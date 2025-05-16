@@ -12,42 +12,6 @@ import {
     where
 } from "./sdk/chandrias-sdk.js";
 
-// ERROR MODAL FUNCTION
-function showErrorModal(message) {
-    const modal = document.getElementById("error-modal");
-    const msg = document.getElementById("error-modal-message");
-    msg.textContent = message;
-    modal.classList.add("show");
-}
-
-// --- Confirm Modal Logic ---
-function showConfirmModal(message, onConfirm) {
-    const modal = document.getElementById("confirm-modal");
-    const msg = document.getElementById("confirm-modal-message");
-    msg.textContent = message;
-    modal.classList.add("show");
-    // Remove previous listeners
-    const okBtn = document.getElementById("confirm-modal-ok");
-    const cancelBtn = document.getElementById("confirm-modal-cancel");
-    const closeBtn = document.querySelector(".confirm-close");
-    function cleanup() {
-        modal.classList.remove("show");
-        okBtn.removeEventListener("click", okHandler);
-        cancelBtn.removeEventListener("click", cancelHandler);
-        closeBtn.removeEventListener("click", cancelHandler);
-    }
-    function okHandler() {
-        cleanup();
-        if (onConfirm) onConfirm();
-    }
-    function cancelHandler() {
-        cleanup();
-    }
-    okBtn.addEventListener("click", okHandler);
-    cancelBtn.addEventListener("click", cancelHandler);
-    closeBtn.addEventListener("click", cancelHandler);
-}
-
 // INTITIALIZE NOTYF
 $(document).ready(function () {
     // NOTYF
@@ -57,6 +21,42 @@ $(document).ready(function () {
             y: "top"
         }
     });
+
+    // ERROR MODAL FUNCTION
+    function showErrorModal(message) {
+        const modal = document.getElementById("error-modal");
+        const msg = document.getElementById("error-modal-message");
+        msg.textContent = message;
+        modal.classList.add("show");
+    }
+
+    // --- Confirm Modal Logic ---
+    function showConfirmModal(message, onConfirm) {
+        const modal = document.getElementById("confirm-modal");
+        const msg = document.getElementById("confirm-modal-message");
+        msg.textContent = message;
+        modal.classList.add("show");
+        // Remove previous listeners
+        const okBtn = document.getElementById("confirm-modal-ok");
+        const cancelBtn = document.getElementById("confirm-modal-cancel");
+        const closeBtn = document.querySelector(".confirm-close");
+        function cleanup() {
+            modal.classList.remove("show");
+            okBtn.removeEventListener("click", okHandler);
+            cancelBtn.removeEventListener("click", cancelHandler);
+            closeBtn.removeEventListener("click", cancelHandler);
+        }
+        function okHandler() {
+            cleanup();
+            if (onConfirm) onConfirm();
+        }
+        function cancelHandler() {
+            cleanup();
+        }
+        okBtn.addEventListener("click", okHandler);
+        cancelBtn.addEventListener("click", cancelHandler);
+        closeBtn.addEventListener("click", cancelHandler);
+    }
 
     // Error modal close logic
     $(document).on("click", ".error-close, #error-modal-ok", function () {
@@ -71,7 +71,7 @@ $(document).ready(function () {
     // DISPLAY CARDS FUNCTION
     async function loadProducts() {
         try {
-            const container = $(".card_container");
+            const container = $("#products-container");
             container.empty(); // Clear existing cards to avoid duplicates
             const querySnapshot = await getDocs(
                 collection(chandriaDB, "products")
@@ -140,7 +140,7 @@ $(document).ready(function () {
             });
         } catch (err) {
             console.error("Error loading products from Firebase:", err);
-            $(".card_container").append(
+            container.append(
                 '<div style="color:red;margin:2rem;">Failed to load products. Check your connection or Firebase rules.</div>'
             );
         }
@@ -901,6 +901,600 @@ $(document).ready(function () {
         }
     });
 
+    // ============================== ADDITIONAL ACCESSORIES SECTION ==============================
+    // --- ADDITIONAL PRODUCT DISPLAY ---
+    async function loadAdditionals() {
+        try {
+            const container = $("#additional-container");
+            container.empty(); // Clear existing cards to avoid duplicates
+
+            const querySnapshot = await getDocs(
+                collection(chandriaDB, "additionals")
+            );
+
+            if (querySnapshot.empty) {
+                container.append(
+                    '<div style="margin:2rem;">No additional products found.</div>'
+                );
+                return;
+            }
+
+            querySnapshot.forEach(doc => {
+                const data = doc.data();
+
+                // Check required fields
+                if (!data.imageUrl || !data.code) {
+                    console.warn(
+                        "Additional missing image or code:",
+                        doc.id,
+                        data
+                    );
+                    return;
+                }
+
+                // Create card HTML
+                const card = $(`
+                <article class="card_article card">
+                    <div class="card_data">
+                        <img
+                            src="${data.imageUrl}"
+                            alt="image"
+                            class="card_img"
+                        />
+                        <h2 class="card_title">${data.name}</h2>
+                        <p class="card_info">Price: ₱${data.price}</p>
+                        <p class="card_info">
+                            ${
+                                data.inclusions && data.inclusions.length
+                                    ? "With Inclusion"
+                                    : "Without Inclusion"
+                            }
+                        </p>
+                        <span class="card_category">${data.code}</span>
+                        <div class="product-actions">
+                            <a
+                                href="#"
+                                class="action-btn edit-add-btn"
+                                data-open="updateAdditionalModal"
+                                aria-label="Edit"
+                                data-id="${doc.id}"
+                            >
+                                <i class="fi fi-rr-edit"></i>
+                            </a>
+                            <a
+                                href="#"
+                                class="action-btn delete-add-btn"
+                                aria-label="Delete"
+                                data-id="${doc.id}"
+                            >
+                                <i class="fi fi-rr-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            `);
+
+                container.append(card);
+            });
+        } catch (err) {
+            console.error("Error loading additional products:", err);
+            $("#additional-container").append(
+                '<div style="color:red;margin:2rem;">Failed to load additional products.</div>'
+            );
+        }
+    }
+    loadAdditionals();
+
+    // GENERATE ADDITIONAL PRODUCT CODE
+    async function generateAdditionalCode(name) {
+        if (!name || name.length < 3) return;
+
+        const prefix = "ADD";
+        const nameCode = name.trim().substring(0, 3).toUpperCase();
+        const baseCode = `${prefix}-${nameCode}`;
+
+        const additionalsRef = collection(chandriaDB, "additionals");
+        const q = query(
+            additionalsRef,
+            where("code", ">=", baseCode),
+            where("code", "<", baseCode + "\uf8ff")
+        );
+        const snapshot = await getDocs(q);
+
+        const numbers = snapshot.docs.map(doc => {
+            const match = doc.data().code.match(/(\d{3})$/);
+            return match ? parseInt(match[1], 10) : 0;
+        });
+
+        const nextNumber = (Math.max(...numbers, 0) + 1)
+            .toString()
+            .padStart(3, "0");
+
+        const fullCode = `${baseCode}-${nextNumber}`;
+        $("#add-additional-code").val(fullCode);
+        $("#update-additional-code").val(fullCode);
+    }
+
+    // GENERATE PRODUCT CODE ON TRIGGER
+    $("#add-additional-name").on("input", function () {
+        const name = $(this).val();
+        generateAdditionalCode(name);
+    });
+    $("#update-additional-name").on("input", function () {
+        const name = $(this).val();
+        generateAdditionalCode(name);
+    });
+
+    // --- ADDITIONAL FORM SUBMISSION ---
+    $("#add-additional-btn").on("click", async function (e) {
+        e.preventDefault();
+
+        // VALIDATION
+        const imageFile = $("#add-additional-file-img")[0].files[0];
+        const name = $("#add-additional-name").val();
+        const code = $("#add-additional-code").val();
+        const price = parseFloat($("#add-additional-price").val());
+
+        if (!imageFile) {
+            showErrorModal("Please select an image.");
+            return;
+        }
+
+        if (!name || !code || isNaN(price) || price < 0) {
+            showErrorModal("Please fill in all fields with valid values.");
+            return;
+        }
+
+        // GATHER INCLUSIONS IF CHECKED
+        let inclusions = [];
+        if ($("#with-inclusions-checkbox").is(":checked")) {
+            $("#inclusions-container input[type='text']").each(function () {
+                const val = $(this).val().trim();
+                if (val) inclusions.push(val);
+            });
+            if (inclusions.length === 0) {
+                showErrorModal("Please enter at least one inclusion.");
+                return;
+            }
+        }
+
+        // UPLOAD IMAGE TO CLOUDINARY
+        const uploadImage = async file => {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", "UPLOAD_IMG");
+
+            const res = await fetch(
+                "https://api.cloudinary.com/v1_1/dbtomr3fm/image/upload",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+            const data = await res.json();
+            return {
+                url: data.secure_url,
+                public_id: data.public_id
+            };
+        };
+
+        try {
+            $("#spinner").removeClass("d-none");
+            $("#spinner-text").text("Uploading Additional Image...");
+
+            const uploadedImage = await uploadImage(imageFile);
+
+            const additionalData = {
+                name,
+                code,
+                price,
+                imageUrl: uploadedImage.url,
+                imageId: uploadedImage.public_id,
+                inclusions: inclusions.length ? inclusions : null,
+                createdAt: new Date()
+            };
+
+            $("#spinner-text").text("Saving Data...");
+
+            await addDoc(collection(chandriaDB, "additionals"), additionalData);
+
+            notyf.success("Additional item added!");
+
+            // RESET FORM
+            $("#addAdditionalModal form")[0].reset();
+            $("#add-additional-dropzone-img").css("background-image", "none");
+            $("#add-additional-upload-label-img").css("opacity", "1");
+            $("#inclusions-container").empty();
+            $("#inclusions-container").hide();
+            $("#remove-inclusion-btn").prop("disabled", true);
+
+            $("#addAdditionalModal").removeClass("show");
+
+            // Reload any relevant data view
+            await loadAdditionals(); // if you have a function like this
+        } catch (err) {
+            console.error(err);
+            showErrorModal("Failed to add additional item.");
+        }
+
+        $("#spinner").addClass("d-none");
+    });
+
+    // --- ADDITIONAL IMAGE PREVIEW ---
+    $("#add-additional-file-img").on("change", function () {
+        const file = this.files[0];
+        if (file && file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                $("#add-additional-dropzone-img").css({
+                    "background-image": `url(${e.target.result})`,
+                    "background-size": "cover",
+                    "background-position": "center"
+                });
+                $("#add-additional-upload-label-img").css("opacity", "0");
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // UPDATE ADDITIONAL IMAGE PREVIEW
+    $("#update-additional-file-img").on("change", function () {
+        const file = this.files[0];
+
+        if (file && file.type.startsWith("image/")) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                $("#update-additional-dropzone-img").css({
+                    "background-image": `url(${e.target.result})`,
+                    "background-size": "cover",
+                    "background-position": "center"
+                });
+
+                $("#update-additional-upload-label-img").css("opacity", "0");
+            };
+
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // VIEW ADDITIONAL DETAILS FUNCTION
+    $(document).on("click", ".edit-add-btn", async function () {
+        const additionalId = $(this).data("id");
+        $("#updateAdditionalModal").addClass("show");
+
+        try {
+            const docRef = doc(chandriaDB, "additionals", additionalId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+
+                // Set hidden field data-id for update
+                $("#update-additional-id").val(additionalId);
+
+                // Set image preview
+                if (data.imageUrl) {
+                    $("#update-additional-dropzone-img").css({
+                        "background-image": `url(${data.imageUrl})`,
+                        "background-size": "cover",
+                        "background-position": "center"
+                    });
+                    $("#update-additional-upload-label-img").css(
+                        "opacity",
+                        "0"
+                    );
+                }
+
+                // Fill inputs
+                $("#update-additional-name").val(data.name || "");
+                $("#update-additional-code").val(data.code || "");
+                $("#update-additional-price").val(data.price || "");
+
+                // Handle inclusions
+                const inclusions = data.inclusions || [];
+                if (inclusions.length > 0) {
+                    $("#with-inclusions-update-checkbox").prop("checked", true);
+                    $("#with-inclusions-update-checkbox").trigger("change");
+                    $("#update-inclusions-container").empty();
+                    inclusions.forEach((inclusion, index) => {
+                        const input = $(`
+                        <input
+                            type="text"
+                            class="inclusion-input"
+                            value="${inclusion}"
+                            placeholder="Inclusion ${index + 1}"
+                        />
+                    `);
+                        $("#update-inclusions-container").append(input);
+                    });
+                    $("#update-inclusion-btn-row").show();
+                } else {
+                    $("#with-inclusions-update-checkbox").prop(
+                        "checked",
+                        false
+                    );
+                    $("#update-inclusions-container").empty();
+                }
+            } else {
+                showErrorModal("Additional product not found.");
+            }
+        } catch (err) {
+            console.error("Error loading additional product:", err);
+            showErrorModal("Failed to load additional product.");
+        }
+    });
+
+    // INCLUSION CHECKBOX FUNCTION (ADDING)
+    $("#with-inclusions-checkbox").on("change", function () {
+        if (this.checked) {
+            $("#inclusions-container").show().append(`
+            <input
+                type="text"
+                placeholder="Name"
+                class="inclusion-field"
+            />
+        `);
+            $("#inclusion-btn-row").addClass("show");
+            $("#remove-inclusion-btn").prop("disabled", true); // disable initially
+        } else {
+            $("#inclusions-container").hide().empty();
+            $("#inclusion-btn-row").removeClass("show");
+            $("#remove-inclusion-btn").prop("disabled", false); // reset on uncheck
+        }
+    });
+
+    // ADD INCLUSION BUTTON FUNCTION
+    $("#add-inclusion-btn").on("click", function () {
+        $("#inclusions-container").append(`
+        <input
+            type="text"
+            placeholder="Name"
+            class="inclusion-field"
+        />
+    `);
+
+        // Enable remove button if more than one input exists
+        if ($("#inclusions-container input[type='text']").length > 1) {
+            $("#remove-inclusion-btn").prop("disabled", false);
+        }
+    });
+    // REMOVE INCLUSION BUTTON FUNCTION
+    $("#remove-inclusion-btn").on("click", function () {
+        const $container = $("#inclusions-container");
+        const $fields = $container.find("input[type='text']");
+
+        if ($fields.length > 1) {
+            $fields.last().remove();
+        }
+
+        // Disable button if only one input is left
+        if ($container.find("input[type='text']").length === 1) {
+            $(this).prop("disabled", true);
+        }
+    });
+
+    // INCLUSION CHECKBOX FUNCTION (UPDATE)
+    $("#with-inclusions-update-checkbox").on("change", function () {
+        if (this.checked) {
+            $("#update-inclusions-container").show().append(`
+            <input
+                type="text"
+                placeholder="Name"
+                class="inclusion-field"
+            />
+        `);
+            $("#update-inclusion-btn-row").addClass("show");
+            $("#update-remove-inclusion-btn").prop("disabled", true); // disable initially
+        } else {
+            $("#update-inclusions-container").hide().empty();
+            $("#update-inclusion-btn-row").removeClass("show");
+            $("#update-remove-inclusion-btn").prop("disabled", false); // reset on uncheck
+        }
+    });
+
+    // ADD INCLUSION BUTTON FUNCTION
+    $("#update-add-inclusion-btn").on("click", function () {
+        $("#update-inclusions-container").append(`
+        <input
+            type="text"
+            placeholder="Name"
+            class="inclusion-field"
+        />
+    `);
+
+        // Enable remove button if more than one input exists
+        if ($("#update-inclusions-container input[type='text']").length > 1) {
+            $("#update-remove-inclusion-btn").prop("disabled", false);
+        }
+    });
+
+    // REMOVE INCLUSION BUTTON FUNCTION
+    $("#update-remove-inclusion-btn").on("click", function () {
+        const $container = $("#update-inclusions-container");
+        const $fields = $container.find("input[type='text']");
+
+        if ($fields.length > 1) {
+            $fields.last().remove();
+        }
+
+        // Disable button if only one input is left
+        if ($container.find("input[type='text']").length === 1) {
+            $(this).prop("disabled", true);
+        }
+    });
+
+    // UPDATE ADDITIONAL PRODUCT
+    $("#update-additional-btn").on("click", async function (e) {
+        e.preventDefault();
+
+        const additionalId = $("#update-additional-id").val();
+        if (!additionalId) return showErrorModal("Additional ID not found.");
+
+        const name = $("#update-additional-name").val().trim();
+        const code = $("#update-additional-code").val().trim();
+        const price = parseFloat($("#update-additional-price").val());
+        const newImageFile = $("#update-additional-file-img")[0].files[0];
+
+        if (!name || !code || isNaN(price) || price < 0) {
+            return showErrorModal(
+                "Please fill in all fields with valid values."
+            );
+        }
+
+        let inclusions = [];
+        if ($("#with-inclusions-update-checkbox").is(":checked")) {
+            $("#update-inclusions-container input[type='text']").each(
+                function () {
+                    const val = $(this).val().trim();
+                    if (val) inclusions.push(val);
+                }
+            );
+
+            if (inclusions.length === 0) {
+                return showErrorModal("Please enter at least one inclusion.");
+            }
+        }
+
+        let newImageUrl = null;
+        let newImageId = null;
+
+        try {
+            $("#spinner").removeClass("d-none");
+            $("#spinner-text").text("Updating Additional...");
+
+            const docRef = doc(chandriaDB, "additionals", additionalId);
+            const docSnap = await getDoc(docRef);
+            const existingData = docSnap.data();
+
+            // DELETE OLD IMAGE IF NEW ONE IS SELECTED
+            if (newImageFile && existingData.imageId) {
+                $("#spinner-text").text("Deleting Old Image...");
+                await deleteImageFromCloudinary(existingData.imageId);
+            }
+
+            // UPLOAD NEW IMAGE IF SELECTED
+            if (newImageFile) {
+                $("#spinner-text").text("Uploading New Image...");
+                const formData = new FormData();
+                formData.append("file", newImageFile);
+                formData.append("upload_preset", "UPLOAD_IMG");
+
+                const response = await fetch(
+                    "https://api.cloudinary.com/v1_1/dbtomr3fm/image/upload",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+                const data = await response.json();
+                newImageUrl = data.secure_url;
+                newImageId = data.public_id;
+            }
+
+            const updatedData = {
+                name,
+                code,
+                price,
+                inclusions: inclusions.length ? inclusions : null
+            };
+
+            if (newImageUrl && newImageId) {
+                updatedData.imageUrl = newImageUrl;
+                updatedData.imageId = newImageId;
+            }
+
+            await updateDoc(docRef, updatedData);
+
+            notyf.success("Additional item updated!");
+
+            // Reset form and modal
+            $("#update-add-form")[0].reset();
+            $("#updateAdditionalModal").removeClass("show");
+            $("#update-inclusions-container").empty().hide();
+
+            // Refresh data view
+            await loadAdditionals();
+        } catch (err) {
+            console.error(err);
+            showErrorModal("Failed to update additional item.");
+        } finally {
+            $("#spinner").addClass("d-none");
+        }
+    });
+
+    // DELETE ADDITIONAL FUNCTION
+    $(document).on("click", ".delete-add-btn", async function () {
+        const additionalId = $(this).data("id");
+        const card = $(this).closest(".card");
+
+        showConfirmModal(
+            "Are you sure you want to delete this additional item?",
+            async function () {
+                try {
+                    const spinner = $("#spinner");
+                    const spinnerText = $("#spinner-text");
+
+                    spinner.removeClass("d-none");
+                    spinnerText.text("Deleting Image");
+
+                    // Step 1: Get additional info
+                    const docSnap = await getDoc(
+                        doc(chandriaDB, "additionals", additionalId)
+                    );
+                    const additional = docSnap.data();
+
+                    // Step 2: Delete image from Cloudinary
+                    await deleteImageFromCloudinary(additional.imageId);
+
+                    spinnerText.text("Deleting Data");
+
+                    // Step 3: Delete Firestore record
+                    await deleteDoc(
+                        doc(chandriaDB, "additionals", additionalId)
+                    );
+
+                    notyf.success("Additional item deleted!");
+                    card.fadeOut(300, () => card.remove());
+                } catch (err) {
+                    console.error("Error:", err);
+                    showErrorModal(
+                        "Failed to delete additional item or image."
+                    );
+                } finally {
+                    $("#spinner").addClass("d-none");
+                }
+            }
+        );
+    });
+
+    // MODAL CLOSE TOGGLER
+    $("#updateAdditionalModal, #updateModalCloseBtn, #updateCloseBtn").on(
+        "click",
+        function () {
+            $("#updateAdditionalModal").removeClass("show");
+
+            $("#update-add-form")[0].reset();
+            // RESET IMAGE DROP ZONES
+            $("#update-additional-dropzone-img").css(
+                "background-image",
+                "none"
+            );
+            $("#update-additional-upload-label-img").css("opacity", "1");
+
+            $("#update-inclusions-container").empty();
+            $("#update-inclusion-btn-row").removeClass("show");
+        }
+    );
+
+    // PREVENT DEFAULTS
+    $("#updateModalContent").on("click", function (e) {
+        e.stopPropagation();
+    });
+
+    // ============================== END OF ADDTIONAL SECTION ==============================
+
     // --- TAB & ADD BUTTON LOGIC ---
     const addItemBtn = $("#add-item-btn");
     const addProductModal = $("#addProductModal");
@@ -938,88 +1532,6 @@ $(document).ready(function () {
         setBodyScrollLock(true);
     });
 
-    // --- ADDITIONAL FORM SUBMISSION ---
-    $("#add-additional-btn").on("click", async function (e) {
-        e.preventDefault();
-        const imgFile = $("#add-additional-file-img")[0].files[0];
-        const name = $("#add-additional-name").val().trim();
-        const type = $("#add-additional-type").val().trim();
-        const price = $("#add-additional-price").val().trim();
-        if (!imgFile) {
-            showErrorModal("Please select an image.");
-            return;
-        }
-        if (!name) {
-            showErrorModal("Please enter a name.");
-            return;
-        }
-        if (!type) {
-            showErrorModal("Please enter a type.");
-            return;
-        }
-        if (!price || parseFloat(price) < 0) {
-            showErrorModal("Please enter a valid price.");
-            return;
-        }
-        // Show spinner
-        $("#spinner").removeClass("d-none");
-        $("#spinner-text").text("Uploading Image");
-        // Upload image
-        try {
-            const formData = new FormData();
-            formData.append("file", imgFile);
-            formData.append("upload_preset", "UPLOAD_IMG");
-            const response = await fetch(
-                "https://api.cloudinary.com/v1_1/dbtomr3fm/image/upload",
-                {
-                    method: "POST",
-                    body: formData
-                }
-            );
-            const data = await response.json();
-            const imageUrl = data.secure_url;
-            // Save to Firestore (collection: accessories)
-            const additionalData = {
-                name,
-                type,
-                price,
-                imageUrl,
-                createdAt: new Date()
-            };
-            await addDoc(collection(chandriaDB, "accessories"), additionalData);
-            notyf.success("Additional item added!");
-            // Reset form
-            $("#add-additional-name").val("");
-            $("#add-additional-type").val("");
-            $("#add-additional-price").val("");
-            $("#add-additional-dropzone-img").css("background-image", "none");
-            $("#add-additional-upload-label-img").css("opacity", "1");
-            setTimeout(() => {
-                addAdditionalModal.removeClass("show");
-            }, 900);
-        } catch (err) {
-            showErrorModal("Failed to add additional item.");
-        }
-        $("#spinner").addClass("d-none");
-    });
-
-    // --- ADDITIONAL IMAGE PREVIEW ---
-    $("#add-additional-file-img").on("change", function () {
-        const file = this.files[0];
-        if (file && file.type.startsWith("image/")) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                $("#add-additional-dropzone-img").css({
-                    "background-image": `url(${e.target.result})`,
-                    "background-size": "cover",
-                    "background-position": "center"
-                });
-                $("#add-additional-upload-label-img").css("opacity", "0");
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
     // Prevent background scroll when any modal is open (strict)
     function setBodyScrollLock(lock) {
         if (lock) {
@@ -1035,7 +1547,7 @@ $(document).ready(function () {
     // Open modal: lock scroll
     $(document).on(
         "click",
-        '[data-open="addProductModal"], [data-open="viewProductModal"], [data-open="addAdditionalModal"]',
+        '[data-open="addProductModal"], [data-open="viewProductModal"], [data-open="addAdditionalModal"], [data-open="updateAdditionalModal"]',
         function () {
             setBodyScrollLock(true);
         }

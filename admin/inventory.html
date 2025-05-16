@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         <title>Chandria's La Robe</title>
-        
+
         <!-- BOX-ICON CDN -->
         <link
             href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
@@ -22,22 +22,9 @@
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css"
         />
-        
+
         <!-- EXTERNAL CSS -->
         <link rel="stylesheet" href="./assets/css/inventory.css" />
-
-        <style>
-            /* Custom primary color for checkbox */
-            #with-inclusions-checkbox {
-              accent-color: #ff9aaf; /* Use your primary color here */
-            }
-            .with-inclusions-row {
-              display: flex;
-              align-items: center;
-              gap: 0.5rem;
-              margin: 1rem 0 0.5rem 0;
-            }
-        </style>
     </head>
 
     <body>
@@ -51,7 +38,10 @@
             <header>
                 <div class="custom-image-text">
                     <span class="custom-image">
-                        <img src="./assets/images/chandriaslogo.png" alt="logo" />
+                        <img
+                            src="./assets/images/chandriaslogo.png"
+                            alt="logo"
+                        />
                     </span>
                 </div>
 
@@ -178,13 +168,15 @@
                 </div>
                 <div class="pos-layout">
                     <div class="pos-products tab-content active" id="products">
-                        <div class="card_container">
+                        <div class="card_container" id="products-container">
                             <!-- Product cards fetched from Firebase (do not modify) -->
                             <!-- ...existing product card rendering logic... -->
                         </div>
                     </div>
                     <div class="pos-accessories tab-content" id="accessories">
+                        <div class="card_container" id="additional-container">
                         <!-- Accessories cards or content here if needed -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -694,14 +686,13 @@
                         type="text"
                         id="add-additional-name"
                         placeholder="Name"
-                        required
                     />
-                    <!-- Type (renamed to Additional Code) -->
+                    <!-- ADDITIONAL PRODUCT CODE -->
                     <input
                         type="text"
                         id="add-additional-code"
                         placeholder="Additional Code"
-                        required
+                        disabled
                     />
                     <!-- Price Input (unchanged) -->
                     <div class="price-input">
@@ -715,19 +706,22 @@
                     </div>
                     <!-- With Inclusions Checkbox -->
                     <div class="with-inclusions-row">
-                      <label class="with-inclusions-label">
-                        <input type="checkbox" id="with-inclusions-checkbox" />
-                        <span>With Inclusions?</span>
-                      </label>
+                        <label class="with-inclusions-label">
+                            <input
+                                type="checkbox"
+                                id="with-inclusions-checkbox"
+                            />
+                            <span>With Inclusions?</span>
+                        </label>
                     </div>
                     <!-- Inclusions Fields (hidden by default) -->
                     <div id="inclusions-container"></div>
                     <div id="inclusion-btn-row">
                         <button type="button" id="add-inclusion-btn">
-                            <i class='bx bx-plus'></i> Add More
+                            <i class="bx bx-plus"></i> Add More
                         </button>
                         <button type="button" id="remove-inclusion-btn">
-                            <i class='bx bx-trash'></i> Remove
+                            <i class="bx bx-trash"></i> Remove
                         </button>
                     </div>
 
@@ -748,6 +742,120 @@
                 </form>
             </div>
         </div>
+
+        <!-- UPDATE ADDITIONAL MODAL -->
+        <div id="updateAdditionalModal" class="custom-modal">
+            <div class="custom-modal-content" id="updateModalContent">
+                <span
+                    class="custom-close-button"
+                    id="updateModalCloseBtn"
+                    data-close="updateAdditionalModal"
+                    >&times;</span
+                >
+                <h2
+                    style="
+                        color: var(--secondary-text-color);
+                        transition: var(--tran-04);
+                    "
+                >
+                    Edit Additional
+                </h2>
+                <form id="update-add-form">
+                    <!-- Image Preview -->
+                    <div class="file-upload-container">
+                        <div class="drop-zone" id="update-additional-dropzone-img">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                id="update-additional-file-img"
+                                hidden
+                            />
+                            <label
+                                for="update-additional-file-img"
+                                class="upload-label"
+                                id="update-additional-upload-label-img"
+                            >
+                                <img
+                                    src="https://cdn-icons-png.flaticon.com/512/724/724933.png"
+                                    alt="Upload"
+                                    class="upload-icon"
+                                />
+                                <p>Select Image</p>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- ADDITIONAL PRODUCT ID -->
+                    <input
+                        type="text"
+                        id="update-additional-id"
+                        disabled
+                        hidden
+                    />
+                    <!-- Name -->
+                    <input
+                        type="text"
+                        id="update-additional-name"
+                        placeholder="Name"
+                    />
+                    <!-- PRODUCT CODE -->
+                    <input
+                        type="text"
+                        id="update-additional-code"
+                        placeholder="Additional Code"
+                        disabled
+                    />
+                    <!-- Price Input (unchanged) -->
+                    <div class="price-input">
+                        <div class="price-symbol">₱</div>
+                        <input
+                            type="number"
+                            placeholder="Price"
+                            id="update-additional-price"
+                        />
+                        <div class="price-suffix">.00</div>
+                    </div>
+                    <!-- With Inclusions Checkbox -->
+                    <div class="with-inclusions-row">
+                        <label class="with-inclusions-label">
+                            <input
+                                type="checkbox"
+                                id="with-inclusions-update-checkbox"
+                            />
+                            <span>With Inclusions?</span>
+                        </label>
+                    </div>
+                    <!-- Inclusions Fields (hidden by default) -->
+                    <div id="update-inclusions-container">
+                      <!-- INPUT FIELDS HERE -->
+                    </div>
+                    <div id="update-inclusion-btn-row">
+                        <button type="button" id="update-add-inclusion-btn">
+                            <i class="bx bx-plus"></i> Add More
+                        </button>
+                        <button type="button" id="update-remove-inclusion-btn">
+                            <i class="bx bx-trash"></i> Remove
+                        </button>
+                    </div>
+
+                    <div class="modal-buttons">
+                        <button
+                            class="custom-btn"
+                            id="updateCloseBtn"
+                            data-close="updateAdditionalModal"
+                        >
+                            Close
+                        </button>
+                        <button
+                            class="custom-btn primary-btn"
+                            id="update-additional-btn"
+                        >
+                            Update
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
 
         <!-- ERROR MODAL -->
         <div id="error-modal" class="custom-modal">
@@ -799,7 +907,6 @@
 
         <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
 
-
         <!-- NOTYF CDN -->
         <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
         <!-- JQUERY JS -->
@@ -811,87 +918,5 @@
         <!-- EXTERNAL SCRIPT -->
         <script type="module" src="./assets/js/inventory-service.js"></script>
         <script type="module" src="./assets/js/inventory-subscript.js"></script>
-        <script>
-// Inclusions logic for Add Additional Modal
-(function() {
-    const checkbox = document.getElementById('with-inclusions-checkbox');
-    const container = document.getElementById('inclusions-container');
-    const addBtn = document.getElementById('add-inclusion-btn');
-    const removeBtn = document.getElementById('remove-inclusion-btn');
-    const btnRow = document.getElementById('inclusion-btn-row');
-    const errorModal = document.getElementById('error-modal');
-    const errorMsg = document.getElementById('error-modal-message');
-    const errorOk = document.getElementById('error-modal-ok');
-    if (!checkbox || !container || !addBtn || !removeBtn || !btnRow) return;
-
-    function updateRemoveBtnState() {
-        if (container.childElementCount <= 1) {
-            removeBtn.disabled = true;
-            removeBtn.style.opacity = 0.6;
-            removeBtn.style.cursor = 'not-allowed';
-        } else {
-            removeBtn.disabled = false;
-            removeBtn.style.opacity = 1;
-            removeBtn.style.cursor = 'pointer';
-        }
-    }
-
-    function addInclusionField() {
-        const field = document.createElement('input');
-        field.type = 'text';
-        field.placeholder = 'Name';
-        field.className = 'inclusion-field';
-        field.style.marginBottom = '0.5rem';
-        field.style.width = '100%';
-        field.style.borderRadius = '6px';
-        field.style.border = '1px solid #ccc';
-        field.style.padding = '0.5rem';
-        container.appendChild(field);
-        updateRemoveBtnState();
-    }
-
-    function removeInclusionField() {
-        if (container.childElementCount <= 1) {
-            // Show error modal
-            if (errorModal && errorMsg && errorOk) {
-                errorMsg.textContent = 'Cannot remove the last inclusion field.';
-                errorModal.style.display = 'flex';
-                errorOk.onclick = function() {
-                    errorModal.style.display = 'none';
-                };
-                // Also allow closing with X
-                const closeBtn = errorModal.querySelector('.custom-close-button');
-                if (closeBtn) closeBtn.onclick = function() { errorModal.style.display = 'none'; };
-            }
-            return;
-        }
-        container.removeChild(container.lastElementChild);
-        updateRemoveBtnState();
-        // If all fields are removed (shouldn't happen, but for safety)
-        if (container.childElementCount === 0) {
-            checkbox.checked = false;
-            container.style.display = 'none';
-            btnRow.style.display = 'none';
-        }
-    }
-
-    checkbox.addEventListener('change', function() {
-        if (checkbox.checked) {
-            container.style.display = 'flex';
-            btnRow.style.display = 'flex';
-            if (container.childElementCount === 0) addInclusionField();
-        } else {
-            container.style.display = 'none';
-            btnRow.style.display = 'none';
-            container.innerHTML = '';
-        }
-        updateRemoveBtnState();
-    });
-    addBtn.addEventListener('click', addInclusionField);
-    removeBtn.addEventListener('click', removeInclusionField);
-    // On page load, ensure remove is disabled
-    updateRemoveBtnState();
-})();
-</script>
     </body>
 </html>

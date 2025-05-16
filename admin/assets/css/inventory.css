@@ -709,6 +709,15 @@ header .custom-image-text .custom-header-text {
     align-items: center;
 }
 
+.card_info {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-color);
+    margin: 5px 0;
+    display: flex;
+    align-items: center;
+}
+
 .card_color {
     font-size: 14px;
     font-weight: 500;
@@ -1129,6 +1138,10 @@ header .custom-image-text .custom-header-text {
   justify-content: flex-end;
   align-items: center;
 }
+#inclusion-btn-row.show {
+  display: flex;
+}
+
 #add-inclusion-btn {
   background: #ff9aaf;
   color: #fff;
@@ -1176,6 +1189,72 @@ header .custom-image-text .custom-header-text {
   cursor: pointer;
 }
 #with-inclusions-checkbox {
+  accent-color: #ff9aaf;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+/* With Inclusions Checkbox (UPDATE) */
+#with-inclusions-update-checkbox {
+  accent-color: #ff9aaf; /* Use your primary color here */
+  width: 18px;
+  height: 18px;
+}
+
+#update-inclusions-container {
+  display: none;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+#update-inclusion-btn-row {
+  display: none;
+  flex-direction: row;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  justify-content: flex-end;
+  align-items: center;
+}
+#update-inclusion-btn-row.show {
+  display: flex;
+}
+
+#update-add-inclusion-btn {
+  background: #ff9aaf;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+}
+#update-remove-inclusion-btn {
+  background: #fff;
+  color: #ff9aaf;
+  border: 1px solid #ff9aaf;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+#update-remove-inclusion-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+#update-remove-inclusion-btn:not(:disabled) {
+  opacity: 1;
+  cursor: pointer;
+}
+
+#with-inclusions-update-checkbox {
   accent-color: #ff9aaf;
   width: 18px;
   height: 18px;

@@ -103,8 +103,79 @@
 
     <section class="page-name">
         <div class="text">Calendar</div>
-    </section>
     
+
+    <div class="calendar-container">
+        <div class="calendar-layout">
+            <div class="calendar-main">                <div class="calendar-header">
+                    <div class="calendar-controls">
+                        <button id="prevMonth"><i class='bx bx-chevron-left'></i></button>
+                        <div class="month-year-select">
+                            <select id="monthSelect"></select>
+                            <select id="yearSelect"></select>
+                        </div>
+                        <button id="nextMonth"><i class='bx bx-chevron-right'></i></button>
+                    </div>
+                    <div class="search-container">
+                        <input type="text" id="searchTransactionCode" placeholder="Search transaction code...">
+                        <i class='bx bx-search search-icon'></i>
+                    </div>
+                </div>
+                <div class="weekdays">
+                    <div>MON</div>
+                    <div>TUE</div>
+                    <div>WED</div>
+                    <div>THU</div>
+                    <div>FRI</div>
+                    <div>SAT</div>
+                    <div>SUN</div>
+                </div>
+                <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
+            <div class="event-sidebar">
+                <h3>Create Event</h3>
+                <div class="event-form">
+                    <div class="form-group">
+                        <label>Transaction Code</label>
+                        <input type="text" id="eventTitle" placeholder="Enter Transaction Code">
+                    </div>
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" id="eventStartDate" placeholder="YYYY-MM-DD">
+                    </div>
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input type="date" id="eventEndDate" placeholder="YYYY-MM-DD">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="eventDescription" placeholder="Enter description"></textarea>
+                    </div>                    
+                    <div class="form-group">
+                        <label>Rental Type</label>
+                        <select id="eventType">
+                            <option value="">Select rental type</option>
+                            <option value="fixed">Fixed Days</option>
+                            <option value="open">Open Rental</option>
+                        </select>
+                        <small class="type-description" style="color: #666; font-size: 11px; margin-top: 4px;">
+                            Fixed Days: Paid upfront for fixed period<br>
+                            Open Rental: Pay when returned based on total days
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label>Event Color</label>
+                        <input type="color" id="eventColor" value="#ff9a9e">
+                    </div>
+                    <div class="form-actions">
+                        <button class="save-btn" id="saveEvent">Save Event</button>
+                        <button class="delete-btn" id="clearEvents">Clear All</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- EXTERNAL SCRIPT -->
     <script type="module" src="./assets/js/calendar-service.js"></script>
 
