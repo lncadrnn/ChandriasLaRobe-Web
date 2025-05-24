@@ -346,19 +346,13 @@
                         </div>
                         <div class="customer-form-row">
                             <label
-                                >Total Payment<br /><input
-                                    type="number"
-                                    id="total-payment"
-                                    min="0"
-                                    step="0.01"
-                                    required
-                            /></label>
-                            <label
-                                >Remaining Balance<br /><input
-                                    type="number"
-                                    id="remaining-balance"
-                                    readonly
-                            /></label>
+                                >Rental Type<br />
+                                <select id="rental-type" required>
+                                    <option value="">Select Rental Type</option>
+                                    <option value="Open Rental">Open Rental</option>
+                                    <option value="Fixed Rental">Fixed Rental</option>
+                                </select>
+                            </label>
                         </div>
                         <div class="customer-form-row">
                             <label
@@ -381,6 +375,22 @@
                                     <option value="down">Down Payment</option>
                                 </select>
                             </label>
+                        </div>
+                        <div class="customer-form-row">
+                            <label
+                                >Total Payment<br /><input
+                                    type="number"
+                                    id="total-payment"
+                                    min="0"
+                                    step="0.01"
+                                    required
+                            /></label>
+                            <label
+                                >Remaining Balance<br /><input
+                                    type="number"
+                                    id="remaining-balance"
+                                    readonly
+                            /></label>
                         </div>
                         <div class="customer-form-row">
                             <label style="flex: 1 1 100%"
