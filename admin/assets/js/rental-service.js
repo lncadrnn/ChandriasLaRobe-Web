@@ -1,8 +1,4 @@
-import {
-    chandriaDB,
-    collection,
-    getDocs
-} from "./sdk/chandrias-sdk.js";
+import { chandriaDB, collection, getDocs } from "./sdk/chandrias-sdk.js";
 
 $(document).ready(function () {
     // DISPLAY PRODUCTS FUNCTION
@@ -31,28 +27,52 @@ $(document).ready(function () {
         });
     }
     displayProducts();
+    
+    // DISPLAY ADDITIONALS PRODUCT FUNCTION
+    async function displayAccessories() {
+        const querySnapshot = await getDocs(
+            collection(chandriaDB, "additionals")
+        );
 
+        querySnapshot.forEach(doc => {
+            const data = doc.data();
+
+            const card = `
+        <div class="pos-card" data-id="${doc.id}">
+            <img src="${data.imageUrl}" alt="Accessory" class="pos-img">
+            <div class="pos-info">
+                <div class="pos-name">${data.name}</div>
+                <div class="pos-price">₱${data.price}</div>
+            </div>
+        </div>
+        `;
+
+            $(".pos-accessories").append(card);
+        });
+    }
+    displayAccessories(); 
+    
     // --- EVENT TYPE FEE LOGIC ---
     // Removed event type logic as requested
 
     // --- PAYMENT METHOD REFERENCE NO LOGIC ---
-    const paymentMethodSelector = $('#payment-method');
-    const referenceNoInput = $('#reference-no');
+    const paymentMethodSelector = $("#payment-method");
+    const referenceNoInput = $("#reference-no");
 
-    paymentMethodSelector.on('change', function () {
+    paymentMethodSelector.on("change", function () {
         let method = $(this).val();
-        if (method === 'Cash') {
-            referenceNoInput.val('CASH').prop('readonly', true);
+        if (method === "Cash") {
+            referenceNoInput.val("CASH").prop("readonly", true);
         } else {
-            referenceNoInput.val('').prop('readonly', false);
+            referenceNoInput.val("").prop("readonly", false);
         }
     });
 
     // Optionally, trigger the logic on page load if values are pre-filled
-    paymentMethodSelector.trigger('change');
+    paymentMethodSelector.trigger("change");
 
     // Patch: When modal is shown, trigger the custom event
-    if ($('#customer-modal').is(':visible')) {
-        $('#customer-modal').trigger('showModal');
+    if ($("#customer-modal").is(":visible")) {
+        $("#customer-modal").trigger("showModal");
     }
 });

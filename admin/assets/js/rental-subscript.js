@@ -1,3 +1,5 @@
+import { chandriaDB, collection, getDoc, doc } from "./sdk/chandrias-sdk.js";
+
 $(document).ready(function () {
     const $body = $("body"),
         $sidebar = $body.find(".sidebar"),
@@ -168,7 +170,8 @@ $(document).ready(function () {
                     "</ul>";
             }
 
-            const editIcon = `<i class='bx bx-edit cart-edit' title="Edit" style="cursor:pointer;"></i>`;
+            // EDIT BUTTON
+            const editIcon = `<i class='bx bx-edit cart-edit' title="Edit" data-idx="${idx}" data-id="${item.id}" style="cursor:pointer;"></i>`;
 
             $div.html(`
       <span>${item.name}${typesStr}</span>
@@ -187,7 +190,9 @@ $(document).ready(function () {
 
             // Open accessory editor
             $div.find(".cart-edit").on("click", function () {
-                showAccessoryModal(idx);
+                const idx = $(this).data("idx");
+                const id = $(this).data("id");
+                showAccessoryModal(idx, id);
             });
 
             $cartDetailsDiv.append($div);
@@ -233,6 +238,36 @@ $(document).ready(function () {
         updateCartSummary();
     });
 
+    // ACCESSORIES CLICK FUNCTION
+    $("#accessories").on("click", ".pos-card", function () {
+        const $card = $(this);
+        const id = $card.data("id"); // <-- Firestore document ID
+        const name = $card.find(".pos-name").text();
+        const price = parseInt(
+            $card.find(".pos-price").text().replace(/[^\d]/g, "")
+        );
+
+        const countOfThis = cart.accessories.filter(
+            item => item.name === name
+        ).length;
+        const productCount = cart.products.length;
+
+        if (countOfThis >= productCount) {
+            showErrorModal(
+                `You can only add as many '${name}' as products selected.`
+            );
+            return;
+        }
+
+        if (name.toLowerCase().includes("accessor")) {
+            cart.accessories.push({ id, name, price, types: [] }); // <-- Add id to cart
+        } else {
+            cart.accessories.push({ id, name, price });
+        }
+
+        updateCartSummary();
+    });
+
     // --- Accessory Modal Logic ---
     // Cache jQuery objects for modal and controls
     const $accessoryModal = $("#accessory-modal");
@@ -242,21 +277,64 @@ $(document).ready(function () {
     let pendingAccessoryIdx = null;
 
     // Function to show the modal and pre-fill checkboxes if needed
-    function showAccessoryModal(idx) {
-        $accessoryModal.show(); // show the modal
+    async function showAccessoryModal(idx) {
+        $accessoryModal.show();
         pendingAccessoryIdx = idx;
 
-        // Reset all checkboxes
-        $accessoryForm.find("input[type=checkbox]").prop("checked", false);
-
-        // If accessory already has types, mark them as checked
         const accessory = cart.accessories[idx];
-        if (accessory && accessory.types) {
-            accessory.types.forEach(type => {
-                $accessoryForm
-                    .find(`input[value="${type}"]`)
-                    .prop("checked", true);
-            });
+        const selectedTypes = accessory.types || [];
+        const accessoryId = accessory.id;
+
+        $accessoryForm.empty(); // Clear previous checkboxes
+
+        // Add the "Select All" checkbox first
+        const selectAllHTML = `
+        <label>
+            <input type="checkbox" id="select-all-accessories" />
+            <strong>Select All</strong>
+        </label>
+        <br>
+    `;
+        $accessoryForm.append(selectAllHTML);
+
+        try {
+            const docRef = doc(chandriaDB, "additionals", accessoryId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const inclusions = data.inclusions || [];
+
+                inclusions.forEach(type => {
+                    const isChecked = selectedTypes.includes(type);
+
+                    const checkboxHTML = `
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="accessoryType" value="${type}" ${
+                            isChecked ? "checked" : ""
+                        }>
+                        ${type}
+                    </label>
+                    <br>
+                `;
+                    $accessoryForm.append(checkboxHTML);
+                });
+
+                // Re-bind "Select All" logic after appending
+                $("#select-all-accessories")
+                    .off("change")
+                    .on("change", function () {
+                        const checked = $(this).is(":checked");
+                        $('#accessory-form input[name="accessoryType"]').prop(
+                            "checked",
+                            checked
+                        );
+                    });
+            } else {
+                console.warn("Accessory not found in Firestore.");
+            }
+        } catch (error) {
+            console.error("Error fetching accessory by ID:", error);
         }
     }
 
@@ -273,9 +351,11 @@ $(document).ready(function () {
             pendingAccessoryIdx !== null &&
             cart.accessories[pendingAccessoryIdx]
         ) {
-            // Get all checked checkbox values
+            // Get all checked accessoryType checkboxes except "Select All"
             const types = $accessoryForm
-                .find("input[type=checkbox]:checked")
+                .find(
+                    "input[type=checkbox]:checked:not(#select-all-accessories)"
+                )
                 .map(function () {
                     return this.value;
                 })
@@ -290,7 +370,7 @@ $(document).ready(function () {
 
         $accessoryModal.hide();
     });
-
+    
     // Close modal if user clicks outside the modal content
     $(window).on("click", function (e) {
         if ($(e.target).is($accessoryModal)) {
@@ -318,38 +398,6 @@ $(document).ready(function () {
             $selectAll.prop("checked", allChecked); // Update "Select All" checkbox
         });
     }
-
-    // --- Add click listeners to accessory cards (jQuery version) ---
-    $("#accessories .pos-card").on("click", function () {
-        const $card = $(this);
-        const name = $card.find(".pos-name").text();
-        const price = parseInt(
-            $card.find(".pos-price").text().replace(/[^\d]/g, "")
-        );
-
-        // Count how many of this item are already in the cart
-        const countOfThis = cart.accessories.filter(
-            item => item.name === name
-        ).length;
-        const productCount = cart.products.length;
-
-        // Don't allow more accessories than products
-        if (countOfThis >= productCount) {
-            showErrorModal(
-                `You can only add as many '${name}' as products selected.`
-            );
-            return;
-        }
-
-        // If it's an accessory (not wings), add with empty types
-        if (name.toLowerCase().includes("accessor")) {
-            cart.accessories.push({ name, price, types: [] });
-        } else {
-            cart.accessories.push({ name, price });
-        }
-
-        updateCartSummary(); // Refresh cart
-    });
 
     // --- Initialize cart summary on load ---
     updateCartSummary();

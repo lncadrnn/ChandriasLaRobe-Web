@@ -12,10 +12,10 @@
 
 
   /* Set transitions to none */
-  --tran-02: none; /* all 0.2s ease; */
-  --tran-03: none; /* all 0.3s ease; */
-  --tran-04: none; /* all 0.4s ease; */
-  --tran-05: none; /* all 0.5s ease; */
+  --tran-02: all 0.5s ease; /* all 0.2s ease; */
+  --tran-03: all 0.5s ease; /* all 0.3s ease; */
+  --tran-04: all 0.5s ease; /* all 0.4s ease; */
+  --tran-05: all 0.5s ease; /* all 0.5s ease; */
 }
 
 /* PAGE AND SEARCH */
@@ -955,3 +955,7 @@
   color: #e74c3c;
 }
 /* --- End Customer Form Header Styles --- */
+
+.custom-sidebar {
+  transition: var(--tran-02);
+}
