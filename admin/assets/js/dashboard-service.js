@@ -1,4 +1,10 @@
+import { firebaseConfig } from '../../firebase-config.js';
+
 document.addEventListener("DOMContentLoaded", () => {
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     // Sidebar toggle logic
     const body = document.querySelector("body"),
         sidebar = body.querySelector(".sidebar"),
@@ -72,53 +78,205 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Appointments data
-    const appointments = [
-        { name: 'Maria Santos', desc: ' has booked an appointment on May 15, 2025', time: '5 Minutes ago', link: '#' },
-        { name: 'John Smith', desc: ' has booked an appointment on May 20, 2025', time: '10 Minutes ago', link: '#' },
-        { name: 'Sarah Garcia', desc: ' has booked an appointment on May 12, 2025', time: '15 Minutes ago', link: '#' },
-        { name: 'Michael Chen', desc: ' has booked an appointment on May 18, 2025', time: '30 Minutes ago', link: '#' },
-        { name: 'Emma Wilson', desc: ' has booked an appointment on May 25, 2025', time: '45 Minutes ago', link: '#' },
-        { name: 'Sofia Rodriguez', desc: ' has booked an appointment on June 1, 2025', time: '1 Hour ago', link: '#' },
-        { name: 'David Kim', desc: ' has booked an appointment on May 30, 2025', time: '2 Hours ago', link: '#' },
-        { name: 'Isabella Martinez', desc: ' has booked an appointment on May 22, 2025', time: '3 Hours ago', link: '#' },
-        { name: 'James Anderson', desc: ' has booked an appointment on June 5, 2025', time: '4 Hours ago', link: '#' },
-        { name: 'Nina Patel', desc: ' has booked an appointment on May 28, 2025', time: '5 Hours ago', link: '#' },
-        { name: 'Lucas Brown', desc: ' has booked an appointment on June 3, 2025', time: 'Yesterday', link: '#' },
-        { name: 'Mia Thompson', desc: ' has booked an appointment on May 31, 2025', time: 'Yesterday', link: '#' },
-        { name: 'Oliver White', desc: ' has booked an appointment on June 2, 2025', time: 'Yesterday', link: '#' },
-        { name: 'Ava Johnson', desc: ' has booked an appointment on May 29, 2025', time: '2 Days ago', link: '#' },
-        { name: 'Ethan Davis', desc: ' has booked an appointment on June 8, 2025', time: '2 Days ago', link: '#' }
-    ];
-    function renderAppointments() {
-        const ul = document.getElementById('appointments-list');
-        ul.innerHTML = '';
-        appointments.forEach(app => {
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <div class="appointment-title"><b>${app.name}</b></div>
-                <div class="appointment-desc">${app.desc}</div>
-                <span class="appointment-time">${app.time}</span>
-                <a class="appointment-view" href="${app.link}">View</a>
-            `;
-            ul.appendChild(li);
-        });
+    // Appointments Functions
+    async function fetchAppointments() {
+        try {
+            const snapshot = await db.collection("appointments")
+                .orderBy("createdAt", "desc")
+                .limit(10)
+                .get();
+            
+            return snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+        } catch (error) {
+            console.error("Error fetching appointments:", error);
+            return [];
+        }
     }
 
-    // Appointments search
-    const searchInput = document.getElementById('appointment-search');
-    const clearBtn = document.getElementById('clear-search');
-    if (searchInput && clearBtn) {
-        searchInput.addEventListener('input', function() {
-            const value = this.value.toLowerCase();
-            const ul = document.getElementById('appointments-list');
-            Array.from(ul.children).forEach(li => {
-                li.style.display = li.textContent.toLowerCase().includes(value) ? '' : 'none';
+    async function renderAppointments() {
+        const ul = document.getElementById('appointments-list');
+        ul.innerHTML = '';
+        
+        try {
+            const appointments = await fetchAppointments();
+            
+            appointments.forEach(app => {
+                const createdDate = app.createdAt?.toDate() || new Date();
+                const formattedDate = createdDate.toLocaleString();
+                
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="appointment-title"><b>${app.customerName || 'Unknown'}</b></div>
+                    <div class="appointment-desc"> has booked an appointment on ${app.checkoutDate || 'N/A'}</div>
+                    <span class="appointment-time">${formattedDate}</span>
+                    <a class="appointment-view" href="#" data-id="${app.id}">View</a>
+                `;
+                ul.appendChild(li);
             });
+
+            // Add view event listeners
+            document.querySelectorAll('.appointment-view').forEach(link => {
+                link.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const id = e.target.getAttribute('data-id');
+                    showAppointmentDetails(id);
+                });
+            });
+        } catch (error) {
+            console.error("Error rendering appointments:", error);
+        }
+    }
+
+    async function showAppointmentDetails(id) {
+        try {
+            const docSnap = await db.collection("appointments").doc(id).get();
+            if (!docSnap.exists) return;
+
+            const data = docSnap.data();
+            const modal = document.getElementById('appointment-modal');
+            const details = document.getElementById('appointment-details');
+
+            // Debug: log cartItems
+            console.log("Appointment cartItems:", data.cartItems);
+
+            // Fetch product details for each cart item
+            let cartItems = [];
+            if (Array.isArray(data.cartItems) && data.cartItems.length > 0) {
+                cartItems = await Promise.all(data.cartItems.map(async item => {
+                    let productDoc;
+                    if (item.type === "accessory") {
+                        productDoc = await db.collection("additionals").doc(item.productId).get();
+                    } else {
+                        productDoc = await db.collection("products").doc(item.productId).get();
+                    }
+                    if (!productDoc.exists) return null;
+                    const productData = productDoc.data();
+                    return {
+                        name: productData.name || productData.code || "Unknown",
+                        image: productData.frontImageUrl || productData.imageUrl || "",
+                        price: productData.price || 0,
+                        size: item.size || "",
+                        quantity: item.quantity || 1,
+                        type: item.type || "product"
+                    };
+                }));
+                cartItems = cartItems.filter(Boolean);
+            }
+
+            let products = '';
+            if (cartItems.length > 0) {
+                products = cartItems.map(item => `
+                    <tr>
+                        <td><img src="${item.image}" alt="${item.name}" class="modal-product-img"></td>
+                        <td>
+                            <div class="modal-product-name">${item.name}</div>
+                            <div class="modal-product-size">Size: ${item.size} x ${item.quantity}</div>
+                        </td>
+                        <td class="modal-product-price">₱ ${(item.price * item.quantity).toLocaleString()}</td>
+                    </tr>
+                `).join('');
+            } else {
+                products = `<tr><td colspan="3" style="text-align:center;color:#888;">No booked items found for this appointment.</td></tr>`;
+            }
+
+            const total = cartItems.reduce((sum, i) => sum + (Number(i.price) * (i.quantity || 1)), 0);
+
+            // Ensure all fields are filled (use empty string if undefined)
+            const customerName = data.customerName || '';
+            const customerEmail = data.customerEmail || '';
+            const customerContact = data.customerContact || '';
+            const checkoutDate = data.checkoutDate || '';
+            const checkoutTime = data.checkoutTime || '';
+            const checkoutDuration = data.checkoutDuration
+                ? data.checkoutDuration + ' Day' + (data.checkoutDuration > 1 ? 's' : '')
+                : '';
+            const customerRequest = data.customerRequest || '';
+
+            details.innerHTML = `
+                <div class="appointment-modal-grid">
+                    <div class="appointment-modal-form" style="gap:1.2rem;">
+                        <div><b>Name:</b> ${customerName}</div>
+                        <div><b>Email:</b> ${customerEmail}</div>
+                        <div><b>Phone:</b> ${customerContact}</div>
+                        <div><b>Date:</b> ${checkoutDate}</div>
+                        <div><b>Time:</b> ${checkoutTime}</div>
+                        <div><b>Duration:</b> ${checkoutDuration}</div>
+                        <div><b>Request / Notes:</b> ${customerRequest}</div>
+                    </div>
+                    <div class="appointment-modal-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Products</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${products}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2" style="text-align:right;font-weight:600;">Total</td>
+                                    <td style="font-weight:700;font-size:1.2em;">₱ ${total.toLocaleString()}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            modal.classList.add('visible');
+
+            // Proceed to Transaction handler
+            modal.querySelector('.proceed-transaction').onclick = () => {
+                sessionStorage.setItem('appointmentData', JSON.stringify({
+                    customerName: data.customerName,
+                    customerEmail: data.customerEmail,
+                    customerContact: data.customerContact,
+                    eventDate: data.checkoutDate,
+                    appointmentTime: data.checkoutTime,
+                    duration: data.checkoutDuration,
+                    specialRequest: data.customerRequest || '',
+                    appointmentId: id,
+                    cartItems: cartItems,
+                    totalAmount: total
+                }));
+                window.location.href = './rental.html';
+            };
+        } catch (error) {
+            console.error("Error showing appointment details:", error);
+        }
+    }
+
+    // Close modal handler
+    document.querySelector('.close-modal')?.addEventListener('click', () => {
+        document.getElementById('appointment-modal').classList.remove('visible');
+    });
+
+    // Appointment search functionality
+    const searchInput = document.getElementById('appointment-search');
+    const clearSearch = document.getElementById('clear-search');
+
+    if (searchInput && clearSearch) {
+        searchInput.addEventListener('input', async (e) => {
+            const value = e.target.value.toLowerCase();
+            const list = document.getElementById('appointments-list');
+            const items = list.getElementsByTagName('li');
+
+            for (const item of items) {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(value) ? '' : 'none';
+            }
         });
-        clearBtn.addEventListener('click', function() {
+
+        clearSearch.addEventListener('click', () => {
             searchInput.value = '';
-            searchInput.dispatchEvent(new Event('input'));
+            const items = document.querySelectorAll('#appointments-list li');
+            items.forEach(item => item.style.display = '');
         });
     }
 

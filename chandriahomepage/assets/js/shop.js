@@ -43,7 +43,7 @@ $(document).ready(function () {
     });
 
     // DISPLAY PRODUCTS FUNCTION
-    async function displayProducts(user) {
+    async function displayProducts(user, page = 1) {
         let userCart = []; // Will hold the user's cart items if logged in
 
         // If user is logged in, fetch their cart from Firestore
@@ -59,28 +59,39 @@ $(document).ready(function () {
 
         // Fetch all products
         const querySnapshot = await getDocs(collection(chandriaDB, "products"));
+        const products = [];
 
-        // Clear the container before appending to avoid duplicates
-        $(".products-container").empty();
-
-        // Loop through each product
         querySnapshot.forEach(doc => {
             const data = doc.data();
-            const productId = doc.id;
+            products.push({ id: doc.id, ...data });
+        });
 
-            // Check if this product is in the user's cart
-            const isInCart = userCart.some(
-                item => item.productId === productId
-            );
+        const totalItems = products.length;
+        const itemsPerPage = 12;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        // Update total items text
+        $(".total-products span").text(totalItems);
+
+        // Clear the container and pagination
+        $(".products-container").empty();
+        $(".pagination").empty();
+
+        // Paginate products
+        const startIndex = (page - 1) * itemsPerPage;
+        const paginatedProducts = products.slice(startIndex, startIndex + itemsPerPage);
+
+        paginatedProducts.forEach(product => {
+            const isInCart = userCart.some(item => item.productId === product.id);
             const selectedClass = isInCart ? "selected" : "";
 
             // Build product card
             const card = `
             <div class="product-item">
                 <div class="product-banner">
-                    <a href="./details.html" class="product-images" data-id="${productId}">
-                        <img src="${data.frontImageUrl}" alt="" class="product-img default">
-                        <img src="${data.backImageUrl}" alt="" class="product-img hover">
+                    <a href="./details.html" class="product-images" data-id="${product.id}">
+                        <img src="${product.frontImageUrl}" alt="" class="product-img default">
+                        <img src="${product.backImageUrl}" alt="" class="product-img hover">
                     </a>
                     <div class="product-actions">
                         <a href="#" class="action-btn" aria-label="Quick View">
@@ -93,9 +104,9 @@ $(document).ready(function () {
                 </div>
 
                 <div class="product-content">
-                    <span class="product-category">${data.category}</span>
-                    <a href="./details.html" data-id="${productId}">
-                        <h3 class="product-title">${data.name}</h3>
+                    <span class="product-category">${product.category}</span>
+                    <a href="./details.html" data-id="${product.id}">
+                        <h3 class="product-title">${product.name}</h3>
                     </a>
 
                     <div class="product-rating">
@@ -105,11 +116,11 @@ $(document).ready(function () {
                     </div>
 
                     <div class="product-price flex">
-                        <span class="new-price">₱ ${data.price}/24hr</span>
+                        <span class="new-price">₱ ${product.price}/24hr</span>
                     </div>
 
                     <!-- Add to cart button -->
-                    <button class="action-btn cart-btn ${selectedClass}" aria-label="Add to Rent List" data-id="${productId}">
+                    <button class="action-btn cart-btn ${selectedClass}" aria-label="Add to Rent List" data-id="${product.id}">
                         <i class="fi fi-rs-shopping-bag-add"></i>
                     </button>
                 </div>
@@ -118,6 +129,21 @@ $(document).ready(function () {
 
             // Append to container
             $(".products-container").append(card);
+        });
+
+        // Generate pagination links
+        for (let i = 1; i <= totalPages; i++) {
+            const activeClass = i === page ? "active" : "";
+            $(".pagination").append(`
+            <li><a href="#" class="pagination-link ${activeClass}" data-page="${i}">${i}</a></li>
+        `);
+        }
+
+        // Add event listener for pagination links
+        $(".pagination-link").on("click", function (e) {
+            e.preventDefault();
+            const selectedPage = parseInt($(this).data("page"), 10);
+            displayProducts(user, selectedPage);
         });
     }
     

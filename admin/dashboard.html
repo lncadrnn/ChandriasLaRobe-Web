@@ -168,8 +168,27 @@
                     <!-- Populated by JS -->
                 </ul>
             </section>
+
+            <!-- Add Modal -->
+            <div id="appointment-modal" class="modal">
+                <div class="modal-content appointment-modal-flex">
+                    <span class="close-modal">&times;</span>
+                    <h3 class="modal-title">Appointment Details</h3>
+                    <div id="appointment-details" class="appointment-modal-body"></div>
+                    <div class="modal-actions">
+                        <button class="btn proceed-transaction">PROCEED TO TRANSACTION</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
-    <script src="/admin/assets/js/dashboard-service.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script type="module" src="./firebase-config.js"></script>
+    <script type="module" src="./assets/js/dashboard-service.js"></script>
 </body>
 </html>

@@ -25,5 +25,5 @@ yarn-error.log*
 # Environment files (local configs)
 /.env.*
 
-admin/firebase-config.js
-chandriahomepage/assets/script/firebase-config.js
+admin/assets/js/sdk/firebase-config.js
+chandriahomepage/assets/js/sdk/firebase-config.js

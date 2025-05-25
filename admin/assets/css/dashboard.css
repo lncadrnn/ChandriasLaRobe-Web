@@ -454,12 +454,11 @@ html {
 }
 
 .appointments-list {
-    flex: 0 1 auto;
+    flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 0 0.3rem 0 0.3rem;
+    padding: 0 0.3rem;
     margin: 0;
-    margin-top: auto;
     width: 100%;
     box-sizing: border-box;
 }
@@ -470,6 +469,12 @@ html {
     box-sizing: border-box;
     grid-template-columns: 180px 1fr auto auto;
     overflow-x: hidden;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.appointments-list li:last-child {
+    border-bottom: none;
 }
 
 .appointments-list::-webkit-scrollbar {
@@ -546,6 +551,184 @@ html {
 
 .appointments-list::-webkit-scrollbar-thumb:hover {
     background: #ddd;
+}
+
+/* Modal styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.modal-content h3 {
+    margin-bottom: 1rem;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.modal.visible {
+    visibility: visible;
+    opacity: 1;
+}
+
+.hidden {
+    display: none;
+}
+
+.appointment-modal-flex {
+    min-width: 400px;
+    max-width: 700px; /* reduced from 1100px */
+    width: 95vw;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    position: relative;
+}
+.appointment-modal-body {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.appointment-modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 2rem;
+    align-items: flex-start;
+}
+.appointment-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.appointment-modal-form input,
+.appointment-modal-form textarea {
+    width: 100%;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 0.7rem 1rem;
+    font-size: 1rem;
+    background: #fafafa;
+    color: #333;
+    resize: none;
+}
+.appointment-modal-form textarea {
+    min-height: 80px;
+    max-height: 120px;
+}
+.appointment-modal-table {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1.2rem;
+    border: 1px solid #eee;
+}
+.appointment-modal-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.appointment-modal-table th,
+.appointment-modal-table td {
+    padding: 0.75rem 0.5rem;
+    text-align: left;
+    font-size: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+.appointment-modal-table th {
+    font-weight: 700;
+    color: #222;
+    background: #fafafa;
+}
+.appointment-modal-table tfoot td {
+    border-bottom: none;
+}
+.modal-product-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: #fafafa;
+}
+.modal-product-name {
+    font-weight: 600;
+    color: #222;
+}
+.modal-product-size {
+    font-size: 0.95em;
+    color: #888;
+}
+.modal-product-price {
+    font-weight: 500;
+    color: #222;
+    text-align: right;
+}
+.modal-title {
+    text-align: center;
+    font-size: 1.7rem;
+    font-family: var(--second-font, inherit);
+    font-weight: 700;
+    margin-top: 0.5rem;
+}
+.modal-actions {
+    margin-top: 2rem;
+    text-align: center;
+}
+.proceed-transaction {
+    background: #ff7eb3;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 0.6rem 1.5rem; /* reduced padding */
+    font-size: 1rem;        /* reduced font size */
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    min-width: 180px;       /* set a reasonable min-width */
+    max-width: 250px;       /* set a max-width */
+    width: 100%;            /* let it fill the modal-actions, but not too wide */
+    box-sizing: border-box;
+    display: inline-block;
+}
+.proceed-transaction:hover {
+    background: #e0679f;
+}
+
+/* Responsive */
+@media (max-width: 1000px) {
+    .appointment-modal-flex {
+        min-width: 0;
+        max-width: 98vw;
+    }
+    .appointment-modal-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    .appointment-modal-table {
+        padding: 0.7rem;
+    }
 }
 
 @media (max-width: 1200px) {
