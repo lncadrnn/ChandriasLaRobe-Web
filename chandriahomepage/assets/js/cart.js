@@ -262,14 +262,15 @@ $("#btn-checkout").on("click", async function () {
         }
 
         try {
-            // Get user's document reference and snapshot
+            // Get user\'s document reference and snapshot
             const userRef = doc(chandriaDB, "userAccounts", user.uid);
             const userSnap = await getDoc(userRef);
 
             if (userSnap.exists()) {
                 const data = userSnap.data();
                 const cartItems = data.added_to_cart || [];
-                const totalCount = cartItems.length;
+                // Calculate total quantity instead of number of items, ensuring quantity is an integer
+                const totalCount = cartItems.reduce((sum, item) => sum + (parseInt(item.quantity, 10) || 0), 0);
 
                 // Update the cart count in the header
                 $("#cart-count").text(totalCount);
