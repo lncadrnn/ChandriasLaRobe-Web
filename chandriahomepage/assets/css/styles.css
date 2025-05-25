@@ -1021,3 +1021,240 @@ margin-bottom: 3.35rem;
 
 @media screen and (max-width: 350px) {
 }
+
+/* =============== ACCOUNT SETTINGS STYLES =============== */
+.account-settings {
+    padding: 2rem 0; /* Add some padding to the section */
+}
+
+/* Assuming .container class provides max-width and centering from existing styles */
+/* If not, you might need to add:
+.account-settings .container {
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+*/
+
+.account-settings h2 {
+    font-size: 2rem; 
+    margin-bottom: 1.5rem;
+    color: #333; /* Darker text color */
+    text-align: center; 
+}
+
+.account-settings h3 {
+    font-size: 1.5rem; 
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #555; 
+    border-bottom: 1px solid #eee; /* Separator line */
+    padding-bottom: 0.5rem;
+}
+
+.basic-info-section,
+.address-info-section {
+    margin-bottom: 2rem;
+    background-color: #f9f9f9; /* Light background for sections */
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600; 
+    color: #444;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="date"],
+.form-group input[type="tel"],
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box; 
+    font-size: 1rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #80bdff; /* Bootstrap-like focus color */
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); 
+}
+
+/* Profile Picture Section */
+.profile-picture {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; 
+    margin-bottom: 1.5rem;
+}
+
+#profile-preview {
+    width: 100px; 
+    height: 100px;
+    border-radius: 50%; 
+    object-fit: cover; 
+    border: 3px solid #eee;
+}
+
+.profile-picture-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align items to the start */
+    gap: 0.75rem; 
+}
+
+.profile-picture-upload label { /* Style for the "Upload New Picture" text */
+    cursor: pointer;
+    color: #007bff; 
+    font-weight: normal; /* Override potential label bolding */
+    margin-bottom: 0; /* Reset margin if inherited */
+}
+.profile-picture-upload label:hover {
+    text-decoration: underline;
+}
+
+.profile-picture-upload input[type="file"] {
+    /* Can be styled further or hidden and replaced with a custom button if desired */
+    /* For now, basic styling: */
+    font-size: 0.9rem;
+    max-width: 250px; /* Prevent it from being too wide */
+}
+
+.profile-picture-upload .btn-danger { /* Specific styling for remove button in this context */
+    padding: 0.375rem 0.75rem; /* Smaller padding */
+    font-size: 0.875rem; /* Smaller font */
+}
+
+
+/* Grid Containers for form fields */
+.grid-container-basic-info,
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
+    gap: 1.5rem; /* Space between grid items */
+}
+
+/* Buttons */
+.account-settings .btn { 
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    border: none; 
+    transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+.account-settings .btn-primary {
+    background-color: #007bff; 
+    color: white;
+}
+.account-settings .btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.account-settings .btn-danger {
+    background-color: #dc3545; 
+    color: white;
+}
+.account-settings .btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* Save Changes Button - specific placement */
+.account-settings > .container > .btn-primary[type="submit"] { 
+    display: block; 
+    width: fit-content;
+    min-width: 150px; /* Minimum width for better appearance */
+    margin: 2.5rem auto 1.5rem auto; /* Center it and add margin */
+}
+
+
+/* Delete Account Section */
+.delete-account-section {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #ddd; 
+    text-align: center; 
+}
+
+.delete-account-section p {
+    margin-bottom: 1rem;
+    color: #666; 
+    font-size: 0.9rem;
+}
+.delete-account-section .btn-danger {
+    margin: 0 auto; /* Center the button if it's the only element */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .account-settings h2 {
+        font-size: 1.8rem;
+    }
+    .account-settings h3 {
+        font-size: 1.3rem;
+    }
+    .grid-container-basic-info,
+    .grid-container {
+        grid-template-columns: 1fr; /* Stack on smaller screens */
+        gap: 1rem;
+    }
+    .profile-picture {
+        flex-direction: column;
+        align-items: center; /* Center items when stacked */
+        text-align: center; /* Center text within */
+    }
+    .profile-picture-upload {
+        align-items: center; /* Center upload controls */
+    }
+    .account-settings > .container > .btn-primary[type="submit"] {
+        width: 100%; /* Full width on smaller screens */
+        max-width: 300px; /* But not excessively wide */
+    }
+}
+
+@media (max-width: 480px) {
+    .account-settings {
+        padding: 1rem 0;
+    }
+    .basic-info-section,
+    .address-info-section {
+        padding: 1rem;
+    }
+    .account-settings h2 {
+        font-size: 1.6rem;
+    }
+    .account-settings h3 {
+        font-size: 1.2rem;
+    }
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="date"],
+    .form-group input[type="tel"],
+    .form-group select {
+        padding: 0.6rem;
+        font-size: 0.9rem;
+    }
+    .account-settings .btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+}
