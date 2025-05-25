@@ -75,4 +75,37 @@ $(document).ready(function () {
     if ($("#customer-modal").is(":visible")) {
         $("#customer-modal").trigger("showModal");
     }
+
+    // --- EVENT DATE VALIDATION ---
+    const eventDateInput = $("#event-date");
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const dd = String(today.getDate()).padStart(2, '0');
+
+    // Calculate the date two days from today for the min attribute
+    const twoDaysFromToday = new Date(today);
+    twoDaysFromToday.setDate(today.getDate() + 2);
+    const minYear = twoDaysFromToday.getFullYear();
+    const minMonth = String(twoDaysFromToday.getMonth() + 1).padStart(2, '0');
+    const minDay = String(twoDaysFromToday.getDate()).padStart(2, '0');
+    const minDateString = `${minYear}-${minMonth}-${minDay}`;
+    eventDateInput.attr("min", minDateString);
+
+    eventDateInput.on("change", function () {
+        const selectedDate = new Date($(this).val());
+        selectedDate.setHours(0,0,0,0); // Normalize to midnight
+
+        const todayNormalized = new Date(yyyy, today.getMonth(), dd); // Use normalized today
+
+        // Calculate the date for tomorrow
+        const tomorrow = new Date(todayNormalized);
+        tomorrow.setDate(todayNormalized.getDate() + 1);
+
+        if (selectedDate <= tomorrow) { // Check if selected date is today or tomorrow or in the past
+            $("#error-modal-message").text("Event date must be at least two days after the current date.");
+            $("#error-modal").show();
+            $(this).val(""); // Clear the invalid date
+        }
+    });
 });
