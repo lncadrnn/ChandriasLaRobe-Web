@@ -34,13 +34,6 @@
               <a href="chandriahomepage/shop.html" class="nav-link">Shop</a>
             </li>
 
-            <li class="nav-item">
-              <a href="chandriahomepage/accounts.html" class="nav-link">Profile</a>
-            </li>
-
-            <li class="nav-item">
-              <a id="login-logout-link" href="/chandriahomepage/user_authentication.html" class="nav-link">Login</a>
-            </li>
           </ul>
 
           <div class="header-search">
@@ -53,6 +46,7 @@
         </div>
 
         <div class="header-user-actions">
+
           <a href="chandriahomepage/wishlist.html" class="header-action-btn">
             <img src="chandriahomepage/assets/img/icon-heart.svg" alt="">
             <span class="count">0</span>
@@ -62,6 +56,11 @@
             <img src="chandriahomepage/assets/img/icon-cart.svg" alt="">
             <span class="count" id="cart-count">0</span>
           </a>
+
+          <a href="chandriahomepage/accounts.html" class="header-action-btn" id="user-account-link">
+            <img src="chandriahomepage/assets/img/icon-user.svg" alt="">
+          </a>
+          
 
         </div>
 
@@ -988,9 +987,9 @@
                 <div class="product-banner">
                  
                   <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-8-1.jpg" alt="" class="product-img default">
+                  <img src="chandriahomepage/assets/img/product-7-1.jpg" alt="" class="product-img default">
                   
-                  <img src="chandriahomepage/assets/img/product-8-2.jpg" alt="" class="product-img hover">
+                  <img src="chandriahomepage/assets/img/product-7-2.jpg" alt="" class="product-img hover">
                   </a>
 
                   <div class="product-actions">
@@ -1007,7 +1006,7 @@
                         </a>
                   </div>
 
-                  <div class="product-badge light-blue">New</div>
+                  <div class="product-badge light-pink">Hot</div>
 
                 </div>
 
@@ -1328,7 +1327,7 @@
                   </div>
 
                   <div class="product-badge light-pink">10%</div>
-                  
+
                 </div>
 
                 <div class="product-content">
@@ -1476,7 +1475,8 @@ import { getAuth, onAuthStateChanged, doc, getDoc } from "./chandriahomepage/ass
 import { chandriaDB } from "./chandriahomepage/assets/js/sdk/chandrias-sdk.js";
 
 const auth = getAuth();
-const loginLogoutLinkElement = document.getElementById('login-logout-link');
+const loginLogoutLinkElement = document.getElementById('login-logout-link'); // This might be for a different element not shown in selection
+const userAccountLink = document.getElementById('user-account-link');
 
 // Cart count update function
 async function updateCartCount() {
@@ -1505,12 +1505,24 @@ async function updateCartCount() {
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    loginLogoutLinkElement.style.display = 'none';
+    if (loginLogoutLinkElement) { // Check if the element exists
+        loginLogoutLinkElement.style.display = 'none';
+    }
+    if (userAccountLink) {
+        userAccountLink.href = "chandriahomepage/accounts.html";
+    }
+    localStorage.setItem('userEmail', user.email); // Store user's email
     updateCartCount(); // Update cart count when user is logged in
   } else {
-    loginLogoutLinkElement.style.display = 'block';
-    loginLogoutLinkElement.textContent = "Login";
-    loginLogoutLinkElement.href = "/chandriahomepage/user_authentication.html";
+    if (loginLogoutLinkElement) { // Check if the element exists
+        loginLogoutLinkElement.style.display = 'block';
+        loginLogoutLinkElement.textContent = "Login";
+        loginLogoutLinkElement.href = "/chandriahomepage/user_authentication.html";
+    }
+    if (userAccountLink) {
+        userAccountLink.href = "chandriahomepage/user_authentication.html";
+    }
+    localStorage.removeItem('userEmail'); // Remove user's email on logout
     document.getElementById("cart-count").textContent = "0"; // Reset cart count when logged out
   }
 });
