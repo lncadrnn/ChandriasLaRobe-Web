@@ -164,6 +164,17 @@
             </section>
         </main>
 
+        <!-- Logout Confirmation Modal -->
+        <div id="logout-modal" class="custom-modal" style="display:none; position:fixed; z-index:2000; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); align-items:center; justify-content:center;">
+          <div style="background:#fff; border-radius:10px; max-width:350px; width:90%; margin:auto; padding:2rem 1.5rem; box-shadow:0 2px 16px rgba(0,0,0,0.15); text-align:center;">
+            <h3 style="color:#222; margin-bottom:1.5rem;">Are you sure you want to log out?</h3>
+            <div style="display:flex; gap:1rem; justify-content:center;">
+              <button id="logout-yes" style="background:#ff9aaf; color:#fff; border:none; border-radius:5px; padding:0.5rem 1.5rem; font-weight:600; cursor:pointer;">Yes</button>
+              <button id="logout-no" style="background:#eee; color:#222; border:none; border-radius:5px; padding:0.5rem 1.5rem; font-weight:600; cursor:pointer;">No</button>
+            </div>
+          </div>
+        </div>
+
         <!--=============== SWIPER JS ===============-->
         <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
         <!-- NOTYF CDN -->
@@ -182,13 +193,24 @@
 
             const auth = getAuth();
             const logoutButton = document.getElementById('logout-btn');
+            const logoutModal = document.getElementById('logout-modal');
+            const confirmLogoutButton = document.getElementById('confirm-logout');
+            const cancelLogoutButton = document.getElementById('cancel-logout');
 
             logoutButton.addEventListener('click', () => {
+                logoutModal.style.display = 'block';
+            });
+
+            confirmLogoutButton.addEventListener('click', () => {
                 signOut(auth).then(() => {
                     window.location.href = "./user_authentication.html";
                 }).catch((error) => {
                     console.error("Error during logout:", error);
                 });
+            });
+
+            cancelLogoutButton.addEventListener('click', () => {
+                logoutModal.style.display = 'none';
             });
         </script>
     </body>

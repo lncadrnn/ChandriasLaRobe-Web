@@ -1,3 +1,8 @@
+import { getAuth, signOut } from "./sdk/chandrias-sdk.js";
+
+// Initialize Firebase Auth
+const auth = getAuth();
+
 function previewImage(event) {
     const input = event.target;
     const avatarPlaceholder = document.querySelector('.avatar-placeholder');
@@ -46,4 +51,28 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('confirm-new-password').value = '';
         }
     });
+});
+
+// Handle Logout Confirmation Modal
+const logoutModal = document.getElementById('logout-modal');
+const logoutYes = document.getElementById('logout-yes');
+const logoutNo = document.getElementById('logout-no');
+const logoutButton = document.getElementById('logout-btn');
+
+logoutButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    logoutModal.style.display = 'flex';
+});
+
+logoutNo.addEventListener('click', () => {
+    logoutModal.style.display = 'none';
+});
+
+logoutYes.addEventListener('click', () => {
+    signOut(auth).then(() => {
+        window.location.href = "./user_authentication.html";
+    }).catch((error) => {
+        console.error("Error during logout:", error);
+    });
+    logoutModal.style.display = 'none';
 });
