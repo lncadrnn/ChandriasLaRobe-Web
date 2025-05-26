@@ -138,7 +138,7 @@ input:focus {
 }
 
 .btn-upload:hover {
-    background-color: hsl(346, 100%, 74%);
+    background-color: hsl(346, 98%, 69%);
 }
 
 .form-actions {
@@ -174,7 +174,8 @@ input:focus {
 }
 
 .btn-save:hover {
-    background-color: hsl(346, 100%, 74%);
+    background-color: hsl(346, 98%, 69%);
+    color:white;
 }
 
 .delete-account-link {
@@ -224,6 +225,23 @@ input:focus {
     border-radius: 8px;
     margin-bottom: 1rem;
     border-left: 3px solid hsl(346, 100%, 74%);
+}
+
+/* Logout Button */
+.btn-logout {
+    background-color: #ff4d4d; /* Red */
+    color: white;
+    border: 1px solid #ff4d4d;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+    background-color: #cc0000; /* Darker red */
+    border-color: #cc0000;
 }
 
 /* Responsive adjustments */

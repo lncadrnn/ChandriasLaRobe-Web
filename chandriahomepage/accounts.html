@@ -140,6 +140,9 @@
                                 <button type="button" class="btn btn-cancel">Cancel</button>
                                 <button type="submit" class="btn btn-save">Save</button>
                             </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-logout" id="logout-btn">Logout</button>
+                            </div>
                         </div>
                         
                         <div class="account-avatar-column">
@@ -174,5 +177,19 @@
         <!--=============== MAIN JS ===============-->
         <script type="module" src="./assets/js/shop.js"></script>
         <script type="module" src="./assets/js/accountsettings.js"></script>
+        <script type="module">
+            import { getAuth, signOut } from "./assets/js/sdk/chandrias-sdk.js";
+
+            const auth = getAuth();
+            const logoutButton = document.getElementById('logout-btn');
+
+            logoutButton.addEventListener('click', () => {
+                signOut(auth).then(() => {
+                    window.location.href = "./user_authentication.html";
+                }).catch((error) => {
+                    console.error("Error during logout:", error);
+                });
+            });
+        </script>
     </body>
 </html>
