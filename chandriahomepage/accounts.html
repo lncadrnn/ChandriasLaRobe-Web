@@ -144,15 +144,19 @@
                                 <button type="button" class="btn btn-logout" id="logout-btn">Logout</button>
                             </div>
                         </div>
-                        
-                        <div class="account-avatar-column">
-                            <div class="avatar-placeholder">
-                                <div class="avatar-content">
-                                    <i class="fas fa-cloud"></i>
-                                    <span>AVATAR</span>
+                          <div class="account-avatar-column">
+                            <div class="avatar-container">
+                                <div class="avatar-placeholder">
+                                    <div class="avatar-content">
+                                        <i class="fas fa-cloud"></i>
+                                        <span>AVATAR</span>
+                                    </div>
                                 </div>
+                                <button type="button" class="avatar-reset-btn" onclick="resetAvatar()" style="display: none;">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
-                            <label for="profile-image-upload" class="btn-upload">Upload picture</label>
+                            <label for="profile-image-upload" class="btn-upload">Upload Picture</label>
                             <input type="file" id="profile-image-upload" accept="image/*" onchange="previewImage(event)" style="display: none;" />
                             
                             <a href="#" class="delete-account-link" onclick="confirmDelete()">

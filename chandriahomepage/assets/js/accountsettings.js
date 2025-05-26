@@ -6,6 +6,7 @@ const auth = getAuth();
 function previewImage(event) {
     const input = event.target;
     const avatarPlaceholder = document.querySelector('.avatar-placeholder');
+    const resetButton = document.querySelector('.avatar-reset-btn');
     
     if (input.files && input.files[0]) {
         const reader = new FileReader();
@@ -20,9 +21,32 @@ function previewImage(event) {
             // Clear the placeholder and add the image
             avatarPlaceholder.innerHTML = '';
             avatarPlaceholder.appendChild(img);
+            
+            // Show the reset button
+            resetButton.style.display = 'flex';
         };
         reader.readAsDataURL(input.files[0]);
     }
+}
+
+function resetAvatar() {
+    const avatarPlaceholder = document.querySelector('.avatar-placeholder');
+    const resetButton = document.querySelector('.avatar-reset-btn');
+    const fileInput = document.getElementById('profile-image-upload');
+    
+    // Reset the placeholder to default state
+    avatarPlaceholder.innerHTML = `
+        <div class="avatar-content">
+            <i class="fas fa-cloud"></i>
+            <span>AVATAR</span>
+        </div>
+    `;
+    
+    // Hide the reset button
+    resetButton.style.display = 'none';
+    
+    // Clear the file input
+    fileInput.value = '';
 }
 
 function confirmDelete() {
@@ -31,6 +55,11 @@ function confirmDelete() {
         // Trigger API call here in production
     }
 }
+
+// Make functions globally accessible
+window.previewImage = previewImage;
+window.resetAvatar = resetAvatar;
+window.confirmDelete = confirmDelete;
 
 // Toggle password fields visibility
 document.addEventListener('DOMContentLoaded', function() {
