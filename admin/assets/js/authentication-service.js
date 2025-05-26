@@ -4,7 +4,7 @@ import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
     sendPasswordResetEmail,
-    getFirestore,
+    chandriaDB,
     collection,
     getDocs,
     query,
@@ -150,10 +150,7 @@ $(document).ready(function () {
                 notyf.error("Login failed. Please try again.");
             }
         }
-    });
-
-    // CHECKING EMAIL
-    const chandriaDB = getFirestore(appCredential);
+    });    // CHECKING EMAIL
     async function emailExistsInFirestore(email) {
         const usersRef = collection(chandriaDB, "adminAccounts");
         const snapshot = await getDocs(usersRef);

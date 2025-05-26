@@ -12,12 +12,13 @@
             rel="stylesheet"
             integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
             crossorigin="anonymous"
-        />
-        <!-- BOX-ICON CDN -->
+        />        <!-- BOX-ICON CDN -->
         <link
             href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
             rel="stylesheet"
         />
+        <!-- Font Awesome for icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
         <!-- EXTERNAL CSS -->
         <link rel="stylesheet" href="./assets/css/settings.css" />
     </head>
@@ -103,37 +104,85 @@
 
                 <!-- Removed Dark Mode Toggle -->
             </div>
-        </nav>
-
-        <section class="custom-page-name">
+        </nav>        <section class="custom-page-name">
             <div class="custom-text">Settings</div>
 
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-12 col-lg-5">
-                        <div class="card mt-4">
-                            <div class="card-body">
-                                <h1 class="card-title text-center mb-4">
-                                    Profile
-                                </h1>
-                                <h5>
-                                    User Email: <span id="user-email"></span>
-                                </h5>
+            <!--=============== ACCOUNT SETTINGS ===============-->
+            <section class="account-settings-page">
+                <div class="account-settings-container">
+                    <h2 class="account-settings-main-title">Account Settings</h2>
+                    
+                    <div class="account-settings-content-wrapper">
+                        <div class="account-form-column">
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" value="" readonly />
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" id="name" value="" />
+                            </div>
+                            
+                            <div class="form-group">
+                                <button type="button" class="btn-change-password" id="togglePasswordFields">Change Password</button>
+                            </div>
+                            
+                            <div id="passwordFields" style="display: none;">
+                                <div class="form-group">
+                                    <label for="password">Current Password</label>
+                                    <input type="password" id="password" value="" />
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="new-password">New Password</label>
+                                    <input type="password" id="new-password" value="" />
+                                </div>
 
-                                <!-- LOGOUT BUTTON -->
-                                <button
-                                    type="submit"
-                                    class="btn btn-danger w-100 mt-3"
-                                    id="signOut-btn"
-                                >
-                                    Logout
+                                <div class="form-group">
+                                    <label for="confirm-new-password">Confirm New Password</label>
+                                    <input type="password" id="confirm-new-password" value="" />
+                                </div>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-cancel">Cancel</button>
+                                <button type="submit" class="btn btn-save">Save</button>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-logout" id="signOut-btn">Logout</button>
+                            </div>
+                        </div>
+                        <div class="account-avatar-column">
+                            <div class="avatar-container">
+                                <div class="avatar-placeholder">
+                                    <div class="avatar-content">
+                                        <i class="fas fa-user"></i>
+                                        <span>AVATAR</span>
+                                    </div>
+                                </div>
+                                <button type="button" class="avatar-reset-btn" onclick="resetAvatar()" style="display: none;">
+                                    <i class="fas fa-times"></i>
                                 </button>
                             </div>
+                            <label for="profile-image-upload" class="btn-upload">Upload Picture</label>
+                            <input type="file" id="profile-image-upload" accept="image/*" onchange="previewImage(event)" style="display: none;" />
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </section>
+
+        <!-- Logout Confirmation Modal -->
+        <div id="logout-modal" class="custom-modal" style="display:none; position:fixed; z-index:2000; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); align-items:center; justify-content:center;">
+          <div style="background:#fff; border-radius:10px; max-width:350px; width:90%; margin:auto; padding:2rem 1.5rem; box-shadow:0 2px 16px rgba(0,0,0,0.15); text-align:center;">
+            <h3 style="color:#222; margin-bottom:1.5rem;">Are you sure you want to log out?</h3>
+            <div style="display:flex; gap:1rem; justify-content:center;">
+              <button id="logout-yes" style="background:#ff9aaf; color:#fff; border:none; border-radius:5px; padding:0.5rem 1.5rem; font-weight:600; cursor:pointer;">Yes</button>
+              <button id="logout-no" style="background:#eee; color:#222; border:none; border-radius:5px; padding:0.5rem 1.5rem; font-weight:600; cursor:pointer;">No</button>
+            </div>
+          </div>
+        </div>
 
         <!-- BOOTSTRAP CDN -->
         <script

@@ -52,6 +52,7 @@ html {
 
 .main-content {
     margin-left: 250px;
+    width: calc(100% - 250px);
     transition: var(--tran-04);
     padding: 0;
     height: 100vh;
@@ -60,20 +61,23 @@ html {
 }
 
 .sidebar.close ~ .main-content {
-    margin-left: 80px;
+    margin-left: 88px;
+    width: calc(100% - 88px);
     transition: var(--tran-04);
 }
 
 @media (max-width: 900px) {
     .main-content {
-        margin-left: 80px;
+        margin-left: 88px;
+        width: calc(100% - 88px);
         transition: margin-left 0.4s var(--tran-04), width 0.4s var(--tran-04);
     }
     .sidebar {
-        width: 80px;
+        width: 88px;
     }
     .sidebar.close ~ .main-content {
         margin-left: 0;
+        width: 100%;
         transition: margin-left 0.4s var(--tran-04), width 0.4s var(--tran-04);
     }
 }
