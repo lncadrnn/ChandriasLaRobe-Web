@@ -1,6 +1,23 @@
-import { chandriaDB, collection, getDoc, doc } from "./sdk/chandrias-sdk.js";
+import {
+    chandriaDB,
+    collection,
+    getDoc,
+    getDocs,
+    addDoc,
+    query,
+    where,
+    doc
+} from "./sdk/chandrias-sdk.js";
 
 $(document).ready(function () {
+    // NOTYF
+    const notyf = new Notyf({
+        position: {
+            x: "center",
+            y: "top"
+        }
+    });
+
     const $body = $("body"),
         $sidebar = $body.find(".sidebar"),
         $toggle = $body.find(".toggle"),
@@ -64,43 +81,54 @@ $(document).ready(function () {
 
     // --- Utility to update the cart summary ---
     function updateCartSummary() {
-        // --- Products (Gowns): show each unique product once ---
+        // --- Products (Gowns): Grouped Display ---
         const $cartItemsDiv = $(".cart-items");
         $cartItemsDiv.empty(); // Clear the cart items section
 
-        const uniqueProducts = [];
+        const groupedProducts = {};
 
-        // Filter to keep only unique products by name and price
+        // Group products by name
         cart.products.forEach(item => {
-            if (
-                !uniqueProducts.some(
-                    p => p.name === item.name && p.price === item.price
-                )
-            ) {
-                uniqueProducts.push(item);
+            if (!groupedProducts[item.name]) {
+                groupedProducts[item.name] = {
+                    price: item.price,
+                    sizes: []
+                };
             }
+            groupedProducts[item.name].sizes.push({
+                size: item.size,
+                quantity: item.quantity
+            });
         });
 
-        // Render each unique product
-        uniqueProducts.forEach(item => {
+        // Render grouped products
+        Object.entries(groupedProducts).forEach(([name, group]) => {
             const $div = $('<div class="cart-item"></div>');
+            let sizesHTML = "";
+
+            group.sizes.forEach(({ size, quantity }) => {
+                sizesHTML += `- ${quantity} x ${size}<br>`;
+            });
+
+            const total = group.sizes.reduce(
+                (sum, s) => sum + s.quantity * group.price,
+                0
+            );
+
             $div.html(`
-      <span>${item.name}</span>
-      <span>
-        ₱${item.price.toLocaleString()}
-        <i class='bx bx-trash cart-remove' title="Remove"></i>
-      </span>
+        <span>
+            <strong>${name}</strong><br>
+            ${sizesHTML}
+        </span>
+        <span>
+            ₱${total.toLocaleString()}
+            <i class='bx bx-trash cart-remove' title="Remove All"></i>
+        </span>
     `);
 
-            // Click to remove all instances of this product
+            // Remove all sizes of this product
             $div.find(".cart-remove").on("click", function () {
-                cart.products = cart.products.filter(
-                    p => !(p.name === item.name && p.price === item.price)
-                );
-                // Trim accessories if there are too many
-                if (cart.accessories.length > cart.products.length) {
-                    cart.accessories.splice(cart.products.length);
-                }
+                cart.products = cart.products.filter(p => p.name !== name);
                 updateCartSummary();
             });
 
@@ -199,49 +227,244 @@ $(document).ready(function () {
         });
 
         // --- Calculate and display total amount ---
-        const total = [...cart.products, ...cart.accessories].reduce(
-            (sum, item) => sum + item.price,
-            0
-        );
+        const total = [
+            ...cart.products.map(p => p.price * (p.quantity || 1)),
+            ...cart.accessories.map(a => a.price)
+        ].reduce((sum, val) => sum + val, 0);
+
         $("#cart-total-amount").text(`₱${total.toLocaleString()}`);
     }
 
-    // Listen for clicks on the #products container
-    $("#products").on("click", function (e) {
-        // Find the nearest parent with class .pos-card that was clicked
-        const $card = $(e.target).closest(".pos-card");
+    // SELECT SIZE PRODUCT FUNCTION
+    $(document).on("click", ".product-card", async function (e) {
+        const productId = $(this).data("id");
+        const productName = $(this).data("name");
+        const productCode = $(this).find(".pos-name").text();
+        const productPrice = $(this).find(".pos-price").text().trim();
 
-        // If no product card was clicked, exit
-        if (!$card.length) return;
+        // Set product name and price in the modal
+        $("#modal-product-name").text(productName);
+        $("#modal-product-code").text(productCode);
+        $("#modal-product-price").text(productPrice);
 
-        // Get the product name from the card
-        const name = $card.find(".pos-name").text();
+        // Attach product ID to the proceed button
+        $("#proceed-btn").data("id", productId);
 
-        // Get the price, remove any non-digit characters (like ₱), and convert to number
-        const price = parseInt(
-            $card.find(".pos-price").text().replace(/[^\d]/g, "")
-        );
+        // Show the modal
+        $("#product-size-modal").show();
 
-        // Check if product is already in cart based on name and price
-        const exists = cart.products.some(
-            p => p.name === name && p.price === price
-        );
-        if (exists) {
-            showErrorModal("This product is already in the cart.");
-            return;
+        // Reset button and clear sizes
+        $("#proceed-btn").addClass("disabled");
+        $("#product-size-form").empty();
+
+        const sizeLabels = {
+            XS: "Extra Small",
+            S: "Small",
+            M: "Medium",
+            L: "Large",
+            XL: "Extra Large",
+            XXL: "Double Extra Large"
+        };
+
+        try {
+            const docRef = doc(chandriaDB, "products", productId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const sizes = data.size || {};
+
+                const availableSizes = Object.entries(sizes).filter(
+                    ([_, qty]) => qty > 0
+                );
+
+                for (const [sizeCode, qty] of availableSizes) {
+                    const isOnlyOne = availableSizes.length === 1;
+                    const displayLabel = `${
+                        sizeLabels[sizeCode] || sizeCode
+                    } (${sizeCode})`;
+
+                    const $label = $("<label>");
+                    const $checkbox = $("<input>", {
+                        type: "checkbox",
+                        name: "availableSize",
+                        value: sizeCode,
+                        "data-stock": qty
+                    });
+
+                    if (isOnlyOne) $checkbox.prop("checked", true);
+
+                    $label.append($checkbox, ` ${displayLabel}`);
+                    $("#product-size-form").append($label).append("<br>");
+
+                    if (isOnlyOne) {
+                        $checkbox.trigger("change");
+                    }
+                }
+            } else {
+                console.warn("Product not found.");
+            }
+        } catch (err) {
+            console.error("Error fetching product:", err);
         }
-
-        // Add the product to the cart
-        cart.products.push({ name, price });
-
-        // Update the cart display
-        updateCartSummary();
     });
 
+    // PROCEED TO CUSTOMER MODAL CART FUNCTION
+    $("#proceed-btn").on("click", function () {
+        if ($(this).hasClass("disabled")) return;
+
+        const productId = $(this).data("id");
+        const productName = $("#modal-product-name").text();
+        const productCode = $("#modal-product-code").text();
+
+        const productPrice = parseInt(
+            $("#modal-product-price").text().replace(/[^\d]/g, "")
+        );
+        const selectedSizes = $("input[name='availableSize']:checked");
+
+        let added = false;
+        let anyValid = false;
+
+        selectedSizes.each(function () {
+            const size = $(this).val();
+            const $qtyInput = $(`#size-qty-${size}`);
+            const altQtyInput = $(this)
+                .closest("label")
+                .find(".quantity-input");
+            const qty = parseInt($qtyInput.val() || altQtyInput.val(), 10);
+
+            if (!qty || qty < 1) return;
+
+            anyValid = true;
+
+            const exists = cart.products.some(
+                p => p.id === productId && p.size === size
+            );
+
+            if (exists) {
+                showErrorModal(
+                    `"${productName}" (${size}) is already in the cart.`
+                );
+            } else {
+                cart.products.push({
+                    id: productId,
+                    name: productName,
+                    code: productCode,
+                    price: productPrice,
+                    size: size,
+                    quantity: qty
+                });
+                added = true;
+            }
+        });
+
+        if (!anyValid) {
+            console.warn(
+                "No valid size/quantity selected or all items already in cart."
+            );
+        }
+
+        if (added) {
+            updateCartSummary();
+            $("#product-size-modal").hide();
+        }
+    });
+
+    // --====== START OF EVENT LISTENERS FOR PRODUCT SIZES ======--
+    // SIZE CHECKBOXES FUNCTION
+    $(document).on(
+        "change",
+        "#product-size-form input[type=checkbox]",
+        function () {
+            const $label = $(this).closest("label");
+            const isChecked = $(this).is(":checked");
+
+            // Remove previous quantity input and stock span
+            $label.find(".quantity-input, .stock-text").remove();
+
+            if (isChecked) {
+                const stock = $(this).data("stock");
+
+                const quantityInput = $("<input>", {
+                    type: "number",
+                    class: "quantity-input",
+                    min: 1,
+                    max: stock,
+                    value: 1
+                });
+
+                const stockDisplay = $(
+                    `<span class="stock-text" style="margin-left: 8px; font-size: 0.9em; color: gray;">Stock: ${stock}</span>`
+                );
+
+                $label.append(quantityInput, stockDisplay);
+            }
+
+            // Check if any checkboxes are still checked
+            const anyChecked =
+                $("#product-size-form input[type=checkbox]:checked").length > 0;
+
+            if (anyChecked) {
+                $("#proceed-btn").removeClass("disabled");
+            } else {
+                $("#proceed-btn").addClass("disabled");
+            }
+        }
+    );
+
+    // LIMIT QUANTITY INPUT based on available stock
+    // Restrict special characters and limit quantity input to available stock
+    $(document).on("input", ".quantity-input", function () {
+        const $input = $(this);
+        const $checkbox = $input.closest("label").find("input[type=checkbox]");
+        const stock = parseInt($checkbox.data("stock"), 10) || 0;
+
+        // Remove all non-digit characters
+        let cleaned = $input.val().replace(/\D/g, "");
+
+        // If user types "00", convert to "1"
+        if (cleaned === "00") {
+            cleaned = "1";
+        }
+
+        // Update the input field
+        $input.val(cleaned);
+
+        // Enforce max stock limit only if value exists
+        const currentVal = parseInt(cleaned, 10);
+        if (!isNaN(currentVal) && currentVal > stock) {
+            $input.val(stock);
+        }
+    });
+
+    // EVENT LISTENER FOR QUANTITY INPUT FIELDS
+    $(document).on("input", "#product-size-form .quantity-input", function () {
+        let allValid = true;
+
+        $("#product-size-form input[type=checkbox]:checked").each(function () {
+            const qtyVal = $(this)
+                .closest("label")
+                .find(".quantity-input")
+                .val();
+            if (qtyVal === "" || qtyVal === "0" || /^0+/.test(qtyVal)) {
+                allValid = false;
+                return false; // Exit loop early
+            }
+        });
+
+        if (allValid) {
+            $("#proceed-btn").removeClass("disabled");
+        } else {
+            $("#proceed-btn").addClass("disabled");
+        }
+    });
+    // --====== END OF EVENT LISTENERS FOR PRODUCT SIZES ======--
+
     // ACCESSORIES CLICK FUNCTION
-    $("#accessories").on("click", ".pos-card", function () {
+    $(document).on("click", ".additional-card", function () {
         const $card = $(this);
-        const id = $card.data("id"); // <-- Firestore document ID
+        const id = $card.data("id"); // Firestore document ID
+        const code = $card.data("code"); // Accessory code (NEW)
         const name = $card.find(".pos-name").text();
         const price = parseInt(
             $card.find(".pos-price").text().replace(/[^\d]/g, "")
@@ -259,11 +482,11 @@ $(document).ready(function () {
             return;
         }
 
-        if (name.toLowerCase().includes("accessor")) {
-            cart.accessories.push({ id, name, price, types: [] }); // <-- Add id to cart
-        } else {
-            cart.accessories.push({ id, name, price });
-        }
+        const accessory = { id, name, price };
+        if (code) accessory.code = code;
+        if (name.toLowerCase().includes("accessor")) accessory.types = [];
+
+        cart.accessories.push(accessory);
 
         updateCartSummary();
     });
@@ -341,6 +564,7 @@ $(document).ready(function () {
     // Close the modal when close button is clicked
     $closeModalBtn.on("click", function () {
         $accessoryModal.hide();
+        $("#product-size-modal").hide();
     });
 
     // Save selected types when save button is clicked
@@ -370,11 +594,14 @@ $(document).ready(function () {
 
         $accessoryModal.hide();
     });
-    
+
     // Close modal if user clicks outside the modal content
     $(window).on("click", function (e) {
         if ($(e.target).is($accessoryModal)) {
             $accessoryModal.hide();
+        }
+        if ($(e.target).is($("#product-size-modal"))) {
+            $("#product-size-modal").hide();
         }
     });
 
@@ -492,29 +719,6 @@ $(document).ready(function () {
     const $checkoutBtn = $("#cart-checkout-btn");
     const $cartTotalAmount = $("#cart-total-amount");
 
-    // When checkout button is clicked
-    if ($checkoutBtn.length && $customerModal.length) {
-        $checkoutBtn.on("click", function (e) {
-            e.preventDefault();
-
-            // Prevent checkout if no product is in the cart
-            if (!cart.products.length) {
-                showErrorModal(
-                    "Please add at least one product to the cart before proceeding."
-                );
-                return;
-            }
-
-            // Set rental fee field with total amount
-            if ($rentalFeeField.length && $cartTotalAmount.length) {
-                $rentalFeeField.val($cartTotalAmount.text() || "");
-            }
-
-            // Show the customer modal
-            $customerModal.show();
-        });
-    }
-
     // Close the modal when close button is clicked
     if ($customerClose.length) {
         $customerClose.on("click", function () {
@@ -528,19 +732,6 @@ $(document).ready(function () {
             $customerModal.hide();
         }
     });
-
-    // Handle form submission
-    if ($customerForm.length) {
-        $customerForm.on("submit", function (e) {
-            e.preventDefault();
-
-            // Hide the modal after submitting
-            $customerModal.hide();
-
-            // Show error modal as placeholder (replace with real submission logic)
-            showErrorModal("Customer form submitted! (Demo only)");
-        });
-    }
 
     // --- Customer Modal Luzon Regions and City Logic (jQuery version) ---
     const luzonRegions = {
@@ -750,60 +941,89 @@ $(document).ready(function () {
         $citySelect.html('<option value="">Select City</option>');
     }
 
+    // UPDATE CUSTOMER FIELD
     // --- Auto-fill Product Code, Additional, Rental Fee ---
     function updateCustomerModalFields() {
-        // Concatenate all product names/codes in the cart and display them in the 'client-product-code' field
-        const productCodes = cart.products.map(p => p.name).join(", ");
-        $("#client-product-code").val(productCodes);
+        // Group product sizes by product code
+        const groupedProducts = {};
 
-        // Create an array to hold additional items like accessories or wings
-        let additionalArr = [];
+        cart.products.forEach(p => {
+            if (!p.code) {
+                console.warn("Product missing code:", p);
+                return; // skip products without code
+            }
 
-        // Count the number of wings in the cart
-        const wingsCount = cart.accessories.filter(a =>
-            a.name.toLowerCase().includes("wing")
-        ).length;
+            if (!groupedProducts[p.code]) {
+                groupedProducts[p.code] = {};
+            }
 
-        // Check if there are any accessories in the cart and add them to the additional items array
-        if (
-            cart.accessories.some(a =>
-                a.name.toLowerCase().includes("accessor")
-            )
-        )
-            additionalArr.push("Accessory");
+            if (!groupedProducts[p.code][p.size]) {
+                groupedProducts[p.code][p.size] = 0;
+            }
 
-        // If there are wings, add them to the additional items array, including the count if greater than 1
-        if (wingsCount > 0)
-            additionalArr.push(
-                `Wings${wingsCount > 1 ? " x" + wingsCount : ""}`
-            );
+            groupedProducts[p.code][p.size] += p.quantity;
+        });
 
-        // Set the value of the 'client-additional' field with the additional items list
-        $("#client-additional").val(additionalArr.join(", "));
+        // Build the summary string using code instead of name
+        const productSummary = Object.entries(groupedProducts)
+            .map(([code, sizes]) => {
+                const sizeDetails = Object.entries(sizes)
+                    .map(([size, qty]) => `${size} x${qty}`)
+                    .join(", ");
+                return `${code} (${sizeDetails})`;
+            })
+            .join("; ");
 
-        // Set the rental fee in the 'client-rental-fee' field based on the total amount in the cart
+        $("#client-product-code").val(productSummary);
+
+        // Group all accessories by code (fallback to id or name)
+        const groupedAdditionals = {};
+        cart.accessories.forEach(a => {
+            const code = a.code || a.id || a.name;
+            if (!groupedAdditionals[code]) {
+                groupedAdditionals[code] = 0;
+            }
+            groupedAdditionals[code] += a.quantity || 1;
+        });
+
+        const additionalArr = Object.entries(groupedAdditionals).map(
+            ([code, qty]) => ({ code, quantity: qty })
+        );
+
+        const additionalSummary = additionalArr
+            .map(item => `${item.code} x${item.quantity}`)
+            .join(", ");
+        $("#client-additional-code").val(additionalSummary);
+
+        // Set rental fee from cart total
         $("#client-rental-fee").val($("#cart-total-amount").text() || "");
     }
 
-    // When the checkout button is clicked
-    if ($checkoutBtn && $customerModal) {
-        $($checkoutBtn).on("click", function (e) {
+    // FUNCTION FOR CART PROCEED BUTTON
+    if ($checkoutBtn.length && $customerModal.length) {
+        $checkoutBtn.on("click", function (e) {
             e.preventDefault();
 
-            // Check if there are products in the cart
+            // Prevent checkout if no product is in the cart
             if (!cart.products.length) {
-                // If no products, show an error message
                 showErrorModal(
                     "Please add at least one product to the cart before proceeding."
                 );
                 return;
             }
 
-            // Update the customer modal fields with the cart details
-            updateCustomerModalFields();
+            // Set rental fee field with total amount (if exists)
+            if ($rentalFeeField.length && $cartTotalAmount.length) {
+                $rentalFeeField.val($cartTotalAmount.text() || "");
+            }
+
+            // Optionally update other modal fields if needed
+            if (typeof updateCustomerModalFields === "function") {
+                updateCustomerModalFields();
+            }
 
             // Show the customer modal
-            $($customerModal).show();
+            $customerModal.show();
         });
     }
 
@@ -814,34 +1034,54 @@ $(document).ready(function () {
     });
 
     // --- Payment Type Logic ---
-    const $paymentType = $("#payment-type"); // Selects the payment type dropdown
-    const $totalPayment = $("#total-payment"); // Selects the total payment input field
-    const $remainingBalance = $("#remaining-balance"); // Selects the remaining balance input field
-    const $rentalFeeInput = $("#client-rental-fee"); // Selects the rental fee input field
+    const $paymentType = $("#payment-type");
+    const $totalPayment = $("#total-payment");
+    const $remainingBalance = $("#remaining-balance");
+    const $rentalFeeInput = $("#client-rental-fee");
 
     // Function to update the payment fields based on the selected payment type
     function updatePaymentFields() {
-        // Get the rental fee value, removing non-numeric characters
-        const rentalFee =
-            parseFloat($rentalFeeInput.val().replace(/[^\d.]/g, "")) || 0;
+        try {
+            // Get the rental fee value, removing non-numeric characters
+            const rentalFee =
+                parseFloat($rentalFeeInput.val().replace(/[^\d.]/g, "")) || 0;
 
-        // If the payment type is 'full', set the total payment to the full rental fee and disable further input
-        if ($paymentType.val() === "full") {
-            $totalPayment.val(rentalFee); // Set the total payment to the full rental fee
-            $totalPayment.prop("readonly", true); // Make the total payment input read-only
-            $remainingBalance.val(0); // Set the remaining balance to 0
-        }
-        // If the payment type is 'down', enable the total payment input for the user to enter down payment
-        else if ($paymentType.val() === "down") {
-            $totalPayment.val(""); // Clear the total payment input
-            $totalPayment.prop("readonly", false); // Enable editing of the total payment
-            $remainingBalance.val(rentalFee); // Set the remaining balance to the full rental fee
-        }
-        // If no valid payment type is selected, reset both fields
-        else {
-            $totalPayment.val(""); // Clear the total payment input
-            $totalPayment.prop("readonly", true); // Make the total payment input read-only
-            $remainingBalance.val(""); // Clear the remaining balance
+            if (isNaN(rentalFee)) {
+                throw new Error("Rental fee is not a valid number.");
+            }
+
+            const paymentType = $paymentType.val();
+
+            if (!paymentType) {
+                throw new Error("No payment type selected.");
+            }
+
+            // If the payment type is 'full'
+            if (paymentType === "Full Payment") {
+                $totalPayment.val(rentalFee);
+                $totalPayment.prop("readonly", true);
+                $remainingBalance.val(0);
+            }
+            // If the payment type is 'down'
+            else if (paymentType === "Down Payment") {
+                $totalPayment.val("");
+                $totalPayment.prop("readonly", false);
+                $remainingBalance.val(rentalFee);
+            }
+            // If unknown type
+            else {
+                $totalPayment.val("");
+                $totalPayment.prop("readonly", true);
+                $remainingBalance.val("");
+                console.warn("Unexpected payment type:", paymentType);
+            }
+        } catch (error) {
+            console.error(
+                "Error in updatePaymentFields:",
+                error.message,
+                error
+            );
+            notyf.error("Something went wrong while updating payment fields.");
         }
     }
 
@@ -912,4 +1152,213 @@ $(document).ready(function () {
             });
         }
     }
+
+    // TRANSACTION CODE GENERATOR FUNCTION
+    async function generateTransactionCode() {
+        try {
+            const now = new Date();
+            const mmddyy = now
+                .toLocaleDateString("en-US", {
+                    month: "2-digit",
+                    day: "2-digit",
+                    year: "2-digit"
+                })
+                .replace(/\//g, ""); // Format: MMDDYY
+
+            const prefix = "TRNS-" + mmddyy + "-";
+            const rentalsRef = collection(chandriaDB, "transaction");
+
+            const q = query(
+                rentalsRef,
+                where("transactionCode", ">=", prefix + "000"),
+                where("transactionCode", "<=", prefix + "999")
+            );
+
+            const snapshot = await getDocs(q);
+            let maxSeq = 0;
+
+            snapshot.forEach(doc => {
+                const code = doc.data().transactionCode;
+                const match = code.match(/-(\d{3})$/);
+                if (match) {
+                    const num = parseInt(match[1], 10);
+                    if (num > maxSeq) maxSeq = num;
+                }
+            });
+
+            const newSeq = (maxSeq + 1).toString().padStart(3, "0");
+            return prefix + newSeq;
+        } catch (error) {
+            console.error("Error generating transaction code:", error);
+
+            // Optional: Notify the user via alert or UI element
+            alert(
+                "Failed to generate transaction code. Please try again later."
+            );
+
+            // Optional: Return a fallback code with 'ERR'
+            const fallbackCode =
+                "TRNS-ERROR-" + Date.now().toString().slice(-3);
+            return fallbackCode;
+        }
+    }
+
+    // FORM (CUSTOMER INFO) SUBMIT FUNCTION
+    $("#customer-form").on("submit", async function (e) {
+        e.preventDefault();
+
+        // SPINNER VARIABLES
+        const spinnerText = $("#spinner-text");
+        const spinner = $("#spinner");
+
+        try {
+            spinner.removeClass("d-none");
+            spinnerText.text("Preparing data...");
+
+            // --- GROUP PRODUCTS ---
+            const groupedProducts = {};
+            cart.products.forEach(item => {
+                if (
+                    !item.id ||
+                    !item.name ||
+                    !item.code ||
+                    !item.size ||
+                    item.quantity === undefined ||
+                    item.price === undefined
+                ) {
+                    console.warn("Invalid product skipped:", item);
+                    return;
+                }
+
+                const key = item.id + "|" + item.name;
+                if (!groupedProducts[key]) {
+                    groupedProducts[key] = {
+                        id: item.id,
+                        code: item.code,
+                        name: item.name,
+                        sizes: {},
+                        price: item.price
+                    };
+                }
+
+                if (!groupedProducts[key].sizes[item.size]) {
+                    groupedProducts[key].sizes[item.size] = 0;
+                }
+
+                groupedProducts[key].sizes[item.size] += item.quantity;
+            });
+
+            const finalProductList = Object.values(groupedProducts);
+
+            // --- GROUP ACCESSORIES ---
+            const finalAccessoriesList = [];
+            const simpleAccessoryMap = new Map();
+
+            cart.accessories.forEach(item => {
+                if (!item.code || !item.name || item.price === undefined) {
+                    console.warn("Invalid accessory item skipped:", item);
+                    return;
+                }
+
+                if (Array.isArray(item.types) && item.types.length > 0) {
+                    finalAccessoriesList.push({
+                        id: item.id || "",
+                        code: item.code,
+                        name: item.name,
+                        price: item.price,
+                        types: item.types
+                    });
+                } else {
+                    const key = item.code + "|" + item.id;
+                    if (!simpleAccessoryMap.has(key)) {
+                        simpleAccessoryMap.set(key, {
+                            id: item.id || "",
+                            code: item.code,
+                            name: item.name,
+                            price: item.price,
+                            quantity: 1
+                        });
+                    } else {
+                        simpleAccessoryMap.get(key).quantity++;
+                    }
+                }
+            });
+            finalAccessoriesList.push(...simpleAccessoryMap.values());
+
+            // --- GENERATE TRANSACTION CODE ---
+            spinnerText.text("Generating transaction code...");
+            const transactionCode = await generateTransactionCode();
+
+            if (!transactionCode.startsWith("TRNS-")) {
+                throw new Error(
+                    "Invalid transaction code generated: " + transactionCode
+                );
+            }
+
+            // --- COLLECT FORM DATA ---
+            const formData = {
+                fullName: $("#client-full-name").val().trim(),
+                contactNumber: $("#client-contact").val().trim(),
+                eventStartDate: $("#event-start-date").val(),
+                eventEndDate: $("#event-end-date").val(),
+                eventType: $("#event-type").val(),
+                rentalFee:
+                    parseInt(
+                        $("#client-rental-fee").val().replace(/[^\d]/g, ""),
+                        10
+                    ) || 0,
+                rentalType: $("#rental-type").val(),
+                paymentMethod: $("#payment-method").val(),
+                paymentType: $("#payment-type").val(),
+                totalPayment: parseFloat($("#total-payment").val()) || 0,
+                remainingBalance:
+                    parseFloat($("#remaining-balance").val()) || 0,
+                referenceNo: $("#reference-no").val().trim(),
+                region: $("#client-region").val(),
+                city: $("#client-city").val(),
+                address: $("#client-address").val().trim(),
+                notes: $("#client-notes").val().trim(),
+                timestamp: new Date().toISOString(),
+                products: finalProductList,
+                accessories: finalAccessoriesList,
+                transactionCode: transactionCode
+            };
+
+            console.log("Customer Form Data to submit:", formData);
+
+            // === Validate no undefined fields ===
+            for (const [key, value] of Object.entries(formData)) {
+                if (value === undefined) {
+                    throw new Error(`formData field "${key}" is undefined`);
+                }
+            }
+
+            spinnerText.text("Submitting to Firestore...");
+            const docRef = await addDoc(
+                collection(chandriaDB, "transaction"),
+                formData
+            );
+
+            spinnerText.text("Submission successful!");
+
+            // SHOW SUCCESS MESSAGE
+            notyf.success("Details Successfully Submitted!");
+        } catch (error) {
+            console.error("Form submission error:", error);
+
+            // SHOW ERROR MESSAGE
+            notyf.error(
+                "An error occurred while submitting the form. Please check the console for details."
+            );
+        } finally {
+            spinner.addClass("d-none");
+            $customerModal.hide();
+            $("#customer-form")[0].reset();
+            $(".cart-items").empty();
+            $(".cart-details").empty();
+            $("#cart-total-amount").text(`₱0`);
+        }
+    });
+
+    // END OF JAVASCRIPT HERE
 });

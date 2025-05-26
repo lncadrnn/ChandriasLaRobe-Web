@@ -137,12 +137,15 @@ $(document).ready(function () {
                 </article>
                 `);
                 container.append(card);
+                $("body").addClass("loaded");
             });
         } catch (err) {
             console.error("Error loading products from Firebase:", err);
             container.append(
                 '<div style="color:red;margin:2rem;">Failed to load products. Check your connection or Firebase rules.</div>'
             );
+            $("body").addClass("loaded");
+            
         }
     }
     loadProducts();

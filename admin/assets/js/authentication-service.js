@@ -4,7 +4,7 @@ import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
     sendPasswordResetEmail,
-    chandriaDB,
+    getFirestore,
     collection,
     getDocs,
     query,
@@ -27,7 +27,7 @@ $(document).ready(function () {
         if (user && !isLoggingIn) {
             // Delay just a bit to allow UI elements to load before redirecting
             setTimeout(() => {
-                window.location.href = "/admin/dashboard.html"; // Redirect to profile page if already logged in
+                window.location.href = "admin/dashboard.html"; // Redirect to profile page if already logged in
             }, 800);
         }
     });
@@ -127,7 +127,7 @@ $(document).ready(function () {
 
             // Delay redirect to allow toast to show
             setTimeout(() => {
-                window.location.href = "/admin/dashboard.html"; // Redirect to dashboard
+                window.location.href = "admin/dashboard.html"; // Redirect to dashboard
             }, 1300);
             //
         } catch (error) {
@@ -150,7 +150,10 @@ $(document).ready(function () {
                 notyf.error("Login failed. Please try again.");
             }
         }
-    });    // CHECKING EMAIL
+    });
+
+    // CHECKING EMAIL
+    const chandriaDB = getFirestore(appCredential);
     async function emailExistsInFirestore(email) {
         const usersRef = collection(chandriaDB, "adminAccounts");
         const snapshot = await getDocs(usersRef);

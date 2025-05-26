@@ -28,6 +28,12 @@
     </head>
 
     <body>
+        <!-- ====== BEGINNING LOADER ====== -->
+        <div id="loader">
+            <div>Loading Inventory...</div>
+            <div class="spinner-loader"></div>
+        </div>
+
         <!-- SPINNER -->
         <div class="container-spinner d-none" id="spinner">
             <div class="spinner"></div>
@@ -175,7 +181,7 @@
                     </div>
                     <div class="pos-accessories tab-content" id="accessories">
                         <div class="card_container" id="additional-container">
-                        <!-- Accessories cards or content here if needed -->
+                            <!-- Accessories cards or content here if needed -->
                         </div>
                     </div>
                 </div>
@@ -763,7 +769,10 @@
                 <form id="update-add-form">
                     <!-- Image Preview -->
                     <div class="file-upload-container">
-                        <div class="drop-zone" id="update-additional-dropzone-img">
+                        <div
+                            class="drop-zone"
+                            id="update-additional-dropzone-img"
+                        >
                             <input
                                 type="file"
                                 accept="image/*"
@@ -826,7 +835,7 @@
                     </div>
                     <!-- Inclusions Fields (hidden by default) -->
                     <div id="update-inclusions-container">
-                      <!-- INPUT FIELDS HERE -->
+                        <!-- INPUT FIELDS HERE -->
                     </div>
                     <div id="update-inclusion-btn-row">
                         <button type="button" id="update-add-inclusion-btn">
@@ -855,7 +864,6 @@
                 </form>
             </div>
         </div>
-
 
         <!-- ERROR MODAL -->
         <div id="error-modal" class="custom-modal">
@@ -909,6 +917,7 @@
 
         <!-- NOTYF CDN -->
         <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+        
         <!-- JQUERY JS -->
         <script
             src="https://code.jquery.com/jquery-3.7.1.js"

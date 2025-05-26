@@ -6,24 +6,45 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         <title>Chandria's La Robe - Web System</title>
-        
+
         <!-- BOX-ICON CDN -->
         <link
             href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
             rel="stylesheet"
         />
+
+        <!-- NOTYF CDN -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css"
+        />
+        
         <!-- EXTERNAL CSS -->
         <link rel="stylesheet" href="./assets/css/sidebar.css" />
         <link rel="stylesheet" href="./assets/css/rental.css" />
- 
     </head>
 
     <body>
+        <!-- ====== BEGINNING LOADER ====== -->
+        <div id="loader">
+            <div>Loading Rental...</div>
+            <div class="spinner-loader"></div>
+        </div>
+
+        <!-- LOADING SPINNER -->
+        <div class="container-spinner d-none" id="spinner">
+            <div class="spinner"></div>
+            <div class="spinner-text" id="spinner-text">Uploading</div>
+        </div>
+
         <nav class="sidebar close">
             <header>
                 <div class="image-text">
                     <span class="image">
-                        <img src="./assets/images/chandriaslogo.png" alt="logo" />
+                        <img
+                            src="./assets/images/chandriaslogo.png"
+                            alt="logo"
+                        />
                     </span>
                 </div>
 
@@ -51,9 +72,7 @@
                         <li class="nav-link">
                             <a href="./calendar.html">
                                 <i class="bx bxs-calendar icon"></i>
-                                <span class="text nav-text"
-                                    >Calendar</span
-                                >
+                                <span class="text nav-text">Calendar</span>
                             </a>
                         </li>
 
@@ -126,8 +145,12 @@
                 <div class="pos-cart-summary">
                     <div class="cart-title">Cart Summary</div>
                     <div class="cart-scroll">
-                        <div class="cart-items"></div>
-                        <div class="cart-details"></div>
+                        <div class="cart-items">
+                          <!-- CART ITEMS HERE -->
+                        </div>
+                        <div class="cart-details">
+                          <!-- CART TOTAL AMOUNT HERE -->
+                        </div>
                     </div>
                     <div class="cart-bottom-bar">
                         <div class="cart-total">
@@ -145,6 +168,45 @@
             </div>
         </section>
 
+        <!-- PRODUCT SIZE MODAL -->
+        <div id="product-size-modal" class="modal">
+            <div class="product-size-modal-content modal-content">
+                <span
+                    class="close-modal"
+                    style="cursor: pointer; float: right; font-size: 1.5em"
+                    >&times;</span
+                >
+                <h3>Select Product Size</h3>
+                <form id="product-size-form">
+                    <label
+                        ><input
+                            type="checkbox"
+                            name="availableSize"
+                            value="Small"
+                        />
+                        Small</label
+                    ><br />
+                    <label
+                        ><input
+                            type="checkbox"
+                            name="availableSize"
+                            value="Medium"
+                        />
+                        Medium</label
+                    ><br />
+                </form>
+
+                <!-- STORING DETAILS -->
+                <div style="display: none">
+                    <span id="modal-product-code"></span>
+                    <span id="modal-product-name"></span>
+                    <span id="modal-product-price"></span>
+                </div>
+
+                <button id="proceed-btn" class="disabled">Proceed</button>
+            </div>
+        </div>
+
         <!-- Accessory Selection Modal -->
         <div id="accessory-modal" class="modal" style="display: none">
             <div class="modal-content">
@@ -154,6 +216,7 @@
                     >&times;</span
                 >
                 <h3>Select Accessory Types</h3>
+
                 <form id="accessory-form">
                     <label
                         ><input type="checkbox" id="select-all-accessories" />
@@ -174,54 +237,6 @@
                             value="Earrings"
                         />
                         Earrings</label
-                    ><br />
-                    <label
-                        ><input
-                            type="checkbox"
-                            name="accessoryType"
-                            value="Necklace"
-                        />
-                        Necklace</label
-                    ><br />
-                    <label
-                        ><input
-                            type="checkbox"
-                            name="accessoryType"
-                            value="Rings"
-                        />
-                        Rings</label
-                    ><br />
-                    <label
-                        ><input
-                            type="checkbox"
-                            name="accessoryType"
-                            value="Crown"
-                        />
-                        Crown</label
-                    ><br />
-                    <label
-                        ><input
-                            type="checkbox"
-                            name="accessoryType"
-                            value="Bag"
-                        />
-                        Bag</label
-                    ><br />
-                    <label
-                        ><input
-                            type="checkbox"
-                            name="accessoryType"
-                            value="Gloves"
-                        />
-                        Gloves</label
-                    ><br />
-                    <label
-                        ><input
-                            type="checkbox"
-                            name="accessoryType"
-                            value="Pins"
-                        />
-                        Pins</label
                     ><br />
                 </form>
                 <button id="save-accessory-types">Save</button>
@@ -281,26 +296,28 @@
                         </div>
                         <div class="customer-form-row">
                             <label
-                                >Client First Name<br /><input
+                                >Client Full Name<br /><input
                                     type="text"
-                                    id="client-first-name"
+                                    id="client-full-name"
+                                    value="Rejay Buta"
                                     required
                             /></label>
-                            <label
-                                >Client Last Name<br /><input
-                                    type="text"
-                                    id="client-last-name"
-                                    required
-                            /></label>
-                        </div>
-                        <div class="customer-form-row">
                             <label
                                 >Client Contact Number<input
                                     type="text"
                                     id="client-contact"
+                                    value="09165268932"
+                            /></label>
+                        </div>
+                        <div class="customer-form-row">
+                            <label
+                                >Additional<br /><input
+                                    type="text"
+                                    id="client-additional-code"
+                                    readonly
                             /></label>
                             <label
-                                >Product Code<br /><input
+                                >Selected Product<br /><input
                                     type="text"
                                     id="client-product-code"
                                     readonly
@@ -308,15 +325,15 @@
                         </div>
                         <div class="customer-form-row">
                             <label
-                                >Additional<br /><input
-                                    type="text"
-                                    id="client-additional"
-                                    readonly
+                                >Event Start Date<br /><input
+                                    type="date"
+                                    id="event-start-date"
+                                    required
                             /></label>
                             <label
-                                >Event Date<br /><input
+                                >Event End Date<br /><input
                                     type="date"
-                                    id="event-date"
+                                    id="event-end-date"
                                     required
                             /></label>
                         </div>
@@ -349,8 +366,12 @@
                                 >Rental Type<br />
                                 <select id="rental-type" required>
                                     <option value="">Select Rental Type</option>
-                                    <option value="Open Rental">Open Rental</option>
-                                    <option value="Fixed Rental">Fixed Rental</option>
+                                    <option value="Open Rental">
+                                        Open Rental
+                                    </option>
+                                    <option value="Fixed Rental">
+                                        Fixed Rental
+                                    </option>
                                 </select>
                             </label>
                         </div>
@@ -371,8 +392,8 @@
                                     <option value="">
                                         Select Payment Type
                                     </option>
-                                    <option value="full">Full Payment</option>
-                                    <option value="down">Down Payment</option>
+                                    <option value="Full Payment">Full Payment</option>
+                                    <option value="Down Payment">Down Payment</option>
                                 </select>
                             </label>
                         </div>
@@ -416,6 +437,7 @@
                                     type="text"
                                     id="client-address"
                                     required
+                                    value="B17 L14 Duhat Street, Camella Springville"
                             /></label>
                         </div>
                         <div class="customer-form-row customer-form-notes">
@@ -423,7 +445,9 @@
                                 >Additional Notes / Repair<br /><textarea
                                     id="client-notes"
                                     rows="2"
-                                ></textarea>
+                                >
+Lorem Ipsum eowjfiwownspddjdksodbdoskdk</textarea
+                                >
                             </label>
                         </div>
                         <button type="submit" id="customer-form-submit">
@@ -434,6 +458,9 @@
             </div>
         </div>
 
+        <!-- NOTYF CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+    
         <!-- JQUERY JS -->
         <script
             src="https://code.jquery.com/jquery-3.7.1.js"
