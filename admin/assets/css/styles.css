@@ -13,6 +13,7 @@ body {
   align-items: center;
   min-height: 100vh; 
   background: linear-gradient(90deg, #f1f0f0,  hsl(346, 85%, 90%));
+  position: relative; /* Added for absolute positioning of button */
 }
 
 .container {
@@ -219,6 +220,37 @@ form {
   box-shadow: none;
 }
 
+/* Add these styles for the back button */
+/* Ensure body has relative positioning if not already set, for absolute positioning of button */
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: transparent; /* Changed: Transparent background */
+  border: none; /* Changed: No border */
+  padding: 8px 10px; /* Adjusted padding */
+  border-radius: 6px; /* Optional: slight rounding */
+  cursor: pointer;
+  font-size: 1rem; /* Adjust as needed */
+  color: #333; /* Changed: Dark text color */
+  z-index: 1000; 
+  display: flex;
+  align-items: center;
+  gap: 6px; /* Adjusted gap */
+  box-shadow: none; /* Changed: No box shadow */
+  transition: color 0.2s ease; /* Optional: transition for hover */
+}
+
+.back-btn:hover {
+  /* background-color: #f8f9fa; */ /* Removed hover background change */
+  /* box-shadow: 0 4px 8px rgba(0,0,0,0.07); */ /* Removed hover shadow */
+  color: #000; /* Optional: slightly darker on hover */
+}
+
+.back-btn i {
+  font-size: 1.2em; /* Adjust as needed */
+  color: #333; /* Changed: Match text color */
+}
 
 @media screen and (max-width: 650px){
   .container {

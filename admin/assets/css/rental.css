@@ -611,7 +611,6 @@
   border: 1.5px solid var(--secondary-text-color);
   border-radius: 8px;
   padding: 0.35em 0.7em;
-  margin-bottom: 1em;
   font-size: 1em;
   background: #f8f8f8;
   color: var(--neutral-text-color);
@@ -918,6 +917,15 @@
 }
 #customer-form input[type="number"] {
   -moz-appearance: textfield;
+}
+
+/* Center the Rental Fee label text */
+label:has(#client-rental-fee) {
+  text-align: center;
+}
+/* Center the text inside the Rental Fee input field */
+input#client-rental-fee {
+  text-align: center;
 }
 /* --- End Enhanced Customer Modal New Fields --- */
 

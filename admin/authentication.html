@@ -25,6 +25,10 @@
     </head>
 
     <body>
+        <button id="back-btn" class="back-btn" type="button">
+            <i class="bx bx-arrow-back"></i> Back
+        </button>
+
         <div class="container">
             <div class="form-box login">
                 <!-- LOGIN CONTAINER -->
@@ -100,5 +104,15 @@
         ></script>
         <!-- EXTERNAL SCRIPT -->
         <script type="module" src="/admin/assets/js/authentication-service.js"></script>
+        <script>
+          document.getElementById('back-btn').onclick = function() {
+            if (window.history.length > 1) {
+              window.history.back();
+            } else {
+              // Fallback to admin dashboard
+              window.location.href = 'dashboard.html'; 
+            }
+          };
+        </script>
     </body>
 </html>

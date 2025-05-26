@@ -76,13 +76,6 @@
                             </a>
                         </li>
 
-                        <li class="nav-link">
-                            <a href="./schedule.html">
-                                <i class="bx bxs-alarm icon"></i>
-                                <span class="text nav-text">Schedule</span>
-                            </a>
-                        </li>
-
                         <li class="nav-link active">
                             <a href="#">
                                 <i class="bx bxs-package icon"></i>
@@ -325,19 +318,17 @@
                         </div>
                         <div class="customer-form-row">
                             <label
-                                >Event Start Date<br /><input
-                                    type="date"
-                                    id="event-start-date"
-                                    required
-                            /></label>
-                            <label
-                                >Event End Date<br /><input
-                                    type="date"
-                                    id="event-end-date"
-                                    required
-                            /></label>
-                        </div>
-                        <div class="customer-form-row">
+                                >Rental Type<br />
+                                <select id="rental-type" required>
+                                    <option value="">Select Rental Type</option>
+                                    <option value="Open Rental">
+                                        Open Rental
+                                    </option>
+                                    <option value="Fixed Rental">
+                                        Fixed Rental
+                                    </option>
+                                </select>
+                            </label>
                             <label
                                 >Event Type<br />
                                 <select id="event-type" required>
@@ -354,27 +345,32 @@
                                     </option>
                                 </select>
                             </label>
-                            <label
-                                >Rental Fee<br /><input
-                                    type="text"
-                                    id="client-rental-fee"
-                                    readonly
+                        </div>
+
+                        <!-- Row for Open Rental Dates, conditionally shown - MOVED UP -->
+                        <div class="customer-form-row" id="open-rental-dates-wrapper" style="display: none;">
+                            <label>
+                                Event Start Date<br /><input
+                                    type="date"
+                                    id="event-start-date"
+                            /></label>
+                            <label>
+                                Event End Date<br /><input
+                                    type="date"
+                                    id="event-end-date"
                             /></label>
                         </div>
-                        <div class="customer-form-row">
-                            <label
-                                >Rental Type<br />
-                                <select id="rental-type" required>
-                                    <option value="">Select Rental Type</option>
-                                    <option value="Open Rental">
-                                        Open Rental
-                                    </option>
-                                    <option value="Fixed Rental">
-                                        Fixed Rental
-                                    </option>
-                                </select>
+
+                        <!-- Row for Fixed Event Date and Rental Fee -->
+                        <div class="customer-form-row" id="fixed-details-row"> 
+                            <label id="fixed-event-date-wrapper"> 
+                                Event Date<br /><input type="date" id="fixed-event-date" />
+                            </label>
+                            <label id="rental-fee-wrapper"> 
+                                Rental Fee<br /><input type="text" id="client-rental-fee" readonly />
                             </label>
                         </div>
+
                         <div class="customer-form-row">
                             <label
                                 >Payment Method<br />

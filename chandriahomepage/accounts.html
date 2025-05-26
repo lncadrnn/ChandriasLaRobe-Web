@@ -49,14 +49,6 @@
                         <li class="nav-item">
                             <a href="shop.html" class="nav-link">Shop</a>
                         </li>
-
-                        <li class="nav-item">
-                            <a href="./accounts.html" class="nav-link active-link">Profile</a>
-                        </li>
-
-                        <li class="nav-item" id="nav-login">
-                            <a href="./user_authentication.html" class="nav-link">Login</a>
-                        </li>
                     </ul>
 
                     <div class="header-search">
@@ -80,6 +72,10 @@
                     <a href="./cart.html" class="header-action-btn">
                         <img src="assets/img/icon-cart.svg" alt="" />
                         <span class="count" id="cart-count">0</span>
+                    </a>
+
+                    <a href="accounts.html" class="header-action-btn">
+                        <img src="assets/img/icon-user.svg" alt="" />
                     </a>
                 </div>
             </nav>
@@ -215,6 +211,22 @@
 
             cancelLogoutButton.addEventListener('click', () => {
                 logoutModal.style.display = 'none';
+            });
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const userEmail = localStorage.getItem('userEmail');
+                const emailField = document.getElementById('email'); // Changed 'account-user-email' to 'email'
+
+                if (emailField && userEmail) {
+                    emailField.value = userEmail;
+                } else if (emailField) {
+                    // Optional: Handle case where email is not found in localStorage
+                    // For example, redirect to login or display a placeholder
+                    // emailField.value = ''; 
+                    // window.location.href = 'user_authentication.html'; // If redirect is desired
+                }
             });
         </script>
     </body>

@@ -6,15 +6,115 @@ body {
     color: #333;
 }
 
-/* Custom breadcrumb styling */
-.custom-breadcrumb {
-    background-color: #ffd0e0;
-    padding: 0.8rem 0;
+/*=============== HEADER & NAV ===============*/
+.header-top{
+  background-color: var(--first-color-alt);
+  padding-block: 0.88rem;
+}
+.header-container{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-container span:first-child{
+  margin-right: 2rem;
+}
+.header-contact span, .header-alert-news, .header-top-action{
+  font-size: var(--small-font-size);
+}
+.header-alert-news{
+  color: var(--text-color);
+  font-weight:var(--weight-600);
+}
+.header-top-action{
+  color: var(--text-color);
+}
+.nav, .nav-menu, .nav-list, .header-user-actions{
+  display: flex;
+  align-items: center;
+}
+.nav{
+  height: calc(var(--header-height) + 2.5rem);
+  justify-content: space-between;
+  column-gap: 1rem;
+}
+.nav-logo-img{
+  width: 150px;
 }
 
-.breadcrumb-link, .breadcrum-link {
-    color: #333;
-    font-size: 0.9rem;
+.nav-menu{
+  width: 100%;
+  margin-left: 2.5rem;
+}
+.nav-list{
+  column-gap: 2.5rem;
+  margin-right: auto;
+}
+.nav-link{
+  color: var(--title-color);
+  font-weight: var(--weight-700); /* Ensure consistent bold weight */
+  transition: all 0.2s var(--transition);
+  font-size: var(--normal-font-size); /* Add consistent font size */
+}
+
+#nav-login {
+  display: none;
+}
+
+.header-search{
+  width: 340px;
+  position: relative;
+}
+.header-search .form-input{
+  width: 100%;
+}
+.search-btn{
+  position: absolute;
+  top: 24%;
+  right: 1.25rem;
+  cursor: pointer;
+}
+.header-user-actions{
+  column-gap: 1.25rem;
+}
+.header-action-btn{
+  position: relative;
+}
+.header-action-btn img{
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  filter: brightness(0);
+}
+.header-action-btn .count{
+  position: absolute;
+  top: -0.625rem;
+  right: -0.625rem;
+  background-color: var(--first-color);
+  color: var(--body-color);
+  height: 18px;
+  width: 18px;
+  line-height: 18px;
+  border-radius: 50%;
+  text-align: center;
+  font-size: var(--tiny-font-size);
+
+}
+/* Active link */
+.active-link, .nav-link:hover{
+  color: var(--first-color);
+}
+/*=============== BREADCRUMBS ===============*/
+.breadcrumb{
+  background-color:var(--first-color-alt);
+  padding-block: 1.5rem;
+}
+.breadcrumb-list{
+  column-gap: .75rem;
+}
+.breadcrumb-link{
+  color: var(--text-color);
+  font-size: var(--small-font-size);
 }
 
 .account-settings-page {

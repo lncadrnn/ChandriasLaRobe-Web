@@ -166,7 +166,7 @@ $(document).ready(function () {
 $("#btn-checkout").on("click", async function () {
   const user = auth.currentUser;
   if (!user) {
-    alert("You Should Login First.");
+    window.location.href = "./user_authentication.html";
     return;
   }
 
