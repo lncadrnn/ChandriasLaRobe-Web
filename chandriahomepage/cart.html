@@ -50,7 +50,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="./test_Profile.html" class="nav-link">Profile</a>
+                            <a href="./accounts.html" class="nav-link">Profile</a>
                         </li>
 
                         <li class="nav-item">
@@ -176,6 +176,17 @@
                 </div>
             </section>
         </main>
+
+        <!-- Remove Item Confirmation Modal -->
+        <div id="remove-modal" class="custom-modal" style="display:none; position:fixed; z-index:2000; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); align-items:center; justify-content:center;">
+          <div style="background:#fff; border-radius:10px; max-width:350px; width:90%; margin:auto; padding:2rem 1.5rem; box-shadow:0 2px 16px rgba(0,0,0,0.15); text-align:center;">
+            <h3 style="color:#222; margin-bottom:1.5rem;">Are you sure you want to remove this item from your cart?</h3>
+            <div style="display:flex; gap:1rem; justify-content:center;">
+              <button id="remove-yes" style="background:#ff9aaf; color:#fff; border:none; border-radius:5px; padding:0.5rem 1.5rem; font-weight:600; cursor:pointer;">Yes</button>
+              <button id="remove-no" style="background:#eee; color:#222; border:none; border-radius:5px; padding:0.5rem 1.5rem; font-weight:600; cursor:pointer;">No</button>
+            </div>
+          </div>
+        </div>
 
         <!--=============== SWIPER JS ===============-->
         <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>

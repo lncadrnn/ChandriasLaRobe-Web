@@ -202,23 +202,29 @@ $("#btn-checkout").on("click", async function () {
     console.error("Checkout update failed:", error);
     alert("Failed to update cart.");
   }
-});
-
-    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+});    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // DELETE CART ITEM FUNCTION
-    $(document).on("click", ".delete-btn", async function () {
+    let itemToRemove = null;
+    
+    $(document).on("click", ".delete-btn", function () {
+        const productId = $(this).data("id");
+        const size = $(this).data("size");
+        
+        // Store the item details for removal
+        itemToRemove = { productId, size, element: $(this) };
+        
+        // Show confirmation modal
+        $("#remove-modal").css("display", "flex");
+    });
+
+    // Modal "Yes" button - confirm removal
+    $("#remove-yes").on("click", async function () {
+        if (!itemToRemove) return;
+
         const user = auth.currentUser;
         if (!user) return;
 
-        const productId = $(this).data("id");
-        const size = $(this).data("size");
-
-        // CONFIRM DELETION
-        const confirmDelete = confirm(
-            "Are you sure you want to remove this item from your cart?"
-        );
-        if (!confirmDelete) return;
-
+        const { productId, size, element } = itemToRemove;
         const userRef = doc(chandriaDB, "userAccounts", user.uid);
 
         try {
@@ -238,17 +244,30 @@ $("#btn-checkout").on("click", async function () {
             });
 
             // REMOVING TABLE ITEM
-            const tableRow = $(this).closest("tr");
+            const tableRow = element.closest("tr");
             tableRow.remove();
 
             notyf.success("Cart item removed.");
 
-            // Optionally: refresh cart table
+            // Update cart count
             await updateCartCount();
+
+            // Hide modal and clear stored item
+            $("#remove-modal").hide();
+            itemToRemove = null;
+
         } catch (error) {
             console.error("Error deleting cart item: ", error);
             alert("Failed to remove item.");
+            $("#remove-modal").hide();
+            itemToRemove = null;
         }
+    });
+
+    // Modal "No" button - cancel removal
+    $("#remove-no").on("click", function () {
+        $("#remove-modal").hide();
+        itemToRemove = null;
     });
 
     // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#

@@ -51,9 +51,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="./test_Profile.html" class="nav-link"
-                                >Profile</a
-                            >
+                            <a href="./accounts.html" class="nav-link">Profile</a>
                         </li>
 
                         <li class="nav-item">
@@ -368,13 +366,28 @@
                     profileLink.onclick = (e) => {
                         e.preventDefault();
                         if (user) {
-                            window.location.href = "./test_Profile.html";
+                            window.location.href = "./accounts.html";
                         } else {
                             window.location.href = "./user_authentication.html";
                         }
                     };
                 });
             }
+        </script>
+        <script type="module">
+            import { getAuth, onAuthStateChanged } from "./assets/js/sdk/chandrias-sdk.js";
+            const authInstance = getAuth();
+            const loginLogoutLinkElement = document.getElementById('login-logout-link');
+
+            onAuthStateChanged(authInstance, (user) => {
+              if (user) {
+                loginLogoutLinkElement.style.display = 'none';
+              } else {
+                loginLogoutLinkElement.style.display = 'block';
+                loginLogoutLinkElement.textContent = "Login";
+                loginLogoutLinkElement.href = "./user_authentication.html";
+              }
+            });
         </script>
     </body>
 </html>
