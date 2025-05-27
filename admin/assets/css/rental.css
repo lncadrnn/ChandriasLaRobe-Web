@@ -327,11 +327,12 @@
   width: 100vw;
   height: 100vh;
   background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(3px);
   justify-content: center;
-  align-items: flex-start; /* Change from center to flex-start */
-  animation: fadeIn 0.2s;
-  padding: 1rem 0; /* Add padding to modal container */
-  padding-top: 2vh; /* Add padding at the top */
+  align-items: flex-start;
+  animation: fadeIn 0.25s ease;
+  padding: 1rem 0;
+  padding-top: 2vh;
   overflow-y: auto;
 }
 @keyframes fadeIn {
@@ -341,46 +342,70 @@
 .modal-content {
   background: var(--sidebar-color);
   margin: 0 auto;
-  padding: 2.2rem 2rem 1.5rem 2rem;
-  border-radius: 18px;
-  max-width: 370px;
-  min-width: 320px;
-  height: 540px;
-  max-height: 540px;
-  box-shadow: 0 8px 32px rgba(44,62,80,0.18);
+  padding: 1.5rem 1.5rem 1rem 1.5rem; /* Reduced padding all around */
+  border-radius: 14px; /* Smaller border radius */
+  max-width: 360px; /* Slightly smaller width */
+  min-width: 300px;
+  height: auto; /* Auto height instead of fixed */
+  max-height: 520px; /* Smaller max height */
+  box-shadow: 0 10px 40px rgba(44,62,80,0.18);
   position: relative;
-  border: 1.5px solid var(--secondary-text-color);
+  border: none;
   animation: popIn 0.2s;
   display: flex;
   flex-direction: column;
-  padding-bottom: 0; /* Remove bottom padding to avoid double space with button */
+  padding-bottom: 0;
+  overflow: hidden;
 }
 @keyframes popIn {
-  from { transform: scale(0.95); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  0% { transform: scale(0.95); opacity: 0; }
+  70% { transform: scale(1.02); }
+  100% { transform: scale(1); opacity: 1; }
 }
 .close-modal {
   position: absolute;
-  top: 18px;
-  right: 22px;
-  font-size: 1.7em;
-  color: var(--secondary-text-color);
+  top: 12px; /* Positioned higher */
+  right: 15px; /* Positioned more to the right */
+  font-size: 1.5em; /* Smaller font size */
+  color: var(--primary-color);
   background: none;
   border: none;
-  /* transition: color 0.2s; */ /* Removed transition */
+  transition: all 0.2s ease;
+  width: 28px; /* Smaller width */
+  height: 28px; /* Smaller height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
 }
 .close-modal:hover {
   color: #e74c3c;
+  background-color: rgba(255, 126, 172, 0.1);
 }
 
 /* ====== START OF MODAL STYLES ====== */
 #accessory-modal h3 {
   margin-top: 0;
-  margin-bottom: 1.2rem;
-  color: var(--secondary-text-color);
-  font-size: 1.25rem;
+  margin-bottom: 0.6rem; /* Further reduced bottom margin */
+  color: var(--primary-color);
+  font-size: 1.3rem; /* Slightly smaller font */
   text-align: center;
   letter-spacing: 0.5px;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 0.4rem; /* Further reduced padding */
+}
+
+#accessory-modal h3::after {
+  content: '';
+  position: absolute;
+  width: 60px;
+  height: 3px;
+  background: var(--primary-color);
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 3px;
 }
 
 #accessory-form {
@@ -388,53 +413,127 @@
   overflow-y: auto;
   margin-bottom: 0;
   padding-bottom: 0; /* Remove extra space under the last accessory */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Further reduced gap between items */
+  padding-right: 6px;
+}
+
+#accessory-form::-webkit-scrollbar {
+  width: 6px;
+}
+
+#accessory-form::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+#accessory-form::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 3px;
+}
+
+#accessory-form label:first-of-type {
+  background-color: var(--primary-light);
+  border: 1px solid var(--primary-color);
+  margin-bottom: 0.4rem; /* Further reduced margin */
+  font-weight: 600;
+}
+
+#accessory-form input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  animation: ripple 0.5s ease-out;
+}
+
+#accessory-form br {
+  display: none; /* Remove any <br> elements to save space */
 }
 
 #accessory-form label {
   display: flex;
   align-items: center;
-  gap: 0.4em;
-  font-size: 1.08em;
+  gap: 1em; /* Reduced gap */
+  font-size: 1.08em; /* Slightly smaller font */
   margin-bottom: 0;
   color: var(--text-color);
   cursor: pointer;
-  padding: 0.18em 0.2em;
-  border-radius: 6px;
-  /* transition: background 0.15s; */ /* Removed transition */
+  padding: 0.4em 0.8em; /* Significantly reduced vertical padding */
+  border-radius: 6px; /* Smaller border radius */
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  background-color: #f8f9fa;
 }
 
 #accessory-form label:hover {
-  background: var(--secondary-color);
+  background: var(--primary-light);
+  border-color: var(--primary-color);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 126, 172, 0.1);
 }
 
 #accessory-form input[type="checkbox"] {
-  accent-color: var(--secondary-text-color);
-  width: 1.1em;
-  height: 1.1em;
-  margin-right: 0.4em;
+  position: relative;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.2em; /* Even smaller width */
+  height: 1.2em; /* Even smaller height */
+  border: 1px solid #ddd; /* Thinner border */
+  border-radius: 3px; /* Smaller border radius */
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: white;
+  margin: 0; /* Remove any default margins */
+}
+
+#accessory-form input[type="checkbox"]:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+#accessory-form input[type="checkbox"]:checked::before {
+  content: "✓";
+  position: absolute;
+  color: white;
+  font-size: 0.7em; /* Smaller checkmark */
+  font-weight: bold;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 #save-accessory-types {
   display: block;
   width: 100%;
   margin-top: auto;
-  background: var(--secondary-text-color);
-  color: var(--opposite-text-color);
+  background: var(--primary-color);
+  color: white;
   border: none;
-  border-radius: 8px;
-  padding: 0.7em 0;
-  font-size: 1.08em;
+  border-radius: 8px; /* Smaller border radius */
+  padding: 0.5em 0; /* Further reduced padding */
+  font-size: 1em; /* Slightly smaller font */
   font-weight: 600;
   cursor: pointer;
-  /* transition: background 0.2s; */ /* Removed transition */
-  box-shadow: 0 2px 8px rgba(44,62,80,0.08);
-  margin-top: 1.2em;
-  margin-bottom: 0.2em;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 8px rgba(255, 126, 172, 0.18); /* Smaller shadow */
+  margin-top: 0.5em; /* Further reduced top margin */
+  margin-bottom: 0.1em; /* Reduced bottom margin */
 }
-#save-accessory-types:hover {
-  background: var(--secondary-color);
-  color: var(--secondary-text-color);
 
+#save-accessory-types:hover {
+  background: var(--primary-color);
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 126, 172, 0.25);
 }
 /* ====== END OF MODAL STYLES ====== */
 
