@@ -19,11 +19,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }    // Rentals data - now fetched from Firebase
     let rentals = [];    const statusClass = {
-        'Pending': 'pending',
-        'Ongoing': 'ongoing',
+        'Upcoming': 'pending',
+        'Pending': 'ongoing', 
         'Completed': 'delivered',
         'Overdue': 'declined'
-    };    // Fetch transactions from Firebase
+    };// Fetch transactions from Firebase
     async function fetchTransactions() {
         try {
             console.log("Fetching transactions from Firebase...");
@@ -39,12 +39,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 const currentDate = new Date();
                 const eventStartDate = data.eventStartDate ? new Date(data.eventStartDate) : null;
                 const eventEndDate = data.eventEndDate ? new Date(data.eventEndDate) : null;
-                
-                // Calculate rental status based on dates
-                let rentalStatus = 'Pending';
+                  // Calculate rental status based on dates
+                let rentalStatus = 'Upcoming';
                 if (eventStartDate && eventEndDate) {
                     if (currentDate < eventStartDate) {
-                        rentalStatus = 'Pending';
+                        rentalStatus = 'Upcoming';
                     } else if (currentDate >= eventStartDate && currentDate <= eventEndDate) {
                         rentalStatus = 'Ongoing';
                     } else if (currentDate > eventEndDate) {
