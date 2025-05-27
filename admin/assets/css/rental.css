@@ -776,127 +776,268 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2vh 0;
+  padding: 1vh 0;
+  overflow-x: hidden;
 }
-#customer-modal .modal-content,
-.customer-modal-content {
-  margin-top: 0;
-  top: unset;
-  transform: unset;
-  max-height: 96vh;
-  overflow-y: auto;
-  padding-top: 2.5rem;
-  scroll-padding-top: 1.5rem;
-  padding-right: 2.2rem; /* Add extra right padding for scrollbar */
-  box-sizing: border-box;
-  background-clip: padding-box;
-}
+
 #customer-modal .modal-content {
-  max-width: 700px; /* match wider modal */
-  min-width: 340px;
-  padding: 2.7rem 2.7rem 2rem 2.7rem;
-  background: linear-gradient(135deg, var(--sidebar-color) 80%, var(--secondary-color) 100%);
-  border: 2px solid var(--secondary-text-color);
-  box-shadow: 0 8px 32px rgba(44,62,80,0.18), 0 2px 16px rgba(44,62,80,0.10);
-  border-radius: 22px;
+  max-width: 650px;
+  min-width: 400px;
+  width: 90%;
+  background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 20px 60px rgba(255, 126, 179, 0.25), 0 8px 25px rgba(255, 126, 179, 0.15);
+  border-radius: 20px;
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  animation: popIn 0.2s;
-  overflow-y: visible;
-  max-height: 90%;
+  animation: modalSlideIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 92vh;
   margin: 0 auto;
-  position: relative;
-  top: 0;
-  transform: none;
-}
-#customer-modal h3 {
-  color: var(--secondary-text-color);
-  margin-bottom: 1.2em;
-  text-align: center;
-  font-size: 1.35rem;
-  letter-spacing: 0.5px;
-  font-weight: 700;
-}
-#customer-form label {
-  display: block;
-  font-size: 1.08em;
-  color: var(--text-color);
-  margin-bottom: 0.2em;
-  font-weight: 500;
-}
-#customer-form input[type="text"] {
-  width: 100%;
-  border: 1.5px solid var(--secondary-text-color);
-  border-radius: 8px;
-  padding: 0.35em 0.7em;
-  font-size: 1em;
-  background: #f8f8f8;
-  color: var(--neutral-text-color);
-  /* transition: border 0.2s; */ /* Removed transition */
-}
-#customer-form input[type="text"]:focus {
-  border: 2px solid var(--secondary-text-color);
-  outline: none;
-  background: #fff;
-}
-#customer-form input[readonly] {
-  background: #f5f5f5;
-  color: #888;
-  font-weight: 400;
-}
-#customer-form button[type="submit"] {
-  width: 100%;
-  margin-top: 1.2em;
-  background: var(--secondary-text-color);
-  color: var(--opposite-text-color);
-  border: none;
-  border-radius: 8px;
-  padding: 0.7em 0;
-  font-size: 1.08em;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(44,62,80,0.08);
-  letter-spacing: 0.5px;
-  /* transition: 0.2s, color 0.2s; */ /* Removed transition */
-}
-#customer-form button[type="submit"]:hover {
-  background: var(--secondary-color);
-  color: var (--secondary-text-color);
-}
-#customer-modal .close-modal.customer-close {
-  position: absolute;
-  top: 1.2rem;
-  right: 1.5rem;
-  z-index: 10;
-  font-size: 2.2em;
-  color: var(--secondary-text-color);
-  background: none;
-  border: none;
-  /* transition: color 0.2s; */ /* Removed transition */
-  cursor: pointer;
-  box-shadow: none;
-  padding: 0;
-}
-#customer-modal .close-modal.customer-close:hover {
-  color: #e74c3c;
 }
 
-@media (max-width: 600px) {
-  #customer-modal .close-modal.customer-close {
-    top: 1vh;
-    right: 2vw;
-    font-size: 2em;
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
-@media (max-width: 600px) {
+/* Modal Header */
+.modal-header {
+  background: linear-gradient(135deg, var(--primary-color) 0%, hsl(346, 98%, 74%) 100%);
+  color: white;
+  padding: 1.2rem 2rem;
+  border-radius: 18px 18px 0 0;
+  position: relative;
+  text-align: center;
+  margin: 0;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.modal-header .close-modal {
+  position: absolute;
+  top: 50%;
+  right: 1.5rem;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 0.2rem;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.modal-header .close-modal:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Modal Body */
+.modal-body {
+  padding: 2rem;
+  overflow-y: auto;
+  max-height: 70vh;
+}
+
+.modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary-color) 0%, hsl(346, 98%, 74%) 100%);
+  border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: rgba(255, 126, 179, 0.1);
+  border-radius: 10px;
+}
+
+/* Form Sections */
+.form-section {
+  margin-bottom: 1.8rem;
+  background: #fafafa;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+}
+
+.form-section:last-of-type {
+  margin-bottom: 0;
+}
+
+/* Form Rows */
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
+}
+
+/* Form Groups */
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* Form Inputs */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  background: white;
+  color: #2c3e50;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(255, 126, 179, 0.15);
+  transform: translateY(-1px);
+}
+
+.form-group input[readonly] {
+  background: #f8f9fa;
+  color: #6c757d;
+  border-color: #dee2e6;
+  cursor: not-allowed;
+}
+
+.form-group input[readonly]:focus {
+  transform: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Select Styling */
+.form-group select {
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23ff7eb3" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.2em;
+  cursor: pointer;
+}
+
+/* Expandable Fields */
+.expandable-field textarea {
+  min-height: 60px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+/* Submit Button */
+#customer-form button[type="submit"] {
+  width: 100%;
+  margin-top: 2rem;
+  background: linear-gradient(135deg, var(--primary-color) 0%, hsl(346, 98%, 74%) 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(255, 126, 179, 0.3);
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+#customer-form button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(255, 126, 179, 0.4);
+  background: linear-gradient(135deg, hsl(346, 98%, 74%) 0%, hsl(346, 95%, 70%) 100%);
+}
+
+#customer-form button[type="submit"]:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 20px rgba(255, 126, 179, 0.3);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
   #customer-modal .modal-content {
-    width: 97vw !important;
-    min-width: unset !important;
-    max-width: 99vw !important;
-    padding: 1.1rem 0.5rem 1.1rem 0.5rem !important;
+    width: 95%;
+    min-width: 320px;
+    margin: 1rem;
+    max-height: 90vh;
+  }
+  
+  .modal-header {
+    padding: 1rem 1.5rem;
+  }
+  
+  .modal-header h3 {
+    font-size: 1.2rem;
+  }
+  
+  .modal-body {
+    padding: 1.5rem;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .form-section {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #customer-modal .modal-content {
+    width: 98%;
+    margin: 0.5rem;
+  }
+  
+  .modal-header {
+    padding: 0.8rem 1rem;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+  
+  .form-section {
+    padding: 0.8rem;
   }
 }
 /* --- End Customer Modal Styles --- */
@@ -907,144 +1048,270 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  max-width: 700px; /* wider modal */
-  min-width: 340px;
+  max-width: 800px; /* wider modal for better layout */
+  min-width: 400px;
   width: 100%;
-  background: var(--sidebar-color);
-  border: 2.5px solid var(--secondary-text-color);
-  box-shadow: 0 8px 32px rgba(44,62,80,0.18), 0 2px 16px rgba(44,62,80,0.10);
-  border-radius: 22px;
-  padding: 2.7rem 2.7rem 2rem 2.7rem; /* more padding for a spacious look */
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 1px solid var(--primary-color); /* Pink border */
+  box-shadow: 0 20px 60px rgba(255, 126, 179, 0.15), 0 8px 25px rgba(255, 126, 179, 0.08); /* Pink shadow */
+  border-radius: 24px;
+  padding: 1rem 1.5rem 1.5rem 1.5rem; /* Further reduced top padding */
   position: relative;
-  animation: popIn 0.2s;
-  overflow-y: auto;
-  max-height: 96vh;
-  margin: 0 auto; /* Add margin to ensure content isn't cut at top */
-  position: relative;
-  top: 0; /* Reset top position */
-  transform: none; /* Remove transform */
-  overflow: hidden; /* Ensures children are clipped to border radius */
-  padding-top: 1.2rem;
-  min-height: 600px;
-  max-height: 98vh;
+  animation: modalSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow-x: hidden; /* Hide horizontal overflow */
+  overflow-y: hidden;
+  max-height: 95vh;
+  margin: 0 auto;
+  top: 0;
+  transform: none;
+  min-height: 650px;
 }
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .customer-modal-scroll {
   height: 100%;
-  max-height: 70vh;
+  max-height: 75vh;
   overflow-y: auto;
-  border-radius: 18px;
+  border-radius: 16px;
   background: transparent;
-  padding-right: 0.5em;
+  padding-right: 0.8em;
   padding-top: 0;
-  border-right: 12px solid transparent; /* Moves scrollbar to the right */
-  padding-left: 2em;
+  border-right: 12px solid transparent;
+  padding-left: 0.5em;
 }
+
 .customer-modal-scroll::-webkit-scrollbar {
-  width: 14px; /* wider scrollbar area */
+  width: 8px;
   background: transparent;
 }
+
 .customer-modal-scroll::-webkit-scrollbar-thumb {
-  background: var(--secondary-text-color);
-  border-radius: 18px;
-  border: 3px solid transparent; /* creates space around the thumb */
+  background: linear-gradient(180deg, var(--primary-color) 0%, hsl(346, 98%, 69%) 100%); /* Changed to pink theme */
+  border-radius: 10px;
+  border: 1px solid transparent;
   background-clip: padding-box;
 }
+
 .customer-modal-scroll::-webkit-scrollbar-track {
-  background: transparent;
-  margin-right: 4px; /* visually shifts the thumb right */
+  background: rgba(0,0,0,0.05);
+  border-radius: 10px;
+  margin: 4px 0;
 }
+
 .customer-modal-scroll::-webkit-scrollbar-corner {
   background: transparent;
 }
-.customer-form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.2em 1.2em;
-  width: 100%;
-  margin-top: 0;
-}
-.customer-form-row {
-  display: contents;
-}
-.customer-form-address,
-.customer-form-notes {
-  grid-column: 1 / span 2;
-}
-#customer-form button[type="submit"] {
-  grid-column: 1 / span 2;
-}
+/* Grid styles removed - now using flexbox layout */
 @media (max-width: 600px) {
   .customer-modal-content {
-    max-width: 99vw;
-    padding: 1.1rem 0.5rem 1.1rem 0.5rem !important;
+    max-width: 95vw;
+    min-width: 320px;
+    padding: 1rem 1rem 1rem 1rem; /* Reduced padding for mobile */
+    min-height: 500px; /* Reduced min-height for mobile */
+    margin: 10px;
+    max-height: 90vh;
   }
+  
+  .customer-form-header {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    margin-top: -1.5rem;
+    padding: 1.2rem 1.5rem;
+  }
+  
+  .customer-form-header h2 {
+    font-size: 1.4em;
+  }
+  
+  .customer-form-header .customer-close {
+    right: 1rem;
+    width: 36px;
+    height: 36px;
+    font-size: 1.6em;
+  }
+  
+  .customer-form-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
   .customer-form-grid {
-    grid-template-columns: 1fr;
-  }
-  .customer-form-address,
-  .customer-form-notes,
-  #customer-form button[type="submit"] {
-    grid-column: 1;
+    gap: 1.2em;
   }
 }
-/* --- End Two-Column Customer Modal Styles --- */
 
-/* --- Refined Customer Modal Styles --- */
+@media (max-width: 800px) {
+  .customer-form-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .customer-modal-content {
+    max-width: 90vw;
+    padding: 2rem 1.5rem 2.5rem 1.5rem;
+  }
+  
+  .customer-form-header {
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    margin-top: -2rem;
+  }
+}
 .customer-form-grid {
   display: flex;
   flex-direction: column;
-  gap: 1.1em;
+  gap: 1.5em;
+  padding-top: 1rem;
 }
+
 .customer-form-row {
   display: flex;
-  gap: 1.2em;
+  gap: 1.5em;
   width: 100%;
 }
+
 .customer-form-row label {
   flex: 1 1 0;
   display: flex;
   flex-direction: column;
-  font-size: 1.07em;
-  font-weight: 500;
-  color: var(--text-color);
+  font-size: 1.05em;
+  font-weight: 600;
+  color: #2c3e50;
+  position: relative;
 }
-.customer-form-address label,
-.customer-form-notes label {
+
+.customer-form-row label::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 28px;
+  bottom: 8px;
+  width: 3px;
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.customer-form-row label:focus-within::before {
+  opacity: 1;
+}
+
+/* Enhanced input styling */
+.customer-form-row input,
+.customer-form-row select,
+.customer-form-row textarea {
   width: 100%;
+  border: 2px solid #e1e8ed;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 1em;
+  background: #ffffff;
+  color: #2c3e50;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin-top: 0.5rem;
 }
+
+.customer-form-row input:focus,
+.customer-form-row select:focus,
+.customer-form-row textarea:focus {
+  border: 2px solid var(--secondary-text-color);
+  outline: none;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+  transform: translateY(-1px);
+}
+
+.customer-form-row input[readonly] {
+  background: #f8f9fa;
+  color: #6c757d;
+  border: 2px solid #e9ecef;
+  cursor: not-allowed;
+}
+
+.customer-form-row input[readonly]:focus {
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+/* Special styling for product code field - make it wider and multiline */
+#client-product-code {
+  min-height: 80px;
+  resize: vertical;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 1.4;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa !important;
+  color: #495057 !important;
+  border: 2px solid #e9ecef !important;
+  cursor: not-allowed;
+  font-size: 0.95em;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
 .customer-form-address,
 .customer-form-notes {
   width: 100%;
   display: flex;
 }
+
+.customer-form-address label,
+.customer-form-notes label {
+  width: 100%;
+}
+
 .customer-form-address input,
 .customer-form-notes textarea {
   width: 100%;
   min-width: 0;
-  font-size: 1.05em;
-  border-radius: 10px;
-  padding: 0.65em 1em;
-  border: 1.5px solid var(--secondary-text-color);
-  background: #f8f8f8;
-  color: var(--neutral-text-color);
+  font-size: 1em;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--primary-color);
+  background: #ffffff;
+  color: #2c3e50;
   margin-bottom: 0.1em;
-  box-shadow: 0 1px 4px rgba(44,62,80,0.06);
+  box-shadow: 0 2px 8px rgba(255, 126, 179, 0.04);
   resize: vertical;
+  transition: all 0.3s ease;
 }
+
 .customer-form-notes textarea {
-  min-height: 2.5em;
-  max-height: 6em;
+  min-height: 80px;
+  max-height: 120px;
+  line-height: 1.5;
+}
+
+.customer-form-address input:focus,
+.customer-form-notes textarea:focus {
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 4px 20px rgba(255, 126, 179, 0.15);
+  transform: translateY(-1px);
 }
 .customer-modal-title {
   text-align: center;
   font-size: 1.35rem;
   font-weight: 700;
-  margin-bottom: 1.2em;
+  margin-bottom: 0.5rem; /* Further reduced margin */
   letter-spacing: 0.5px;
   position: relative;
   color: var(--secondary-text-color);
   background: var(--sidebar-color);
-  padding: 1rem 0;
+  padding: 0.4rem 0; /* Further reduced padding to make header thinner */
   z-index: 2;
 }
 .customer-modal-title-row {
@@ -1072,7 +1339,7 @@
   z-index: 2;
 }
 .customer-close:hover {
-  color: #e74c3c;
+  color: var(--primary-color);
 }
 @media (max-width: 800px) {
   .customer-form-row {
@@ -1086,67 +1353,109 @@
 #customer-form label {
   display: flex;
   flex-direction: column;
-  font-size: 1.08em;
-  color: var(--text-color);
-  margin-bottom: 0.2em;
-  font-weight: 500;
+  font-size: 1.05em;
+  color: #2c3e50;
+  margin-bottom: 0.3em;
+  font-weight: 600;
 }
+
 #customer-form input[type="date"],
 #customer-form select,
 #customer-form input[type="number"] {
   width: 100%;
-  border: 1.5px solid var(--secondary-text-color);
-  border-radius: 8px;
-  padding: 0.35em 0.7em;
-  margin-bottom: 1em;
+  border: 2px solid var(--primary-color);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5em;
+  margin-top: 0.5rem;
   font-size: 1em;
-  background: #f8f8f8;
-  color: #888;
-  /* transition: border 0.2s; */ /* Removed transition */
+  background: #ffffff;
+  color: #2c3e50;
+  transition: all 0.3s ease;
   font-weight: 400;
+  box-shadow: 0 2px 8px rgba(255, 126, 179, 0.04);
 }
+
 #customer-form input[type="date"]:focus,
 #customer-form select:focus,
 #customer-form input[type="number"]:focus {
-  border: 2px solid var(--secondary-text-color);
+  border: 2px solid var(--primary-color);
   outline: none;
-  background: #fff;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(255, 126, 179, 0.15);
+  transform: translateY(-1px);
 }
+
 #customer-form select {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-image: url('data:image/svg+xml;utf8,<svg fill="%23808080" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23ff7eb3" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
   background-repeat: no-repeat;
-  background-position: right 0.8em center;
+  background-position: right 1rem center;
   background-size: 1.2em;
   font-weight: 400;
-  color: #888;
+  color: #2c3e50;
+  cursor: pointer;
 }
+
+#customer-form select:hover {
+  border-color: var(--primary-color);
+}
+
 #customer-form input[readonly],
 #customer-form input[readonly]:focus {
-  background: #f5f5f5;
-  color: #888;
+  background: #f8f9fa;
+  color: #6c757d;
   font-weight: 400;
-  border: 1.5px solid var(--secondary-text-color);
+  border: 2px solid #e9ecef;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
+
 #customer-form input[type="number"]::-webkit-inner-spin-button,
 #customer-form input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 #customer-form input[type="number"] {
   appearance: textfield;
   -moz-appearance: textfield;
 }
 
-/* Center the Rental Fee label text */
+/* Enhanced styling for specific fields */
 label:has(#client-rental-fee) {
   text-align: center;
 }
-/* Center the text inside the Rental Fee input field */
+
 input#client-rental-fee {
   text-align: center;
+  font-weight: 600;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+/* Special styling for text inputs */
+#customer-form input[type="text"] {
+  width: 100%;
+  border: 2px solid #e1e8ed;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 1em;
+  background: #ffffff;
+  color: #2c3e50;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin-top: 0.5rem;
+}
+
+#customer-form input[type="text"]:focus {
+  border: 2px solid var(--secondary-text-color);
+  outline: none;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+  transform: translateY(-1px);
 }
 /* --- End Enhanced Customer Modal New Fields --- */
 
@@ -1184,7 +1493,8 @@ input#client-rental-fee {
   .customer-modal-content, #customer-modal .modal-content {
     max-width: 95vw;
     margin: 1rem auto;
-    padding: 1.5rem 1rem !important;
+    padding: 0.8rem 1rem !important; /* Further reduced padding for mobile */
+    overflow-x: hidden; /* Ensure horizontal overflow is hidden on mobile */
   }
 }
 @media (max-width: 600px) {
@@ -1247,33 +1557,52 @@ input#client-rental-fee {
   align-items: center;
   justify-content: center;
   position: relative;
-  margin-bottom: 1.2em;
+  margin-bottom: 2rem;
   margin-top: 0;
+  background: var(--secondary-text-color);
+  padding: 1.5rem 2rem;
+  border-radius: 16px;
+  margin-left: -2.5rem;
+  margin-right: -2.5rem;
+  margin-top: -2rem;
 }
+
 .customer-form-header h2 {
   flex: 1;
   text-align: center;
   margin: 0;
-  /* margin-top: 5%; */
-  font-size: 1.4em;
+  font-size: 1.6em;
   font-weight: 700;
-  color: var(--secondary-text-color);
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  letter-spacing: 0.5px;
 }
+
 .customer-form-header .customer-close {
   position: absolute;
-  right: 0.5em;
+  right: 1.5rem;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 2em;
+  font-size: 1.8em;
   cursor: pointer;
-  color: var(--secondary-text-color);
-  background: none;
+  color: #ffffff;
+  background: rgba(255,255,255,0.15);
   border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 2;
-  /* transition: color 0.2s; */ /* Removed transition */
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
 }
+
 .customer-form-header .customer-close:hover {
-  color: #e74c3c;
+  background: rgba(255,255,255,0.25);
+  transform: translateY(-50%) rotate(90deg);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 /* --- End Customer Form Header Styles --- */
 

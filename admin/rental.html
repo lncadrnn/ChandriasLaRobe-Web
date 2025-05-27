@@ -266,181 +266,172 @@
         </div>
 
         <!-- Customer Form Modal -->
+        <!-- Customer Modal -->
         <div id="customer-modal" class="modal" style="display: none">
-            <div class="customer-modal-content customer-modal-flex">
-                <span class="close-modal customer-close" title="Close">
-                    <i class="bx bx-x"></i>
-                </span>
-                <div class="customer-modal-scroll">
-                    <form
-                        id="customer-form"
-                        autocomplete="off"
-                        class="customer-form-grid"
-                    >
-                        <div class="customer-form-header">
-                            <h2>Rental Information</h2>
-                        </div>
-                        <div class="customer-form-row">
-                            <label
-                                >Client Full Name<br /><input
-                                    type="text"
-                                    id="client-full-name"
-                                    value=""
-                                    required
-                            /></label>
-                            <label
-                                >Client Contact Number<input
-                                    type="text"
-                                    id="client-contact"
-                                    value=""
-                            /></label>
-                        </div>
-                        <div class="customer-form-row">
-                            <label
-                                >Additional<br /><input
-                                    type="text"
-                                    id="client-additional-code"
-                                    readonly
-                            /></label>
-                            <label
-                                >Selected Product<br /><input
-                                    type="text"
-                                    id="client-product-code"
-                                    readonly
-                            /></label>
-                        </div>
-                        <div class="customer-form-row">
-                            <label
-                                >Rental Type<br />
-                                <select id="rental-type" required>
-                                    <option value="">Select Rental Type</option>
-                                    <option value="Open Rental">
-                                        Open Rental
-                                    </option>
-                                    <option value="Fixed Rental">
-                                        Fixed Rental
-                                    </option>
-                                </select>
-                            </label>
-                            <label
-                                >Event Type<br />
-                                <select id="event-type" required>
-                                    <option value="">Select Event Type</option>
-                                    <option value="Sagala">Sagala</option>
-                                    <option value="Grad Ball">Grad Ball</option>
-                                    <option value="Debut">Debut</option>
-                                    <option value="Prom">Prom</option>
-                                    <option value="Other Indoor Events">
-                                        Other Indoor Events
-                                    </option>
-                                    <option value="Other Outdoor Events">
-                                        Other Outdoor Events
-                                    </option>
-                                </select>
-                            </label>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Rental Information</h3>
+                    <span class="close-modal customer-close" title="Close">
+                        <i class="bx bx-x"></i>
+                    </span>
+                </div>
+                <div class="modal-body">
+                    <form id="customer-form" autocomplete="off">
+                        <!-- Client Information -->
+                        <div class="form-section">
+                            <div class="form-group">
+                                <label for="client-full-name">Client Full Name</label>
+                                <input type="text" id="client-full-name" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="client-contact">Client Contact Number</label>
+                                <input type="text" id="client-contact" />
+                            </div>
                         </div>
 
-                        <!-- Row for Open Rental Dates, conditionally shown - MOVED UP -->
-                        <div class="customer-form-row" id="open-rental-dates-wrapper" style="display: none;">
-                            <label>
-                                Event Start Date<br /><input
-                                    type="date"
-                                    id="event-start-date"
-                            /></label>
-                            <label>
-                                Event End Date<br /><input
-                                    type="date"
-                                    id="event-end-date"
-                            /></label>
+                        <!-- Product Information -->
+                        <div class="form-section">
+                            <div class="form-group">
+                                <label for="client-product-code">Selected Products</label>
+                                <div class="expandable-field">
+                                    <textarea id="client-product-code" readonly rows="2" placeholder="No products selected"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="client-additional-code">Additional Items</label>
+                                <div class="expandable-field">
+                                    <textarea id="client-additional-code" readonly rows="1" placeholder="No additional items"></textarea>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Row for Fixed Event Date and Rental Fee -->
-                        <div class="customer-form-row" id="fixed-details-row"> 
-                            <label id="fixed-event-date-wrapper"> 
-                                Event Date<br /><input type="date" id="fixed-event-date" />
-                            </label>
-                            <label id="rental-fee-wrapper"> 
-                                Rental Fee<br /><input type="text" id="client-rental-fee" readonly />
-                            </label>
+                        <!-- Rental Details -->
+                        <div class="form-section">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="rental-type">Rental Type</label>
+                                    <select id="rental-type" required>
+                                        <option value="">Select Rental Type</option>
+                                        <option value="Open Rental">Open Rental</option>
+                                        <option value="Fixed Rental">Fixed Rental</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="event-type">Event Type</label>
+                                    <select id="event-type" required>
+                                        <option value="">Select Event Type</option>
+                                        <option value="Sagala">Sagala</option>
+                                        <option value="Grad Ball">Grad Ball</option>
+                                        <option value="Debut">Debut</option>
+                                        <option value="Prom">Prom</option>
+                                        <option value="Other Indoor Events">Other Indoor Events</option>
+                                        <option value="Other Outdoor Events">Other Outdoor Events</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="customer-form-row">
-                            <label
-                                >Payment Method<br />
-                                <select id="payment-method" required>
-                                    <option value="">Select Method</option>
-                                    <option value="Cash">Cash</option>
-                                    <option value="Gcash">GCash</option>
-                                    <option value="Maya">Maya</option>
-                                    <option value="GoTyme">GoTyme</option>
-                                </select>
-                            </label>
-                            <label
-                                >Payment Type<br />
-                                <select id="payment-type" required>
-                                    <option value="">
-                                        Select Payment Type
-                                    </option>
-                                    <option value="Full Payment">Full Payment</option>
-                                    <option value="Down Payment">Down Payment</option>
-                                </select>
-                            </label>
+                        <!-- Date Section -->
+                        <div class="form-section" id="open-rental-dates-wrapper" style="display: none;">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="event-start-date">Event Start Date</label>
+                                    <input type="date" id="event-start-date" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="event-end-date">Event End Date</label>
+                                    <input type="date" id="event-end-date" />
+                                </div>
+                            </div>
                         </div>
-                        <div class="customer-form-row">
-                            <label
-                                >Total Payment<br /><input
-                                    type="number"
-                                    id="total-payment"
-                                    min="0"
-                                    step="0.01"
-                                    required
-                            /></label>
-                            <label
-                                >Remaining Balance<br /><input
-                                    type="number"
-                                    id="remaining-balance"
-                                    readonly
-                            /></label>
+
+                        <div class="form-section" id="fixed-details-row">
+                            <div class="form-row">
+                                <div class="form-group" id="fixed-event-date-wrapper">
+                                    <label for="fixed-event-date">Event Date</label>
+                                    <input type="date" id="fixed-event-date" />
+                                </div>
+                                <div class="form-group" id="rental-fee-wrapper">
+                                    <label for="client-rental-fee">Rental Fee</label>
+                                    <input type="text" id="client-rental-fee" readonly />
+                                </div>
+                            </div>
                         </div>
-                        <div class="customer-form-row">
-                            <label style="flex: 1 1 100%"
-                                >Reference No.<br /><input
-                                    type="text"
-                                    id="reference-no"
-                                    style="width: 100%"
-                            /></label>
+
+                        <!-- Payment Information -->
+                        <div class="form-section">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="payment-method">Payment Method</label>
+                                    <select id="payment-method" required>
+                                        <option value="">Select Method</option>
+                                        <option value="Cash">Cash</option>
+                                        <option value="Gcash">GCash</option>
+                                        <option value="Maya">Maya</option>
+                                        <option value="GoTyme">GoTyme</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="payment-type">Payment Type</label>
+                                    <select id="payment-type" required>
+                                        <option value="">Select Payment Type</option>
+                                        <option value="Full Payment">Full Payment</option>
+                                        <option value="Down Payment">Down Payment</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                        <div class="customer-form-row">
-                            <label
-                                >Region<br />
-                                <select id="client-region" required></select>
-                            </label>
-                            <label
-                                >City<br />
-                                <select id="client-city" required></select>
-                            </label>
+
+                        <div class="form-section">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="total-payment">Total Payment</label>
+                                    <input type="number" id="total-payment" min="0" step="0.01" required />
+                                </div>
+                                <div class="form-group">
+                                    <label for="remaining-balance">Remaining Balance</label>
+                                    <input type="number" id="remaining-balance" readonly />
+                                </div>
+                            </div>
                         </div>
-                        <div class="customer-form-row customer-form-address">
-                            <label
-                                >Address<br /><input
-                                    type="text"
-                                    id="client-address"
-                                    required
-                                    value=""
-                            /></label>
+
+                        <div class="form-section">
+                            <div class="form-group">
+                                <label for="reference-no">Reference Number</label>
+                                <input type="text" id="reference-no" />
+                            </div>
                         </div>
-                        <div class="customer-form-row customer-form-notes">
-                            <label
-                                >Additional Notes / Repair<br /><textarea
-                                    id="client-notes"
-                                    rows="2"
-                                >
-</textarea
-                                >
-                            </label>
+
+                        <!-- Address Information -->
+                        <div class="form-section">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="client-region">Region</label>
+                                    <select id="client-region" required></select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="client-city">City</label>
+                                    <select id="client-city" required></select>
+                                </div>
+                            </div>
                         </div>
+
+                        <div class="form-section">
+                            <div class="form-group">
+                                <label for="client-address">Address</label>
+                                <input type="text" id="client-address" required />
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="form-group">
+                                <label for="client-notes">Additional Notes / Repair</label>
+                                <textarea id="client-notes" rows="2" placeholder="Enter any additional notes or repair instructions"></textarea>
+                            </div>
+                        </div>
+
                         <button type="submit" id="customer-form-submit">
-                            Submit
+                            Submit Rental
                         </button>
                     </form>
                 </div>

@@ -1062,7 +1062,7 @@ $(document).ready(function () {
             groupedProducts[p.code][p.size] += p.quantity;
         });
 
-        // Build the summary string using code instead of name
+        // Build the summary string using code instead of name with comma separation
         const productSummary = Object.entries(groupedProducts)
             .map(([code, sizes]) => {
                 const sizeDetails = Object.entries(sizes)
@@ -1070,7 +1070,7 @@ $(document).ready(function () {
                     .join(", ");
                 return `${code} (${sizeDetails})`;
             })
-            .join("; ");
+            .join(",\n");
 
         $("#client-product-code").val(productSummary);
 
