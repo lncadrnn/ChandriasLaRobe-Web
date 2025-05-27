@@ -600,3 +600,186 @@ body {
 .event-rental-type.open {
     border-left: 3px dashed var(--primary-color);
 }
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(3px);
+    overflow: hidden;
+}
+
+.modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    max-width: 450px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    transform: scale(0.8) translateY(-50px);
+    transition: all 0.3s ease;
+    position: relative;
+    margin: auto;
+}
+
+.modal.show .modal-content {
+    transform: scale(1) translateY(0);
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+/* Responsive modal adjustments */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        max-width: none;
+        margin: 20px;
+        max-height: calc(100vh - 40px);
+    }
+    
+    .modal-header {
+        padding: 15px 20px 10px;
+    }
+    
+    .modal-body {
+        padding: 15px 20px;
+    }
+    
+    .modal-footer {
+        padding: 10px 20px 15px;
+    }
+}
+
+/* Ensure modal is always centered */
+@media (max-height: 600px) {
+    .modal-content {
+        max-height: 90vh;
+    }
+}
+
+.modal-header {
+    padding: 20px 25px 15px;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.close-modal {
+    font-size: 28px;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    line-height: 1;
+    padding: 0;
+    background: none;
+    border: none;
+}
+
+.close-modal:hover {
+    color: #666;
+}
+
+.modal-body {
+    padding: 20px 25px;
+}
+
+.modal-body p {
+    margin: 0 0 15px 0;
+    color: #666;
+    font-size: 16px;
+}
+
+.event-details-modal {
+    background: var(--gray-100);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.event-details-modal div {
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.event-details-modal div:last-child {
+    margin-bottom: 0;
+}
+
+.event-details-modal strong {
+    color: #333;
+    font-weight: 600;
+}
+
+.modal-footer {
+    padding: 15px 25px 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    border-top: 1px solid var(--gray-200);
+}
+
+.btn-cancel, .btn-delete {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 80px;
+}
+
+.btn-cancel {
+    background: var(--gray-200);
+    color: #666;
+}
+
+.btn-cancel:hover {
+    background: var(--gray-300);
+    color: #333;
+}
+
+.btn-delete {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+.btn-delete:active {
+    transform: translateY(0);
+}

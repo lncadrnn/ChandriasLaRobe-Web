@@ -3,9 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
         sidebar = body.querySelector(".sidebar"),
         toggle = body.querySelector(".toggle"),
         modeSwitch = body.querySelector(".toggle-switch"),
-        modeText = body.querySelector(".mode-text");
-
-    // --- Restore sidebar state from localStorage ---
+        modeText = body.querySelector(".mode-text");    // --- Restore sidebar state from localStorage ---
     if (localStorage.getItem("admin-sidebar-closed") === "true") {
         sidebar.classList.add("close");
     }
@@ -135,17 +133,86 @@ document.addEventListener("DOMContentLoaded", () => {
                     }, 100);
                 }
             });
-            
-            document.getElementById('prevMonth').addEventListener('click', () => this.changeMonth(-1));
+              document.getElementById('prevMonth').addEventListener('click', () => this.changeMonth(-1));
             document.getElementById('nextMonth').addEventListener('click', () => this.changeMonth(1));
             document.getElementById('saveEvent').addEventListener('click', () => this.saveEvent());
             
             // Add clear events listener
             document.getElementById('clearEvents').addEventListener('click', () => {
-                if (confirm('Are you sure you want to delete all events? This cannot be undone.')) {
-                    this.events = {};
-                    localStorage.removeItem('calendarEvents');
-                    this.render();
+                showClearAllModal();
+            });
+
+            // Add rental type change listener
+            document.getElementById('eventType').addEventListener('change', (e) => {
+                const rentalType = e.target.value;
+                const openRentalDates = document.querySelectorAll('.open-rental-dates');
+                const fixedRentalDate = document.querySelector('.fixed-rental-date');
+                
+                // Hide all date fields first
+                openRentalDates.forEach(field => field.style.display = 'none');
+                if (fixedRentalDate) fixedRentalDate.style.display = 'none';
+                
+                // Show appropriate date fields based on selection
+                if (rentalType === 'open') {
+                    openRentalDates.forEach(field => field.style.display = 'block');
+                } else if (rentalType === 'fixed') {
+                    if (fixedRentalDate) fixedRentalDate.style.display = 'block';
+                }
+            });
+
+            // Add modal event listeners
+            document.getElementById('confirmDelete').addEventListener('click', () => {
+                const modal = document.getElementById('deleteModal');
+                if (modal.eventToDelete) {
+                    confirmDeleteEvent(modal.eventToDelete);
+                }
+            });            document.getElementById('cancelDelete').addEventListener('click', () => {
+                hideDeleteModal();
+            });
+
+            // Close modal when clicking outside
+            document.getElementById('deleteModal').addEventListener('click', (e) => {
+                if (e.target.id === 'deleteModal') {
+                    hideDeleteModal();
+                }
+            });            // Close modal with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const deleteModal = document.getElementById('deleteModal');
+                    const clearAllModal = document.getElementById('clearAllModal');
+                    if (deleteModal.style.display === 'block') {
+                        hideDeleteModal();
+                    } else if (clearAllModal.style.display === 'block') {
+                        hideClearAllModal();
+                    }
+                }
+            });
+
+            // Add clear all modal event listeners
+            document.getElementById('confirmClearAll').addEventListener('click', () => {
+                confirmClearAllEvents();
+            });
+
+            document.getElementById('cancelClearAll').addEventListener('click', () => {
+                hideClearAllModal();
+            });
+
+            // Add event listener to all close buttons (for both modals)
+            document.querySelectorAll('.close-modal').forEach(closeBtn => {
+                closeBtn.addEventListener('click', (e) => {
+                    const modal = e.target.closest('.modal');
+                    if (modal.id === 'deleteModal') {
+                        hideDeleteModal();
+                    } else if (modal.id === 'clearAllModal') {
+                        hideClearAllModal();
+                    }
+                });
+            });
+
+            // Close modal when clicking outside (for both modals)
+            document.getElementById('clearAllModal').addEventListener('click', (e) => {
+                if (e.target.id === 'clearAllModal') {
+                    hideClearAllModal();
                 }
             });
 
@@ -336,14 +403,52 @@ document.addEventListener("DOMContentLoaded", () => {
                 this.endDateInput.value = this.selectedEndDate;
             }
             this.render();
-        },
-        saveEvent() {
+        },        saveEvent() {
             const title = document.getElementById('eventTitle').value;
             const description = document.getElementById('eventDescription').value;
             const type = document.getElementById('eventType').value;
             const color = document.getElementById('eventColor').value;
             
-            if (!title || !this.selectedStartDate) return;
+            if (!title || !type) {
+                alert('Please fill in Transaction Code and Rental Type');
+                return;
+            }
+
+            let startDate, endDate;
+              // Get dates based on rental type
+            if (type === 'open') {
+                const startDateInput = document.getElementById('eventStartDate');
+                const endDateInput = document.getElementById('eventEndDate');
+                startDate = startDateInput.value;
+                endDate = endDateInput.value;
+                
+                if (!startDate || !endDate) {
+                    alert('Please select both Start Date and End Date for Open Rental');
+                    return;
+                }
+            } else if (type === 'fixed') {
+                const fixedDateInput = document.getElementById('eventFixedDate');
+                const selectedDate = fixedDateInput.value;
+                
+                if (!selectedDate) {
+                    alert('Please select Event Date for Fixed Rental');
+                    return;
+                }
+                
+                // For fixed rental, create a 3-day period: day before, selected day, day after
+                const centerDate = new Date(selectedDate);
+                const startDateObj = new Date(centerDate);
+                startDateObj.setDate(centerDate.getDate() - 1); // Day before
+                const endDateObj = new Date(centerDate);
+                endDateObj.setDate(centerDate.getDate() + 1); // Day after
+                
+                startDate = this.formatDate(startDateObj);
+                endDate = this.formatDate(endDateObj);
+            }
+
+            // Update calendar's selected dates
+            this.selectedStartDate = startDate;
+            this.selectedEndDate = endDate;
 
             // If editing, remove the old event first from all dates
             if (this.editingEvent) {
@@ -370,13 +475,11 @@ document.addEventListener("DOMContentLoaded", () => {
                        color, // fallback to color input value
                 startDate: this.selectedStartDate,
                 endDate: this.selectedEndDate || this.selectedStartDate
-            };
-
-            // Add event to all days in the range
+            };            // Add event to all days in the range
             let currentDate = new Date(this.selectedStartDate);
-            const endDate = new Date(this.selectedEndDate || this.selectedStartDate);
+            const endDateObj = new Date(this.selectedEndDate || this.selectedStartDate);
             
-            while (currentDate <= endDate) {
+            while (currentDate <= endDateObj) {
                 const dateStr = this.formatDate(currentDate);
                 if (!this.events[dateStr]) {
                     this.events[dateStr] = [];
@@ -385,16 +488,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 currentDate.setDate(currentDate.getDate() + 1);
             }
             localStorage.setItem('calendarEvents', JSON.stringify(this.events));
-            
-            // Reset form and calendar state
+              // Reset form and calendar state
             document.getElementById('eventTitle').value = '';
             document.getElementById('eventDescription').value = '';
             document.getElementById('eventType').value = '';
             document.getElementById('eventColor').value = '#ff9a9e';
+            
+            // Reset all date fields
+            document.getElementById('eventStartDate').value = '';
+            document.getElementById('eventEndDate').value = '';
+            document.getElementById('eventFixedDate').value = '';
+            
+            // Hide all date field groups
+            const openRentalDates = document.querySelectorAll('.open-rental-dates');
+            const fixedRentalDate = document.querySelector('.fixed-rental-date');
+            openRentalDates.forEach(field => field.style.display = 'none');
+            if (fixedRentalDate) fixedRentalDate.style.display = 'none';
+            
             this.selectedStartDate = null;
             this.selectedEndDate = null;
-            this.startDateInput.value = '';
-            this.endDateInput.value = '';
             this.editingEvent = null;
             
             // Reset save button text
@@ -575,15 +687,39 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         return marker;
-    }
-    function editEvent(event) {
+    }    function editEvent(event) {
         // Populate form with event details
         document.getElementById('eventTitle').value = event.title;
         document.getElementById('eventDescription').value = event.description || '';
         document.getElementById('eventType').value = event.type || '';
-        document.getElementById('eventStartDate').value = event.startDate;
-        document.getElementById('eventEndDate').value = event.endDate;
         document.getElementById('eventColor').value = event.color || '#ff9a9e';
+        
+        // Show/hide appropriate date fields based on rental type
+        const openRentalDates = document.querySelectorAll('.open-rental-dates');
+        const fixedRentalDate = document.querySelector('.fixed-rental-date');
+        
+        // Hide all fields first
+        openRentalDates.forEach(field => field.style.display = 'none');
+        if (fixedRentalDate) fixedRentalDate.style.display = 'none';
+        
+        if (event.type === 'open') {
+            // Show Open Rental date fields and populate them
+            openRentalDates.forEach(field => field.style.display = 'block');
+            document.getElementById('eventStartDate').value = event.startDate;
+            document.getElementById('eventEndDate').value = event.endDate;
+            document.getElementById('eventFixedDate').value = '';        } else if (event.type === 'fixed') {
+            // Show Fixed Rental date field and populate it
+            if (fixedRentalDate) fixedRentalDate.style.display = 'block';
+            
+            // For fixed rental, calculate the center date from the 3-day span
+            const startDateObj = new Date(event.startDate);
+            const centerDate = new Date(startDateObj);
+            centerDate.setDate(startDateObj.getDate() + 1); // Center date is start + 1 day
+            
+            document.getElementById('eventFixedDate').value = this.formatDate(centerDate);
+            document.getElementById('eventStartDate').value = '';
+            document.getElementById('eventEndDate').value = '';
+        }
         
         // Update the selected dates in the calendar object
         calendar.selectedStartDate = event.startDate;
@@ -599,25 +735,87 @@ document.addEventListener("DOMContentLoaded", () => {
         // Update the sidebar title to 'Edit Event'
         const sidebarTitle = document.querySelector('.event-sidebar h3');
         sidebarTitle.textContent = 'Edit Event';
+    }    function deleteEvent(event) {
+        showDeleteModal(event);
     }
 
-    function deleteEvent(event) {
-        if (confirm('Are you sure you want to delete this event?')) {
-            // Remove event from all dates
-            for (const dateStr in calendar.events) {
-                calendar.events[dateStr] = calendar.events[dateStr].filter(e => 
-                    e.title !== event.title || e.startDate !== event.startDate
-                );
-                // Remove date key if no events left
-                if (calendar.events[dateStr].length === 0) {
-                    delete calendar.events[dateStr];
-                }
-            }
-            
-            // Save to localStorage and refresh
-            localStorage.setItem('calendarEvents', JSON.stringify(calendar.events));
-            calendar.render();
+    function showDeleteModal(event) {
+        const modal = document.getElementById('deleteModal');
+        const modalEventTitle = document.getElementById('modalEventTitle');
+        const modalEventType = document.getElementById('modalEventType');
+        const modalEventDates = document.getElementById('modalEventDates');
+        const modalEventDescription = document.getElementById('modalEventDescription');
+        
+        // Populate modal with event details
+        modalEventTitle.textContent = event.title;
+        modalEventType.textContent = event.type === 'fixed' ? 'Fixed Rental' : 'Open Rental';
+        
+        // Format date range
+        const startDate = new Date(event.startDate);
+        const endDate = new Date(event.endDate);
+        if (event.type === 'fixed') {
+            modalEventDates.textContent = `${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`;
+        } else {
+            modalEventDates.textContent = `${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`;
         }
+        
+        modalEventDescription.innerHTML = event.description ? 
+            `<strong>Description:</strong> ${event.description}` : '';
+          // Show modal
+        document.body.classList.add('modal-open');
+        modal.style.display = 'block';
+        setTimeout(() => modal.classList.add('show'), 10);
+        
+        // Store event reference for deletion
+        modal.eventToDelete = event;
+    }
+
+    function confirmDeleteEvent(event) {
+        // Remove event from all dates
+        for (const dateStr in calendar.events) {
+            calendar.events[dateStr] = calendar.events[dateStr].filter(e => 
+                e.title !== event.title || e.startDate !== event.startDate
+            );
+            // Remove date key if no events left
+            if (calendar.events[dateStr].length === 0) {
+                delete calendar.events[dateStr];
+            }
+        }
+        
+        // Save to localStorage and refresh
+        localStorage.setItem('calendarEvents', JSON.stringify(calendar.events));
+        calendar.render();
+        hideDeleteModal();
+    }    function hideDeleteModal() {
+        const modal = document.getElementById('deleteModal');
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            modal.eventToDelete = null;
+            document.body.classList.remove('modal-open');
+        }, 300);
+    }    function showClearAllModal() {
+        const modal = document.getElementById('clearAllModal');
+        
+        // Show modal
+        document.body.classList.add('modal-open');
+        modal.style.display = 'block';
+        setTimeout(() => modal.classList.add('show'), 10);
+    }
+
+    function confirmClearAllEvents() {
+        // Clear all events
+        calendar.events = {};
+        localStorage.removeItem('calendarEvents');
+        calendar.render();
+        hideClearAllModal();
+    }    function hideClearAllModal() {
+        const modal = document.getElementById('clearAllModal');
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.body.classList.remove('modal-open');
+        }, 300);
     }
 
     function formatEventTime(event) {
