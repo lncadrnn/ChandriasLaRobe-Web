@@ -29,7 +29,7 @@ $(document).ready(function () {
         if (user && !isLoggingIn) {
             // Delay just a bit to allow UI elements to load before redirecting
             setTimeout(() => {
-                window.location.href = "./dashboard.html"; // Redirect to profile page if already logged in
+                window.location.href = "/admin/dashboard.html"; // Redirect to profile page if already logged in
             }, 800);
         }
     });
@@ -128,7 +128,7 @@ $(document).ready(function () {
 
             // Delay redirect to allow toast to show
             setTimeout(() => {
-                window.location.href = "./dashboard.html"; // Redirect to dashboard
+                window.location.href = "/admin/dashboard.html"; // Redirect to dashboard
             }, 1300);
             //
         } catch (error) {
