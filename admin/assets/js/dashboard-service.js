@@ -182,17 +182,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 products = `<tr><td colspan="3" style="text-align:center;color:#888;">No booked items found for this appointment.</td></tr>`;
             }
 
-            const total = cartItems.reduce((sum, i) => sum + (Number(i.price) * (i.quantity || 1)), 0);
-
-            // Ensure all fields are filled (use empty string if undefined)
+            const total = cartItems.reduce((sum, i) => sum + (Number(i.price) * (i.quantity || 1)), 0);            // Ensure all fields are filled (use empty string if undefined)
             const customerName = data.customerName || '';
             const customerEmail = data.customerEmail || '';
             const customerContact = data.customerContact || '';
             const checkoutDate = data.checkoutDate || '';
             const checkoutTime = data.checkoutTime || '';
-            const checkoutDuration = data.checkoutDuration
-                ? data.checkoutDuration + ' Day' + (data.checkoutDuration > 1 ? 's' : '')
-                : '';
             const customerRequest = data.customerRequest || '';
 
             details.innerHTML = `
@@ -203,7 +198,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div><b>Phone:</b> ${customerContact}</div>
                         <div><b>Date:</b> ${checkoutDate}</div>
                         <div><b>Time:</b> ${checkoutTime}</div>
-                        <div><b>Duration:</b> ${checkoutDuration}</div>
                         <div><b>Request / Notes:</b> ${customerRequest}</div>
                     </div>
                     <div class="appointment-modal-table">
@@ -229,9 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             `;
 
-            modal.classList.add('visible');
-
-            // Proceed to Transaction handler
+            modal.classList.add('visible');            // Proceed to Transaction handler
             modal.querySelector('.proceed-transaction').onclick = () => {
                 sessionStorage.setItem('appointmentData', JSON.stringify({
                     customerName: data.customerName,
@@ -239,8 +231,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     customerContact: data.customerContact,
                     eventDate: data.checkoutDate,
                     appointmentTime: data.checkoutTime,
-                    duration: data.checkoutDuration,
-                    specialRequest: data.customerRequest || '',
                     appointmentId: id,
                     cartItems: cartItems,
                     totalAmount: total

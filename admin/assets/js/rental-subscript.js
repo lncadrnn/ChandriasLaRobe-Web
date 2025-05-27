@@ -641,6 +641,92 @@ $(document).ready(function () {
     // --- Initialize cart summary on load ---
     updateCartSummary();
 
+    // === APPOINTMENT FLOW FUNCTIONS ===
+    // Check if the page was loaded from an appointment flow
+    function checkAppointmentFlow() {
+        const appointmentData = sessionStorage.getItem('appointmentData');
+        if (appointmentData) {
+            try {
+                const data = JSON.parse(appointmentData);
+                console.log('Appointment data found:', data);
+                
+                // Pre-populate cart and form with appointment data
+                prePopulateCartFromAppointment(data);
+                preFillCustomerFormFromAppointment(data);
+                
+                // Clear the session storage after using it
+                sessionStorage.removeItem('appointmentData');
+                
+                return true;
+            } catch (error) {
+                console.error('Error parsing appointment data:', error);
+                sessionStorage.removeItem('appointmentData');
+            }
+        }
+        return false;
+    }
+
+    // Pre-populate cart with appointment items
+    function prePopulateCartFromAppointment(appointmentData) {
+        if (!appointmentData.cartItems || !Array.isArray(appointmentData.cartItems)) {
+            console.log('No cart items in appointment data');
+            return;
+        }
+
+        // Clear existing cart
+        cart.products = [];
+        cart.accessories = [];
+
+        appointmentData.cartItems.forEach(item => {
+            if (item.type === 'accessory') {
+                cart.accessories.push({
+                    id: item.productId,
+                    name: item.name,
+                    code: item.name, // Use name as code for accessories
+                    price: item.price,
+                    quantity: item.quantity,
+                    types: [] // Can be updated later when accessory modal is opened
+                });
+            } else {
+                cart.products.push({
+                    id: item.productId,
+                    name: item.name,
+                    code: item.name, // Use name as code for products
+                    price: item.price,
+                    size: item.size,
+                    quantity: item.quantity
+                });
+            }
+        });
+
+        // Update cart summary display
+        updateCartSummary();
+        
+        console.log('Cart pre-populated from appointment:', cart);
+    }
+
+    // Pre-fill customer form with appointment data
+    function preFillCustomerFormFromAppointment(appointmentData) {
+        // Fill basic customer information
+        if (appointmentData.customerName) {
+            $("#client-full-name").val(appointmentData.customerName);
+        }
+        if (appointmentData.customerContact) {
+            $("#client-contact").val(appointmentData.customerContact);
+        }
+        if (appointmentData.eventDate) {
+            $("#fixed-event-date").val(appointmentData.eventDate);
+        }
+
+        console.log('Customer form pre-filled with appointment data');
+    }
+
+    // Check for appointment flow on page load
+    const isAppointmentFlow = checkAppointmentFlow();
+    if (isAppointmentFlow) {
+        console.log('Page loaded from appointment flow - data pre-populated');
+    }
+
     // --- Error Modal Logic (jQuery version) ---
     const $errorModal = $("#error-modal");
     const $errorModalMsg = $("#error-modal-message");

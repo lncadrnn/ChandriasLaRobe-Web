@@ -126,15 +126,12 @@ $(document).ready(function () {
     $("#place-rent-btn").on("click", async function (e) {
         e.preventDefault();
 
-        const checkoutStatus = "Upcoming";
-
-        // GET FORM DATA
+        const checkoutStatus = "Upcoming";        // GET FORM DATA
         const customerName = $("#customer-name").val();
         const customerEmail = $("#customer-email").val();
         const customerContact = $("#customer-contact").val(); // <-- ADD THIS
         const checkoutDateStr = $("#checkout-date").val();
         const checkoutTimeStr = $("#checkout-time").val();
-        const checkoutDuration = $("#checkout-duration").val(); // <-- ADD THIS
         const customerRequest = $("#customer-request").val(); // <-- ADD THIS
 
         // VALIDATE FORM DATA
@@ -207,14 +204,12 @@ $(document).ready(function () {
             }
         }
 
-        try {
-            const productData = {
+        try {            const productData = {
                 customerName: customerName,
                 customerEmail: customerEmail,
                 customerContact: customerContact, // <-- SAVE PHONE
                 checkoutDate: checkoutDateStr,
                 checkoutTime: checkoutTimeStr,
-                checkoutDuration: checkoutDuration, // <-- SAVE DURATION
                 customerRequest: customerRequest, // <-- SAVE NOTES/REQUEST
                 checkoutStatus: checkoutStatus,
                 createdAt: new Date(),
