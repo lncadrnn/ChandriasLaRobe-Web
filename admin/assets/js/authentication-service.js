@@ -1,4 +1,5 @@
 import {
+    chandriaDB,
     appCredential,
     auth,
     onAuthStateChanged,
@@ -12,6 +13,7 @@ import {
 } from "./sdk/chandrias-sdk.js";
 
 $(document).ready(function () {
+    // NOTYF
     const notyf = new Notyf({
         position: {
             x: "center",
@@ -27,7 +29,7 @@ $(document).ready(function () {
         if (user && !isLoggingIn) {
             // Delay just a bit to allow UI elements to load before redirecting
             setTimeout(() => {
-                window.location.href = "admin/dashboard.html"; // Redirect to profile page if already logged in
+                window.location.href = "./dashboard.html"; // Redirect to profile page if already logged in
             }, 800);
         }
     });
@@ -61,7 +63,6 @@ $(document).ready(function () {
 
     // DOM VARIABLES
     const loginBtn = $("#login-btn");
-
     // LOGIN BUTTON FUNCTION
     loginBtn.on("click", async function (e) {
         e.preventDefault();
@@ -127,7 +128,7 @@ $(document).ready(function () {
 
             // Delay redirect to allow toast to show
             setTimeout(() => {
-                window.location.href = "admin/dashboard.html"; // Redirect to dashboard
+                window.location.href = "./dashboard.html"; // Redirect to dashboard
             }, 1300);
             //
         } catch (error) {
@@ -153,7 +154,6 @@ $(document).ready(function () {
     });
 
     // CHECKING EMAIL
-    const chandriaDB = getFirestore(appCredential);
     async function emailExistsInFirestore(email) {
         const usersRef = collection(chandriaDB, "adminAccounts");
         const snapshot = await getDocs(usersRef);
