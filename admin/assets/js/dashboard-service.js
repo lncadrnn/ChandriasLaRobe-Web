@@ -116,9 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
             rentalSearchInput.value = '';
             renderRentals();
         });
-    }
-
-    // Show rental details modal
+    }    // Show rental details modal
     async function showRentalDetails(id) {
         try {
             const docSnap = await db.collection("transaction").doc(id).get();
@@ -131,29 +129,115 @@ document.addEventListener("DOMContentLoaded", () => {
             // Format dates
             const eventStartDate = data.eventStartDate ? new Date(data.eventStartDate).toLocaleDateString() : 'N/A';
             const eventEndDate = data.eventEndDate ? new Date(data.eventEndDate).toLocaleDateString() : 'N/A';
-            const transactionDate = data.timestamp ? data.timestamp.toDate().toLocaleDateString() : 'N/A';
+            const transactionDate = data.timestamp ? new Date(data.timestamp).toLocaleDateString() : 'N/A';
 
-            // Parse products and accessories
-            let productsList = '';
+            // Fetch detailed product information from Firebase
+            let productsContent = '';
             if (data.products && Array.isArray(data.products)) {
-                productsList = data.products.map(product => `
-                    <tr>
-                        <td>${product.name || 'Unknown Product'}</td>
-                        <td>${product.size || 'N/A'}</td>
-                        <td>₱ ${(product.price || 0).toLocaleString()}</td>
-                    </tr>
-                `).join('');
+                const productDetails = await Promise.all(data.products.map(async product => {
+                    try {
+                        if (!product.id) return null;
+                        
+                        const productDoc = await db.collection("products").doc(product.id).get();
+                        if (!productDoc.exists) return null;
+                        
+                        const productData = productDoc.data();
+                        
+                        // Convert sizes object to display format
+                        const sizesDisplay = Object.entries(product.sizes || {})
+                            .map(([size, quantity]) => `${size} (×${quantity})`)
+                            .join(', ') || 'N/A';
+                            
+                        return {
+                            name: productData.name || product.name || 'Unknown Product',
+                            code: productData.code || product.code || 'N/A',
+                            image: productData.frontImageUrl || productData.imageUrl || '',
+                            sizes: sizesDisplay,
+                            price: product.price || productData.price || 0,
+                            totalQuantity: Object.values(product.sizes || {}).reduce((sum, qty) => sum + qty, 0)
+                        };
+                    } catch (error) {
+                        console.error('Error fetching product details:', error);
+                        return null;
+                    }
+                }));
+
+                const validProducts = productDetails.filter(Boolean);
+                
+                if (validProducts.length > 0) {
+                    productsContent = validProducts.map(product => `
+                        <tr>
+                            <td><img src="${product.image}" alt="${product.name}" class="modal-product-img" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; background: #fafafa;"></td>
+                            <td>
+                                <div class="modal-product-name" style="font-weight: 600; color: #222;">${product.name}</div>
+                                <div class="modal-product-code" style="font-size: 0.9em; color: #666;">Code: ${product.code}</div>
+                                <div class="modal-product-size" style="font-size: 0.95em; color: #888;">Sizes: ${product.sizes}</div>
+                            </td>
+                            <td class="modal-product-price" style="font-weight: 500; color: #222; text-align: right;">₱ ${(product.price * product.totalQuantity).toLocaleString()}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    productsContent = '<tr><td colspan="3" style="text-align:center;color:#888;">No products found</td></tr>';
+                }
+            } else {
+                productsContent = '<tr><td colspan="3" style="text-align:center;color:#888;">No products found</td></tr>';
             }
 
-            let accessoriesList = '';
+            // Fetch detailed accessory information from Firebase
+            let accessoriesContent = '';
             if (data.accessories && Array.isArray(data.accessories)) {
-                accessoriesList = data.accessories.map(accessory => `
-                    <tr>
-                        <td>${accessory.name || 'Unknown Accessory'}</td>
-                        <td>1</td>
-                        <td>₱ ${(accessory.price || 0).toLocaleString()}</td>
-                    </tr>
-                `).join('');
+                const accessoryDetails = await Promise.all(data.accessories.map(async accessory => {
+                    try {
+                        if (!accessory.id) return {
+                            name: accessory.name || 'Unknown Accessory',
+                            code: accessory.code || 'N/A',
+                            image: '',
+                            quantity: accessory.quantity || 1,
+                            price: accessory.price || 0
+                        };
+                        
+                        const accessoryDoc = await db.collection("additionals").doc(accessory.id).get();
+                        if (!accessoryDoc.exists) return {
+                            name: accessory.name || 'Unknown Accessory',
+                            code: accessory.code || 'N/A',
+                            image: '',
+                            quantity: accessory.quantity || 1,
+                            price: accessory.price || 0
+                        };
+                        
+                        const accessoryData = accessoryDoc.data();
+                        return {
+                            name: accessoryData.name || accessory.name || 'Unknown Accessory',
+                            code: accessoryData.code || accessory.code || 'N/A',
+                            image: accessoryData.imageUrl || '',
+                            quantity: accessory.quantity || 1,
+                            price: accessory.price || accessoryData.price || 0
+                        };
+                    } catch (error) {
+                        console.error('Error fetching accessory details:', error);
+                        return {
+                            name: accessory.name || 'Unknown Accessory',
+                            code: accessory.code || 'N/A',
+                            image: '',
+                            quantity: accessory.quantity || 1,
+                            price: accessory.price || 0
+                        };
+                    }
+                }));
+
+                if (accessoryDetails.length > 0) {
+                    accessoriesContent = accessoryDetails.map(accessory => `
+                        <tr>
+                            <td><img src="${accessory.image}" alt="${accessory.name}" class="modal-product-img" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; background: #fafafa;"></td>
+                            <td>
+                                <div class="modal-product-name" style="font-weight: 600; color: #222;">${accessory.name}</div>
+                                <div class="modal-product-code" style="font-size: 0.9em; color: #666;">Code: ${accessory.code}</div>
+                                <div class="modal-product-size" style="font-size: 0.95em; color: #888;">Quantity: ${accessory.quantity}</div>
+                            </td>
+                            <td class="modal-product-price" style="font-weight: 500; color: #222; text-align: right;">₱ ${(accessory.price * accessory.quantity).toLocaleString()}</td>
+                        </tr>
+                    `).join('');
+                }
             }
 
             const totalPayment = parseFloat(data.totalPayment) || 0;
@@ -178,33 +262,31 @@ document.addEventListener("DOMContentLoaded", () => {
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Product Name</th>
-                                    <th>Size</th>
-                                    <th>Price</th>
+                                    <th></th>
+                                    <th>Product Details</th>
+                                    <th>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${productsList || '<tr><td colspan="3" style="text-align:center;color:#888;">No products found</td></tr>'}
+                                ${productsContent}
                             </tbody>
                         </table>
                         
-                        ${data.accessories && data.accessories.length > 0 ? `
+                        ${accessoriesContent ? `
                         <h4 style="margin-top: 20px;">Accessories</h4>
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Accessory Name</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
+                                    <th></th>
+                                    <th>Accessory Details</th>
+                                    <th>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${accessoriesList}
+                                ${accessoriesContent}
                             </tbody>
                         </table>
-                        ` : ''}
-
-                        <div class="payment-summary" style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px;">
+                        ` : ''}                        <div class="payment-summary" style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px;">
                             <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                                 <span><b>Total Amount:</b></span>
                                 <span><b>₱ ${totalPayment.toLocaleString()}</b></span>
@@ -218,15 +300,48 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <span><b>₱ ${remainingBalance.toLocaleString()}</b></span>
                             </div>
                         </div>
+                          <div class="rental-modal-actions" style="margin-top: 20px; text-align: center;">
+                            <button id="proceed-to-calendar-btn" style="
+                                background: var(--primary-color);
+                                color: white;
+                                border: none;
+                                padding: 12px 24px;
+                                border-radius: 6px;
+                                cursor: pointer;
+                                font-size: 16px;
+                                font-weight: 600;
+                                transition: background-color 0.3s ease;
+                            " onmouseover="this.style.backgroundColor='#e63975'" onmouseout="this.style.backgroundColor='var(--primary-color)'">
+                                Proceed to Calendar
+                            </button>
+                        </div>
                     </div>
                 </div>
-            `;
-
-            modal.classList.add('visible');
+            `;            modal.classList.add('visible');
+            
+            // Add click handler for Proceed to Calendar button
+            const proceedBtn = document.getElementById('proceed-to-calendar-btn');
+            if (proceedBtn) {
+                proceedBtn.addEventListener('click', () => {
+                    // Store rental data for calendar use
+                    sessionStorage.setItem('rentalData', JSON.stringify({
+                        transactionId: id,
+                        customerName: data.fullName,
+                        transactionCode: data.transactionCode,
+                        eventStartDate: data.eventStartDate,
+                        eventEndDate: data.eventEndDate,
+                        totalPayment: totalPayment,
+                        remainingBalance: remainingBalance
+                    }));
+                    
+                    // Navigate to calendar page (adjust URL as needed)
+                    window.location.href = './calendar.html';
+                });
+            }
         } catch (error) {
             console.error("Error showing rental details:", error);
         }
-    }    // Load and render rentals
+    }// Load and render rentals
     async function loadRentals() {
         console.log("Loading rentals...");
         rentals = await fetchTransactions();
