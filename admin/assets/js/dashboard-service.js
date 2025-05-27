@@ -50,11 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         rentalStatus = 'Completed';
                     }
                 }
-                
-                // Calculate payment status
+                  // Calculate payment status
                 const totalPayment = parseFloat(data.totalPayment) || 0;
                 const remainingBalance = parseFloat(data.remainingBalance) || 0;
-                const paymentStatus = remainingBalance > 0 ? 'Due' : 'Fully Paid';
+                const paymentStatus = remainingBalance > 0 ? `Bal: ₱${remainingBalance.toLocaleString()}` : 'Fully Paid';
                 
                 return {
                     id: doc.id,
