@@ -164,9 +164,7 @@
                 <ul class="appointments-list" id="appointments-list">
                     <!-- Populated by JS -->
                 </ul>
-            </section>
-
-            <!-- Add Modal -->
+            </section>            <!-- Appointment Modal -->
             <div id="appointment-modal" class="modal">
                 <div class="modal-content appointment-modal-flex">
                     <span class="close-modal">&times;</span>
@@ -175,6 +173,15 @@
                     <div class="modal-actions">
                         <button class="btn proceed-transaction">PROCEED TO TRANSACTION</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- Rental Modal -->
+            <div id="rental-modal" class="modal">
+                <div class="modal-content appointment-modal-flex">
+                    <span class="close-rental-modal">&times;</span>
+                    <h3 class="modal-title">Rental Transaction Details</h3>
+                    <div id="rental-details" class="appointment-modal-body"></div>
                 </div>
             </div>
         </div>

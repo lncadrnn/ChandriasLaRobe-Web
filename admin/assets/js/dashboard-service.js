@@ -17,29 +17,62 @@ document.addEventListener("DOMContentLoaded", () => {
             const isClosed = sidebar.classList.toggle("close");
             localStorage.setItem("admin-sidebar-closed", isClosed);
         });
+    }    // Rentals data - now fetched from Firebase
+    let rentals = [];    const statusClass = {
+        'Pending': 'pending',
+        'Ongoing': 'ongoing',
+        'Completed': 'delivered',
+        'Overdue': 'declined'
+    };    // Fetch transactions from Firebase
+    async function fetchTransactions() {
+        try {
+            console.log("Fetching transactions from Firebase...");
+            const snapshot = await db.collection("transaction")
+                .orderBy("timestamp", "desc")
+                .limit(20)
+                .get();
+            
+            console.log("Found", snapshot.docs.length, "transactions");
+            
+            return snapshot.docs.map(doc => {
+                const data = doc.data();
+                const currentDate = new Date();
+                const eventStartDate = data.eventStartDate ? new Date(data.eventStartDate) : null;
+                const eventEndDate = data.eventEndDate ? new Date(data.eventEndDate) : null;
+                
+                // Calculate rental status based on dates
+                let rentalStatus = 'Pending';
+                if (eventStartDate && eventEndDate) {
+                    if (currentDate < eventStartDate) {
+                        rentalStatus = 'Pending';
+                    } else if (currentDate >= eventStartDate && currentDate <= eventEndDate) {
+                        rentalStatus = 'Ongoing';
+                    } else if (currentDate > eventEndDate) {
+                        rentalStatus = 'Completed';
+                    }
+                }
+                
+                // Calculate payment status
+                const totalPayment = parseFloat(data.totalPayment) || 0;
+                const remainingBalance = parseFloat(data.remainingBalance) || 0;
+                const paymentStatus = remainingBalance > 0 ? 'Due' : 'Fully Paid';
+                
+                return {
+                    id: doc.id,
+                    name: data.fullName || 'Unknown',
+                    code: data.transactionCode || doc.id.substring(0, 6),
+                    payment: paymentStatus,
+                    status: rentalStatus,
+                    details: 'View',
+                    ...data
+                };
+            });
+        } catch (error) {
+            console.error("Error fetching transactions:", error);
+            return [];
+        }
     }
 
-    // Rentals data
-    const rentals = [
-        { name: 'Eimi FUkuda', code: '85631', payment: 'Due', status: 'Pending', details: 'View' },
-        { name: 'Maria Nagai', code: '36378', payment: 'Refunded', status: 'Declined', details: 'View' },
-        { name: 'Akari Minase', code: '49347', payment: 'Due', status: 'Pending', details: 'View' },
-        { name: 'Kururugi Aoi', code: '96996', payment: 'Paid', status: 'Delivered', details: 'View' },
-        { name: 'Mori Hinako', code: '22821', payment: 'Paid', status: 'Delivered', details: 'View' },
-        { name: 'Satsuki Mei', code: '81475', payment: 'Due', status: 'Pending', details: 'View' },
-        { name: 'Rara Kuduo', code: '22821', payment: 'Paid', status: 'Delivered', details: 'View' },
-        { name: 'Misaki Azusa', code: '81475', payment: 'Due', status: 'Pending', details: 'View' },
-        { name: 'Natsu Toujou', code: '22821', payment: 'Paid', status: 'Delivered', details: 'View' },
-        { name: 'Honoko Tsujii', code: '81475', payment: 'Due', status: 'Pending', details: 'View' },
-        { name: 'Maina Yuuri', code: '22821', payment: 'Paid', status: 'Delivered', details: 'View' },
-        { name: 'Sara Uruki', code: '81475', payment: 'Due', status: 'Pending', details: 'View' },
-        { name: 'Rima Arai', code: '00482', payment: 'Paid', status: 'Delivered', details: 'View' }
-    ];
-    const statusClass = {
-        'Pending': 'pending',
-        'Declined': 'declined',
-        'Delivered': 'delivered'
-    };
     function renderRentals(filteredRentals = rentals) {
         const tbody = document.getElementById('rentals-table-body');
         tbody.innerHTML = '';
@@ -50,9 +83,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td>${rental.code}</td>
                 <td>${rental.payment}</td>
                 <td class="${statusClass[rental.status] || ''}">${rental.status}</td>
-                <td><a href="#">${rental.details}</a></td>
+                <td><a href="#" class="rental-view" data-id="${rental.id}">${rental.details}</a></td>
             `;
             tbody.appendChild(tr);
+        });        // Add click event listeners for rental details
+        document.querySelectorAll('.rental-view').forEach(link => {
+            link.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const id = e.target.getAttribute('data-id');
+                showRentalDetails(id);
+            });
         });
     }
 
@@ -76,6 +116,122 @@ document.addEventListener("DOMContentLoaded", () => {
             rentalSearchInput.value = '';
             renderRentals();
         });
+    }
+
+    // Show rental details modal
+    async function showRentalDetails(id) {
+        try {
+            const docSnap = await db.collection("transaction").doc(id).get();
+            if (!docSnap.exists) return;
+
+            const data = docSnap.data();
+            const modal = document.getElementById('rental-modal');
+            const details = document.getElementById('rental-details');
+
+            // Format dates
+            const eventStartDate = data.eventStartDate ? new Date(data.eventStartDate).toLocaleDateString() : 'N/A';
+            const eventEndDate = data.eventEndDate ? new Date(data.eventEndDate).toLocaleDateString() : 'N/A';
+            const transactionDate = data.timestamp ? data.timestamp.toDate().toLocaleDateString() : 'N/A';
+
+            // Parse products and accessories
+            let productsList = '';
+            if (data.products && Array.isArray(data.products)) {
+                productsList = data.products.map(product => `
+                    <tr>
+                        <td>${product.name || 'Unknown Product'}</td>
+                        <td>${product.size || 'N/A'}</td>
+                        <td>₱ ${(product.price || 0).toLocaleString()}</td>
+                    </tr>
+                `).join('');
+            }
+
+            let accessoriesList = '';
+            if (data.accessories && Array.isArray(data.accessories)) {
+                accessoriesList = data.accessories.map(accessory => `
+                    <tr>
+                        <td>${accessory.name || 'Unknown Accessory'}</td>
+                        <td>1</td>
+                        <td>₱ ${(accessory.price || 0).toLocaleString()}</td>
+                    </tr>
+                `).join('');
+            }
+
+            const totalPayment = parseFloat(data.totalPayment) || 0;
+            const remainingBalance = parseFloat(data.remainingBalance) || 0;
+            const paidAmount = totalPayment - remainingBalance;
+
+            details.innerHTML = `
+                <div class="rental-modal-grid">
+                    <div class="rental-modal-form" style="gap:1.2rem;">
+                        <div><b>Customer Name:</b> ${data.fullName || 'N/A'}</div>
+                        <div><b>Contact Number:</b> ${data.contactNumber || 'N/A'}</div>
+                        <div><b>Transaction Code:</b> ${data.transactionCode || 'N/A'}</div>
+                        <div><b>Rental Type:</b> ${data.rentalType || 'N/A'}</div>
+                        <div><b>Event Start Date:</b> ${eventStartDate}</div>
+                        <div><b>Event End Date:</b> ${eventEndDate}</div>
+                        <div><b>Transaction Date:</b> ${transactionDate}</div>
+                        <div><b>Payment Method:</b> ${data.paymentMethod || 'N/A'}</div>
+                        <div><b>Payment Type:</b> ${data.paymentType || 'N/A'}</div>
+                    </div>
+                    <div class="rental-modal-table">
+                        <h4>Products</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Size</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${productsList || '<tr><td colspan="3" style="text-align:center;color:#888;">No products found</td></tr>'}
+                            </tbody>
+                        </table>
+                        
+                        ${data.accessories && data.accessories.length > 0 ? `
+                        <h4 style="margin-top: 20px;">Accessories</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Accessory Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${accessoriesList}
+                            </tbody>
+                        </table>
+                        ` : ''}
+
+                        <div class="payment-summary" style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span><b>Total Amount:</b></span>
+                                <span><b>₱ ${totalPayment.toLocaleString()}</b></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>Paid Amount:</span>
+                                <span>₱ ${paidAmount.toLocaleString()}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; color: ${remainingBalance > 0 ? '#e74c3c' : '#27ae60'};">
+                                <span><b>Remaining Balance:</b></span>
+                                <span><b>₱ ${remainingBalance.toLocaleString()}</b></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modal.classList.add('visible');
+        } catch (error) {
+            console.error("Error showing rental details:", error);
+        }
+    }    // Load and render rentals
+    async function loadRentals() {
+        console.log("Loading rentals...");
+        rentals = await fetchTransactions();
+        console.log("Loaded", rentals.length, "rentals");
+        renderRentals();
     }
 
     // Appointments Functions
@@ -240,11 +396,13 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error("Error showing appointment details:", error);
         }
-    }
-
-    // Close modal handler
+    }    // Close modal handlers
     document.querySelector('.close-modal')?.addEventListener('click', () => {
         document.getElementById('appointment-modal').classList.remove('visible');
+    });
+
+    document.querySelector('.close-rental-modal')?.addEventListener('click', () => {
+        document.getElementById('rental-modal').classList.remove('visible');
     });
 
     // Appointment search functionality
@@ -268,9 +426,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const items = document.querySelectorAll('#appointments-list li');
             items.forEach(item => item.style.display = '');
         });
-    }
-
-    // Initial render
-    renderRentals();
+    }    // Initial render
+    loadRentals();
     renderAppointments();
 });

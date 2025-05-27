@@ -285,10 +285,11 @@ html {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1rem 1.5rem;
 }
 
 .dashboard-table td {
-    padding: 1rem 0;
+    padding: 1rem 1.5rem;
     font-size: 0.75rem;
     color: var (--text-color);
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -296,6 +297,11 @@ html {
 
 .dashboard-table td.pending { 
     color: #f59e0b;
+    font-weight: 500;
+}
+
+.dashboard-table td.ongoing {
+    color: #2196F3;
     font-weight: 500;
 }
 
@@ -627,6 +633,14 @@ html {
     cursor: pointer;
 }
 
+.close-rental-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
 .modal.visible {
     visibility: visible;
     opacity: 1;
@@ -751,7 +765,87 @@ html {
     background: #e0679f;
 }
 
-/* Responsive */
+/* Rental Modal Specific Styles */
+.rental-modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.rental-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.rental-modal-form > div {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.rental-modal-table {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1.2rem;
+    border: 1px solid #eee;
+}
+
+.rental-modal-table h4 {
+    margin: 0 0 1rem 0;
+    color: #333;
+    font-weight: 600;
+}
+
+.rental-modal-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+.rental-modal-table th,
+.rental-modal-table td {
+    padding: 0.75rem 0.5rem;
+    text-align: left;
+    font-size: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.rental-modal-table th {
+    font-weight: 700;
+    color: #222;
+    background: #fafafa;
+}
+
+.payment-summary {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.payment-summary > div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.payment-summary > div:last-child {
+    margin-bottom: 0;
+}
+
+/* Status classes for rental table */
+.ongoing {
+    color: #2196F3;
+    font-weight: 600;
+}
+
+.overdue {
+    color: #f44336;
+    font-weight: 600;
+}
+
 @media (max-width: 1000px) {
     .appointment-modal-flex {
         min-width: 0;
