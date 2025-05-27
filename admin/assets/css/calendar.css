@@ -389,13 +389,46 @@ body {
     padding: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     z-index: 9999;
-    min-width: 200px;
+    min-width: 280px;  /* Increased for enhanced content */
+    max-width: 350px;  /* Prevent it from being too wide */
     backdrop-filter: blur(8px);
     border: 1px solid rgba(0,0,0,0.1);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
     pointer-events: all; /* Enable interaction with the tooltip content */
+    max-height: 400px;  /* Limit height */
+    overflow-y: auto;   /* Allow scrolling if content is too long */
+}
+
+/* Enhanced details styling */
+.event-hover-content .rental-period {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #666;
+}
+
+.event-hover-content .loading-state {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+    font-size: 12px;
+    justify-content: center;
+    padding: 8px;
+}
+
+.event-hover-content .enhanced-details ul {
+    margin: 4px 0;
+    padding-left: 16px;
+}
+
+.event-hover-content .enhanced-details li {
+    margin-bottom: 2px;
+    font-size: 12px;
 }
 
 /* Show tooltip on hover */

@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Chandria's La Robe - Web System</title>
-    
-    <!-- EXTERNAL CSS -->
+      <!-- EXTERNAL CSS -->
     <link rel="stylesheet" href="./assets/css/calendar.css" />
     <link rel="stylesheet" href="./assets/css/sidebar.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
@@ -220,7 +220,10 @@
                 <button class="btn-delete" id="confirmClearAll">Clear All Events</button>
             </div>
         </div>
-    </div>
+    </div>    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="./firebase-config.js"></script>
 
     <!-- EXTERNAL SCRIPT -->
     <script type="module" src="./assets/js/calendar-service.js"></script>

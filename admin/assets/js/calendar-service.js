@@ -1,9 +1,25 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Initialize Firebase (assuming it's already loaded globally)
+    let db = null;
+    try {
+        if (typeof firebase !== 'undefined' && firebase.apps.length === 0) {
+            // Firebase config should be available globally from firebase-config.js
+            if (typeof firebaseConfig !== 'undefined') {
+                firebase.initializeApp(firebaseConfig);
+            }
+        }
+        if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+            db = firebase.firestore();
+        }
+    } catch (error) {
+        console.warn('Firebase not available or already initialized:', error);
+    }
+
     const body = document.querySelector("body"),
         sidebar = body.querySelector(".sidebar"),
         toggle = body.querySelector(".toggle"),
         modeSwitch = body.querySelector(".toggle-switch"),
-        modeText = body.querySelector(".mode-text");    // --- Restore sidebar state from localStorage ---
+        modeText = body.querySelector(".mode-text");// --- Restore sidebar state from localStorage ---
     if (localStorage.getItem("admin-sidebar-closed") === "true") {
         sidebar.classList.add("close");
     }
@@ -140,13 +156,13 @@ document.addEventListener("DOMContentLoaded", () => {
             // Add clear events listener
             document.getElementById('clearEvents').addEventListener('click', () => {
                 showClearAllModal();
-            });
-
-            // Add rental type change listener
+            });            // Add rental type change listener
             document.getElementById('eventType').addEventListener('change', (e) => {
                 const rentalType = e.target.value;
                 const openRentalDates = document.querySelectorAll('.open-rental-dates');
                 const fixedRentalDate = document.querySelector('.fixed-rental-date');
+                const eventStartDate = document.getElementById('eventStartDate');
+                const eventEndDate = document.getElementById('eventEndDate');
                 
                 // Hide all date fields first
                 openRentalDates.forEach(field => field.style.display = 'none');
@@ -155,9 +171,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Show appropriate date fields based on selection
                 if (rentalType === 'open') {
                     openRentalDates.forEach(field => field.style.display = 'block');
+                    // Reset end date validation when switching to open rental
+                    if (eventEndDate) {
+                        eventEndDate.disabled = !eventStartDate.value;
+                    }
                 } else if (rentalType === 'fixed') {
                     if (fixedRentalDate) fixedRentalDate.style.display = 'block';
                 }
+                
+                // Clear all date values when switching rental types
+                if (eventStartDate) eventStartDate.value = '';
+                if (eventEndDate) {
+                    eventEndDate.value = '';
+                    eventEndDate.disabled = true;
+                }
+                const eventFixedDate = document.getElementById('eventFixedDate');
+                if (eventFixedDate) eventFixedDate.value = '';
             });
 
             // Add modal event listeners
@@ -207,25 +236,166 @@ document.addEventListener("DOMContentLoaded", () => {
                         hideClearAllModal();
                     }
                 });
-            });
-
-            // Close modal when clicking outside (for both modals)
+            });            // Close modal when clicking outside (for both modals)
             document.getElementById('clearAllModal').addEventListener('click', (e) => {
                 if (e.target.id === 'clearAllModal') {
                     hideClearAllModal();
                 }
-            });
+            });            // Add date validation
+            this.initDateValidation();
+            
+            // Check for rental data from dashboard
+            this.populateFromSessionStorage();
 
             this.render();
         },
 
-        formatDate(date) {
+        initDateValidation() {
+            const today = new Date();
+            const todayString = today.getFullYear() + '-' + 
+                               String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                               String(today.getDate()).padStart(2, '0');
+
+            // Set minimum date for all date inputs
+            const eventFixedDate = document.getElementById('eventFixedDate');
+            const eventStartDate = document.getElementById('eventStartDate');
+            const eventEndDate = document.getElementById('eventEndDate');
+
+            // Set minimum date to today for all date inputs
+            if (eventFixedDate) eventFixedDate.min = todayString;
+            if (eventStartDate) eventStartDate.min = todayString;
+            if (eventEndDate) eventEndDate.min = todayString;
+
+            // Initially disable end date until start date is selected
+            if (eventEndDate) eventEndDate.disabled = true;
+
+            // Add event listener for start date to control end date
+            if (eventStartDate) {
+                eventStartDate.addEventListener('change', (e) => {
+                    const startDateValue = e.target.value;
+                    if (startDateValue) {
+                        // Enable end date and set its minimum to the selected start date
+                        eventEndDate.disabled = false;
+                        eventEndDate.min = startDateValue;
+                        eventEndDate.value = ''; // Clear any previous end date
+                    } else {
+                        // Disable end date if start date is cleared
+                        eventEndDate.disabled = true;
+                        eventEndDate.value = '';
+                    }
+                });
+            }
+
+            // Add event listener for end date validation
+            if (eventEndDate) {
+                eventEndDate.addEventListener('change', (e) => {
+                    const endDateValue = e.target.value;
+                    const startDateValue = eventStartDate.value;
+                    
+                    if (endDateValue && startDateValue) {
+                        const startDate = new Date(startDateValue);
+                        const endDate = new Date(endDateValue);
+                        
+                        if (endDate < startDate) {
+                            alert('End date cannot be before start date');
+                            e.target.value = '';
+                        }
+                    }
+                });
+            }
+
+            // Add event listener for fixed date validation
+            if (eventFixedDate) {
+                eventFixedDate.addEventListener('change', (e) => {
+                    const selectedDate = new Date(e.target.value);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0); // Reset time for comparison
+                    
+                    if (selectedDate < today) {
+                        alert('Event date cannot be in the past');
+                        e.target.value = '';
+                    }
+                });
+            }
+        },        formatDate(date) {
             // Ensure we're working with the local date
             const d = new Date(date);
             const year = d.getFullYear();
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const day = String(d.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
+        },
+
+        populateFromSessionStorage() {
+            try {
+                const rentalData = sessionStorage.getItem('rentalData');
+                if (rentalData) {
+                    const data = JSON.parse(rentalData);
+                    console.log('Populating calendar from rental data:', data);
+
+                    // Populate transaction code
+                    const transactionCodeInput = document.getElementById('eventTitle');
+                    if (transactionCodeInput && data.transactionCode) {
+                        transactionCodeInput.value = data.transactionCode;
+                    }
+
+                    // Set rental type to open (since we're coming from dashboard with date range)
+                    const eventTypeSelect = document.getElementById('eventType');
+                    if (eventTypeSelect) {
+                        eventTypeSelect.value = 'open';
+                        
+                        // Trigger change event to show appropriate date fields
+                        const changeEvent = new Event('change', { bubbles: true });
+                        eventTypeSelect.dispatchEvent(changeEvent);
+                    }
+
+                    // Populate dates if available
+                    if (data.eventStartDate && data.eventEndDate) {
+                        const startDateInput = document.getElementById('eventStartDate');
+                        const endDateInput = document.getElementById('eventEndDate');
+                        
+                        if (startDateInput && endDateInput) {
+                            startDateInput.value = data.eventStartDate;
+                            endDateInput.value = data.eventEndDate;
+                            
+                            // Enable end date input since start date is set
+                            endDateInput.disabled = false;
+                            
+                            // Set min date for end date based on start date
+                            endDateInput.min = data.eventStartDate;
+                        }
+                    }
+
+                    // Show a notification that data was loaded
+                    const notification = document.createElement('div');
+                    notification.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        background: #10b981;
+                        color: white;
+                        padding: 12px 20px;
+                        border-radius: 8px;
+                        z-index: 10000;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                        font-weight: 500;
+                    `;
+                    notification.textContent = `Rental data loaded: ${data.transactionCode}`;
+                    document.body.appendChild(notification);
+
+                    // Remove notification after 3 seconds
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 3000);
+
+                    // Clear session storage after use
+                    sessionStorage.removeItem('rentalData');
+                }
+            } catch (error) {
+                console.error('Error populating calendar from session storage:', error);
+            }
         },
         render() {
             const year = this.currentDate.getFullYear();
@@ -414,8 +584,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            let startDate, endDate;
-              // Get dates based on rental type
+            // Date validation
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Reset time for comparison
+            
+            let startDate, endDate;            // Get dates based on rental type
             if (type === 'open') {
                 const startDateInput = document.getElementById('eventStartDate');
                 const endDateInput = document.getElementById('eventEndDate');
@@ -426,12 +599,39 @@ document.addEventListener("DOMContentLoaded", () => {
                     alert('Please select both Start Date and End Date for Open Rental');
                     return;
                 }
+                
+                // Validate dates are not in the past
+                const startDateObj = new Date(startDate);
+                const endDateObj = new Date(endDate);
+                
+                if (startDateObj < today) {
+                    alert('Start date cannot be in the past');
+                    return;
+                }
+                
+                if (endDateObj < today) {
+                    alert('End date cannot be in the past');
+                    return;
+                }
+                
+                if (endDateObj < startDateObj) {
+                    alert('End date cannot be before start date');
+                    return;
+                }
+                
             } else if (type === 'fixed') {
                 const fixedDateInput = document.getElementById('eventFixedDate');
                 const selectedDate = fixedDateInput.value;
                 
                 if (!selectedDate) {
                     alert('Please select Event Date for Fixed Rental');
+                    return;
+                }
+                
+                // Validate fixed date is not in the past
+                const selectedDateObj = new Date(selectedDate);
+                if (selectedDateObj < today) {
+                    alert('Event date cannot be in the past');
                     return;
                 }
                 
@@ -493,11 +693,16 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('eventDescription').value = '';
             document.getElementById('eventType').value = '';
             document.getElementById('eventColor').value = '#ff9a9e';
-            
-            // Reset all date fields
+              // Reset all date fields
             document.getElementById('eventStartDate').value = '';
             document.getElementById('eventEndDate').value = '';
             document.getElementById('eventFixedDate').value = '';
+            
+            // Reset date validation states
+            const eventEndDate = document.getElementById('eventEndDate');
+            if (eventEndDate) {
+                eventEndDate.disabled = true; // Disable end date until start date is selected
+            }
             
             // Hide all date field groups
             const openRentalDates = document.querySelectorAll('.open-rental-dates');
@@ -521,13 +726,124 @@ document.addEventListener("DOMContentLoaded", () => {
             this.render();
             
             this.render();
-        },
-
-        changeMonth(delta) {
+        },        changeMonth(delta) {
             this.currentDate.setMonth(this.currentDate.getMonth() + delta);
             this.render();
         }
     };
+
+    // Helper function to format date range
+    function formatDateRange(startDate, endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const options = { month: 'short', day: 'numeric' };
+        
+        if (startDate === endDate) {
+            return start.toLocaleDateString('en-US', { ...options, year: 'numeric' });
+        } else {
+            return `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', { ...options, year: 'numeric' })}`;
+        }
+    }    // Function to load enhanced rental details from Firebase
+    async function loadEnhancedDetails(transactionCode, hoverElement) {
+        try {
+            const db = firebase.firestore();
+            const snapshot = await db.collection("transaction")
+                .where("transactionCode", "==", transactionCode)
+                .limit(1)
+                .get();
+
+            const enhancedContainer = hoverElement.querySelector('.enhanced-details');
+            
+            if (snapshot.empty) {
+                enhancedContainer.innerHTML = `
+                    <div style="color: #666; font-size: 12px; text-align: center;">
+                        No additional details found
+                    </div>
+                `;
+                return;
+            }
+
+            const data = snapshot.docs[0].data();
+            
+            // Calculate remaining balance
+            const totalPayment = parseFloat(data.totalPayment || 0);
+            const totalPaid = parseFloat(data.totalPaid || 0);
+            const remainingBalance = totalPayment - totalPaid;
+
+            // Get selected products
+            const selectedProducts = data.selectedProducts || [];
+            const additionalItems = data.additionalItems || [];
+
+            let enhancedHTML = '';
+
+            // Customer name
+            if (data.fullName) {
+                enhancedHTML += `
+                    <div style="margin-bottom: 12px; padding: 8px; background: #f8f9fa; border-radius: 4px;">
+                        <strong style="color: #495057;">Customer:</strong> ${data.fullName}
+                    </div>
+                `;
+            }
+
+            // Selected products
+            if (selectedProducts.length > 0) {
+                enhancedHTML += `
+                    <div style="margin-bottom: 8px;">
+                        <strong style="color: #495057;">Rented Products:</strong>
+                        <ul style="margin: 4px 0; padding-left: 16px; font-size: 12px;">
+                `;
+                selectedProducts.forEach(product => {
+                    enhancedHTML += `<li>${product.category || 'Unknown'} - ${product.size || 'N/A'}</li>`;
+                });
+                enhancedHTML += '</ul></div>';
+            }
+
+            // Additional items
+            if (additionalItems.length > 0) {
+                enhancedHTML += `
+                    <div style="margin-bottom: 8px;">
+                        <strong style="color: #495057;">Additional Items:</strong>
+                        <ul style="margin: 4px 0; padding-left: 16px; font-size: 12px;">
+                `;
+                additionalItems.forEach(item => {
+                    enhancedHTML += `<li>${item.item || item.name || 'Unknown item'}</li>`;
+                });
+                enhancedHTML += '</ul></div>';
+            }
+
+            // Payment information with remaining balance
+            enhancedHTML += `
+                <div style="margin-top: 12px; padding: 8px; background: #f8f9fa; border-radius: 4px; font-size: 12px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <span><strong>Total Amount:</strong></span>
+                        <span>₱${totalPayment.toLocaleString()}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <span><strong>Amount Paid:</strong></span>
+                        <span>₱${totalPaid.toLocaleString()}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-top: 1px solid #dee2e6; padding-top: 4px;">
+                        <span><strong>Remaining Balance:</strong></span>
+                        <span style="color: ${remainingBalance > 0 ? '#dc3545' : '#28a745'}; font-weight: bold;">
+                            ₱${remainingBalance.toLocaleString()}
+                        </span>
+                    </div>
+                </div>
+            `;
+
+            enhancedContainer.innerHTML = enhancedHTML;
+
+        } catch (error) {
+            console.error('Error loading enhanced details:', error);
+            const enhancedContainer = hoverElement.querySelector('.enhanced-details');
+            enhancedContainer.innerHTML = `
+                <div style="color: #dc3545; font-size: 12px; text-align: center;">
+                    <i class="fa fa-exclamation-triangle"></i> Failed to load details
+                </div>
+            `;
+        }
+    }
+
     function createEventMarker(event, isStart, isEnd) {
         const marker = document.createElement('div');
         marker.classList.add('event-marker');
@@ -567,10 +883,11 @@ document.addEventListener("DOMContentLoaded", () => {
         title.className = 'event-title';
         title.textContent = event.title;
         marker.appendChild(title);
-        
-        // Create hover content
+          // Create hover content
         const hoverContent = document.createElement('div');
         hoverContent.className = 'event-hover-content';        
+        
+        // Create enhanced hover content with loading state
         hoverContent.innerHTML = `
             <div class="event-details">
                 <div style="font-weight: 500">Transaction Code: ${event.title}</div>
@@ -578,7 +895,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     ${event.type === 'fixed' ? 'Fixed Days Rental' : 
                       event.type === 'open' ? 'Open Rental' : 'No rental type'}
                 </div>
+                <div class="rental-period">
+                    <i class="fa-regular fa-calendar"></i>
+                    ${formatDateRange(event.startDate, event.endDate)}
+                </div>
                 ${event.description ? `<div style="font-size: 12px; color: #666; margin-top: 8px">${event.description}</div>` : ''}
+                
+                <div class="enhanced-details" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee;">
+                    <div class="loading-state">
+                        <i class="fa fa-spinner fa-spin"></i> Loading details...
+                    </div>
+                </div>
             </div>
             <div class="event-actions">
                 <button class="edit-btn">Edit</button>
@@ -627,17 +954,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         if (highlight) {
             marker.classList.add('search-match');
-        }
-
-        // Sticky hover logic
+        }        // Sticky hover logic with enhanced content loading
         let hoverTimeout;
         let sticky = false;
-        marker.addEventListener('mouseenter', () => {
+        let detailsLoaded = false;
+        
+        marker.addEventListener('mouseenter', async () => {
             if (sticky) return;
             clearTimeout(hoverTimeout);
             hoverContent.style.display = 'block';
             hoverContent.style.opacity = '1';
             hoverContent.style.visibility = 'visible';
+            
+            // Load enhanced details if not already loaded
+            if (!detailsLoaded) {
+                await loadEnhancedDetails(event.title, hoverContent);
+                detailsLoaded = true;
+            }
         });
         marker.addEventListener('mouseleave', () => {
             if (sticky) return;
@@ -701,13 +1034,20 @@ document.addEventListener("DOMContentLoaded", () => {
         // Hide all fields first
         openRentalDates.forEach(field => field.style.display = 'none');
         if (fixedRentalDate) fixedRentalDate.style.display = 'none';
-        
-        if (event.type === 'open') {
+          if (event.type === 'open') {
             // Show Open Rental date fields and populate them
             openRentalDates.forEach(field => field.style.display = 'block');
             document.getElementById('eventStartDate').value = event.startDate;
             document.getElementById('eventEndDate').value = event.endDate;
-            document.getElementById('eventFixedDate').value = '';        } else if (event.type === 'fixed') {
+            document.getElementById('eventFixedDate').value = '';
+            
+            // Enable end date since we have a start date
+            const eventEndDate = document.getElementById('eventEndDate');
+            if (eventEndDate) {
+                eventEndDate.disabled = false;
+                eventEndDate.min = event.startDate;
+            }
+        } else if (event.type === 'fixed') {
             // Show Fixed Rental date field and populate it
             if (fixedRentalDate) fixedRentalDate.style.display = 'block';
             
@@ -719,6 +1059,12 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('eventFixedDate').value = this.formatDate(centerDate);
             document.getElementById('eventStartDate').value = '';
             document.getElementById('eventEndDate').value = '';
+            
+            // Reset end date validation
+            const eventEndDate = document.getElementById('eventEndDate');
+            if (eventEndDate) {
+                eventEndDate.disabled = true;
+            }
         }
         
         // Update the selected dates in the calendar object
