@@ -263,8 +263,12 @@ $(document).ready(function () {
             M: "Medium",
             L: "Large",
             XL: "Extra Large",
-            XXL: "Double Extra Large"
+            XXL: "Double Extra Large",
+            XXXL: "Triple Extra Large"
         };
+
+        // Define the order in which sizes should be displayed
+        const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 
         try {
             const docRef = doc(chandriaDB, "products", productId);
@@ -274,9 +278,17 @@ $(document).ready(function () {
                 const data = docSnap.data();
                 const sizes = data.size || {};
 
-                const availableSizes = Object.entries(sizes).filter(
-                    ([_, qty]) => qty > 0
-                );
+                // Filter available sizes (qty > 0) and sort by predefined order
+                const availableSizes = Object.entries(sizes)
+                    .filter(([_, qty]) => qty > 0)
+                    .sort(([sizeA], [sizeB]) => {
+                        const indexA = sizeOrder.indexOf(sizeA);
+                        const indexB = sizeOrder.indexOf(sizeB);
+                        // If size not in predefined order, put it at the end
+                        const orderA = indexA === -1 ? sizeOrder.length : indexA;
+                        const orderB = indexB === -1 ? sizeOrder.length : indexB;
+                        return orderA - orderB;
+                    });
 
                 for (const [sizeCode, qty] of availableSizes) {
                     const isOnlyOne = availableSizes.length === 1;

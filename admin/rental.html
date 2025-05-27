@@ -164,39 +164,32 @@
         <!-- PRODUCT SIZE MODAL -->
         <div id="product-size-modal" class="modal">
             <div class="product-size-modal-content modal-content">
-                <span
-                    class="close-modal"
-                    style="cursor: pointer; float: right; font-size: 1.5em"
-                    >&times;</span
-                >
-                <h3>Select Product Size</h3>
-                <form id="product-size-form">
-                    <label
-                        ><input
-                            type="checkbox"
-                            name="availableSize"
-                            value="Small"
-                        />
-                        Small</label
-                    ><br />
-                    <label
-                        ><input
-                            type="checkbox"
-                            name="availableSize"
-                            value="Medium"
-                        />
-                        Medium</label
-                    ><br />
-                </form>
-
-                <!-- STORING DETAILS -->
-                <div style="display: none">
-                    <span id="modal-product-code"></span>
-                    <span id="modal-product-name"></span>
-                    <span id="modal-product-price"></span>
+                <div class="modal-header">
+                    <span class="close-modal">&times;</span>
+                    <h3>Select Product Size</h3>
                 </div>
+                
+                <div class="modal-body">
+                    <form id="product-size-form">
+                        <label>
+                            <input type="checkbox" name="availableSize" value="Small" />
+                            <span>Small</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" name="availableSize" value="Medium" />
+                            <span>Medium</span>
+                        </label>
+                    </form>
 
-                <button id="proceed-btn" class="disabled">Proceed</button>
+                    <!-- STORING DETAILS -->
+                    <div style="display: none">
+                        <span id="modal-product-code"></span>
+                        <span id="modal-product-name"></span>
+                        <span id="modal-product-price"></span>
+                    </div>
+
+                    <button id="proceed-btn" class="disabled">Proceed</button>
+                </div>
             </div>
         </div>
 
