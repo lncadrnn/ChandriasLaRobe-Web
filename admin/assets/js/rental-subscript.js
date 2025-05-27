@@ -1312,12 +1312,21 @@ $(document).ready(function () {
             $eventStartDate.attr("required", "required").attr("min", minBookableDateStr);
             $eventEndDate.attr("required", "required");
             
+            // Disable end date initially if no start date is selected
+            if (!$eventStartDate.val()) {
+                $eventEndDate.prop("disabled", true);
+            } else {
+                $eventEndDate.prop("disabled", false);
+            }
+            
             if ($eventStartDate.val()) {
                 const currentStartDateVal = $eventStartDate.val();
                 const currentStartParts = currentStartDateVal.split('-');
                 const currentStartDateLocal = new Date(parseInt(currentStartParts[0]), parseInt(currentStartParts[1]) - 1, parseInt(currentStartParts[2]));
                 if (currentStartDateLocal < minBookableDate) {
                     $eventStartDate.val(""); 
+                    // Disable end date if start date is cleared
+                    $eventEndDate.prop("disabled", true);
                 }
             }
             updateEventEndDateMin();
@@ -1330,7 +1339,17 @@ $(document).ready(function () {
 
     // Initialize and attach listeners
     if ($fixedEventDateInput.length && $eventStartDate.length && $eventEndDate.length) {
-        $eventStartDate.on("change", updateEventEndDateMin);
+        $eventStartDate.on("change", function() {
+            // Enable/disable end date based on start date selection
+            if ($rentalType.val() === "Open Rental") {
+                if ($eventStartDate.val()) {
+                    $eventEndDate.prop("disabled", false);
+                } else {
+                    $eventEndDate.prop("disabled", true).val("");
+                }
+            }
+            updateEventEndDateMin();
+        });
         $rentalType.on("change", toggleDateFields);
         toggleDateFields(); // Initial call
     }
