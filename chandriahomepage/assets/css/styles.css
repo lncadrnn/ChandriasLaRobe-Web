@@ -225,9 +225,14 @@ table{
 }
 .header-user-actions{
   column-gap: 1.25rem;
+  align-items: center;
 }
 .header-action-btn{
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
 }
 .header-action-btn img{
   width: 30px;

@@ -10,6 +10,9 @@ import {
     doc
 } from "./sdk/chandrias-sdk.js";
 
+// Import auto-logout functionality
+import autoLogout from "./auto-logout.js";
+
 $(document).ready(function () {
     // INITIALIZING NOTYF
     const notyf = new Notyf({

@@ -11,6 +11,9 @@ import {
     arrayUnion
 } from "./sdk/chandrias-sdk.js";
 
+// Import auto-logout functionality
+import autoLogout from "./auto-logout.js";
+
 $(document).ready(async function () {
   const productId = localStorage.getItem("selectedProductId");
   if (!productId) {

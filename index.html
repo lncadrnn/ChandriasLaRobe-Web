@@ -1473,6 +1473,8 @@
     <script type="module">
 import { getAuth, onAuthStateChanged, doc, getDoc } from "./chandriahomepage/assets/js/sdk/chandrias-sdk.js";
 import { chandriaDB } from "./chandriahomepage/assets/js/sdk/chandrias-sdk.js";
+// Import auto-logout functionality
+import autoLogout from "./chandriahomepage/assets/js/auto-logout.js";
 
 const auth = getAuth();
 const loginLogoutLinkElement = document.getElementById('login-logout-link'); // This might be for a different element not shown in selection

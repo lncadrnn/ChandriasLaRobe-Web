@@ -367,9 +367,10 @@
                     };
                 });
             }
-        </script>
-        <script type="module">
+        </script>        <script type="module">
             import { getAuth, onAuthStateChanged } from "./assets/js/sdk/chandrias-sdk.js";
+            // Import auto-logout functionality
+            import autoLogout from "./assets/js/auto-logout.js";
             const authInstance = getAuth();
             const loginLogoutLinkElement = document.getElementById('login-logout-link');
 
