@@ -11,11 +11,11 @@
   --opposite-text-color: #fff;
 
 
-  /* Set transitions to none */
-  --tran-02: all 0.5s ease; /* all 0.2s ease; */
-  --tran-03: all 0.5s ease; /* all 0.3s ease; */
-  --tran-04: all 0.5s ease; /* all 0.4s ease; */
-  --tran-05: all 0.5s ease; /* all 0.5s ease; */
+  /* Set smooth transitions with improved easing */
+  --tran-02: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --tran-03: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --tran-04: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --tran-05: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* PAGE AND SEARCH */
