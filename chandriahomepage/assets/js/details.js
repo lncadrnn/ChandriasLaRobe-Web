@@ -60,61 +60,48 @@ $(document).ready(async function () {
       y: "top"
     }
   });
-
-  // START - Authentication Modal Logic
-  const authModal = document.getElementById('auth-modal');
-  const authModalClose = document.getElementById('auth-modal-close');
-  const authModalLogin = document.getElementById('auth-modal-login');
-  const authModalCancel = document.getElementById('auth-modal-cancel');
-
+  // AUTHENTICATION MODAL FUNCTIONS (Matching shop.js implementation)
   function showAuthModal() {
+    const authModal = document.getElementById('auth-modal');
     if (authModal) {
-      authModal.style.opacity = '1';
-      authModal.style.visibility = 'visible';
+      authModal.classList.add('show');
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
     }
   }
 
   function hideAuthModal() {
+    const authModal = document.getElementById('auth-modal');
     if (authModal) {
-      authModal.style.opacity = '0';
-      authModal.style.visibility = 'hidden';
+      authModal.classList.remove('show');
+      document.body.style.overflow = ''; // Restore scrolling
     }
   }
 
-  // Assign to window for global access if needed by other scripts or inline event handlers
-  window.showAuthModal = showAuthModal;
-  window.hideAuthModal = hideAuthModal;
+  // Authentication modal event listeners
+  $(document).on('click', '#auth-modal-close, #auth-modal-cancel', function() {
+    hideAuthModal();
+  });
 
-  if (authModalClose) {
-    authModalClose.addEventListener('click', hideAuthModal);
-  }
+  $(document).on('click', '#auth-modal-login', function() {
+    window.location.href = './user_authentication.html';
+  });
 
-  if (authModalCancel) {
-    authModalCancel.addEventListener('click', hideAuthModal);
-  }
-
-  if (authModalLogin) {
-    authModalLogin.addEventListener('click', () => {
-      window.location.href = './user_authentication.html';
-    });
-  }
-
-  // Close modal on escape key press
-  window.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && authModal && authModal.style.visibility === 'visible') {
+  // Close modal when clicking outside
+  $(document).on('click', '#auth-modal', function(e) {
+    if (e.target === this) {
       hideAuthModal();
     }
   });
 
-  // Close modal on outside click
-  if (authModal) {
-    authModal.addEventListener('click', (event) => {
-      if (event.target === authModal) {
-        hideAuthModal();
-      }
-    });
-  }
-  // END - Authentication Modal Logic
+  // Close modal on escape key
+  $(document).on('keydown', function(e) {
+    if (e.key === 'Escape') {
+      hideAuthModal();
+    }
+  });
+
+  // Make showAuthModal globally accessible
+  window.showAuthModal = showAuthModal;
 
   // Size selection functionality
   $(document).on('click', '.size-link', function(e) {
