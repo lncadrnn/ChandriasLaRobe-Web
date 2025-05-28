@@ -30,7 +30,7 @@ $(document).ready(function () {
         ]
     });
 
-    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // LISTEN FOR AUTH STATE CHANGES
     onAuthStateChanged(auth, async user => {
         if (!user) {
@@ -146,7 +146,7 @@ $(document).ready(function () {
         localStorage.setItem("selectedProductId", productId);
     });
 
-    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // CART COUNT FUNCTION
     async function updateCartCount() {
         const user = auth.currentUser;
@@ -419,4 +419,243 @@ $(document).ready(function () {
         e.stopPropagation();
     });
     //
+    
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+    // QUICK VIEW MODAL FUNCTIONALITY    // Quick View button click handler
+    $(document).on("click", ".action-btn[aria-label='Quick View']", async function (e) {
+        e.preventDefault();
+        
+        console.log('Quick View button clicked'); // Debug log
+        
+        // Try multiple ways to get the product ID
+        const $productItem = $(this).closest('.product-item');
+        console.log('Product item found:', $productItem.length > 0); // Debug log
+        
+        let productId = $productItem.find('[data-id]').first().data('id');
+        console.log('Product ID attempt 1:', productId); // Debug log
+        
+        // If not found, try looking for the cart button's data-id
+        if (!productId) {
+            productId = $productItem.find('.cart-btn[data-id]').data('id');
+            console.log('Product ID attempt 2 (cart button):', productId); // Debug log
+        }
+        
+        // If still not found, try looking for the product link's data-id
+        if (!productId) {
+            productId = $productItem.find('a[data-id]').data('id');
+            console.log('Product ID attempt 3 (product link):', productId); // Debug log
+        }
+        
+        // If still not found, try looking for any element with data-id
+        if (!productId) {
+            productId = $productItem.find('*[data-id]').first().data('id');
+            console.log('Product ID attempt 4 (any element):', productId); // Debug log
+        }
+        
+        console.log('Final Product ID found:', productId); // Debug log
+        
+        if (!productId) {
+            console.error('Product ID not found');
+            console.log('Product item HTML:', $productItem.html()); // Debug log
+            alert('Product ID not found. Please check the console for details.'); // User feedback
+            return;
+        }
+
+        // Show loading state
+        openQuickViewModal();
+        showQuickViewLoading();
+
+        try {
+            const docRef = doc(chandriaDB, "products", productId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const product = docSnap.data();
+                populateQuickViewModal(product, productId);
+                hideQuickViewLoading();
+            } else {
+                console.error("Product not found");
+                notyf.error("Product not found");
+                closeQuickViewModal();
+            }
+        } catch (error) {
+            console.error("Error fetching product:", error);
+            notyf.error("Failed to load product details");
+            closeQuickViewModal();
+        }
+    });    // Function to populate quick view modal with product data
+    function populateQuickViewModal(product, productId) {
+        // Restore the original details HTML structure if it was replaced by loading
+        if ($('.quick-view-loading').length > 0) {
+            $('.quick-view-details').html(`
+                <div class="quick-view-header">
+                    <h2 id="quick-view-title" class="quick-view-product-title">Product Name</h2>
+                    <span id="quick-view-category" class="quick-view-category">Category</span>
+                </div>
+                <div class="quick-view-price">
+                    <span id="quick-view-price" class="quick-view-new-price">₱0</span>
+                    <span class="quick-view-period">/24hr</span>
+                </div>
+                <div class="quick-view-description">
+                    <p id="quick-view-desc" class="quick-view-desc-text">Product description will appear here...</p>
+                </div>
+                <div class="quick-view-features">
+                    <div class="quick-view-feature">
+                        <i class="fi fi-rs-clothes-hanger"></i>
+                        <span>Free Fitting Service</span>
+                    </div>
+                    <div class="quick-view-feature">
+                        <i class="fi fi-rs-sparkles"></i>
+                        <span>Pre-Cleaned & Sanitized</span>
+                    </div>
+                    <div class="quick-view-feature">
+                        <i class="fi fi-rs-running"></i>
+                        <span>Ready-to-Wear</span>
+                    </div>
+                </div>                <div class="quick-view-meta">
+                    <div class="quick-view-color">
+                        <span class="quick-view-label">Color:</span>
+                        <div id="quick-view-color-indicator" class="quick-view-color-circle"></div>
+                    </div>
+                    <div class="quick-view-code">
+                        <span class="quick-view-label">Product Code:</span>
+                        <span id="quick-view-product-code" class="quick-view-code-text">-</span>
+                    </div>
+                </div>
+                <div class="quick-view-actions">
+                    <button id="quick-view-add-to-cart" class="quick-view-btn quick-view-btn-primary">
+                        <i class="fi fi-rs-shopping-bag-add"></i>
+                        <span>Add to Rent</span>
+                    </button>
+                    <button id="quick-view-view-details" class="quick-view-btn quick-view-btn-secondary">
+                        <i class="fi fi-rs-eye"></i>
+                        <span>View Full Details</span>
+                    </button>
+                </div>
+            `);
+        }
+        
+        // Set main image and thumbnails
+        $('#quick-view-main-img').attr('src', product.frontImageUrl || '');
+        $('.quick-view-thumbnail').eq(0).attr('src', product.frontImageUrl || '');
+        $('.quick-view-thumbnail').eq(1).attr('src', product.backImageUrl || '');
+          // Set product details
+        $('#quick-view-title').text(product.name || '');
+        $('#quick-view-category').text(product.category || '');
+        $('#quick-view-price').text(`₱ ${product.price || '0'}`);
+        $('#quick-view-desc').text(product.description || 'No description available');
+          // Set product metadata
+        $('#quick-view-product-code').text(product.code || 'N/A');
+        
+        // Set button data attributes
+        $('#quick-view-add-to-cart').attr('data-id', productId);
+        $('#quick-view-view-details').attr('data-id', productId);
+        
+        // Set color if available
+        if (product.color) {
+            $('#quick-view-color-indicator').css('background-color', product.color);
+        }
+        
+        // Set features (customize based on your product structure)
+        const features = [
+            { icon: 'fi-rs-truck', text: 'Free delivery within Metro Manila' },
+            { icon: 'fi-rs-refresh', text: '24/7 customer support' },
+            { icon: 'fi-rs-shield-check', text: 'Quality guaranteed' },
+            { icon: 'fi-rs-time-check', text: 'Flexible rental periods' }
+        ];
+        
+        const $featuresContainer = $('.quick-view-features');
+        $featuresContainer.empty();
+        features.forEach(feature => {
+            $featuresContainer.append(`
+                <div class="quick-view-feature">
+                    <i class="${feature.icon}"></i>
+                    <span>${feature.text}</span>
+                </div>
+            `);
+        });
+    }    // Function to open quick view modal
+    function openQuickViewModal() {
+        console.log('Opening quick view modal'); // Debug log
+        $('.quick-view-modal-container').addClass('show');
+        $('body').css('overflow', 'hidden');
+        
+        // Set first thumbnail as active
+        $('.quick-view-thumbnail').removeClass('active');
+        $('.quick-view-thumbnail').eq(0).addClass('active');
+        
+        console.log('Quick view modal opened, has show class:', $('.quick-view-modal-container').hasClass('show')); // Debug log
+    }    // Function to close quick view modal
+    function closeQuickViewModal() {
+        $('.quick-view-modal-container').removeClass('show');
+        $('body').css('overflow', 'auto');
+    }
+
+    // Function to show loading state in quick view modal
+    function showQuickViewLoading() {
+        console.log('Showing quick view loading state'); // Debug log
+        $('.quick-view-details').html(`
+            <div class="quick-view-loading">
+                <div class="spinner"></div>
+                <p>Loading product details...</p>
+            </div>
+        `);
+        $('.quick-view-images img').attr('src', '');
+        console.log('Loading state applied'); // Debug log
+    }
+
+    // Function to hide loading state in quick view modal
+    function hideQuickViewLoading() {
+        // Loading state is removed when populateQuickViewModal is called
+        // This function exists for consistency but the actual hiding is done in populateQuickViewModal
+        console.log('Hiding quick view loading state'); // Debug log
+    }// Close modal when clicking close button or backdrop
+    $(document).on('click', '.quick-view-close', closeQuickViewModal);
+    $(document).on('click', '.quick-view-modal-container', function(e) {
+        if (e.target === this) {
+            closeQuickViewModal();
+        }
+    });
+
+    // Prevent modal from closing when clicking modal content
+    $(document).on('click', '.quick-view-content', function(e) {
+        e.stopPropagation();
+    });    // Thumbnail image switching
+    $(document).on('click', '.quick-view-thumbnail', function() {
+        const newSrc = $(this).attr('src');
+        $('#quick-view-main-img').attr('src', newSrc);
+        
+        // Update active thumbnail
+        $('.quick-view-thumbnail').removeClass('active');
+        $(this).addClass('active');
+    });    // Quick view "Add to Rent" button click handler
+    $(document).on('click', '#quick-view-add-to-cart', function(e) {
+        e.preventDefault();
+        const productId = $(this).data('id');
+        
+        // Find the product card and trigger the cart button click
+        $(`.cart-btn[data-id="${productId}"]`).trigger('click');
+        
+        // Close quick view modal
+        closeQuickViewModal();
+    });
+
+    // Quick view "View Full Details" button click handler
+    $(document).on('click', '#quick-view-view-details', function(e) {
+        e.preventDefault();
+        const productId = $(this).data('id');
+        
+        // Store product ID and navigate to details page
+        localStorage.setItem("selectedProductId", productId);
+        window.location.href = "./details.html";
+    });
+
+    // Close modal with Escape key
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape' || e.keyCode === 27) {
+            closeQuickViewModal();
+        }
+    });
+
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
 });

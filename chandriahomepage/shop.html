@@ -281,15 +281,78 @@
                     </li>
                 </ul>
             </section>
-        </main>
-
-        <!--=============== LOGOUT MODAL ===============-->
+        </main>        <!--=============== LOGOUT MODAL ===============-->
         <div id="logout-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
             <div style="background:#fff; border-radius:10px; max-width:350px; width:90%; margin:auto; padding:2rem 1.5rem; box-shadow:0 2px 16px rgba(0,0,0,0.15); text-align:center;">
                 <h3 style="color:#222; margin-bottom:1.5rem;">Are you sure you want to log out?</h3>
                 <div style="display:flex; gap:1rem; justify-content:center;">
                     <button id="logout-yes" style="background:#ff9aaf; color:#fff; border:none; border-radius:5px; padding:0.5rem 1.5rem; font-weight:600; cursor:pointer;">Yes</button>
                     <button id="logout-no" style="background:#eee; color:#222; border:none; border-radius:5px; padding:0.5rem 1.5rem; font-weight:600; cursor:pointer;">No</button>
+                </div>
+            </div>
+        </div>
+
+        <!--=============== QUICK VIEW MODAL ===============-->
+        <div id="quick-view-modal" class="quick-view-modal-container">
+            <div class="quick-view-modal">
+                <button class="quick-view-close" id="quick-view-close">&times;</button>
+                <div class="quick-view-content">
+                    <div class="quick-view-images">
+                        <div class="quick-view-main-image">
+                            <img id="quick-view-main-img" src="" alt="Product Image" class="quick-view-img">
+                        </div>
+                        <div class="quick-view-thumbnail-container">
+                            <img id="quick-view-front-thumb" src="" alt="Front View" class="quick-view-thumbnail active">
+                            <img id="quick-view-back-thumb" src="" alt="Back View" class="quick-view-thumbnail">
+                        </div>
+                    </div>
+                    <div class="quick-view-details">
+                        <div class="quick-view-header">
+                            <h2 id="quick-view-title" class="quick-view-product-title">Product Name</h2>
+                            <span id="quick-view-category" class="quick-view-category">Category</span>
+                        </div>
+                        <div class="quick-view-price">
+                            <span id="quick-view-price" class="quick-view-new-price">₱0</span>
+                            <span class="quick-view-period">/24hr</span>
+                        </div>
+                        <div class="quick-view-description">
+                            <p id="quick-view-desc" class="quick-view-desc-text">Product description will appear here...</p>
+                        </div>
+                        <div class="quick-view-features">
+                            <div class="quick-view-feature">
+                                <i class="fi fi-rs-clothes-hanger"></i>
+                                <span>Free Fitting Service</span>
+                            </div>
+                            <div class="quick-view-feature">
+                                <i class="fi fi-rs-sparkles"></i>
+                                <span>Pre-Cleaned & Sanitized</span>
+                            </div>
+                            <div class="quick-view-feature">
+                                <i class="fi fi-rs-running"></i>
+                                <span>Ready-to-Wear</span>
+                            </div>
+                        </div>
+                        <div class="quick-view-meta">
+                            <div class="quick-view-color">
+                                <span class="quick-view-label">Color:</span>
+                                <div id="quick-view-color-indicator" class="quick-view-color-circle"></div>
+                            </div>
+                            <div class="quick-view-code">
+                                <span class="quick-view-label">Product Code:</span>
+                                <span id="quick-view-product-code" class="quick-view-code-text">-</span>
+                            </div>
+                        </div>
+                        <div class="quick-view-actions">
+                            <button id="quick-view-add-to-cart" class="quick-view-btn quick-view-btn-primary">
+                                <i class="fi fi-rs-shopping-bag-add"></i>
+                                <span>Add to Rent</span>
+                            </button>
+                            <button id="quick-view-view-details" class="quick-view-btn quick-view-btn-secondary">
+                                <i class="fi fi-rs-eye"></i>
+                                <span>View Full Details</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

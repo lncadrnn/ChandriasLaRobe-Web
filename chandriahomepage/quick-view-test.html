@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick View Test</title>
+    <link rel="stylesheet" href="./assets/css/shop.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css">
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Quick View Test Page</h1>
+        
+        <!-- Test Product Card -->
+        <div class="product-item">
+            <div class="product-banner">
+                <a href="./details.html" class="product-images" data-id="test-product-1">
+                    <img src="./assets/img/product-1-1.jpg" alt="" class="product-img default">
+                    <img src="./assets/img/product-1-2.jpg" alt="" class="product-img hover">
+                </a>
+                <div class="product-actions">
+                    <a href="#" class="action-btn" aria-label="Quick View">
+                        <i class="fi fi-rs-eye"></i>
+                    </a>
+                    <a href="#" class="action-btn" aria-label="Add to Favorites">
+                        <i class="fi fi-rs-heart"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="product-content">
+                <span class="product-category">Wedding Dress</span>
+                <a href="./details.html" data-id="test-product-1">
+                    <h3 class="product-title">Test Wedding Dress</h3>
+                </a>
+
+                <div class="product-price flex">
+                    <span class="new-price">₱ 1500/24hr</span>
+                </div>
+
+                <!-- Add to cart button -->
+                <button class="action-btn cart-btn" aria-label="Add to Rent List" data-id="test-product-1">
+                    <i class="fi fi-rs-shopping-bag-add"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!--=============== QUICK VIEW MODAL ===============-->
+    <div id="quick-view-modal" class="quick-view-modal-container">
+        <div class="quick-view-modal">
+            <button class="quick-view-close" id="quick-view-close">&times;</button>
+            <div class="quick-view-content">
+                <div class="quick-view-images">
+                    <div class="quick-view-main-image">
+                        <img id="quick-view-main-img" src="" alt="Product Image" class="quick-view-img">
+                    </div>
+                    <div class="quick-view-thumbnail-container">
+                        <img id="quick-view-front-thumb" src="" alt="Front View" class="quick-view-thumbnail active">
+                        <img id="quick-view-back-thumb" src="" alt="Back View" class="quick-view-thumbnail">
+                    </div>
+                </div>
+                <div class="quick-view-details">
+                    <div class="quick-view-header">
+                        <h2 id="quick-view-title" class="quick-view-product-title">Product Name</h2>
+                        <span id="quick-view-category" class="quick-view-category">Category</span>
+                    </div>
+                    <div class="quick-view-price">
+                        <span id="quick-view-price" class="quick-view-new-price">₱0</span>
+                        <span class="quick-view-period">/24hr</span>
+                    </div>
+                    <div class="quick-view-description">
+                        <p id="quick-view-desc" class="quick-view-desc-text">Product description will appear here...</p>
+                    </div>
+                    <div class="quick-view-features">
+                        <div class="quick-view-feature">
+                            <i class="fi fi-rs-clothes-hanger"></i>
+                            <span>Free Fitting Service</span>
+                        </div>
+                        <div class="quick-view-feature">
+                            <i class="fi fi-rs-sparkles"></i>
+                            <span>Pre-Cleaned & Sanitized</span>
+                        </div>
+                        <div class="quick-view-feature">
+                            <i class="fi fi-rs-running"></i>
+                            <span>Ready-to-Wear</span>
+                        </div>
+                    </div>
+                    <div class="quick-view-meta">
+                        <div class="quick-view-color">
+                            <span class="quick-view-label">Color:</span>
+                            <div id="quick-view-color-indicator" class="quick-view-color-circle"></div>
+                        </div>
+                        <div class="quick-view-sizes">
+                            <span class="quick-view-label">Available Sizes:</span>
+                            <div id="quick-view-sizes-list" class="quick-view-size-list">
+                                <!-- Sizes will be populated dynamically -->
+                            </div>
+                        </div>
+                        <div class="quick-view-stock">
+                            <span class="quick-view-label">Stock:</span>
+                            <span id="quick-view-stock-count" class="quick-view-stock-number">0</span>
+                        </div>
+                        <div class="quick-view-code">
+                            <span class="quick-view-label">Product Code:</span>
+                            <span id="quick-view-product-code" class="quick-view-code-text">-</span>
+                        </div>
+                    </div>
+                    <div class="quick-view-actions">
+                        <button id="quick-view-add-to-cart" class="quick-view-btn quick-view-btn-primary">
+                            <i class="fi fi-rs-shopping-bag-add"></i>
+                            <span>Add to Rent</span>
+                        </button>
+                        <button id="quick-view-view-details" class="quick-view-btn quick-view-btn-secondary">
+                            <i class="fi fi-rs-eye"></i>
+                            <span>View Full Details</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test script without Firebase dependency
+        const notyf = new Notyf({
+            position: {
+                x: "center",
+                y: "top"
+            }
+        });
+
+        $(document).ready(function() {
+            console.log('Test page loaded');
+            
+            // Mock Firebase data for testing
+            const mockProduct = {
+                id: "test-product-1",
+                name: "Test Wedding Dress",
+                category: "Wedding Dress",
+                price: "1500",
+                description: "Beautiful test wedding dress for quick view testing",
+                frontImageUrl: "./assets/img/product-1-1.jpg",
+                backImageUrl: "./assets/img/product-1-2.jpg",
+                code: "WD001",
+                stock: 5,
+                color: "#ffffff",
+                sizes: ["S", "M", "L", "XL"]
+            };
+
+            // Quick View button click handler (test version)
+            $(document).on("click", ".action-btn[aria-label='Quick View']", async function (e) {
+                e.preventDefault();
+                
+                console.log('Quick View button clicked'); // Debug log
+                
+                // Try multiple ways to get the product ID
+                const $productItem = $(this).closest('.product-item');
+                console.log('Product item found:', $productItem.length > 0); // Debug log
+                
+                let productId = $productItem.find('[data-id]').first().data('id');
+                console.log('Product ID attempt 1:', productId); // Debug log
+                
+                // If not found, try looking for the cart button's data-id
+                if (!productId) {
+                    productId = $productItem.find('.cart-btn[data-id]').data('id');
+                    console.log('Product ID attempt 2 (cart button):', productId); // Debug log
+                }
+                
+                // If still not found, try looking for the product link's data-id
+                if (!productId) {
+                    productId = $productItem.find('a[data-id]').data('id');
+                    console.log('Product ID attempt 3 (product link):', productId); // Debug log
+                }
+                
+                // If still not found, try looking for any element with data-id
+                if (!productId) {
+                    productId = $productItem.find('*[data-id]').first().data('id');
+                    console.log('Product ID attempt 4 (any element):', productId); // Debug log
+                }
+                
+                console.log('Final Product ID found:', productId); // Debug log
+                
+                if (!productId) {
+                    console.error('Product ID not found');
+                    console.log('Product item HTML:', $productItem.html()); // Debug log
+                    alert('Product ID not found. Please check the console for details.'); // User feedback
+                    return;
+                }
+
+                // Show loading state
+                openQuickViewModal();
+                showQuickViewLoading();
+
+                // Simulate loading delay
+                setTimeout(() => {
+                    populateQuickViewModal(mockProduct, productId);
+                    hideQuickViewLoading();
+                }, 1000);
+            });
+
+            // Function to show loading state in quick view modal
+            function showQuickViewLoading() {
+                console.log('Showing quick view loading state'); // Debug log
+                $('.quick-view-details').html(`
+                    <div class="quick-view-loading">
+                        <div class="spinner"></div>
+                        <p>Loading product details...</p>
+                    </div>
+                `);
+                $('.quick-view-images img').attr('src', '');
+                console.log('Loading state applied'); // Debug log
+            }
+
+            // Function to hide loading state in quick view modal
+            function hideQuickViewLoading() {
+                console.log('Hiding quick view loading state'); // Debug log
+            }
+
+            // Function to populate quick view modal with product data
+            function populateQuickViewModal(product, productId) {
+                console.log('Populating quick view modal with product:', product); // Debug log
+                
+                // Restore the original details HTML structure if it was replaced by loading
+                if ($('.quick-view-loading').length > 0) {
+                    $('.quick-view-details').html(`
+                        <div class="quick-view-header">
+                            <h2 id="quick-view-title" class="quick-view-product-title">Product Name</h2>
+                            <span id="quick-view-category" class="quick-view-category">Category</span>
+                        </div>
+                        <div class="quick-view-price">
+                            <span id="quick-view-price" class="quick-view-new-price">₱0</span>
+                            <span class="quick-view-period">/24hr</span>
+                        </div>
+                        <div class="quick-view-description">
+                            <p id="quick-view-desc" class="quick-view-desc-text">Product description will appear here...</p>
+                        </div>
+                        <div class="quick-view-features">
+                            <div class="quick-view-feature">
+                                <i class="fi fi-rs-clothes-hanger"></i>
+                                <span>Free Fitting Service</span>
+                            </div>
+                            <div class="quick-view-feature">
+                                <i class="fi fi-rs-sparkles"></i>
+                                <span>Pre-Cleaned & Sanitized</span>
+                            </div>
+                            <div class="quick-view-feature">
+                                <i class="fi fi-rs-running"></i>
+                                <span>Ready-to-Wear</span>
+                            </div>
+                        </div>
+                        <div class="quick-view-meta">
+                            <div class="quick-view-color">
+                                <span class="quick-view-label">Color:</span>
+                                <div id="quick-view-color-indicator" class="quick-view-color-circle"></div>
+                            </div>
+                            <div class="quick-view-sizes">
+                                <span class="quick-view-label">Available Sizes:</span>
+                                <div id="quick-view-sizes-list" class="quick-view-size-list">
+                                    <!-- Sizes will be populated dynamically -->
+                                </div>
+                            </div>
+                            <div class="quick-view-stock">
+                                <span class="quick-view-label">Stock:</span>
+                                <span id="quick-view-stock-count" class="quick-view-stock-number">0</span>
+                            </div>
+                            <div class="quick-view-code">
+                                <span class="quick-view-label">Product Code:</span>
+                                <span id="quick-view-product-code" class="quick-view-code-text">-</span>
+                            </div>
+                        </div>
+                        <div class="quick-view-actions">
+                            <button id="quick-view-add-to-cart" class="quick-view-btn quick-view-btn-primary">
+                                <i class="fi fi-rs-shopping-bag-add"></i>
+                                <span>Add to Rent</span>
+                            </button>
+                            <button id="quick-view-view-details" class="quick-view-btn quick-view-btn-secondary">
+                                <i class="fi fi-rs-eye"></i>
+                                <span>View Full Details</span>
+                            </button>
+                        </div>
+                    `);
+                }
+                
+                // Set main image and thumbnails
+                $('#quick-view-main-img').attr('src', product.frontImageUrl || '');
+                $('.quick-view-thumbnail').eq(0).attr('src', product.frontImageUrl || '');
+                $('.quick-view-thumbnail').eq(1).attr('src', product.backImageUrl || '');
+                
+                // Set product details
+                $('#quick-view-title').text(product.name || '');
+                $('#quick-view-category').text(product.category || '');
+                $('#quick-view-price').text(`₱ ${product.price || '0'}`);
+                $('#quick-view-desc').text(product.description || 'No description available');
+                
+                // Set product metadata
+                $('#quick-view-product-code').text(product.code || 'N/A');
+                $('#quick-view-stock-count').text(product.stock || '0');
+                
+                // Set button data attributes
+                $('#quick-view-add-to-cart').attr('data-id', productId);
+                $('#quick-view-view-details').attr('data-id', productId);
+                
+                // Set color if available
+                if (product.color) {
+                    $('#quick-view-color-indicator').css('background-color', product.color);
+                }
+                
+                // Set sizes if available
+                if (product.sizes && Array.isArray(product.sizes)) {
+                    const $sizesContainer = $('#quick-view-sizes-list');
+                    $sizesContainer.empty();
+                    product.sizes.forEach(size => {
+                        $sizesContainer.append(`<span class="quick-view-size-item">${size}</span>`);
+                    });
+                }
+            }
+
+            // Function to open quick view modal
+            function openQuickViewModal() {
+                console.log('Opening quick view modal'); // Debug log
+                $('.quick-view-modal-container').addClass('show');
+                $('body').css('overflow', 'hidden');
+                
+                // Set first thumbnail as active
+                $('.quick-view-thumbnail').removeClass('active');
+                $('.quick-view-thumbnail').eq(0).addClass('active');
+                
+                console.log('Quick view modal opened, has show class:', $('.quick-view-modal-container').hasClass('show')); // Debug log
+            }
+
+            // Function to close quick view modal
+            function closeQuickViewModal() {
+                $('.quick-view-modal-container').removeClass('show');
+                $('body').css('overflow', 'auto');
+            }
+
+            // Close modal when clicking close button or backdrop
+            $(document).on('click', '.quick-view-close', closeQuickViewModal);
+            $(document).on('click', '.quick-view-modal-container', function(e) {
+                if (e.target === this) {
+                    closeQuickViewModal();
+                }
+            });
+
+            // Prevent modal from closing when clicking modal content
+            $(document).on('click', '.quick-view-content', function(e) {
+                e.stopPropagation();
+            });
+
+            // Thumbnail image switching
+            $(document).on('click', '.quick-view-thumbnail', function() {
+                const newSrc = $(this).attr('src');
+                $('#quick-view-main-img').attr('src', newSrc);
+                
+                // Update active thumbnail
+                $('.quick-view-thumbnail').removeClass('active');
+                $(this).addClass('active');
+            });
+
+            // Test buttons
+            $(document).on('click', '#quick-view-add-to-cart', function(e) {
+                e.preventDefault();
+                alert('Add to Cart clicked (test mode)');
+                closeQuickViewModal();
+            });
+
+            $(document).on('click', '#quick-view-view-details', function(e) {
+                e.preventDefault();
+                alert('View Details clicked (test mode)');
+                closeQuickViewModal();
+            });
+
+            // Close modal with Escape key
+            $(document).on('keydown', function(e) {
+                if (e.key === 'Escape' || e.keyCode === 27) {
+                    closeQuickViewModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
