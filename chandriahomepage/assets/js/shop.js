@@ -665,13 +665,102 @@ $(document).ready(function () {
         $('.quick-view-thumbnail').removeClass('active');
         $(this).addClass('active');
     });    // Quick view "Add to Rent" button click handler
-    $(document).on('click', '#quick-view-add-to-cart', function(e) {
+    $(document).on('click', '#quick-view-add-to-cart', async function(e) {
         e.preventDefault();
-        const productId = $(this).data('id');
         
-        // Find the product card and trigger the cart button click
-        $(`.cart-btn[data-id="${productId}"]`).trigger('click');
+        const user = auth.currentUser;
+        if (!user) {
+            showAuthModal();
+            return;
+        }
+
+        const button = $(this);
+        const productId = button.data('id');
         
+        if (!productId) {
+            notyf.error("Product not found.");
+            return;
+        }
+
+        // Disable button and show loading state
+        const originalText = button.find('span').text();
+        button.prop('disabled', true);
+        button.find('span').text('Adding...');
+
+        try {
+            // Get product data to find available sizes
+            const docRef = doc(chandriaDB, "products", productId);
+            const docSnap = await getDoc(docRef);
+            
+            if (!docSnap.exists()) {
+                notyf.error("Product not found.");
+                return;
+            }
+
+            const productData = docSnap.data();
+            const sizes = productData.size || {};
+            
+            // Find the first available size with stock > 0
+            let selectedSize = null;
+            for (const [size, stock] of Object.entries(sizes)) {
+                if (stock > 0) {
+                    selectedSize = size;
+                    break;
+                }
+            }
+
+            if (!selectedSize) {
+                notyf.error("Product is out of stock.");
+                return;
+            }
+
+            // Add to cart with first available size and quantity 1
+            const userRef = doc(chandriaDB, "userAccounts", user.uid);
+            const userSnap = await getDoc(userRef);
+            
+            if (!userSnap.exists()) {
+                notyf.error("User account not found.");
+                return;
+            }
+
+            const userData = userSnap.data();
+            const currentCart = userData.added_to_cart || [];
+
+            // Check if the same product with the same size is already in the cart
+            const index = currentCart.findIndex(
+                item => item.productId === productId && item.size === selectedSize
+            );
+
+            if (index !== -1) {
+                // If found, increment the quantity
+                currentCart[index].quantity += 1;
+                await updateDoc(userRef, { added_to_cart: currentCart });
+                notyf.success(`Updated quantity for ${productData.name} (${selectedSize})`);
+            } else {
+                // If not found, add a new item to the cart
+                await updateDoc(userRef, {
+                    added_to_cart: arrayUnion({
+                        productId,
+                        size: selectedSize,
+                        quantity: 1
+                    })
+                });
+                notyf.success(`Added ${productData.name} (${selectedSize}) to cart!`);
+            }
+
+            // Update cart count and product display
+            await updateCartCount();
+            await displayProducts(user);
+            
+        } catch (error) {
+            console.error("Error adding to cart: ", error);
+            notyf.error("An error occurred. Please try again.");
+        } finally {
+            // Re-enable button
+            button.prop('disabled', false);
+            button.find('span').text(originalText);
+        }
+
         // Close quick view modal
         closeQuickViewModal();
     });

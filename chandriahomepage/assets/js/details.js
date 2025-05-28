@@ -49,10 +49,101 @@ $(document).ready(async function () {
     // Stock
     const totalStock = Object.values(data.size).reduce((a, b) => a + b, 0);
     $('#product-stock').text(`${totalStock} in stocks`);
-
   } else {
     alert("Product not found.");
   }
+
+  // NOTYF INITIALIZATION for notifications
+  const notyf = new Notyf({
+    position: {
+      x: "center",
+      y: "top"
+    }
+  });
+
+  // Size selection functionality
+  $(document).on('click', '.size-link', function(e) {
+    e.preventDefault();
+    $('.size-link').removeClass('size-active');
+    $(this).addClass('size-active');
+  });
+  // Add to Cart functionality
+  $('#details-add-to-cart').on('click', async function(e) {
+    e.preventDefault();
+      const user = auth.currentUser;
+    if (!user) {
+      // Show authentication modal
+      if (typeof window.showAuthModal === 'function') {
+        window.showAuthModal();
+      } else {
+        alert("Please log in to add items to cart.");
+      }
+      return;
+    }
+
+    const button = $(this);
+    const quantity = parseInt($('#details-quantity').val(), 10) || 1;
+    const selectedSize = $('.size-active').text().trim();
+    const productId = localStorage.getItem("selectedProductId");
+
+    if (!selectedSize) {
+      alert("Please select a size.");
+      return;
+    }
+
+    if (quantity < 1) {
+      alert("Please enter a valid quantity.");
+      return;
+    }
+
+    // Disable button and show loading state
+    button.prop('disabled', true).text('Adding...');
+
+    try {
+      const userRef = doc(chandriaDB, "userAccounts", user.uid);
+      const userSnap = await getDoc(userRef);
+      
+      if (!userSnap.exists()) {
+        alert("User account not found.");
+        return;
+      }
+
+      const data = userSnap.data();
+      const currentCart = data.added_to_cart || [];
+
+      // Check if the same product with the same size is already in the cart
+      const index = currentCart.findIndex(
+        item => item.productId === productId && item.size === selectedSize
+      );
+
+      if (index !== -1) {
+        // If found, update the quantity of that item
+        currentCart[index].quantity = quantity;
+        await updateDoc(userRef, { added_to_cart: currentCart });
+        notyf.success("Cart item updated successfully.");
+      } else {
+        // If not found, add a new item to the cart
+        await updateDoc(userRef, {
+          added_to_cart: arrayUnion({
+            productId,
+            size: selectedSize,
+            quantity
+          })
+        });
+        notyf.success("Added successfully to cart!");
+      }
+
+      // Update cart count
+      await updateCartCount();
+      
+    } catch (error) {
+      console.error("Error updating cart: ", error);
+      notyf.error("An error occurred. Please try again.");
+    } finally {
+      // Re-enable button
+      button.prop('disabled', false).text('Add to Rent List');
+    }
+  });
 
   // Update cart count on auth state change
   onAuthStateChanged(auth, async user => {

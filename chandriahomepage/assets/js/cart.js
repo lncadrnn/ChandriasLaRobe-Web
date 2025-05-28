@@ -27,16 +27,62 @@ $(document).ready(function () {
                     className: "notyf__icon--success",
                     tagName: "i"
                 }
-            }
-        ]
+            }        ]
     });
 
     // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+    // AUTHENTICATION MODAL FUNCTIONS
+    function showAuthModal() {
+        const authModal = document.getElementById('auth-modal');
+        if (authModal) {
+            authModal.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+    }
+
+    function hideAuthModal() {
+        const authModal = document.getElementById('auth-modal');
+        if (authModal) {
+            authModal.classList.remove('show');
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+    }
+
+    // Authentication modal event listeners
+    $(document).on('click', '#auth-modal-close, #auth-modal-cancel', function() {
+        hideAuthModal();
+    });
+
+    $(document).on('click', '#auth-modal-login', function() {
+        window.location.href = './user_authentication.html';
+    });
+
+    // Close modal when clicking outside
+    $(document).on('click', '#auth-modal', function(e) {
+        if (e.target === this) {
+            hideAuthModal();
+        }
+    });
+
+    // Close modal on escape key
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape') {
+            hideAuthModal();
+        }
+    });    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // LISTEN FOR AUTH STATE CHANGES
     onAuthStateChanged(auth, async user => {
         if (!user) {
-            // User not logged in, show the login nav
-            $("#nav-login").show();
+            // User not logged in, show authentication modal and hide cart content
+            showAuthModal();
+            $('.cart.section-lg.container').hide();
+            $('.cart-actions').hide();
+            return;
+        } else {
+            // User is logged in, hide auth modal and show cart content
+            hideAuthModal();
+            $('.cart.section-lg.container').show();
+            $('.cart-actions').show();
         }
         await updateCartCount();
         await displayCartItems(user);
