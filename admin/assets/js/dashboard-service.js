@@ -117,81 +117,67 @@ document.addEventListener("DOMContentLoaded", () => {
     }    // Show rental details modal
     async function showRentalDetails(id) {        try {
             const docSnap = await db.collection("transaction").doc(id).get();
-            if (!docSnap.exists) return;
-
-            const data = docSnap.data();
+            if (!docSnap.exists) return;        const data = docSnap.data();
             
-            // DEBUG: Log the transaction data retrieved from Firestore
-            console.log("DEBUG - Transaction data retrieved:", data);
-            console.log("DEBUG - Products in transaction:", data.products);
-            console.log("DEBUG - Products array type:", Array.isArray(data.products));
-            console.log("DEBUG - Products array length:", data.products ? data.products.length : 0);
-            
-            const modal = document.getElementById('rental-modal');
-            const details = document.getElementById('rental-details');
+        const modal = document.getElementById('rental-modal');
+        const details = document.getElementById('rental-details');
 
-            // Format dates
-            const eventStartDate = data.eventStartDate ? new Date(data.eventStartDate).toLocaleDateString() : 'N/A';
-            const eventEndDate = data.eventEndDate ? new Date(data.eventEndDate).toLocaleDateString() : 'N/A';
-            const transactionDate = data.timestamp ? new Date(data.timestamp).toLocaleDateString() : 'N/A';
+        // Format dates
+        const eventStartDate = data.eventStartDate ? new Date(data.eventStartDate).toLocaleDateString() : 'N/A';
+        const eventEndDate = data.eventEndDate ? new Date(data.eventEndDate).toLocaleDateString() : 'N/A';
+        const transactionDate = data.timestamp ? new Date(data.timestamp).toLocaleDateString() : 'N/A';
 
-            // Fetch detailed product information from Firebase
-            let productsContent = '';
-            if (data.products && Array.isArray(data.products)) {
-                console.log("DEBUG - Processing products array...");
-                const productDetails = await Promise.all(data.products.map(async product => {
-                    try {
-                        console.log("DEBUG - Processing product:", product);
-                        if (!product.id) return null;
+        // Fetch detailed product information from Firebase
+        let productsContent = '';
+        if (data.products && Array.isArray(data.products)) {
+            const productDetails = await Promise.all(data.products.map(async product => {
+                try {
+                    if (!product.id) return null;
+                    
+                    const productDoc = await db.collection("products").doc(product.id).get();
+                    if (!productDoc.exists) return null;
+                    
+                    const productData = productDoc.data();
+                    
+                    // Convert sizes object to display format
+                    const sizesDisplay = Object.entries(product.sizes || {})
+                        .map(([size, quantity]) => `${size} (×${quantity})`)
+                        .join(', ') || 'N/A';
                         
-                        const productDoc = await db.collection("products").doc(product.id).get();
-                        if (!productDoc.exists) return null;
-                        
-                        const productData = productDoc.data();
-                        
-                        // Convert sizes object to display format
-                        const sizesDisplay = Object.entries(product.sizes || {})
-                            .map(([size, quantity]) => `${size} (×${quantity})`)
-                            .join(', ') || 'N/A';
-                            
-                        return {
-                            name: productData.name || product.name || 'Unknown Product',
-                            code: productData.code || product.code || 'N/A',
-                            image: productData.frontImageUrl || productData.imageUrl || '',
-                            sizes: sizesDisplay,
-                            price: product.price || productData.price || 0,
-                            totalQuantity: Object.values(product.sizes || {}).reduce((sum, qty) => sum + qty, 0)
-                        };
-                    } catch (error) {
-                        console.error('Error fetching product details:', error);
-                        return null;
-                    }
-                }));                const validProducts = productDetails.filter(Boolean);
-                
-                // DEBUG: Log product details processing results
-                console.log("DEBUG - Product details processing results:");
-                console.log("DEBUG - Valid products count:", validProducts.length);
-                console.log("DEBUG - Valid products:", validProducts);
-                
-                if (validProducts.length > 0) {
-                    productsContent = validProducts.map(product => `
-                        <tr>
-                            <td><img src="${product.image}" alt="${product.name}" class="modal-product-img" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; background: #fafafa;"></td>
-                            <td>
-                                <div class="modal-product-name" style="font-weight: 600; color: #222;">${product.name}</div>
-                                <div class="modal-product-code" style="font-size: 0.9em; color: #666;">Code: ${product.code}</div>
-                                <div class="modal-product-size" style="font-size: 0.95em; color: #888;">Sizes: ${product.sizes}</div>
-                            </td>
-                            <td class="modal-product-price" style="font-weight: 500; color: #222; text-align: right;">₱ ${(product.price * product.totalQuantity).toLocaleString()}</td>
-                        </tr>
-                    `).join('');                } else {
-                    console.log("DEBUG - No valid products found, showing 'No products found' message");
-                    productsContent = '<tr><td colspan="3" style="text-align:center;color:#888;">No products found</td></tr>';
+                    return {
+                        name: productData.name || product.name || 'Unknown Product',
+                        code: productData.code || product.code || 'N/A',
+                        image: productData.frontImageUrl || productData.imageUrl || '',
+                        sizes: sizesDisplay,
+                        price: product.price || productData.price || 0,
+                        totalQuantity: Object.values(product.sizes || {}).reduce((sum, qty) => sum + qty, 0)
+                    };
+                } catch (error) {
+                    console.error('Error fetching product details:', error);
+                    return null;
                 }
+            }));
+
+            const validProducts = productDetails.filter(Boolean);
+            
+            if (validProducts.length > 0) {
+                productsContent = validProducts.map(product => `
+                    <tr>
+                        <td><img src="${product.image}" alt="${product.name}" class="modal-product-img" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; background: #fafafa;"></td>
+                        <td>
+                            <div class="modal-product-name" style="font-weight: 600; color: #222;">${product.name}</div>
+                            <div class="modal-product-code" style="font-size: 0.9em; color: #666;">Code: ${product.code}</div>
+                            <div class="modal-product-size" style="font-size: 0.95em; color: #888;">Sizes: ${product.sizes}</div>
+                        </td>
+                        <td class="modal-product-price" style="font-weight: 500; color: #222; text-align: right;">₱ ${(product.price * product.totalQuantity).toLocaleString()}</td>
+                    </tr>
+                `).join('');
             } else {
-                console.log("DEBUG - No products array found in transaction data");
                 productsContent = '<tr><td colspan="3" style="text-align:center;color:#888;">No products found</td></tr>';
             }
+        } else {
+            productsContent = '<tr><td colspan="3" style="text-align:center;color:#888;">No products found</td></tr>';
+        }
 
             // Fetch detailed accessory information from Firebase
             let accessoriesContent = '';
@@ -416,16 +402,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const docSnap = await db.collection("appointments").doc(id).get();
             if (!docSnap.exists) return;
 
-            const data = docSnap.data();
-            const modal = document.getElementById('appointment-modal');
-            const details = document.getElementById('appointment-details');
+            const data = docSnap.data();        const modal = document.getElementById('appointment-modal');
+        const details = document.getElementById('appointment-details');
 
-            // Debug: log cartItems
-            console.log("Appointment cartItems:", data.cartItems);
-
-            // Fetch product details for each cart item
-            let cartItems = [];
-            if (Array.isArray(data.cartItems) && data.cartItems.length > 0) {
+        // Fetch product details for each cart item
+        let cartItems = [];
+        if (Array.isArray(data.cartItems) && data.cartItems.length > 0) {
                 cartItems = await Promise.all(data.cartItems.map(async item => {
                     let productDoc;
                     if (item.type === "accessory") {
