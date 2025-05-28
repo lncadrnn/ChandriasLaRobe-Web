@@ -1471,14 +1471,59 @@
     <script src="chandriahomepage/assets/js/main.js"></script>
 
     <script type="module">
-import { getAuth, onAuthStateChanged, doc, getDoc } from "./chandriahomepage/assets/js/sdk/chandrias-sdk.js";
+import { getAuth, onAuthStateChanged, doc, getDoc, signOut } from "./chandriahomepage/assets/js/sdk/chandrias-sdk.js";
 import { chandriaDB } from "./chandriahomepage/assets/js/sdk/chandrias-sdk.js";
-// Import auto-logout functionality
-import autoLogout from "./chandriahomepage/assets/js/auto-logout.js";
 
 const auth = getAuth();
 const loginLogoutLinkElement = document.getElementById('login-logout-link'); // This might be for a different element not shown in selection
 const userAccountLink = document.getElementById('user-account-link');
+
+// Conservative auto-logout: Only logout when browser/tab is actually closing
+let isNavigatingWithinSite = false;
+
+// Track internal navigation to prevent logout during site navigation
+document.addEventListener('click', (event) => {
+    const link = event.target.closest('a');
+    if (link && link.href) {
+        const currentDomain = window.location.hostname;
+        const linkUrl = new URL(link.href, window.location.origin);
+        
+        // If it's an internal link, mark as internal navigation
+        if (linkUrl.hostname === currentDomain) {
+            isNavigatingWithinSite = true;
+            // Reset the flag after a short delay
+            setTimeout(() => {
+                isNavigatingWithinSite = false;
+            }, 1000);
+        }
+    }
+});
+
+// Only logout on actual browser close, not internal navigation
+window.addEventListener('beforeunload', async (event) => {
+    // Don't logout if this is internal site navigation
+    if (isNavigatingWithinSite) {
+        return;
+    }
+    
+    // Only logout if user is authenticated
+    if (auth.currentUser) {
+        try {
+            // Clear local storage
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userProfilePicture');
+            
+            // Sign out from Firebase (this will be quick since it's beforeunload)
+            await signOut(auth);
+            console.log('Auto-logout: User signed out on browser close');
+        } catch (error) {
+            console.error('Auto-logout error:', error);
+            // Clear local storage even if signOut fails
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userProfilePicture');
+        }
+    }
+});
 
 // Cart count update function
 async function updateCartCount() {

@@ -11,9 +11,6 @@ import {
     arrayUnion
 } from "./sdk/chandrias-sdk.js";
 
-// Import auto-logout functionality
-import autoLogout from "./auto-logout.js";
-
 $(document).ready(function () {
     // INTIALIZING NOTYF
     const notyf = new Notyf({

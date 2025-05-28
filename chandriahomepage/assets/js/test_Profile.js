@@ -4,9 +4,6 @@ import {
     signOut
 } from "./sdk/chandrias-sdk.js";
 
-// Import auto-logout functionality
-import autoLogout from "./auto-logout.js";
-
 $(document).ready(function () {
 
     // Check if the user is logged in and display the email

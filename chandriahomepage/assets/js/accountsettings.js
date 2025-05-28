@@ -1,8 +1,5 @@
 import { getAuth, signOut } from "./sdk/chandrias-sdk.js";
 
-// Import auto-logout functionality
-import autoLogout from "./auto-logout.js";
-
 // Initialize Firebase Auth
 const auth = getAuth();
 
