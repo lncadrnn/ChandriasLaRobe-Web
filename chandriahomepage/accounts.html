@@ -188,16 +188,12 @@
         <script type="module" src="./assets/js/shop.js"></script>
         <script type="module" src="./assets/js/accountsettings.js"></script>        <script type="module">
             import { getAuth, onAuthStateChanged, signOut } from "./assets/js/sdk/chandrias-sdk.js";
-            import autoLogout from "./assets/js/auto-logout.js";
 
             const auth = getAuth();
             const logoutButton = document.getElementById('logout-btn');
             const logoutModal = document.getElementById('logout-modal');
             const confirmLogoutButton = document.getElementById('confirm-logout');
             const cancelLogoutButton = document.getElementById('cancel-logout');
-
-            // Initialize auto-logout system
-            // Auto-logout is now handled by the centralized auto-logout module
 
             // Authentication state listener to ensure user is logged in
             onAuthStateChanged(auth, (user) => {

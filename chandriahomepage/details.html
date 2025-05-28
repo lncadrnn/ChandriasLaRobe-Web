@@ -36,9 +36,7 @@
                         alt=""
                         class="nav-logo-img"
                     />
-                </a>
-
-                <div class="nav-menu" id="nav-menu">
+                </a>                <div class="nav-menu" id="nav-menu">
                     <ul class="nav-list">
                         <li class="nav-item">
                             <a href="../index.html" class="nav-link">Home</a>
@@ -46,10 +44,6 @@
 
                         <li class="nav-item">
                             <a href="shop.html" class="nav-link">Shop</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="login-register.html" class="nav-link">Login</a>
                         </li>
                     </ul>
 
@@ -63,17 +57,15 @@
                             <img src="assets/img/search.png" alt="" />
                         </button>
                     </div>
-                </div>
-
-                <div class="header-user-actions">
+                </div>                <div class="header-user-actions">
                     <a href="wishlist.html" class="header-action-btn">
                         <img src="assets/img/icon-heart.svg" alt="" />
-                        <span class="count">3</span>
+                        <span class="count">0</span>
                     </a>
 
                     <a href="cart.html" class="header-action-btn">
                         <img src="assets/img/icon-cart.svg" alt="" />
-                        <span class="count">3</span>
+                        <span class="count" id="cart-count">0</span>
                     </a>
 
                     <a href="accounts.html" class="header-action-btn">
@@ -84,19 +76,18 @@
         </header>
 
         <!--=============== MAIN ===============-->
-        <main class="main">
-            <!--=============== BREADCRUMB ===============-->
+        <main class="main">            <!--=============== BREADCRUMB ===============-->
             <section class="breadcrumb">
                 <ul class="breadcrumb-list flex container">
                     <li>
                         <a href="../index.html" class="breadcrumb-link">Home</a>
                     </li>
                     <li><span class="breadcrum-link">></span></li>
-                    <li><span class="breadcrum-link">Gown</span></li>
+                    <li><span class="breadcrum-link" id="breadcrumb-category">Gown</span></li>
                     <li><span class="breadcrum-link">></span></li>
                     <li>
-                        <span class="breadcrum-link"
-                            >Colorful Patern Shirts
+                        <span class="breadcrum-link" id="breadcrumb-product-name">
+                            Colorful Patern Shirts
                         </span>
                     </li>
                 </ul>
@@ -772,8 +763,5 @@
             crossorigin="anonymous"
         ></script>        <!-- EXTERNAL SCRIPT -->
         <script type="module" src="./assets/js/details.js"></script>
-        <script type="module">
-            import autoLogout from "./assets/js/auto-logout.js";
-        </script>
     </body>
 </html>

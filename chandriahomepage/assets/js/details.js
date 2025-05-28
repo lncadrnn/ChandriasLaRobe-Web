@@ -35,6 +35,10 @@ $(document).ready(async function () {
     $('#product-code').text(data.code);
     $('#product-color').css("background-color", data.color);
 
+    // Update breadcrumb with actual product info
+    $('#breadcrumb-category').text(data.category || 'Gown');
+    $('#breadcrumb-product-name').text(data.name || 'Product Name');
+
     // Sizes
     const sizeList = $('#product-sizes');
     sizeList.empty();
@@ -48,5 +52,35 @@ $(document).ready(async function () {
 
   } else {
     alert("Product not found.");
+  }
+
+  // Update cart count on auth state change
+  onAuthStateChanged(auth, async user => {
+    await updateCartCount();
+  });
+
+  // Cart count function
+  async function updateCartCount() {
+    const user = auth.currentUser;
+
+    if (!user) {
+      $("#cart-count").text("0");
+      return;
+    }
+
+    try {
+      const userRef = doc(chandriaDB, "userAccounts", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        const data = userSnap.data();
+        const cartItems = data.added_to_cart || [];
+        const totalCount = cartItems.reduce((sum, item) => sum + (parseInt(item.quantity, 10) || 0), 0);
+        $("#cart-count").text(totalCount);
+      }
+    } catch (error) {
+      console.error("Error fetching cart count: ", error);
+      $("#cart-count").text("0");
+    }
   }
 });
