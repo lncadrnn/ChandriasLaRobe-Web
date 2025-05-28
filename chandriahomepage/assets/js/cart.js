@@ -11,6 +11,7 @@ import {
     doc,
     arrayUnion
 } from "./sdk/chandrias-sdk.js";
+import autoLogout from "./auto-logout.js";
 
 $(document).ready(function () {
     // INTIALIZING NOTYF

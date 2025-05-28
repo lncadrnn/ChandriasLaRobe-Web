@@ -104,16 +104,9 @@ $(document).ready(function () {
                 </div>
 
                 <div class="product-content">
-                    <span class="product-category">${product.category}</span>
-                    <a href="./details.html" data-id="${product.id}">
+                    <span class="product-category">${product.category}</span>                    <a href="./details.html" data-id="${product.id}">
                         <h3 class="product-title">${product.name}</h3>
                     </a>
-
-                    <div class="product-rating">
-                        <i class="fi fi-rs-star"></i><i class="fi fi-rs-star"></i>
-                        <i class="fi fi-rs-star"></i><i class="fi fi-rs-star"></i>
-                        <i class="fi fi-rs-star"></i>
-                    </div>
 
                     <div class="product-price flex">
                         <span class="new-price">₱ ${product.price}/24hr</span>

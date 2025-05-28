@@ -184,10 +184,11 @@
             src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
             crossorigin="anonymous"
-        ></script>
-        <!--=============== MAIN JS ===============-->
+        ></script>        <!--=============== MAIN JS ===============-->
         <script type="module" src="./assets/js/shop.js"></script>
-        <script type="module" src="./assets/js/accountsettings.js"></script>        <script type="module">            import { getAuth, signOut } from "./assets/js/sdk/chandrias-sdk.js";
+        <script type="module" src="./assets/js/accountsettings.js"></script>        <script type="module">
+            import { getAuth, onAuthStateChanged, signOut } from "./assets/js/sdk/chandrias-sdk.js";
+            import autoLogout from "./assets/js/auto-logout.js";
 
             const auth = getAuth();
             const logoutButton = document.getElementById('logout-btn');
@@ -195,35 +196,60 @@
             const confirmLogoutButton = document.getElementById('confirm-logout');
             const cancelLogoutButton = document.getElementById('cancel-logout');
 
-            logoutButton.addEventListener('click', () => {
-                logoutModal.style.display = 'block';
-            });
+            // Initialize auto-logout system
+            // Auto-logout is now handled by the centralized auto-logout module
 
-            confirmLogoutButton.addEventListener('click', () => {
-                signOut(auth).then(() => {
+            // Authentication state listener to ensure user is logged in
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // User is logged in - sync localStorage and update UI
+                    localStorage.setItem('userEmail', user.email);
+                    
+                    // Update email field if it exists
+                    const emailField = document.getElementById('email');
+                    if (emailField) {
+                        emailField.value = user.email;
+                    }
+                } else {
+                    // User is not logged in - redirect to login
                     window.location.href = "./user_authentication.html";
-                }).catch((error) => {
-                    console.error("Error during logout:", error);
-                });
+                }
             });
 
-            cancelLogoutButton.addEventListener('click', () => {
-                logoutModal.style.display = 'none';
-            });
+            // Set up logout modal handlers
+            if (logoutButton) {
+                logoutButton.addEventListener('click', () => {
+                    if (logoutModal) logoutModal.style.display = 'flex';
+                });
+            }
+
+            if (confirmLogoutButton) {
+                confirmLogoutButton.addEventListener('click', () => {
+                    signOut(auth).then(() => {
+                        window.location.href = "./user_authentication.html";
+                    }).catch((error) => {
+                        console.error("Error during logout:", error);
+                    });
+                });
+            }
+
+            if (cancelLogoutButton) {
+                cancelLogoutButton.addEventListener('click', () => {
+                    if (logoutModal) logoutModal.style.display = 'none';
+                });
+            }
         </script>
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                // This script is now secondary to the Firebase auth state
+                // The onAuthStateChanged listener above will handle the email population
                 const userEmail = localStorage.getItem('userEmail');
-                const emailField = document.getElementById('email'); // Changed 'account-user-email' to 'email'
+                const emailField = document.getElementById('email');
 
-                if (emailField && userEmail) {
+                if (emailField && userEmail && !emailField.value) {
+                    // Only set from localStorage if not already set by Firebase auth
                     emailField.value = userEmail;
-                } else if (emailField) {
-                    // Optional: Handle case where email is not found in localStorage
-                    // For example, redirect to login or display a placeholder
-                    // emailField.value = ''; 
-                    // window.location.href = 'user_authentication.html'; // If redirect is desired
                 }
             });
         </script>

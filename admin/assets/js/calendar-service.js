@@ -746,6 +746,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }    // Function to load enhanced rental details from Firebase
     async function loadEnhancedDetails(transactionCode, hoverElement) {
         try {
+            // Check if Firebase is available
+            if (typeof firebase === 'undefined' || firebase.apps.length === 0) {
+                const enhancedContainer = hoverElement.querySelector('.enhanced-details');
+                enhancedContainer.innerHTML = `
+                    <div style="color: #666; font-size: 12px;">
+                        <i class="fa fa-info-circle"></i> Firebase not available
+                    </div>
+                `;
+                return;
+            }
+
             const db = firebase.firestore();
             const snapshot = await db.collection("transaction")
                 .where("transactionCode", "==", transactionCode)
@@ -756,8 +767,8 @@ document.addEventListener("DOMContentLoaded", () => {
             
             if (snapshot.empty) {
                 enhancedContainer.innerHTML = `
-                    <div style="color: #666; font-size: 12px; text-align: center;">
-                        No additional details found
+                    <div style="color: #666; font-size: 12px;">
+                        <i class="fa fa-info-circle"></i> No additional details found
                     </div>
                 `;
                 return;
@@ -776,11 +787,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let enhancedHTML = '';
 
-            // Customer name
+            // Customer info
             if (data.fullName) {
                 enhancedHTML += `
-                    <div style="margin-bottom: 12px; padding: 8px; background: #f8f9fa; border-radius: 4px;">
-                        <strong style="color: #495057;">Customer:</strong> ${data.fullName}
+                    <div style="margin-bottom: 8px;">
+                        <strong>Customer:</strong> ${data.fullName}
                     </div>
                 `;
             }
@@ -789,7 +800,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (selectedProducts.length > 0) {
                 enhancedHTML += `
                     <div style="margin-bottom: 8px;">
-                        <strong style="color: #495057;">Rented Products:</strong>
+                        <strong>Products:</strong>
                         <ul style="margin: 4px 0; padding-left: 16px; font-size: 12px;">
                 `;
                 selectedProducts.forEach(product => {
@@ -802,7 +813,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (additionalItems.length > 0) {
                 enhancedHTML += `
                     <div style="margin-bottom: 8px;">
-                        <strong style="color: #495057;">Additional Items:</strong>
+                        <strong>Additional Items:</strong>
                         <ul style="margin: 4px 0; padding-left: 16px; font-size: 12px;">
                 `;
                 additionalItems.forEach(item => {
@@ -811,23 +822,52 @@ document.addEventListener("DOMContentLoaded", () => {
                 enhancedHTML += '</ul></div>';
             }
 
-            // Payment information with remaining balance
+            // Payment information
             enhancedHTML += `
-                <div style="margin-top: 12px; padding: 8px; background: #f8f9fa; border-radius: 4px; font-size: 12px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                        <span><strong>Total Amount:</strong></span>
+                <div style="margin-bottom: 8px; padding: 8px; background: #f8f9fa; border-radius: 4px; font-size: 12px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span><strong>Total:</strong></span>
                         <span>₱${totalPayment.toLocaleString()}</span>
                     </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                        <span><strong>Amount Paid:</strong></span>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span><strong>Paid:</strong></span>
                         <span>₱${totalPaid.toLocaleString()}</span>
                     </div>
-                    <div style="display: flex; justify-content: space-between; border-top: 1px solid #dee2e6; padding-top: 4px;">
-                        <span><strong>Remaining Balance:</strong></span>
+                    <div style="display: flex; justify-content: space-between; border-top: 1px solid #dee2e6; margin-top: 4px; padding-top: 4px;">
+                        <span><strong>Balance:</strong></span>
                         <span style="color: ${remainingBalance > 0 ? '#dc3545' : '#28a745'}; font-weight: bold;">
                             ₱${remainingBalance.toLocaleString()}
                         </span>
                     </div>
+                </div>
+            `;
+
+            // Event status
+            const eventStartDate = data.eventStartDate ? new Date(data.eventStartDate) : null;
+            const eventEndDate = data.eventEndDate ? new Date(data.eventEndDate) : null;
+            const currentDate = new Date();
+            
+            let status = 'Upcoming';
+            let statusColor = '#6c757d';
+            
+            if (eventStartDate && eventEndDate) {
+                if (currentDate < eventStartDate) {
+                    status = 'Upcoming';
+                    statusColor = '#17a2b8';
+                } else if (currentDate >= eventStartDate && currentDate <= eventEndDate) {
+                    status = 'Ongoing';
+                    statusColor = '#ffc107';
+                } else if (currentDate > eventEndDate) {
+                    status = 'Completed';
+                    statusColor = '#28a745';
+                }
+            }
+
+            enhancedHTML += `
+                <div style="text-align: center; margin-top: 8px;">
+                    <span style="display: inline-block; padding: 2px 8px; background: ${statusColor}; color: white; border-radius: 12px; font-size: 11px; font-weight: 500;">
+                        ${status}
+                    </span>
                 </div>
             `;
 
@@ -837,7 +877,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error('Error loading enhanced details:', error);
             const enhancedContainer = hoverElement.querySelector('.enhanced-details');
             enhancedContainer.innerHTML = `
-                <div style="color: #dc3545; font-size: 12px; text-align: center;">
+                <div style="color: #dc3545; font-size: 12px;">
                     <i class="fa fa-exclamation-triangle"></i> Failed to load details
                 </div>
             `;

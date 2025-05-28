@@ -209,14 +209,9 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
             crossorigin="anonymous"
         ></script>        <!-- EXTERNAL SCRIPT -->
-        <script type="module" src="./assets/js/user_authentication.js"></script>
-        <script>
+        <script type="module" src="./assets/js/user_authentication.js"></script>        <script>
           document.getElementById('back-btn').onclick = function() {
-            if (window.history.length > 1) {
-              window.history.back();
-            } else {
-              window.location.href = 'index.html'; // fallback if no history
-            }
+            window.location.href = '../index.html'; // Always go to index.html
           };
         </script>
     </body>

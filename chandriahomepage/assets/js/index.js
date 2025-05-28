@@ -47,15 +47,7 @@ $(document).ready(function () {
                 <div class="product-content">
                   <span class="product-category">${data.category}</span>
                   <a href="/chandriahomepage/details.html" data-id="${doc.id}">
-                    <h3 class="product-title">${data.productCode}</h3>
-                  </a>
-                  <div class="product-rating">
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
-                  </div>
+                    <h3 class="product-title">${data.productCode}</h3>                  </a>
                   <div class="product-price flex">
                       <span class="new-price">₱ ${data.prize}/24hr</span>
                       <span class="old-price">₱ 2300/24hr</span>

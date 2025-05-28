@@ -126,14 +126,15 @@ $(document).ready(function () {
 
                 loginBtn.attr("disabled", false).text("Login");
                 return;
-            }
-
-            // SHOW NOTYF
+            }            // SHOW NOTYF
             notyf.open({
                 type: "success",
                 message: "Successful Login, Redirecting...",
                 duration: 3000
             });
+
+            // Store user email in localStorage for consistent auth state
+            localStorage.setItem('userEmail', user.email);
 
             // Delay redirect to allow toast to show
             setTimeout(() => {
