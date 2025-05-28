@@ -22,7 +22,8 @@ import {
     getDoc,
     query,
     where,
-    arrayUnion
+    arrayUnion,
+    arrayRemove
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
@@ -58,5 +59,6 @@ export {
     query,
     where,
     arrayUnion,
+    arrayRemove,
     updateProfile
 };

@@ -9,10 +9,9 @@
 
    <!--=============== SWIPER CSS ===============-->
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
-
-
     <!--=============== CSS ===============-->
     <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="assets/css/shop.css" />
 
     <title>Chandria's La Robe</title>
   <body>
@@ -42,17 +41,15 @@
 
             </button>
           </div>
-        </div>
-
-        <div class="header-user-actions">
+        </div>        <div class="header-user-actions">
           <a href="wishlist.html" class="header-action-btn">
             <img src="assets/img/icon-heart.svg" alt="">
-            <span class="count">3</span>
+            <span class="count" id="wishlist-count">0</span>
           </a>
 
           <a href="cart.html" class="header-action-btn">
             <img src="assets/img/icon-cart.svg" alt="">
-            <span class="count">3</span>
+            <span class="count" id="cart-count">0</span>
           </a>
 
           <a href="accounts.html" class="header-action-btn">
@@ -76,121 +73,67 @@
         </ul>
       </section>
 
-      <!--=============== FAVORITES ===============-->
-      <section class="wishlist section-lg container">
+      <!--=============== FAVORITES ===============-->      <section class="wishlist section-lg container">
         <div class="table-container">
           <table class="table">
-            <tr>
-              <th>Image</th>
-              <th>Name</th>
-              <th>Price</th>
-              <th>Availability Status</th>
-              <th>Action</th>
-              <th>Remove</th>
-            </tr>
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Availability Status</th>
+                <th>Action</th>
+                <th>Remove</th>
+              </tr>
+            </thead>
             <tbody id="wishlist-body">
-             <tr>
-              <td>
-                <img src="assets/img/product-6-1.jpg" alt="" class="table-img">
-              </td>
-
-              <td>
-                <h3 class="table-title">Colorful Pattern Shirt</h3>
-                <p class="table-description">A red gown is a long, often formal dress, typically worn</p>
-              </td>
-
-              <td>
-                <span class="table-price">₱900</span>
-              </td>
-              <td>
-                <span class="table-status">Available</span>
-              </td>
-              <td>
-                <a href="" class="btn btn btn-sm">Add to Rent List</a>
-              </td>
-              <td>
-                <i class="fi fi-rs-trash table-trash"></i>
-              </td>
-            </tr>
-         
-            <tr>
-              <td>
-                <img src="assets/img/product-7-1.jpg" alt="" class="table-img">
-              </td>
-
-              <td>
-                <h3 class="table-title">Colorful Pattern Shirt</h3>
-                <p class="table-description">A red gown is a long, often formal dress, typically worn</p>
-              </td>
-
-              <td>
-                <span class="table-price">₱900</span>
-              </td>
-              <td>
-                <span class="table-status">Reserved</span>
-              </td>
-              <td>
-                <a href="" class="btn btn btn-sm">Add to Rent List</a>
-              </td>
-              <td>
-                <i class="fi fi-rs-trash table-trash"></i>
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                <img src="assets/img/product-8-1.jpg" alt="" class="table-img">
-              </td>
-
-              <td>
-                <h3 class="table-title">Colorful Pattern Shirt</h3>
-                <p class="table-description">A red gown is a long, often formal dress, typically worn</p>
-              </td>
-
-              <td>
-                <span class="table-price">₱900</span>
-              </td>
-              <td>
-                <span class="table-status">Unavailable</span>
-              </td>
-              <td>
-                <a href="" class="btn btn btn-sm">Add to Rent List</a>
-              </td>
-              <td>
-                <i class="fi fi-rs-trash table-trash"></i>
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                <img src="assets/img/product-8-1.jpg" alt="" class="table-img">
-              </td>
-
-              <td>
-                <h3 class="table-title">Colorful Pattern Shirt</h3>
-                <p class="table-description">A red gown is a long, often formal dress, typically worn</p>
-              </td>
-
-              <td>
-                <span class="table-price">₱900</span>
-              </td>
-              <td>
-                <span class="table-status">Available</span>
-              </td>
-              <td>
-                <a href="" class="btn btn btn-sm">Add to Rent List</a>
-              </td>
-              <td>
-                <i class="fi fi-rs-trash table-trash"></i>
-              </td>
-            </tr>
-
-          </tbody>
-            
+              <!-- Wishlist items will be populated dynamically -->
+            </tbody>
           </table>
         </div>
-      </section>    <!--=============== SWIPER JS ===============-->
+      </section><!--=============== AUTHENTICATION MODAL ===============-->
+    <div id="auth-modal" class="auth-modal-overlay">
+        <div class="auth-modal">
+            <button class="auth-modal-close" id="auth-modal-close">&times;</button>
+            <div class="auth-modal-content">
+                <div class="auth-modal-header">
+                    <i class="fi fi-rs-user auth-modal-icon"></i>
+                    <h2 class="auth-modal-title">Authentication Required</h2>
+                    <p class="auth-modal-subtitle">You need to log in first to access your wishlist.</p>
+                </div>
+                <div class="auth-modal-actions">
+                    <button id="auth-modal-login" class="auth-btn auth-btn-primary">
+                        <span>Continue to Login / Signup</span>
+                    </button>
+                    <button id="auth-modal-cancel" class="auth-btn auth-btn-tertiary">
+                        <span>Maybe Later</span>
+                    </button>
+                </div>
+                <div class="auth-modal-features">
+                    <div class="auth-feature">
+                        <i class="fi fi-rs-shopping-cart-check"></i>
+                        <span>Save items for later</span>
+                    </div>
+                    <div class="auth-feature">
+                        <i class="fi fi-rs-heart"></i>
+                        <span>Create your wishlist</span>
+                    </div>
+                    <div class="auth-feature">
+                        <i class="fi fi-rs-truck"></i>
+                        <span>Track your orders</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    <!--=============== JQUERY ===============-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!--=============== NOTYF NOTIFICATIONS ===============-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+    <!--=============== SWIPER JS ===============-->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!--=============== WISHLIST JS ===============-->
+    <script type="module" src="assets/js/wishlist.js"></script>
     <!--=============== MAIN JS ===============-->
     <script src="assets/js/main.js"></script>
   </body>
