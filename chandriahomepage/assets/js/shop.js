@@ -27,8 +27,49 @@ $(document).ready(function () {
                     tagName: "i"
                 }
             }
-        ]
+        ]    });
+
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+    // AUTHENTICATION MODAL FUNCTIONS
+    function showAuthModal() {
+        const authModal = document.getElementById('auth-modal');
+        if (authModal) {
+            authModal.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+    }
+
+    function hideAuthModal() {
+        const authModal = document.getElementById('auth-modal');
+        if (authModal) {
+            authModal.classList.remove('show');
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+    }    // Authentication modal event listeners
+    $(document).on('click', '#auth-modal-close, #auth-modal-cancel', function() {
+        hideAuthModal();
     });
+
+    $(document).on('click', '#auth-modal-login', function() {
+        window.location.href = './user_authentication.html';
+    });
+
+    // Close modal when clicking outside
+    $(document).on('click', '#auth-modal', function(e) {
+        if (e.target === this) {
+            hideAuthModal();
+        }
+    });
+
+    // Close modal on escape key
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape') {
+            hideAuthModal();
+        }
+    });
+
+    // Make showAuthModal globally accessible
+    window.showAuthModal = showAuthModal;
 
     // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // LISTEN FOR AUTH STATE CHANGES
@@ -180,14 +221,9 @@ $(document).ready(function () {
     let currentSizeStock = {}; // Global variable for size:quantity map
     $(document).on("click", ".cart-btn", async function () {
         const user = auth.currentUser; // Get currently logged-in user
-        // If user is not logged in, show a prompt to log in
+        // If user is not logged in, show authentication modal
         if (!user) {
-            const goToLogin = confirm(
-                "You need to log in to add items to your cart. Do you want to log in now?"
-            );
-            if (goToLogin) {
-                window.location.href = "./user_authentication.html"; // Redirect to login page
-            }
+            showAuthModal();
             return; // Stop execution if not logged in
         }
 

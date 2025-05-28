@@ -289,6 +289,39 @@
                     <button id="logout-yes" style="background:#ff9aaf; color:#fff; border:none; border-radius:5px; padding:0.5rem 1.5rem; font-weight:600; cursor:pointer;">Yes</button>
                     <button id="logout-no" style="background:#eee; color:#222; border:none; border-radius:5px; padding:0.5rem 1.5rem; font-weight:600; cursor:pointer;">No</button>
                 </div>
+            </div>        </div>
+
+        <!--=============== AUTHENTICATION MODAL ===============-->        <div id="auth-modal" class="auth-modal-overlay">
+            <div class="auth-modal">
+                <button class="auth-modal-close" id="auth-modal-close">&times;</button>
+                <div class="auth-modal-content">
+                    <div class="auth-modal-header">
+                        <i class="fi fi-rs-user auth-modal-icon"></i>
+                        <h2 class="auth-modal-title">Authentication Required</h2>
+                        <p class="auth-modal-subtitle">You need to log in first in order to access that.</p>
+                    </div>                    <div class="auth-modal-actions">
+                        <button id="auth-modal-login" class="auth-btn auth-btn-primary">
+                            <span>Continue to Login / Signup</span>
+                        </button>
+                        <button id="auth-modal-cancel" class="auth-btn auth-btn-tertiary">
+                            <span>Maybe Later</span>
+                        </button>
+                    </div>
+                    <div class="auth-modal-features">
+                        <div class="auth-feature">
+                            <i class="fi fi-rs-shopping-cart-check"></i>
+                            <span>Save items to cart</span>
+                        </div>
+                        <div class="auth-feature">
+                            <i class="fi fi-rs-heart"></i>
+                            <span>Add to favorites</span>
+                        </div>
+                        <div class="auth-feature">
+                            <i class="fi fi-rs-time-fast"></i>
+                            <span>Book for appointment</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -367,7 +400,9 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
             crossorigin="anonymous"
         ></script>        <!--=============== MAIN JS ===============-->
-        <script type="module" src="./assets/js/shop.js"></script>        <script type="module">
+        <script type="module" src="./assets/js/shop.js"></script>
+
+        <script type="module">
             import { getAuth, onAuthStateChanged, signOut } from "./assets/js/sdk/chandrias-sdk.js";
             import autoLogout from "./assets/js/auto-logout.js";
             

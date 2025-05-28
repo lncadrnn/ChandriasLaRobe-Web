@@ -1,5 +1,5 @@
 // Auto-logout utility for Chandria's La Robe
-// Automatically signs out users when they close the tab, navigate away, or are inactive for 30 minutes
+// Automatically signs out users when they close the tab, navigate away, or are inactive for 3 hours
 
 import { getAuth, signOut } from "./sdk/chandrias-sdk.js";
 
@@ -7,7 +7,7 @@ class AutoLogout {
     constructor() {
         this.auth = getAuth();
         this.isEnabled = true;
-        this.inactivityTimeout = 30 * 60 * 1000; // 30 minutes in milliseconds
+        this.inactivityTimeout = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
         this.inactivityTimer = null;
         this.hiddenTimer = null;
         this.isNavigatingWithinSite = false;
@@ -35,8 +35,7 @@ class AutoLogout {
         
         // Check for session expiry on page load
         this.checkSessionExpiry();
-        
-        // Check if browser was closed for more than 30 minutes
+          // Check if browser was closed for more than 3 hours
         this.checkBrowserCloseTimeout();
     }
 
@@ -81,11 +80,10 @@ class AutoLogout {
         if (this.inactivityTimer) {
             clearTimeout(this.inactivityTimer);
         }
-        
-        // Set new timer for 30 minutes
+          // Set new timer for 3 hours
         this.inactivityTimer = setTimeout(() => {
             if (this.isEnabled && this.auth.currentUser) {
-                console.log('Auto-logout: User inactive for 30 minutes, logging out');
+                console.log('Auto-logout: User inactive for 3 hours, logging out');
                 this.performLogout('inactivity');
             }
         }, this.inactivityTimeout);
@@ -135,16 +133,14 @@ class AutoLogout {
                 console.error('Auto-logout error during pagehide:', error);
             }
         }
-    }
-
-    handleVisibilityChange() {
+    }    handleVisibilityChange() {
         if (document.hidden) {
-            // Tab became hidden - start 30-minute timer
+            // Tab became hidden - start 3-hour timer
             if (this.isEnabled && this.auth.currentUser) {
                 this.hiddenTimer = setTimeout(() => {
-                    // Only logout if the page is still hidden after 30 minutes and user is still authenticated
+                    // Only logout if the page is still hidden after 3 hours and user is still authenticated
                     if (document.hidden && this.auth.currentUser) {
-                        console.log('Auto-logout: Tab hidden for 30 minutes, logging out user');
+                        console.log('Auto-logout: Tab hidden for 3 hours, logging out user');
                         this.performLogout('tab_hidden');
                     }
                 }, this.inactivityTimeout);
@@ -184,8 +180,7 @@ class AutoLogout {
             await signOut(this.auth);
             
             console.log('Auto-logout: User successfully signed out');
-            
-            // If this is an inactivity or expiry logout, redirect to login page
+              // If this is an inactivity or expiry logout, redirect to login page
             if (reason === 'inactivity' || reason === 'expired') {
                 alert('You have been logged out due to inactivity. Please log in again.');
                 window.location.href = './user_authentication.html';
@@ -229,15 +224,13 @@ class AutoLogout {
     // Method to manually trigger logout
     manualLogout() {
         return this.performLogout('manual');
-    }
-
-    // Method to check if browser was closed for more than 30 minutes
+    }    // Method to check if browser was closed for more than 3 hours
     checkBrowserCloseTimeout() {
         const browserCloseTime = localStorage.getItem('browserCloseTime');
         if (browserCloseTime) {
             const timeElapsed = Date.now() - parseInt(browserCloseTime);
             if (timeElapsed > this.inactivityTimeout) {
-                console.log('Auto-logout: Browser was closed for more than 30 minutes');
+                console.log('Auto-logout: Browser was closed for more than 3 hours');
                 this.performLogout('browser_timeout');
                 return true;
             }

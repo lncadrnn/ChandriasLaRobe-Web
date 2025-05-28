@@ -5,14 +5,14 @@ The enhanced auto-logout system provides comprehensive session management for Ch
 
 ## Features
 
-### ✅ 30-Minute Inactivity Logout
-- Automatically logs out users after 30 minutes of complete inactivity
+### ✅ 3-Hour Inactivity Logout
+- Automatically logs out users after 3 hours of complete inactivity
 - Tracks mouse movements, clicks, keypresses, scrolling, and touch events
 - Timer resets on any user activity
 - Shows alert notification before redirecting to login page
 
 ### ✅ Tab Hidden Logout
-- Logs out users if tab stays hidden for 30 minutes
+- Logs out users if tab stays hidden for 3 hours
 - Prevents accidental logout on quick tab switches
 - Only triggers after sustained absence from the tab
 
@@ -22,7 +22,7 @@ The enhanced auto-logout system provides comprehensive session management for Ch
 - Clears all session data and localStorage
 
 ### ✅ Browser Restart Detection
-- Detects if browser was closed for more than 30 minutes
+- Detects if browser was closed for more than 3 hours
 - Automatically logs out user on page reload after extended closure
 - Maintains session if browser was closed briefly
 
@@ -57,11 +57,11 @@ The system runs automatically - no additional setup required.
 ### What Users Will Experience:
 
 1. **Normal Usage**: Users can browse normally without interruption
-2. **Inactivity Warning**: After 30 minutes of inactivity, users see an alert and are redirected to login
+2. **Inactivity Warning**: After 3 hours of inactivity, users see an alert and are redirected to login
 3. **Tab Switching**: Quick tab switches won't log users out
-4. **Extended Tab Hiding**: If tab is hidden for 30+ minutes, user is logged out
+4. **Extended Tab Hiding**: If tab is hidden for 3+ hours, user is logged out
 5. **Browser Close**: Closing browser/tab immediately logs out the user
-6. **Session Recovery**: If browser was closed for 30+ minutes, user must log in again
+6. **Session Recovery**: If browser was closed for 3+ hours, user must log in again
 
 ### What Users Won't Experience:
 - ❌ Logout during normal site navigation
@@ -86,10 +86,10 @@ A test page is available at `chandriahomepage/auto-logout-test.html` to demonstr
 
 ## Configuration
 
-The auto-logout timeout is set to 30 minutes (1,800,000 milliseconds) and can be adjusted in the `AutoLogout` constructor:
+The auto-logout timeout is set to 3 hours (10,800,000 milliseconds) and can be adjusted in the `AutoLogout` constructor:
 
 ```javascript
-this.inactivityTimeout = 30 * 60 * 1000; // 30 minutes
+this.inactivityTimeout = 3 * 60 * 60 * 1000; // 3 hours
 ```
 
 ## Troubleshooting
@@ -113,5 +113,5 @@ The auto-logout system is self-contained and requires minimal maintenance. Monit
 ---
 
 **Status**: ✅ Fully Implemented and Tested
-**Last Updated**: December 2024
-**Version**: 2.0 (Enhanced with comprehensive timeout features)
+**Last Updated**: May 2025
+**Version**: 2.1 (Updated to 3-hour timeout for enhanced user experience)

@@ -72,20 +72,18 @@
         <div id="authStatus" class="status logged-out">
             Not logged in
         </div>
-        
-        <div class="info">
+          <div class="info">
             <h3>Auto-Logout Features:</h3>
             <ul>
-                <li>✅ Logout after 30 minutes of inactivity</li>
-                <li>✅ Logout when tab is hidden for 30 minutes</li>
+                <li>✅ Logout after 3 hours of inactivity</li>
+                <li>✅ Logout when tab is hidden for 3 hours</li>
                 <li>✅ Logout when browser/tab is closed</li>
-                <li>✅ Logout if browser was closed for more than 30 minutes</li>
+                <li>✅ Logout if browser was closed for more than 3 hours</li>
                 <li>✅ Prevent logout during internal site navigation</li>
             </ul>
         </div>
-        
-        <div id="timer" class="timer">
-            Inactivity Timer: --:--
+          <div id="timer" class="timer">
+            Inactivity Timer: --:--:--
         </div>
         
         <div>
@@ -149,21 +147,21 @@
                 addLog('User logged out');
             }
         });
-        
-        // Update timer every second
+          // Update timer every second
         setInterval(() => {
             if (auth.currentUser) {
                 const elapsed = Date.now() - inactivityStartTime;
-                const remaining = Math.max(0, (30 * 60 * 1000) - elapsed);
-                const minutes = Math.floor(remaining / 60000);
+                const remaining = Math.max(0, (3 * 60 * 60 * 1000) - elapsed);
+                const hours = Math.floor(remaining / 3600000);
+                const minutes = Math.floor((remaining % 3600000) / 60000);
                 const seconds = Math.floor((remaining % 60000) / 1000);
-                timer.textContent = `Inactivity Timer: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                timer.textContent = `Inactivity Timer: ${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
                 
                 if (remaining === 0) {
                     timer.style.color = '#dc3545';
                 }
             } else {
-                timer.textContent = 'Inactivity Timer: --:--';
+                timer.textContent = 'Inactivity Timer: --:--:--';
             }
         }, 1000);
         
@@ -173,10 +171,9 @@
             inactivityStartTime = Date.now();
             timer.style.color = '#ff6b6b';
         };
-        
-        window.testTabHide = function() {
-            addLog('Test: Hide this tab for 30 minutes to test tab-hidden logout');
-            alert('Hide this tab for 30 minutes to test the tab-hidden auto-logout feature!');
+          window.testTabHide = function() {
+            addLog('Test: Hide this tab for 3 hours to test tab-hidden logout');
+            alert('Hide this tab for 3 hours to test the tab-hidden auto-logout feature!');
         };
         
         window.manualLogout = function() {
