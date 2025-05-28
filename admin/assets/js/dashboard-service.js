@@ -115,12 +115,18 @@ document.addEventListener("DOMContentLoaded", () => {
             renderRentals();
         });
     }    // Show rental details modal
-    async function showRentalDetails(id) {
-        try {
+    async function showRentalDetails(id) {        try {
             const docSnap = await db.collection("transaction").doc(id).get();
             if (!docSnap.exists) return;
 
             const data = docSnap.data();
+            
+            // DEBUG: Log the transaction data retrieved from Firestore
+            console.log("DEBUG - Transaction data retrieved:", data);
+            console.log("DEBUG - Products in transaction:", data.products);
+            console.log("DEBUG - Products array type:", Array.isArray(data.products));
+            console.log("DEBUG - Products array length:", data.products ? data.products.length : 0);
+            
             const modal = document.getElementById('rental-modal');
             const details = document.getElementById('rental-details');
 
@@ -132,8 +138,10 @@ document.addEventListener("DOMContentLoaded", () => {
             // Fetch detailed product information from Firebase
             let productsContent = '';
             if (data.products && Array.isArray(data.products)) {
+                console.log("DEBUG - Processing products array...");
                 const productDetails = await Promise.all(data.products.map(async product => {
                     try {
+                        console.log("DEBUG - Processing product:", product);
                         if (!product.id) return null;
                         
                         const productDoc = await db.collection("products").doc(product.id).get();
@@ -158,9 +166,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         console.error('Error fetching product details:', error);
                         return null;
                     }
-                }));
-
-                const validProducts = productDetails.filter(Boolean);
+                }));                const validProducts = productDetails.filter(Boolean);
+                
+                // DEBUG: Log product details processing results
+                console.log("DEBUG - Product details processing results:");
+                console.log("DEBUG - Valid products count:", validProducts.length);
+                console.log("DEBUG - Valid products:", validProducts);
                 
                 if (validProducts.length > 0) {
                     productsContent = validProducts.map(product => `
@@ -173,11 +184,12 @@ document.addEventListener("DOMContentLoaded", () => {
                             </td>
                             <td class="modal-product-price" style="font-weight: 500; color: #222; text-align: right;">₱ ${(product.price * product.totalQuantity).toLocaleString()}</td>
                         </tr>
-                    `).join('');
-                } else {
+                    `).join('');                } else {
+                    console.log("DEBUG - No valid products found, showing 'No products found' message");
                     productsContent = '<tr><td colspan="3" style="text-align:center;color:#888;">No products found</td></tr>';
                 }
             } else {
+                console.log("DEBUG - No products array found in transaction data");
                 productsContent = '<tr><td colspan="3" style="text-align:center;color:#888;">No products found</td></tr>';
             }
 
@@ -422,9 +434,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         productDoc = await db.collection("products").doc(item.productId).get();
                     }
                     if (!productDoc.exists) return null;
-                    const productData = productDoc.data();
-                    return {
+                    const productData = productDoc.data();                    return {
                         name: productData.name || productData.code || "Unknown",
+                        code: productData.code || productData.name || "Unknown", // Add code field
                         image: productData.frontImageUrl || productData.imageUrl || "",
                         price: productData.price || 0,
                         size: item.size || "",

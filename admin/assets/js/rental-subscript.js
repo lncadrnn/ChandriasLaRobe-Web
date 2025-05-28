@@ -668,41 +668,56 @@ $(document).ready(function () {
 
     // Pre-populate cart with appointment items
     function prePopulateCartFromAppointment(appointmentData) {
+        console.log("DEBUG - Pre-populating cart from appointment:", appointmentData);
+        
         if (!appointmentData.cartItems || !Array.isArray(appointmentData.cartItems)) {
-            console.log('No cart items in appointment data');
+            console.log('DEBUG - No cart items in appointment data');
             return;
         }
+
+        console.log("DEBUG - Cart items found:", appointmentData.cartItems);
 
         // Clear existing cart
         cart.products = [];
         cart.accessories = [];
 
-        appointmentData.cartItems.forEach(item => {
+        appointmentData.cartItems.forEach((item, index) => {
+            console.log(`DEBUG - Processing cart item ${index}:`, item);
+            
             if (item.type === 'accessory') {
-                cart.accessories.push({
+                const accessory = {
                     id: item.productId,
                     name: item.name,
                     code: item.name, // Use name as code for accessories
                     price: item.price,
                     quantity: item.quantity,
                     types: [] // Can be updated later when accessory modal is opened
-                });
+                };
+                console.log("DEBUG - Adding accessory:", accessory);
+                cart.accessories.push(accessory);
             } else {
-                cart.products.push({
+                const product = {
                     id: item.productId,
                     name: item.name,
-                    code: item.name, // Use name as code for products
+                    code: item.code || item.name, // Prefer actual code if available, fallback to name
                     price: item.price,
                     size: item.size,
                     quantity: item.quantity
-                });
+                };
+                console.log("DEBUG - Adding product:", product);
+                console.log("DEBUG - Product validation - id:", product.id, "name:", product.name, "price:", product.price, "size:", product.size, "quantity:", product.quantity);
+                cart.products.push(product);
             }
         });
+
+        console.log("DEBUG - Final cart after pre-population:");
+        console.log("DEBUG - Products:", cart.products);
+        console.log("DEBUG - Accessories:", cart.accessories);
 
         // Update cart summary display
         updateCartSummary();
         
-        console.log('Cart pre-populated from appointment:', cart);
+        console.log('DEBUG - Cart pre-populated from appointment completed');
     }
 
     // Pre-fill customer form with appointment data
@@ -726,6 +741,63 @@ $(document).ready(function () {
     if (isAppointmentFlow) {
         console.log('Page loaded from appointment flow - data pre-populated');
     }
+    
+    // DEBUG: Add a test function to simulate appointment flow for debugging
+    window.testAppointmentFlow = function() {
+        console.log("DEBUG - Testing appointment flow with sample data...");
+        const testAppointmentData = {
+            customerName: "Test Customer",
+            customerContact: "09123456789",
+            eventDate: "2025-06-01",
+            cartItems: [
+                {
+                    productId: "testProductId123",
+                    name: "Test Gown",
+                    code: "TG001",
+                    price: 2500,
+                    size: "M",
+                    quantity: 1,
+                    type: "product"
+                }
+            ],
+            totalAmount: 2500
+        };
+        
+        console.log("DEBUG - Simulating appointment data:", testAppointmentData);
+        prePopulateCartFromAppointment(testAppointmentData);
+        preFillCustomerFormFromAppointment(testAppointmentData);
+    };
+    
+    // DEBUG: Add a function to test dashboard transaction retrieval
+    window.testDashboardRetrieval = async function(transactionId) {
+        if (!transactionId) {
+            console.log("DEBUG - Please provide a transaction ID to test");
+            return;
+        }
+        
+        console.log("DEBUG - Testing dashboard retrieval for transaction:", transactionId);
+        try {
+            const docSnap = await getDoc(doc(chandriaDB, "transaction", transactionId));
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                console.log("DEBUG - Retrieved transaction data:", data);
+                console.log("DEBUG - Products in transaction:", data.products);
+                console.log("DEBUG - Products array length:", data.products ? data.products.length : 0);
+                
+                if (data.products && data.products.length > 0) {
+                    data.products.forEach((product, index) => {
+                        console.log(`DEBUG - Product ${index}:`, product);
+                    });
+                } else {
+                    console.log("DEBUG - No products found in transaction!");
+                }
+            } else {
+                console.log("DEBUG - Transaction not found!");
+            }
+        } catch (error) {
+            console.error("DEBUG - Error retrieving transaction:", error);
+        }
+    };
 
     // --- Error Modal Logic (jQuery version) ---
     const $errorModal = $("#error-modal");
@@ -1483,6 +1555,8 @@ $(document).ready(function () {
             // --- GROUP PRODUCTS ---
             const groupedProducts = {};
             cart.products.forEach(item => {
+                console.log("DEBUG - Validating product for grouping:", item);
+                
                 if (
                     !item.id ||
                     !item.name ||
@@ -1491,7 +1565,15 @@ $(document).ready(function () {
                     item.quantity === undefined ||
                     item.price === undefined
                 ) {
-                    console.warn("Invalid product skipped:", item);
+                    console.warn("DEBUG - Invalid product skipped:", item);
+                    console.warn("DEBUG - Missing fields:", {
+                        id: !item.id ? "MISSING" : "OK",
+                        name: !item.name ? "MISSING" : "OK", 
+                        code: !item.code ? "MISSING" : "OK",
+                        size: !item.size ? "MISSING" : "OK",
+                        quantity: item.quantity === undefined ? "MISSING" : "OK",
+                        price: item.price === undefined ? "MISSING" : "OK"
+                    });
                     return;
                 }
 
@@ -1514,6 +1596,23 @@ $(document).ready(function () {
             });
 
             const finalProductList = Object.values(groupedProducts);
+            
+            // DEBUG: Log the final product list structure
+            console.log("DEBUG - Final Product List before saving:", finalProductList);
+            console.log("DEBUG - Final Product List length:", finalProductList.length);
+            finalProductList.forEach((product, index) => {
+                console.log(`DEBUG - Product ${index}:`, {
+                    id: product.id,
+                    code: product.code,
+                    name: product.name,
+                    sizes: product.sizes,
+                    price: product.price
+                });
+            });
+            
+            // DEBUG: Log current cart state for verification
+            console.log("DEBUG - Current cart.products before grouping:", cart.products);
+            console.log("DEBUG - Cart products count:", cart.products.length);
 
             // --- GROUP ACCESSORIES ---
             const finalAccessoriesList = [];
@@ -1603,6 +1702,10 @@ $(document).ready(function () {
             };
 
             console.log("Customer Form Data to submit:", formData);
+            
+            // DEBUG: Specifically log the products being saved
+            console.log("DEBUG - Products being saved to Firestore:", formData.products);
+            console.log("DEBUG - Products array length:", formData.products.length);
 
             // === Validate no undefined fields ===
             for (const [key, value] of Object.entries(formData)) {
@@ -1616,6 +1719,21 @@ $(document).ready(function () {
                 collection(chandriaDB, "transaction"),
                 formData
             );
+
+            // DEBUG: Log the document ID and verify it was saved
+            console.log("DEBUG - Transaction saved with ID:", docRef.id);
+            console.log("DEBUG - Attempting to retrieve saved transaction...");
+            
+            // Try to immediately fetch the saved transaction to verify it was saved correctly
+            const savedTransactionSnap = await getDoc(docRef);
+            if (savedTransactionSnap.exists()) {
+                const savedData = savedTransactionSnap.data();
+                console.log("DEBUG - Successfully retrieved saved transaction:", savedData);
+                console.log("DEBUG - Saved products array:", savedData.products);
+                console.log("DEBUG - Saved products length:", savedData.products ? savedData.products.length : 0);
+            } else {
+                console.log("DEBUG - ERROR: Could not retrieve saved transaction!");
+            }
 
             spinnerText.text("Submission successful!");
 
