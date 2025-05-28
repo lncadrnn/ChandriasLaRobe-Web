@@ -271,6 +271,30 @@ form {
   color: #ff9aaf !important;
 }
 
+/*=============== CURSOR POINTER STYLES ===============*/
+/* All buttons */
+button,
+.btn,
+.toggle-panel .btn,
+.sign-in-btn,
+.sign-up-btn,
+input[type="submit"],
+input[type="button"] {
+  cursor: pointer;
+}
+
+/* All links with href */
+a[href] {
+  cursor: pointer;
+}
+
+/* Authentication specific interactive elements */
+.toggle-panel,
+.form-toggle,
+.forgot-password-link {
+  cursor: pointer;
+}
+
 @media screen and (max-width: 650px) {
     .container {
         height: calc(100vh - 40px);

@@ -31,3 +31,56 @@ body {
     /* transition: var(--tran-05); */ /* Removed transition */
     overflow: hidden;
 }
+
+/*=============== CURSOR POINTER STYLES ===============*/
+/* All buttons and interactive elements */
+button,
+.btn,
+.filter-btn,
+.search-btn,
+.export-btn,
+.print-btn,
+.refresh-btn,
+.edit-btn,
+.delete-btn,
+.view-btn,
+.pagination-btn,
+.sort-btn,
+input[type="submit"],
+input[type="button"] {
+  cursor: pointer;
+}
+
+/* All links with href */
+a[href] {
+  cursor: pointer;
+}
+
+/* Customer logs specific interactive elements */
+.log-item,
+.customer-row,
+.rental-history-item,
+.table-row,
+.table-header,
+.date-filter,
+.status-filter,
+.customer-filter,
+.action-menu,
+.dropdown-toggle,
+.modal-trigger,
+.tab-button,
+select,
+.checkbox-wrapper,
+.expandable-row {
+  cursor: pointer;
+}
+
+/* Disabled elements */
+button:disabled,
+.btn:disabled,
+input:disabled,
+select:disabled {
+  cursor: not-allowed !important;
+}
+
+/* Google Fonts */

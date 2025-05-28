@@ -1,3 +1,117 @@
+
+/*=============== CURSOR POINTER STYLES ===============*/
+/* All buttons and interactive elements */
+button,
+.btn,
+.schedule-btn,
+.add-schedule-btn,
+.edit-schedule-btn,
+.delete-schedule-btn,
+.save-schedule-btn,
+.cancel-schedule-btn,
+.time-slot-btn,
+.date-btn,
+.filter-btn,
+.view-toggle-btn,
+input[type="submit"],
+input[type="button"] {
+  cursor: pointer;
+}
+
+/* All links with href */
+a[href] {
+  cursor: pointer;
+}
+
+/* Schedule specific interactive elements */
+.schedule-item,
+.time-slot,
+.appointment-card,
+.calendar-day,
+.schedule-grid,
+.time-picker,
+.date-picker,
+.duration-selector,
+.status-indicator,
+.customer-selector,
+.service-selector,
+.table-row,
+.table-header,
+.modal-trigger,
+.dropdown-toggle,
+select,
+.checkbox-wrapper,
+.radio-wrapper {
+  cursor: pointer;
+}
+
+/* Disabled elements */
+.time-slot.disabled,
+.calendar-day.disabled,
+button:disabled,
+.btn:disabled,
+input:disabled,
+select:disabled {
+  cursor: not-allowed !important;
+}
+
+
+/*=============== CURSOR POINTER STYLES ===============*/
+/* All buttons and interactive elements */
+button,
+.btn,
+.schedule-btn,
+.add-schedule-btn,
+.edit-schedule-btn,
+.delete-schedule-btn,
+.save-schedule-btn,
+.cancel-schedule-btn,
+.time-slot-btn,
+.date-btn,
+.filter-btn,
+.view-toggle-btn,
+input[type="submit"],
+input[type="button"] {
+  cursor: pointer;
+}
+
+/* All links with href */
+a[href] {
+  cursor: pointer;
+}
+
+/* Schedule specific interactive elements */
+.schedule-item,
+.time-slot,
+.appointment-card,
+.calendar-day,
+.schedule-grid,
+.time-picker,
+.date-picker,
+.duration-selector,
+.status-indicator,
+.customer-selector,
+.service-selector,
+.table-row,
+.table-header,
+.modal-trigger,
+.dropdown-toggle,
+select,
+.checkbox-wrapper,
+.radio-wrapper {
+  cursor: pointer;
+}
+
+/* Disabled elements */
+.time-slot.disabled,
+.calendar-day.disabled,
+button:disabled,
+.btn:disabled,
+input:disabled,
+select:disabled {
+  cursor: not-allowed !important;
+}
+
 body {
     height: 100vh;
     background: var(--body-color);
@@ -126,10 +240,6 @@ tbody tr {
     overflow-y: visible;
 }
 
-tbody {
-    /* Remove max-height and overflow-y from tbody for natural table layout */
-}
-
 .status-upcoming {
     color: #3b82f6;
     font-weight: bold;
@@ -209,3 +319,61 @@ button:hover {
     transform: rotate(360deg);
   }
 }
+
+/*=============== CURSOR POINTER STYLES ===============*/
+/* All buttons and interactive elements */
+button,
+.btn,
+.schedule-btn,
+.add-schedule-btn,
+.edit-schedule-btn,
+.delete-schedule-btn,
+.save-schedule-btn,
+.cancel-schedule-btn,
+.time-slot-btn,
+.date-btn,
+.filter-btn,
+.view-toggle-btn,
+input[type="submit"],
+input[type="button"] {
+  cursor: pointer;
+}
+
+/* All links with href */
+a[href] {
+  cursor: pointer;
+}
+
+/* Schedule specific interactive elements */
+.schedule-item,
+.time-slot,
+.appointment-card,
+.calendar-day,
+.schedule-grid,
+.time-picker,
+.date-picker,
+.duration-selector,
+.status-indicator,
+.customer-selector,
+.service-selector,
+.table-row,
+.table-header,
+.modal-trigger,
+.dropdown-toggle,
+select,
+.checkbox-wrapper,
+.radio-wrapper {
+  cursor: pointer;
+}
+
+/* Disabled elements */
+.time-slot.disabled,
+.calendar-day.disabled,
+button:disabled,
+.btn:disabled,
+input:disabled,
+select:disabled {
+  cursor: not-allowed !important;
+}
+
+/* Google Fonts */

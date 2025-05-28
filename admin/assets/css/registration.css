@@ -216,6 +216,55 @@ form {
     box-shadow: none;
 }
 
+/*=============== CURSOR POINTER STYLES ===============*/
+/* All buttons and interactive elements */
+button,
+.btn,
+.register-btn,
+.submit-btn,
+.cancel-btn,
+.clear-btn,
+.upload-btn,
+.validate-btn,
+input[type="submit"],
+input[type="button"],
+input[type="file"],
+input[type="checkbox"],
+input[type="radio"] {
+  cursor: pointer;
+}
+
+/* All links with href */
+a[href] {
+  cursor: pointer;
+}
+
+/* Registration specific interactive elements */
+.form-group,
+.form-control,
+.file-upload,
+.image-preview,
+.terms-checkbox,
+.privacy-checkbox,
+.step-indicator,
+.step-button,
+.progress-bar,
+.dropdown-toggle,
+select,
+.checkbox-wrapper,
+.radio-wrapper,
+label[for] {
+  cursor: pointer;
+}
+
+/* Disabled elements */
+button:disabled,
+.btn:disabled,
+input:disabled,
+select:disabled {
+  cursor: not-allowed !important;
+}
+
 @media screen and (max-width: 650px) {
     .container {
         height: calc(100vh - 40px);

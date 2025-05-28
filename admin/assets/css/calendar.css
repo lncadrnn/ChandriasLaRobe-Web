@@ -816,3 +816,57 @@ body.modal-open {
 .btn-delete:active {
     transform: translateY(0);
 }
+
+/*=============== CURSOR POINTER STYLES ===============*/
+/* All buttons and interactive elements */
+button,
+.btn,
+.calendar-controls button,
+.event-actions button,
+.add-event-btn,
+.edit-event-btn,
+.delete-event-btn,
+.save-event-btn,
+.cancel-event-btn,
+.month-nav,
+.year-nav,
+.today-btn,
+input[type="submit"],
+input[type="button"] {
+  cursor: pointer;
+}
+
+/* All links with href */
+a[href] {
+  cursor: pointer;
+}
+
+/* Calendar specific interactive elements */
+.calendar-day,
+.calendar-cell,
+.event-item,
+.event-marker,
+.time-slot,
+.date-picker,
+.view-toggle,
+.filter-toggle,
+.calendar-header,
+.navigation-arrow,
+.month-selector,
+.year-selector,
+.event-popup,
+.tooltip,
+select,
+.dropdown {
+  cursor: pointer;
+}
+
+/* Disabled elements */
+.calendar-day.disabled,
+.calendar-day.past,
+button:disabled,
+.btn:disabled {
+  cursor: not-allowed !important;
+}
+
+/* Calendar Styles */

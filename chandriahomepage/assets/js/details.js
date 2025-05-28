@@ -61,6 +61,61 @@ $(document).ready(async function () {
     }
   });
 
+  // START - Authentication Modal Logic
+  const authModal = document.getElementById('auth-modal');
+  const authModalClose = document.getElementById('auth-modal-close');
+  const authModalLogin = document.getElementById('auth-modal-login');
+  const authModalCancel = document.getElementById('auth-modal-cancel');
+
+  function showAuthModal() {
+    if (authModal) {
+      authModal.style.opacity = '1';
+      authModal.style.visibility = 'visible';
+    }
+  }
+
+  function hideAuthModal() {
+    if (authModal) {
+      authModal.style.opacity = '0';
+      authModal.style.visibility = 'hidden';
+    }
+  }
+
+  // Assign to window for global access if needed by other scripts or inline event handlers
+  window.showAuthModal = showAuthModal;
+  window.hideAuthModal = hideAuthModal;
+
+  if (authModalClose) {
+    authModalClose.addEventListener('click', hideAuthModal);
+  }
+
+  if (authModalCancel) {
+    authModalCancel.addEventListener('click', hideAuthModal);
+  }
+
+  if (authModalLogin) {
+    authModalLogin.addEventListener('click', () => {
+      window.location.href = './user_authentication.html';
+    });
+  }
+
+  // Close modal on escape key press
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && authModal && authModal.style.visibility === 'visible') {
+      hideAuthModal();
+    }
+  });
+
+  // Close modal on outside click
+  if (authModal) {
+    authModal.addEventListener('click', (event) => {
+      if (event.target === authModal) {
+        hideAuthModal();
+      }
+    });
+  }
+  // END - Authentication Modal Logic
+
   // Size selection functionality
   $(document).on('click', '.size-link', function(e) {
     e.preventDefault();

@@ -1300,3 +1300,58 @@ body.loaded #loader {
     opacity: 0;
     pointer-events: none;
 }
+
+/*=============== CURSOR POINTER STYLES ===============*/
+/* All buttons and interactive elements */
+button,
+.btn,
+.action-btn,
+.filter-btn,
+.add-btn,
+.edit-btn,
+.delete-btn,
+.save-btn,
+.cancel-btn,
+.search-btn,
+.pagination-btn,
+.sort-btn,
+input[type="submit"],
+input[type="button"],
+input[type="file"] {
+  cursor: pointer;
+}
+
+/* All links with href */
+a[href] {
+  cursor: pointer;
+}
+
+/* Inventory specific interactive elements */
+.inventory-card,
+.product-item,
+.product-actions,
+.category-filter,
+.size-filter,
+.color-picker,
+.table-row,
+.table-header,
+.modal-trigger,
+.dropdown-toggle,
+.tab-button,
+.image-upload,
+.form-control,
+select,
+.checkbox,
+.radio {
+  cursor: pointer;
+}
+
+/* Disabled elements */
+button:disabled,
+.btn:disabled,
+input:disabled,
+select:disabled {
+  cursor: not-allowed !important;
+}
+
+/*=============== GOOGLE FONTS ===============*/

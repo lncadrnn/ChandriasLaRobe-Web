@@ -653,6 +653,31 @@
   text-align: center;
 }
 
+/*=============== CURSOR POINTER STYLES ===============*/
+/* All buttons and interactive elements */
+button,
+.cart-modal .btn,
+.quick-view-close,
+.quick-view-btn,
+.quick-view-btn-primary,
+.quick-view-btn-secondary,
+.quick-view-thumbnail,
+.auth-modal-close,
+.auth-btn,
+.auth-btn-primary,
+.auth-btn-secondary,
+.auth-btn-tertiary,
+.pagination-link,
+.size-link,
+.color-link {
+  cursor: pointer;
+}
+
+/* All links with href */
+a[href] {
+  cursor: pointer;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .quick-view-modal {

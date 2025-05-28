@@ -856,6 +856,35 @@ html {
     font-weight: 600;
 }
 
+/*=============== CURSOR POINTER STYLES ===============*/
+/* All buttons and interactive elements */
+button,
+.btn,
+.card,
+.stat-card,
+.chart-container,
+.dashboard-btn,
+.filter-btn,
+.action-btn,
+input[type="submit"],
+input[type="button"] {
+  cursor: pointer;
+}
+
+/* All links with href */
+a[href] {
+  cursor: pointer;
+}
+
+/* Dashboard specific interactive elements */
+.dashboard-nav,
+.stats-grid,
+.chart-legend,
+.data-table td,
+.data-table th {
+  cursor: pointer;
+}
+
 @media (max-width: 1000px) {
     .appointment-modal-flex {
         min-width: 0;

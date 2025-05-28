@@ -1572,234 +1572,64 @@ input#client-rental-fee {
   box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
   transform: translateY(-1px);
 }
-/* --- End Enhanced Customer Modal New Fields --- */
 
-/* Irrelevant: This class is not used in the HTML, but is defined here for demonstration purposes. */
-.irrelevant {
-  display: none;
-  color: #999;
-  background: #eee;
-  font-size: 0.9em;
-  padding: 0.5em;
-  border-radius: 6px;
-}
-
-/* Responsive Media Queries */
-@media (max-width: 900px) {
-  .pos-layout {
-    flex-direction: column;
-    padding-right: 0;
-    gap: 1.2rem;
-  }
-  .pos-products, .pos-accessories {
-    justify-content: center;
-    margin-left: 0;
-  }
-  .pos-cart-summary {
-    position: static;
-    width: 100%;
-    max-width: 100%;
-    border-radius: 16px;
-    margin: 0 auto;
-    box-shadow: 0 2px 12px rgba(44,62,80,0.08);
-    padding: 1.2rem 0.7rem 1.2rem 0.7rem;
-    margin-bottom: 1.5rem;
-  }
-  .customer-modal-content, #customer-modal .modal-content {
-    max-width: 95vw;
-    margin: 1rem auto;
-    padding: 0.8rem 1rem !important; /* Further reduced padding for mobile */
-    overflow-x: hidden; /* Ensure horizontal overflow is hidden on mobile */
-  }
-}
-@media (max-width: 600px) {
-  .modal-content {
-    width: 95vw !important;
-    min-width: unset !important;
-    max-width: 98vw !important;
-    padding: 1rem 0.5rem 1rem 0.5rem !important;
-  }
-  #error-modal .modal-content {
-    width: 95vw !important;
-    min-width: unset !important;
-    max-width: 98vw !important;
-    padding: 1rem 0.5rem 1rem 0.5rem !important;
-  }
-  .pos-cart-summary {
-    padding: 1rem 0.3rem 1rem 0.3rem;
-  }
-  .cart-title, .cart-total {
-    font-size: 1em;
-  }
-}
-@media (max-width: 420px) {
-  .modal-content, #error-modal .modal-content {
-    font-size: 0.95em;
-    padding: 0.7rem 0.2rem 0.7rem 0.2rem !important;
-  }
-  .cart-title, .cart-total {
-    font-size: 0.95em;
-  }
-}
-
-#client-region, #client-city {
-  width: 100%;
-  border: 1.5px solid var(--secondary-text-color);
-  border-radius: 8px;
-  padding: 0.55em 2.2em 0.55em 0.9em;
-  margin-bottom: 1em;
-  font-size: 1em;
-  background: #f8f8f8;
-  color: var(--neutral-text-color);
-  /* transition: border 0.2s; */ /* Removed transition */
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image: url('data:image/svg+xml;utf8,<svg fill="%23808080" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
-  background-repeat: no-repeat;
-  background-position: right 0.8em center;
-  background-size: 1.2em;
-}
-#client-region:focus, #client-city:focus {
-  border: 2px solid var(--secondary-text-color);
-  outline: none;
-  background: #fff;
-}
-
-/* --- Customer Form Header Styles --- */
-.customer-form-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  margin-bottom: 2rem;
-  margin-top: 0;
-  background: var(--secondary-text-color);
-  padding: 1.5rem 2rem;
-  border-radius: 16px;
-  margin-left: -2.5rem;
-  margin-right: -2.5rem;
-  margin-top: -2rem;
-}
-
-.customer-form-header h2 {
-  flex: 1;
-  text-align: center;
-  margin: 0;
-  font-size: 1.6em;
-  font-weight: 700;
-  color: #ffffff;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  letter-spacing: 0.5px;
-}
-
-.customer-form-header .customer-close {
-  position: absolute;
-  right: 1.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.8em;
+/*=============== CURSOR POINTER STYLES ===============*/
+/* All buttons and interactive elements */
+button,
+.btn,
+.action-btn,
+.add-rental-btn,
+.edit-rental-btn,
+.delete-rental-btn,
+.save-rental-btn,
+.cancel-rental-btn,
+.filter-btn,
+.search-btn,
+.pagination-btn,
+.sort-btn,
+.status-btn,
+.proceed-btn,
+input[type="submit"],
+input[type="button"],
+input[type="checkbox"],
+input[type="radio"] {
   cursor: pointer;
-  color: #ffffff;
-  background: rgba(255,255,255,0.15);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
 }
 
-.customer-form-header .customer-close:hover {
-  background: rgba(255,255,255,0.25);
-  transform: translateY(-50%) rotate(90deg);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-/* --- End Customer Form Header Styles --- */
-
-.custom-sidebar {
-  transition: var(--tran-02);
+/* All links with href */
+a[href] {
+  cursor: pointer;
 }
 
-
-/* --====== BEGINNING OF SPINNER LOADER ======-- */
-.container-spinner {
-  background-color: black;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 10045;
-  opacity: 70%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  /* transition: all 0.2s; */ /* Removed transition */
+/* Rental specific interactive elements */
+.rental-card,
+.rental-item,
+.customer-item,
+.product-selection,
+.date-picker,
+.time-picker,
+.status-dropdown,
+.payment-method,
+.table-row,
+.table-header,
+.modal-trigger,
+.tab-toggle,
+.accordion-header,
+.dropdown-toggle,
+.form-control,
+select,
+.checkbox-wrapper,
+.radio-wrapper {
+  cursor: pointer;
 }
 
-.d-none {
-  display: none;
+/* Disabled elements - override pointer cursor */
+button:disabled,
+.btn:disabled,
+input:disabled,
+select:disabled,
+.btn.disabled {
+  cursor: not-allowed !important;
 }
 
-.spinner {
-  display: inline-block;
-  width: 50px;
-  height: 50px;
-  border: 6px solid #ccc;
-  border-top-color: #1098F7;
-  border-radius: 50%;
-  -webkit-animation: spin 1s ease-in-out infinite;
-  animation: spin 1s ease-in-out infinite;
-}
-
-.spinner-text {
-  color: white;
-  margin-top: 5px;
-}
-/* --====== END OF SPINNER LOADER ======-- */
-
-/* --====== BEGINNING OF LOADER STYLES ======-- */
-.spinner-loader {
-    display: block;
-    width: 50px;
-    height: 50px;
-    border: 10px solid #ccc;
-    border-top-color: darkgray;
-    border-radius: 50%;
-    animation: spin 1s ease infinite;
-    margin-top: 10px;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-#loader {
-    flex-direction: column;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: white;
-    z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.5rem;
-
-    opacity: 1;
-    pointer-events: auto;
-
-    transition: all ease-in-out 0.25s;
-}
-body.loaded #loader {
-    opacity: 0;
-    pointer-events: none;
-}
+/* Google Fonts */

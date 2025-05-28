@@ -299,3 +299,35 @@ header .image-text .header-text {
     left: 88px;
     width: calc(100% - 88px);
 }
+
+/*=============== CURSOR POINTER STYLES ===============*/
+/* All buttons and interactive elements */
+button,
+.toggle,
+.nav-link,
+.nav-link a,
+.menu-links a,
+.custom-nav-link,
+.custom-nav-link a,
+.sidebar-toggle,
+input[type="submit"],
+input[type="button"] {
+  cursor: pointer;
+}
+
+/* All links with href */
+a[href] {
+  cursor: pointer;
+}
+
+/* Sidebar specific interactive elements */
+.sidebar,
+.menu-bar,
+.logo-details,
+.mode-toggle,
+.search-box input,
+.bx {
+  cursor: pointer;
+}
+
+/* Import Google font - Poppins */

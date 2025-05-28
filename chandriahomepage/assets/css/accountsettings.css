@@ -418,6 +418,42 @@ input:focus {
     color: white;
 }
 
+/*=============== CURSOR POINTER STYLES ===============*/
+/* All buttons */
+button,
+.btn,
+.btn-primary,
+.btn-danger,
+.save-changes-btn,
+.change-password-btn,
+.logout-btn,
+.profile-picture-upload button,
+input[type="submit"],
+input[type="button"],
+input[type="file"] {
+  cursor: pointer;
+}
+
+/* All links with href */
+a[href] {
+  cursor: pointer;
+}
+
+/* Account settings specific interactive elements */
+.nav-tabs .nav-link,
+.profile-picture-upload,
+.form-group label[for],
+.sidebar-nav a {
+  cursor: pointer;
+}
+
+/* Reset for disabled elements */
+button:disabled,
+.btn:disabled,
+input:disabled {
+  cursor: not-allowed !important;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .account-settings-content-wrapper {

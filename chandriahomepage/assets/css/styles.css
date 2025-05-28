@@ -1256,3 +1256,55 @@ margin-bottom: 3.35rem;
         font-size: 0.9rem;
     }
 }
+
+/*=============== CURSOR POINTER STYLES ===============*/
+/* All buttons */
+button,
+.btn,
+.btn-sm,
+.btn.close,
+.btn.disabled:not(.btn.disabled),
+.search-btn,
+.place-rent,
+.action-btn,
+.action-btn.cart-btn,
+.swiper-button-next,
+.swiper-button-prev,
+.tab-btn,
+.scroll-top,
+.delete-btn,
+.logout-yes,
+.logout-no,
+.auth-btn,
+.auth-btn-primary,
+.auth-btn-tertiary,
+.auth-modal-close,
+.quick-view-close,
+.quick-view-btn,
+.quick-view-thumbnail,
+.pagination-link {
+  cursor: pointer;
+}
+
+/* All links with href */
+a[href],
+.nav-link,
+.breadcrumb-link,
+.header-action-btn,
+.nav-logo,
+.product-images,
+.product-title,
+.category-item,
+.size-link,
+.color-link {
+  cursor: pointer;
+}
+
+/* Disabled elements should not have pointer cursor */
+.btn.disabled,
+button:disabled,
+a[href=""]:not([href="#"]) {
+  cursor: not-allowed !important;
+}
+
+/*=============== BUTTONS ===============*/
