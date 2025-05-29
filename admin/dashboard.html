@@ -204,17 +204,28 @@
                         <!-- Populated by JS -->
                     </ul>
                 </div>
-            </section><!-- Appointment Modal -->
+            </section>            <!-- Appointment Modal -->
             <div id="appointment-modal" class="modal">
-                <div class="modal-content appointment-modal-flex">
-                    <span class="close-modal">&times;</span>
-                    <h3 class="modal-title">Appointment Details</h3>
+                <div class="modal-backdrop"></div>
+                <div class="modal-content appointment-modal-content">
+                    <div class="appointment-modal-header">
+                        <h3 class="modal-title">
+                            <i class="fas fa-calendar-check"></i>
+                            Appointment Details
+                        </h3>
+                        <button class="close-modal" aria-label="Close modal">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                     <div id="appointment-details" class="appointment-modal-body"></div>
-                    <div class="modal-actions">
-                        <button class="btn proceed-transaction">PROCEED TO TRANSACTION</button>
+                    <div class="appointment-modal-actions">
+                        <button class="btn proceed-transaction">
+                            <i class="fas fa-arrow-right"></i>
+                            PROCEED TO TRANSACTION
+                        </button>
                     </div>
                 </div>
-            </div>            <!-- Rental Modal -->
+            </div><!-- Rental Modal -->
             <div id="rental-modal" class="modal">
                 <div class="modal-backdrop"></div>
                 <div class="modal-content rental-modal-content">

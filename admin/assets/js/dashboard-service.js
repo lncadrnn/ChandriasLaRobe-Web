@@ -448,15 +448,16 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             let products = '';
-            if (cartItems.length > 0) {
-                products = cartItems.map(item => `
+            if (cartItems.length > 0) {                products = cartItems.map(item => `
                     <tr>
-                        <td><img src="${item.image}" alt="${item.name}" class="modal-product-img"></td>
+                        <td><img src="${item.image}" alt="${item.name}" class="appointment-product-img"></td>
                         <td>
-                            <div class="modal-product-name">${item.name}</div>
-                            <div class="modal-product-size">Size: ${item.size} x ${item.quantity}</div>
+                            <div class="appointment-product-info">
+                                <div class="appointment-product-name">${item.name}</div>
+                                <div class="appointment-product-details">Size: ${item.size} | Qty: ${item.quantity}</div>
+                            </div>
                         </td>
-                        <td class="modal-product-price">₱ ${(item.price * item.quantity).toLocaleString()}</td>
+                        <td class="appointment-product-price">₱ ${(item.price * item.quantity).toLocaleString()}</td>
                     </tr>
                 `).join('');
             } else {
@@ -469,37 +470,57 @@ document.addEventListener("DOMContentLoaded", () => {
             const customerContact = data.customerContact || '';
             const checkoutDate = data.checkoutDate || '';
             const checkoutTime = data.checkoutTime || '';
-            const customerRequest = data.customerRequest || '';
-
-            details.innerHTML = `
+            const customerRequest = data.customerRequest || '';            details.innerHTML = `
                 <div class="appointment-modal-grid">
-                    <div class="appointment-modal-form" style="gap:1.2rem;">
-                        <div><b>Name:</b> ${customerName}</div>
-                        <div><b>Email:</b> ${customerEmail}</div>
-                        <div><b>Phone:</b> ${customerContact}</div>
-                        <div><b>Date:</b> ${checkoutDate}</div>
-                        <div><b>Time:</b> ${checkoutTime}</div>
-                        <div><b>Request / Notes:</b> ${customerRequest}</div>
+                    <div class="appointment-customer-info">
+                        <h4><i class="fas fa-user"></i> Customer Information</h4>
+                        <div class="appointment-info-item">
+                            <span class="appointment-info-label">Name:</span>
+                            <span class="appointment-info-value">${customerName}</span>
+                        </div>
+                        <div class="appointment-info-item">
+                            <span class="appointment-info-label">Email:</span>
+                            <span class="appointment-info-value">${customerEmail}</span>
+                        </div>
+                        <div class="appointment-info-item">
+                            <span class="appointment-info-label">Phone:</span>
+                            <span class="appointment-info-value">${customerContact}</span>
+                        </div>
+                        <div class="appointment-info-item">
+                            <span class="appointment-info-label">Date:</span>
+                            <span class="appointment-info-value">${checkoutDate}</span>
+                        </div>
+                        <div class="appointment-info-item">
+                            <span class="appointment-info-label">Time:</span>
+                            <span class="appointment-info-value">${checkoutTime}</span>
+                        </div>
+                        <div class="appointment-info-item">
+                            <span class="appointment-info-label">Notes:</span>
+                            <span class="appointment-info-value">${customerRequest || 'No special requests'}</span>
+                        </div>
                     </div>
-                    <div class="appointment-modal-table">
-                        <table>
+                    <div class="appointment-products-section">
+                        <div class="appointment-products-header">
+                            <h4><i class="fas fa-box"></i> Booked Items</h4>
+                        </div>
+                        <table class="appointment-products-table">
                             <thead>
                                 <tr>
-                                    <th></th>
-                                    <th>Products</th>
-                                    <th>Total</th>
+                                    <th>Image</th>
+                                    <th>Product Details</th>
+                                    <th>Price</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 ${products}
                             </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="2" style="text-align:right;font-weight:600;">Total</td>
-                                    <td style="font-weight:700;font-size:1.2em;">₱ ${total.toLocaleString()}</td>
-                                </tr>
-                            </tfoot>
                         </table>
+                        <div class="appointment-total-section">
+                            <div class="appointment-total-row">
+                                <span>Total Amount:</span>
+                                <span>₱ ${total.toLocaleString()}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;

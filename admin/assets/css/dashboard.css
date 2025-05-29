@@ -976,9 +976,9 @@ html {
 
 /* Modern Rental Modal Styles */
 #rental-modal .modal-content {
-    max-width: 1000px;
-    width: 95%;
-    max-height: 95vh;
+    max-width: 800px;
+    width: 85%;
+    max-height: 80vh;
     overflow: hidden;
     background: var(--sidebar-color);
     border-radius: 16px;
@@ -1026,23 +1026,26 @@ html {
 }
 
 .close-rental-modal {
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     color: white;
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
 }
 
 .close-rental-modal:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 @keyframes modalSlideIn {
@@ -1098,117 +1101,257 @@ html {
     display: none;
 }
 
-.appointment-modal-flex {
-    min-width: 400px;
-    max-width: 700px; /* reduced from 1100px */
-    width: 95vw;
+/* ===== APPOINTMENT MODAL STYLES ===== */
+#appointment-modal .modal-content.appointment-modal-content {
+    background: white !important;
+    border-radius: var(--border-radius-lg) !important;
+    box-shadow: var(--shadow-large);
+    max-width: 800px !important;
+    width: 85% !important;
+    max-height: 80vh !important;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    align-items: stretch;
     position: relative;
+    animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0; /* Override general modal-content padding */
 }
+
+.appointment-modal-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark) 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+}
+
+.appointment-modal-header .modal-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.appointment-modal-header .modal-title i {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.appointment-modal-header .close-modal {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--tran-02);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.appointment-modal-header .close-modal:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
 .appointment-modal-body {
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
+    padding: 2rem;
+    overflow-y: auto;
+    flex: 1;
 }
+
 .appointment-modal-grid {
     display: grid;
-    grid-template-columns: 1fr 1.1fr;
+    grid-template-columns: 1fr 1.2fr;
     gap: 2rem;
     align-items: flex-start;
 }
-.appointment-modal-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-.appointment-modal-form input,
-.appointment-modal-form textarea {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    margin-bottom: 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    background-color: white;
-    font-size: 14px;
-    color: var(--text-color-dark);
-    transition: var(--tran-02);
-    box-sizing: border-box;
-}
 
-.appointment-modal-form input:focus,
-.appointment-modal-form textarea:focus {
-    border-color: var(--primary-color);
-    outline: 0;
-    box-shadow: 0 0 0 3px var(--primary-color-light);
-}
-.appointment-modal-form textarea {
-    resize: vertical;
-    min-height: 100px;
-    max-height: 120px;
-}
-.appointment-modal-table {
-    background: white;
+.appointment-customer-info {
+    background: var(--body-color);
     border-radius: var(--border-radius);
     padding: 1.5rem;
     border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-light);
 }
 
-.appointment-modal-table table {
+.appointment-customer-info h4 {
+    margin: 0 0 1rem 0;
+    color: var(--text-color-dark);
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.appointment-info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.appointment-info-item:last-child {
+    border-bottom: none;
+}
+
+.appointment-info-label {
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 0.875rem;
+}
+
+.appointment-info-value {
+    font-weight: 600;
+    color: var(--text-color-dark);
+    font-size: 0.875rem;
+    text-align: right;
+    max-width: 60%;
+    word-break: break-word;
+}
+
+.appointment-products-section {
+    background: white;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.appointment-products-header {
+    background: var(--body-color);
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.appointment-products-header h4 {
+    margin: 0;
+    color: var(--text-color-dark);
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.appointment-products-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.appointment-modal-table th,
-.appointment-modal-table td {
-    padding: 0.75rem 0.5rem;
+.appointment-products-table th {
+    background: var(--body-color);
+    padding: 0.75rem 1rem;
     text-align: left;
-    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color-dark);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     border-bottom: 1px solid var(--border-color);
 }
 
-.appointment-modal-table th {
+.appointment-products-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.875rem;
+}
+
+.appointment-products-table tbody tr:hover {
+    background: var(--body-color);
+    transition: var(--tran-02);
+}
+
+.appointment-product-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.appointment-product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.appointment-product-name {
     font-weight: 600;
     color: var(--text-color-dark);
+    font-size: 0.875rem;
+}
+
+.appointment-product-details {
+    font-size: 0.75rem;
+    color: var(--text-color);
+}
+
+.appointment-product-price {
+    font-weight: 600;
+    color: var(--text-color-dark);
+    text-align: right;
+}
+
+.appointment-total-section {
+    background: linear-gradient(135deg, var(--primary-color-light) 0%, rgba(255, 255, 255, 0.8) 100%);
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.appointment-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-color-dark);
+}
+
+.appointment-modal-actions {
+    padding: 1.5rem 2rem;
     background: var(--body-color);
-    font-size: 13px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.appointment-modal-actions .btn {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark) 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: var(--tran-02);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-.appointment-modal-table tfoot td {
-    border-bottom: none;
-    font-weight: 600;
-    color: var(--text-color-dark);
-}
-.modal-product-img {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: var(--border-radius);
-    background: var(--body-color);
-    border: 1px solid var(--border-color);
+.appointment-modal-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.modal-product-name {
-    font-weight: 600;
-    color: var(--text-color-dark);
-    font-size: 14px;
+.appointment-modal-actions .btn i {
+    font-size: 0.9rem;
 }
 
-.modal-product-size {
-    font-size: 13px;
-    color: var(--text-color);
-    margin-top: 2px;
-}
-
-.modal-product-price {
-    font-weight: 600;
-    color: var(--text-color-dark);
-    text-align: right;
-    font-size: 14px;
-}
 .modal-title {
     text-align: center;
     font-size: 1.7rem;
@@ -1582,13 +1725,18 @@ a[href] {
     .dashboard-layout {
         padding: 0.7rem;
         gap: 0.7rem;
-    }
-    
-    /* Mobile responsive styles for modern rental modal */
+    }    /* Mobile responsive styles for modern rental modal */
     #rental-modal .modal-content {
-        width: 98%;
-        max-width: 98%;
-        max-height: 95vh;
+        width: 95%;
+        max-width: 95%;
+        max-height: 90vh;
+        margin: 1rem auto;
+    }
+    /* Mobile responsive styles for appointment modal */
+    #appointment-modal .modal-content.appointment-modal-content {
+        width: 90%;
+        max-width: 600px;
+        max-height: 85vh;
         margin: 1rem auto;
     }
     
@@ -1741,42 +1889,50 @@ a[href] {
     }
 }
 
-/* Modal Backdrop Enhancement */
-.modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(8px);
-    z-index: 998;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.modal.visible .modal-backdrop {
-    opacity: 1;
-}
-
-/* Ensure modal content is above backdrop */
-#rental-modal .modal-content {
-    position: relative;
-    z-index: 999;
-}
-
-@media (max-width: 768px) {
-    .view-analytics-btn span {
-        display: none;
+/* Ultra-small screen styles for appointment modal */
+    #appointment-modal .modal-content.appointment-modal-content {
+        width: 95%;
+        max-width: 500px;
+        max-height: 90vh;
+        margin: 0.5rem auto;
+        border-radius: var(--border-radius);
     }
     
-    .view-analytics-btn {
-        padding: 0.75rem;
-        min-width: 44px;
-        justify-content: center;
-    }
-    
-    .main-header {
+    .appointment-modal-header {
         padding: 1rem;
     }
-}
+    
+    .appointment-modal-header .modal-title {
+        font-size: 1rem;
+    }
+    
+    .appointment-modal-body {
+        padding: 1rem;
+    }
+    
+    .appointment-modal-grid {
+        gap: 1rem;
+    }
+    
+    .appointment-customer-info {
+        padding: 1rem;
+    }
+    
+    .appointment-products-header {
+        padding: 0.75rem 1rem;
+    }
+    
+    .appointment-products-table th,
+    .appointment-products-table td {
+        padding: 0.5rem 0.25rem;
+        font-size: 12px;
+    }
+    
+    .appointment-product-img {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .appointment-modal-actions {
+        padding: 1rem;
+    }
