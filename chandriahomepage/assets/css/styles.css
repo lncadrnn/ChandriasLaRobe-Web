@@ -494,11 +494,12 @@ table{
   justify-self: flex-end;
 }
 /*=============== BUTTONS ===============*/
-.btn-basic {
+.btn {
   display: inline-block;
   background-color: var(--first-color);
   border: 2px solid var(--first-color);
   color: var(--body-color);
+  text-align: center;
   padding-inline: 1.75rem;
   height: 50px;
   line-height: 50px;
@@ -509,7 +510,7 @@ table{
   transition: all 0.4s var(--transition);
 }
 
-.btn-basic:hover{
+.btn:hover{
   background-color: transparent;
   color: var(--first-color);
 }
@@ -533,13 +534,13 @@ table{
   column-gap: .5rem;
 }
 
-.btn.close, .btn-basic.close {
+.btn.close {
   background-color: darkgray;
   border: 2px solid darkgray;
   color: var(--body-color);
 }
 
-.btn.disabled, .btn-basic.disabled {
+.btn.disabled {
   color: var(--body-color);
   pointer-events: none;
   opacity: 0.75;
@@ -547,7 +548,7 @@ table{
   border-color: lightgray;
 }
 
-.btn.close:hover, .btn-basic.close:hover{
+.btn.close:hover{
   background-color: transparent;
   color: lightslategray;
 }
@@ -1354,7 +1355,6 @@ margin-bottom: 3.35rem;
 .btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 0.5rem;
   padding: 1rem 2rem;
   border-radius: 0.75rem;
