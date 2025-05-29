@@ -12,6 +12,24 @@ import {
     where
 } from "./sdk/chandrias-sdk.js";
 
+// #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+// INVENTORY LOADER FUNCTIONS
+function showInventoryLoader() {
+    const inventoryLoader = document.getElementById('inventory-loader');
+    if (inventoryLoader) {
+        inventoryLoader.classList.remove('hidden');
+        inventoryLoader.style.display = 'flex';
+    }
+}
+
+function hideInventoryLoader() {
+    const inventoryLoader = document.getElementById('inventory-loader');
+    if (inventoryLoader) {
+        inventoryLoader.classList.add('hidden');
+        inventoryLoader.style.display = 'none';
+    }
+}
+
 // INTITIALIZE NOTYF
 $(document).ready(function () {
     // NOTYF
@@ -144,11 +162,22 @@ $(document).ready(function () {
             container.append(
                 '<div style="color:red;margin:2rem;">Failed to load products. Check your connection or Firebase rules.</div>'
             );
-            $("body").addClass("loaded");
-            
+            $("body").addClass("loaded");        }
+    }
+
+    // Initialize all inventory data with loader
+    async function initializeAllInventoryData() {
+        try {
+            showInventoryLoader();
+            await Promise.all([loadProducts(), loadAdditionals()]);
+        } catch (error) {
+            console.error("Error initializing inventory data:", error);
+        } finally {
+            hideInventoryLoader();
         }
     }
-    loadProducts();
+    
+    initializeAllInventoryData();
 
     // RGB TO HEX FUNCTION
     function rgbToHex(rgb) {
@@ -983,10 +1012,8 @@ $(document).ready(function () {
             console.error("Error loading additional products:", err);
             $("#additional-container").append(
                 '<div style="color:red;margin:2rem;">Failed to load additional products.</div>'
-            );
-        }
+            );        }
     }
-    loadAdditionals();
 
     // GENERATE ADDITIONAL PRODUCT CODE
     async function generateAdditionalCode(name) {

@@ -1262,6 +1262,54 @@ header .custom-image-text .custom-header-text {
 }
 
 /* BEGINNING LOADER STYLES */
+.inventory-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.inventory-loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.inventory-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: inventorySpin 1s linear infinite;
+}
+
+.inventory-loader-text {
+    margin-top: 20px;
+    color: var(--text-color);
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.inventory-loader.hidden {
+    display: none;
+}
+
+@keyframes inventorySpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* LEGACY LOADER STYLES (DEPRECATED) */
 .spinner-loader {
     display: block;
     width: 50px;
