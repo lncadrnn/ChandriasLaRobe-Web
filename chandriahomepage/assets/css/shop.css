@@ -657,6 +657,8 @@
 /* All buttons and interactive elements */
 button,
 .cart-modal .btn,
+.cart-modal .btn-primary,
+.cart-modal .btn-secondary,
 .quick-view-close,
 .quick-view-btn,
 .quick-view-btn-primary,

@@ -246,11 +246,9 @@ $(document).ready(function () {
 
                 // SET IMAGE PREVIEWS
                 $(".front-img").attr("src", data.frontImageUrl);
-                $(".back-img").attr("src", data.backImageUrl);
-
-                // SET TEXT OUTPUTS
+                $(".back-img").attr("src", data.backImageUrl);                // SET TEXT OUTPUTS
                 $("#product-name").text(data.name);
-                $("#product-price").text(data.prize);
+                $("#product-price").text(data.price);
                 $("#product-description").text(data.description);
 
                 // SET COLOR
@@ -561,13 +559,8 @@ $(document).ready(function () {
                     <div class="quick-view-code">
                         <span class="quick-view-label">Product Code:</span>
                         <span id="quick-view-product-code" class="quick-view-code-text">-</span>
-                    </div>
-                </div>
+                    </div>                </div>
                 <div class="quick-view-actions">
-                    <button id="quick-view-add-to-cart" class="quick-view-btn quick-view-btn-primary">
-                        <i class="fi fi-rs-shopping-bag-add"></i>
-                        <span>Add to Rent</span>
-                    </button>
                     <button id="quick-view-view-details" class="quick-view-btn quick-view-btn-secondary">
                         <i class="fi fi-rs-eye"></i>
                         <span>View Full Details</span>
@@ -584,12 +577,10 @@ $(document).ready(function () {
         $('#quick-view-title').text(product.name || '');
         $('#quick-view-category').text(product.category || '');
         $('#quick-view-price').text(`₱ ${product.price || '0'}`);
-        $('#quick-view-desc').text(product.description || 'No description available');
-          // Set product metadata
+        $('#quick-view-desc').text(product.description || 'No description available');        // Set product metadata
         $('#quick-view-product-code').text(product.code || 'N/A');
         
         // Set button data attributes
-        $('#quick-view-add-to-cart').attr('data-id', productId);
         $('#quick-view-view-details').attr('data-id', productId);
         
         // Set color if available

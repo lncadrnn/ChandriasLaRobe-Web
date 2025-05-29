@@ -494,7 +494,7 @@ table{
   justify-self: flex-end;
 }
 /*=============== BUTTONS ===============*/
-.btn {
+.btn-basic {
   display: inline-block;
   background-color: var(--first-color);
   border: 2px solid var(--first-color);
@@ -509,7 +509,7 @@ table{
   transition: all 0.4s var(--transition);
 }
 
-.btn:hover{
+.btn-basic:hover{
   background-color: transparent;
   color: var(--first-color);
 }
@@ -533,13 +533,13 @@ table{
   column-gap: .5rem;
 }
 
-.btn.close {
+.btn.close, .btn-basic.close {
   background-color: darkgray;
   border: 2px solid darkgray;
   color: var(--body-color);
 }
 
-.btn.disabled {
+.btn.disabled, .btn-basic.disabled {
   color: var(--body-color);
   pointer-events: none;
   opacity: 0.75;
@@ -547,7 +547,7 @@ table{
   border-color: lightgray;
 }
 
-.btn.close:hover{
+.btn.close:hover, .btn-basic.close:hover{
   background-color: transparent;
   color: lightslategray;
 }
@@ -1354,6 +1354,7 @@ margin-bottom: 3.35rem;
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   padding: 1rem 2rem;
   border-radius: 0.75rem;
