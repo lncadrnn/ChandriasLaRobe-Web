@@ -1,5 +1,23 @@
 import { firebaseConfig } from '../../firebase-config.js';
 
+// #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+// DASHBOARD LOADER FUNCTIONS
+function showDashboardLoader() {
+    const dashboardLoader = document.getElementById('dashboard-loader');
+    if (dashboardLoader) {
+        dashboardLoader.classList.remove('hidden');
+        dashboardLoader.style.display = 'flex';
+    }
+}
+
+function hideDashboardLoader() {
+    const dashboardLoader = document.getElementById('dashboard-loader');
+    if (dashboardLoader) {
+        dashboardLoader.classList.add('hidden');
+        dashboardLoader.style.display = 'none';
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
@@ -526,14 +544,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 const text = item.textContent.toLowerCase();
                 item.style.display = text.includes(value) ? '' : 'none';
             }
-        });
-
-        clearSearch.addEventListener('click', () => {
+        });        clearSearch.addEventListener('click', () => {
             searchInput.value = '';
             const items = document.querySelectorAll('#appointments-list li');
             items.forEach(item => item.style.display = '');
         });
-    }    // Initial render
-    loadRentals();
-    renderAppointments();
+    }
+
+    // Initial render with loader
+    async function initializeDashboard() {
+        try {
+            showDashboardLoader();
+            await Promise.all([
+                loadRentals(),
+                renderAppointments()
+            ]);
+        } catch (error) {
+            console.error("Error initializing dashboard:", error);
+        } finally {
+            hideDashboardLoader();
+        }
+    }
+
+    initializeDashboard();
 });
