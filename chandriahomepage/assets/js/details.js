@@ -33,11 +33,19 @@ $(document).ready(async function () {
     $('#product-price').text(`₱ ${data.price}`);
     $('#product-description').text(data.description);
     $('#product-code').text(data.code);
-    $('#product-color').css("background-color", data.color);
+    $('#product-color').css("background-color", data.color);    // Store product info for breadcrumb
+    if (productId) {
+        localStorage.setItem(`product_${productId}_name`, data.name || 'Product Details');
+        // Don't store category for breadcrumb since we don't want it to show
+    }
 
-    // Update breadcrumb with actual product info
-    $('#breadcrumb-category').text(data.category || 'Gown');
-    $('#breadcrumb-product-name').text(data.name || 'Product Name');
+    // Update breadcrumb if dynamic breadcrumb is available
+    if (window.dynamicBreadcrumb) {
+        // Small delay to ensure localStorage is updated
+        setTimeout(() => {
+            window.dynamicBreadcrumb.refresh();
+        }, 100);
+    }
 
     // Sizes
     const sizeList = $('#product-sizes');

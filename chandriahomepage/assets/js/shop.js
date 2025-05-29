@@ -180,11 +180,16 @@ $(document).ready(function () {
             displayProducts(user, selectedPage);
         });
     }
-    
-    // CARD CLICKED FUNCTION
+      // CARD CLICKED FUNCTION
     $(document).on("click", "a[data-id]", function () {
         const productId = $(this).data("id");
         localStorage.setItem("selectedProductId", productId);
+        
+        // Also store product name for breadcrumb
+        const productTitle = $(this).find('.product-title').text() || $(this).closest('.product-item').find('.product-title').text();
+        if (productTitle) {
+            localStorage.setItem(`product_${productId}_name`, productTitle.trim());
+        }
     });
 
     // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
@@ -763,15 +768,20 @@ $(document).ready(function () {
 
         // Close quick view modal
         closeQuickViewModal();
-    });
-
-    // Quick view "View Full Details" button click handler
+    });    // Quick view "View Full Details" button click handler
     $(document).on('click', '#quick-view-view-details', function(e) {
         e.preventDefault();
         const productId = $(this).data('id');
         
         // Store product ID and navigate to details page
         localStorage.setItem("selectedProductId", productId);
+        
+        // Also store product name for breadcrumb from quick view modal
+        const productName = $('#quick-view-title').text();
+        if (productName) {
+            localStorage.setItem(`product_${productId}_name`, productName.trim());
+        }
+        
         window.location.href = "./details.html";
     });
 
