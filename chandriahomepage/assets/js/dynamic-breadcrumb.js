@@ -193,9 +193,7 @@ class DynamicBreadcrumb {
             'Login': 'user_authentication.html'
         };
         return pageMap[pageName] || '#';
-    }
-
-    renderBreadcrumb(items) {
+    }    renderBreadcrumb(items) {
         if (!this.breadcrumbContainer) return;
 
         this.breadcrumbContainer.innerHTML = '';
@@ -210,6 +208,12 @@ class DynamicBreadcrumb {
                 link.className = 'breadcrumb-link';
                 link.textContent = item.name;
                 
+                // Add click handler for breadcrumb navigation
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.handleBreadcrumbClick(item.name, index, items);
+                });
+                
                 // Add home icon to first item
                 if (index === 0) {
                     const homeIcon = this.createHomeIcon();
@@ -221,6 +225,15 @@ class DynamicBreadcrumb {
                 const span = document.createElement('span');
                 span.className = `breadcrumb-link ${item.isActive ? 'active' : ''}`;
                 span.textContent = item.name;
+                
+                // Make non-active items clickable too (for trimming trail)
+                if (!item.isActive && index < items.length - 1) {
+                    span.style.cursor = 'pointer';
+                    span.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.handleBreadcrumbClick(item.name, index, items);
+                    });
+                }
                 
                 // Add home icon to first item
                 if (index === 0) {
@@ -302,9 +315,7 @@ class DynamicBreadcrumb {
     refresh() {
         this.currentPath = window.location.pathname;
         this.generateBreadcrumb();
-    }
-
-    // Public method to add custom breadcrumb item
+    }    // Public method to add custom breadcrumb item
     addCustomItem(name, url = null) {
         const items = this.getBreadcrumbItems();
         // Insert before the last (active) item
@@ -314,6 +325,41 @@ class DynamicBreadcrumb {
             isActive: false
         });
         this.renderBreadcrumb(items);
+    }
+
+    // Handle breadcrumb click for navigation and trail trimming
+    handleBreadcrumbClick(clickedItemName, clickedIndex, currentItems) {
+        // If clicking on Home, clear all history and navigate
+        if (clickedItemName === 'Home') {
+            localStorage.removeItem('breadcrumb_history');
+            window.location.href = this.getHomeUrl();
+            return;
+        }
+
+        // If clicking on Shop, clear history and navigate
+        if (clickedItemName === 'Shop') {
+            localStorage.removeItem('breadcrumb_history');
+            window.location.href = 'shop.html';
+            return;
+        }
+
+        // For other pages, trim the breadcrumb trail
+        // Remove all items after the clicked item from history
+        let history = JSON.parse(localStorage.getItem('breadcrumb_history') || '[]');
+        
+        // Find the position of clicked item in history and trim everything after it
+        const clickedItemIndex = history.findIndex(item => item === clickedItemName);
+        if (clickedItemIndex !== -1) {
+            // Keep items up to and including the clicked item
+            history = history.slice(0, clickedItemIndex + 1);
+            localStorage.setItem('breadcrumb_history', JSON.stringify(history));
+        }
+
+        // Navigate to the clicked page
+        const pageUrl = this.getPageUrl(clickedItemName);
+        if (pageUrl && pageUrl !== '#') {
+            window.location.href = pageUrl;
+        }
     }
 }
 

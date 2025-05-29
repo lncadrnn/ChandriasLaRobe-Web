@@ -340,6 +340,7 @@ table{
   gap: 0.5rem;
   min-height: 44px;
   box-shadow: 0 2px 8px rgba(233, 30, 99, 0.15);
+  cursor: pointer;
 }
 
 .breadcrumb-link::before {
@@ -364,6 +365,16 @@ table{
 
 .breadcrumb-link:hover::before {
   left: 100%;
+}
+
+/* Clickable non-active breadcrumb items */
+.breadcrumb-link:not(.active) {
+  cursor: pointer;
+}
+
+.breadcrumb-link:not(.active):hover {
+  background: rgba(233, 30, 99, 0.8);
+  transform: translateY(-1px) scale(1.02);
 }
 
 .breadcrumb-link.active {
