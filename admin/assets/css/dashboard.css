@@ -922,12 +922,86 @@ html {
     }
 }
 
-/* Specific styling for rental modal content */
+/* Modern Rental Modal Styles */
 #rental-modal .modal-content {
-    max-width: 900px;
+    max-width: 1000px;
     width: 95%;
-    max-height: 90vh;
+    max-height: 95vh;
+    overflow: hidden;
+    background: var(--sidebar-color);
+    border-radius: 16px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border-color);
+    animation: modalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.rental-modal-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.rental-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+    color: white;
+    border-radius: 16px 16px 0 0;
+}
+
+.rental-modal-header .modal-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: white;
+}
+
+.rental-modal-header .modal-title i {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.rental-modal-body {
+    flex: 1;
     overflow-y: auto;
+    padding: 2rem;
+}
+
+.close-rental-modal {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+}
+
+.close-rental-modal:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
 .modal-content h3 {
@@ -1120,51 +1194,93 @@ html {
     box-shadow: var(--shadow-medium);
 }
 
-/* Rental Modal Specific Styles */
+/* Modern Rental Modal Grid and Content */
 .rental-modal-grid {
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 1fr 1.8fr;
     gap: 2rem;
     align-items: flex-start;
 }
 
 .rental-modal-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    background: var(--sidebar-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .rental-modal-form > div {
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--border-color);
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    background: var(--body-color);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
     font-size: 14px;
     color: var(--text-color-dark);
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rental-modal-form > div:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.rental-modal-form > div b {
+    color: var(--primary-color);
+    font-weight: 600;
+    min-width: 120px;
 }
 
 .rental-modal-table {
-    background: white;
-    border-radius: var(--border-radius);
+    background: var(--sidebar-color);
+    border-radius: 12px;
     padding: 1.5rem;
     border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-light);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .rental-modal-table h4 {
-    margin: 0 0 1rem 0;
+    margin: 0 0 1.5rem 0;
     color: var(--text-color-dark);
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--primary-color-light);
+}
+
+.rental-modal-table h4:before {
+    content: '📦';
+    font-size: 1rem;
+}
+
+.rental-modal-table h4[style*="margin-top"] {
+    margin-top: 2rem !important;
+}
+
+.rental-modal-table h4[style*="margin-top"]:before {
+    content: '🎭';
 }
 
 .rental-modal-table table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 1rem;
+    background: var(--body-color);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .rental-modal-table th,
 .rental-modal-table td {
-    padding: 0.75rem 0.5rem;
+    padding: 1rem 0.75rem;
     text-align: left;
     font-size: 14px;
     border-bottom: 1px solid var(--border-color);
@@ -1173,29 +1289,141 @@ html {
 .rental-modal-table th {
     font-weight: 600;
     color: var(--text-color-dark);
-    background: var(--body-color);
+    background: linear-gradient(135deg, var(--primary-color-light), var(--primary-color-light));
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
+.rental-modal-table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.rental-modal-table tbody tr:hover {
+    background: var(--primary-color-light);
+    transform: translateY(-1px);
+}
+
+.rental-modal-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Modern Payment Summary */
 .payment-summary {
-    margin-top: 1.5rem;
-    padding: 1.5rem;
-    background: var(--body-color);
-    border-radius: var(--border-radius);
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-light);
+    margin-top: 2rem !important;
+    padding: 1.5rem !important;
+    background: linear-gradient(135deg, var(--primary-color-light), rgba(255, 255, 255, 0.8)) !important;
+    border-radius: 12px !important;
+    border: 1px solid var(--primary-color) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.payment-summary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-color-dark));
 }
 
 .payment-summary > div {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
+    display: flex !important;
+    justify-content: space-between !important;
+    margin-bottom: 12px !important;
+    padding: 0.75rem 1rem;
+    background: var(--sidebar-color);
+    border-radius: 8px;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .payment-summary > div:last-child {
-    margin-bottom: 0;
+    margin-bottom: 0 !important;
+    font-size: 16px;
+    font-weight: 700;
+    background: var(--body-color);
+    border: 2px solid var(--border-color);
+}
+
+/* Modern Action Button */
+.rental-modal-actions {
+    margin-top: 2rem;
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.rental-modal-actions button {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark)) !important;
+    color: white !important;
+    border: none !important;
+    padding: 1rem 2rem !important;
+    border-radius: 12px !important;
+    cursor: pointer !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.rental-modal-actions button:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
+}
+
+.rental-modal-actions button:active {
+    transform: translateY(-1px) !important;
+}
+
+/* Enhanced Product Display */
+.modal-product-img {
+    width: 60px !important;
+    height: 60px !important;
+    object-fit: cover !important;
+    border-radius: 8px !important;
+    background: var(--body-color) !important;
+    border: 2px solid var(--border-color) !important;
+    transition: all 0.2s ease !important;
+}
+
+.modal-product-img:hover {
+    transform: scale(1.05) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.modal-product-name {
+    font-weight: 600 !important;
+    color: var(--text-color-dark) !important;
+    font-size: 14px !important;
+    margin-bottom: 4px;
+}
+
+.modal-product-code {
+    font-size: 12px !important;
+    color: var(--primary-color) !important;
+    font-weight: 500 !important;
+    margin-bottom: 2px;
+}
+
+.modal-product-size {
+    font-size: 13px !important;
+    color: var(--text-color) !important;
+}
+
+.modal-product-price {
+    font-weight: 600 !important;
+    color: var(--text-color-dark) !important;
+    text-align: right !important;
+    font-size: 15px !important;
 }
 
 /* Status classes for rental table */
@@ -1304,44 +1532,108 @@ a[href] {
         gap: 0.7rem;
     }
     
-    /* Mobile responsive styles for rental modal */
+    /* Mobile responsive styles for modern rental modal */
     #rental-modal .modal-content {
-        width: 95%;
-        max-width: 95%;
-        padding: 1rem;
+        width: 98%;
+        max-width: 98%;
         max-height: 95vh;
+        margin: 1rem auto;
+    }
+    
+    .rental-modal-header {
+        padding: 1rem 1.5rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .rental-modal-header .modal-title {
+        font-size: 1.1rem;
+    }
+    
+    .rental-modal-body {
+        padding: 1.5rem;
     }
     
     .rental-modal-grid {
         grid-template-columns: 1fr;
-        gap: 1rem;
+        gap: 1.5rem;
+    }
+    
+    .rental-modal-form > div {
+        padding: 0.75rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    
+    .rental-modal-form > div b {
+        min-width: auto;
+        color: var(--primary-color);
     }
     
     .rental-modal-table {
         padding: 1rem;
     }
     
+    .rental-modal-table h4 {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    
     .rental-modal-table th,
     .rental-modal-table td {
-        padding: 0.5rem 0.25rem;
-        font-size: 0.9rem;
+        padding: 0.75rem 0.5rem;
+        font-size: 13px;
     }
     
     .modal-product-img {
-        width: 40px !important;
-        height: 40px !important;
+        width: 50px !important;
+        height: 50px !important;
+    }
+    
+    .payment-summary > div {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 13px !important;
+    }
+    
+    .payment-summary > div:last-child {
+        font-size: 14px !important;
     }
     
     .rental-modal-actions button {
-        padding: 10px 20px !important;
+        padding: 0.875rem 1.5rem !important;
         font-size: 14px !important;
     }
 }
 
 @media (max-width: 480px) {
     #rental-modal .modal-content {
+        width: 100%;
+        max-width: 100%;
+        height: 100vh;
+        max-height: 100vh;
+        margin: 0;
+        border-radius: 0;
+    }
+    
+    .rental-modal-header {
+        padding: 1rem;
+    }
+    
+    .rental-modal-header .modal-title {
+        font-size: 1rem;
+    }
+    
+    .rental-modal-body {
+        padding: 1rem;
+    }
+    
+    .rental-modal-grid {
+        gap: 1rem;
+    }
+    
+    .rental-modal-table {
         padding: 0.75rem;
-        max-height: 98vh;
     }
     
     .rental-modal-table th:first-child,
@@ -1349,12 +1641,74 @@ a[href] {
         display: none;
     }
     
+    .rental-modal-table th,
+    .rental-modal-table td {
+        padding: 0.5rem 0.25rem;
+        font-size: 12px;
+    }
+    
+    .modal-product-img {
+        width: 40px !important;
+        height: 40px !important;
+    }
+    
     .modal-product-name {
-        font-size: 0.9rem !important;
+        font-size: 13px !important;
     }
     
     .modal-product-code,
     .modal-product-size {
-        font-size: 0.8rem !important;
+        font-size: 11px !important;
     }
+    
+    .modal-product-price {
+        font-size: 13px !important;
+    }
+    
+    .payment-summary {
+        padding: 1rem !important;
+    }
+    
+    .payment-summary > div {
+        padding: 0.5rem !important;
+        font-size: 12px !important;
+    }
+    
+    .payment-summary > div:last-child {
+        font-size: 13px !important;
+    }
+    
+    .rental-modal-actions {
+        padding-top: 1rem;
+    }
+    
+    .rental-modal-actions button {
+        width: 100%;
+        padding: 1rem !important;
+        font-size: 14px !important;
+    }
+}
+
+/* Modal Backdrop Enhancement */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    z-index: 998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.visible .modal-backdrop {
+    opacity: 1;
+}
+
+/* Ensure modal content is above backdrop */
+#rental-modal .modal-content {
+    position: relative;
+    z-index: 999;
 }

@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Chandria's La Robe - Web System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />    <title>Chandria's La Robe - Web System</title>
     <link rel="stylesheet" href="/admin/assets/css/sidebar.css" />
     <link rel="stylesheet" href="/admin/assets/css/styles.css" />
     <link rel="stylesheet" href="/admin/assets/css/dashboard.css" />
 
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
@@ -209,14 +208,20 @@
                         <button class="btn proceed-transaction">PROCEED TO TRANSACTION</button>
                     </div>
                 </div>
-            </div>
-
-            <!-- Rental Modal -->
+            </div>            <!-- Rental Modal -->
             <div id="rental-modal" class="modal">
-                <div class="modal-content appointment-modal-flex">
-                    <span class="close-rental-modal">&times;</span>
-                    <h3 class="modal-title">Rental Transaction Details</h3>
-                    <div id="rental-details" class="appointment-modal-body"></div>
+                <div class="modal-backdrop"></div>
+                <div class="modal-content rental-modal-content">
+                    <div class="rental-modal-header">
+                        <h3 class="modal-title">
+                            <i class="fas fa-receipt"></i>
+                            Rental Transaction Details
+                        </h3>
+                        <button class="close-rental-modal" aria-label="Close modal">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div id="rental-details" class="rental-modal-body"></div>
                 </div>
             </div>
         </div>
