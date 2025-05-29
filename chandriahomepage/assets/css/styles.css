@@ -1127,6 +1127,22 @@ margin-bottom: 3.35rem;
   letter-spacing: 0.5px;
 }
 
+/* Center align all cart table header items */
+.cart-header-item,
+.cart-header-size,
+.cart-header-price,
+.cart-header-stock,
+.cart-header-qty,
+.cart-header-total,
+.cart-header-actions {
+  text-align: center;
+}
+
+/* Keep Product column left-aligned since it contains product info */
+.cart-header-item {
+  text-align: left;
+}
+
 .cart-items-container {
   max-height: 500px;
   overflow-y: auto;
@@ -1194,11 +1210,13 @@ margin-bottom: 3.35rem;
   font-weight: 600;
   color: var(--first-color);
   font-size: 1.1rem;
+  text-align: center;
 }
 
 .cart-item-stock {
   font-weight: 500;
   color: var(--text-color);
+  text-align: center;
 }
 
 .cart-item-quantity {
