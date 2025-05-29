@@ -88,59 +88,61 @@
                     <!-- Dynamic breadcrumb will be generated here -->
                 </ul>
             </section>            <!--=============== CART ===============-->            <section class="cart section-lg container">
-                <div class="cart-header">
-                    <h2 class="cart-title">Products to Fit</h2>
-                    <p class="cart-subtitle">Review your selected items before booking for appointment</p>
-                </div>
-                  <!-- Cart Table -->
-                <div class="cart-table">
-                    <div class="cart-table-header">
-                        <div class="cart-header-item">Product</div>
-                        <div class="cart-header-size">Size</div>
-                        <div class="cart-header-price">Price</div>
-                        <div class="cart-header-stock">Stock</div>
-                        <div class="cart-header-qty">Quantity</div>
-                        <div class="cart-header-total">Total</div>
-                        <div class="cart-header-actions">Actions</div>
+                <div id="cart-content">
+                    <div class="cart-header">
+                        <h2 class="cart-title">Products to Fit</h2>
+                        <p class="cart-subtitle">Review your selected items before booking for appointment</p>
                     </div>
-                    <div class="cart-items-container" id="cart-list">
-                        <!-- Cart items will be dynamically inserted here -->
-                    </div>
-                </div>
-
-                <!-- Empty Cart State -->
-                <div class="empty-cart" id="empty-cart" style="display: none;">
-                    <div class="empty-cart-icon">
-                        <i class="fi fi-rs-shopping-cart"></i>
-                    </div>
-                    <h3 class="empty-cart-title">Your cart is empty</h3>
-                    <p class="empty-cart-text">Looks like you haven't added any items to your cart yet.</p>
-                    <a href="shop.html" class="btn btn-primary empty-cart-btn">
-                        <i class="fi fi-rs-shopping-bag"></i>
-                        Continue Shopping
-                    </a>
-                </div>
-
-                <!-- Cart Actions -->
-                <div class="cart-actions">
-                    <div class="cart-summary">
-                        <div class="cart-summary-row">
-                            <span class="cart-summary-label">Total Items:</span>
-                            <span class="cart-summary-value" id="cart-total-items">0</span>
+                    <!-- Cart Table -->
+                    <div class="cart-table">
+                        <div class="cart-table-header">
+                            <div class="cart-header-item">Product</div>
+                            <div class="cart-header-size">Size</div>
+                            <div class="cart-header-price">Price</div>
+                            <div class="cart-header-stock">Stock</div>
+                            <div class="cart-header-qty">Quantity</div>
+                            <div class="cart-header-total">Total</div>
+                            <div class="cart-header-actions">Actions</div>
                         </div>
-                        <div class="cart-summary-row cart-summary-total">
-                            <span class="cart-summary-label">Grand Total:</span>
-                            <span class="cart-summary-value" id="cart-grand-total">₱0</span>
+                        <div class="cart-items-container" id="cart-list">
+                            <!-- Cart items will be dynamically inserted here -->
                         </div>
                     </div>
-                    <div class="cart-action-buttons">
-                        <a href="shop.html" class="btn btn-secondary">
-                            <i class="fi fi-rs-arrow-left"></i>
+
+                    <!-- Empty Cart State -->
+                    <div class="empty-cart" id="empty-cart" style="display: none;">
+                        <div class="empty-cart-icon">
+                            <i class="fi fi-rs-shopping-cart"></i>
+                        </div>
+                        <h3 class="empty-cart-title">Your cart is empty</h3>
+                        <p class="empty-cart-text">Looks like you haven't added any items to your cart yet.</p>
+                        <a href="shop.html" class="btn btn-primary empty-cart-btn">
+                            <i class="fi fi-rs-shopping-bag"></i>
                             Continue Shopping
-                        </a>                        <button class="btn btn-primary" id="btn-checkout">
-                            <i class="fi fi-rs-shopping-bag"></i> 
-                            Book for Appointment
-                        </button>
+                        </a>
+                    </div>
+
+                    <!-- Cart Actions -->
+                    <div class="cart-actions">
+                        <div class="cart-summary">
+                            <div class="cart-summary-row">
+                                <span class="cart-summary-label">Total Items:</span>
+                                <span class="cart-summary-value" id="cart-total-items">0</span>
+                            </div>
+                            <div class="cart-summary-row cart-summary-total">
+                                <span class="cart-summary-label">Grand Total:</span>
+                                <span class="cart-summary-value" id="cart-grand-total">₱0</span>
+                            </div>
+                        </div>
+                        <div class="cart-action-buttons">
+                            <a href="shop.html" class="btn btn-secondary">
+                                <i class="fi fi-rs-arrow-left"></i>
+                                Continue Shopping
+                            </a>                            <button class="btn btn-primary" id="btn-checkout">
+                                <i class="fi fi-rs-shopping-bag"></i> 
+                                Book for Appointment
+                            </button>
+                        </div>
                     </div>
                 </div>
             </section>

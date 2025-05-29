@@ -326,45 +326,40 @@ table{
   font-size: 0.95rem;
   font-weight: 600;
   text-decoration: none;
-  padding: 0.75rem 1.25rem;
-  border-radius: 25px;
+  padding: 0.5rem 0.25rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(233, 30, 99, 0.3);
-  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
+  background: transparent;
+  border: none;
+  text-shadow: none;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  min-height: 44px;
-  box-shadow: 0 2px 8px rgba(233, 30, 99, 0.15);
   cursor: pointer;
 }
 
 .breadcrumb-link::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: rgba(233, 30, 99, 0.8);
+  transition: width 0.3s ease;
 }
 
 .breadcrumb-link:hover {
-  color: #ffffff;
-  background: rgba(233, 30, 99, 0.9);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(233, 30, 99, 0.4);
-  border-color: rgba(233, 30, 99, 0.8);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  color: #e91e63;
+  background: transparent;
+  transform: none;
+  box-shadow: none;
+  border: none;
+  text-shadow: none;
 }
 
 .breadcrumb-link:hover::before {
-  left: 100%;
+  width: 100%;
 }
 
 /* Clickable non-active breadcrumb items */
@@ -373,24 +368,26 @@ table{
 }
 
 .breadcrumb-link:not(.active):hover {
-  background: rgba(233, 30, 99, 0.8);
-  transform: translateY(-1px) scale(1.02);
+  background: transparent;
+  transform: none;
+  color: #e91e63;
 }
 
 .breadcrumb-link.active {
-  color: #ffffff;
+  color: #e91e63;
   font-weight: 700;
-  background: rgba(233, 30, 99, 1);
-  box-shadow: 0 4px 15px rgba(233, 30, 99, 0.5);
-  border-color: rgba(233, 30, 99, 1);
-  animation: pulse 2s infinite;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  animation: none;
+  text-shadow: none;
 }
 
-@keyframes pulse {
-  0%, 100% { box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4); }
-  50% { box-shadow: 0 6px 20px rgba(233, 30, 99, 0.6); }
+.breadcrumb-link.active::before {
+  width: 100%;
 }
+
+
 
 .breadcrumb-separator {
   color: #4a5568;
@@ -429,10 +426,8 @@ table{
   }
   
   .breadcrumb-link {
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.2rem;
     font-size: 0.85rem;
-    border-radius: 20px;
-    min-height: 40px;
   }
   
   .breadcrumb-list {
@@ -1879,3 +1874,44 @@ a[href=""]:not([href="#"]) {
 }
 
 /*=============== BUTTONS ===============*/
+
+/*=============== CART LOADER STYLES ===============*/
+.cart-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    width: 100%;
+}
+
+.cart-loader p {
+    margin-top: 1rem;
+    color: var(--text-color);
+    font-size: var(--normal-font-size);
+    font-weight: var(--weight-500);
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid var(--border-color);
+    border-top: 3px solid var(--first-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Fade in animation for cart content */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

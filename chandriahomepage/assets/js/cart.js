@@ -338,13 +338,13 @@ $("#btn-checkout").on("click", async function () {
             
             // Remove the item from the display with fade-out animation
             const itemContainer = element.closest(".cart-item-row");
-            itemContainer.fadeOut(300, function() {
+            itemContainer.fadeOut(0, function() {
                 $(this).remove();
                 
                 // Check if cart is now empty
                 if (updatedCart.length === 0) {
-                    $("#empty-cart").fadeIn(300);
-                    $(".cart-table, .cart-actions").fadeOut(300);
+                    $("#empty-cart").fadeIn(0);
+                    $(".cart-table, .cart-actions").fadeOut(0);
                 } else {
                     // Update totals if items remain
                     updateGrandTotal();
