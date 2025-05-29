@@ -1936,22 +1936,50 @@ a[href=""]:not([href="#"]) {
     display: none;
 }
 
-@keyframes cartSpin {
+/*=============== SHOP LOADER STYLES ===============*/
+.shop-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.shop-loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid hsl(346, 100%, 74%);
+    border-radius: 50%;
+    animation: shopSpin 1s linear infinite;
+}
+
+.shop-loader-text {
+    margin-top: 20px;
+    color: hsl(230, 16%, 45%);
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.shop-loader.hidden {
+    display: none;
+}
+
+@keyframes shopSpin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Fade in animation for cart content */
-.fade-in {
-    animation: fadeIn 0.3s ease-in;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
 }

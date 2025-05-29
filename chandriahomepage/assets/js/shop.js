@@ -29,7 +29,7 @@ $(document).ready(function () {
             }
         ]    });
 
-    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // AUTHENTICATION MODAL FUNCTIONS
     function showAuthModal() {
         const authModal = document.getElementById('auth-modal');
@@ -45,42 +45,28 @@ $(document).ready(function () {
             authModal.classList.remove('show');
             document.body.style.overflow = ''; // Restore scrolling
         }
-    }    // Authentication modal event listeners
-    $(document).on('click', '#auth-modal-close, #auth-modal-cancel', function() {
-        hideAuthModal();
-    });
+    }
 
-    $(document).on('click', '#auth-modal-login', function() {
-        window.location.href = './user_authentication.html';
-    });
-
-    // Close modal when clicking outside
-    $(document).on('click', '#auth-modal', function(e) {
-        if (e.target === this) {
-            hideAuthModal();
-        }
-    });
-
-    // Close modal on escape key
-    $(document).on('keydown', function(e) {
-        if (e.key === 'Escape') {
-            hideAuthModal();
-        }
-    });
-
-    // Make showAuthModal globally accessible
-    window.showAuthModal = showAuthModal;
-
-    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
-    // LISTEN FOR AUTH STATE CHANGES
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#    // LISTEN FOR AUTH STATE CHANGES
     onAuthStateChanged(auth, async user => {
+        // Show loader when starting to load data
+        showShopLoader();
+        
         if (!user) {
             // User not logged in, show the login nav
             $("#nav-login").show();
         }
-        // Call displayProducts with user (can be null or a valid user object)
-        await displayProducts(user);
-        await updateCartCount();
+        
+        try {
+            // Call displayProducts with user (can be null or a valid user object)
+            await displayProducts(user);
+            await updateCartCount();
+        } catch (error) {
+            console.error('Error loading shop data:', error);
+        } finally {
+            // Hide loader after data is loaded (success or error)
+            hideShopLoader();
+        }
     });
 
     // DISPLAY PRODUCTS FUNCTION
@@ -192,7 +178,7 @@ $(document).ready(function () {
         }
     });
 
-    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // CART COUNT FUNCTION
     async function updateCartCount() {
         const user = auth.currentUser;
@@ -370,7 +356,7 @@ $(document).ready(function () {
         }
     });
 
-    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // RENT BUTTON FUNCTION
     $("#btn-rent").on("click", async function (e) {
         const user = auth.currentUser; // Get the currently signed-in user
@@ -459,7 +445,51 @@ $(document).ready(function () {
     });
     //
     
-    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+    // SHOP LOADER FUNCTIONS
+    function showShopLoader() {
+        const shopLoader = document.getElementById('shop-loader');
+        if (shopLoader) {
+            shopLoader.classList.remove('hidden');
+            shopLoader.style.display = 'flex';
+        }
+    }
+
+    function hideShopLoader() {
+        const shopLoader = document.getElementById('shop-loader');
+        if (shopLoader) {
+            shopLoader.classList.add('hidden');
+            shopLoader.style.display = 'none';
+        }
+    }
+
+    // Authentication modal event listeners
+    $(document).on('click', '#auth-modal-close, #auth-modal-cancel', function() {
+        hideAuthModal();
+    });
+
+    $(document).on('click', '#auth-modal-login', function() {
+        window.location.href = './user_authentication.html';
+    });
+
+    // Close modal when clicking outside
+    $(document).on('click', '#auth-modal', function(e) {
+        if (e.target === this) {
+            hideAuthModal();
+        }
+    });
+
+    // Close modal on escape key
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape') {
+            hideAuthModal();
+        }
+    });
+
+    // Make showAuthModal globally accessible
+    window.showAuthModal = showAuthModal;
+
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // QUICK VIEW MODAL FUNCTIONALITY    // Quick View button click handler
     $(document).on("click", ".action-btn[aria-label='Quick View']", async function (e) {
         e.preventDefault();
@@ -783,5 +813,5 @@ $(document).ready(function () {
         }
     });
 
-    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
 });
