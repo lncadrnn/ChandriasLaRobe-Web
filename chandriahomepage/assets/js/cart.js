@@ -86,9 +86,7 @@ $(document).ready(function () {
         }
         await updateCartCount();
         await displayCartItems(user);
-    });
-
-    // DISPLAY CART ITEMS ON TABLE
+    });    // DISPLAY CART ITEMS IN TABLE
     async function displayCartItems() {
         const user = auth.currentUser;
         if (!user) return;
@@ -103,8 +101,20 @@ $(document).ready(function () {
         const cartTable = $("#cart-list");
         cartTable.empty(); // Clear previous contents
 
+        if (cartItems.length === 0) {
+            $("#empty-cart").show();
+            $(".cart-table, .cart-actions").hide();
+            return;
+        } else {
+            $("#empty-cart").hide();
+            $(".cart-table, .cart-actions").show();
+        }
+
+        let totalItems = 0;
+        let grandTotal = 0;
+
         for (const item of cartItems) {
-            const productRef = doc(chandriaDB, "products", item.productId); // adjust if your collection name is different
+            const productRef = doc(chandriaDB, "products", item.productId);
             const productSnap = await getDoc(productRef);
 
             if (!productSnap.exists()) continue;
@@ -115,37 +125,43 @@ $(document).ready(function () {
             const total = price * quantity;
             const stock = product.size?.[item.size] || 0;
 
+            totalItems += quantity;
+            grandTotal += total;
+
+            // Table Row
             const row = `
-            <tr>
-                <td>
-                    <img src="${product.frontImageUrl}" alt="" class="table-img" />
-                </td>
-                <td>
-                    <h3 class="table-title">${product.name}</h3>
-                    <p class="table-description">${product.description}</p>
-                </td>
-                <td>
-                    <span class="table-size">${item.size}</span>
-                </td>
-                <td><span class="table-price">₱${price}</span></td>
-                <td><span class="table-stock">${stock}</span></td>
-                <td>
-                    <input type="number" class="quantity"
-                           value="${quantity}" min="1" max="${stock}"
-                           data-id="${item.productId}" data-size="${item.size}"
-                           data-price="${price}" />
-                </td>
-                <td><span class="table-total">₱${total}</span></td>
-                <td>
-                    <button class="delete-btn" data-id="${item.productId}" data-size="${item.size}">
-                        <i class="fi fi-rs-trash table-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        `;
+                <div class="cart-item-row">
+                    <div class="cart-item-product">
+                        <img src="${product.frontImageUrl}" alt="" class="cart-item-image" />
+                        <div class="cart-item-details">
+                            <h3>${product.name}</h3>
+                            <p>${product.description}</p>
+                        </div>
+                    </div>
+                    <div class="cart-item-size">${item.size}</div>
+                    <div class="cart-item-price">₱${price.toLocaleString()}</div>
+                    <div class="cart-item-stock">${stock}</div>
+                    <div class="cart-item-quantity">
+                        <input type="number" class="quantity"
+                               value="${quantity}" min="1" max="${stock}"
+                               data-id="${item.productId}" data-size="${item.size}"
+                               data-price="${price}" />
+                    </div>
+                    <div class="cart-item-total">₱${total.toLocaleString()}</div>
+                    <div class="cart-item-actions">
+                        <button class="delete-btn" data-id="${item.productId}" data-size="${item.size}">
+                            <i class="fi fi-rs-trash table-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
 
             cartTable.append(row);
         }
+
+        // Update cart summary
+        $("#cart-total-items").text(totalItems);
+        $("#cart-grand-total").text(`₱${grandTotal.toLocaleString()}`);
     }
 
     // VALIDATE QUANTITY INPUT PER PRODUCT, REPLACE SPECIAL CHARACTERS
@@ -165,8 +181,7 @@ $(document).ready(function () {
         } else {
             $("#btn-checkout").removeClass("disabled");
         }
-    }
-    $(document).on("input", ".quantity", function () {
+    }    $(document).on("input", ".quantity", function () {
         const input = $(this);
         let val = input.val();
 
@@ -175,7 +190,7 @@ $(document).ready(function () {
 
         if (val === "") {
             input.val("");
-            input.closest("tr").find(".table-total").text("₱0");
+            updateItemTotal(input, 0);
             updateCheckoutButtonState();
             return;
         }
@@ -191,21 +206,36 @@ $(document).ready(function () {
             input.val(maxStock);
         }
 
-        // Recalculate total
-        const priceText = input
-            .closest("tr")
-            .find(".table-price")
-            .text()
-            .replace("₱", "")
-            .trim();
-        const price = parseFloat(priceText);
+        // Update the total for this item
+        const price = parseFloat(input.data("price"));
         const finalQty = parseInt(input.val(), 10);
         const total = isNaN(finalQty) ? 0 : price * finalQty;
 
-        input.closest("tr").find(".table-total").text(`₱${total}`);
-
+        updateItemTotal(input, total);
+        updateGrandTotal();
         updateCheckoutButtonState();
-    });
+    });    function updateItemTotal(input, total) {
+        // Find the item container
+        const itemContainer = input.closest(".cart-item-row");
+        
+        // Update the total display
+        itemContainer.find(".cart-item-total").text(`₱${total.toLocaleString()}`);
+    }
+
+    function updateGrandTotal() {
+        let grandTotal = 0;
+        let totalItems = 0;
+        
+        $(".quantity").each(function() {
+            const quantity = parseInt($(this).val(), 10) || 0;
+            const price = parseFloat($(this).data("price")) || 0;
+            grandTotal += quantity * price;
+            totalItems += quantity;
+        });
+
+        $("#cart-grand-total").text(`₱${grandTotal.toLocaleString()}`);
+        $("#cart-total-items").text(totalItems);
+    }
 
     // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // CHECKOUT FUNCTION
@@ -282,16 +312,21 @@ $("#btn-checkout").on("click", async function () {
             // Filter out the item to delete
             const updatedCart = currentCart.filter(item => {
                 return !(item.productId === productId && item.size === size);
-            });
-
-            // Update Firestore with the new cart
+            });            // Update Firestore with the new cart
             await updateDoc(userRef, {
                 added_to_cart: updatedCart
-            });
+            });            // Remove the item from the display
+            const itemContainer = element.closest(".cart-item-row");
+            itemContainer.remove();
 
-            // REMOVING TABLE ITEM
-            const tableRow = element.closest("tr");
-            tableRow.remove();
+            // Check if cart is now empty
+            if (updatedCart.length === 0) {
+                $("#empty-cart").show();
+                $(".cart-table, .cart-actions").hide();
+            } else {
+                // Update totals if items remain
+                updateGrandTotal();
+            }
 
             notyf.success("Cart item removed.");
 

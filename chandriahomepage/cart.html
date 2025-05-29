@@ -87,80 +87,63 @@
                 <ul class="breadcrumb-list flex container">
                     <!-- Dynamic breadcrumb will be generated here -->
                 </ul>
-            </section>
-
-            <!--=============== CART ===============-->
+            </section>            <!--=============== CART ===============-->
             <section class="cart section-lg container">
-                <div class="table-container">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Image</th>
-                                <th>Name</th> 
-                                <th>Size</th>
-                                <th>Price</th> 
-                                <th>Available Stock</th> 
-                                <th>Quantity</th>
-                                <th>Total</th>
-                                <th>Remove</th>
-                            </tr>
-                        </thead>
-                        <tbody id="cart-list">
-                            <tr>
-                                <td>
-                                    <img
-                                        src="assets/img/product-6-1.jpg"
-                                        alt=""
-                                        class="table-img"
-                                    />
-                                </td>
-
-                                <td>
-                                    <h3 class="table-title">
-                                        Colorful Pattern Shirt
-                                    </h3>
-                                    <p class="table-description">
-                                        A red gown is a long, often formal
-                                        dress, typically worn
-                                    </p>
-                                </td>
-                                
-                                <td>
-                                    <span class="table-size">S</span>
-                                </td>
-
-                                <td>
-                                    <span class="table-price">₱900</span>
-                                </td>
-                                <td>
-                                    <span class="table-price">0</span>
-                                </td>
-                                <td>
-                                    <input
-                                        type="number"
-                                        value="0"
-                                        min="0"
-                                        class="quantity"
-                                    />
-                                </td>
-                                <td>
-                                    <span class="table-total">₱--</span>
-                                </td>
-                                <td>
-                                  <button class="delete-btn">
-                                    <i class="fi fi-rs-trash table-trash"></i>
-                                  </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    
-                    </table>
-               
+                <div class="cart-header">
+                    <h2 class="cart-title">Your Rental Cart</h2>
+                    <p class="cart-subtitle">Review your selected items before checkout</p>
                 </div>
+                  <!-- Cart Table -->
+                <div class="cart-table">
+                    <div class="cart-table-header">
+                        <div class="cart-header-item">Product</div>
+                        <div class="cart-header-size">Size</div>
+                        <div class="cart-header-price">Price</div>
+                        <div class="cart-header-stock">Stock</div>
+                        <div class="cart-header-qty">Quantity</div>
+                        <div class="cart-header-total">Total</div>
+                        <div class="cart-header-actions">Actions</div>
+                    </div>
+                    <div class="cart-items-container" id="cart-list">
+                        <!-- Cart items will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <!-- Empty Cart State -->
+                <div class="empty-cart" id="empty-cart" style="display: none;">
+                    <div class="empty-cart-icon">
+                        <i class="fi fi-rs-shopping-cart"></i>
+                    </div>
+                    <h3 class="empty-cart-title">Your cart is empty</h3>
+                    <p class="empty-cart-text">Looks like you haven't added any items to your cart yet.</p>
+                    <a href="shop.html" class="btn btn-primary empty-cart-btn">
+                        <i class="fi fi-rs-shopping-bag"></i>
+                        Continue Shopping
+                    </a>
+                </div>
+
+                <!-- Cart Actions -->
                 <div class="cart-actions">
-                    <button class="btn flex btn-md" id="btn-checkout">
-                        <i class="fi-rs-shopping-bag"></i> Rent Now
-                    </button>
+                    <div class="cart-summary">
+                        <div class="cart-summary-row">
+                            <span class="cart-summary-label">Total Items:</span>
+                            <span class="cart-summary-value" id="cart-total-items">0</span>
+                        </div>
+                        <div class="cart-summary-row cart-summary-total">
+                            <span class="cart-summary-label">Grand Total:</span>
+                            <span class="cart-summary-value" id="cart-grand-total">₱0</span>
+                        </div>
+                    </div>
+                    <div class="cart-action-buttons">
+                        <a href="shop.html" class="btn btn-secondary">
+                            <i class="fi fi-rs-arrow-left"></i>
+                            Continue Shopping
+                        </a>
+                        <button class="btn btn-primary" id="btn-checkout">
+                            <i class="fi fi-rs-shopping-bag"></i> 
+                            Proceed to Checkout
+                        </button>
+                    </div>
                 </div>
             </section>
         </main>
