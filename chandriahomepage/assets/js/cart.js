@@ -72,8 +72,12 @@ $(document).ready(function () {
     });    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // LISTEN FOR AUTH STATE CHANGES
     onAuthStateChanged(auth, async user => {
+        // Show loader when starting to load data
+        showCartLoader();
+        
         if (!user) {
             // User not logged in, show authentication modal and hide cart content
+            hideCartLoader();
             showAuthModal();
             $('.cart.section-lg.container').hide();
             $('.cart-actions').hide();
@@ -84,8 +88,16 @@ $(document).ready(function () {
             $('.cart.section-lg.container').show();
             $('.cart-actions').show();
         }
-        await updateCartCount();
-        await displayCartItems(user);
+        
+        try {
+            await updateCartCount();
+            await displayCartItems(user);
+        } catch (error) {
+            console.error('Error loading cart data:', error);
+        } finally {
+            // Hide loader after data is loaded (success or error)
+            hideCartLoader();
+        }
     });    // DISPLAY CART ITEMS IN TABLE
     async function displayCartItems() {
         const user = auth.currentUser;
@@ -163,6 +175,99 @@ $(document).ready(function () {
         $("#cart-total-items").text(totalItems);
         $("#cart-grand-total").text(`₱${grandTotal.toLocaleString()}`);
     }
+
+    // VALIDATE QUANTITY INPUT PER PRODUCT, REPLACE SPECIAL CHARACTERS
+    // UPDATE TOTAL PRICE ON QUANTITY CHANGE
+    function updateCheckoutButtonState() {
+        let hasInvalid = false;
+        $(".quantity").each(function () {
+            const val = $(this).val().trim();
+            if (val === "" || isNaN(val) || parseInt(val, 10) <= 0) {
+                hasInvalid = true;
+                return false; // break loop
+            }
+        });
+
+        if (hasInvalid) {
+            $("#btn-checkout").addClass("disabled");
+        } else {
+            $("#btn-checkout").removeClass("disabled");
+        }
+    }    $(document).on("input", ".quantity", function () {
+        const input = $(this);
+        let val = input.val();
+
+        // Remove non-digit characters
+        val = val.replace(/\D/g, "");
+
+        if (val === "") {
+            input.val("");
+            updateItemTotal(input, 0);
+            updateCheckoutButtonState();
+            return;
+        }
+
+        if (val === "0") val = "1";
+
+        input.val(val); // Set cleaned value
+
+        const quantity = parseInt(val, 10);
+        const maxStock = parseInt(input.attr("max"), 10) || 0;
+
+        if (quantity > maxStock) {
+            input.val(maxStock);
+        }
+
+        // Update the total for this item
+        const price = parseFloat(input.data("price"));
+        const finalQty = parseInt(input.val(), 10);
+        const total = isNaN(finalQty) ? 0 : price * finalQty;
+
+        updateItemTotal(input, total);
+        updateGrandTotal();
+        updateCheckoutButtonState();
+    });    function updateItemTotal(input, total) {
+        // Find the item container
+        const itemContainer = input.closest(".cart-item-row");
+        
+        // Update the total display
+        itemContainer.find(".cart-item-total").text(`₱${total.toLocaleString()}`);
+    }
+
+    function updateGrandTotal() {
+        let grandTotal = 0;
+        let totalItems = 0;
+        
+        $(".quantity").each(function() {
+            const quantity = parseInt($(this).val(), 10) || 0;
+            const price = parseFloat($(this).data("price")) || 0;
+            grandTotal += quantity * price;
+            totalItems += quantity;
+        });
+
+        $("#cart-grand-total").text(`₱${grandTotal.toLocaleString()}`);
+        $("#cart-total-items").text(totalItems);
+    }
+
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+    // CART LOADER FUNCTIONS
+    function showCartLoader() {
+        const cartLoader = document.getElementById('cart-loader');
+        if (cartLoader) {
+            cartLoader.classList.remove('hidden');
+            cartLoader.style.display = 'flex';
+        }
+    }
+
+    function hideCartLoader() {
+        const cartLoader = document.getElementById('cart-loader');
+        if (cartLoader) {
+            cartLoader.classList.add('hidden');
+            cartLoader.style.display = 'none';
+        }
+    }
+
+
 
     // VALIDATE QUANTITY INPUT PER PRODUCT, REPLACE SPECIAL CHARACTERS
     // UPDATE TOTAL PRICE ON QUANTITY CHANGE
