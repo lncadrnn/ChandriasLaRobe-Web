@@ -152,15 +152,15 @@ html {
 .main-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 2rem 2rem 0 2rem;
-    margin-bottom: 1.5rem;
+    justify-content: flex-start;
+    padding: 1.5rem 2rem 0 2rem;
+    margin-bottom: 1rem;
 }
 
 .header-left {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.125rem;
 }
 
 .header-subtitle {
@@ -175,11 +175,12 @@ html {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    font-size: 2rem;
+    font-size: 1.75rem;
     font-weight: 800;
     letter-spacing: -0.02em;
     text-shadow: none;
     margin: 0;
+    line-height: 1.2;
 }
 
 .header-right {
@@ -222,9 +223,6 @@ html {
     color: var(--text-color);
     font-size: 0.75rem;
     font-weight: 500;
-}
-    font-size: 12px;
-    font-weight: 400;
 }
 
 .user-avatar {
@@ -902,9 +900,10 @@ html {
     background: white;
     padding: 2rem;
     border-radius: var(--border-radius-lg);
-    width: 400px;
-    max-width: 90%;
-    max-height: 85vh;
+    width: 100%;
+    max-width: 600px;
+    min-width: 400px;
+    max-height: 90vh;
     overflow-y: auto;
     box-shadow: var(--shadow-large);
     border: 1px solid var(--border-color);
@@ -925,16 +924,18 @@ html {
 
 /* Specific styling for rental modal content */
 #rental-modal .modal-content {
-    width: 900px;
-    max-width: 95%;
+    max-width: 900px;
+    width: 95%;
     max-height: 90vh;
     overflow-y: auto;
 }
 
 .modal-content h3 {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     color: var(--text-color-dark);
     font-weight: 700;
+    font-size: 1.5rem;
+    text-align: center;
 }
 
 .close-modal,
@@ -998,62 +999,89 @@ html {
 .appointment-modal-form input,
 .appointment-modal-form textarea {
     width: 100%;
-    border: 1px solid #eee;
-    border-radius: 6px;
-    padding: 0.7rem 1rem;
-    font-size: 1rem;
-    background: #fafafa;
-    color: #333;
-    resize: none;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: white;
+    font-size: 14px;
+    color: var(--text-color-dark);
+    transition: var(--tran-02);
+    box-sizing: border-box;
+}
+
+.appointment-modal-form input:focus,
+.appointment-modal-form textarea:focus {
+    border-color: var(--primary-color);
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--primary-color-light);
 }
 .appointment-modal-form textarea {
-    min-height: 80px;
+    resize: vertical;
+    min-height: 100px;
     max-height: 120px;
 }
 .appointment-modal-table {
-    background: #fff;
-    border-radius: 10px;
-    padding: 1.2rem;
-    border: 1px solid #eee;
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-light);
 }
+
 .appointment-modal-table table {
     width: 100%;
     border-collapse: collapse;
 }
+
 .appointment-modal-table th,
 .appointment-modal-table td {
     padding: 0.75rem 0.5rem;
     text-align: left;
-    font-size: 1rem;
-    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border-color);
 }
+
 .appointment-modal-table th {
-    font-weight: 700;
-    color: #222;
-    background: #fafafa;
+    font-weight: 600;
+    color: var(--text-color-dark);
+    background: var(--body-color);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
+
 .appointment-modal-table tfoot td {
     border-bottom: none;
+    font-weight: 600;
+    color: var(--text-color-dark);
 }
 .modal-product-img {
     width: 60px;
     height: 60px;
     object-fit: cover;
-    border-radius: 6px;
-    background: #fafafa;
+    border-radius: var(--border-radius);
+    background: var(--body-color);
+    border: 1px solid var(--border-color);
 }
+
 .modal-product-name {
     font-weight: 600;
-    color: #222;
+    color: var(--text-color-dark);
+    font-size: 14px;
 }
+
 .modal-product-size {
-    font-size: 0.95em;
-    color: #888;
+    font-size: 13px;
+    color: var(--text-color);
+    margin-top: 2px;
 }
+
 .modal-product-price {
-    font-weight: 500;
-    color: #222;
+    font-weight: 600;
+    color: var(--text-color-dark);
     text-align: right;
+    font-size: 14px;
 }
 .modal-title {
     text-align: center;
@@ -1065,25 +1093,31 @@ html {
 .modal-actions {
     margin-top: 2rem;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
 }
+
 .proceed-transaction {
-    background: #ff7eb3;
-    color: #fff;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+    color: white;
     border: none;
-    border-radius: 30px;
-    padding: 0.6rem 1.5rem; /* reduced padding */
-    font-size: 1rem;        /* reduced font size */
-    font-weight: 700;
+    border-radius: var(--border-radius);
+    padding: 0.75rem 1.5rem;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s;
-    min-width: 180px;       /* set a reasonable min-width */
-    max-width: 250px;       /* set a max-width */
-    width: 100%;            /* let it fill the modal-actions, but not too wide */
-    box-sizing: border-box;
-    display: inline-block;
+    transition: all 0.3s ease;
+    min-width: 160px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: var(--shadow-light);
 }
+
 .proceed-transaction:hover {
-    background: #e0679f;
+    background: linear-gradient(135deg, var(--primary-color-dark), var(--primary-color));
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
 }
 
 /* Rental Modal Specific Styles */
@@ -1101,21 +1135,25 @@ html {
 }
 
 .rental-modal-form > div {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #f0f0f0;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 14px;
+    color: var(--text-color-dark);
 }
 
 .rental-modal-table {
-    background: #fff;
-    border-radius: 10px;
-    padding: 1.2rem;
-    border: 1px solid #eee;
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-light);
 }
 
 .rental-modal-table h4 {
     margin: 0 0 1rem 0;
-    color: #333;
+    color: var(--text-color-dark);
     font-weight: 600;
+    font-size: 16px;
 }
 
 .rental-modal-table table {
@@ -1128,22 +1166,26 @@ html {
 .rental-modal-table td {
     padding: 0.75rem 0.5rem;
     text-align: left;
-    font-size: 1rem;
-    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .rental-modal-table th {
-    font-weight: 700;
-    color: #222;
-    background: #fafafa;
+    font-weight: 600;
+    color: var(--text-color-dark);
+    background: var(--body-color);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .payment-summary {
-    margin-top: 20px;
-    padding: 15px;
-    background: #f5f5f5;
-    border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: var(--body-color);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-light);
 }
 
 .payment-summary > div {
