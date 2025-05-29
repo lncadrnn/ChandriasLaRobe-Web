@@ -1,26 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 * {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
 :root {
-    --body-color: #e4e9f7;
-    --sidebar-color: #fff;
+    --body-color: #f8fafc;
+    --sidebar-color: #ffffff;
     --primary-color: hsl(346, 100%, 74%);
-    --primary-color-light: #f6f5ff;
-    --toggle-color: #dddd;
-    --text-color: #808080;
+    --primary-color-light: hsl(346, 100%, 96%);
+    --primary-color-dark: hsl(346, 100%, 64%);
+    --toggle-color: #e2e8f0;
+    --text-color: #64748b;
+    --text-color-dark: #334155;
     --secondary-color: hsl(346, 85%, 90%);
     --secondary-text-color: hsl(346, 100%, 74%);
+    --border-color: #e2e8f0;
+    --shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --border-radius: 12px;
+    --border-radius-lg: 16px;
     
-
-    --tran-02: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    --tran-03: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    --tran-04: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    --tran-02: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --tran-03: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --tran-04: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --tran-05: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -36,18 +43,20 @@ body.dark {
 }
 
 body {
-    background: #e4e9f7;
-    font-family: 'Poppins', sans-serif;
+    background: var(--body-color);
+    font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
     height: 100vh;
-    transition: var(--tran-05);
+    transition: var(--tran-03);
     overflow: hidden;
-    font-size: 1rem;
+    font-size: 14px;
+    color: var(--text-color-dark);
+    line-height: 1.6;
 }
 
 html {
-    font-size: 13px;
+    font-size: 14px;
 }
 
 /*=============== DASHBOARD LOADER STYLES ===============*/
@@ -57,12 +66,14 @@ html {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: #ffffff;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.98));
+    backdrop-filter: blur(10px);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     z-index: 10000;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .dashboard-loader-content {
@@ -70,27 +81,35 @@ html {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    background: white;
+    padding: 3rem;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-large);
+    border: 1px solid var(--border-color);
 }
 
 .dashboard-spinner {
-    width: 60px;
-    height: 60px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid var(--primary-color);
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--primary-color-light);
+    border-top: 3px solid var(--primary-color);
     border-radius: 50%;
     animation: dashboardSpin 1s linear infinite;
+    margin-bottom: 1.5rem;
 }
 
 .dashboard-loader-text {
-    margin-top: 20px;
-    color: var(--text-color);
-    font-size: 18px;
+    color: var(--text-color-dark);
+    font-size: 16px;
     font-weight: 500;
     text-align: center;
+    letter-spacing: -0.01em;
 }
 
 .dashboard-loader.hidden {
-    display: none;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
 
 @keyframes dashboardSpin {
@@ -134,34 +153,64 @@ html {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1.5rem 1.5rem 0 1.5rem;
+    padding: 2rem 2rem 0 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .brand {
-    color: #ff7eb3;
-    font-size: 2.5rem;
-    font-weight: 700;
-    letter-spacing: 1px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-shadow: none;
 }
 
 .header-right {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 1.5rem;
 }
 
 .user-info {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 1rem;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+    border: 1px solid var(--border-color);
+    transition: var(--tran-02);
 }
+
+.user-info:hover {
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-1px);
+}
+
 .user-info b {
-    font-weight: 700;
+    color: var(--text-color-dark);
+    font-weight: 600;
+    font-size: 14px;
 }
+
+.user-info .role {
+    color: var(--text-color);
+    font-size: 12px;
+    font-weight: 400;
+}
+
 .user-avatar {
-    font-size: 2.2rem;
-    margin-left: 0.5rem;
+    font-size: 2rem;
+    color: var(--primary-color);
+    transition: var(--tran-02);
+}
+
+.user-info:hover .user-avatar {
+    color: var(--primary-color-dark);
 }
 
 .dashboard-layout {
@@ -207,17 +256,40 @@ html {
 }
 
 .dashboard-card {
-    background: var(--sidebar-color);
-    border-radius: 16px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    height: 140px;
+    background: linear-gradient(135deg, white, #fefefe);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-light);
+    border: 1px solid var(--border-color);
+    height: 120px;
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    transition: var(--tran-04);
-    transform: translateZ(0); /* Force GPU acceleration */
-    will-change: width, flex-basis; /* Hint browser about what will change */
+    justify-content: space-between;
+    transition: var(--tran-03);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+    opacity: 0;
+    transition: var(--tran-03);
+}
+
+.dashboard-card:hover {
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-2px);
+    border-color: var(--primary-color-light);
+}
+
+.dashboard-card:hover::before {
+    opacity: 1;
 }
 
 /* Dashboard card sizing - responsive to sidebar state */
@@ -236,27 +308,30 @@ html {
 }
 
 .card-title {
-    font-size: 0.9rem;
+    font-size: 12px;
     font-weight: 600;
     color: var(--text-color);
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .card-main {
-    font-size: 3.2rem;
-    font-weight: 600;
-    color: var(--secondary-text-color);
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     line-height: 1;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
     display: flex;
     align-items: baseline;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .card-main span {
-    font-size: 1.1rem;
+    font-size: 14px;
     color: var(--text-color);
     font-weight: 500;
     opacity: 0.8;
@@ -264,17 +339,18 @@ html {
 
 .card-sub {
     color: var(--text-color);
-    font-size: 0.85rem;
+    font-size: 12px;
     margin: 0;
     display: flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.25rem;
     opacity: 0.7;
 }
 
 .card-sub span {
     font-weight: 600;
     opacity: 1;
+    color: var(--primary-color);
 }
 
 .dashboard-content {
@@ -284,11 +360,12 @@ html {
 
 /* Recent Rentals section */
 .dashboard-table {
-    background: var(--sidebar-color);
-    border-radius: 16px;
-    padding: 1.2rem 1.2rem 0.7rem;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    height: calc(100vh - 285px);
+    background: white;
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-light);
+    border: 1px solid var(--border-color);
+    height: calc(100vh - 300px);
     display: flex;
     flex-direction: column;
     position: relative;
@@ -299,17 +376,18 @@ html {
 .table-header {
     position: sticky;
     top: 0;
-    background: var(--sidebar-color);
+    background: white;
     z-index: 10;
-    padding-bottom: 0;
+    padding-bottom: 1rem;
     margin-bottom: 0;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .table-content {
     overflow-y: auto;
     flex: 1;
-    margin: 0 -1.2rem;
-    padding: 0 1.2rem;
+    margin: 0 -1.5rem;
+    padding: 0 1.5rem;
 }
 
 .dashboard-table table {
@@ -321,26 +399,27 @@ html {
 .dashboard-table thead th {
     position: sticky;
     top: 0;
-    background: var(--sidebar-color);
+    background: white;
     z-index: 5;
 }
 
 .dashboard-table th {
     text-align: left;
     color: var(--text-color);
-    font-weight: 500;
-    font-size: 0.75rem;
+    font-weight: 600;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    padding: 1rem 1.5rem;
+    border-bottom: 2px solid var(--border-color);
+    padding: 1rem 0;
 }
 
 .dashboard-table td {
-    padding: 1rem 1.5rem;
-    font-size: 0.75rem;
-    color: var (--text-color);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1rem 0;
+    font-size: 14px;
+    color: var(--text-color-dark);
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 500;
 }
 
 .dashboard-table td.pending { 
@@ -494,12 +573,13 @@ html {
 
 /* Recent Appointments section */
 .dashboard-appointments {
-    flex: 0 0 400px; /* Fixed width - doesn't resize */
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-    padding: 1.2rem;
-    height: calc(100vh - 120px);
+    flex: 0 0 400px;
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-light);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    height: calc(100vh - 140px);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -509,23 +589,27 @@ html {
     margin-left: 0;
 }
 
-/* Remove the previous responsive appointment adjustments since we want it fixed */
-
 .appointments-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #111;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-color-dark);
     margin-bottom: 1rem;
 }
 
 .appointments-search {
     display: flex;
     align-items: center;
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 0.6rem 0.8rem;
+    background: var(--body-color);
+    border-radius: var(--border-radius);
+    padding: 0.75rem 1rem;
     margin-bottom: 1rem;
-    border: 1px solid #f0f0f0;
+    border: 1px solid var(--border-color);
+    transition: var(--tran-02);
+}
+
+.appointments-search:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-color-light);
 }
 
 .appointments-search input {
@@ -533,20 +617,20 @@ html {
     background: transparent;
     outline: none;
     flex: 1;
-    font-size: 0.8rem;
-    color: #555;
+    font-size: 14px;
+    color: var(--text-color-dark);
     padding: 0;
 }
 
 .appointments-search input::placeholder {
-    color: #aaa;
+    color: var(--text-color);
 }
 
 .appointments-list {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 0 0.3rem;
+    padding: 0;
     margin: 0;
     width: 100%;
     box-sizing: border-box;
@@ -556,10 +640,18 @@ html {
     width: 100%;
     min-width: 0;
     box-sizing: border-box;
-    grid-template-columns: 180px 1fr auto auto;
     overflow-x: hidden;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+    transition: var(--tran-02);
+    border-radius: var(--border-radius);
+    margin-bottom: 0.5rem;
+}
+
+.appointments-list li:hover {
+    background-color: var(--primary-color-light);
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
 }
 
 .appointments-list li:last-child {
@@ -649,7 +741,8 @@ html {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -660,15 +753,28 @@ html {
 }
 
 .modal-content {
-    background: #fff;
+    background: white;
     padding: 2rem;
-    border-radius: 8px;
+    border-radius: var(--border-radius-lg);
     width: 400px;
     max-width: 90%;
     max-height: 85vh;
     overflow-y: auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-large);
+    border: 1px solid var(--border-color);
     position: relative;
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 /* Specific styling for rental modal content */
@@ -681,22 +787,33 @@ html {
 
 .modal-content h3 {
     margin-bottom: 1rem;
+    color: var(--text-color-dark);
+    font-weight: 700;
 }
 
-.close-modal {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-
+.close-modal,
 .close-rental-modal {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 1rem;
+    right: 1rem;
     font-size: 1.5rem;
     cursor: pointer;
+    color: var(--text-color);
+    background: var(--body-color);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--tran-02);
+}
+
+.close-modal:hover,
+.close-rental-modal:hover {
+    background: var(--primary-color-light);
+    color: var(--primary-color);
 }
 
 .modal.visible {
