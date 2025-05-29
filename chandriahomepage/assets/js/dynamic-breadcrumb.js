@@ -33,7 +33,7 @@ class DynamicBreadcrumb {
     }    getBreadcrumbItems() {
         const items = [];
         const currentPage = this.getCurrentPageName();
-        const navigationHistory = this.getNavigationHistory();
+        const navigationHistory = this.getFilteredNavigationHistory();
 
         // Always start with Home
         items.push({
@@ -65,12 +65,10 @@ class DynamicBreadcrumb {
                 url: 'shop.html',
                 isActive: false
             });
-        }
-
-        // Add pages from navigation history (excluding Home and current page)
+        }        // Add pages from navigation history (excluding Home, current page, and Product Details)
         if (navigationHistory.length > 0) {
             navigationHistory.forEach(page => {
-                if (page !== 'Home' && page !== currentPage) {
+                if (page !== 'Home' && page !== currentPage && page !== 'Product Details') {
                     items.push({
                         name: page,
                         url: this.getPageUrl(page),
@@ -78,7 +76,7 @@ class DynamicBreadcrumb {
                     });
                 }
             });
-        }        // Add current page
+        }// Add current page
         if (currentPage === 'Product Details') {
             const productName = this.getProductName();
             
@@ -146,11 +144,22 @@ class DynamicBreadcrumb {
         }
 
         return null;
-    }
-
-    getNavigationHistory() {
+    }    getNavigationHistory() {
         const history = JSON.parse(localStorage.getItem('breadcrumb_history') || '[]');
         return history.slice(-3); // Keep only last 3 pages for clean breadcrumb
+    }
+
+    getFilteredNavigationHistory() {
+        const currentPage = this.getCurrentPageName();
+        const history = JSON.parse(localStorage.getItem('breadcrumb_history') || '[]');
+        
+        // If we're not on the details page, filter out "Product Details" from history
+        if (currentPage !== 'Product Details') {
+            return history.filter(page => page !== 'Product Details').slice(-3);
+        }
+        
+        // If we're on the details page, return normal history
+        return history.slice(-3);
     }    updateNavigationHistory() {
         const currentPage = this.getCurrentPageName();
         let history = JSON.parse(localStorage.getItem('breadcrumb_history') || '[]');
@@ -159,6 +168,11 @@ class DynamicBreadcrumb {
         if (currentPage === 'Home' || currentPage === 'Shop') {
             localStorage.removeItem('breadcrumb_history');
             return;
+        }
+        
+        // If we're not on details page, remove any "Product Details" from history
+        if (currentPage !== 'Product Details') {
+            history = history.filter(page => page !== 'Product Details');
         }
         
         // For other pages, build up the navigation trail
