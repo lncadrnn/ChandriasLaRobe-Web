@@ -11,6 +11,24 @@ import {
     arrayUnion
 } from "./sdk/chandrias-sdk.js";
 
+// #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+// DETAILS LOADER FUNCTIONS
+function showDetailsLoader() {
+    const detailsLoader = document.getElementById('details-loader');
+    if (detailsLoader) {
+        detailsLoader.classList.remove('hidden');
+        detailsLoader.style.display = 'flex';
+    }
+}
+
+function hideDetailsLoader() {
+    const detailsLoader = document.getElementById('details-loader');
+    if (detailsLoader) {
+        detailsLoader.classList.add('hidden');
+        detailsLoader.style.display = 'none';
+    }
+}
+
 $(document).ready(async function () {
   const productId = localStorage.getItem("selectedProductId");
   if (!productId) {
@@ -18,22 +36,26 @@ $(document).ready(async function () {
     return;
   }
 
-  const docRef = doc(chandriaDB, "products", productId);
-  const docSnap = await getDoc(docRef);
+  try {
+    // Show loader before starting to fetch product details
+    showDetailsLoader();
 
-  if (docSnap.exists()) {
-    const data = docSnap.data();
+    const docRef = doc(chandriaDB, "products", productId);
+    const docSnap = await getDoc(docRef);
 
-    // Image previews
-    $('.frontImage').attr("src", data.frontImageUrl);
-    $('.backImage').attr("src", data.backImageUrl);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
 
-    // Text and values
-    $('#product-name').text(data.name);
-    $('#product-price').text(`₱ ${data.price}`);
-    $('#product-description').text(data.description);
-    $('#product-code').text(data.code);
-    $('#product-color').css("background-color", data.color);    // Store product info for breadcrumb
+      // Image previews
+      $('.frontImage').attr("src", data.frontImageUrl);
+      $('.backImage').attr("src", data.backImageUrl);
+
+      // Text and values
+      $('#product-name').text(data.name);
+      $('#product-price').text(`₱ ${data.price}`);
+      $('#product-description').text(data.description);
+      $('#product-code').text(data.code);
+      $('#product-color').css("background-color", data.color);// Store product info for breadcrumb
     if (productId) {
         localStorage.setItem(`product_${productId}_name`, data.name || 'Product Details');
         // Don't store category for breadcrumb since we don't want it to show
@@ -55,10 +77,16 @@ $(document).ready(async function () {
     });
 
     // Stock
-    const totalStock = Object.values(data.size).reduce((a, b) => a + b, 0);
-    $('#product-stock').text(`${totalStock} in stocks`);
-  } else {
-    alert("Product not found.");
+    const totalStock = Object.values(data.size).reduce((a, b) => a + b, 0);      $('#product-stock').text(`${totalStock} in stocks`);
+    } else {
+      alert("Product not found.");
+    }
+  } catch (error) {
+    console.error("Error loading product details:", error);
+    alert("Error loading product details. Please try again.");
+  } finally {
+    // Hide loader after product details are loaded (success or error)
+    hideDetailsLoader();
   }
 
   // NOTYF INITIALIZATION for notifications
