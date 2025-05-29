@@ -99,53 +99,86 @@
             </div>
 
         </div>
-    </nav>
-
-     <main class="main-content">
+    </nav>     <main class="main-content">
         <header class="main-header">
-            <h1><span class="brand">Dashboard</span></h1>
+            <div class="header-left">
+                <h1><span class="brand">Dashboard</span></h1>
+                <p class="header-subtitle">Welcome back! Here's what's happening today.</p>
+            </div>
             <div class="header-right">
                 <div class="user-info">
-                    <span>Hey, <b>Retrotaku</b><br><span class="role">Employee</span></span>
-                    <span class="user-avatar"><i class='bx bxs-user-circle'></i></span>
+                    <div class="user-details">
+                        <span class="user-name">Admin</span>
+                        <span class="role">Employee</span>
+                    </div>
+                    <div class="user-avatar">
+                        <i class='bx bxs-user-circle'></i>
+                    </div>
                 </div>
             </div>
-        </header>
-        <div class="dashboard-layout">
+        </header>        <div class="dashboard-layout">
             <div class="dashboard-main">
                 <section class="dashboard-cards-row">
-
-                    <div class="dashboard-card">
-                        <div class="card-title">ACTIVE RENTALS</div>
-                        <div class="card-main">17 <span>Items out</span></div>
-                        <div class="card-sub">4 <span>Due Today</span></div>
+                    <div class="dashboard-card active-rentals">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class='bx bxs-package'></i>
+                            </div>
+                            <div class="card-title">ACTIVE RENTALS</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-main">17 <span>Items out</span></div>
+                            <div class="card-sub">4 <span>Due Today</span></div>
+                        </div>
                     </div>
                     
-                    <div class="dashboard-card">
-                        <div class="card-title">ACTIVE APPOINTMENT</div>
-                        <div class="card-main">2 <span>Booked Today</span></div>
-                        <div class="card-sub">11 <span>Due This Week</span></div>
+                    <div class="dashboard-card active-appointments">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class='bx bxs-calendar'></i>
+                            </div>
+                            <div class="card-title">ACTIVE APPOINTMENTS</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-main">2 <span>Booked Today</span></div>
+                            <div class="card-sub">11 <span>Due This Week</span></div>
+                        </div>
                     </div>
 
-                    <div class="dashboard-card">
-                        <div class="card-title">TOTAL PRODUCTS</div>
-                        <div class="card-main">5 <span>Gowns & Suits</span></div>
-                        <div class="card-sub">4 <span>Rented Today</span></div>
+                    <div class="dashboard-card total-products">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class='bx bxs-t-shirt'></i>
+                            </div>
+                            <div class="card-title">TOTAL PRODUCTS</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-main">5 <span>Gowns & Suits</span></div>
+                            <div class="card-sub">4 <span>Rented Today</span></div>
+                        </div>
                     </div>
-                    
-                </section>                
-                <section class="dashboard-table">
+                </section>                <section class="dashboard-table">
                     <div class="table-header">
-                        <div class="table-title">Recent Rentals</div>
-                        <div class="table-search">
-                            <i class='bx bx-search'></i>
-                            <input type="text" placeholder="Search">
-                            <i class='bx bx-x'></i>
+                        <div class="table-title">
+                            <h3>Recent Rentals</h3>
+                            <p>Latest rental transactions and their status</p>
+                        </div>
+                        <div class="table-actions">
+                            <div class="table-search">
+                                <i class='bx bx-search'></i>
+                                <input type="text" placeholder="Search rentals...">
+                                <i class='bx bx-x clear-icon'></i>
+                            </div>
+                            <button class="view-all-btn">
+                                <span>View All</span>
+                                <i class='bx bx-chevron-right'></i>
+                            </button>
                         </div>
                     </div>
                     <div class="table-content">
                         <table>
-                            <thead>                                <tr>
+                            <thead>
+                                <tr>
                                     <th>Rentee Name</th>
                                     <th>Transaction Code</th>
                                     <th>Remaining Bal.</th>
@@ -159,19 +192,26 @@
                         </table>
                     </div>
                 </section>
-            </div>
-
-            <section class="dashboard-appointments">
-                <div class="appointments-title">Recent Appointment</div>
-                <div class="appointments-search">
-                    <i class='bx bx-search'></i>
-                    <input type="text" id="appointment-search" placeholder="Search">
-                    <i class='bx bx-x clear-search' id="clear-search"></i>
+            </div>            <section class="dashboard-appointments">
+                <div class="appointments-header">
+                    <div class="appointments-title">
+                        <h3>Recent Appointments</h3>
+                        <p>Upcoming and recent booking appointments</p>
+                    </div>
+                    <div class="appointments-actions">
+                        <div class="appointments-search">
+                            <i class='bx bx-search'></i>
+                            <input type="text" id="appointment-search" placeholder="Search appointments...">
+                            <i class='bx bx-x clear-search' id="clear-search"></i>
+                        </div>
+                    </div>
                 </div>
-                <ul class="appointments-list" id="appointments-list">
-                    <!-- Populated by JS -->
-                </ul>
-            </section>            <!-- Appointment Modal -->
+                <div class="appointments-content">
+                    <ul class="appointments-list" id="appointments-list">
+                        <!-- Populated by JS -->
+                    </ul>
+                </div>
+            </section><!-- Appointment Modal -->
             <div id="appointment-modal" class="modal">
                 <div class="modal-content appointment-modal-flex">
                     <span class="close-modal">&times;</span>
