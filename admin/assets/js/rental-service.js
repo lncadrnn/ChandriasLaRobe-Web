@@ -1,5 +1,22 @@
 import { chandriaDB, collection, getDocs } from "./sdk/chandrias-sdk.js";
 
+// RENTAL LOADER FUNCTIONS
+function showRentalLoader() {
+    const rentalLoader = document.getElementById('rental-loader');
+    if (rentalLoader) {
+        rentalLoader.classList.remove('hidden');
+        rentalLoader.style.display = 'flex';
+    }
+}
+
+function hideRentalLoader() {
+    const rentalLoader = document.getElementById('rental-loader');
+    if (rentalLoader) {
+        rentalLoader.classList.add('hidden');
+        rentalLoader.style.display = 'none';
+    }
+}
+
 $(document).ready(function () {
     // DISPLAY PRODUCTS FUNCTION
     async function displayProducts() {
@@ -18,15 +35,10 @@ $(document).ready(function () {
                         <div class="pos-price">₱${data.price}</div>
                     </div>
             </div>
-            `;
-
-            // APPEND TO CONTAINER
+            `;            // APPEND TO CONTAINER
             $(".pos-products").append(card);
-            
-            $("body").addClass("loaded");
         });
     }
-    displayProducts();
     
     // DISPLAY ADDITIONALS PRODUCT FUNCTION
     async function displayAccessories() {
@@ -50,7 +62,20 @@ $(document).ready(function () {
             $(".pos-accessories").append(card);
         });
     }
-    displayAccessories(); 
+
+    // Initialize all rental data with loader
+    async function initializeAllRentalData() {
+        try {
+            showRentalLoader();
+            await Promise.all([displayProducts(), displayAccessories()]);
+        } catch (error) {
+            console.error("Error initializing rental data:", error);
+        } finally {
+            hideRentalLoader();
+        }
+    }
+    
+    initializeAllRentalData();
     
     // --- EVENT TYPE FEE LOGIC ---
     // Removed event type logic as requested
