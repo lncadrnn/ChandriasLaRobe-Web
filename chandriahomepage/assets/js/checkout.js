@@ -10,6 +10,24 @@ import {
     doc
 } from "./sdk/chandrias-sdk.js";
 
+// #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+// CHECKOUT LOADER FUNCTIONS
+function showCheckoutLoader() {
+    const checkoutLoader = document.getElementById('checkout-loader');
+    if (checkoutLoader) {
+        checkoutLoader.classList.remove('hidden');
+        checkoutLoader.style.display = 'flex';
+    }
+}
+
+function hideCheckoutLoader() {
+    const checkoutLoader = document.getElementById('checkout-loader');
+    if (checkoutLoader) {
+        checkoutLoader.classList.add('hidden');
+        checkoutLoader.style.display = 'none';
+    }
+}
+
 $(document).ready(function () {
     // INITIALIZING NOTYF
     const notyf = new Notyf({
@@ -50,29 +68,37 @@ $(document).ready(function () {
     $('#clock-btn').on('click', function(e) {
         e.preventDefault();
         $('#checkout-time').clockpicker('show');
-    });
-
-    // FILL UP FORM BASE ON CURRENT USER LOGGED-IN
+    });    // FILL UP FORM BASE ON CURRENT USER LOGGED-IN
     onAuthStateChanged(auth, async user => {
-        if (user) {
-            // Auto-fill email from Firebase Auth
-            $("#customer-email").val(user.email);
+        // Show loader when starting to load checkout data
+        showCheckoutLoader();
+        
+        try {
+            if (user) {
+                // Auto-fill email from Firebase Auth
+                $("#customer-email").val(user.email);
 
-            // Fetch user data from Firestore
-            const userDoc = await getDoc(
-                doc(chandriaDB, "userAccounts", user.uid)
-            );
+                // Fetch user data from Firestore
+                const userDoc = await getDoc(
+                    doc(chandriaDB, "userAccounts", user.uid)
+                );
 
-            if (userDoc.exists()) {
-                const userData = userDoc.data();
-                $("#customer-name").val(userData.fullname || "");
-                $("#customer-contact").val(userData.contact || "");
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    $("#customer-name").val(userData.fullname || "");
+                    $("#customer-contact").val(userData.contact || "");
+                }
+                
+                await loadCartItems(user.uid);
+                await updateCartCount();
+            } else {
+                $("#nav-login").show(); // show if there's no user logged-in
             }
-            
-            await loadCartItems(user.uid);
-            await updateCartCount();
-        } else {
-            $("#nav-login").show(); // show if there's no user logged-in
+        } catch (error) {
+            console.error('Error loading checkout data:', error);
+        } finally {
+            // Hide loader after data is loaded (success or error)
+            hideCheckoutLoader();
         }
     });
 
