@@ -144,15 +144,19 @@
                     </div>
                 </div>
             </section>
-        </main>
-
-        <!-- Remove Item Confirmation Modal -->
-        <div id="remove-modal" class="custom-modal" style="display:none; position:fixed; z-index:2000; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); align-items:center; justify-content:center;">
-          <div style="background:#fff; border-radius:10px; max-width:350px; width:90%; margin:auto; padding:2rem 1.5rem; box-shadow:0 2px 16px rgba(0,0,0,0.15); text-align:center;">
-            <h3 style="color:#222; margin-bottom:1.5rem;">Are you sure you want to remove this item from your cart?</h3>
-            <div style="display:flex; gap:1rem; justify-content:center;">
-              <button id="remove-yes" style="background:#ff9aaf; color:#fff; border:none; border-radius:5px; padding:0.5rem 1.5rem; font-weight:600; cursor:pointer;">Yes</button>
-              <button id="remove-no" style="background:#eee; color:#222; border:none; border-radius:5px; padding:0.5rem 1.5rem; font-weight:600; cursor:pointer;">No</button>
+        </main>        <!-- Remove Item Confirmation Modal -->
+        <div id="remove-modal" class="modal-overlay">
+          <div class="modal-container">
+            <div class="modal-icon">
+              <i class="fi fi-rs-trash"></i>
+            </div>
+            <div class="modal-content">
+              <h3 class="modal-title">Remove Item</h3>
+              <p class="modal-message">Are you sure you want to remove this item from your cart?</p>
+              <div class="modal-actions">
+                <button id="remove-no" class="btn btn-secondary">Cancel</button>
+                <button id="remove-yes" class="btn btn-primary">Remove Item</button>
+              </div>
             </div>
           </div>
         </div>

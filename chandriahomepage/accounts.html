@@ -157,15 +157,19 @@
                     </div>
                 </div>
             </section>
-        </main>
-
-        <!-- Logout Confirmation Modal -->
-        <div id="logout-modal" class="custom-modal" style="display:none; position:fixed; z-index:2000; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); align-items:center; justify-content:center;">
-          <div style="background:#fff; border-radius:10px; max-width:350px; width:90%; margin:auto; padding:2rem 1.5rem; box-shadow:0 2px 16px rgba(0,0,0,0.15); text-align:center;">
-            <h3 style="color:#222; margin-bottom:1.5rem;">Are you sure you want to log out?</h3>
-            <div style="display:flex; gap:1rem; justify-content:center;">
-              <button id="logout-yes" style="background:#ff9aaf; color:#fff; border:none; border-radius:5px; padding:0.5rem 1.5rem; font-weight:600; cursor:pointer;">Yes</button>
-              <button id="logout-no" style="background:#eee; color:#222; border:none; border-radius:5px; padding:0.5rem 1.5rem; font-weight:600; cursor:pointer;">No</button>
+        </main>        <!-- Logout Confirmation Modal -->
+        <div id="logout-modal" class="modal-overlay">
+          <div class="modal-container">
+            <div class="modal-icon">
+              <i class="fas fa-sign-out-alt"></i>
+            </div>
+            <div class="modal-content">
+              <h3 class="modal-title">Confirm Logout</h3>
+              <p class="modal-message">Are you sure you want to log out of your account?</p>
+              <div class="modal-actions">
+                <button id="logout-no" class="btn btn-secondary">Cancel</button>
+                <button id="logout-yes" class="btn btn-primary">Logout</button>
+              </div>
             </div>
           </div>
         </div>
@@ -205,30 +209,67 @@
                     // User is not logged in - redirect to login
                     window.location.href = "./user_authentication.html";
                 }
-            });
-
+            });            // Modal handling functions
+            function showLogoutModal() {
+                if (logoutModal) {
+                    logoutModal.style.display = 'flex';
+                    setTimeout(() => {
+                        logoutModal.classList.add('show');
+                    }, 10);
+                }
+            }
+            
+            function hideLogoutModal() {
+                if (logoutModal) {
+                    logoutModal.classList.remove('show');
+                    setTimeout(() => {
+                        logoutModal.style.display = 'none';
+                    }, 300);
+                }
+            }
+            
             // Set up logout modal handlers
             if (logoutButton) {
-                logoutButton.addEventListener('click', () => {
-                    if (logoutModal) logoutModal.style.display = 'flex';
-                });
+                logoutButton.addEventListener('click', showLogoutModal);
             }
 
-            if (confirmLogoutButton) {
-                confirmLogoutButton.addEventListener('click', () => {
+            if (document.getElementById('logout-yes')) {
+                document.getElementById('logout-yes').addEventListener('click', () => {
+                    // Create a loading notification
+                    const notyf = new Notyf({
+                        position: { x: 'center', y: 'top' },
+                        duration: 3000
+                    });
+                    notyf.success('Logging out...');
+                    
                     signOut(auth).then(() => {
                         window.location.href = "./user_authentication.html";
                     }).catch((error) => {
                         console.error("Error during logout:", error);
+                        notyf.error('Logout failed. Please try again.');
                     });
                 });
             }
 
-            if (cancelLogoutButton) {
-                cancelLogoutButton.addEventListener('click', () => {
-                    if (logoutModal) logoutModal.style.display = 'none';
+            if (document.getElementById('logout-no')) {
+                document.getElementById('logout-no').addEventListener('click', hideLogoutModal);
+            }
+            
+            // Close modal when clicking outside
+            if (logoutModal) {
+                logoutModal.addEventListener('click', (e) => {
+                    if (e.target === logoutModal) {
+                        hideLogoutModal();
+                    }
                 });
             }
+            
+            // Close modal on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && logoutModal && logoutModal.style.display !== 'none') {
+                    hideLogoutModal();
+                }
+            });
         </script>
 
         <script>

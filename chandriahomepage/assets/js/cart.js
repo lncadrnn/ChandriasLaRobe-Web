@@ -278,9 +278,26 @@ $("#btn-checkout").on("click", async function () {
     console.error("Checkout update failed:", error);
     alert("Failed to update cart.");
   }
-});    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
-    // DELETE CART ITEM FUNCTION
+});    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#    // DELETE CART ITEM FUNCTION
     let itemToRemove = null;
+    
+    // Show modal with animation
+    function showRemoveModal() {
+        const modal = $("#remove-modal");
+        modal.css("display", "flex");
+        setTimeout(() => {
+            modal.addClass("show");
+        }, 10); // Small delay to ensure display:flex is applied first
+    }
+    
+    // Hide modal with animation
+    function hideRemoveModal() {
+        const modal = $("#remove-modal");
+        modal.removeClass("show");
+        setTimeout(() => {
+            modal.css("display", "none");
+        }, 300); // Match the CSS transition duration
+    }
     
     $(document).on("click", ".delete-btn", function () {
         const productId = $(this).data("id");
@@ -289,8 +306,8 @@ $("#btn-checkout").on("click", async function () {
         // Store the item details for removal
         itemToRemove = { productId, size, element: $(this) };
         
-        // Show confirmation modal
-        $("#remove-modal").css("display", "flex");
+        // Show confirmation modal with animation
+        showRemoveModal();
     });
 
     // Modal "Yes" button - confirm removal
@@ -312,43 +329,65 @@ $("#btn-checkout").on("click", async function () {
             // Filter out the item to delete
             const updatedCart = currentCart.filter(item => {
                 return !(item.productId === productId && item.size === size);
-            });            // Update Firestore with the new cart
+            });
+            
+            // Update Firestore with the new cart
             await updateDoc(userRef, {
                 added_to_cart: updatedCart
-            });            // Remove the item from the display
+            });
+            
+            // Remove the item from the display with fade-out animation
             const itemContainer = element.closest(".cart-item-row");
-            itemContainer.remove();
+            itemContainer.fadeOut(300, function() {
+                $(this).remove();
+                
+                // Check if cart is now empty
+                if (updatedCart.length === 0) {
+                    $("#empty-cart").fadeIn(300);
+                    $(".cart-table, .cart-actions").fadeOut(300);
+                } else {
+                    // Update totals if items remain
+                    updateGrandTotal();
+                }
+            });
 
-            // Check if cart is now empty
-            if (updatedCart.length === 0) {
-                $("#empty-cart").show();
-                $(".cart-table, .cart-actions").hide();
-            } else {
-                // Update totals if items remain
-                updateGrandTotal();
-            }
-
-            notyf.success("Cart item removed.");
+            notyf.success("Item removed from cart");
 
             // Update cart count
             await updateCartCount();
 
             // Hide modal and clear stored item
-            $("#remove-modal").hide();
+            hideRemoveModal();
             itemToRemove = null;
 
         } catch (error) {
             console.error("Error deleting cart item: ", error);
-            alert("Failed to remove item.");
-            $("#remove-modal").hide();
+            notyf.error("Failed to remove item");
+            hideRemoveModal();
             itemToRemove = null;
         }
     });
 
     // Modal "No" button - cancel removal
     $("#remove-no").on("click", function () {
-        $("#remove-modal").hide();
+        hideRemoveModal();
         itemToRemove = null;
+    });
+    
+    // Close modal when clicking outside
+    $(document).on('click', '#remove-modal', function(e) {
+        if (e.target === this) {
+            hideRemoveModal();
+            itemToRemove = null;
+        }
+    });
+    
+    // Close modal on escape key
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape' && $("#remove-modal").is(":visible")) {
+            hideRemoveModal();
+            itemToRemove = null;
+        }
     });
 
     // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
