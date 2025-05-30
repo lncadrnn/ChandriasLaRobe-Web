@@ -22,24 +22,43 @@ imgGallery();
 /*=============== SWIPER CATEGORIES ===============*/
 var swiperCategories = new Swiper(".categories-container", {
     spaceBetween: 24,
-    loop:true,
+    loop: true,
+    loopedSlides: 6, // Total number of slides
+    centeredSlides: true, // Center slides to show partial on both sides
+    slideToClickedSlide: true, // Allow clicking on partial slides to navigate
+    grabCursor: true, // Show grab cursor for better UX
+    effect: 'slide', // Explicitly set slide effect (no fade)
+    speed: 400, // Smooth transition speed
     navigation: {
-      nextEl: ".swiper-button-next",
-      prevEl: ".swiper-button-prev",
+      nextEl: ".custom-next-btn",
+      prevEl: ".custom-prev-btn",
     },
 
     breakpoints: {
+        320: {
+          slidesPerView: 1.2, // Show partial slides on mobile
+          spaceBetween: 15,
+          centeredSlides: true,
+        },
         640: {
-          slidesPerView: 2,
+          slidesPerView: 2.3, // Show partial slides on both sides
           spaceBetween: 20,
+          centeredSlides: true,
         },
         768: {
-          slidesPerView: 4,
-          spaceBetween: 40,
+          slidesPerView: 3.3, // Show partial slides on both sides
+          spaceBetween: 30,
+          centeredSlides: true,
+        },
+        1024: {
+          slidesPerView: 4.3, // Show partial slides on both sides
+          spaceBetween: 35,
+          centeredSlides: true,
         },
         1400: {
-          slidesPerView: 6,
+          slidesPerView: 5.3, // Show partial slides on both sides
           spaceBetween: 24,
+          centeredSlides: true,
         },
       }
   });

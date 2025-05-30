@@ -598,25 +598,134 @@ table{
 .swiper{
   overflow: initial;
 }
+/* Categories Section Wrapper */
+.categories-section-wrapper {
+  position: relative;
+  padding: 0 90px; /* Increased padding to accommodate moved buttons */
+  overflow: visible; /* Allow cards to show outside container */
+  margin: 0 -50px; /* Extend the container to show partial cards on both sides */
+}
+
+/* Categories Container */
+.categories-container {
+  overflow: visible !important; /* Override Swiper's overflow hidden */
+  padding: 0 50px; /* Add padding to show partial cards on both sides */
+}
+
+.categories-container .swiper-wrapper {
+  overflow: visible; /* Show cards extending beyond the container */
+  display: flex;
+  align-items: center;
+}
+
+/* Category Items */
+.category-item {
+  transition: transform 0.3s ease;
+  flex-shrink: 0; /* Prevent cards from shrinking */
+  cursor: pointer; /* Show pointer cursor on all cards */
+  opacity: 1; /* Remove fading effect - all cards fully visible */
+}
+
+.category-item:hover {
+  transform: translateY(-5px);
+}
+
+/* Original Swiper Button Styles (Hidden) */
 .swiper-button-next::after, .swiper-button-prev::after{
   content:'' ;
 }
 .swiper-button-next, .swiper-button-prev{
-  top: -1.875rem;
+  display: none; /* Hide default buttons */
+}
+
+/* Custom Navigation Buttons */
+.custom-prev-btn, .custom-next-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
   background-color: var(--first-color);
-  border: 1px solid white;
-  width: 30px;
-  height: 30px;
+  border: none;
   border-radius: 50%;
+  display: flex !important; /* Force display of arrows */
+  align-items: center;
+  justify-content: center;
   color: white;
-  font-size: var(--tiny-font-size);
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 100; /* Higher z-index to ensure visibility */
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Add subtle shadow for visibility */
 }
-.swiper-button-prev{
-  left: initial;
-  right:2.5rem ;
+
+.custom-prev-btn:hover, .custom-next-btn:hover {
+  transform: translateY(-50%) scale(1.1);
+  background-color: var(--first-color-dark, #e91e63); /* Darker on hover */
 }
-.swiper-button-next{
-  right: 0;
+
+.custom-prev-btn {
+  left: 60px; /* Move further right for full visibility */
+}
+
+.custom-next-btn {
+  right: 60px; /* Move further left for full visibility */
+}
+
+/* Button Icons */
+.custom-prev-btn i, .custom-next-btn i {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+}
+
+/* Disable buttons when at start/end (for non-loop sliders) */
+.custom-prev-btn.swiper-button-disabled,
+.custom-next-btn.swiper-button-disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Responsive Design for Navigation Buttons */
+@media screen and (max-width: 768px) {
+  .categories-section-wrapper {
+    padding: 0 65px; /* Adjusted padding for mobile */
+  }
+  
+  .custom-prev-btn, .custom-next-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .custom-prev-btn {
+    left: 40px; /* More inward positioning on mobile */
+  }
+
+  .custom-next-btn {
+    right: 40px; /* More inward positioning on mobile */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .categories-section-wrapper {
+    padding: 0 55px;
+  }
+  
+  .custom-prev-btn, .custom-next-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+  }
+  
+  .custom-prev-btn {
+    left: 30px; /* Inward positioning on small screens */
+  }
+
+  .custom-next-btn {
+    right: 30px; /* Inward positioning on small screens */
+  }
 }
 /*=============== PRODUCTS ===============*/
 .tab-btns{
@@ -2532,6 +2641,11 @@ a[href=""]:not([href="#"]) {
   }
 }
 
+/* Categories Section with Edge Fade Effect - REMOVED */
+.categories.section {
+  position: relative;
+}
+
 /*=============== CONTACT & BOOKING INFO ===============*/
 .contact-booking {
   background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
@@ -2572,7 +2686,7 @@ a[href=""]:not([href="#"]) {
   gap: 1rem;
   margin-bottom: 1.5rem;
   padding: 1rem;
-  background: rgba(255, 133, 177, 0.05);
+  background: rgba(255, 133,177, 0.05);
   border-radius: 10px;
   transition: transform 0.3s var(--transition);
 }
