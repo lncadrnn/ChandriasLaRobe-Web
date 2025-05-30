@@ -2432,7 +2432,7 @@ a[href=""]:not([href="#"]) {
 .contact-container {
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 .contact-info,
@@ -2441,11 +2441,17 @@ a[href=""]:not([href="#"]) {
   background: rgba(255, 255, 255, 0.8);
   border-radius: 15px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .contact-details,
 .booking-details {
   margin-top: 2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .contact-item,
