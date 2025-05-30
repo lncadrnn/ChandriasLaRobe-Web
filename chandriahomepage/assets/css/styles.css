@@ -196,6 +196,12 @@ table{
   width: 100%;
   margin-left: 2.5rem;
 }
+
+/* Enhanced navigation for index page without search bar */
+.nav-menu {
+  justify-content: center;
+}
+
 .nav-list{
   column-gap: 2.5rem;
   margin-right: auto;

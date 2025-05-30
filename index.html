@@ -89,9 +89,7 @@
       <nav class="nav container">
         <a href="index.html" class="nav-logo">
           <img src="chandriahomepage/assets/img/logo1.png" alt="" class="nav-logo-img">
-        </a>
-
-        <div class="nav-menu" id="nav-menu">          <ul class="nav-list">
+        </a>        <div class="nav-menu" id="nav-menu">          <ul class="nav-list">
             <li class="nav-item">
               <a href="index.html" class="nav-link active-link">Home</a>
             </li>
@@ -105,23 +103,15 @@
             </li>
 
           </ul>
-
-          <div class="header-search">
-            <input type="text" placeholder="Search" class="form-input">
-            <button class="search-btn">
-              <img src="chandriahomepage/assets/img/search.png" alt="">
-
-            </button>
-          </div>
         </div>        <div class="header-user-actions">
           <a href="chandriahomepage/wishlist.html" class="header-action-btn">
             <img src="chandriahomepage/assets/img/icon-heart.svg" alt="">
             <span class="count">0</span>
           </a>
 
-          <a href="chandriahomepage/appointments.html" class="header-action-btn">
-            <img src="chandriahomepage/assets/img/icon-calendar.svg" alt="">
-            <span class="count" id="appointment-count">0</span>
+          <a href="chandriahomepage/cart.html" class="header-action-btn">
+            <img src="chandriahomepage/assets/img/icon-cart.svg" alt="">
+            <span class="count" id="cart-count">0</span>
           </a>
 
           <a href="chandriahomepage/accounts.html" class="header-action-btn" id="user-account-link">
@@ -372,33 +362,6 @@ async function loadFreshProducts() {
     }
 }
 
-
-
-// Appointment count update function
-async function updateAppointmentCount() {
-    const user = auth.currentUser;
-
-    if (!user) {
-        document.getElementById("appointment-count").textContent = "0";
-        return;
-    }
-
-    try {
-        const userRef = doc(chandriaDB, "userAccounts", user.uid);
-        const userSnap = await getDoc(userRef);
-
-        if (userSnap.exists()) {
-            const data = userSnap.data();
-            const appointments = data.appointments || [];
-            const pendingAppointments = appointments.filter(apt => apt.status === 'pending' || apt.status === 'confirmed');
-            document.getElementById("appointment-count").textContent = pendingAppointments.length;
-        }
-    } catch (error) {
-        console.error("Error fetching appointment count: ", error);
-        document.getElementById("appointment-count").textContent = "0";
-    }
-}
-
 // Welcome Modal functionality
 function initWelcomeModal() {
     const modal = document.getElementById('welcomeModal');
@@ -406,15 +369,11 @@ function initWelcomeModal() {
     const skipBtn = document.getElementById('skipWelcome');
     const howItWorksLink = document.getElementById('howItWorksLink');
     
-    // Check if user has seen the welcome modal before
-    const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
-    
-    if (!hasSeenWelcome) {
-        // Show modal after a short delay for better UX
-        setTimeout(() => {
-            modal.classList.add('show');
-        }, 1000);
-    }
+    // Always show the welcome modal when index.html is loaded
+    // Show modal after a short delay for better UX
+    setTimeout(() => {
+        modal.classList.add('show');
+    }, 1000);
     
     // Close modal function
     function closeModal() {
@@ -479,21 +438,17 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     if (loginLogoutLinkElement) { // Check if the element exists
         loginLogoutLinkElement.style.display = 'none';
-    }
-    if (userAccountLink) {
+    }    if (userAccountLink) {
         userAccountLink.href = "chandriahomepage/accounts.html";
     }    localStorage.setItem('userEmail', user.email); // Store user's email
-    updateAppointmentCount(); // Update appointment count when user is logged in
   } else {
     if (loginLogoutLinkElement) { // Check if the element exists
         loginLogoutLinkElement.style.display = 'block';
         loginLogoutLinkElement.textContent = "Login";
         loginLogoutLinkElement.href = "/chandriahomepage/user_authentication.html";
-    }
-    if (userAccountLink) {
+    }    if (userAccountLink) {
         userAccountLink.href = "chandriahomepage/user_authentication.html";
     }    localStorage.removeItem('userEmail'); // Remove user's email on logout
-    document.getElementById("appointment-count").textContent = "0"; // Reset appointment count when logged out
   }
 });
 </script>
