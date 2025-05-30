@@ -2722,8 +2722,11 @@ a[href=""]:not([href="#"]) {
   .welcome-modal {
     width: 95%;
     margin: 1rem;
-  }
   
+
+
+  }
+
   .modal-header {
     padding: 1.5rem 1.5rem 1rem;
   }
@@ -2774,12 +2777,15 @@ a[href=""]:not([href="#"]) {
 }
 
 /*=============== BUSINESS POLICY PAGE ===============*/
-.policy-page {
+.policy-page,
+.about-section,
+.policies-section {
   background: var(--body-color);
   min-height: 100vh;
 }
 
-.policy-header {
+.policy-header,
+.about-header {
   text-align: center;
   margin-bottom: 3rem;
   padding: 2rem 0;
@@ -2795,6 +2801,7 @@ a[href=""]:not([href="#"]) {
   color: white;
 }
 
+.about-subtitle,
 .policy-subtitle {
   font-size: 1.125rem;
   opacity: 0.9;
@@ -2802,10 +2809,22 @@ a[href=""]:not([href="#"]) {
   margin: 0 auto;
 }
 
-.policy-content {
+.about-subtitle {
+  color: var(--text-color);
+  font-style: italic;
+  margin-top: 0.5rem;
+  opacity: 1;
+}
+
+.policy-content,
+.about-content {
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
+}
+
+.about-content {
+  margin-bottom: 4rem;
 }
 
 .policy-section {
@@ -3012,4 +3031,115 @@ a[href=""]:not([href="#"]) {
   .policy-text li {
     padding-left: 1.25rem;
   }
+}
+
+/*=============== ABOUT & POLICIES PAGE ===============*/
+.about-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.about-subtitle {
+  color: var(--text-color);
+  font-size: var(--large-font-size);
+  font-style: italic;
+  margin-top: 0.5rem;
+  opacity: 1;
+}
+
+.about-content {
+  margin-bottom: 4rem;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.service-item {
+  background: rgba(255, 133, 177, 0.05);
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  transition: transform 0.3s var(--transition);
+}
+
+.service-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(255, 133, 177, 0.2);
+}
+
+.service-item h3 {
+  color: var(--title-color);
+  font-size: var(--normal-font-size);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.service-item h3 i {
+  color: var(--primary-color);
+  font-size: 1.2rem;
+}
+
+.service-item p {
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+/* Contact Actions and Booking Actions */
+.contact-actions,
+.booking-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 1.5rem;
+}
+
+.booking-actions {
+  flex-direction: row;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.booking-actions .btn {
+  flex: 1;
+  min-width: 140px;
+}
+
+/* Latest Arrivals Section - Left Alignment */
+.latest-arrivals-title,
+.fresh-ontherack .section-title,
+.products .section-title {
+  text-align: left !important;
+  font-size: var(--h2-font-size);
+  font-weight: 700;
+  color: var(--title-color);
+  margin-bottom: 1rem;
+  padding-left: 0;
+}
+
+.latest-arrivals-subtitle,
+.fresh-ontherack .section-subtitle,
+.products .section-subtitle {
+  text-align: left !important;
+  margin-bottom: 2rem;
+  color: var(--text-color-light);
+  font-size: var(--small-font-size);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Override any centered styling for fresh-ontherack section */
+.fresh-ontherack {
+  text-align: left;
+}
+
+.fresh-ontherack .section-title span {
+  color: var(--primary-color);
 }
