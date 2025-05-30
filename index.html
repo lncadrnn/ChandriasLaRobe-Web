@@ -27,8 +27,7 @@
         <button class="modal-close" id="closeWelcomeModal">
           <i class="fi fi-rs-cross"></i>
         </button>
-        
-        <div class="modal-header">
+          <div class="modal-header">
           <img src="chandriahomepage/assets/img/logonobg.png" alt="Chandria's La Robe" class="modal-logo">
           <h2 class="modal-title">Welcome to Chandria's La Robe</h2>
           <p class="modal-subtitle">Your Premier Destination for Perfect Fit</p>
@@ -42,8 +41,8 @@
                 <i class="fi fi-rs-search"></i>
               </div>
               <div class="modal-step-content">
-                <h4>1. Browse Online</h4>
-                <p>Explore our collection of gowns, suits, and accessories</p>
+                <h4>Browse Online</h4>
+                <p>Explore our gowns, suits, and accessories</p>
               </div>
             </div>
             
@@ -52,8 +51,8 @@
                 <i class="fi fi-rs-calendar"></i>
               </div>
               <div class="modal-step-content">
-                <h4>2. Book Appointment</h4>
-                <p>Schedule your fitting session at our boutique</p>
+                <h4>Book Appointment</h4>
+                <p>Schedule your fitting session</p>
               </div>
             </div>
             
@@ -62,8 +61,8 @@
                 <i class="fi fi-rs-marker"></i>
               </div>
               <div class="modal-step-content">
-                <h4>3. Visit Our Store</h4>
-                <p>Get professional fitting and styling consultation</p>
+                <h4>Visit Our Store</h4>
+                <p>Get professional fitting consultation</p>
               </div>
             </div>
             
@@ -72,14 +71,16 @@
                 <i class="fi fi-rs-heart"></i>
               </div>
               <div class="modal-step-content">
-                <h4>4. Perfect Fit</h4>
-                <p>Leave with your perfect outfit, ready for your event</p>
+                <h4>Perfect Fit</h4>
+                <p>Leave with your perfect outfit</p>
               </div>
             </div>
           </div>
-        </div>        <div class="modal-actions">
+        </div>
+
+        <div class="modal-actions">
           <a href="chandriahomepage/shop.html" class="btn btn-primary modal-btn">Browse Collection</a>
-          <button class="btn btn-ghost modal-btn" id="skipWelcome">Skip for Now</button>
+          <a href="chandriahomepage/business-policy.html" class="btn btn-ghost modal-btn">Read the Business Policy</a>
         </div>
       </div>
     </div>
@@ -366,14 +367,17 @@ async function loadFreshProducts() {
 function initWelcomeModal() {
     const modal = document.getElementById('welcomeModal');
     const closeBtn = document.getElementById('closeWelcomeModal');
-    const skipBtn = document.getElementById('skipWelcome');
     const howItWorksLink = document.getElementById('howItWorksLink');
     
-    // Always show the welcome modal when index.html is loaded
-    // Show modal after a short delay for better UX
-    setTimeout(() => {
-        modal.classList.add('show');
-    }, 1000);
+    // Check if user has seen the welcome modal before
+    const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
+    
+    // Only show modal on first visit to index.html
+    if (!hasSeenWelcome) {
+        setTimeout(() => {
+            modal.classList.add('show');
+        }, 1000);
+    }
     
     // Close modal function
     function closeModal() {
@@ -388,7 +392,6 @@ function initWelcomeModal() {
     
     // Event listeners
     closeBtn.addEventListener('click', closeModal);
-    skipBtn.addEventListener('click', closeModal);
     howItWorksLink.addEventListener('click', (e) => {
         e.preventDefault();
         showModal();
@@ -428,19 +431,48 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         });
-    });
-
-    // Load products when page loads
+    });    // Load products when page loads
     loadFreshProducts();
+    
+    // Initialize cart count
+    updateCartCount();
 });
 
-onAuthStateChanged(auth, (user) => {
+// CART COUNT FUNCTION
+async function updateCartCount() {
+    const user = auth.currentUser;
+
+    if (!user) {
+        document.getElementById("cart-count").textContent = "0";
+        return;
+    }
+
+    try {
+        const userRef = doc(chandriaDB, "userAccounts", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+            const data = userSnap.data();
+            const cartItems = data.added_to_cart || [];
+            const totalCount = cartItems.reduce((sum, item) => sum + (parseInt(item.quantity, 10) || 0), 0);
+            document.getElementById("cart-count").textContent = totalCount;
+        } else {
+            document.getElementById("cart-count").textContent = "0";
+        }
+    } catch (error) {
+        console.error("Error fetching cart count: ", error);
+        document.getElementById("cart-count").textContent = "0";
+    }
+}
+
+onAuthStateChanged(auth, async (user) => {
   if (user) {
     if (loginLogoutLinkElement) { // Check if the element exists
         loginLogoutLinkElement.style.display = 'none';
-    }    if (userAccountLink) {
+    }if (userAccountLink) {
         userAccountLink.href = "chandriahomepage/accounts.html";
     }    localStorage.setItem('userEmail', user.email); // Store user's email
+    await updateCartCount(); // Update cart count when user logs in
   } else {
     if (loginLogoutLinkElement) { // Check if the element exists
         loginLogoutLinkElement.style.display = 'block';
@@ -449,6 +481,7 @@ onAuthStateChanged(auth, (user) => {
     }    if (userAccountLink) {
         userAccountLink.href = "chandriahomepage/user_authentication.html";
     }    localStorage.removeItem('userEmail'); // Remove user's email on logout
+    updateCartCount(); // Update cart count when user logs out
   }
 });
 </script>

@@ -2556,9 +2556,9 @@ a[href=""]:not([href="#"]) {
 .welcome-modal {
   background: white;
   border-radius: 20px;
-  max-width: 600px;
+  max-width: 550px;
   width: 90%;
-  max-height: 90vh;
+  max-height: 85vh;
   overflow-y: auto;
   position: relative;
   transform: scale(0.7) translateY(-50px);
@@ -2595,19 +2595,22 @@ a[href=""]:not([href="#"]) {
 
 .modal-close i {
   font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-header {
   text-align: center;
-  padding: 2rem 2rem 1rem;
+  padding: 1.5rem 2rem 1rem;
   background: linear-gradient(135deg, #fff5f8 0%, #ffe8f1 100%);
   border-radius: 20px 20px 0 0;
 }
 
 .modal-logo {
-  width: 80px;
+  width: 70px;
   height: auto;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .modal-title {
@@ -2624,27 +2627,27 @@ a[href=""]:not([href="#"]) {
 }
 
 .modal-process {
-  padding: 2rem;
+  padding: 1.5rem;
 }
 
 .process-title {
   text-align: center;
   font-size: var(--h3-font-size);
   color: var(--title-color);
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   font-weight: var(--weight-600);
 }
 
 .modal-steps {
   display: grid;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .modal-step {
   display: flex;
   align-items: flex-start;
   gap: 1rem;
-  padding: 1rem;
+  padding: 0.75rem;
   background: rgba(255, 133, 177, 0.05);
   border-radius: 12px;
   transition: transform 0.3s var(--transition);
@@ -2655,15 +2658,15 @@ a[href=""]:not([href="#"]) {
 }
 
 .modal-step-icon {
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
   background: linear-gradient(135deg, var(--primary-color), #ff9ec7);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   flex-shrink: 0;
   box-shadow: 0 5px 15px rgba(255, 133, 177, 0.3);
 }
@@ -2671,7 +2674,7 @@ a[href=""]:not([href="#"]) {
 .modal-step-content h4 {
   font-size: var(--normal-font-size);
   color: var(--title-color);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   font-weight: var(--weight-600);
 }
 
@@ -2682,7 +2685,7 @@ a[href=""]:not([href="#"]) {
 }
 
 .modal-actions {
-  padding: 1rem 2rem 2rem;
+  padding: 1rem 1.5rem 1.5rem;
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
@@ -2693,7 +2696,7 @@ a[href=""]:not([href="#"]) {
   flex: 1;
   min-width: 150px;
   text-align: center;
-  padding: 1rem 1.5rem;
+  padding: 0.875rem 1.25rem;
   border-radius: 50px;
   font-weight: var(--weight-600);
   transition: all 0.3s var(--transition);
@@ -2767,5 +2770,246 @@ a[href=""]:not([href="#"]) {
   
   .modal-step-content h4 {
     margin-bottom: 0.25rem;
+  }
+}
+
+/*=============== BUSINESS POLICY PAGE ===============*/
+.policy-page {
+  background: var(--body-color);
+  min-height: 100vh;
+}
+
+.policy-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 2rem 0;
+  background: linear-gradient(135deg, var(--primary-color-alt) 0%, var(--primary-color) 100%);
+  border-radius: 1rem;
+  color: white;
+}
+
+.policy-title {
+  font-size: 2.5rem;
+  font-weight: var(--font-bold);
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.policy-subtitle {
+  font-size: 1.125rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.policy-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.policy-section {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 133, 177, 0.1);
+  transition: all 0.3s var(--transition);
+}
+
+.policy-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.policy-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: var(--font-semi-bold);
+  color: var(--title-color);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--primary-color-alt);
+}
+
+.policy-section-title i {
+  font-size: 1.25rem;
+  color: var(--primary-color);
+}
+
+.policy-text h3 {
+  font-size: 1.25rem;
+  font-weight: var(--font-medium);
+  color: var(--title-color);
+  margin: 1.5rem 0 1rem 0;
+}
+
+.policy-text h3:first-child {
+  margin-top: 0;
+}
+
+.policy-text ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem 0;
+}
+
+.policy-text li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+.policy-text li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6rem;
+  width: 6px;
+  height: 6px;
+  background: var(--primary-color);
+  border-radius: 50%;
+}
+
+.policy-text p {
+  line-height: 1.6;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+}
+
+.contact-info-policy {
+  display: grid;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.contact-item-policy {
+  padding: 1rem;
+  background: var(--container-color);
+  border-radius: 0.5rem;
+  border-left: 4px solid var(--primary-color);
+  line-height: 1.6;
+}
+
+.contact-item-policy strong {
+  color: var(--title-color);
+  font-weight: var(--font-medium);
+}
+
+.policy-footer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.policy-footer .btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  min-width: 160px;
+  justify-content: center;
+}
+
+/* Breadcrumb styling for policy page */
+.breadcrumb {
+  background: var(--container-color);
+  padding: 1rem 0;
+  margin-bottom: 0;
+}
+
+.breadcrumb-list {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.breadcrumb-item {
+  color: var(--text-color);
+  font-size: 0.875rem;
+}
+
+.breadcrumb-item:not(:last-child)::after {
+  content: '/';
+  margin-left: 0.5rem;
+  color: var(--text-color-light);
+}
+
+.breadcrumb-item a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.3s var(--transition);
+}
+
+.breadcrumb-item a:hover {
+  color: var(--primary-color-alt);
+}
+
+.breadcrumb-item:last-child {
+  color: var(--text-color-light);
+}
+
+/*=============== BUSINESS POLICY RESPONSIVE ===============*/
+@media screen and (max-width: 768px) {
+  .policy-title {
+    font-size: 2rem;
+  }
+  
+  .policy-subtitle {
+    font-size: 1rem;
+  }
+  
+  .policy-section {
+    padding: 1.5rem;
+  }
+  
+  .policy-section-title {
+    font-size: 1.25rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .policy-footer {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .policy-footer .btn {
+    width: 100%;
+    max-width: 280px;
+  }
+  
+  .contact-info-policy {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .policy-header {
+    padding: 1.5rem 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .policy-title {
+    font-size: 1.75rem;
+  }
+  
+  .policy-section {
+    padding: 1rem;
+  }
+  
+  .policy-text li {
+    padding-left: 1.25rem;
   }
 }
