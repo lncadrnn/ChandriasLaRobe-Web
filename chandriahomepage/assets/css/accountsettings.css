@@ -105,9 +105,15 @@ body {
   color: var(--first-color);
 }
 /*=============== BREADCRUMBS ===============*/
-.breadcrumb{
-  background-color:var(--first-color-alt);
-  padding-block: 1.5rem;
+.breadcrumb {
+  background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 50%, #e91e63 100%);
+  backdrop-filter: blur(20px);
+  border-bottom: 2px solid rgba(233, 30, 99, 0.2);
+  box-shadow: 0 4px 20px rgba(233, 30, 99, 0.15);
+  padding: 1.5rem 0;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 2rem;
 }
 .breadcrumb-list{
   column-gap: .75rem;
