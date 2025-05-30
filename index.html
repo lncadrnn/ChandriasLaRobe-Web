@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
+<html lang="en">  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -10,11 +9,16 @@
     <!---------------------------------- SWIPER CSS ---------------------------------->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 
+    <!-------------------------------- GOOGLE FONTS --------------------------------->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-------------------------------- CSS --------------------------------->
     <link rel="stylesheet" href="chandriahomepage/assets/css/styles.css" />
 
-    <title>Chandria's La Robe</title>
+    <!-- Firebase SDK -->
+    <script type="module" src="admin/firebase-config.js"></script>
+
+    <title>Chandria's La Robe - Premium Attire Rentals</title>
   </head>
   <body>
     <!-------------------------------- HEADER -------------------------------->
@@ -85,69 +89,40 @@
 
           <img src="chandriahomepage/assets/img/home-img3.png" alt="" class="home-img">
         </div>
-      </section>
-
-      <!-------------------------------- CATEGORIES -------------------------------->
+      </section>      <!-------------------------------- CATEGORIES -------------------------------->
       <section class="categories container section">
         <h3 class="section-title">
           <span>Popular</span> Categories</h3>
 
           <div class="categories-container swiper">
-            <div class="swiper-wrapper">
-              <a href="chandriahomepage/shop.html" class="category-item swiper-slide">
-
-                <img src="chandriahomepage/assets/img/category-1.jpg" alt="" class="category-img">
-
-                <h3 class="category-title">T-shirt</h3>
+            <div class="swiper-wrapper">              <a href="chandriahomepage/shop.html?category=ball-gowns" class="category-item swiper-slide">
+                <img src="chandriahomepage/assets/img/category-1.jpg" alt="Ball Gowns" class="category-img">
+                <h3 class="category-title">Ball Gowns</h3>
               </a>
 
-              <a href="chandriahomepage/shop.html" class="category-item swiper-slide">
-                
-                <img src="chandriahomepage/assets/img/category-2.jpg" alt="" class="category-img">
-
-                <h3 class="category-title">Bags</h3>
+              <a href="chandriahomepage/shop.html?category=long-gowns" class="category-item swiper-slide">
+                <img src="chandriahomepage/assets/img/category-2.jpg" alt="Long Gowns" class="category-img">
+                <h3 class="category-title">Long Gowns</h3>
               </a>
 
-              <a href="chandriahomepage/shop.html" class="category-item swiper-slide">
-                
-                <img src="chandriahomepage/assets/img/category-3.jpg" alt="" class="category-img">
-
-                <h3 class="category-title">Sandal</h3>
+              <a href="chandriahomepage/shop.html?category=wedding-gowns" class="category-item swiper-slide">
+                <img src="chandriahomepage/assets/img/category-3.jpg" alt="Wedding Gowns" class="category-img">
+                <h3 class="category-title">Wedding Gowns</h3>
               </a>
 
-              <a href="chandriahomepage/shop.html" class="category-item swiper-slide">
-                
-                <img src="chandriahomepage/assets/img/category-4.jpg" alt="" class="category-img">
-
-                <h3 class="category-title">Scarf Cap</h3>
+              <a href="chandriahomepage/shop.html?category=fairy-gowns" class="category-item swiper-slide">
+                <img src="chandriahomepage/assets/img/category-4.jpg" alt="Fairy Gowns" class="category-img">
+                <h3 class="category-title">Fairy Gowns</h3>
               </a>
 
-              <a href="chandriahomepage/shop.html" class="category-item swiper-slide">
-                
-                <img src="chandriahomepage/assets/img/category-5.jpg" alt="" class="category-img">
-
-                <h3 class="category-title">Shoes</h3>
+              <a href="chandriahomepage/shop.html?category=suits" class="category-item swiper-slide">
+                <img src="chandriahomepage/assets/img/category-5.jpg" alt="Suits" class="category-img">
+                <h3 class="category-title">Suits</h3>
               </a>
 
-              <a href="chandriahomepage/shop.html" class="category-item swiper-slide">
-                
-                <img src="chandriahomepage/assets/img/category-6.jpg" alt="" class="category-img">
-
-                <h3 class="category-title">Pillowcase</h3>
-              </a>
-
-              <a href="chandriahomepage/shop.html" class="category-item swiper-slide">
-                
-                <img src="chandriahomepage/assets/img/category-7.jpg" alt="" class="category-img">
-
-                <h3 class="category-title">Jumpersuits</h3>
-              </a>
-
-              <a href="chandriahomepage/shop.html" class="category-item swiper-slide">
-                
-                <img src="chandriahomepage/assets/img/category-8.jpg" alt="" class="category-img">
-
-                <h3 class="category-title">Hats</h3>
+              <a href="chandriahomepage/shop.html?category=additionals" class="category-item swiper-slide">
+                <img src="chandriahomepage/assets/img/category-6.jpg" alt="Additionals" class="category-img">
+                <h3 class="category-title">Additionals</h3>
               </a>
             </div>
           
@@ -161,1134 +136,21 @@
           </div>
       </section>
 
-      <!--------------------------------PRODUCTS -------------------------------->
-      <section class="products section container">
-        <div class="tab-btns">
-          <span class="tab-btn active-tab" data-target="#featured">Featured</span>
-          <span class="tab-btn" data-target="#popular">Popular</span>
-          <span class="tab-btn" data-target="#newest">Newest</span>
-        </div>
-
-        <div class="tab-items">
-       <!--------------------------------PRODUCTS (FEATURED)-------------------------------->   
-          <div class="tab-item active-tab" content id="featured">
-            <div class="products-container featured-container grid">
-          
-<!--               <div class="product-item">
-  <div class="product-banner">
-   
-    <a href="chandriahomepage/details.html" class="product-images">
-    <img src="chandriahomepage/assets/img/product-1-1.jpg" alt="" class="product-img default">
-    
-    <img src="chandriahomepage/assets/img/product-1-2.jpg" alt="" class="product-img hover">
-    </a>
-
-    <div class="product-actions">
-      <a href="#" class="action-btn" aria-label="Quick View">
-      <i class="fi fi-rs-eye"></i>
-      </a>
-
-      <a href="#" class="action-btn" aria-label="Add to Favorites">
-        <i class="fi fi-rs-heart"></i>
-        </a>
-
-        <a href="#" class="action-btn" aria-label="share">
-          <i class="fi fi-rs-shuffle"></i>
-          </a>
-    </div>
-
-    <div class="product-badge light-pink">Hot</div>
-
-  </div>
-
-  <div class="product-content">
-    <span class="product-category">Clothing</span>
-    <a href="chandriahomepage/details.html">
-      <h3 class="product-title">Colorful Pattern Shirts</h3>
-    </a>
-
-    <div class="product-price flex">
-        <span class="new-price">₱ 1500/24hr</span>
-
-    </div>
-
-    <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-      <i class="fi fi-rs-shopping-bag-add"></i>
-      </a>
-  </div>
-</div> -->
-
-            </div>
-          </div>
-       <!--------------------------------PRODUCTS (POPULAR)-------------------------------->   
-          <div class="tab-item" content id="popular">
-            <div class="products-container grid">
-              <div class="product-item">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-9-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-9-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-pink">Hot</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-2-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-2-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-green">Hot</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-10-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-10-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-orange">Hot</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-4-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-4-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-blue">Hot</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-11-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-11-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-pink">20%</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-6-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-6-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-pink">10%</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-7-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-7-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-green">Hot</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-7-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-7-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-pink">Hot</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-            </div>
-          </div>
-       <!--------------------------------PRODUCTS (NEWEST)--------------------------------> 
-          <div class="tab-item" content id="newest">
-            <div class="products-container grid">
-              <div class="product-item">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-1-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-1-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-pink">Hot</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-2-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-2-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-green">Hot</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-3-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-3-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-orange">Hot</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-4-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-4-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-blue">Hot</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-11-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-11-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-pink">20%</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-6-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-6-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-pink">10%</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-7-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-7-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-green">Hot</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-7-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-7-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-pink">Hot</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
       <!-------------------------------- POLICY -------------------------------->
       <section class="policy section">
         <div class="policy-container container grid"></div>
 
+      </section>      <!-------------------------------- FRESH ON THE RACK -------------------------------->
+      <section class="fresh-ontherack container section">
+        <h3 class="section-title">
+          <span>Fresh </span>on the Rack
+        </h3>
+        <div class="products-container grid" id="fresh-products-container">
+          <!-- Fresh products will be loaded here from inventory -->
+        </div>
       </section>
 
-      <!-------------------------------- FRESH ON THE RACK -------------------------------->
-      <section class="fresh-ontherack container section">
-
-        <h3 class="section-title">
-          <span>Fresh </span>on the Rack</h3>
-
-          <div class="fresh-container swiper">
-            <div class="swiper-wrapper">
-
-              <div class="product-item swiper-slide">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-9-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-9-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-pink">Hot</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item swiper-slide">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-2-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-2-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-green">Hot</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item swiper-slide">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-10-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-10-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-orange">Hot</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item swiper-slide">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-4-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-4-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-blue">Hot</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item swiper-slide">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-11-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-11-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-pink">20%</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item swiper-slide">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-6-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-6-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-pink">10%</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item swiper-slide">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-7-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-7-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-green">Hot</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-
-              <div class="product-item swiper-slide">
-                <div class="product-banner">
-                 
-                  <a href="chandriahomepage/details.html" class="product-images">
-                  <img src="chandriahomepage/assets/img/product-7-1.jpg" alt="" class="product-img default">
-                  
-                  <img src="chandriahomepage/assets/img/product-7-2.jpg" alt="" class="product-img hover">
-                  </a>
-
-                  <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                    </a>
-
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                      <i class="fi fi-rs-heart"></i>
-                      </a>
-
-                      <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-shuffle"></i>
-                        </a>
-                  </div>
-
-                  <div class="product-badge light-pink">Hot</div>
-
-                </div>
-
-                <div class="product-content">
-                  <span class="product-category">Clothing</span>
-                  <a href="chandriahomepage/details.html">
-                    <h3 class="product-title">Colorful Pattern Shirts</h3>
-                  </a>
-                  <div class="product-price flex">
-                      <span class="new-price">₱ 1500/24hr</span>
-
-                  </div>
-
-                  <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
     </main>
-
-
-
-    <!-------------------------------- SCROLL TOP BUTTON -------------------------------->
-    <a href="#" class="scroll-top" id="scroll-top">
-      <i class="fi fi-rs-angle-up"></i>
-    </a>
 
     <!---------------------------------- SWIPER JS ---------------------------------->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -1296,11 +158,107 @@
     <!-------------------------------- JS --------------------------------->
     <script src="chandriahomepage/assets/js/main.js"></script>    <script type="module">
 import { getAuth, onAuthStateChanged, doc, getDoc, signOut } from "./chandriahomepage/assets/js/sdk/chandrias-sdk.js";
-import { chandriaDB } from "./chandriahomepage/assets/js/sdk/chandrias-sdk.js";
+import { chandriaDB, collection, getDocs, query, orderBy, limit } from "./chandriahomepage/assets/js/sdk/chandrias-sdk.js";
 
 const auth = getAuth();
 const loginLogoutLinkElement = document.getElementById('login-logout-link'); // This might be for a different element not shown in selection
 const userAccountLink = document.getElementById('user-account-link');
+
+// Function to create product HTML
+function createProductHTML(product, productId) {
+    // Get available sizes as a string
+    const availableSizes = product.size ? Object.keys(product.size).join(", ") : "N/A";
+    
+    // Determine product category display
+    const categoryDisplay = product.category || "Clothing";
+    
+    // Format price - assuming it's stored as a number
+    const price = product.price ? `₱ ${product.price}/24hr` : "Price TBA";
+    
+    return `
+        <div class="product-item">
+            <div class="product-banner">
+                <a href="chandriahomepage/details.html?id=${productId}" class="product-images">
+                    <img src="${product.frontImageUrl || 'chandriahomepage/assets/img/placeholder.jpg'}" alt="${product.name || 'Product'}" class="product-img default">
+                    ${product.backImageUrl ? `<img src="${product.backImageUrl}" alt="${product.name || 'Product'}" class="product-img hover">` : ''}
+                </a>
+                <div class="product-actions">
+                    <a href="#" class="action-btn" aria-label="Quick View">
+                        <i class="fi fi-rs-eye"></i>
+                    </a>
+                    <a href="#" class="action-btn" aria-label="Add to Favorites">
+                        <i class="fi fi-rs-heart"></i>
+                    </a>
+                    <a href="#" class="action-btn" aria-label="Share">
+                        <i class="fi fi-rs-shuffle"></i>
+                    </a>
+                </div>
+                <div class="product-badge light-pink">New</div>
+            </div>
+            <div class="product-content">
+                <span class="product-category">${categoryDisplay}</span>
+                <a href="chandriahomepage/details.html?id=${productId}">
+                    <h3 class="product-title">${product.name || 'Untitled Product'}</h3>
+                </a>
+                <div class="product-price flex">
+                    <span class="new-price">${price}</span>
+                </div>
+                <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
+                    <i class="fi fi-rs-shopping-bag-add"></i>
+                </a>
+            </div>
+        </div>
+    `;
+}
+
+// Function to load fresh products (most recent)
+async function loadFreshProducts() {
+    try {
+        const freshContainer = document.getElementById('fresh-products-container');
+        if (!freshContainer) return;
+        
+        // Show loading state
+        freshContainer.innerHTML = '<div class="loading">Loading fresh products...</div>';
+        
+        // Query for most recent products (limited to 4)
+        const productsQuery = query(
+            collection(chandriaDB, "products"),
+            orderBy("createdAt", "desc"),
+            limit(4)
+        );
+        
+        const querySnapshot = await getDocs(productsQuery);
+        
+        if (querySnapshot.empty) {
+            freshContainer.innerHTML = '<div class="no-products">No products available at the moment.</div>';
+            return;
+        }
+        
+        let productsHTML = '';
+        querySnapshot.forEach((doc) => {
+            const productData = doc.data();
+            // Only add if product has required fields
+            if (productData.frontImageUrl && productData.name) {
+                productsHTML += createProductHTML(productData, doc.id);
+            }
+        });
+        
+        if (productsHTML === '') {
+            freshContainer.innerHTML = '<div class="no-products">No products available at the moment.</div>';
+        } else {
+            freshContainer.innerHTML = productsHTML;
+        }
+        
+    } catch (error) {
+        console.error("Error loading fresh products:", error);
+        const freshContainer = document.getElementById('fresh-products-container');
+        if (freshContainer) {
+            freshContainer.innerHTML = '<div class="error">Unable to load products. Please try again later.</div>';
+        }
+    }
+}
+
+
 
 // Cart count update function
 async function updateCartCount() {
@@ -1326,6 +284,11 @@ async function updateCartCount() {
         document.getElementById("cart-count").textContent = "0";
     }
 }
+
+// Load products when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadFreshProducts();
+});
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
