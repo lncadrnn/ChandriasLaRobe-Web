@@ -106,11 +106,13 @@ $(document).ready(function () {
 
         // Paginate products
         const startIndex = (page - 1) * itemsPerPage;
-        const paginatedProducts = products.slice(startIndex, startIndex + itemsPerPage);
-
-        paginatedProducts.forEach(product => {
+        const paginatedProducts = products.slice(startIndex, startIndex + itemsPerPage);        paginatedProducts.forEach(product => {
             const isInCart = userCart.some(item => item.productId === product.id);
             const selectedClass = isInCart ? "selected" : "";
+
+            // Generate random badge variations for visual appeal
+            const badges = ['light-pink', 'light-green', 'light-orange', 'light-blue'];
+            const randomBadge = badges[Math.floor(Math.random() * badges.length)];
 
             // Build product card
             const card = `
@@ -128,15 +130,17 @@ $(document).ready(function () {
                             <i class="fi fi-rs-heart"></i>
                         </a>
                     </div>
+                    <div class="product-badge ${randomBadge}">New</div>
                 </div>
 
                 <div class="product-content">
-                    <span class="product-category">${product.category}</span>                    <a href="./details.html" data-id="${product.id}">
+                    <span class="product-category">${product.category}</span>                    
+                    <a href="./details.html" data-id="${product.id}">
                         <h3 class="product-title">${product.name}</h3>
                     </a>
-
-                    <div class="product-price flex">
-                        <span class="new-price">₱ ${product.price}/24hr</span>
+                    
+                    <div class="product-price">
+                        <span class="new-price">₱ ${product.price} / rent</span>
                     </div>
 
                     <!-- Add to cart button -->
@@ -560,10 +564,9 @@ $(document).ready(function () {
                 <div class="quick-view-header">
                     <h2 id="quick-view-title" class="quick-view-product-title">Product Name</h2>
                     <span id="quick-view-category" class="quick-view-category">Category</span>
-                </div>
-                <div class="quick-view-price">
+                </div>                <div class="quick-view-price">
                     <span id="quick-view-price" class="quick-view-new-price">₱0</span>
-                    <span class="quick-view-period">/24hr</span>
+                    <span class="quick-view-period"> / rent</span>
                 </div>
                 <div class="quick-view-description">
                     <p id="quick-view-desc" class="quick-view-desc-text">Product description will appear here...</p>

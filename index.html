@@ -207,21 +207,21 @@
                 <i class="fi fi-rs-marker"></i>
                 <div>
                   <h4>Our Location</h4>
-                  <p>123 Fashion Street, Style District<br>Manila, Philippines</p>
+                  <p>B42 L13 Bilbao Street, Hacienda La Joya Subdivision<br>Imus, Cavite, Philippines</p>
                 </div>
               </div>
               <div class="contact-item">
                 <i class="fi fi-rs-phone-call"></i>
                 <div>
                   <h4>Phone</h4>
-                  <p>+63 912 345 6789</p>
+                  <p>+63 000 000 000</p>
                 </div>
               </div>
               <div class="contact-item">
                 <i class="fi fi-rs-clock"></i>
                 <div>
                   <h4>Fitting Hours</h4>
-                  <p>Monday - Saturday: 10:00 AM - 7:00 PM<br>Sunday: 12:00 PM - 5:00 PM</p>
+                  <p>Monday - Sunday: 08:00 AM - 9:00 PM<br>We'll notify you if we're not available.</p>
                 </div>
               </div>
             </div>            <div class="contact-actions">
@@ -231,33 +231,33 @@
               </a>
             </div>
           </div>
-          
-          <div class="booking-info">
+            <div class="booking-info">
             <h3 class="section-title">
               <span>Booking</span> Information
             </h3>
             <div class="booking-details">
               <div class="booking-item">
-                <i class="fi fi-rs-calendar"></i>
+                <i class="fi fi-rs-tags"></i>
                 <div>
-                  <h4>Appointment Duration</h4>
-                  <p>Allow 1-2 hours for your fitting session</p>
+                  <h4>Free Fitting Policy</h4>
+                  <p>Free fitting for up to 3 items/products. Additional fittings are ₱100 each (coordinate at our physical store)</p>
                 </div>
               </div>
               <div class="booking-item">
-                <i class="fi fi-rs-user-add"></i>
+                <i class="fi fi-rs-clothes-hanger"></i>
                 <div>
-                  <h4>Group Bookings</h4>
-                  <p>Perfect for bridal parties and special events</p>
-                </div>
-              </div>              <div class="booking-item">
-                <i class="fi fi-rs-diamond"></i>
-                <div>
-                  <h4>Personal Styling</h4>
-                  <p>Expert stylists available for consultation</p>
+                  <h4>Product Preparation</h4>
+                  <p>We prepare your selected gown when you book it. You can also book a blank appointment if unsure what to fit</p>
                 </div>
               </div>
-            </div>            <div class="booking-actions">
+              <div class="booking-item">
+                <i class="fi fi-rs-bell"></i>
+                <div>
+                  <h4>Availability Notice</h4>
+                  <p>If your booked product is already rented, we'll notify you immediately to reschedule or select alternatives</p>
+                </div>
+              </div>
+            </div><div class="booking-actions">
               <a href="chandriahomepage/shop.html" class="btn btn-primary">Browse Our Products</a>
               <a href="chandriahomepage/about-policy.html" class="btn btn-secondary">
                 <i class="fi fi-rs-document"></i>
@@ -288,34 +288,37 @@ function createProductHTML(product, productId) {
     const availableSizes = product.size ? Object.keys(product.size).join(", ") : "N/A";
     
     // Determine product category display
-    const categoryDisplay = product.category || "Clothing";
-      // Format price - assuming it's stored as a number
-    const price = product.price ? `₱ ${product.price} rental` : "Price available in-store";
+    const categoryDisplay = product.category || "Clothing";      
     
-    return `
+    // Format price - assuming it's stored as a number
+    const price = product.price ? `₱ ${product.price} / rent` : "Price available in-store";
+    
+    // Generate random badge variations for visual appeal
+    const badges = ['light-pink', 'light-green', 'light-orange', 'light-blue'];
+    const randomBadge = badges[Math.floor(Math.random() * badges.length)];
+      return `
         <div class="product-item">
             <div class="product-banner">
                 <a href="chandriahomepage/details.html?id=${productId}" class="product-images">
                     <img src="${product.frontImageUrl || 'chandriahomepage/assets/img/placeholder.jpg'}" alt="${product.name || 'Product'}" class="product-img default">
                     ${product.backImageUrl ? `<img src="${product.backImageUrl}" alt="${product.name || 'Product'}" class="product-img hover">` : ''}
-                </a>                <div class="product-actions">
+                </a>                
+                <div class="product-actions">
                     <a href="chandriahomepage/details.html?id=${productId}" class="action-btn" aria-label="View Details">
                         <i class="fi fi-rs-eye"></i>
                     </a>
                     <a href="#" class="action-btn" aria-label="Add to Favorites">
                         <i class="fi fi-rs-heart"></i>
                     </a>
-                    <a href="#" class="action-btn" aria-label="Share">
-                        <i class="fi fi-rs-share"></i>
-                    </a>
                 </div>
-                <div class="product-badge light-pink">New</div>
-            </div>            <div class="product-content">
+                <div class="product-badge ${randomBadge}">New</div>
+            </div>            
+            <div class="product-content">
                 <span class="product-category">${categoryDisplay}</span>
                 <a href="chandriahomepage/details.html?id=${productId}">
                     <h3 class="product-title">${product.name || 'Untitled Product'}</h3>
                 </a>
-                <div class="product-price flex">
+                <div class="product-price">
                     <span class="new-price">${price}</span>
                 </div>
             </div>
