@@ -2494,7 +2494,7 @@ a[href=""]:not([href="#"]) {
 }
 
 .booking-info .btn {
-  margin-top: 2rem;
+  margin-top: auto;
   width: 100%;
 }
 
