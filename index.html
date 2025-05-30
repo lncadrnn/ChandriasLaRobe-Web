@@ -18,9 +18,75 @@
     <!-- Firebase SDK -->
     <script type="module" src="admin/firebase-config.js"></script>
 
-    <title>Chandria's La Robe - Premium Attire Rentals</title>
+    <title>Chandria's La Robe - Book Your Fitting Appointment</title>
   </head>
   <body>
+    <!-------------------------------- WELCOMING MODAL -------------------------------->
+    <div class="welcome-modal-overlay" id="welcomeModal">
+      <div class="welcome-modal">
+        <button class="modal-close" id="closeWelcomeModal">
+          <i class="fi fi-rs-cross"></i>
+        </button>
+        
+        <div class="modal-header">
+          <img src="chandriahomepage/assets/img/logo1.png" alt="Chandria's La Robe" class="modal-logo">
+          <h2 class="modal-title">Welcome to Chandria's La Robe</h2>
+          <p class="modal-subtitle">Your Premier Destination for Perfect Fit</p>
+        </div>
+
+        <div class="modal-process">
+          <h3 class="process-title">How It Works</h3>
+          <div class="modal-steps">
+            <div class="modal-step">
+              <div class="modal-step-icon">
+                <i class="fi fi-rs-search"></i>
+              </div>
+              <div class="modal-step-content">
+                <h4>1. Browse Online</h4>
+                <p>Explore our collection of gowns, suits, and accessories</p>
+              </div>
+            </div>
+            
+            <div class="modal-step">
+              <div class="modal-step-icon">
+                <i class="fi fi-rs-calendar"></i>
+              </div>
+              <div class="modal-step-content">
+                <h4>2. Book Appointment</h4>
+                <p>Schedule your fitting session at our boutique</p>
+              </div>
+            </div>
+            
+            <div class="modal-step">
+              <div class="modal-step-icon">
+                <i class="fi fi-rs-marker"></i>
+              </div>
+              <div class="modal-step-content">
+                <h4>3. Visit Our Store</h4>
+                <p>Get professional fitting and styling consultation</p>
+              </div>
+            </div>
+            
+            <div class="modal-step">
+              <div class="modal-step-icon">
+                <i class="fi fi-rs-heart"></i>
+              </div>
+              <div class="modal-step-content">
+                <h4>4. Perfect Fit</h4>
+                <p>Leave with your perfect outfit, ready for your event</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <a href="chandriahomepage/shop.html" class="btn btn-primary modal-btn">Browse Collection</a>
+          <a href="chandriahomepage/book-appointment.html" class="btn btn-secondary modal-btn">Book Appointment</a>
+          <button class="btn btn-ghost modal-btn" id="skipWelcome">Skip for Now</button>
+        </div>
+      </div>
+    </div>
+
     <!-------------------------------- HEADER -------------------------------->
     <header class="header">
       <nav class="nav container">
@@ -28,14 +94,17 @@
           <img src="chandriahomepage/assets/img/logo1.png" alt="" class="nav-logo-img">
         </a>
 
-        <div class="nav-menu" id="nav-menu">
-          <ul class="nav-list">
+        <div class="nav-menu" id="nav-menu">          <ul class="nav-list">
             <li class="nav-item">
               <a href="index.html" class="nav-link active-link">Home</a>
             </li>
 
             <li class="nav-item">
               <a href="chandriahomepage/shop.html" class="nav-link">Shop</a>
+            </li>
+
+            <li class="nav-item">
+              <a href="#" class="nav-link" id="howItWorksLink">How It Works</a>
             </li>
 
           </ul>
@@ -47,25 +116,20 @@
 
             </button>
           </div>
-        </div>
-
-        <div class="header-user-actions">
-
+        </div>        <div class="header-user-actions">
           <a href="chandriahomepage/wishlist.html" class="header-action-btn">
             <img src="chandriahomepage/assets/img/icon-heart.svg" alt="">
             <span class="count">0</span>
           </a>
 
-          <a href="chandriahomepage/cart.html" class="header-action-btn">
-            <img src="chandriahomepage/assets/img/icon-cart.svg" alt="">
-            <span class="count" id="cart-count">0</span>
+          <a href="chandriahomepage/appointments.html" class="header-action-btn">
+            <img src="chandriahomepage/assets/img/icon-calendar.svg" alt="">
+            <span class="count" id="appointment-count">0</span>
           </a>
 
           <a href="chandriahomepage/accounts.html" class="header-action-btn" id="user-account-link">
             <img src="chandriahomepage/assets/img/icon-user.svg" alt="">
           </a>
-          
-
         </div>
 
       </nav>
@@ -73,18 +137,16 @@
 
     <!--------------------------------MAIN -------------------------------->
     <main class="main">
-      <!-------------------------------- HOME -------------------------------->
-      <section class="home section-lg">
+      <!-------------------------------- HOME -------------------------------->      <section class="home section-lg">
         <div class="home-container container grid">
           <div class="home-content">
-            <span class="home-subtitle">Discover Elegance in Every Outfit</span>
-            <h1 class="home-title">Premium Attire for
-                              <span>Every Occasion</span>
-            </h1>
-            <p class="home-description">
-              Stylish Rentals, Hassle-Free Experience
+            <span class="home-subtitle">Visit Our Boutique for Expert Fitting</span>
+            <h1 class="home-title">Book Your Appointment for
+                              <span>Perfect Fit</span>
+            </h1>            <p class="home-description">
+              Browse our collection online, then visit our store for professional fitting and styling consultation
             </p>
-            <a href="chandriahomepage/shop.html" class="btn btn-primary">Book Now</a>
+            <a href="chandriahomepage/shop.html" class="btn btn-primary">Browse Collection</a>
           </div>
 
           <img src="chandriahomepage/assets/img/home-img3.png" alt="" class="home-img">
@@ -92,10 +154,11 @@
       </section>      <!-------------------------------- CATEGORIES -------------------------------->
       <section class="categories container section">
         <h3 class="section-title">
-          <span>Popular</span> Categories</h3>
+          <span>Browse</span> Categories</h3>
+        <p class="section-subtitle">Explore our collection and book an appointment to try on your favorites</p>
 
           <div class="categories-container swiper">
-            <div class="swiper-wrapper">              <a href="chandriahomepage/shop.html?category=ball-gowns" class="category-item swiper-slide">
+            <div class="swiper-wrapper"><a href="chandriahomepage/shop.html?category=ball-gowns" class="category-item swiper-slide">
                 <img src="chandriahomepage/assets/img/category-1.jpg" alt="Ball Gowns" class="category-img">
                 <h3 class="category-title">Ball Gowns</h3>
               </a>
@@ -131,22 +194,83 @@
           </div>
           <div class="swiper-button-prev">
             <i class="fi fi-rs-angle-left"></i>
-          </div>
-
-          </div>
+          </div>          </div>
       </section>
 
       <!-------------------------------- POLICY -------------------------------->
       <section class="policy section">
         <div class="policy-container container grid"></div>
 
-      </section>      <!-------------------------------- FRESH ON THE RACK -------------------------------->
+      </section><!-------------------------------- FRESH ON THE RACK -------------------------------->
       <section class="fresh-ontherack container section">
         <h3 class="section-title">
-          <span>Fresh </span>on the Rack
+          <span>Latest </span>Arrivals
         </h3>
+        <p class="section-subtitle">See our newest pieces and book an appointment to try them on</p>
         <div class="products-container grid" id="fresh-products-container">
           <!-- Fresh products will be loaded here from inventory -->
+        </div>
+      </section>      <!-------------------------------- CONTACT & BOOKING INFO -------------------------------->
+      <section class="contact-booking container section">
+        <div class="contact-container grid">
+          <div class="contact-info">
+            <h3 class="section-title">
+              <span>Visit</span> Our Boutique
+            </h3>
+            <div class="contact-details">
+              <div class="contact-item">
+                <i class="fi fi-rs-marker"></i>
+                <div>
+                  <h4>Our Location</h4>
+                  <p>123 Fashion Street, Style District<br>Manila, Philippines</p>
+                </div>
+              </div>
+              <div class="contact-item">
+                <i class="fi fi-rs-phone-call"></i>
+                <div>
+                  <h4>Phone</h4>
+                  <p>+63 912 345 6789</p>
+                </div>
+              </div>
+              <div class="contact-item">
+                <i class="fi fi-rs-clock"></i>
+                <div>
+                  <h4>Fitting Hours</h4>
+                  <p>Monday - Saturday: 10:00 AM - 8:00 PM<br>Sunday: 12:00 PM - 6:00 PM</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="booking-info">
+            <h3 class="section-title">
+              <span>Booking</span> Information
+            </h3>
+            <div class="booking-details">
+              <div class="booking-item">
+                <i class="fi fi-rs-calendar"></i>
+                <div>
+                  <h4>Appointment Duration</h4>
+                  <p>Allow 1-2 hours for your fitting session</p>
+                </div>
+              </div>
+              <div class="booking-item">
+                <i class="fi fi-rs-user-add"></i>
+                <div>
+                  <h4>Group Bookings</h4>
+                  <p>Perfect for bridal parties and special events</p>
+                </div>
+              </div>
+              <div class="booking-item">
+                <i class="fi fi-rs-diamond"></i>
+                <div>
+                  <h4>Personal Styling</h4>
+                  <p>Expert stylists available for consultation</p>
+                </div>
+              </div>
+            </div>
+            <a href="chandriahomepage/book-appointment.html" class="btn btn-primary">Book Your Appointment</a>
+          </div>
         </div>
       </section>
 
@@ -171,9 +295,8 @@ function createProductHTML(product, productId) {
     
     // Determine product category display
     const categoryDisplay = product.category || "Clothing";
-    
-    // Format price - assuming it's stored as a number
-    const price = product.price ? `₱ ${product.price}/24hr` : "Price TBA";
+      // Format price - assuming it's stored as a number
+    const price = product.price ? `₱ ${product.price} rental` : "Price available in-store";
     
     return `
         <div class="product-item">
@@ -181,16 +304,15 @@ function createProductHTML(product, productId) {
                 <a href="chandriahomepage/details.html?id=${productId}" class="product-images">
                     <img src="${product.frontImageUrl || 'chandriahomepage/assets/img/placeholder.jpg'}" alt="${product.name || 'Product'}" class="product-img default">
                     ${product.backImageUrl ? `<img src="${product.backImageUrl}" alt="${product.name || 'Product'}" class="product-img hover">` : ''}
-                </a>
-                <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View">
+                </a>                <div class="product-actions">
+                    <a href="chandriahomepage/details.html?id=${productId}" class="action-btn" aria-label="View Details">
                         <i class="fi fi-rs-eye"></i>
                     </a>
                     <a href="#" class="action-btn" aria-label="Add to Favorites">
                         <i class="fi fi-rs-heart"></i>
                     </a>
-                    <a href="#" class="action-btn" aria-label="Share">
-                        <i class="fi fi-rs-shuffle"></i>
+                    <a href="chandriahomepage/book-appointment.html?product=${productId}" class="action-btn" aria-label="Book Fitting">
+                        <i class="fi fi-rs-calendar"></i>
                     </a>
                 </div>
                 <div class="product-badge light-pink">New</div>
@@ -256,12 +378,12 @@ async function loadFreshProducts() {
 
 
 
-// Cart count update function
-async function updateCartCount() {
+// Appointment count update function
+async function updateAppointmentCount() {
     const user = auth.currentUser;
 
     if (!user) {
-        document.getElementById("cart-count").textContent = "0";
+        document.getElementById("appointment-count").textContent = "0";
         return;
     }
 
@@ -271,18 +393,89 @@ async function updateCartCount() {
 
         if (userSnap.exists()) {
             const data = userSnap.data();
-            const cartItems = data.added_to_cart || [];
-            const totalCount = cartItems.reduce((sum, item) => sum + (parseInt(item.quantity, 10) || 0), 0);
-            document.getElementById("cart-count").textContent = totalCount;
+            const appointments = data.appointments || [];
+            const pendingAppointments = appointments.filter(apt => apt.status === 'pending' || apt.status === 'confirmed');
+            document.getElementById("appointment-count").textContent = pendingAppointments.length;
         }
     } catch (error) {
-        console.error("Error fetching cart count: ", error);
-        document.getElementById("cart-count").textContent = "0";
+        console.error("Error fetching appointment count: ", error);
+        document.getElementById("appointment-count").textContent = "0";
     }
 }
 
-// Load products when page loads
+// Welcome Modal functionality
+function initWelcomeModal() {
+    const modal = document.getElementById('welcomeModal');
+    const closeBtn = document.getElementById('closeWelcomeModal');
+    const skipBtn = document.getElementById('skipWelcome');
+    const howItWorksLink = document.getElementById('howItWorksLink');
+    
+    // Check if user has seen the welcome modal before
+    const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
+    
+    if (!hasSeenWelcome) {
+        // Show modal after a short delay for better UX
+        setTimeout(() => {
+            modal.classList.add('show');
+        }, 1000);
+    }
+    
+    // Close modal function
+    function closeModal() {
+        modal.classList.remove('show');
+        localStorage.setItem('hasSeenWelcome', 'true');
+    }
+    
+    // Show modal function
+    function showModal() {
+        modal.classList.add('show');
+    }
+    
+    // Event listeners
+    closeBtn.addEventListener('click', closeModal);
+    skipBtn.addEventListener('click', closeModal);
+    howItWorksLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showModal();
+    });
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+    
+    // Close modal with ESC key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('show')) {
+            closeModal();
+        }
+    });
+}
+
+// Smooth scrolling for anchor links
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize welcome modal
+    initWelcomeModal();
+    
+    // Handle smooth scrolling for anchor links
+    const smoothScrollLinks = document.querySelectorAll('a[href^="#"]');
+    smoothScrollLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Load products when page loads
     loadFreshProducts();
 });
 
@@ -293,9 +486,8 @@ onAuthStateChanged(auth, (user) => {
     }
     if (userAccountLink) {
         userAccountLink.href = "chandriahomepage/accounts.html";
-    }
-    localStorage.setItem('userEmail', user.email); // Store user's email
-    updateCartCount(); // Update cart count when user is logged in
+    }    localStorage.setItem('userEmail', user.email); // Store user's email
+    updateAppointmentCount(); // Update appointment count when user is logged in
   } else {
     if (loginLogoutLinkElement) { // Check if the element exists
         loginLogoutLinkElement.style.display = 'block';
@@ -304,9 +496,8 @@ onAuthStateChanged(auth, (user) => {
     }
     if (userAccountLink) {
         userAccountLink.href = "chandriahomepage/user_authentication.html";
-    }
-    localStorage.removeItem('userEmail'); // Remove user's email on logout
-    document.getElementById("cart-count").textContent = "0"; // Reset cart count when logged out
+    }    localStorage.removeItem('userEmail'); // Remove user's email on logout
+    document.getElementById("appointment-count").textContent = "0"; // Reset appointment count when logged out
   }
 });
 </script>

@@ -2420,3 +2420,340 @@ a[href=""]:not([href="#"]) {
     margin-top: 1rem;
   }
 }
+
+/*=============== CONTACT & BOOKING INFO ===============*/
+.contact-booking {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 20px;
+  padding: 4rem 2rem;
+  margin: 3rem 0;
+}
+
+.contact-container {
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+
+.contact-info,
+.booking-info {
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.contact-details,
+.booking-details {
+  margin-top: 2rem;
+}
+
+.contact-item,
+.booking-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(255, 133, 177, 0.05);
+  border-radius: 10px;
+  transition: transform 0.3s var(--transition);
+}
+
+.contact-item:hover,
+.booking-item:hover {
+  transform: translateX(5px);
+}
+
+.contact-item i,
+.booking-item i {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  margin-top: 0.25rem;
+  min-width: 24px;
+}
+
+.contact-item h4,
+.booking-item h4 {
+  font-size: var(--normal-font-size);
+  color: var(--title-color);
+  margin-bottom: 0.5rem;
+  font-weight: var(--weight-600);
+}
+
+.contact-item p,
+.booking-item p {
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.booking-info .btn {
+  margin-top: 2rem;
+  width: 100%;
+}
+
+/*=============== RESPONSIVE CONTACT & BOOKING ===============*/
+@media screen and (max-width: 968px) {
+  .contact-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .contact-booking {
+    padding: 3rem 1.5rem;
+  }
+}
+
+@media screen and (max-width: 568px) {
+  .contact-item,
+  .booking-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
+  .contact-item i,
+  .booking-item i {
+    margin-top: 0;
+  }
+}
+
+/*=============== WELCOME MODAL ===============*/
+.welcome-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s var(--transition);
+}
+
+.welcome-modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.welcome-modal {
+  background: white;
+  border-radius: 20px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  transform: scale(0.7) translateY(-50px);
+  transition: transform 0.3s var(--transition);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.welcome-modal-overlay.show .welcome-modal {
+  transform: scale(1) translateY(0);
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 133, 177, 0.1);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s var(--transition);
+  z-index: 10;
+}
+
+.modal-close:hover {
+  background: var(--primary-color);
+  color: white;
+  transform: rotate(90deg);
+}
+
+.modal-close i {
+  font-size: 1.2rem;
+}
+
+.modal-header {
+  text-align: center;
+  padding: 2rem 2rem 1rem;
+  background: linear-gradient(135deg, #fff5f8 0%, #ffe8f1 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+.modal-logo {
+  width: 80px;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+.modal-title {
+  font-size: var(--h2-font-size);
+  color: var(--title-color);
+  margin-bottom: 0.5rem;
+  font-weight: var(--weight-700);
+}
+
+.modal-subtitle {
+  color: var(--text-color);
+  font-size: var(--large-font-size);
+  font-style: italic;
+}
+
+.modal-process {
+  padding: 2rem;
+}
+
+.process-title {
+  text-align: center;
+  font-size: var(--h3-font-size);
+  color: var(--title-color);
+  margin-bottom: 2rem;
+  font-weight: var(--weight-600);
+}
+
+.modal-steps {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.modal-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 133, 177, 0.05);
+  border-radius: 12px;
+  transition: transform 0.3s var(--transition);
+}
+
+.modal-step:hover {
+  transform: translateX(5px);
+}
+
+.modal-step-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--primary-color), #ff9ec7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  box-shadow: 0 5px 15px rgba(255, 133, 177, 0.3);
+}
+
+.modal-step-content h4 {
+  font-size: var(--normal-font-size);
+  color: var(--title-color);
+  margin-bottom: 0.5rem;
+  font-weight: var(--weight-600);
+}
+
+.modal-step-content p {
+  color: var(--text-color);
+  font-size: var(--small-font-size);
+  line-height: 1.5;
+}
+
+.modal-actions {
+  padding: 1rem 2rem 2rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.modal-btn {
+  flex: 1;
+  min-width: 150px;
+  text-align: center;
+  padding: 1rem 1.5rem;
+  border-radius: 50px;
+  font-weight: var(--weight-600);
+  transition: all 0.3s var(--transition);
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 2px solid #e0e0e0;
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.btn-ghost:hover {
+  background: #f5f5f5;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+/*=============== MODAL RESPONSIVE ===============*/
+@media screen and (max-width: 768px) {
+  .welcome-modal {
+    width: 95%;
+    margin: 1rem;
+  }
+  
+  .modal-header {
+    padding: 1.5rem 1.5rem 1rem;
+  }
+  
+  .modal-process {
+    padding: 1.5rem;
+  }
+  
+  .modal-steps {
+    gap: 1rem;
+  }
+  
+  .modal-step {
+    padding: 0.75rem;
+  }
+  
+  .modal-step-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .modal-actions {
+    padding: 1rem 1.5rem 1.5rem;
+    flex-direction: column;
+  }
+  
+  .modal-btn {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .modal-title {
+    font-size: var(--h3-font-size);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .modal-step {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+  
+  .modal-step-content h4 {
+    margin-bottom: 0.25rem;
+  }
+}
