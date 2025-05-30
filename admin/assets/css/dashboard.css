@@ -1129,11 +1129,12 @@ html {
 
 .appointment-modal-header .modal-title {
     margin: 0;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    color: white;
 }
 
 .appointment-modal-header .modal-title i {
