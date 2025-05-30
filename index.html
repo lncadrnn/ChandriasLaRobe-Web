@@ -194,8 +194,7 @@ function createProductHTML(product, productId) {
                     </a>
                 </div>
                 <div class="product-badge light-pink">New</div>
-            </div>
-            <div class="product-content">
+            </div>            <div class="product-content">
                 <span class="product-category">${categoryDisplay}</span>
                 <a href="chandriahomepage/details.html?id=${productId}">
                     <h3 class="product-title">${product.name || 'Untitled Product'}</h3>
@@ -203,9 +202,6 @@ function createProductHTML(product, productId) {
                 <div class="product-price flex">
                     <span class="new-price">${price}</span>
                 </div>
-                <a href="#" class="action-btn cart-btn" aria-label="Add to Rent List">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                </a>
             </div>
         </div>
     `;

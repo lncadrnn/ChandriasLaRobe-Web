@@ -680,8 +680,9 @@ table{
 .action-btn{
   width: 40px;
   height: 40px;
-  line-height: 42px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
   background-color: hsl(350, 13%, 91%);
   border: 1px solid transparent;
@@ -2186,19 +2187,19 @@ a[href=""]:not([href="#"]) {
 
 .product-actions {
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 8px;
   opacity: 0;
-  transform: translateX(30px);
   transition: all 0.3s ease;
 }
 
 .product-item:hover .product-actions {
   opacity: 1;
-  transform: translateX(0);
+  transform: translate(-50%, -50%);
 }
 
 .action-btn {
@@ -2213,6 +2214,14 @@ a[href=""]:not([href="#"]) {
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn i {
+  font-size: 16px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .action-btn:hover {
