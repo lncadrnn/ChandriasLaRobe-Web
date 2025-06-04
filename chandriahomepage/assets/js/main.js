@@ -1,10 +1,61 @@
-/*=============== SHOW MENU ===============*/
+/*=============== STICKY HEADER & MOBILE MENU ===============*/
+// Handle sticky header behavior on scroll
+window.addEventListener('scroll', () => {
+  const header = document.querySelector('.header');
+  if (window.scrollY > 50) {
+    header.classList.add('scrolled');
+  } else {
+    header.classList.remove('scrolled');
+  }
+});
 
-/*===== Menu Show =====*/
-/* Validate if constant exists */
+// Mobile hamburger menu functionality
+const hamburgerMenu = document.querySelector('.hamburger-menu');
+const mobileNavMenu = document.querySelector('.mobile-nav-menu');
+const body = document.body;
 
-/*===== Hide Show =====*/
-/* Validate if constant exists */
+if (hamburgerMenu && mobileNavMenu) {
+  hamburgerMenu.addEventListener('click', () => {
+    hamburgerMenu.classList.toggle('active');
+    mobileNavMenu.classList.toggle('show');
+    body.classList.toggle('nav-open');
+  });
+
+  // Close menu when clicking mobile nav links
+  document.querySelectorAll('.mobile-nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburgerMenu.classList.remove('active');
+      mobileNavMenu.classList.remove('show');
+      body.classList.remove('nav-open');
+    });
+  });
+
+  // Close menu when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!hamburgerMenu.contains(e.target) && !mobileNavMenu.contains(e.target)) {
+      hamburgerMenu.classList.remove('active');
+      mobileNavMenu.classList.remove('show');
+      body.classList.remove('nav-open');
+    }
+  });
+}
+
+/*=============== SMOOTH SCROLLING FOR NAVIGATION ===============*/
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      const headerHeight = document.querySelector('.header').offsetHeight;
+      const targetPosition = target.offsetTop - headerHeight - 20;
+      
+      window.scrollTo({
+        top: targetPosition,
+        behavior: 'smooth'
+      });
+    }
+  });
+});
 
 /*=============== IMAGE GALLERY ===============*/
 function imgGallery(){
@@ -90,22 +141,117 @@ var swiperProducts = new Swiper(".fresh-container", {
 });
 
 /*=============== PRODUCTS TABS ===============*/
-const tabs = document.querySelectorAll('[data-target]'),
-  tabContents = document.querySelectorAll('[content]');
+const tabs = document.querySelectorAll('[data-tab]'),
+  tabContents = document.querySelectorAll('.product-tab-content');
 
-  tabs.forEach((tab) => {
-    tab.addEventListener('click', () => {
-      const target = document.querySelector(tab.dataset.target);
-       tabContents.forEach((tabContent) => {
-        tabContent.classList.remove('active-tab');
-     });
+tabs.forEach((tab) => {
+  tab.addEventListener('click', () => {
+    const targetTab = tab.dataset.tab;
+    
+    // Remove active class from all tabs and contents
+    tabs.forEach((t) => t.classList.remove('active-tab'));
+    tabContents.forEach((content) => content.classList.remove('active-tab'));
+    
+    // Add active class to clicked tab
+    tab.classList.add('active-tab');
+    
+    // Show corresponding content
+    const targetContent = document.getElementById(targetTab);
+    if (targetContent) {
+      targetContent.classList.add('active-tab');
+    }
+  });
+});
 
-     target.classList.add('active-tab');
+/*=============== INTERSECTION OBSERVER FOR ANIMATIONS ===============*/
+// Intersection Observer for scroll animations
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+};
 
-      tabs.forEach((tab) => {
-       tab.classList.remove('active-tab');
-   });
-      tab.classList.add('active-tab');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('animate');
+    }
+  });
+}, observerOptions);
 
+// Observe elements when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  const elementsToObserve = document.querySelectorAll(
+    '.section-header, .hero-content, .category-card, .policy-item, .product-item'
+  );
+  
+  elementsToObserve.forEach(el => {
+    observer.observe(el);
+  });
+});
+
+/*=============== PERFORMANCE MONITORING ===============*/
+// Log performance metrics for debugging
+if (window.performance && window.performance.timing) {
+  window.addEventListener('load', () => {
+    const loadTime = window.performance.timing.loadEventEnd - window.performance.timing.navigationStart;
+    console.log(`Page load time: ${loadTime}ms`);
+  });
+}
+
+/*=============== WELCOME MODAL ===============*/
+// Welcome Modal functionality
+document.addEventListener('DOMContentLoaded', () => {
+  const welcomeModal = document.getElementById('welcomeModal');
+  const closeWelcomeModal = document.getElementById('closeWelcomeModal');
+  
+  // Show modal on page load (can be controlled based on user preferences)
+  const hasSeenModal = localStorage.getItem('hasSeenWelcomeModal');
+  
+  if (!hasSeenModal) {
+    // Show modal after a brief delay for better UX
+    setTimeout(() => {
+      if (welcomeModal) {
+        welcomeModal.classList.remove('hidden');
+      }
+    }, 1000);
+  } else {
+    // Hide modal if user has seen it before
+    if (welcomeModal) {
+      welcomeModal.classList.add('hidden');
+    }
+  }
+  
+  // Close modal functionality
+  if (closeWelcomeModal && welcomeModal) {
+    closeWelcomeModal.addEventListener('click', () => {
+      welcomeModal.classList.add('hidden');
+      localStorage.setItem('hasSeenWelcomeModal', 'true');
+    });
+  }
+  
+  // Close modal when clicking outside
+  if (welcomeModal) {
+    welcomeModal.addEventListener('click', (e) => {
+      if (e.target === welcomeModal) {
+        welcomeModal.classList.add('hidden');
+        localStorage.setItem('hasSeenWelcomeModal', 'true');
+      }
+    });
+  }
+  
+  // Close modal with Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && welcomeModal && !welcomeModal.classList.contains('hidden')) {
+      welcomeModal.classList.add('hidden');
+      localStorage.setItem('hasSeenWelcomeModal', 'true');
+    }
+  });
+  
+  // Modal action buttons functionality
+  const modalButtons = document.querySelectorAll('.modal-btn');
+  modalButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      localStorage.setItem('hasSeenWelcomeModal', 'true');
     });
   });
+});

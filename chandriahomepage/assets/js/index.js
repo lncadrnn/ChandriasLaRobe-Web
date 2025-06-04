@@ -134,11 +134,103 @@ $(document).ready(function () {
         }
     }
 
-    // Welcome Modal functionality
+    // Function to load hot products (price range based)
+    async function loadHotProducts() {
+        try {
+            const $hotContainer = $("#hot-products-container");
+            if ($hotContainer.length === 0) return;
+
+            $hotContainer.html(
+                '<div class="loading">Loading hot products...</div>'
+            );
+
+            // Query products with price >= 3000 (considered "hot" high-end items)
+            const querySnapshot = await getDocs(collection(chandriaDB, "products"));
+            const hotProducts = [];
+
+            querySnapshot.forEach(doc => {
+                const productData = doc.data();
+                const price = parseFloat(productData.price) || 0;
+                if (price >= 3000 && productData.frontImageUrl && productData.name) {
+                    hotProducts.push({ id: doc.id, ...productData, price });
+                }
+            });
+
+            // Sort by price descending and limit to 4
+            hotProducts.sort((a, b) => b.price - a.price);
+            const limitedHotProducts = hotProducts.slice(0, 4);
+
+            if (limitedHotProducts.length === 0) {
+                $hotContainer.html(
+                    '<div class="no-products">No hot products available at the moment.</div>'
+                );
+                return;
+            }
+
+            let productsHTML = "";
+            limitedHotProducts.forEach(productData => {
+                productsHTML += createProductHTML(productData, productData.id);
+            });
+
+            $hotContainer.html(productsHTML);
+        } catch (error) {
+            console.error("Error loading hot products:", error);
+            $("#hot-products-container").html(
+                '<div class="error">Unable to load hot products. Please try again later.</div>'
+            );
+        }
+    }
+
+    // Function to load popular products (based on category popularity)
+    async function loadPopularProducts() {
+        try {
+            const $popularContainer = $("#popular-products-container");
+            if ($popularContainer.length === 0) return;
+
+            $popularContainer.html(
+                '<div class="loading">Loading popular products...</div>'
+            );
+
+            // Get products from popular categories (Wedding Gown, Long Gown, Short Gown)
+            const querySnapshot = await getDocs(collection(chandriaDB, "products"));
+            const popularProducts = [];
+
+            querySnapshot.forEach(doc => {
+                const productData = doc.data();
+                const category = productData.category || '';
+                const popularCategories = ['Wedding Gown', 'Long Gown', 'Short Gown'];
+                
+                if (popularCategories.includes(category) && productData.frontImageUrl && productData.name) {
+                    popularProducts.push({ id: doc.id, ...productData });
+                }
+            });
+
+            // Limit to 4 products
+            const limitedPopularProducts = popularProducts.slice(0, 4);
+
+            if (limitedPopularProducts.length === 0) {
+                $popularContainer.html(
+                    '<div class="no-products">No popular products available at the moment.</div>'
+                );
+                return;
+            }
+
+            let productsHTML = "";
+            limitedPopularProducts.forEach(productData => {
+                productsHTML += createProductHTML(productData, productData.id);
+            });
+
+            $popularContainer.html(productsHTML);
+        } catch (error) {
+            console.error("Error loading popular products:", error);
+            $("#popular-products-container").html(
+                '<div class="error">Unable to load popular products. Please try again later.</div>'
+            );
+        }
+    }
     function initWelcomeModal() {
         const $modal = $("#welcomeModal");
         const $closeBtn = $("#closeWelcomeModal");
-        const $howItWorksLink = $("#howItWorksLink");
 
         const hasSeenWelcome = localStorage.getItem("hasSeenWelcome");
 
@@ -163,11 +255,6 @@ $(document).ready(function () {
         // Event listeners
         $closeBtn.on("click", closeModal);
 
-        $howItWorksLink.on("click", function (e) {
-            e.preventDefault();
-            showModal();
-        });
-
         // Close modal when clicking outside of it
         $modal.on("click", function (e) {
             if (e.target === this) {
@@ -186,6 +273,37 @@ $(document).ready(function () {
     // Initialize welcome modal
     initWelcomeModal();
 
+    // Product Tabs functionality
+    function initProductTabs() {
+        const $tabs = $('.product-tab');
+        const $tabContents = $('.product-tab-content');
+
+        $tabs.on('click', function(e) {
+            e.preventDefault();
+            const targetTab = $(this).data('tab');
+            
+            // Remove active class from all tabs and contents
+            $tabs.removeClass('active-tab');
+            $tabContents.removeClass('active-tab');
+            
+            // Add active class to clicked tab
+            $(this).addClass('active-tab');
+            
+            // Show corresponding content
+            $(`#${targetTab}`).addClass('active-tab');
+            
+            // Load products for the selected tab if not already loaded
+            if (targetTab === 'hot' && $('#hot-products-container').children().length === 0) {
+                loadHotProducts();
+            } else if (targetTab === 'popular' && $('#popular-products-container').children().length === 0) {
+                loadPopularProducts();
+            }
+        });
+    }
+
+    // Initialize product tabs
+    initProductTabs();
+
     // Smooth scrolling for anchor links
     $('a[href^="#"]').on("click", function (e) {
         e.preventDefault();
@@ -203,6 +321,10 @@ $(document).ready(function () {
 
     // Load fresh products
     loadFreshProducts();
+    
+    // Load hot and popular products on page load
+    loadHotProducts();
+    loadPopularProducts();
 
     // Initialize cart count
     updateCartCount();
