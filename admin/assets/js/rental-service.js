@@ -1,23 +1,50 @@
-import { chandriaDB, collection, getDocs } from "./sdk/chandrias-sdk.js";
-
-// RENTAL LOADER FUNCTIONS
-function showRentalLoader() {
-    const rentalLoader = document.getElementById('rental-loader');
-    if (rentalLoader) {
-        rentalLoader.classList.remove('hidden');
-        rentalLoader.style.display = 'flex';
-    }
-}
-
-function hideRentalLoader() {
-    const rentalLoader = document.getElementById('rental-loader');
-    if (rentalLoader) {
-        rentalLoader.classList.add('hidden');
-        rentalLoader.style.display = 'none';
-    }
-}
+import {
+    collection,
+    getDocs,
+    onAuthStateChanged,
+    auth,
+    doc,
+    getDoc,
+    chandriaDB,
+    signOut
+} from "./sdk/chandrias-sdk.js";
 
 $(document).ready(function () {
+    // Check if user is already signed in, if so, redirect to HOME PAGE
+    onAuthStateChanged(auth, async user => {
+        if (user) {
+            // Check if user exists in userAccounts
+            const userDocRef = doc(chandriaDB, "userAccounts", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (userDocSnap.exists()) {
+                // If user is customer, sign them out
+                await signOut(auth);
+                window.location.href = "../index.html";
+                return;
+            }
+        }
+
+        if (!user) {
+            window.location.href = "./authentication.html";
+        }
+    });
+
+    // RENTAL LOADER FUNCTIONS
+    function showRentalLoader() {
+        const $rentalLoader = $("#rental-loader");
+        if ($rentalLoader.length) {
+            $rentalLoader.removeClass("hidden").css("display", "flex");
+        }
+    }
+
+    function hideRentalLoader() {
+        const $rentalLoader = $("#rental-loader");
+        if ($rentalLoader.length) {
+            $rentalLoader.addClass("hidden").css("display", "none");
+        }
+    }
+
     // DISPLAY PRODUCTS FUNCTION
     async function displayProducts() {
         const querySnapshot = await getDocs(collection(chandriaDB, "products"));
@@ -35,11 +62,11 @@ $(document).ready(function () {
                         <div class="pos-price">₱${data.price}</div>
                     </div>
             </div>
-            `;            // APPEND TO CONTAINER
+            `; // APPEND TO CONTAINER
             $(".pos-products").append(card);
         });
     }
-    
+
     // DISPLAY ADDITIONALS PRODUCT FUNCTION
     async function displayAccessories() {
         const querySnapshot = await getDocs(
@@ -74,9 +101,9 @@ $(document).ready(function () {
             hideRentalLoader();
         }
     }
-    
+
     initializeAllRentalData();
-    
+
     // --- EVENT TYPE FEE LOGIC ---
     // Removed event type logic as requested
 

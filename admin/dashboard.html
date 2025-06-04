@@ -1,255 +1,315 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />    <title>Chandria's La Robe - Web System</title>
-    <link rel="stylesheet" href="/admin/assets/css/sidebar.css" />
-    <link rel="stylesheet" href="/admin/assets/css/styles.css" />
-    <link rel="stylesheet" href="/admin/assets/css/dashboard.css" />
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Chandria's La Robe - Web System</title>
+        <link rel="stylesheet" href="/admin/assets/css/sidebar.css" />
+        <link rel="stylesheet" href="/admin/assets/css/styles.css" />
+        <link rel="stylesheet" href="/admin/assets/css/dashboard.css" />
 
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
+        <link
+            href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+    </head>
 
-<body>
-    <!-- Full Screen Dashboard Loader -->
-    <div id="dashboard-loader" class="dashboard-loader">
-        <div class="dashboard-loader-content">
-            <div class="dashboard-spinner"></div>
-            <p class="dashboard-loader-text">Loading data from the dashboard.</p>
+    <body>
+        <!-- Full Screen Dashboard Loader -->
+        <div id="dashboard-loader" class="dashboard-loader">
+            <div class="dashboard-loader-content">
+                <div class="dashboard-spinner"></div>
+                <p class="dashboard-loader-text">
+                    Loading data from the dashboard.
+                </p>
+            </div>
         </div>
-    </div>
 
-    <nav class="sidebar close">
-        <header>
-            <div class="image-text">
-                <span class="image">
-                    <img src="./assets/images/chandriaslogo.png" alt="logo">
-                </span>
+        <nav class="sidebar close">
+            <header>
+                <div class="image-text">
+                    <span class="image">
+                        <img
+                            src="./assets/images/chandriaslogo.png"
+                            alt="logo"
+                        />
+                    </span>
                 </div>
 
+                <i class="bx bx-chevron-right toggle"></i>
+            </header>
 
-            <i class='bx bx-chevron-right toggle'></i>
-        </header>
+            <div class="menu-bar">
+                <div class="menu">
+                    <ul class="menu-links">
+                        <li class="nav-link active">
+                            <a href="#">
+                                <i class="bx bxs-dashboard icon"></i>
+                                <span class="text nav-text">Dashboard</span>
+                            </a>
+                        </li>
 
-        <div class="menu-bar">
-            <div class="menu">
+                        <li class="nav-link">
+                            <a href="./inventory.html">
+                                <i class="bx bxs-t-shirt icon"></i>
+                                <span class="text nav-text">Inventory</span>
+                            </a>
+                            <!-- <i class='bx bxs-chevron-down'></i> -->
+                        </li>
 
-                <ul class="menu-links">
-                    <li class="nav-link active">
-                        <a href="#">
-                            <i class='bx bxs-dashboard icon'></i>
-                            <span class="text nav-text">Dashboard</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-link">
-                        <a href="./inventory.html">
-                            <i class='bx bxs-t-shirt icon'></i>
-                            <span class="text nav-text">Inventory</span>
-                        </a>
-                        <!-- <i class='bx bxs-chevron-down'></i> -->
-                    </li>
-
-                    <li class="nav-link">
+                        <li class="nav-link">
                             <a href="./calendar.html">
                                 <i class="bx bxs-calendar icon"></i>
+                                <span class="text nav-text">Calendar</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-link">
+                            <a href="./rental.html">
+                                <i class="bx bxs-package icon"></i>
+                                <span class="text nav-text">Rental</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-link">
+                            <a href="./customer-logs.html">
+                                <i class="bx bxs-user icon"></i>
                                 <span class="text nav-text"
-                                    >Calendar</span
+                                    >Rental History</span
                                 >
                             </a>
                         </li>
 
-                    <li class="nav-link">
-                        <a href="./rental.html">
-                            <i class='bx bxs-package icon'></i>
-                            <span class="text nav-text">Rental</span>
-                        </a>
-                    </li>
+                        <li class="nav-link">
+                            <a href="./settings.html">
+                                <i class="bx bxs-cog icon"></i>
+                                <span class="text nav-text">Settings</span>
+                            </a>
+                        </li>
 
-                    <li class="nav-link">
-                        <a href="./customer-logs.html">
-                            <i class='bx bxs-user icon'></i>
-                            <span class="text nav-text">Rental History</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-link">
-                        <a href="./settings.html">
-                            <i class="bx bxs-cog icon"></i>
-                            <span class="text nav-text"
-                                >Settings</span
-                            >
-                        </a>
-                    </li>
-
-                    <!-- <li class="nav-link">
+                        <!-- <li class="nav-link">
                         <a href="#">
                             <i class='bx bxs-wallet icon'></i>
                             <span class="text nav-text">Transaction</span>
                         </a>
                     </li> -->
+                    </ul>
+                </div>
 
-                </ul>
+                <div class="bottom-content"></div>
             </div>
-
-            <div class="bottom-content">
-            </div>
-
-        </div>
-    </nav>     <main class="main-content">        <header class="main-header">
-            <div class="header-left">
-                <h1><span class="brand">Dashboard</span></h1>
-                <p class="header-subtitle">Welcome back! Here's what's happening today.</p>
-            </div>
-            <div class="header-right">
-                <button class="view-analytics-btn">
-                    <i class='bx bx-bar-chart-alt-2'></i>
-                    <span>View Analytics</span>
-                </button>
-            </div>
-        </header><div class="dashboard-layout">
-            <div class="dashboard-main">
-                <section class="dashboard-cards-row">
-                    <div class="dashboard-card active-rentals">
-                        <div class="card-header">
-                            <div class="card-icon">
-                                <i class='bx bxs-package'></i>
+        </nav>
+        <main class="main-content">
+            <header class="main-header">
+                <div class="header-left">
+                    <h1><span class="brand">Dashboard</span></h1>
+                    <p class="header-subtitle">
+                        Welcome back! Here's what's happening today.
+                    </p>
+                </div>
+                <div class="header-right">
+                    <button class="view-analytics-btn">
+                        <i class="bx bx-bar-chart-alt-2"></i>
+                        <span>View Analytics</span>
+                    </button>
+                </div>
+            </header>
+            <div class="dashboard-layout">
+                <div class="dashboard-main">
+                    <section class="dashboard-cards-row">
+                        <div class="dashboard-card active-rentals">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="bx bxs-package"></i>
+                                </div>
+                                <div class="card-title">ACTIVE RENTALS</div>
                             </div>
-                            <div class="card-title">ACTIVE RENTALS</div>
+                            <div class="card-content">
+                                <div class="card-main">
+                                    17 <span>Items out</span>
+                                </div>
+                                <div class="card-sub">
+                                    4 <span>Due Today</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-content">
-                            <div class="card-main">17 <span>Items out</span></div>
-                            <div class="card-sub">4 <span>Due Today</span></div>
+
+                        <div class="dashboard-card active-appointments">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="bx bxs-calendar"></i>
+                                </div>
+                                <div class="card-title">
+                                    ACTIVE APPOINTMENTS
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-main">
+                                    2 <span>Booked Today</span>
+                                </div>
+                                <div class="card-sub">
+                                    11 <span>Due This Week</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card total-products">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="bx bxs-t-shirt"></i>
+                                </div>
+                                <div class="card-title">TOTAL PRODUCTS</div>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-main">
+                                    5 <span>Gowns & Suits</span>
+                                </div>
+                                <div class="card-sub">
+                                    4 <span>Rented Today</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="dashboard-table">
+                        <div class="table-header">
+                            <div class="table-title">
+                                <h3>Recent Rentals</h3>
+                                <p>
+                                    Latest rental transactions and their status
+                                </p>
+                            </div>
+                            <div class="table-actions">
+                                <div class="table-search">
+                                    <i class="bx bx-search"></i>
+                                    <input
+                                        type="text"
+                                        placeholder="Search rentals..."
+                                    />
+                                    <i class="bx bx-x clear-icon"></i>
+                                </div>
+                                <button class="view-all-btn">
+                                    <span>View All</span>
+                                    <i class="bx bx-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-content">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Rentee Name</th>
+                                        <th>Transaction Code</th>
+                                        <th>Remaining Bal.</th>
+                                        <th>Status</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rentals-table-body">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+                <section class="dashboard-appointments">
+                    <div class="appointments-header">
+                        <div class="appointments-title">
+                            <h3>Recent Appointments</h3>
+                            <p>Upcoming and recent booking appointments</p>
+                        </div>
+                        <div class="appointments-actions">
+                            <div class="appointments-search">
+                                <i class="bx bx-search"></i>
+                                <input
+                                    type="text"
+                                    id="appointment-search"
+                                    placeholder="Search appointments..."
+                                />
+                                <i
+                                    class="bx bx-x clear-search"
+                                    id="clear-search"
+                                ></i>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="dashboard-card active-appointments">
-                        <div class="card-header">
-                            <div class="card-icon">
-                                <i class='bx bxs-calendar'></i>
-                            </div>
-                            <div class="card-title">ACTIVE APPOINTMENTS</div>
-                        </div>
-                        <div class="card-content">
-                            <div class="card-main">2 <span>Booked Today</span></div>
-                            <div class="card-sub">11 <span>Due This Week</span></div>
-                        </div>
+                    <div class="appointments-content">
+                        <ul class="appointments-list" id="appointments-list">
+                            <!-- Populated by JS -->
+                        </ul>
                     </div>
-
-                    <div class="dashboard-card total-products">
-                        <div class="card-header">
-                            <div class="card-icon">
-                                <i class='bx bxs-t-shirt'></i>
-                            </div>
-                            <div class="card-title">TOTAL PRODUCTS</div>
+                </section>
+                <!-- Appointment Modal -->
+                <div id="appointment-modal" class="modal">
+                    <div class="modal-backdrop"></div>
+                    <div class="modal-content appointment-modal-content">
+                        <div class="appointment-modal-header">
+                            <h3 class="modal-title">
+                                <i class="fas fa-calendar-check"></i>
+                                Appointment Details
+                            </h3>
+                            <button
+                                class="close-modal"
+                                aria-label="Close modal"
+                            >
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
-                        <div class="card-content">
-                            <div class="card-main">5 <span>Gowns & Suits</span></div>
-                            <div class="card-sub">4 <span>Rented Today</span></div>
-                        </div>
-                    </div>
-                </section>                <section class="dashboard-table">
-                    <div class="table-header">
-                        <div class="table-title">
-                            <h3>Recent Rentals</h3>
-                            <p>Latest rental transactions and their status</p>
-                        </div>
-                        <div class="table-actions">
-                            <div class="table-search">
-                                <i class='bx bx-search'></i>
-                                <input type="text" placeholder="Search rentals...">
-                                <i class='bx bx-x clear-icon'></i>
-                            </div>
-                            <button class="view-all-btn">
-                                <span>View All</span>
-                                <i class='bx bx-chevron-right'></i>
+                        <div
+                            id="appointment-details"
+                            class="appointment-modal-body"
+                        ></div>
+                        <div class="appointment-modal-actions">
+                            <button class="btn proceed-transaction">
+                                <i class="fas fa-arrow-right"></i>
+                                PROCEED TO TRANSACTION
                             </button>
                         </div>
                     </div>
-                    <div class="table-content">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Rentee Name</th>
-                                    <th>Transaction Code</th>
-                                    <th>Remaining Bal.</th>
-                                    <th>Status</th>
-                                    <th>Details</th>
-                                </tr>
-                            </thead>
-                            <tbody id="rentals-table-body">
-                                <!-- Populated by JS -->
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-            </div>            <section class="dashboard-appointments">
-                <div class="appointments-header">
-                    <div class="appointments-title">
-                        <h3>Recent Appointments</h3>
-                        <p>Upcoming and recent booking appointments</p>
-                    </div>
-                    <div class="appointments-actions">
-                        <div class="appointments-search">
-                            <i class='bx bx-search'></i>
-                            <input type="text" id="appointment-search" placeholder="Search appointments...">
-                            <i class='bx bx-x clear-search' id="clear-search"></i>
+                </div>
+                <!-- Rental Modal -->
+                <div id="rental-modal" class="modal">
+                    <div class="modal-backdrop"></div>
+                    <div class="modal-content rental-modal-content">
+                        <div class="rental-modal-header">
+                            <h3 class="modal-title">
+                                <i class="fas fa-receipt"></i>
+                                Rental Transaction Details
+                            </h3>
+                            <button
+                                class="close-rental-modal"
+                                aria-label="Close modal"
+                            >
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
+                        <div
+                            id="rental-details"
+                            class="rental-modal-body"
+                        ></div>
                     </div>
-                </div>
-                <div class="appointments-content">
-                    <ul class="appointments-list" id="appointments-list">
-                        <!-- Populated by JS -->
-                    </ul>
-                </div>
-            </section>            <!-- Appointment Modal -->
-            <div id="appointment-modal" class="modal">
-                <div class="modal-backdrop"></div>
-                <div class="modal-content appointment-modal-content">
-                    <div class="appointment-modal-header">
-                        <h3 class="modal-title">
-                            <i class="fas fa-calendar-check"></i>
-                            Appointment Details
-                        </h3>
-                        <button class="close-modal" aria-label="Close modal">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div id="appointment-details" class="appointment-modal-body"></div>
-                    <div class="appointment-modal-actions">
-                        <button class="btn proceed-transaction">
-                            <i class="fas fa-arrow-right"></i>
-                            PROCEED TO TRANSACTION
-                        </button>
-                    </div>
-                </div>
-            </div><!-- Rental Modal -->
-            <div id="rental-modal" class="modal">
-                <div class="modal-backdrop"></div>
-                <div class="modal-content rental-modal-content">
-                    <div class="rental-modal-header">
-                        <h3 class="modal-title">
-                            <i class="fas fa-receipt"></i>
-                            Rental Transaction Details
-                        </h3>
-                        <button class="close-rental-modal" aria-label="Close modal">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div id="rental-details" class="rental-modal-body"></div>
                 </div>
             </div>
-        </div>
-    </main>
-    
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    
-    <!-- Firebase Config -->
-    <script type="module" src="./firebase-config.js"></script>
-    <script type="module" src="./assets/js/dashboard-service.js"></script>
-</body>
+        </main>
+
+        <!-- Firebase SDK -->
+        <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+     
+        <!-- JQUERY CDN -->
+        <script
+            src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+            crossorigin="anonymous"
+        ></script>
+        
+        <!-- Firebase Config -->
+        <script type="module" src="./firebase-config.js"></script>
+        <script type="module" src="./assets/js/dashboard-service.js"></script>
+        <script type="module" src="./assets/js/dashboard-subscript.js"></script>
+    </body>
 </html>

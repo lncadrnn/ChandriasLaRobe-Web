@@ -1,502 +1,452 @@
-<!DOCTYPE html>
-<html lang="en">  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-------------------------------- FLATICON --------------------------------->
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css'>
+        <!-------------------------------- FLATICON --------------------------------->
+        <link
+            rel="stylesheet"
+            href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css"
+        />
 
-    <!---------------------------------- SWIPER CSS ---------------------------------->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+        <!---------------------------------- SWIPER CSS ---------------------------------->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+        />
 
-    <!-------------------------------- GOOGLE FONTS --------------------------------->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+        <!-------------------------------- GOOGLE FONTS --------------------------------->
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
 
-    <!-------------------------------- CSS --------------------------------->
-    <link rel="stylesheet" href="chandriahomepage/assets/css/styles.css" />
+        <!-- NOTYF CDN -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css"
+        />
 
-    <!-- Firebase SDK -->
-    <script type="module" src="admin/firebase-config.js"></script>
+        <!-------------------------------- CSS --------------------------------->
+        <link rel="stylesheet" href="chandriahomepage/assets/css/styles.css" />
 
-    <title>Chandria's La Robe - Book Your Fitting Appointment</title>
-  </head>
-  <body>
-    <!-------------------------------- WELCOMING MODAL -------------------------------->
-    <div class="welcome-modal-overlay" id="welcomeModal">
-      <div class="welcome-modal">
-        <button class="modal-close" id="closeWelcomeModal">
-          <i class="fi fi-rs-cross"></i>
-        </button>
-          <div class="modal-header">
-          <img src="chandriahomepage/assets/img/logonobg.png" alt="Chandria's La Robe" class="modal-logo">
-          <h2 class="modal-title">Welcome to Chandria's La Robe</h2>
-          <p class="modal-subtitle">Your Premier Destination for Perfect Fit</p>
+        <!-- Firebase SDK -->
+        <script type="module" src="admin/firebase-config.js"></script>
+
+        <title>Chandria's La Robe - Book Your Fitting Appointment</title>
+    </head>
+    <body>
+        <!-------------------------------- WELCOMING MODAL -------------------------------->
+        <div class="welcome-modal-overlay" id="welcomeModal">
+            <div class="welcome-modal">
+                <button class="modal-close" id="closeWelcomeModal">
+                    <i class="fi fi-rs-cross"></i>
+                </button>
+                <div class="modal-header">
+                    <img
+                        src="chandriahomepage/assets/img/logonobg.png"
+                        alt="Chandria's La Robe"
+                        class="modal-logo"
+                    />
+                    <h2 class="modal-title">Welcome to Chandria's La Robe</h2>
+                    <p class="modal-subtitle">
+                        Your Premier Destination for Perfect Fit
+                    </p>
+                </div>
+
+                <div class="modal-process">
+                    <h3 class="process-title">How It Works</h3>
+                    <div class="modal-steps">
+                        <div class="modal-step">
+                            <div class="modal-step-icon">
+                                <i class="fi fi-rs-search"></i>
+                            </div>
+                            <div class="modal-step-content">
+                                <h4>Browse Online</h4>
+                                <p>Explore our gowns, suits, and accessories</p>
+                            </div>
+                        </div>
+
+                        <div class="modal-step">
+                            <div class="modal-step-icon">
+                                <i class="fi fi-rs-calendar"></i>
+                            </div>
+                            <div class="modal-step-content">
+                                <h4>Book Appointment</h4>
+                                <p>Schedule your fitting session</p>
+                            </div>
+                        </div>
+                        <div class="modal-step">
+                            <div class="modal-step-icon">
+                                <i class="fi fi-rs-marker"></i>
+                            </div>
+                            <div class="modal-step-content">
+                                <h4>Visit Our Physical Store</h4>
+                                <p>Get professional fitting consultation</p>
+                            </div>
+                        </div>
+
+                        <div class="modal-step">
+                            <div class="modal-step-icon">
+                                <i class="fi fi-rs-heart"></i>
+                            </div>
+                            <div class="modal-step-content">
+                                <h4>Perfect Fit</h4>
+                                <p>Leave with your perfect outfit</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <a
+                        href="chandriahomepage/shop.html"
+                        class="btn btn-primary modal-btn"
+                        >Browse Collection</a
+                    >
+                    <a
+                        href="chandriahomepage/about-policy.html"
+                        class="btn btn-ghost modal-btn"
+                        >About & Policies</a
+                    >
+                </div>
+            </div>
         </div>
 
-        <div class="modal-process">
-          <h3 class="process-title">How It Works</h3>
-          <div class="modal-steps">
-            <div class="modal-step">
-              <div class="modal-step-icon">
-                <i class="fi fi-rs-search"></i>
-              </div>
-              <div class="modal-step-content">
-                <h4>Browse Online</h4>
-                <p>Explore our gowns, suits, and accessories</p>
-              </div>
-            </div>
-            
-            <div class="modal-step">
-              <div class="modal-step-icon">
-                <i class="fi fi-rs-calendar"></i>
-              </div>
-              <div class="modal-step-content">
-                <h4>Book Appointment</h4>
-                <p>Schedule your fitting session</p>
-              </div>
-            </div>
-              <div class="modal-step">
-              <div class="modal-step-icon">
-                <i class="fi fi-rs-marker"></i>
-              </div>
-              <div class="modal-step-content">
-                <h4>Visit Our Physical Store</h4>
-                <p>Get professional fitting consultation</p>
-              </div>
-            </div>
-            
-            <div class="modal-step">
-              <div class="modal-step-icon">
-                <i class="fi fi-rs-heart"></i>
-              </div>
-              <div class="modal-step-content">
-                <h4>Perfect Fit</h4>
-                <p>Leave with your perfect outfit</p>
-              </div>
-            </div>
-          </div>
-        </div>        <div class="modal-actions">
-          <a href="chandriahomepage/shop.html" class="btn btn-primary modal-btn">Browse Collection</a>
-          <a href="chandriahomepage/about-policy.html" class="btn btn-ghost modal-btn">About & Policies</a>
-        </div>
-      </div>
-    </div>
-
-    <!-------------------------------- HEADER -------------------------------->
-    <header class="header">
-      <nav class="nav container">
-        <a href="index.html" class="nav-logo">
-          <img src="chandriahomepage/assets/img/logo1.png" alt="" class="nav-logo-img">
-        </a>        <div class="nav-menu" id="nav-menu">          <ul class="nav-list">
-            <li class="nav-item">
-              <a href="index.html" class="nav-link active-link">Home</a>
-            </li>
-
-            <li class="nav-item">
-              <a href="chandriahomepage/shop.html" class="nav-link">Shop</a>
-            </li>
-
-            <li class="nav-item">
-              <a href="#" class="nav-link" id="howItWorksLink">How It Works</a>
-            </li>
-
-          </ul>
-        </div>        <div class="header-user-actions">
-          <a href="chandriahomepage/wishlist.html" class="header-action-btn">
-            <img src="chandriahomepage/assets/img/icon-heart.svg" alt="">
-            <span class="count">0</span>
-          </a>
-
-          <a href="chandriahomepage/cart.html" class="header-action-btn">
-            <img src="chandriahomepage/assets/img/icon-cart.svg" alt="">
-            <span class="count" id="cart-count">0</span>
-          </a>
-
-          <a href="chandriahomepage/accounts.html" class="header-action-btn" id="user-account-link">
-            <img src="chandriahomepage/assets/img/icon-user.svg" alt="">
-          </a>
-        </div>
-
-      </nav>
-    </header>
-
-    <!--------------------------------MAIN -------------------------------->
-    <main class="main">
-      <!-------------------------------- HOME -------------------------------->      <section class="home section-lg">
-        <div class="home-container container grid">
-          <div class="home-content">
-            <span class="home-subtitle">Visit Our Physical Store for Expert Fitting</span>
-            <h1 class="home-title">Book Your Appointment for
-                              <span>Perfect Fit</span>
-            </h1>            <p class="home-description">
-              Browse our collection online, then visit our store for professional fitting and styling consultation
-            </p>
-            <a href="chandriahomepage/shop.html" class="btn btn-primary">Browse Collection</a>
-          </div>
-
-          <img src="chandriahomepage/assets/img/home-img3.png" alt="" class="home-img">
-        </div>
-      </section>      <!-------------------------------- CATEGORIES -------------------------------->
-      <section class="categories container section">
-        <h3 class="section-title">
-          <span>Browse</span> Categories</h3>
-        <p class="section-subtitle">Explore our collection and book an appointment to try on your favorites</p>        <div class="categories-section-wrapper">
-          <div class="categories-container swiper">
-            <div class="swiper-wrapper">
-              <a href="chandriahomepage/shop.html?category=ball-gowns" class="category-item swiper-slide">
-                <img src="chandriahomepage/assets/img/category-1.jpg" alt="Ball Gowns" class="category-img">
-                <h3 class="category-title">Ball Gowns</h3>
-              </a>
-
-              <a href="chandriahomepage/shop.html?category=long-gowns" class="category-item swiper-slide">
-                <img src="chandriahomepage/assets/img/category-2.jpg" alt="Long Gowns" class="category-img">
-                <h3 class="category-title">Long Gowns</h3>
-              </a>
-
-              <a href="chandriahomepage/shop.html?category=wedding-gowns" class="category-item swiper-slide">
-                <img src="chandriahomepage/assets/img/category-3.jpg" alt="Wedding Gowns" class="category-img">
-                <h3 class="category-title">Wedding Gowns</h3>
-              </a>
-
-              <a href="chandriahomepage/shop.html?category=fairy-gowns" class="category-item swiper-slide">
-                <img src="chandriahomepage/assets/img/category-4.jpg" alt="Fairy Gowns" class="category-img">
-                <h3 class="category-title">Fairy Gowns</h3>
-              </a>
-
-              <a href="chandriahomepage/shop.html?category=suits" class="category-item swiper-slide">
-                <img src="chandriahomepage/assets/img/category-5.jpg" alt="Suits" class="category-img">
-                <h3 class="category-title">Suits</h3>
-              </a>
-
-              <a href="chandriahomepage/shop.html?category=additionals" class="category-item swiper-slide">
-                <img src="chandriahomepage/assets/img/category-6.jpg" alt="Additionals" class="category-img">
-                <h3 class="category-title">Additionals</h3>
-              </a>
-            </div>
-          </div>
-          
-          <!-- Custom Navigation Buttons -->
-          <div class="swiper-button-prev custom-prev-btn">
-            <i class="fi fi-rs-angle-left"></i>
-          </div>
-          <div class="swiper-button-next custom-next-btn">
-            <i class="fi fi-rs-angle-right"></i>
-          </div>
-        </div>
-      </section>
-
-      <!-------------------------------- POLICY -------------------------------->
-      <section class="policy section">
-        <div class="policy-container container grid"></div>
-
-      </section>      <!-------------------------------- FRESH ON THE RACK -------------------------------->
-      <section class="fresh-ontherack container section">
-        <h3 class="section-title latest-arrivals-title">
-          <span>Latest </span>Arrivals
-        </h3>
-        <p class="section-subtitle latest-arrivals-subtitle">See our newest pieces and book an appointment to try them on</p>
-        <div class="products-container grid" id="fresh-products-container">
-          <!-- Fresh products will be loaded here from inventory -->
-        </div>
-      </section><!-------------------------------- CONTACT & BOOKING INFO -------------------------------->
-      <section class="contact-booking container section">
-        <div class="contact-container grid">
-          <div class="contact-info">
-            <h3 class="section-title">
-              <span>Visit</span> Our Physical Store
-            </h3>
-            <div class="contact-details">
-              <div class="contact-item">
-                <i class="fi fi-rs-marker"></i>
-                <div>
-                  <h4>Our Location</h4>
-                  <p>B42 L13 Bilbao Street, Hacienda La Joya Subdivision<br>Imus, Cavite, Philippines</p>
-                </div>
-              </div>
-              <div class="contact-item">
-                <i class="fi fi-rs-phone-call"></i>
-                <div>
-                  <h4>Phone</h4>
-                  <p>+63 000 000 000</p>
-                </div>
-              </div>
-              <div class="contact-item">
-                <i class="fi fi-rs-clock"></i>
-                <div>
-                  <h4>Fitting Hours</h4>
-                  <p>Monday - Sunday: 08:00 AM - 9:00 PM<br>We'll notify you if we're not available.</p>
-                </div>
-              </div>
-            </div>            <div class="contact-actions">
-              <a href="chandriahomepage/about-policy.html" class="btn btn-secondary">
-                <i class="fi fi-rs-document"></i>
-                About & Policies
-              </a>
-            </div>
-          </div>
-            <div class="booking-info">
-            <h3 class="section-title">
-              <span>Booking</span> Information
-            </h3>
-            <div class="booking-details">
-              <div class="booking-item">
-                <i class="fi fi-rs-tags"></i>
-                <div>
-                  <h4>Free Fitting Policy</h4>
-                  <p>Free fitting for up to 3 items/products. Additional fittings are ₱100 each (coordinate at our physical store)</p>
-                </div>
-              </div>
-              <div class="booking-item">
-                <i class="fi fi-rs-clothes-hanger"></i>
-                <div>
-                  <h4>Product Preparation</h4>
-                  <p>We prepare your selected gown when you book it. You can also book a blank appointment if unsure what to fit</p>
-                </div>
-              </div>
-              <div class="booking-item">
-                <i class="fi fi-rs-bell"></i>
-                <div>
-                  <h4>Availability Notice</h4>
-                  <p>If your booked product is already rented, we'll notify you immediately to reschedule or select alternatives</p>
-                </div>
-              </div>
-            </div><div class="booking-actions">
-              <a href="chandriahomepage/shop.html" class="btn btn-primary">Browse Our Products</a>
-              <a href="chandriahomepage/about-policy.html" class="btn btn-secondary">
-                <i class="fi fi-rs-document"></i>
-                About & Policies
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-    </main>
-
-    <!---------------------------------- SWIPER JS ---------------------------------->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-    <!-------------------------------- JS --------------------------------->
-    <script src="chandriahomepage/assets/js/main.js"></script>    <script type="module">
-import { getAuth, onAuthStateChanged, doc, getDoc, signOut } from "./chandriahomepage/assets/js/sdk/chandrias-sdk.js";
-import { chandriaDB, collection, getDocs, query, orderBy, limit } from "./chandriahomepage/assets/js/sdk/chandrias-sdk.js";
-
-const auth = getAuth();
-const loginLogoutLinkElement = document.getElementById('login-logout-link'); // This might be for a different element not shown in selection
-const userAccountLink = document.getElementById('user-account-link');
-
-// Function to create product HTML
-function createProductHTML(product, productId) {
-    // Get available sizes as a string
-    const availableSizes = product.size ? Object.keys(product.size).join(", ") : "N/A";
-    
-    // Determine product category display
-    const categoryDisplay = product.category || "Clothing";      
-    
-    // Format price - assuming it's stored as a number
-    const price = product.price ? `₱ ${product.price} / rent` : "Price available in-store";
-    
-    // Generate random badge variations for visual appeal
-    const badges = ['light-pink', 'light-green', 'light-orange', 'light-blue'];
-    const randomBadge = badges[Math.floor(Math.random() * badges.length)];
-      return `
-        <div class="product-item">
-            <div class="product-banner">
-                <a href="chandriahomepage/details.html?id=${productId}" class="product-images">
-                    <img src="${product.frontImageUrl || 'chandriahomepage/assets/img/placeholder.jpg'}" alt="${product.name || 'Product'}" class="product-img default">
-                    ${product.backImageUrl ? `<img src="${product.backImageUrl}" alt="${product.name || 'Product'}" class="product-img hover">` : ''}
-                </a>                
-                <div class="product-actions">
-                    <a href="chandriahomepage/details.html?id=${productId}" class="action-btn" aria-label="View Details">
-                        <i class="fi fi-rs-eye"></i>
-                    </a>
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
-                        <i class="fi fi-rs-heart"></i>
-                    </a>
-                </div>
-                <div class="product-badge ${randomBadge}">New</div>
-            </div>            
-            <div class="product-content">
-                <span class="product-category">${categoryDisplay}</span>
-                <a href="chandriahomepage/details.html?id=${productId}">
-                    <h3 class="product-title">${product.name || 'Untitled Product'}</h3>
+        <!-------------------------------- HEADER -------------------------------->
+        <header class="header">
+            <nav class="nav container">
+                <a href="index.html" class="nav-logo">
+                    <img
+                        src="chandriahomepage/assets/img/logo1.png"
+                        alt=""
+                        class="nav-logo-img"
+                    />
                 </a>
-                <div class="product-price">
-                    <span class="new-price">${price}</span>
+                <div class="nav-menu" id="nav-menu">
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="index.html" class="nav-link active-link"
+                                >Home</a
+                            >
+                        </li>
+
+                        <li class="nav-item">
+                            <a
+                                href="chandriahomepage/shop.html"
+                                class="nav-link"
+                                >Shop</a
+                            >
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="howItWorksLink"
+                                >How It Works</a
+                            >
+                        </li>
+                    </ul>
                 </div>
-            </div>
-        </div>
-    `;
-}
+                <div class="header-user-actions">
+                    <a
+                        href="chandriahomepage/wishlist.html"
+                        class="header-action-btn"
+                    >
+                        <img
+                            src="chandriahomepage/assets/img/icon-heart.svg"
+                            alt=""
+                        />
+                        <span class="count">0</span>
+                    </a>
 
-// Function to load fresh products (most recent)
-async function loadFreshProducts() {
-    try {
-        const freshContainer = document.getElementById('fresh-products-container');
-        if (!freshContainer) return;
+                    <a
+                        href="chandriahomepage/cart.html"
+                        class="header-action-btn"
+                    >
+                        <img
+                            src="chandriahomepage/assets/img/icon-cart.svg"
+                            alt=""
+                        />
+                        <span class="count" id="cart-count">0</span>
+                    </a>
+
+                    <a
+                        href="chandriahomepage/accounts.html"
+                        class="header-action-btn"
+                        id="user-account-link"
+                    >
+                        <img
+                            src="chandriahomepage/assets/img/icon-user.svg"
+                            alt=""
+                        />
+                    </a>
+                </div>
+            </nav>
+        </header>
+
+        <!--------------------------------MAIN -------------------------------->
+        <main class="main">
+            <!-------------------------------- HOME -------------------------------->
+            <section class="home section-lg">
+                <div class="home-container container grid">
+                    <div class="home-content">
+                        <span class="home-subtitle"
+                            >Visit Our Physical Store for Expert Fitting</span
+                        >
+                        <h1 class="home-title">
+                            Book Your Appointment for
+                            <span>Perfect Fit</span>
+                        </h1>
+                        <p class="home-description">
+                            Browse our collection online, then visit our store
+                            for professional fitting and styling consultation
+                        </p>
+                        <a
+                            href="chandriahomepage/shop.html"
+                            class="btn btn-primary"
+                            >Browse Collection</a
+                        >
+                    </div>
+
+                    <img
+                        src="chandriahomepage/assets/img/home-img3.png"
+                        alt=""
+                        class="home-img"
+                    />
+                </div>
+            </section>
+            <!-------------------------------- CATEGORIES -------------------------------->
+            <section class="categories container section">
+                <h3 class="section-title"><span>Browse</span> Categories</h3>
+                <p class="section-subtitle">
+                    Explore our collection and book an appointment to try on
+                    your favorites
+                </p>
+                <div class="categories-section-wrapper">
+                    <div class="categories-container swiper">
+                        <div class="swiper-wrapper">
+                            <a
+                                href="chandriahomepage/shop.html?category=ball-gowns"
+                                class="category-item swiper-slide"
+                            >
+                                <img
+                                    src="chandriahomepage/assets/img/category-1.jpg"
+                                    alt="Ball Gowns"
+                                    class="category-img"
+                                />
+                                <h3 class="category-title">Ball Gowns</h3>
+                            </a>
+
+                            <a
+                                href="chandriahomepage/shop.html?category=long-gowns"
+                                class="category-item swiper-slide"
+                            >
+                                <img
+                                    src="chandriahomepage/assets/img/category-2.jpg"
+                                    alt="Long Gowns"
+                                    class="category-img"
+                                />
+                                <h3 class="category-title">Long Gowns</h3>
+                            </a>
+
+                            <a
+                                href="chandriahomepage/shop.html?category=wedding-gowns"
+                                class="category-item swiper-slide"
+                            >
+                                <img
+                                    src="chandriahomepage/assets/img/category-3.jpg"
+                                    alt="Wedding Gowns"
+                                    class="category-img"
+                                />
+                                <h3 class="category-title">Wedding Gowns</h3>
+                            </a>
+
+                            <a
+                                href="chandriahomepage/shop.html?category=fairy-gowns"
+                                class="category-item swiper-slide"
+                            >
+                                <img
+                                    src="chandriahomepage/assets/img/category-4.jpg"
+                                    alt="Fairy Gowns"
+                                    class="category-img"
+                                />
+                                <h3 class="category-title">Fairy Gowns</h3>
+                            </a>
+
+                            <a
+                                href="chandriahomepage/shop.html?category=suits"
+                                class="category-item swiper-slide"
+                            >
+                                <img
+                                    src="chandriahomepage/assets/img/category-5.jpg"
+                                    alt="Suits"
+                                    class="category-img"
+                                />
+                                <h3 class="category-title">Suits</h3>
+                            </a>
+
+                            <a
+                                href="chandriahomepage/shop.html?category=additionals"
+                                class="category-item swiper-slide"
+                            >
+                                <img
+                                    src="chandriahomepage/assets/img/category-6.jpg"
+                                    alt="Additionals"
+                                    class="category-img"
+                                />
+                                <h3 class="category-title">Additionals</h3>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Custom Navigation Buttons -->
+                    <div class="swiper-button-prev custom-prev-btn">
+                        <i class="fi fi-rs-angle-left"></i>
+                    </div>
+                    <div class="swiper-button-next custom-next-btn">
+                        <i class="fi fi-rs-angle-right"></i>
+                    </div>
+                </div>
+            </section>
+
+            <!-------------------------------- POLICY -------------------------------->
+            <section class="policy section">
+                <div class="policy-container container grid"></div>
+            </section>
+            <!-------------------------------- FRESH ON THE RACK -------------------------------->
+            <section class="fresh-ontherack container section">
+                <h3 class="section-title latest-arrivals-title">
+                    <span>Latest </span>Arrivals
+                </h3>
+                <p class="section-subtitle latest-arrivals-subtitle">
+                    See our newest pieces and book an appointment to try them on
+                </p>
+                <div
+                    class="products-container grid"
+                    id="fresh-products-container"
+                >
+                    <!-- Fresh products will be loaded here from inventory -->
+                </div>
+            </section>
+            <!-------------------------------- CONTACT & BOOKING INFO -------------------------------->
+            <section class="contact-booking container section">
+                <div class="contact-container grid">
+                    <div class="contact-info">
+                        <h3 class="section-title">
+                            <span>Visit</span> Our Physical Store
+                        </h3>
+                        <div class="contact-details">
+                            <div class="contact-item">
+                                <i class="fi fi-rs-marker"></i>
+                                <div>
+                                    <h4>Our Location</h4>
+                                    <p>
+                                        B42 L13 Bilbao Street, Hacienda La Joya
+                                        Subdivision<br />Imus, Cavite,
+                                        Philippines
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fi fi-rs-phone-call"></i>
+                                <div>
+                                    <h4>Phone</h4>
+                                    <p>+63 000 000 000</p>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fi fi-rs-clock"></i>
+                                <div>
+                                    <h4>Fitting Hours</h4>
+                                    <p>
+                                        Monday - Sunday: 08:00 AM - 9:00 PM<br />We'll
+                                        notify you if we're not available.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="contact-actions">
+                            <a
+                                href="chandriahomepage/about-policy.html"
+                                class="btn btn-secondary"
+                            >
+                                <i class="fi fi-rs-document"></i>
+                                About & Policies
+                            </a>
+                        </div>
+                    </div>
+                    <div class="booking-info">
+                        <h3 class="section-title">
+                            <span>Booking</span> Information
+                        </h3>
+                        <div class="booking-details">
+                            <div class="booking-item">
+                                <i class="fi fi-rs-tags"></i>
+                                <div>
+                                    <h4>Free Fitting Policy</h4>
+                                    <p>
+                                        Free fitting for up to 3 items/products.
+                                        Additional fittings are ₱100 each
+                                        (coordinate at our physical store)
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="booking-item">
+                                <i class="fi fi-rs-clothes-hanger"></i>
+                                <div>
+                                    <h4>Product Preparation</h4>
+                                    <p>
+                                        We prepare your selected gown when you
+                                        book it. You can also book a blank
+                                        appointment if unsure what to fit
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="booking-item">
+                                <i class="fi fi-rs-bell"></i>
+                                <div>
+                                    <h4>Availability Notice</h4>
+                                    <p>
+                                        If your booked product is already
+                                        rented, we'll notify you immediately to
+                                        reschedule or select alternatives
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="booking-actions">
+                            <a
+                                href="chandriahomepage/shop.html"
+                                class="btn btn-primary"
+                                >Browse Our Products</a
+                            >
+                            <a
+                                href="chandriahomepage/about-policy.html"
+                                class="btn btn-secondary"
+                            >
+                                <i class="fi fi-rs-document"></i>
+                                About & Policies
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- NOTYF CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+
+        <!---------------------------------- SWIPER JS ---------------------------------->
+        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
         
-        // Show loading state
-        freshContainer.innerHTML = '<div class="loading">Loading fresh products...</div>';
+        <!-- JQUERY CDN -->
+        <script
+            src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+            crossorigin="anonymous"
+        ></script>
         
-        // Query for most recent products (limited to 4)
-        const productsQuery = query(
-            collection(chandriaDB, "products"),
-            orderBy("createdAt", "desc"),
-            limit(4)
-        );
-        
-        const querySnapshot = await getDocs(productsQuery);
-        
-        if (querySnapshot.empty) {
-            freshContainer.innerHTML = '<div class="no-products">No products available at the moment.</div>';
-            return;
-        }
-        
-        let productsHTML = '';
-        querySnapshot.forEach((doc) => {
-            const productData = doc.data();
-            // Only add if product has required fields
-            if (productData.frontImageUrl && productData.name) {
-                productsHTML += createProductHTML(productData, doc.id);
-            }
-        });
-        
-        if (productsHTML === '') {
-            freshContainer.innerHTML = '<div class="no-products">No products available at the moment.</div>';
-        } else {
-            freshContainer.innerHTML = productsHTML;
-        }
-        
-    } catch (error) {
-        console.error("Error loading fresh products:", error);
-        const freshContainer = document.getElementById('fresh-products-container');
-        if (freshContainer) {
-            freshContainer.innerHTML = '<div class="error">Unable to load products. Please try again later.</div>';
-        }
-    }
-}
-
-// Welcome Modal functionality
-function initWelcomeModal() {
-    const modal = document.getElementById('welcomeModal');
-    const closeBtn = document.getElementById('closeWelcomeModal');
-    const howItWorksLink = document.getElementById('howItWorksLink');
-    
-    // Check if user has seen the welcome modal before
-    const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
-    
-    // Only show modal on first visit to index.html
-    if (!hasSeenWelcome) {
-        setTimeout(() => {
-            modal.classList.add('show');
-        }, 1000);
-    }
-    
-    // Close modal function
-    function closeModal() {
-        modal.classList.remove('show');
-        localStorage.setItem('hasSeenWelcome', 'true');
-    }
-    
-    // Show modal function
-    function showModal() {
-        modal.classList.add('show');
-    }
-    
-    // Event listeners
-    closeBtn.addEventListener('click', closeModal);
-    howItWorksLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        showModal();
-    });
-    
-    // Close modal when clicking outside
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModal();
-        }
-    });
-    
-    // Close modal with ESC key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('show')) {
-            closeModal();
-        }
-    });
-}
-
-// Smooth scrolling for anchor links
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize welcome modal
-    initWelcomeModal();
-    
-    // Handle smooth scrolling for anchor links
-    const smoothScrollLinks = document.querySelectorAll('a[href^="#"]');
-    smoothScrollLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
-            if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });    // Load products when page loads
-    loadFreshProducts();
-    
-    // Initialize cart count
-    updateCartCount();
-});
-
-// CART COUNT FUNCTION
-async function updateCartCount() {
-    const user = auth.currentUser;
-
-    if (!user) {
-        document.getElementById("cart-count").textContent = "0";
-        return;
-    }
-
-    try {
-        const userRef = doc(chandriaDB, "userAccounts", user.uid);
-        const userSnap = await getDoc(userRef);
-
-        if (userSnap.exists()) {
-            const data = userSnap.data();
-            const cartItems = data.added_to_cart || [];
-            const totalCount = cartItems.reduce((sum, item) => sum + (parseInt(item.quantity, 10) || 0), 0);
-            document.getElementById("cart-count").textContent = totalCount;
-        } else {
-            document.getElementById("cart-count").textContent = "0";
-        }
-    } catch (error) {
-        console.error("Error fetching cart count: ", error);
-        document.getElementById("cart-count").textContent = "0";
-    }
-}
-
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    if (loginLogoutLinkElement) { // Check if the element exists
-        loginLogoutLinkElement.style.display = 'none';
-    }if (userAccountLink) {
-        userAccountLink.href = "chandriahomepage/accounts.html";
-    }    localStorage.setItem('userEmail', user.email); // Store user's email
-    await updateCartCount(); // Update cart count when user logs in
-  } else {
-    if (loginLogoutLinkElement) { // Check if the element exists
-        loginLogoutLinkElement.style.display = 'block';
-        loginLogoutLinkElement.textContent = "Login";
-        loginLogoutLinkElement.href = "/chandriahomepage/user_authentication.html";
-    }    if (userAccountLink) {
-        userAccountLink.href = "chandriahomepage/user_authentication.html";
-    }    localStorage.removeItem('userEmail'); // Remove user's email on logout
-    updateCartCount(); // Update cart count when user logs out
-  }
-});
-</script>
-  </body>
+        <!-------------------------------- JS --------------------------------->
+        <script src="chandriahomepage/assets/js/main.js"></script>
+        <script type="module" src="./chandriahomepage/assets/js/index.js"></script>
+    </body>
 </html>

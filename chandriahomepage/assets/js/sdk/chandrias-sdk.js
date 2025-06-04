@@ -8,7 +8,11 @@ import {
     sendEmailVerification,
     validatePassword,
     signOut,
-    updateProfile
+    updateProfile,
+    EmailAuthProvider,
+    reauthenticateWithCredential,
+    updatePassword,
+    deleteUser
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 import {
     getFirestore,
@@ -64,5 +68,9 @@ export {
     limit,
     arrayUnion,
     arrayRemove,
-    updateProfile
+    updateProfile,
+    EmailAuthProvider,
+    reauthenticateWithCredential,
+    updatePassword,
+    deleteUser
 };

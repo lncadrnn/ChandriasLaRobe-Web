@@ -1,6 +1,7 @@
 import {
     onAuthStateChanged,
     auth,
+    signOut,
     chandriaDB,
     getFirestore,
     collection,
@@ -27,45 +28,58 @@ $(document).ready(function () {
                     tagName: "i"
                 }
             }
-        ]    });
+        ]
+    });
 
     // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // AUTHENTICATION MODAL FUNCTIONS
     function showAuthModal() {
-        const authModal = document.getElementById('auth-modal');
+        const authModal = document.getElementById("auth-modal");
         if (authModal) {
-            authModal.classList.add('show');
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            authModal.classList.add("show");
+            document.body.style.overflow = "hidden"; // Prevent background scrolling
         }
     }
 
     function hideAuthModal() {
-        const authModal = document.getElementById('auth-modal');
+        const authModal = document.getElementById("auth-modal");
         if (authModal) {
-            authModal.classList.remove('show');
-            document.body.style.overflow = ''; // Restore scrolling
+            authModal.classList.remove("show");
+            document.body.style.overflow = ""; // Restore scrolling
         }
     }
 
     // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#    // LISTEN FOR AUTH STATE CHANGES
     onAuthStateChanged(auth, async user => {
-        // Show loader when starting to load data
-        showShopLoader();
-        
-        if (!user) {
-            // User not logged in, show the login nav
-            $("#nav-login").show();
-        }
-        
         try {
-            // Call displayProducts with user (can be null or a valid user object)
+            if (user) {
+                // Check if user is an admin
+                const adminDocRef = doc(chandriaDB, "adminAccounts", user.uid);
+                const adminDocSnap = await getDoc(adminDocRef);
+
+                if (adminDocSnap.exists()) {
+                    // If user is admin, sign them out
+                    await signOut(auth);
+                    window.location.href = "../index.html";
+                    return;
+                }
+
+                // Not admin – update localStorage and UI
+                localStorage.setItem("userEmail", user.email);
+            } else {
+                // Not logged in
+                localStorage.removeItem("userEmail");
+            }
+
+            // Load products and cart regardless of login status
             await displayProducts(user);
             await updateCartCount();
         } catch (error) {
-            console.error('Error loading shop data:', error);
+            console.error("Error handling auth state:", error);
+            notyf.error("An error occurred while loading the page.");
         } finally {
-            // Hide loader after data is loaded (success or error)
-            hideShopLoader();
+            // Always hide the loader
+            $("#shop-loader").addClass("hidden");
         }
     });
 
@@ -106,13 +120,25 @@ $(document).ready(function () {
 
         // Paginate products
         const startIndex = (page - 1) * itemsPerPage;
-        const paginatedProducts = products.slice(startIndex, startIndex + itemsPerPage);        paginatedProducts.forEach(product => {
-            const isInCart = userCart.some(item => item.productId === product.id);
+        const paginatedProducts = products.slice(
+            startIndex,
+            startIndex + itemsPerPage
+        );
+        paginatedProducts.forEach(product => {
+            const isInCart = userCart.some(
+                item => item.productId === product.id
+            );
             const selectedClass = isInCart ? "selected" : "";
 
             // Generate random badge variations for visual appeal
-            const badges = ['light-pink', 'light-green', 'light-orange', 'light-blue'];
-            const randomBadge = badges[Math.floor(Math.random() * badges.length)];
+            const badges = [
+                "light-pink",
+                "light-green",
+                "light-orange",
+                "light-blue"
+            ];
+            const randomBadge =
+                badges[Math.floor(Math.random() * badges.length)];
 
             // Build product card
             const card = `
@@ -170,15 +196,20 @@ $(document).ready(function () {
             displayProducts(user, selectedPage);
         });
     }
-      // CARD CLICKED FUNCTION
+    // CARD CLICKED FUNCTION
     $(document).on("click", "a[data-id]", function () {
         const productId = $(this).data("id");
         localStorage.setItem("selectedProductId", productId);
-        
+
         // Also store product name for breadcrumb
-        const productTitle = $(this).find('.product-title').text() || $(this).closest('.product-item').find('.product-title').text();
+        const productTitle =
+            $(this).find(".product-title").text() ||
+            $(this).closest(".product-item").find(".product-title").text();
         if (productTitle) {
-            localStorage.setItem(`product_${productId}_name`, productTitle.trim());
+            localStorage.setItem(
+                `product_${productId}_name`,
+                productTitle.trim()
+            );
         }
     });
 
@@ -200,8 +231,11 @@ $(document).ready(function () {
             if (userSnap.exists()) {
                 const data = userSnap.data();
                 const cartItems = data.added_to_cart || [];
-                 // Calculate total quantity instead of number of items, ensuring quantity is an integer
-                const totalCount = cartItems.reduce((sum, item) => sum + (parseInt(item.quantity, 10) || 0), 0);
+                // Calculate total quantity instead of number of items, ensuring quantity is an integer
+                const totalCount = cartItems.reduce(
+                    (sum, item) => sum + (parseInt(item.quantity, 10) || 0),
+                    0
+                );
 
                 // Update the cart count in the header
                 $("#cart-count").text(totalCount);
@@ -236,7 +270,7 @@ $(document).ready(function () {
 
                 // SET IMAGE PREVIEWS
                 $(".front-img").attr("src", data.frontImageUrl);
-                $(".back-img").attr("src", data.backImageUrl);                // SET TEXT OUTPUTS
+                $(".back-img").attr("src", data.backImageUrl); // SET TEXT OUTPUTS
                 $("#product-name").text(data.name);
                 $("#product-price").text(data.price);
                 $("#product-description").text(data.description);
@@ -448,44 +482,48 @@ $(document).ready(function () {
         e.stopPropagation();
     });
     //
-    
+
     // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // SHOP LOADER FUNCTIONS
-    function showShopLoader() {
-        const shopLoader = document.getElementById('shop-loader');
-        if (shopLoader) {
-            shopLoader.classList.remove('hidden');
-            shopLoader.style.display = 'flex';
-        }
-    }
+    // function showShopLoader() {
+    //     const shopLoader = document.getElementById('shop-loader');
+    //     if (shopLoader) {
+    //         shopLoader.classList.remove('hidden');
+    //         shopLoader.style.display = 'flex';
+    //     }
+    // }
 
-    function hideShopLoader() {
-        const shopLoader = document.getElementById('shop-loader');
-        if (shopLoader) {
-            shopLoader.classList.add('hidden');
-            shopLoader.style.display = 'none';
-        }
-    }
+    // function hideShopLoader() {
+    //     const shopLoader = document.getElementById('shop-loader');
+    //     if (shopLoader) {
+    //         shopLoader.classList.add('hidden');
+    //         shopLoader.style.display = 'none';
+    //     }
+    // }
 
     // Authentication modal event listeners
-    $(document).on('click', '#auth-modal-close, #auth-modal-cancel', function() {
-        hideAuthModal();
-    });
+    $(document).on(
+        "click",
+        "#auth-modal-close, #auth-modal-cancel",
+        function () {
+            hideAuthModal();
+        }
+    );
 
-    $(document).on('click', '#auth-modal-login', function() {
-        window.location.href = './user_authentication.html';
+    $(document).on("click", "#auth-modal-login", function () {
+        window.location.href = "./user_authentication.html";
     });
 
     // Close modal when clicking outside
-    $(document).on('click', '#auth-modal', function(e) {
+    $(document).on("click", "#auth-modal", function (e) {
         if (e.target === this) {
             hideAuthModal();
         }
     });
 
     // Close modal on escape key
-    $(document).on('keydown', function(e) {
-        if (e.key === 'Escape') {
+    $(document).on("keydown", function (e) {
+        if (e.key === "Escape") {
             hideAuthModal();
         }
     });
@@ -495,72 +533,78 @@ $(document).ready(function () {
 
     // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // QUICK VIEW MODAL FUNCTIONALITY    // Quick View button click handler
-    $(document).on("click", ".action-btn[aria-label='Quick View']", async function (e) {
-        e.preventDefault();
-        
-        console.log('Quick View button clicked'); // Debug log
-        
-        // Try multiple ways to get the product ID
-        const $productItem = $(this).closest('.product-item');
-        console.log('Product item found:', $productItem.length > 0); // Debug log
-        
-        let productId = $productItem.find('[data-id]').first().data('id');
-        console.log('Product ID attempt 1:', productId); // Debug log
-        
-        // If not found, try looking for the cart button's data-id
-        if (!productId) {
-            productId = $productItem.find('.cart-btn[data-id]').data('id');
-            console.log('Product ID attempt 2 (cart button):', productId); // Debug log
-        }
-        
-        // If still not found, try looking for the product link's data-id
-        if (!productId) {
-            productId = $productItem.find('a[data-id]').data('id');
-            console.log('Product ID attempt 3 (product link):', productId); // Debug log
-        }
-        
-        // If still not found, try looking for any element with data-id
-        if (!productId) {
-            productId = $productItem.find('*[data-id]').first().data('id');
-            console.log('Product ID attempt 4 (any element):', productId); // Debug log
-        }
-        
-        console.log('Final Product ID found:', productId); // Debug log
-        
-        if (!productId) {
-            console.error('Product ID not found');
-            console.log('Product item HTML:', $productItem.html()); // Debug log
-            alert('Product ID not found. Please check the console for details.'); // User feedback
-            return;
-        }
+    $(document).on(
+        "click",
+        ".action-btn[aria-label='Quick View']",
+        async function (e) {
+            e.preventDefault();
 
-        // Show loading state
-        openQuickViewModal();
-        showQuickViewLoading();
+            console.log("Quick View button clicked"); // Debug log
 
-        try {
-            const docRef = doc(chandriaDB, "products", productId);
-            const docSnap = await getDoc(docRef);
+            // Try multiple ways to get the product ID
+            const $productItem = $(this).closest(".product-item");
+            console.log("Product item found:", $productItem.length > 0); // Debug log
 
-            if (docSnap.exists()) {
-                const product = docSnap.data();
-                populateQuickViewModal(product, productId);
-                hideQuickViewLoading();
-            } else {
-                console.error("Product not found");
-                notyf.error("Product not found");
+            let productId = $productItem.find("[data-id]").first().data("id");
+            console.log("Product ID attempt 1:", productId); // Debug log
+
+            // If not found, try looking for the cart button's data-id
+            if (!productId) {
+                productId = $productItem.find(".cart-btn[data-id]").data("id");
+                console.log("Product ID attempt 2 (cart button):", productId); // Debug log
+            }
+
+            // If still not found, try looking for the product link's data-id
+            if (!productId) {
+                productId = $productItem.find("a[data-id]").data("id");
+                console.log("Product ID attempt 3 (product link):", productId); // Debug log
+            }
+
+            // If still not found, try looking for any element with data-id
+            if (!productId) {
+                productId = $productItem.find("*[data-id]").first().data("id");
+                console.log("Product ID attempt 4 (any element):", productId); // Debug log
+            }
+
+            console.log("Final Product ID found:", productId); // Debug log
+
+            if (!productId) {
+                console.error("Product ID not found");
+                console.log("Product item HTML:", $productItem.html()); // Debug log
+                alert(
+                    "Product ID not found. Please check the console for details."
+                ); // User feedback
+                return;
+            }
+
+            // Show loading state
+            openQuickViewModal();
+            showQuickViewLoading();
+
+            try {
+                const docRef = doc(chandriaDB, "products", productId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const product = docSnap.data();
+                    populateQuickViewModal(product, productId);
+                    hideQuickViewLoading();
+                } else {
+                    console.error("Product not found");
+                    notyf.error("Product not found");
+                    closeQuickViewModal();
+                }
+            } catch (error) {
+                console.error("Error fetching product:", error);
+                notyf.error("Failed to load product details");
                 closeQuickViewModal();
             }
-        } catch (error) {
-            console.error("Error fetching product:", error);
-            notyf.error("Failed to load product details");
-            closeQuickViewModal();
         }
-    });    // Function to populate quick view modal with product data
+    ); // Function to populate quick view modal with product data
     function populateQuickViewModal(product, productId) {
         // Restore the original details HTML structure if it was replaced by loading
-        if ($('.quick-view-loading').length > 0) {
-            $('.quick-view-details').html(`
+        if ($(".quick-view-loading").length > 0) {
+            $(".quick-view-details").html(`
                 <div class="quick-view-header">
                     <h2 id="quick-view-title" class="quick-view-product-title">Product Name</h2>
                     <span id="quick-view-category" class="quick-view-category">Category</span>
@@ -601,35 +645,44 @@ $(document).ready(function () {
                 </div>
             `);
         }
-        
+
         // Set main image and thumbnails
-        $('#quick-view-main-img').attr('src', product.frontImageUrl || '');
-        $('.quick-view-thumbnail').eq(0).attr('src', product.frontImageUrl || '');
-        $('.quick-view-thumbnail').eq(1).attr('src', product.backImageUrl || '');
-          // Set product details
-        $('#quick-view-title').text(product.name || '');
-        $('#quick-view-category').text(product.category || '');
-        $('#quick-view-price').text(`₱ ${product.price || '0'}`);
-        $('#quick-view-desc').text(product.description || 'No description available');        // Set product metadata
-        $('#quick-view-product-code').text(product.code || 'N/A');
-        
+        $("#quick-view-main-img").attr("src", product.frontImageUrl || "");
+        $(".quick-view-thumbnail")
+            .eq(0)
+            .attr("src", product.frontImageUrl || "");
+        $(".quick-view-thumbnail")
+            .eq(1)
+            .attr("src", product.backImageUrl || "");
+        // Set product details
+        $("#quick-view-title").text(product.name || "");
+        $("#quick-view-category").text(product.category || "");
+        $("#quick-view-price").text(`₱ ${product.price || "0"}`);
+        $("#quick-view-desc").text(
+            product.description || "No description available"
+        ); // Set product metadata
+        $("#quick-view-product-code").text(product.code || "N/A");
+
         // Set button data attributes
-        $('#quick-view-view-details').attr('data-id', productId);
-        
+        $("#quick-view-view-details").attr("data-id", productId);
+
         // Set color if available
         if (product.color) {
-            $('#quick-view-color-indicator').css('background-color', product.color);
+            $("#quick-view-color-indicator").css(
+                "background-color",
+                product.color
+            );
         }
-        
+
         // Set features (customize based on your product structure)
         const features = [
-            { icon: 'fi-rs-truck', text: 'Free delivery within Metro Manila' },
-            { icon: 'fi-rs-refresh', text: '24/7 customer support' },
-            { icon: 'fi-rs-shield-check', text: 'Quality guaranteed' },
-            { icon: 'fi-rs-time-check', text: 'Flexible rental periods' }
+            { icon: "fi-rs-truck", text: "Free delivery within Metro Manila" },
+            { icon: "fi-rs-refresh", text: "24/7 customer support" },
+            { icon: "fi-rs-shield-check", text: "Quality guaranteed" },
+            { icon: "fi-rs-time-check", text: "Flexible rental periods" }
         ];
-        
-        const $featuresContainer = $('.quick-view-features');
+
+        const $featuresContainer = $(".quick-view-features");
         $featuresContainer.empty();
         features.forEach(feature => {
             $featuresContainer.append(`
@@ -639,64 +692,67 @@ $(document).ready(function () {
                 </div>
             `);
         });
-    }    // Function to open quick view modal
+    } // Function to open quick view modal
     function openQuickViewModal() {
-        console.log('Opening quick view modal'); // Debug log
-        $('.quick-view-modal-container').addClass('show');
-        $('body').css('overflow', 'hidden');
-        
+        console.log("Opening quick view modal"); // Debug log
+        $(".quick-view-modal-container").addClass("show");
+        $("body").css("overflow", "hidden");
+
         // Set first thumbnail as active
-        $('.quick-view-thumbnail').removeClass('active');
-        $('.quick-view-thumbnail').eq(0).addClass('active');
-        
-        console.log('Quick view modal opened, has show class:', $('.quick-view-modal-container').hasClass('show')); // Debug log
-    }    // Function to close quick view modal
+        $(".quick-view-thumbnail").removeClass("active");
+        $(".quick-view-thumbnail").eq(0).addClass("active");
+
+        console.log(
+            "Quick view modal opened, has show class:",
+            $(".quick-view-modal-container").hasClass("show")
+        ); // Debug log
+    } // Function to close quick view modal
     function closeQuickViewModal() {
-        $('.quick-view-modal-container').removeClass('show');
-        $('body').css('overflow', 'auto');
+        $(".quick-view-modal-container").removeClass("show");
+        $("body").css("overflow", "auto");
     }
 
     // Function to show loading state in quick view modal
     function showQuickViewLoading() {
-        console.log('Showing quick view loading state'); // Debug log
-        $('.quick-view-details').html(`
+        console.log("Showing quick view loading state"); // Debug log
+        $(".quick-view-details").html(`
             <div class="quick-view-loading">
                 <div class="spinner"></div>
                 <p>Loading product details...</p>
             </div>
         `);
-        $('.quick-view-images img').attr('src', '');
-        console.log('Loading state applied'); // Debug log
+        $(".quick-view-images img").attr("src", "");
+        console.log("Loading state applied"); // Debug log
     }
 
     // Function to hide loading state in quick view modal
     function hideQuickViewLoading() {
         // Loading state is removed when populateQuickViewModal is called
         // This function exists for consistency but the actual hiding is done in populateQuickViewModal
-        console.log('Hiding quick view loading state'); // Debug log
-    }// Close modal when clicking close button or backdrop
-    $(document).on('click', '.quick-view-close', closeQuickViewModal);
-    $(document).on('click', '.quick-view-modal-container', function(e) {
+        console.log("Hiding quick view loading state"); // Debug log
+    } // Close modal when clicking close button or backdrop
+    $(document).on("click", ".quick-view-close", closeQuickViewModal);
+    $(document).on("click", ".quick-view-modal-container", function (e) {
         if (e.target === this) {
             closeQuickViewModal();
         }
     });
 
     // Prevent modal from closing when clicking modal content
-    $(document).on('click', '.quick-view-content', function(e) {
+    $(document).on("click", ".quick-view-content", function (e) {
         e.stopPropagation();
-    });    // Thumbnail image switching
-    $(document).on('click', '.quick-view-thumbnail', function() {
-        const newSrc = $(this).attr('src');
-        $('#quick-view-main-img').attr('src', newSrc);
-        
+    }); // Thumbnail image switching
+    $(document).on("click", ".quick-view-thumbnail", function () {
+        const newSrc = $(this).attr("src");
+        $("#quick-view-main-img").attr("src", newSrc);
+
         // Update active thumbnail
-        $('.quick-view-thumbnail').removeClass('active');
-        $(this).addClass('active');
-    });    // Quick view "Add to Rent" button click handler
-    $(document).on('click', '#quick-view-add-to-cart', async function(e) {
+        $(".quick-view-thumbnail").removeClass("active");
+        $(this).addClass("active");
+    }); // Quick view "Add to Rent" button click handler
+    $(document).on("click", "#quick-view-add-to-cart", async function (e) {
         e.preventDefault();
-        
+
         const user = auth.currentUser;
         if (!user) {
             showAuthModal();
@@ -704,23 +760,23 @@ $(document).ready(function () {
         }
 
         const button = $(this);
-        const productId = button.data('id');
-        
+        const productId = button.data("id");
+
         if (!productId) {
             notyf.error("Product not found.");
             return;
         }
 
         // Disable button and show loading state
-        const originalText = button.find('span').text();
-        button.prop('disabled', true);
-        button.find('span').text('Adding...');
+        const originalText = button.find("span").text();
+        button.prop("disabled", true);
+        button.find("span").text("Adding...");
 
         try {
             // Get product data to find available sizes
             const docRef = doc(chandriaDB, "products", productId);
             const docSnap = await getDoc(docRef);
-            
+
             if (!docSnap.exists()) {
                 notyf.error("Product not found.");
                 return;
@@ -728,7 +784,7 @@ $(document).ready(function () {
 
             const productData = docSnap.data();
             const sizes = productData.size || {};
-            
+
             // Find the first available size with stock > 0
             let selectedSize = null;
             for (const [size, stock] of Object.entries(sizes)) {
@@ -746,7 +802,7 @@ $(document).ready(function () {
             // Add to cart with first available size and quantity 1
             const userRef = doc(chandriaDB, "userAccounts", user.uid);
             const userSnap = await getDoc(userRef);
-            
+
             if (!userSnap.exists()) {
                 notyf.error("User account not found.");
                 return;
@@ -757,14 +813,17 @@ $(document).ready(function () {
 
             // Check if the same product with the same size is already in the cart
             const index = currentCart.findIndex(
-                item => item.productId === productId && item.size === selectedSize
+                item =>
+                    item.productId === productId && item.size === selectedSize
             );
 
             if (index !== -1) {
                 // If found, increment the quantity
                 currentCart[index].quantity += 1;
                 await updateDoc(userRef, { added_to_cart: currentCart });
-                notyf.success(`Updated quantity for ${productData.name} (${selectedSize})`);
+                notyf.success(
+                    `Updated quantity for ${productData.name} (${selectedSize})`
+                );
             } else {
                 // If not found, add a new item to the cart
                 await updateDoc(userRef, {
@@ -774,44 +833,48 @@ $(document).ready(function () {
                         quantity: 1
                     })
                 });
-                notyf.success(`Added ${productData.name} (${selectedSize}) to cart!`);
+                notyf.success(
+                    `Added ${productData.name} (${selectedSize}) to cart!`
+                );
             }
 
             // Update cart count and product display
             await updateCartCount();
             await displayProducts(user);
-            
         } catch (error) {
             console.error("Error adding to cart: ", error);
             notyf.error("An error occurred. Please try again.");
         } finally {
             // Re-enable button
-            button.prop('disabled', false);
-            button.find('span').text(originalText);
+            button.prop("disabled", false);
+            button.find("span").text(originalText);
         }
 
         // Close quick view modal
         closeQuickViewModal();
-    });    // Quick view "View Full Details" button click handler
-    $(document).on('click', '#quick-view-view-details', function(e) {
+    }); // Quick view "View Full Details" button click handler
+    $(document).on("click", "#quick-view-view-details", function (e) {
         e.preventDefault();
-        const productId = $(this).data('id');
-        
+        const productId = $(this).data("id");
+
         // Store product ID and navigate to details page
         localStorage.setItem("selectedProductId", productId);
-        
+
         // Also store product name for breadcrumb from quick view modal
-        const productName = $('#quick-view-title').text();
+        const productName = $("#quick-view-title").text();
         if (productName) {
-            localStorage.setItem(`product_${productId}_name`, productName.trim());
+            localStorage.setItem(
+                `product_${productId}_name`,
+                productName.trim()
+            );
         }
-        
+
         window.location.href = "./details.html";
     });
 
     // Close modal with Escape key
-    $(document).on('keydown', function(e) {
-        if (e.key === 'Escape' || e.keyCode === 27) {
+    $(document).on("keydown", function (e) {
+        if (e.key === "Escape" || e.keyCode === 27) {
             closeQuickViewModal();
         }
     });

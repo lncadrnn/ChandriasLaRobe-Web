@@ -17,7 +17,7 @@ $(document).ready(function () {
             y: "top"
         }
     });
-
+    
     const $body = $("body"),
         $sidebar = $body.find(".sidebar"),
         $toggle = $body.find(".toggle"),
@@ -234,7 +234,13 @@ $(document).ready(function () {
 
         $("#cart-total-amount").text(`₱${total.toLocaleString()}`);
     }
-
+    
+    // CLEAR CART FUNCTION 
+    function clearCart() {
+        cart.products = [];
+        cart.accessories = [];
+    }
+    
     // SELECT SIZE PRODUCT FUNCTION
     $(document).on("click", ".product-card", async function (e) {
         const productId = $(this).data("id");
@@ -648,7 +654,10 @@ $(document).ready(function () {
         if (appointmentData) {
             try {
                 const data = JSON.parse(appointmentData);
-                console.log('Appointment data found:', data);
+                
+                // LOGGING DATA ITEMS
+                // console.log("Appointment Flow Data:", data);
+                // console.log("Cart Items:", data.cartItems);
                 
                 // Pre-populate cart and form with appointment data
                 prePopulateCartFromAppointment(data);
@@ -679,7 +688,7 @@ $(document).ready(function () {
         appointmentData.cartItems.forEach((item, index) => {
             if (item.type === 'accessory') {
                 const accessory = {
-                    id: item.productId,
+                    id: item.id,
                     name: item.name,
                     code: item.name, // Use name as code for accessories
                     price: item.price,
@@ -689,13 +698,16 @@ $(document).ready(function () {
                 cart.accessories.push(accessory);
             } else {
                 const product = {
-                    id: item.productId,
+                    id: item.id,
                     name: item.name,
-                    code: item.code || item.name, // Prefer actual code if available, fallback to name
+                    code: item.code,
                     price: item.price,
                     size: item.size,
                     quantity: item.quantity
                 };
+                
+                // LOGGING
+                // console.log("PRODUCT DATA(BEFORE PUSH):", product);
                 cart.products.push(product);
             }
         });
@@ -1466,7 +1478,8 @@ $(document).ready(function () {
             return fallbackCode;
         }
     }
-
+    
+    // --====== START OF SUBMITTING DATA TO FIREBASE ======--
     // FORM (CUSTOMER INFO) SUBMIT FUNCTION
     $("#customer-form").on("submit", async function (e) {
         e.preventDefault();
@@ -1478,6 +1491,9 @@ $(document).ready(function () {
         try {
             spinner.removeClass("d-none");
             spinnerText.text("Preparing data...");
+            
+            // LOGGING CART PRODUCTS
+            // console.log("CART PRODUCTS:", cart.products);
 
             // --- GROUP PRODUCTS ---
             const groupedProducts = {};
@@ -1487,8 +1503,8 @@ $(document).ready(function () {
                     !item.name ||
                     !item.code ||
                     !item.size ||
-                    item.quantity === undefined ||
-                    item.price === undefined
+                    item.quantity == undefined ||
+                    item.price == undefined
                 ) {
                     console.warn("Invalid product skipped - missing required fields:", item);
                     return;
@@ -1501,7 +1517,7 @@ $(document).ready(function () {
                         code: item.code,
                         name: item.name,
                         sizes: {},
-                        price: item.price
+                        price: parseFloat(item.price)
                     };
                 }
 
@@ -1511,6 +1527,9 @@ $(document).ready(function () {
 
                 groupedProducts[key].sizes[item.size] += item.quantity;
             });
+            
+            // LOGGING CART PRODUCTS
+            // console.log("Raw cart.products before grouping:", cart.products);
 
             const finalProductList = Object.values(groupedProducts);
 
@@ -1548,6 +1567,10 @@ $(document).ready(function () {
                 }
             });
             finalAccessoriesList.push(...simpleAccessoryMap.values());
+            
+            // LOGGING FINAL PRODUCT LIST
+            // console.log("Final groupedProducts:", groupedProducts);
+            // console.log("Final Product List:", finalProductList);
 
             // --- GENERATE TRANSACTION CODE ---
             spinnerText.text("Generating transaction code...");
@@ -1600,8 +1623,9 @@ $(document).ready(function () {
                 accessories: finalAccessoriesList,
                 transactionCode: transactionCode
             };
-
-            console.log("Customer Form Data to submit:", formData);
+            
+            // LOGGING FORM DATA
+             console.log("Customer Form Data to submit:", formData);
 
             // === Validate no undefined fields ===
             for (const [key, value] of Object.entries(formData)) {
@@ -1631,11 +1655,13 @@ $(document).ready(function () {
             spinner.addClass("d-none");
             $customerModal.hide();
             $("#customer-form")[0].reset();
-            $(".cart-items").empty();
-            $(".cart-details").empty();
-            $("#cart-total-amount").text(`₱0`);
+            
+            // CLEARING CART
+            clearCart();
+            updateCartSummary();
         }
     });
-
+    // --====== END OF SUBMITTING DATA TO FIREBASE ======--
+  
     // END OF JAVASCRIPT HERE
 });

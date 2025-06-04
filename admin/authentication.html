@@ -21,10 +21,19 @@
             href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css"
         />
         <!-- EXTERNAL CSS -->
-        <link rel="stylesheet" href="/admin/assets/css/styles.css" />
+        <link rel="stylesheet" href="./assets/css/styles.css" />
+        <link rel="stylesheet" href="./assets/css/authentication.css" />
     </head>
 
     <body>
+        <!-- Full Screen Loader -->
+        <div id="login-loader" class="login-loader">
+            <div class="login-loader-content">
+                <div class="login-spinner"></div>
+                <p class="login-loader-text">Checking Admin Status</p>
+            </div>
+        </div>
+
         <button id="back-btn" class="back-btn" type="button">
             <i class="bx bx-arrow-back"></i> Back
         </button>
@@ -62,7 +71,7 @@
                             "
                         ></i>
                     </div>
-                    <button type="submit" class="btn-basic" id="login-btn">
+                    <button type="submit" class="btn" id="login-btn">
                         Login
                     </button>
                 </form>
@@ -80,7 +89,11 @@
                         />
                         <i class="bx bxs-user"></i>
                     </div>
-                    <button type="submit" class="btn-basic" id="submit-forgot-btn">
+                    <button
+                        type="submit"
+                        class="btn-basic"
+                        id="submit-forgot-btn"
+                    >
                         Submit
                     </button>
                 </form>
@@ -103,16 +116,19 @@
             crossorigin="anonymous"
         ></script>
         <!-- EXTERNAL SCRIPT -->
-        <script type="module" src="/admin/assets/js/authentication-service.js"></script>
+        <script
+            type="module"
+            src="/admin/assets/js/authentication-service.js"
+        ></script>
         <script>
-          document.getElementById('back-btn').onclick = function() {
-            if (window.history.length > 1) {
-              window.history.back();
-            } else {
-              // Fallback to admin dashboard
-              window.location.href = 'dashboard.html'; 
-            }
-          };
+            document.getElementById("back-btn").onclick = function () {
+                if (window.history.length > 1) {
+                    window.history.back();
+                } else {
+                    // Fallback to admin dashboard
+                    window.location.href = "dashboard.html";
+                }
+            };
         </script>
     </body>
 </html>

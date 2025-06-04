@@ -24,11 +24,26 @@
         <link rel="stylesheet" href="./assets/css/styles.css" />
         <link rel="stylesheet" href="./assets/css/accountsettings.css" />
         <!-- Font Awesome for icons -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        />
 
         <title>Chandria's La Robe</title>
     </head>
     <body>
+        <!-- ====== BEGINNING LOADER ====== -->
+        <div id="loader">
+            <div class="spinner-loader"></div>
+            <div class="spinner-loader-text">Loading Account Settings...</div>
+        </div>
+
+        <!-- SPINNER -->
+        <div class="container-spinner d-none" id="spinner">
+            <div class="spinner"></div>
+            <div class="spinner-text" id="spinner-text">Uploading</div>
+        </div>
+
         <!--=============== HEADER ===============-->
         <header class="header">
             <nav class="nav container">
@@ -80,62 +95,113 @@
                 </div>
             </nav>
         </header>
-        
+
         <!--=============== MAIN ===============-->
-        <main class="main">            <!--=============== BREADCRUMB ===============-->
+        <main class="main">
+            <!--=============== BREADCRUMB ===============-->
             <section class="breadcrumb custom-breadcrumb">
                 <ul class="breadcrumb-list flex container">
                     <!-- Dynamic breadcrumb will be generated here -->
                 </ul>
-              </section>
-              
+            </section>
+
             <!--=============== ACCOUNT SETTINGS ===============-->
             <section class="account-settings-page">
                 <div class="account-settings-container">
-                    <h2 class="account-settings-main-title">Account Settings</h2>
-                    
+                    <h2 class="account-settings-main-title">
+                        Account Settings
+                    </h2>
+
                     <div class="account-settings-content-wrapper">
                         <div class="account-form-column">
                             <div class="form-group">
                                 <label for="email">Email Address</label>
-                                <input type="email" id="email" value="" />
+                                <input
+                                    class="disabled"
+                                    type="email"
+                                    id="email"
+                                    disabled
+                                />
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="name">Name</label>
                                 <input type="text" id="name" value="" />
                             </div>
-                            
+
                             <div class="form-group">
-                                <button type="button" class="btn-change-password" id="togglePasswordFields">Change Password</button>
+                                <button
+                                    type="button"
+                                    class="btn-change-password"
+                                    id="togglePasswordFields"
+                                >
+                                    Change Password
+                                </button>
                             </div>
-                            
-                            <div id="passwordFields" style="display: none;">
+
+                            <div id="passwordFields" style="display: none">
                                 <div class="form-group">
-                                    <label for="password">Current Password</label>
-                                    <input type="password" id="password" value="" />
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="new-password">New Password</label>
-                                    <input type="password" id="new-password" value="" />
+                                    <label for="password"
+                                        >Current Password</label
+                                    >
+                                    <input
+                                        type="password"
+                                        id="password"
+                                        value=""
+                                    />
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="confirm-new-password">Confirm New Password</label>
-                                    <input type="password" id="confirm-new-password" value="" />
+                                    <label for="new-password"
+                                        >New Password</label
+                                    >
+                                    <input
+                                        type="password"
+                                        id="new-password"
+                                        value=""
+                                    />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="confirm-new-password"
+                                        >Confirm New Password</label
+                                    >
+                                    <input
+                                        type="password"
+                                        id="confirm-new-password"
+                                        value=""
+                                    />
                                 </div>
                             </div>
-                            
+
                             <div class="form-actions">
-                           <button type="button" class="btn btn-secondary" style="border: 2px solid hsl(346, 98%, 74%);">Cancel</button>
-                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button
+                                    type="button"
+                                    class="btn btn-secondary"
+                                    style="border: 2px solid hsl(346, 98%, 74%)"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary disabled"
+                                    id="save-btn"
+                                >
+                                    Save
+                                </button>
                             </div>
                             <div class="form-actions">
-                                <button type="button" class="btn btn-primary" id="logout-btn" style="background:rgb(193, 2, 2);">Logout</button>
+                                <button
+                                    type="button"
+                                    class="btn btn-primary"
+                                    id="logout-btn"
+                                    style="background: rgb(193, 2, 2)"
+                                >
+                                    Logout
+                                </button>
                             </div>
                         </div>
-                          <div class="account-avatar-column">
+                        <div class="account-avatar-column">
                             <div class="avatar-container">
                                 <div class="avatar-placeholder">
                                     <div class="avatar-content">
@@ -143,35 +209,81 @@
                                         <span>AVATAR</span>
                                     </div>
                                 </div>
-                                <button type="button" class="avatar-reset-btn" onclick="resetAvatar()" style="display: none;">
+                                <button
+                                    type="button"
+                                    class="avatar-reset-btn"
+                                    onclick="resetAvatar()"
+                                    style="display: none"
+                                >
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
-                            <label for="profile-image-upload" class="btn-upload">Upload Picture</label>
-                            <input type="file" id="profile-image-upload" accept="image/*" onchange="previewImage(event)" style="display: none;" />
-                            
-                            <a href="#" class="delete-account-link" onclick="confirmDelete()">
+                            <label for="profile-image-upload" class="btn-upload"
+                                >Upload Picture</label
+                            >
+                            <input
+                                type="file"
+                                id="profile-image-upload"
+                                accept="image/*"
+                                onchange="previewImage(event)"
+                                style="display: none"
+                            />
+
+                            <a
+                                href="#"
+                                id="del-acc"
+                                class="delete-account-link"
+                            >
                                 <i class="fas fa-trash-alt"></i> Delete Account
                             </a>
                         </div>
                     </div>
                 </div>
             </section>
-        </main>        <!-- Logout Confirmation Modal -->
+        </main>
+
+        <!-- DELETE ACCOUNT MODAL -->
+        <div class="del-acc-modal-container">
+            <div class="del-acc-modal-box">
+                <div class="del-acc-modal-content">
+                    <label for="del-acc-password"
+                        >Enter Current Password:
+                    </label>
+                    <input type="password" id="del-acc-password" value="" />
+                    <div class="btn-group">
+                        <button class="btn-cancel" id="del-acc-cancel">
+                            Cancel
+                        </button>
+                        <button class="btn-submit" id="del-acc-confirm">
+                            <span id="btn-text"> Confirm </span>
+                            <span id="btn-spinner" class="btn-spinner" style="display: none"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logout Confirmation Modal -->
         <div id="logout-modal" class="modal-overlay">
-          <div class="modal-container">
-            <div class="modal-icon">
-              <i class="fas fa-sign-out-alt"></i>
+            <div class="modal-container">
+                <div class="modal-icon">
+                    <i class="fas fa-sign-out-alt"></i>
+                </div>
+                <div class="modal-content">
+                    <h3 class="modal-title">Confirm Logout</h3>
+                    <p class="modal-message">
+                        Are you sure you want to log out of your account?
+                    </p>
+                    <div class="modal-actions">
+                        <button id="logout-no" class="btn btn-secondary">
+                            Cancel
+                        </button>
+                        <button id="logout-yes" class="btn btn-primary">
+                            Logout
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="modal-content">
-              <h3 class="modal-title">Confirm Logout</h3>
-              <p class="modal-message">Are you sure you want to log out of your account?</p>
-              <div class="modal-actions">
-                <button id="logout-no" class="btn btn-secondary">Cancel</button>
-                <button id="logout-yes" class="btn btn-primary">Logout</button>
-              </div>
-            </div>
-          </div>
         </div>
 
         <!--=============== SWIPER JS ===============-->
@@ -183,107 +295,10 @@
             src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
             crossorigin="anonymous"
-        ></script>        <!--=============== MAIN JS ===============-->
-        <script type="module" src="./assets/js/shop.js"></script>
-        <script type="module" src="./assets/js/accountsettings.js"></script>        <script type="module">
-            import { getAuth, onAuthStateChanged, signOut } from "./assets/js/sdk/chandrias-sdk.js";
+        ></script>
+        <!--=============== MAIN JS ===============-->
+        <script type="module" src="./assets/js/accountsettings.js"></script>
 
-            const auth = getAuth();
-            const logoutButton = document.getElementById('logout-btn');
-            const logoutModal = document.getElementById('logout-modal');
-            const confirmLogoutButton = document.getElementById('confirm-logout');
-            const cancelLogoutButton = document.getElementById('cancel-logout');
-
-            // Authentication state listener to ensure user is logged in
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    // User is logged in - sync localStorage and update UI
-                    localStorage.setItem('userEmail', user.email);
-                    
-                    // Update email field if it exists
-                    const emailField = document.getElementById('email');
-                    if (emailField) {
-                        emailField.value = user.email;
-                    }
-                } else {
-                    // User is not logged in - redirect to login
-                    window.location.href = "./user_authentication.html";
-                }
-            });            // Modal handling functions
-            function showLogoutModal() {
-                if (logoutModal) {
-                    logoutModal.style.display = 'flex';
-                    setTimeout(() => {
-                        logoutModal.classList.add('show');
-                    }, 10);
-                }
-            }
-            
-            function hideLogoutModal() {
-                if (logoutModal) {
-                    logoutModal.classList.remove('show');
-                    setTimeout(() => {
-                        logoutModal.style.display = 'none';
-                    }, 300);
-                }
-            }
-            
-            // Set up logout modal handlers
-            if (logoutButton) {
-                logoutButton.addEventListener('click', showLogoutModal);
-            }
-
-            if (document.getElementById('logout-yes')) {
-                document.getElementById('logout-yes').addEventListener('click', () => {
-                    // Create a loading notification
-                    const notyf = new Notyf({
-                        position: { x: 'center', y: 'top' },
-                        duration: 3000
-                    });
-                    notyf.success('Logging out...');
-                    
-                    signOut(auth).then(() => {
-                        window.location.href = "./user_authentication.html";
-                    }).catch((error) => {
-                        console.error("Error during logout:", error);
-                        notyf.error('Logout failed. Please try again.');
-                    });
-                });
-            }
-
-            if (document.getElementById('logout-no')) {
-                document.getElementById('logout-no').addEventListener('click', hideLogoutModal);
-            }
-            
-            // Close modal when clicking outside
-            if (logoutModal) {
-                logoutModal.addEventListener('click', (e) => {
-                    if (e.target === logoutModal) {
-                        hideLogoutModal();
-                    }
-                });
-            }
-            
-            // Close modal on escape key
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && logoutModal && logoutModal.style.display !== 'none') {
-                    hideLogoutModal();
-                }
-            });
-        </script>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // This script is now secondary to the Firebase auth state
-                // The onAuthStateChanged listener above will handle the email population
-                const userEmail = localStorage.getItem('userEmail');
-                const emailField = document.getElementById('email');
-
-                if (emailField && userEmail && !emailField.value) {
-                    // Only set from localStorage if not already set by Firebase auth
-                    emailField.value = userEmail;
-                }
-            });        </script>
         <!--=============== DYNAMIC BREADCRUMB JS ===============-->
         <script src="assets/js/dynamic-breadcrumb.js"></script>
     </body>

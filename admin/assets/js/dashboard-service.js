@@ -435,6 +435,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                     if (!productDoc.exists) return null;
                     const productData = productDoc.data();                    return {
+                        id: productDoc.id,
                         name: productData.name || productData.code || "Unknown",
                         code: productData.code || productData.name || "Unknown", // Add code field
                         image: productData.frontImageUrl || productData.imageUrl || "",
@@ -543,6 +544,8 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error showing appointment details:", error);
         }
     }    // Close modal handlers
+    
+    
     document.querySelector('.close-modal')?.addEventListener('click', () => {
         document.getElementById('appointment-modal').classList.remove('visible');
     });

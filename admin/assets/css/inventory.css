@@ -1183,6 +1183,7 @@ header .custom-image-text .custom-header-text {
     margin: 0;
 }
 
+/* --====== START OF SPINNER STYLES ======-- */
 .container-spinner {
   background-color: black;
   position: fixed;
@@ -1223,6 +1224,7 @@ header .custom-image-text .custom-header-text {
 .d-none {
   display: none;
 }
+/* --====== END OF SPINNER STYLES ======-- */ 
 
 /* With Inclusions Checkbox and Row Styles */
 #with-inclusions-checkbox {

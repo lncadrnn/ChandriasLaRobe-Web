@@ -8,6 +8,9 @@ import {
     getFirestore,
     collection,
     getDocs,
+    getDoc,
+    doc,
+    signOut,
     query,
     where
 } from "./sdk/chandrias-sdk.js";
@@ -25,12 +28,27 @@ $(document).ready(function () {
     let isLoggingIn = false;
 
     // Check if user is already signed in, if so, redirect to profile page
-    onAuthStateChanged(auth, user => {
+    onAuthStateChanged(auth, async user => {
         if (user && !isLoggingIn) {
             // Delay just a bit to allow UI elements to load before redirecting
             setTimeout(() => {
                 window.location.href = "/admin/dashboard.html"; // Redirect to profile page if already logged in
             }, 800);
+
+            // Check if user exists in adminAccounts
+            const userDocRef = doc(chandriaDB, "userAccounts", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (userDocSnap.exists()) {
+                // If user is admin, sign them out
+                await signOut(auth);
+                $("#login-loader").addClass("hidden");
+                return;
+            }
+        }
+
+        if (!user) {
+            $("#login-loader").addClass("hidden");
         }
     });
 
@@ -95,7 +113,7 @@ $(document).ready(function () {
                 loginBtn.attr("disabled", false).text("Login");
                 return;
             }
-            
+
             // Sign in with Firebase Authentication
             const userCredential = await signInWithEmailAndPassword(
                 auth,

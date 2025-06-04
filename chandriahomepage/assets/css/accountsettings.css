@@ -1,132 +1,137 @@
 /* Base styling */
 body {
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
     margin: 0;
     background-color: #ffffff;
     color: #333;
 }
 
 /*=============== HEADER & NAV ===============*/
-.header-top{
-  background-color: var(--first-color-alt);
-  padding-block: 0.88rem;
+.header-top {
+    background-color: var(--first-color-alt);
+    padding-block: 0.88rem;
 }
-.header-container{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
-.header-container span:first-child{
-  margin-right: 2rem;
+.header-container span:first-child {
+    margin-right: 2rem;
 }
-.header-contact span, .header-alert-news, .header-top-action{
-  font-size: var(--small-font-size);
+.header-contact span,
+.header-alert-news,
+.header-top-action {
+    font-size: var(--small-font-size);
 }
-.header-alert-news{
-  color: var(--text-color);
-  font-weight:var(--weight-600);
+.header-alert-news {
+    color: var(--text-color);
+    font-weight: var(--weight-600);
 }
-.header-top-action{
-  color: var(--text-color);
+.header-top-action {
+    color: var(--text-color);
 }
-.nav, .nav-menu, .nav-list, .header-user-actions{
-  display: flex;
-  align-items: center;
+.nav,
+.nav-menu,
+.nav-list,
+.header-user-actions {
+    display: flex;
+    align-items: center;
 }
-.nav{
-  height: calc(var(--header-height) + 2.5rem);
-  justify-content: space-between;
-  column-gap: 1rem;
+.nav {
+    height: calc(var(--header-height) + 2.5rem);
+    justify-content: space-between;
+    column-gap: 1rem;
 }
-.nav-logo-img{
-  width: 150px;
+.nav-logo-img {
+    width: 150px;
 }
 
-.nav-menu{
-  width: 100%;
-  margin-left: 2.5rem;
+.nav-menu {
+    width: 100%;
+    margin-left: 2.5rem;
 }
-.nav-list{
-  column-gap: 2.5rem;
-  margin-right: auto;
+.nav-list {
+    column-gap: 2.5rem;
+    margin-right: auto;
 }
-.nav-link{
-  color: var(--title-color);
-  font-weight: var(--weight-700); /* Ensure consistent bold weight */
-  transition: all 0.2s var(--transition);
-  font-size: var(--normal-font-size); /* Add consistent font size */
+.nav-link {
+    color: var(--title-color);
+    font-weight: var(--weight-700); /* Ensure consistent bold weight */
+    transition: all 0.2s var(--transition);
+    font-size: var(--normal-font-size); /* Add consistent font size */
 }
 
 #nav-login {
-  display: none;
+    display: none;
 }
 
-.header-search{
-  width: 340px;
-  position: relative;
+.header-search {
+    width: 340px;
+    position: relative;
 }
-.header-search .form-input{
-  width: 100%;
+.header-search .form-input {
+    width: 100%;
 }
-.search-btn{
-  position: absolute;
-  top: 24%;
-  right: 1.25rem;
-  cursor: pointer;
+.search-btn {
+    position: absolute;
+    top: 24%;
+    right: 1.25rem;
+    cursor: pointer;
 }
-.header-user-actions{
-  column-gap: 1.25rem;
+.header-user-actions {
+    column-gap: 1.25rem;
 }
-.header-action-btn{
-  position: relative;
+.header-action-btn {
+    position: relative;
 }
-.header-action-btn img{
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
-  filter: brightness(0);
+.header-action-btn img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    filter: brightness(0);
 }
-.header-action-btn .count{
-  position: absolute;
-  top: -0.625rem;
-  right: -0.625rem;
-  background-color: var(--first-color);
-  color: var(--body-color);
-  height: 18px;
-  width: 18px;
-  line-height: 18px;
-  border-radius: 50%;
-  text-align: center;
-  font-size: var(--tiny-font-size);
-
+.header-action-btn .count {
+    position: absolute;
+    top: -0.625rem;
+    right: -0.625rem;
+    background-color: var(--first-color);
+    color: var(--body-color);
+    height: 18px;
+    width: 18px;
+    line-height: 18px;
+    border-radius: 50%;
+    text-align: center;
+    font-size: var(--tiny-font-size);
 }
 /* Active link */
-.active-link, .nav-link:hover{
-  color: var(--first-color);
+.active-link,
+.nav-link:hover {
+    color: var(--first-color);
 }
 /*=============== BREADCRUMBS ===============*/
 .breadcrumb {
-  background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 50%, #e91e63 100%);
-  backdrop-filter: blur(20px);
-  border-bottom: 2px solid rgba(233, 30, 99, 0.2);
-  box-shadow: 0 4px 20px rgba(233, 30, 99, 0.15);
-  padding: 1.5rem 0;
-  position: relative;
-  overflow: hidden;
-  margin-bottom: 2rem;
+    background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 50%, #e91e63 100%);
+    backdrop-filter: blur(20px);
+    border-bottom: 2px solid rgba(233, 30, 99, 0.2);
+    box-shadow: 0 4px 20px rgba(233, 30, 99, 0.15);
+    padding: 1.5rem 0;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 2rem;
 }
-.breadcrumb-list{
-  column-gap: .75rem;
+.breadcrumb-list {
+    column-gap: 0.75rem;
 }
-.breadcrumb-link{
-  color: var(--text-color);
-  font-size: var(--small-font-size);
+.breadcrumb-link {
+    color: var(--text-color);
+    font-size: var(--small-font-size);
 }
 
 .account-settings-page {
     display: flex;
     justify-content: center;
-    padding:2rem 1rem;
+    padding: 2rem 1rem;
     background-color: #ffffff;
 }
 
@@ -310,7 +315,7 @@ input:focus {
 
 .btn-save:hover {
     background-color: hsl(346, 98%, 69%);
-    color:white;
+    color: white;
 }
 
 .delete-account-link {
@@ -416,114 +421,113 @@ input:focus {
 
 /* Modal Overlay */
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(3px);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
 }
 
 .modal-overlay.show {
-  display: flex;
-  opacity: 1;
-  animation: fadeIn 0.3s ease forwards;
+    display: flex;
+    opacity: 1;
 }
 
 .modal-container {
-  background: #fff;
-  border-radius: 16px;
-  max-width: 400px;
-  width: 90%;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  transform: translateY(20px);
-  opacity: 0;
-  transition: all 0.3s ease;
-  overflow: hidden;
-  animation: slideUp 0.4s 0.1s ease forwards;
+    background: #fff;
+    border-radius: 16px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    animation: slideUp 0.4s 0.1s ease forwards;
 }
 
 .modal-overlay.show .modal-container {
-  transform: translateY(0);
-  opacity: 1;
+    transform: translateY(0);
+    opacity: 1;
 }
 
 .modal-icon {
-  background: var(--primary-color-light, #ffc0cb);
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--primary-color, #ff9aaf);
+    background: var(--primary-color-light, #ffc0cb);
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color, #ff9aaf);
 }
 
 .modal-icon i {
-  font-size: 3rem;
-  animation: pulse 1s infinite alternate;
+    font-size: 3rem;
+    animation: pulse 1s infinite alternate;
 }
 
 .modal-content {
-  padding: 1.5rem;
-  text-align: center;
+    padding: 1.5rem;
+    text-align: center;
 }
 
 .modal-title {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #333;
 }
 
 .modal-message {
-  color: #666;
-  margin-bottom: 1.5rem;
-  line-height: 1.5;
+    color: #666;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
 }
 
 .modal-actions {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
 }
 
 .modal-actions .btn {
-  min-width: 100px;
-  padding: 0.75rem 1.5rem;
+    min-width: 100px;
+    padding: 0.75rem 1.5rem;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 @keyframes pulse {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.1);
-  }
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.1);
+    }
 }
 
 /*=============== CURSOR POINTER STYLES ===============*/
@@ -539,12 +543,12 @@ button,
 input[type="submit"],
 input[type="button"],
 input[type="file"] {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 /* All links with href */
 a[href] {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 /* Account settings specific interactive elements */
@@ -552,14 +556,14 @@ a[href] {
 .profile-picture-upload,
 .form-group label[for],
 .sidebar-nav a {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 /* Reset for disabled elements */
 button:disabled,
 .btn:disabled,
 input:disabled {
-  cursor: not-allowed !important;
+    cursor: not-allowed !important;
 }
 
 /* Responsive adjustments */
@@ -568,22 +572,211 @@ input:disabled {
         flex-direction: column-reverse;
         gap: 2rem;
     }
-    
+
     .account-form-column,
     .account-avatar-column {
         max-width: 100%;
     }
-    
+
     .form-actions {
         flex-direction: column;
     }
-    
+
     .btn {
         width: 100%;
     }
-    
+
     .delete-account-link {
         align-self: center;
         margin-top: 2rem;
     }
 }
+
+.disabled {
+  color: black;
+  pointer-events: none;
+  opacity: 0.75;
+  background-color: #F3F4F6;
+  border-color: lightgray;
+}
+
+/* --====== START OF LOADER STYLES ======-- */
+.spinner-loader-text {
+    margin-top: 20px;
+    color: hsl(230, 16%, 45%);
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.spinner-loader {
+    width: 60px;
+    height: 60px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid hsl(346, 100%, 74%);
+    border-radius: 50%;
+
+    animation: spin 1s ease infinite;
+    margin-top: 10px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#loader {
+    flex-direction: column;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: white;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+
+    opacity: 1;
+    pointer-events: auto;
+
+    transition: all ease-in-out 0.25s;
+}
+
+body.loaded #loader {
+    opacity: 0;
+    pointer-events: none;
+}
+/* --====== END OF LOADER STYLES ======-- */
+
+/* --====== START OF SPINNER STYLES ======-- */
+.container-spinner {
+  background-color: black;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10045;
+  opacity: 70%;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+  transition: 0.3s opacity ease-in-out;
+}
+
+.spinner-text {
+  color: white;
+  margin-top: 5px;
+}
+
+.spinner {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  border: 6px solid #ccc;
+  border-top-color: #1098F7;
+  border-radius: 50%;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.d-none {
+  opacity: 0;
+  pointer-events: none;
+}
+/* --====== END OF SPINNER STYLES ======-- */ 
+
+/* --====== START OF DELETE ACCOUNT MODAL STYLES ======-- */
+.del-acc-modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.5);
+  
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.del-acc-modal-box {
+  width: 300px;
+  height: 220px;
+  background-color: white;
+  border-radius: 30px 0 0 0;
+  box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.2);
+  padding:  2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.del-acc-modal-container.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.btn-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-cancel {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 2em;
+  background-color: lightgray;
+  font-weight: 500;
+}
+
+.btn-submit {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 2em;
+  font-weight: 500;
+  background: linear-gradient(135deg, var(--first-color), hsl(346, 98%, 74%));
+  color: white;
+}
+
+.btn-submit.disabled {
+  color: var(--body-color);
+  pointer-events: none;
+  opacity: 0.75;
+  background-color: lightgray;
+  border-color: lightgray;
+}
+
+.btn-spinner {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  border: 6px solid #ccc;
+  border-top-color: darkgray;
+  border-radius: 50%;
+  animation: spin 1s ease infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* --====== END OF DELETE ACCOUNT MODAL STYLES ======-- */

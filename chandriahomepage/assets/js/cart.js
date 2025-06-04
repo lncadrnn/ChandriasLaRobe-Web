@@ -2,6 +2,7 @@
 import {
     onAuthStateChanged,
     auth,
+    signOut,
     chandriaDB,
     getFirestore,
     collection,
@@ -27,78 +28,96 @@ $(document).ready(function () {
                     className: "notyf__icon--success",
                     tagName: "i"
                 }
-            }        ]
+            }
+        ]
+    });
+
+    onAuthStateChanged(auth, async user => {
+        if (user) {
+            // Check if user exists in adminAccounts
+            const adminDocRef = doc(chandriaDB, "adminAccounts", user.uid);
+            const adminDocSnap = await getDoc(adminDocRef);
+
+            if (adminDocSnap.exists()) {
+                // If user is admin, sign them out
+                await signOut(auth);
+                window.location.href = "../index.html";
+                return;
+            }
+        }
     });
 
     // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // AUTHENTICATION MODAL FUNCTIONS
     function showAuthModal() {
-        const authModal = document.getElementById('auth-modal');
+        const authModal = document.getElementById("auth-modal");
         if (authModal) {
-            authModal.classList.add('show');
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            authModal.classList.add("show");
+            document.body.style.overflow = "hidden"; // Prevent background scrolling
         }
     }
 
     function hideAuthModal() {
-        const authModal = document.getElementById('auth-modal');
+        const authModal = document.getElementById("auth-modal");
         if (authModal) {
-            authModal.classList.remove('show');
-            document.body.style.overflow = ''; // Restore scrolling
+            authModal.classList.remove("show");
+            document.body.style.overflow = ""; // Restore scrolling
         }
     }
 
     // Authentication modal event listeners
-    $(document).on('click', '#auth-modal-close, #auth-modal-cancel', function() {
-        hideAuthModal();
-    });
+    $(document).on(
+        "click",
+        "#auth-modal-close, #auth-modal-cancel",
+        function () {
+            hideAuthModal();
+        }
+    );
 
-    $(document).on('click', '#auth-modal-login', function() {
-        window.location.href = './user_authentication.html';
+    $(document).on("click", "#auth-modal-login", function () {
+        window.location.href = "./user_authentication.html";
     });
 
     // Close modal when clicking outside
-    $(document).on('click', '#auth-modal', function(e) {
+    $(document).on("click", "#auth-modal", function (e) {
         if (e.target === this) {
             hideAuthModal();
         }
     });
 
     // Close modal on escape key
-    $(document).on('keydown', function(e) {
-        if (e.key === 'Escape') {
+    $(document).on("keydown", function (e) {
+        if (e.key === "Escape") {
             hideAuthModal();
         }
-    });    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+    }); // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // LISTEN FOR AUTH STATE CHANGES
     onAuthStateChanged(auth, async user => {
-        // Show loader when starting to load data
-        showCartLoader();
-        
         if (!user) {
             // User not logged in, show authentication modal and hide cart content
-            hideCartLoader();
+            $("#cart-loader").addClass("hidden");
             showAuthModal();
-            $('.cart.section-lg.container').hide();
-            $('.cart-actions').hide();
+            $(".cart.section-lg.container").hide();
+            $(".cart-actions").hide();
             return;
         } else {
             // User is logged in, hide auth modal and show cart content
             hideAuthModal();
-            $('.cart.section-lg.container').show();
-            $('.cart-actions').show();
+            $(".cart.section-lg.container").show();
+            $(".cart-actions").show();
         }
-        
+
         try {
             await updateCartCount();
             await displayCartItems(user);
         } catch (error) {
-            console.error('Error loading cart data:', error);
+            console.error("Error loading cart data:", error);
         } finally {
             // Hide loader after data is loaded (success or error)
-            hideCartLoader();
+            $("#cart-loader").addClass("hidden");
         }
-    });    // DISPLAY CART ITEMS IN TABLE
+    }); // DISPLAY CART ITEMS IN TABLE
+
     async function displayCartItems() {
         const user = auth.currentUser;
         if (!user) return;
@@ -144,7 +163,9 @@ $(document).ready(function () {
             const row = `
                 <div class="cart-item-row">
                     <div class="cart-item-product">
-                        <img src="${product.frontImageUrl}" alt="" class="cart-item-image" />
+                        <img src="${
+                            product.frontImageUrl
+                        }" alt="" class="cart-item-image" />
                         <div class="cart-item-details">
                             <h3>${product.name}</h3>
                             <p>${product.description}</p>
@@ -156,12 +177,16 @@ $(document).ready(function () {
                     <div class="cart-item-quantity">
                         <input type="number" class="quantity"
                                value="${quantity}" min="1" max="${stock}"
-                               data-id="${item.productId}" data-size="${item.size}"
+                               data-id="${item.productId}" data-size="${
+                                   item.size
+                               }"
                                data-price="${price}" />
                     </div>
                     <div class="cart-item-total">₱${total.toLocaleString()}</div>
                     <div class="cart-item-actions">
-                        <button class="delete-btn" data-id="${item.productId}" data-size="${item.size}">
+                        <button class="delete-btn" data-id="${
+                            item.productId
+                        }" data-size="${item.size}">
                             <i class="fi fi-rs-trash table-trash"></i>
                         </button>
                     </div>
@@ -193,7 +218,8 @@ $(document).ready(function () {
         } else {
             $("#btn-checkout").removeClass("disabled");
         }
-    }    $(document).on("input", ".quantity", function () {
+    }
+    $(document).on("input", ".quantity", function () {
         const input = $(this);
         let val = input.val();
 
@@ -226,19 +252,22 @@ $(document).ready(function () {
         updateItemTotal(input, total);
         updateGrandTotal();
         updateCheckoutButtonState();
-    });    function updateItemTotal(input, total) {
+    });
+    function updateItemTotal(input, total) {
         // Find the item container
         const itemContainer = input.closest(".cart-item-row");
-        
+
         // Update the total display
-        itemContainer.find(".cart-item-total").text(`₱${total.toLocaleString()}`);
+        itemContainer
+            .find(".cart-item-total")
+            .text(`₱${total.toLocaleString()}`);
     }
 
     function updateGrandTotal() {
         let grandTotal = 0;
         let totalItems = 0;
-        
-        $(".quantity").each(function() {
+
+        $(".quantity").each(function () {
             const quantity = parseInt($(this).val(), 10) || 0;
             const price = parseFloat($(this).data("price")) || 0;
             grandTotal += quantity * price;
@@ -248,26 +277,6 @@ $(document).ready(function () {
         $("#cart-grand-total").text(`₱${grandTotal.toLocaleString()}`);
         $("#cart-total-items").text(totalItems);
     }
-
-    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
-    // CART LOADER FUNCTIONS
-    function showCartLoader() {
-        const cartLoader = document.getElementById('cart-loader');
-        if (cartLoader) {
-            cartLoader.classList.remove('hidden');
-            cartLoader.style.display = 'flex';
-        }
-    }
-
-    function hideCartLoader() {
-        const cartLoader = document.getElementById('cart-loader');
-        if (cartLoader) {
-            cartLoader.classList.add('hidden');
-            cartLoader.style.display = 'none';
-        }
-    }
-
-
 
     // VALIDATE QUANTITY INPUT PER PRODUCT, REPLACE SPECIAL CHARACTERS
     // UPDATE TOTAL PRICE ON QUANTITY CHANGE
@@ -286,7 +295,8 @@ $(document).ready(function () {
         } else {
             $("#btn-checkout").removeClass("disabled");
         }
-    }    $(document).on("input", ".quantity", function () {
+    }
+    $(document).on("input", ".quantity", function () {
         const input = $(this);
         let val = input.val();
 
@@ -319,19 +329,22 @@ $(document).ready(function () {
         updateItemTotal(input, total);
         updateGrandTotal();
         updateCheckoutButtonState();
-    });    function updateItemTotal(input, total) {
+    });
+    function updateItemTotal(input, total) {
         // Find the item container
         const itemContainer = input.closest(".cart-item-row");
-        
+
         // Update the total display
-        itemContainer.find(".cart-item-total").text(`₱${total.toLocaleString()}`);
+        itemContainer
+            .find(".cart-item-total")
+            .text(`₱${total.toLocaleString()}`);
     }
 
     function updateGrandTotal() {
         let grandTotal = 0;
         let totalItems = 0;
-        
-        $(".quantity").each(function() {
+
+        $(".quantity").each(function () {
             const quantity = parseInt($(this).val(), 10) || 0;
             const price = parseFloat($(this).data("price")) || 0;
             grandTotal += quantity * price;
@@ -344,48 +357,61 @@ $(document).ready(function () {
 
     // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // CHECKOUT FUNCTION
-$("#btn-checkout").on("click", async function () {
-  const user = auth.currentUser;
-  if (!user) {
-    window.location.href = "./user_authentication.html";
-    return;
-  }
+    $("#btn-checkout").on("click", async function () {
+        const btnCheckOut = $(this);
+        const btnText = btnCheckOut.find("#btn-text");
+        const btnSpinner = btnCheckOut.find(".spinner");
 
-  const userRef = doc(chandriaDB, "userAccounts", user.uid);
+        const user = auth.currentUser;
+        if (!user) {
+            window.location.href = "./user_authentication.html";
+            return;
+        }
 
-  try {
-    const snap = await getDoc(userRef);
-    if (!snap.exists()) return alert("User not found.");
+        const userRef = doc(chandriaDB, "userAccounts", user.uid);
 
-    const currentCart = snap.data().added_to_cart || [];
+        try {
+            // DISABLING BUTTON
+            btnCheckOut.addClass("disabled");
+            btnText.hide();
+            btnSpinner.show();
 
-    $(".quantity").each(function () {
-      const input = $(this);
-      const productId = input.data("id");
-      const size = input.data("size");
-      const quantity = parseInt(input.val(), 10);
+            const snap = await getDoc(userRef);
+            if (!snap.exists()) return alert("User not found.");
 
-      const itemIndex = currentCart.findIndex(
-        item => item.productId === productId && item.size === size
-      );
+            const currentCart = snap.data().added_to_cart || [];
 
-      if (itemIndex !== -1) {
-        currentCart[itemIndex].quantity = quantity;
-      }
-    });
+            $(".quantity").each(function () {
+                const input = $(this);
+                const productId = input.data("id");
+                const size = input.data("size");
+                const quantity = parseInt(input.val(), 10);
 
-    await updateDoc(userRef, { added_to_cart: currentCart });
+                const itemIndex = currentCart.findIndex(
+                    item => item.productId === productId && item.size === size
+                );
 
-    // Redirect after successful update
-    window.location.href = "./checkout.html";
+                if (itemIndex !== -1) {
+                    currentCart[itemIndex].quantity = quantity;
+                }
+            });
 
-  } catch (error) {
-    console.error("Checkout update failed:", error);
-    alert("Failed to update cart.");
-  }
-});    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#    // DELETE CART ITEM FUNCTION
+            await updateDoc(userRef, { added_to_cart: currentCart });
+
+            // Redirect after successful update
+            window.location.href = "./checkout.html";
+        } catch (error) {
+            console.error("Checkout update failed:", error);
+            alert("Failed to update cart.");
+
+            // RE-ENABLING BUTTON IF FAILED
+            btnCheckOut.removeClass("disabled");
+            btnText.show();
+            btnSpinner.hide();
+        }
+    }); // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#    // DELETE CART ITEM FUNCTION
     let itemToRemove = null;
-    
+
     // Show modal with animation
     function showRemoveModal() {
         const modal = $("#remove-modal");
@@ -394,7 +420,7 @@ $("#btn-checkout").on("click", async function () {
             modal.addClass("show");
         }, 10); // Small delay to ensure display:flex is applied first
     }
-    
+
     // Hide modal with animation
     function hideRemoveModal() {
         const modal = $("#remove-modal");
@@ -403,14 +429,14 @@ $("#btn-checkout").on("click", async function () {
             modal.css("display", "none");
         }, 300); // Match the CSS transition duration
     }
-    
+
     $(document).on("click", ".delete-btn", function () {
         const productId = $(this).data("id");
         const size = $(this).data("size");
-        
+
         // Store the item details for removal
         itemToRemove = { productId, size, element: $(this) };
-        
+
         // Show confirmation modal with animation
         showRemoveModal();
     });
@@ -435,17 +461,17 @@ $("#btn-checkout").on("click", async function () {
             const updatedCart = currentCart.filter(item => {
                 return !(item.productId === productId && item.size === size);
             });
-            
+
             // Update Firestore with the new cart
             await updateDoc(userRef, {
                 added_to_cart: updatedCart
             });
-            
+
             // Remove the item from the display with fade-out animation
             const itemContainer = element.closest(".cart-item-row");
-            itemContainer.fadeOut(0, function() {
+            itemContainer.fadeOut(0, function () {
                 $(this).remove();
-                
+
                 // Check if cart is now empty
                 if (updatedCart.length === 0) {
                     $("#empty-cart").fadeIn(0);
@@ -464,7 +490,6 @@ $("#btn-checkout").on("click", async function () {
             // Hide modal and clear stored item
             hideRemoveModal();
             itemToRemove = null;
-
         } catch (error) {
             console.error("Error deleting cart item: ", error);
             notyf.error("Failed to remove item");
@@ -478,18 +503,18 @@ $("#btn-checkout").on("click", async function () {
         hideRemoveModal();
         itemToRemove = null;
     });
-    
+
     // Close modal when clicking outside
-    $(document).on('click', '#remove-modal', function(e) {
+    $(document).on("click", "#remove-modal", function (e) {
         if (e.target === this) {
             hideRemoveModal();
             itemToRemove = null;
         }
     });
-    
+
     // Close modal on escape key
-    $(document).on('keydown', function(e) {
-        if (e.key === 'Escape' && $("#remove-modal").is(":visible")) {
+    $(document).on("keydown", function (e) {
+        if (e.key === "Escape" && $("#remove-modal").is(":visible")) {
             hideRemoveModal();
             itemToRemove = null;
         }
@@ -514,7 +539,10 @@ $("#btn-checkout").on("click", async function () {
                 const data = userSnap.data();
                 const cartItems = data.added_to_cart || [];
                 // Calculate total quantity instead of number of items, ensuring quantity is an integer
-                const totalCount = cartItems.reduce((sum, item) => sum + (parseInt(item.quantity, 10) || 0), 0);
+                const totalCount = cartItems.reduce(
+                    (sum, item) => sum + (parseInt(item.quantity, 10) || 0),
+                    0
+                );
 
                 // Update the cart count in the header
                 $("#cart-count").text(totalCount);

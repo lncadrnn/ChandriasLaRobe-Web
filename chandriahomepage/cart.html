@@ -15,15 +15,17 @@
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
         />
-        
+
         <!-- NOTYF CDN -->
         <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css"
         />
-          <!--=============== CSS ===============-->
+        <!--=============== CSS ===============-->
         <link rel="stylesheet" href="assets/css/styles.css" />
         <link rel="stylesheet" href="assets/css/shop.css" />
+
+        <link rel="stylesheet" href="./assets/css/cart.css" />
 
         <title>Chandria's La Robe</title>
     </head>
@@ -95,11 +97,16 @@
                 <ul class="breadcrumb-list flex container">
                     <!-- Dynamic breadcrumb will be generated here -->
                 </ul>
-            </section>            <!--=============== CART ===============-->            <section class="cart section-lg container">
+            </section>
+            <!--=============== CART ===============-->
+            <section class="cart section-lg container">
                 <div id="cart-content">
                     <div class="cart-header">
                         <h2 class="cart-title">Products to Fit</h2>
-                        <p class="cart-subtitle">Review your selected items before booking for appointment</p>
+                        <p class="cart-subtitle">
+                            Review your selected items before booking for
+                            appointment
+                        </p>
                     </div>
                     <!-- Cart Table -->
                     <div class="cart-table">
@@ -118,13 +125,23 @@
                     </div>
 
                     <!-- Empty Cart State -->
-                    <div class="empty-cart" id="empty-cart" style="display: none;">
+                    <div
+                        class="empty-cart"
+                        id="empty-cart"
+                        style="display: none"
+                    >
                         <div class="empty-cart-icon">
                             <i class="fi fi-rs-shopping-cart"></i>
                         </div>
                         <h3 class="empty-cart-title">Your cart is empty</h3>
-                        <p class="empty-cart-text">Looks like you haven't added any items to your cart yet.</p>
-                        <a href="shop.html" class="btn btn-primary empty-cart-btn">
+                        <p class="empty-cart-text">
+                            Looks like you haven't added any items to your cart
+                            yet.
+                        </p>
+                        <a
+                            href="shop.html"
+                            class="btn btn-primary empty-cart-btn"
+                        >
                             <i class="fi fi-rs-shopping-bag"></i>
                             Continue Shopping
                         </a>
@@ -134,58 +151,97 @@
                     <div class="cart-actions">
                         <div class="cart-summary">
                             <div class="cart-summary-row">
-                                <span class="cart-summary-label">Total Items:</span>
-                                <span class="cart-summary-value" id="cart-total-items">0</span>
+                                <span class="cart-summary-label"
+                                    >Total Items:</span
+                                >
+                                <span
+                                    class="cart-summary-value"
+                                    id="cart-total-items"
+                                    >0</span
+                                >
                             </div>
                             <div class="cart-summary-row cart-summary-total">
-                                <span class="cart-summary-label">Grand Total:</span>
-                                <span class="cart-summary-value" id="cart-grand-total">₱0</span>
+                                <span class="cart-summary-label"
+                                    >Grand Total:</span
+                                >
+                                <span
+                                    class="cart-summary-value"
+                                    id="cart-grand-total"
+                                    >₱0</span
+                                >
                             </div>
                         </div>
                         <div class="cart-action-buttons">
                             <a href="shop.html" class="btn btn-secondary">
                                 <i class="fi fi-rs-arrow-left"></i>
                                 Continue Shopping
-                            </a>                            <button class="btn btn-primary" id="btn-checkout">
-                                <i class="fi fi-rs-shopping-bag"></i> 
-                                Book for Appointment
+                            </a>
+                            <button class="btn btn-primary" id="btn-checkout">
+                                <span id="btn-text">
+                                    <i class="fi fi-rs-shopping-bag"></i>
+                                    Book for Appointment
+                                </span>
+                                <span
+                                    class="spinner"
+                                    style="display: none"
+                                ></span>
                             </button>
                         </div>
                     </div>
                 </div>
             </section>
-        </main>        <!-- Remove Item Confirmation Modal -->
+        </main>
+        <!-- Remove Item Confirmation Modal -->
         <div id="remove-modal" class="modal-overlay">
-          <div class="modal-container">
-            <div class="modal-icon">
-              <i class="fi fi-rs-trash"></i>
+            <div class="modal-container">
+                <div class="modal-icon">
+                    <i class="fi fi-rs-trash"></i>
+                </div>
+                <div class="modal-content">
+                    <h3 class="modal-title">Remove Item</h3>
+                    <p class="modal-message">
+                        Are you sure you want to remove this item from your
+                        cart?
+                    </p>
+                    <div class="modal-actions">
+                        <button id="remove-no" class="btn btn-secondary">
+                            Cancel
+                        </button>
+                        <button id="remove-yes" class="btn btn-primary">
+                            Remove Item
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="modal-content">
-              <h3 class="modal-title">Remove Item</h3>
-              <p class="modal-message">Are you sure you want to remove this item from your cart?</p>
-              <div class="modal-actions">
-                <button id="remove-no" class="btn btn-secondary">Cancel</button>
-                <button id="remove-yes" class="btn btn-primary">Remove Item</button>
-              </div>
-            </div>
-          </div>
         </div>
 
         <!--=============== AUTHENTICATION MODAL ===============-->
         <div id="auth-modal" class="auth-modal-overlay">
             <div class="auth-modal">
-                <button class="auth-modal-close" id="auth-modal-close">&times;</button>
+                <button class="auth-modal-close" id="auth-modal-close">
+                    &times;
+                </button>
                 <div class="auth-modal-content">
                     <div class="auth-modal-header">
                         <i class="fi fi-rs-user auth-modal-icon"></i>
-                        <h2 class="auth-modal-title">Authentication Required</h2>
-                        <p class="auth-modal-subtitle">You need to log in first to access your cart.</p>
+                        <h2 class="auth-modal-title">
+                            Authentication Required
+                        </h2>
+                        <p class="auth-modal-subtitle">
+                            You need to log in first to access your cart.
+                        </p>
                     </div>
                     <div class="auth-modal-actions">
-                        <button id="auth-modal-login" class="auth-btn auth-btn-primary">
+                        <button
+                            id="auth-modal-login"
+                            class="auth-btn auth-btn-primary"
+                        >
                             <span>Continue to Login / Signup</span>
                         </button>
-                        <button id="auth-modal-cancel" class="auth-btn auth-btn-tertiary">
+                        <button
+                            id="auth-modal-cancel"
+                            class="auth-btn auth-btn-tertiary"
+                        >
                             <span>Maybe Later</span>
                         </button>
                     </div>
@@ -209,17 +265,19 @@
 
         <!--=============== SWIPER JS ===============-->
         <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-        
+
         <!-- NOTYF CDN -->
         <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+        
         <!-- JQUERY CDN -->
         <script
             src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
             crossorigin="anonymous"
-        ></script>        <!--=============== EXTERNAL JS ===============-->
+        ></script>
+        <!--=============== EXTERNAL JS ===============-->
         <script type="module" src="./assets/js/cart.js"></script>
-    <!--=============== DYNAMIC BREADCRUMB JS ===============-->
-    <script src="assets/js/dynamic-breadcrumb.js"></script>
-   </body>
+        <!--=============== DYNAMIC BREADCRUMB JS ===============-->
+        <script src="assets/js/dynamic-breadcrumb.js"></script>
+    </body>
 </html>

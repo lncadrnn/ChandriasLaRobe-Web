@@ -1,5 +1,8 @@
 //INVENTORY JS
 import {
+    onAuthStateChanged,
+    auth,
+    signOut,
     chandriaDB,
     collection,
     addDoc,
@@ -15,18 +18,18 @@ import {
 // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
 // INVENTORY LOADER FUNCTIONS
 function showInventoryLoader() {
-    const inventoryLoader = document.getElementById('inventory-loader');
+    const inventoryLoader = document.getElementById("inventory-loader");
     if (inventoryLoader) {
-        inventoryLoader.classList.remove('hidden');
-        inventoryLoader.style.display = 'flex';
+        inventoryLoader.classList.remove("hidden");
+        inventoryLoader.style.display = "flex";
     }
 }
 
 function hideInventoryLoader() {
-    const inventoryLoader = document.getElementById('inventory-loader');
+    const inventoryLoader = document.getElementById("inventory-loader");
     if (inventoryLoader) {
-        inventoryLoader.classList.add('hidden');
-        inventoryLoader.style.display = 'none';
+        inventoryLoader.classList.add("hidden");
+        inventoryLoader.style.display = "none";
     }
 }
 
@@ -37,6 +40,25 @@ $(document).ready(function () {
         position: {
             x: "center",
             y: "top"
+        }
+    });
+    // Check if user is already signed in, if so, redirect to HOME PAGE
+    onAuthStateChanged(auth, async user => {
+        if (user) {
+            // Check if user exists in userAccounts
+            const userDocRef = doc(chandriaDB, "userAccounts", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (userDocSnap.exists()) {
+                // If user is customer, sign them out
+                await signOut(auth);
+                window.location.href = "../index.html";
+                return;
+            }
+        }
+
+        if (!user) {
+            window.location.href = "./authentication.html";
         }
     });
 
@@ -162,7 +184,8 @@ $(document).ready(function () {
             container.append(
                 '<div style="color:red;margin:2rem;">Failed to load products. Check your connection or Firebase rules.</div>'
             );
-            $("body").addClass("loaded");        }
+            $("body").addClass("loaded");
+        }
     }
 
     // Initialize all inventory data with loader
@@ -176,7 +199,7 @@ $(document).ready(function () {
             hideInventoryLoader();
         }
     }
-    
+
     initializeAllInventoryData();
 
     // RGB TO HEX FUNCTION
@@ -1012,7 +1035,8 @@ $(document).ready(function () {
             console.error("Error loading additional products:", err);
             $("#additional-container").append(
                 '<div style="color:red;margin:2rem;">Failed to load additional products.</div>'
-            );        }
+            );
+        }
     }
 
     // GENERATE ADDITIONAL PRODUCT CODE

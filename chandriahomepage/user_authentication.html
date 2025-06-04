@@ -25,6 +25,15 @@
     </head>
 
     <body>
+        <!-- Full Screen Loader -->
+        <div id="login-loader" class="login-loader">
+            <div class="login-loader-content">
+                <div class="login-spinner"></div>
+                <p class="login-loader-text">Checking User Status</p>
+            </div>
+        </div>
+        
+        
         <!-- BACK BUTTON (moved outside .container for global positioning) -->
         <button id="back-btn" class="back-btn" type="button">
             <i class="bx bx-arrow-back"></i> Back
@@ -68,7 +77,11 @@
                     <div class="forgot-link">
                         <a href="#" id="forgot-link"> Forgot Password? </a>
                     </div>
-                    <button type="submit" class="btn btn-primary" id="login-btn">
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        id="login-btn"
+                    >
                         Login
                     </button>
                 </form>
@@ -90,7 +103,11 @@
                     <div class="forgot-link">
                         <a href="#" id="back-to-login"> Back to Login </a>
                     </div>
-                    <button type="submit" class="btn-basic" id="submit-forgot-btn">
+                    <button
+                        type="submit"
+                        class="btn-basic"
+                        id="submit-forgot-btn"
+                    >
                         Submit
                     </button>
                 </form>
@@ -112,7 +129,7 @@
                         />
                         <i class="bx bxs-user"></i>
                     </div>
-                    
+
                     <div class="input-box">
                         <input
                             type="text"
@@ -122,7 +139,7 @@
                         />
                         <i class="bx bxs-user"></i>
                     </div>
-                    
+
                     <div class="input-box">
                         <input
                             type="email"
@@ -132,7 +149,7 @@
                         />
                         <i class="bx bxs-envelope"></i>
                     </div>
-                    
+
                     <div class="input-box">
                         <input
                             type="number"
@@ -142,7 +159,7 @@
                         />
                         <i class="bx bxs-contact"></i>
                     </div>
-                    
+
                     <div class="input-box">
                         <input
                             type="password"
@@ -182,7 +199,13 @@
                             "
                         ></i>
                     </div>
-                    <button type="submit" class="btn btn-primary" id="signUp-btn">Register</button>
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        id="signUp-btn"
+                    >
+                        Register
+                    </button>
                 </form>
             </div>
             <div class="toggle-box">
@@ -208,11 +231,13 @@
             src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
             crossorigin="anonymous"
-        ></script>        <!-- EXTERNAL SCRIPT -->
-        <script type="module" src="./assets/js/user_authentication.js"></script>        <script>
-          document.getElementById('back-btn').onclick = function() {
-            window.location.href = '../index.html'; // Always go to index.html
-          };
+        ></script>
+        <!-- EXTERNAL SCRIPT -->
+        <script type="module" src="./assets/js/user_authentication.js"></script>
+        <script>
+            document.getElementById("back-btn").onclick = function () {
+                window.location.href = "../index.html"; // Always go to index.html
+            };
         </script>
     </body>
 </html>

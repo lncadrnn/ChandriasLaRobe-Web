@@ -8,6 +8,7 @@ import {
     chandriaDB,
     collection,
     getDocs,
+    getDoc,
     getAuth,
     signOut,
     createUserWithEmailAndPassword,
@@ -32,14 +33,30 @@ $(document).ready(function () {
     // FLAG TO PREVENT IMMEDIATE REDIRECT AFTER LOGIN
     let isLoggingIn = false;
 
-    // Check if user is already signed in, if so, redirect to profile page
-    onAuthStateChanged(auth, user => {
+    // Check if user is already signed in, if so, redirect to HOME PAGE
+    onAuthStateChanged(auth, async user => {
         if (user && !isLoggingIn) {
             // Delay just a bit to allow UI elements to load before redirecting
             setTimeout(() => {
-                window.location.href = "../../../index.html"; // Redirect to profile page if already logged in
+                window.location.href = "../index.html"; // Redirect to profile page if already logged in
             }, 800);
+
+            // Check if user exists in adminAccounts
+            const adminDocRef = doc(chandriaDB, "adminAccounts", user.uid);
+            const adminDocSnap = await getDoc(adminDocRef);
+
+            if (adminDocSnap.exists()) {
+                // If user is admin, sign them out
+                await signOut(auth);
+                $("#login-loader").addClass("hidden");
+                return;
+            }
         }
+
+        if (!user) {
+            $("#login-loader").addClass("hidden");
+        }
+        
     });
 
     // ERROR MESSAGES FORMAT
@@ -126,7 +143,7 @@ $(document).ready(function () {
 
                 loginBtn.attr("disabled", false).text("Login");
                 return;
-            }            // SHOW NOTYF
+            } // SHOW NOTYF
             notyf.open({
                 type: "success",
                 message: "Successful Login, Redirecting...",
@@ -134,7 +151,7 @@ $(document).ready(function () {
             });
 
             // Store user email in localStorage for consistent auth state
-            localStorage.setItem('userEmail', user.email);
+            localStorage.setItem("userEmail", user.email);
 
             // Delay redirect to allow toast to show
             setTimeout(() => {
@@ -236,20 +253,18 @@ $(document).ready(function () {
     // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // DOM VARIABLES
     const $fullname = $("#signup-fullname"),
-          $username = $("#signup-username"),
-          $email = $("#signup-email"),
-          $contact = $("#signup-contact"),
-          $password = $("#signup-password"),
-          $passwordConfirm = $("#confirm-password");
+        $username = $("#signup-username"),
+        $email = $("#signup-email"),
+        $contact = $("#signup-contact"),
+        $password = $("#signup-password"),
+        $passwordConfirm = $("#confirm-password");
     const signUpBtn = $("#signUp-btn");
     // SIGN-UP BUTTON FUNCTION
     signUpBtn.on("click", async function (e) {
         e.preventDefault();
-
-        // Set logging in flag to true so we don’t auto-redirect before toast
         isLoggingIn = true;
 
-        // VARIABLES
+        // Variables
         const fullname = $fullname.val();
         const username = $username.val().trim();
         const email = $email.val().trim();
@@ -257,67 +272,60 @@ $(document).ready(function () {
         const password = $password.val().trim();
         const passwordConfirm = $passwordConfirm.val().trim();
 
-        // DISABLING SIGN-UP BUTTON WHEN SIGNING-UP
         signUpBtn.attr("disabled", true).text("Signing Up...");
 
-        if (!fullname || !username || !email || !contact || !password || !passwordConfirm) {
+        // --- VALIDATIONS ---
+        if (
+            !fullname ||
+            !username ||
+            !email ||
+            !contact ||
+            !password ||
+            !passwordConfirm
+        ) {
             notyf.error("Please fill in all fields.");
-            signUpBtn.attr("disabled", false).text("Sign Up");
-            return;
+            return enableButton();
         }
-        
-        // FULLNAME VALIDATION
+
         const fullnamePattern = /^([A-Z][a-z]+)( [A-Z][a-z]+)+$/;
         if (!fullnamePattern.test(fullname)) {
-           notyf.open({
-                    type: "error",
-                    message: "Full name must be at least two words, only letters, and each starting with a capital letter.",
-                    duration: 5000
-                });
-            signUpBtn.attr("disabled", false).text("Sign Up");
-            return;
+            notyf.error(
+                "Full name must be at least two words, only letters, and each starting with a capital letter."
+            );
+            return enableButton();
         }
-        
-        // CONTACT NUMBER VALIDATION
+
         const contactPattern = /^09\d{9}$/;
         if (!contactPattern.test(contact)) {
-            notyf.error("Contact number must start with '09' and be exactly 11 digits.");
-            signUpBtn.attr("disabled", false).text("Sign Up");
-            return;
+            notyf.error(
+                "Contact number must start with '09' and be exactly 11 digits."
+            );
+            return enableButton();
         }
 
-        // CONFIRM PASSWORD VALIDATION
         if (password !== passwordConfirm) {
             notyf.error("Passwords do not match.");
-
-            // ENABLING SIGN-UP BUTTON WHEN WRONG CONFIRM PASSWORD
-            signUpBtn.attr("disabled", false).text("Sign Up");
-            return;
+            return enableButton();
         }
 
-        // PASSWORD VALIDATION
         try {
+            // PASSWORD STRENGTH VALIDATION
             const status = await validatePassword(auth, password);
             if (!status.isValid) {
-                let errorMsg = `<strong>Password doesn't meet the following requirements:</strong><ul style="padding-left: 20px; margin: 0;">`;
-
                 const minLength =
                     status.passwordPolicy.customStrengthOptions
                         .minPasswordLength;
-
-                if (status.containsLowercaseLetter === false)
-                    errorMsg += "<li>At least one lowercase letter</li>";
-                if (status.containsUppercaseLetter === false)
-                    errorMsg += "<li>At least one uppercase letter</li>";
-                if (status.containsNumericCharacter === false)
-                    errorMsg += "<li>At least one number</li>";
-                if (status.containsNonAlphanumericCharacter === false)
-                    errorMsg += "<li>At least one special character</li>";
+                let errorMsg = `<strong>Password doesn't meet requirements:</strong><ul>`;
+                if (!status.containsLowercaseLetter)
+                    errorMsg += "<li>Lowercase letter</li>";
+                if (!status.containsUppercaseLetter)
+                    errorMsg += "<li>Uppercase letter</li>";
+                if (!status.containsNumericCharacter)
+                    errorMsg += "<li>Number</li>";
+                if (!status.containsNonAlphanumericCharacter)
+                    errorMsg += "<li>Special character</li>";
                 if (minLength && password.length < minLength)
-                    errorMsg += `<li>Minimum length: ${minLength} characters</li>`;
-
-                console.log(`Minimum length required: ${minLength}`);
-
+                    errorMsg += `<li>At least ${minLength} characters</li>`;
                 errorMsg += "</ul>";
 
                 notyf.open({
@@ -325,95 +333,64 @@ $(document).ready(function () {
                     message: errorMsg,
                     duration: 5000
                 });
-
-                // ENABLING SIGN-UP BUTTON WHEN WRONG VALIDATION
-                signUpBtn.attr("disabled", false).text("Sign Up");
-                return;
+                return enableButton();
             }
 
-            // CHECK IF USERNAME ALREADY EXISTS
+            // CHECK IF USERNAME EXISTS
             const usernameQuery = await getDocs(
                 query(
                     collection(chandriaDB, "userAccounts"),
                     where("username", "==", username)
                 )
             );
-
-            // IF USERNAME EXISTS, SHOW ERROR AND RETURN
             if (!usernameQuery.empty) {
-                notyf.open({
-                    type: "error",
-                    message:
-                        "Username is already taken. Please choose another one.",
-                    duration: 5000
-                });
-
-                // ENABLING SIGN-UP BUTTON WHEN USERNAME IS TAKEN
-                signUpBtn.attr("disabled", false).text("Sign Up");
-                return;
+                notyf.error(
+                    "Username is already taken. Please choose another."
+                );
+                return enableButton();
             }
 
-            // REGISTERING IF SUCCESS
+            // FIREBASE AUTH SIGN-UP
             const userCredential = await createUserWithEmailAndPassword(
                 auth,
                 email,
                 password
             );
-
-            // SIGN OUT user so they must log in manually
-            await getAuth().signOut();
-
-            // SEND VERIFICATION EMAIL
+            await getAuth().signOut(); // Sign out immediately after registration
             await sendEmailVerification(userCredential.user);
-            
-            // UPDATE FIREBASE USER PROFILE WITH FULL NAME
-              await updateProfile(userCredential.user, {
-                  displayName: fullname
-              });
-              
-              // SAVE ADDITIONAL USER INFO TO FIRESTORE
-              await setDoc(
-                  doc(chandriaDB, "userAccounts", userCredential.user.uid),
-                  {
-                      fullname: fullname,
-                      contact: contact,
-                      username: username,
-                      email: email,
-                      createdAt: new Date()
-                  }
-              );
+            await updateProfile(userCredential.user, { displayName: fullname });
 
-            // MESSAGE IF SUCCESS
-            notyf.open({
-                type: "success",
-                message:
-                    "Successfully Signed-Up! Now Check Email for Verification!",
-                duration: 5000
-            });
+            // FORM DATA
+            const userData = {
+                fullname,
+                contact,
+                username,
+                email,
+                createdAt: new Date()
+            };
 
-            // CLEARING FORM INPUTS
+            // SAVE USER INFO TO FIRESTORE
+            await setDoc(
+                doc(chandriaDB, "userAccounts", userCredential.user.uid),
+                userData
+            );
+
+            // SUCCESS MESSAGE
+            notyf.success(
+                "Successfully Signed-Up! Check your email for verification."
+            );
             $("#form-signup")[0].reset();
-
-            // ERROR IF FAILED
         } catch (error) {
-            console.error(error.code, error.message);
+            console.error("Sign-up error:", error.code, error.message);
 
-            // Format user-friendly error message
             const errorMsg = formatErrorMessage(error.code);
-            // If formatErrorMessage returns a message, show it
-            if (errorMsg) {
-                notyf.open({
-                    type: "error",
-                    message: errorMsg,
-                    duration: 5000
-                });
-            } else {
-                // Fallback for unknown errors
-                notyf.error("Login failed. Please try again.");
-            }
+            notyf.error(errorMsg || "Sign-up failed. Please try again.");
         } finally {
-        // ENABLING SIGN-UP BUTTON AFTER SUCCESS REGISTERING
-        signUpBtn.attr("disabled", false).text("Sign Up");
+            enableButton();
+        }
+
+        function enableButton() {
+            signUpBtn.attr("disabled", false).text("Sign Up");
         }
     });
     // ----- END OF SIGNUP FUNCTION -----

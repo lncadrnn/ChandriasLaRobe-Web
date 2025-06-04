@@ -109,11 +109,3 @@ const tabs = document.querySelectorAll('[data-target]'),
 
     });
   });
-
-  /*================================== PLACE ORDER ========================= */
-  document.querySelector('.place-rent').addEventListener('click', function () {
-    this.disabled = true;
-    this.innerText = 'Appointment Successful';
-    this.form.submit();
-  });
-

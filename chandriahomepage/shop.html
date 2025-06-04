@@ -31,7 +31,9 @@
         <div id="shop-loader" class="shop-loader">
             <div class="shop-loader-content">
                 <div class="shop-spinner"></div>
-                <p class="shop-loader-text">Loading products from your inventory.</p>
+                <p class="shop-loader-text">
+                    Loading Products, Please Wait.
+                </p>
             </div>
         </div>
 
@@ -53,7 +55,9 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="shop.html" class="nav-link active-link">Shop</a>
+                            <a href="shop.html" class="nav-link active-link"
+                                >Shop</a
+                            >
                         </li>
                     </ul>
 
@@ -87,7 +91,8 @@
             </nav>
         </header>
         <!--=============== MAIN ===============-->
-        <main class="main">            <!--=============== BREADCRUMB ===============-->
+        <main class="main">
+            <!--=============== BREADCRUMB ===============-->
             <section class="breadcrumb">
                 <ul class="breadcrumb-list flex container">
                     <!-- Dynamic breadcrumb will be generated here -->
@@ -219,7 +224,8 @@
                                         ><span id="size-available-stock"
                                             >0</span
                                         >
-                                    </div>                                    <div class="details-action">
+                                    </div>
+                                    <div class="details-action">
                                         <input
                                             type="number"
                                             class="quantity"
@@ -231,7 +237,10 @@
                                             id="product-id"
                                             hidden
                                         />
-                                        <button class="btn btn-primary" id="btn-rent">
+                                        <button
+                                            class="btn btn-primary"
+                                            id="btn-rent"
+                                        >
                                             <span class="btn-text"
                                                 >Add to Rent</span
                                             >
@@ -264,11 +273,9 @@
                 <p class="total-products">
                     We found <span>...</span> items for you
                 </p>
-                
+
                 <!-- PRODUCTS CONTAINER -->
-                <div class="products-container grid">
-                  
-                </div>
+                <div class="products-container grid"></div>
 
                 <ul class="pagination">
                     <li><a href="#" class="pagination-link active">01</a></li>
@@ -279,29 +286,98 @@
                     </li>
                 </ul>
             </section>
-        </main>        <!--=============== LOGOUT MODAL ===============-->
-        <div id="logout-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
-            <div style="background:#fff; border-radius:10px; max-width:350px; width:90%; margin:auto; padding:2rem 1.5rem; box-shadow:0 2px 16px rgba(0,0,0,0.15); text-align:center;">
-                <h3 style="color:#222; margin-bottom:1.5rem;">Are you sure you want to log out?</h3>
-                <div style="display:flex; gap:1rem; justify-content:center;">
-                    <button id="logout-yes" style="background:#ff9aaf; color:#fff; border:none; border-radius:5px; padding:0.5rem 1.5rem; font-weight:600; cursor:pointer;">Yes</button>
-                    <button id="logout-no" style="background:#eee; color:#222; border:none; border-radius:5px; padding:0.5rem 1.5rem; font-weight:600; cursor:pointer;">No</button>
+        </main>
+        <!--=============== LOGOUT MODAL ===============-->
+        <div
+            id="logout-modal"
+            style="
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1000;
+                align-items: center;
+                justify-content: center;
+            "
+        >
+            <div
+                style="
+                    background: #fff;
+                    border-radius: 10px;
+                    max-width: 350px;
+                    width: 90%;
+                    margin: auto;
+                    padding: 2rem 1.5rem;
+                    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
+                    text-align: center;
+                "
+            >
+                <h3 style="color: #222; margin-bottom: 1.5rem">
+                    Are you sure you want to log out?
+                </h3>
+                <div style="display: flex; gap: 1rem; justify-content: center">
+                    <button
+                        id="logout-yes"
+                        style="
+                            background: #ff9aaf;
+                            color: #fff;
+                            border: none;
+                            border-radius: 5px;
+                            padding: 0.5rem 1.5rem;
+                            font-weight: 600;
+                            cursor: pointer;
+                        "
+                    >
+                        Yes
+                    </button>
+                    <button
+                        id="logout-no"
+                        style="
+                            background: #eee;
+                            color: #222;
+                            border: none;
+                            border-radius: 5px;
+                            padding: 0.5rem 1.5rem;
+                            font-weight: 600;
+                            cursor: pointer;
+                        "
+                    >
+                        No
+                    </button>
                 </div>
-            </div>        </div>
+            </div>
+        </div>
 
-        <!--=============== AUTHENTICATION MODAL ===============-->        <div id="auth-modal" class="auth-modal-overlay">
+        <!--=============== AUTHENTICATION MODAL ===============-->
+        <div id="auth-modal" class="auth-modal-overlay">
             <div class="auth-modal">
-                <button class="auth-modal-close" id="auth-modal-close">&times;</button>
+                <button class="auth-modal-close" id="auth-modal-close">
+                    &times;
+                </button>
                 <div class="auth-modal-content">
                     <div class="auth-modal-header">
                         <i class="fi fi-rs-user auth-modal-icon"></i>
-                        <h2 class="auth-modal-title">Authentication Required</h2>
-                        <p class="auth-modal-subtitle">You need to log in first in order to access that.</p>
-                    </div>                    <div class="auth-modal-actions">
-                        <button id="auth-modal-login" class="auth-btn auth-btn-primary">
+                        <h2 class="auth-modal-title">
+                            Authentication Required
+                        </h2>
+                        <p class="auth-modal-subtitle">
+                            You need to log in first in order to access that.
+                        </p>
+                    </div>
+                    <div class="auth-modal-actions">
+                        <button
+                            id="auth-modal-login"
+                            class="auth-btn auth-btn-primary"
+                        >
                             <span>Continue to Login / Signup</span>
                         </button>
-                        <button id="auth-modal-cancel" class="auth-btn auth-btn-tertiary">
+                        <button
+                            id="auth-modal-cancel"
+                            class="auth-btn auth-btn-tertiary"
+                        >
                             <span>Maybe Later</span>
                         </button>
                     </div>
@@ -326,28 +402,63 @@
         <!--=============== QUICK VIEW MODAL ===============-->
         <div id="quick-view-modal" class="quick-view-modal-container">
             <div class="quick-view-modal">
-                <button class="quick-view-close" id="quick-view-close">&times;</button>
+                <button class="quick-view-close" id="quick-view-close">
+                    &times;
+                </button>
                 <div class="quick-view-content">
                     <div class="quick-view-images">
                         <div class="quick-view-main-image">
-                            <img id="quick-view-main-img" src="" alt="Product Image" class="quick-view-img">
+                            <img
+                                id="quick-view-main-img"
+                                src=""
+                                alt="Product Image"
+                                class="quick-view-img"
+                            />
                         </div>
                         <div class="quick-view-thumbnail-container">
-                            <img id="quick-view-front-thumb" src="" alt="Front View" class="quick-view-thumbnail active">
-                            <img id="quick-view-back-thumb" src="" alt="Back View" class="quick-view-thumbnail">
+                            <img
+                                id="quick-view-front-thumb"
+                                src=""
+                                alt="Front View"
+                                class="quick-view-thumbnail active"
+                            />
+                            <img
+                                id="quick-view-back-thumb"
+                                src=""
+                                alt="Back View"
+                                class="quick-view-thumbnail"
+                            />
                         </div>
                     </div>
                     <div class="quick-view-details">
                         <div class="quick-view-header">
-                            <h2 id="quick-view-title" class="quick-view-product-title">Product Name</h2>
-                            <span id="quick-view-category" class="quick-view-category">Category</span>
+                            <h2
+                                id="quick-view-title"
+                                class="quick-view-product-title"
+                            >
+                                Product Name
+                            </h2>
+                            <span
+                                id="quick-view-category"
+                                class="quick-view-category"
+                                >Category</span
+                            >
                         </div>
                         <div class="quick-view-price">
-                            <span id="quick-view-price" class="quick-view-new-price">₱0</span>
+                            <span
+                                id="quick-view-price"
+                                class="quick-view-new-price"
+                                >₱0</span
+                            >
                             <span class="quick-view-period">/24hr</span>
                         </div>
                         <div class="quick-view-description">
-                            <p id="quick-view-desc" class="quick-view-desc-text">Product description will appear here...</p>
+                            <p
+                                id="quick-view-desc"
+                                class="quick-view-desc-text"
+                            >
+                                Product description will appear here...
+                            </p>
                         </div>
                         <div class="quick-view-features">
                             <div class="quick-view-feature">
@@ -366,19 +477,34 @@
                         <div class="quick-view-meta">
                             <div class="quick-view-color">
                                 <span class="quick-view-label">Color:</span>
-                                <div id="quick-view-color-indicator" class="quick-view-color-circle"></div>
+                                <div
+                                    id="quick-view-color-indicator"
+                                    class="quick-view-color-circle"
+                                ></div>
                             </div>
                             <div class="quick-view-code">
-                                <span class="quick-view-label">Product Code:</span>
-                                <span id="quick-view-product-code" class="quick-view-code-text">-</span>
+                                <span class="quick-view-label"
+                                    >Product Code:</span
+                                >
+                                <span
+                                    id="quick-view-product-code"
+                                    class="quick-view-code-text"
+                                    >-</span
+                                >
                             </div>
                         </div>
                         <div class="quick-view-actions">
-                            <button id="quick-view-add-to-cart" class="quick-view-btn quick-view-btn-primary">
+                            <button
+                                id="quick-view-add-to-cart"
+                                class="quick-view-btn quick-view-btn-primary"
+                            >
                                 <i class="fi fi-rs-shopping-bag-add"></i>
                                 <span>Add to Rent</span>
                             </button>
-                            <button id="quick-view-view-details" class="quick-view-btn quick-view-btn-secondary">
+                            <button
+                                id="quick-view-view-details"
+                                class="quick-view-btn quick-view-btn-secondary"
+                            >
                                 <i class="fi fi-rs-eye"></i>
                                 <span>View Full Details</span>
                             </button>
@@ -397,86 +523,44 @@
             src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
             crossorigin="anonymous"
-        ></script>        <!--=============== MAIN JS ===============-->
-        <script type="module" src="./assets/js/shop.js"></script>        <script type="module">
-            import { getAuth, onAuthStateChanged, signOut } from "./assets/js/sdk/chandrias-sdk.js";
-            
-            const auth = getAuth();
-            const loginLogoutLink = document.getElementById('login-logout-link');
-            const logoutModal = document.getElementById('logout-modal');
-            const logoutYes = document.getElementById('logout-yes');
-            const logoutNo = document.getElementById('logout-no');
-            const profileLink = document.querySelector('a.nav-link[href="./test_Profile.html"]');
+        ></script>
+        <!--=============== MAIN JS ===============-->
+        <script type="module" src="./assets/js/shop.js"></script>
+        <script type="module">
+            import {
+                getAuth,
+                signOut
+            } from "./assets/js/sdk/chandrias-sdk.js";
 
-            // Single consolidated authentication state listener
-            onAuthStateChanged(auth, (user) => {
-              if (user) {
-                // User is logged in
-                localStorage.setItem('userEmail', user.email); // Sync localStorage
-                
-                // Update login/logout link
-                if (loginLogoutLink) {
-                  loginLogoutLink.textContent = "Logout";
-                  loginLogoutLink.href = "#"; // Prevent navigation
-                  loginLogoutLink.style.display = 'none'; // Hide logout link when logged in
-                  loginLogoutLink.onclick = (e) => {
-                    e.preventDefault();
-                    if(logoutModal) logoutModal.style.display = 'flex';
-                  };
-                }
-                
-                // Update profile link
-                if (profileLink) {
-                  profileLink.onclick = (e) => {
-                    e.preventDefault();
-                    window.location.href = "./accounts.html";
-                  };
-                }
-              } else {
-                // User is logged out
-                localStorage.removeItem('userEmail'); // Clear localStorage
-                
-                // Update login/logout link
-                if (loginLogoutLink) {
-                  loginLogoutLink.textContent = "Login";
-                  loginLogoutLink.href = "./user_authentication.html";
-                  loginLogoutLink.style.display = 'block'; // Show login link when logged out
-                  loginLogoutLink.onclick = null; // Remove previous click handler
-                }
-                
-                // Update profile link
-                if (profileLink) {
-                  profileLink.onclick = (e) => {
-                    e.preventDefault();
-                    window.location.href = "./user_authentication.html";
-                  };
-                }
-              }
-            });
+            const logoutModal = document.getElementById("logout-modal");
+            const logoutYes = document.getElementById("logout-yes");
+            const logoutNo = document.getElementById("logout-no");
 
             // Set up logout modal handlers
             if (logoutYes && logoutNo && logoutModal) {
-              logoutYes.onclick = () => {
-                signOut(auth).then(() => {
-                  logoutModal.style.display = 'none';
-                  window.location.reload(); // Or redirect to home/login page
-                }).catch((error) => {
-                  console.error("Sign out error", error);
-                  // Optionally show an error message to the user
-                  logoutModal.style.display = 'none';
-                });
-              };
+                logoutYes.onclick = () => {
+                    signOut(auth)
+                        .then(() => {
+                            logoutModal.style.display = "none";
+                            window.location.reload(); // Or redirect to home/login page
+                        })
+                        .catch(error => {
+                            console.error("Sign out error", error);
+                            // Optionally show an error message to the user
+                            logoutModal.style.display = "none";
+                        });
+                };
 
-              logoutNo.onclick = () => {
-                logoutModal.style.display = 'none';
-              };
+                logoutNo.onclick = () => {
+                    logoutModal.style.display = "none";
+                };
 
-              // Optional: close modal on outside click
-              logoutModal.onclick = (e) => {
-                if (e.target === logoutModal) {
-                    logoutModal.style.display = 'none';
-                }
-              };
+                // Optional: close modal on outside click
+                logoutModal.onclick = e => {
+                    if (e.target === logoutModal) {
+                        logoutModal.style.display = "none";
+                    }
+                };
             }
         </script>
         <!--=============== DYNAMIC BREADCRUMB JS ===============-->
