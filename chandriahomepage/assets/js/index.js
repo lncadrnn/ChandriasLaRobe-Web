@@ -161,11 +161,13 @@ $(document).ready(function () {
             const limitedHotProducts = hotProducts.slice(0, 4);
 
             if (limitedHotProducts.length === 0) {
-                $hotContainer.html(
+                $hotContainer.addClass('no-products-container').html(
                     '<div class="no-products">No hot products available at the moment.</div>'
                 );
                 return;
             }
+
+            $hotContainer.removeClass('no-products-container');
 
             let productsHTML = "";
             limitedHotProducts.forEach(productData => {
@@ -209,11 +211,13 @@ $(document).ready(function () {
             const limitedPopularProducts = popularProducts.slice(0, 4);
 
             if (limitedPopularProducts.length === 0) {
-                $popularContainer.html(
+                $popularContainer.addClass('no-products-container').html(
                     '<div class="no-products">No popular products available at the moment.</div>'
                 );
                 return;
             }
+
+            $popularContainer.removeClass('no-products-container');
 
             let productsHTML = "";
             limitedPopularProducts.forEach(productData => {
