@@ -265,6 +265,7 @@ class DynamicBreadcrumb {
                 const separator = document.createElement('li');
                 separator.className = 'breadcrumb-separator';
                 separator.setAttribute('aria-hidden', 'true');
+                separator.innerHTML = '›';
                 this.breadcrumbContainer.appendChild(separator);
             }
         });
