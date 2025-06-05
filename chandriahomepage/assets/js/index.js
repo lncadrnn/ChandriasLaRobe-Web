@@ -89,9 +89,6 @@ $(document).ready(function () {
                     <button class="action-btn quick-view-btn" aria-label="Quick View" data-product-id="${productId}">
                         <i class="fi fi-rs-eye"></i>
                     </button>
-                    <a href="chandriahomepage/details.html?id=${productId}" class="action-btn" aria-label="View Details">
-                        <i class="fi fi-rs-shuffle"></i>
-                    </a>
                     <a href="#" class="action-btn" aria-label="Add to Favorites">
                         <i class="fi fi-rs-heart"></i>
                     </a>
@@ -275,13 +272,17 @@ $(document).ready(function () {
     // Function to open quick view modal
     async function openQuickView(productId) {
         try {
-            const modal = document.getElementById('quickViewModal');
-            const modalContent = modal.querySelector('.quick-view-content');
+            const modal = document.getElementById('quick-view-modal');
             
-            // Show modal with loading state
-            modal.style.display = 'flex';
+            // Show modal
+            modal.classList.add('show');
             document.body.style.overflow = 'hidden';
-            modalContent.innerHTML = '<div class="quick-view-loading">Loading product details...</div>';
+            
+            // Show loading state on main image
+            const mainImg = document.getElementById('quick-view-main-img');
+            if (mainImg) {
+                mainImg.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTgiIHN0cm9rZT0iI2UwZTBlMCIgc3Ryb2tlLXdpZHRoPSI0Ii8+CjxwYXRoIGQ9Im0yMCAyYTE4IDE4IDAgMCAxIDE4IDE4IiBzdHJva2U9IiM5NDkzZjMiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj4KPGF1aW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiB0eXBlPSJyb3RhdGUiIGR1cj0iMXMiIHZhbHVlcz0iMCAyMCAyMDszNjAgMjAgMjAiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+CjwvcGF0aD4KPC9zdmc+';
+            }
             
             // Fetch product data
             const productDoc = await getDoc(doc(chandriaDB, "products", productId));
@@ -298,112 +299,42 @@ $(document).ready(function () {
             
         } catch (error) {
             console.error('Error loading product for quick view:', error);
-            const modal = document.getElementById('quickViewModal');
-            const modalContent = modal.querySelector('.quick-view-content');
-            modalContent.innerHTML = '<div class="quick-view-error">Failed to load product details. Please try again.</div>';
+            notyf.error('Failed to load product details. Please try again.');
+            closeQuickView();
         }
     }
 
     // Function to populate quick view modal with product data
     function populateQuickViewModal(product, productId) {
-        const modal = document.getElementById('quickViewModal');
-        const modalContent = modal.querySelector('.quick-view-content');
+        // Update images
+        const mainImg = document.getElementById('quick-view-main-img');
+        const frontThumb = document.getElementById('quick-view-front-thumb');
+        const backThumb = document.getElementById('quick-view-back-thumb');
         
-        const availableSizes = product.size ? Object.keys(product.size).join(", ") : "N/A";
-        const price = product.price ? `₱ ${product.price} / rent` : "Price available in-store";
+        if (mainImg) mainImg.src = product.frontImageUrl || 'chandriahomepage/assets/img/placeholder.jpg';
+        if (frontThumb) frontThumb.src = product.frontImageUrl || 'chandriahomepage/assets/img/placeholder.jpg';
+        if (backThumb) backThumb.src = product.backImageUrl || 'chandriahomepage/assets/img/placeholder.jpg';
         
-        // Create additional images array
-        const additionalImages = [];
-        if (product.backImageUrl) additionalImages.push(product.backImageUrl);
-        if (product.additionalImages && Array.isArray(product.additionalImages)) {
-            additionalImages.push(...product.additionalImages);
+        // Update product details
+        const title = document.getElementById('quick-view-title');
+        const category = document.getElementById('quick-view-category');
+        const price = document.getElementById('quick-view-price');
+        const description = document.getElementById('quick-view-desc');
+        const productCode = document.getElementById('quick-view-product-code');
+        const colorIndicator = document.getElementById('quick-view-color-indicator');
+        const addToCartBtn = document.getElementById('quick-view-add-to-cart');
+        
+        if (title) title.textContent = product.name || 'Untitled Product';
+        if (category) category.textContent = product.category || 'Clothing';
+        if (price) price.textContent = product.price ? `₱${product.price}` : '₱0';
+        if (description) description.textContent = product.description || 'No description available for this product.';
+        if (productCode) productCode.textContent = product.code || 'N/A';
+        if (colorIndicator && product.color) {
+            colorIndicator.style.backgroundColor = product.color;
         }
-        
-        modalContent.innerHTML = `
-            <div class="quick-view-images">
-                <div class="main-image-container">
-                    <img src="${product.frontImageUrl || 'chandriahomepage/assets/img/placeholder.jpg'}" 
-                         alt="${product.name || 'Product'}" 
-                         class="main-image" 
-                         id="quickViewMainImage">
-                </div>
-                ${additionalImages.length > 0 ? `
-                <div class="thumbnail-container">
-                    <div class="thumbnail active" data-image="${product.frontImageUrl}">
-                        <img src="${product.frontImageUrl}" alt="Front view">
-                    </div>
-                    ${additionalImages.map(img => `
-                        <div class="thumbnail" data-image="${img}">
-                            <img src="${img}" alt="Product view">
-                        </div>
-                    `).join('')}
-                </div>
-                ` : ''}
-            </div>
-            
-            <div class="quick-view-details">
-                <div class="product-header">
-                    <span class="product-category">${product.category || 'Clothing'}</span>
-                    <h2 class="product-title">${product.name || 'Untitled Product'}</h2>
-                    <div class="product-price">
-                        <span class="price">${price}</span>
-                    </div>
-                </div>
-                
-                <div class="product-description">
-                    <p>${product.description || 'No description available for this product.'}</p>
-                </div>
-                
-                <div class="product-features">
-                    <div class="feature-item">
-                        <span class="feature-label">Available Sizes:</span>
-                        <span class="feature-value">${availableSizes}</span>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-label">Category:</span>
-                        <span class="feature-value">${product.category || 'Clothing'}</span>
-                    </div>
-                    ${product.color ? `
-                    <div class="feature-item">
-                        <span class="feature-label">Color:</span>
-                        <span class="feature-value">${product.color}</span>
-                    </div>
-                    ` : ''}
-                    ${product.material ? `
-                    <div class="feature-item">
-                        <span class="feature-label">Material:</span>
-                        <span class="feature-value">${product.material}</span>
-                    </div>
-                    ` : ''}
-                </div>
-                
-                <div class="product-meta">
-                    <div class="meta-item">
-                        <i class="fi fi-rs-truck"></i>
-                        <span>Available for fitting appointments</span>
-                    </div>
-                    <div class="meta-item">
-                        <i class="fi fi-rs-refresh"></i>
-                        <span>Professional alterations included</span>
-                    </div>
-                    <div class="meta-item">
-                        <i class="fi fi-rs-shield-check"></i>
-                        <span>Quality guarantee</span>
-                    </div>
-                </div>
-                
-                <div class="action-buttons">
-                    <button class="btn btn-primary full-details-btn" data-product-id="${productId}">
-                        View Full Details
-                        <i class="fi fi-rs-arrow-right"></i>
-                    </button>
-                    <button class="btn btn-secondary add-to-cart-btn" data-product-id="${productId}">
-                        <i class="fi fi-rs-shopping-cart"></i>
-                        Add to Cart
-                    </button>
-                </div>
-            </div>
-        `;
+        if (addToCartBtn) {
+            addToCartBtn.setAttribute('data-product-id', productId);
+        }
         
         // Initialize thumbnail functionality
         initQuickViewThumbnails();
@@ -414,8 +345,8 @@ $(document).ready(function () {
 
     // Function to initialize thumbnail switching
     function initQuickViewThumbnails() {
-        const thumbnails = document.querySelectorAll('#quickViewModal .thumbnail');
-        const mainImage = document.getElementById('quickViewMainImage');
+        const thumbnails = document.querySelectorAll('#quick-view-modal .quick-view-thumbnail');
+        const mainImage = document.getElementById('quick-view-main-img');
         
         thumbnails.forEach(thumbnail => {
             thumbnail.addEventListener('click', () => {
@@ -425,9 +356,10 @@ $(document).ready(function () {
                 // Add active class to clicked thumbnail
                 thumbnail.classList.add('active');
                 
-                // Update main image
-                const newImageSrc = thumbnail.dataset.image;
-                mainImage.src = newImageSrc;
+                // Update main image with thumbnail's src
+                if (mainImage) {
+                    mainImage.src = thumbnail.src;
+                }
             });
         });
     }
@@ -435,7 +367,7 @@ $(document).ready(function () {
     // Function to initialize quick view action buttons
     function initQuickViewActions(productId) {
         // View Full Details button
-        const fullDetailsBtn = document.querySelector('#quickViewModal .full-details-btn');
+        const fullDetailsBtn = document.querySelector('#quick-view-details-btn');
         if (fullDetailsBtn) {
             fullDetailsBtn.addEventListener('click', () => {
                 closeQuickView();
@@ -444,7 +376,7 @@ $(document).ready(function () {
         }
         
         // Add to Cart button
-        const addToCartBtn = document.querySelector('#quickViewModal .add-to-cart-btn');
+        const addToCartBtn = document.querySelector('#quick-view-modal .add-to-cart-btn, #quick-view-add-to-cart');
         if (addToCartBtn) {
             addToCartBtn.addEventListener('click', async () => {
                 await handleQuickViewAddToCart(productId);
@@ -461,7 +393,7 @@ $(document).ready(function () {
                 return;
             }
 
-            const addToCartBtn = document.querySelector('#quickViewModal .add-to-cart-btn');
+            const addToCartBtn = document.querySelector('#quick-view-modal .add-to-cart-btn');
             if (addToCartBtn) {
                 addToCartBtn.disabled = true;
                 addToCartBtn.innerHTML = '<i class="fi fi-rs-spinner"></i> Adding...';
@@ -508,7 +440,7 @@ $(document).ready(function () {
             console.error('Error adding to cart:', error);
             notyf.error('Failed to add product to cart. Please try again.');
         } finally {
-            const addToCartBtn = document.querySelector('#quickViewModal .add-to-cart-btn');
+            const addToCartBtn = document.querySelector('#quick-view-modal .add-to-cart-btn');
             if (addToCartBtn) {
                 addToCartBtn.disabled = false;
                 addToCartBtn.innerHTML = '<i class="fi fi-rs-shopping-cart"></i> Add to Cart';
@@ -518,8 +450,8 @@ $(document).ready(function () {
 
     // Function to close quick view modal
     function closeQuickView() {
-        const modal = document.getElementById('quickViewModal');
-        modal.style.display = 'none';
+        const modal = document.getElementById('quick-view-modal');
+        modal.classList.remove('show');
         document.body.style.overflow = '';
         currentQuickViewProduct = null;
     }
@@ -537,8 +469,8 @@ $(document).ready(function () {
         });
 
         // Close modal events
-        const modal = document.getElementById('quickViewModal');
-        const closeBtn = document.querySelector('#quickViewModal .quick-view-close');
+        const modal = document.getElementById('quick-view-modal');
+        const closeBtn = document.querySelector('#quick-view-modal .quick-view-close');
         
         if (closeBtn) {
             closeBtn.addEventListener('click', closeQuickView);
@@ -554,7 +486,7 @@ $(document).ready(function () {
 
         // ESC key to close modal
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && modal && modal.style.display === 'flex') {
+            if (e.key === 'Escape' && modal && modal.classList.contains('show')) {
                 closeQuickView();
             }
         });

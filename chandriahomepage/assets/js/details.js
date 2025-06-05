@@ -30,9 +30,13 @@ function hideDetailsLoader() {
 }
 
 $(document).ready(async function () {
-  const productId = localStorage.getItem("selectedProductId");
+  // Get product ID from URL parameter
+  const urlParams = new URLSearchParams(window.location.search);
+  const productId = urlParams.get('id');
+  
   if (!productId) {
-    alert("No product selected.");
+    alert("No product ID specified in URL.");
+    window.location.href = "shop.html"; // Redirect to shop if no product ID
     return;
   }
 
