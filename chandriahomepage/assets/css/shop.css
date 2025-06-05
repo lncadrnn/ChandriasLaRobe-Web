@@ -1230,10 +1230,10 @@ a[href] {
 
 @media screen and (min-width: 768px) {
     .pagination-container {
-        flex-direction: row;
+        flex-direction: column;
         justify-content: flex-start;
-        align-items: center;
-        gap: 2rem;
+        align-items: flex-start;
+        gap: 1rem;
     }
 }
 
@@ -1247,10 +1247,10 @@ a[href] {
 
 @media screen and (min-width: 768px) {
     .pagination-wrapper {
-        flex-direction: row;
+        flex-direction: column;
         justify-content: flex-start;
-        align-items: center;
-        gap: 2rem;
+        align-items: flex-start;
+        gap: 1rem;
         width: auto;
     }
 }
