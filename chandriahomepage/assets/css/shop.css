@@ -1127,7 +1127,7 @@ a[href] {
     color: #374151;
     transition: all 0.3s ease;
     white-space: nowrap;
-    min-width: 140px;
+    min-width: 180px;
     justify-content: space-between;
 }
 
@@ -1153,7 +1153,6 @@ a[href] {
     position: absolute;
     top: 100%;
     left: 0;
-    right: 0;
     background: #ffffff;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
@@ -1165,6 +1164,8 @@ a[href] {
     transition: all 0.3s ease;
     max-height: 250px;
     overflow-y: auto;
+    min-width: 220px;
+    white-space: nowrap;
 }
 
 .filter-dropdown.active .filter-dropdown-menu,
