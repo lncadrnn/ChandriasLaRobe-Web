@@ -49,6 +49,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       const headerHeight = document.querySelector('.header').offsetHeight;
       const targetPosition = target.offsetTop - headerHeight - 20;
       
+      // Update active navigation state
+      updateActiveNavigation(this.getAttribute('href'));
+      
       window.scrollTo({
         top: targetPosition,
         behavior: 'smooth'
@@ -56,6 +59,54 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     }
   });
 });
+
+/*=============== NAVIGATION ACTIVE STATE MANAGEMENT ===============*/
+function updateActiveNavigation(targetHash) {
+  // Remove active-link class from all navigation links
+  document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
+    link.classList.remove('active-link');
+  });
+  
+  // Add active-link class to the clicked navigation link
+  document.querySelectorAll(`a[href="${targetHash}"]`).forEach(link => {
+    if (link.classList.contains('nav-link') || link.classList.contains('mobile-nav-link')) {
+      link.classList.add('active-link');
+    }
+  });
+}
+
+/*=============== SCROLL SPY FOR NAVIGATION ===============*/
+// Update navigation based on scroll position
+function handleScrollSpy() {
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-link[href^="#"], .mobile-nav-link[href^="#"]');
+  
+  let current = '';
+  const scrollPosition = window.scrollY + 100; // Offset for header
+  
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop;
+    const sectionHeight = section.offsetHeight;
+    
+    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+      current = '#' + section.getAttribute('id');
+    }
+  });
+  
+  // Update active state based on current section
+  if (current) {
+    navLinks.forEach(link => {
+      link.classList.remove('active-link');
+      if (link.getAttribute('href') === current) {
+        link.classList.add('active-link');
+      }
+    });
+  }
+}
+
+// Initialize scroll spy
+window.addEventListener('scroll', handleScrollSpy);
+window.addEventListener('load', handleScrollSpy);
 
 /*=============== IMAGE GALLERY ===============*/
 function imgGallery(){
