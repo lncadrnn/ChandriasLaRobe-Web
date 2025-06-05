@@ -31,6 +31,7 @@
         <!-------------------------------- CSS --------------------------------->
         <link rel="stylesheet" href="chandriahomepage/assets/css/styles.css" />
         <link rel="stylesheet" href="chandriahomepage/assets/css/quick-view.css" />
+        <link rel="stylesheet" href="chandriahomepage/assets/css/index-quick-view-override.css" />
 
         <!-- Firebase SDK -->
         <script type="module" src="admin/firebase-config.js"></script>
@@ -587,21 +588,6 @@
                     &times;
                 </button>
                 
-                <!-- Loading Spinner -->
-                <div id="quick-view-loading" class="quick-view-loading">
-                    <div class="spinner"></div>
-                    <p>Loading product details...</p>
-                </div>
-                
-                <!-- Error State -->
-                <div id="quick-view-error" class="quick-view-error" style="display: none;">
-                    <div class="error-icon">
-                        <i class="fi fi-rs-exclamation"></i>
-                    </div>
-                    <p>Failed to load product details</p>
-                    <button class="retry-btn" onclick="retryQuickView()">Try Again</button>
-                </div>
-                
                 <div class="quick-view-content" id="quick-view-content">
                     <div class="quick-view-images">
                         <div class="quick-view-main-image">
@@ -647,7 +633,7 @@
                                 class="quick-view-new-price"
                                 >₱0</span
                             >
-                            <span class="quick-view-period">/rent</span>
+                            <span class="quick-view-period">/24hr</span>
                         </div>
                         <div class="quick-view-description">
                             <p
@@ -660,19 +646,15 @@
                         <div class="quick-view-features">
                             <div class="quick-view-feature">
                                 <i class="fi fi-rs-clothes-hanger"></i>
-                                <span>Free delivery within Metro Manila</span>
+                                <span>Free Fitting Service</span>
                             </div>
                             <div class="quick-view-feature">
                                 <i class="fi fi-rs-sparkles"></i>
-                                <span>24/7 customer support</span>
+                                <span>Pre-Cleaned & Sanitized</span>
                             </div>
                             <div class="quick-view-feature">
                                 <i class="fi fi-rs-running"></i>
-                                <span>Quality guaranteed</span>
-                            </div>
-                            <div class="quick-view-feature">
-                                <i class="fi fi-rs-time-fast"></i>
-                                <span>Flexible rental periods</span>
+                                <span>Ready-to-Wear</span>
                             </div>
                         </div>
                         <div class="quick-view-meta">

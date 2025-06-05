@@ -261,10 +261,32 @@ document.addEventListener('DOMContentLoaded', () => {
                      window.location.pathname === '/index.html' ||
                      window.location.pathname.includes('index.html');
   
+  // Function to prevent background scrolling
+  function preventBackgroundScroll(prevent = true) {
+    if (prevent) {
+      // Prevent background scrolling
+      document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = '15px'; // Compensate for scrollbar width
+    } else {
+      // Restore background scrolling
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+  }
+  
+  // Function to close modal
+  function closeModal() {
+    if (welcomeModal) {
+      welcomeModal.classList.add('hidden');
+      preventBackgroundScroll(false); // Restore scrolling
+    }
+  }
+  
   if (welcomeModal && isHomepage) {
     // Show modal after a brief delay for better UX on homepage refresh
     setTimeout(() => {
       welcomeModal.classList.remove('hidden');
+      preventBackgroundScroll(true); // Prevent background scrolling
     }, 1000);
   } else if (welcomeModal) {
     // Ensure modal is hidden on other pages
@@ -274,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Close modal functionality
   if (closeWelcomeModal && welcomeModal) {
     closeWelcomeModal.addEventListener('click', () => {
-      welcomeModal.classList.add('hidden');
+      closeModal();
     });
   }
   
@@ -282,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (welcomeModal) {
     welcomeModal.addEventListener('click', (e) => {
       if (e.target === welcomeModal) {
-        welcomeModal.classList.add('hidden');
+        closeModal();
       }
     });
   }
@@ -290,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Close modal with Escape key
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && welcomeModal && !welcomeModal.classList.contains('hidden')) {
-      welcomeModal.classList.add('hidden');
+      closeModal();
     }
   });
   
@@ -298,9 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalButtons = document.querySelectorAll('.modal-btn');
   modalButtons.forEach(btn => {
     btn.addEventListener('click', () => {
-      if (welcomeModal) {
-        welcomeModal.classList.add('hidden');
-      }
+      closeModal();
     });
   });
 });

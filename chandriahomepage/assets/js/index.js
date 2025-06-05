@@ -12,7 +12,8 @@ import {
     signOut,
     query,
     orderBy,
-    limit
+    limit,
+    arrayUnion
 } from "./sdk/chandrias-sdk.js";
 
 $(document).ready(function () {
@@ -273,19 +274,10 @@ $(document).ready(function () {
     async function openQuickView(productId) {
         try {
             const modal = document.getElementById('quick-view-modal');
-            const loading = document.getElementById('quick-view-loading');
-            const content = document.getElementById('quick-view-content');
-            const error = document.getElementById('quick-view-error');
             
-            // Show modal and loading state
+            // Show modal
             modal.classList.add('show');
             document.body.style.overflow = 'hidden';
-            loading.style.display = 'flex';
-            content.style.display = 'none';
-            error.style.display = 'none';
-            
-            // Store current product ID for retry functionality
-            window.currentQuickViewProductId = productId;
             
             // Fetch product data
             const productDoc = await getDoc(doc(chandriaDB, "products", productId));
@@ -300,39 +292,20 @@ $(document).ready(function () {
             // Populate modal with product data
             populateQuickViewModal(productData, productId);
             
-            // Hide loading, show content
-            if (loading) loading.style.display = 'none';
-            if (content) {
-                content.style.display = 'block';
-                content.style.visibility = 'visible';
-            }
-            
-            // Initialize action buttons
-            initQuickViewActions(productId);
-            
         } catch (error) {
             console.error('Error loading product for quick view:', error);
-            showQuickViewError();
+            notyf.error('Failed to load product details');
+            closeQuickView();
         }
     }
 
-    // Function to show error state in quick view modal
-    function showQuickViewError() {
-        const loading = document.getElementById('quick-view-loading');
-        const content = document.getElementById('quick-view-content');
-        const error = document.getElementById('quick-view-error');
-        
-        if (loading) loading.style.display = 'none';
-        if (content) content.style.display = 'none';
-        if (error) error.style.display = 'flex';
+    // Function to close quick view modal
+    function closeQuickView() {
+        const modal = document.getElementById('quick-view-modal');
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+        currentQuickViewProduct = null;
     }
-
-    // Global retry function for quick view
-    window.retryQuickView = function() {
-        if (window.currentQuickViewProductId) {
-            openQuickView(window.currentQuickViewProductId);
-        }
-    };
 
     // Function to populate quick view modal with product data
     function populateQuickViewModal(product, productId) {
@@ -352,7 +325,6 @@ $(document).ready(function () {
         const description = document.getElementById('quick-view-desc');
         const productCode = document.getElementById('quick-view-product-code');
         const colorIndicator = document.getElementById('quick-view-color-indicator');
-        const addToCartBtn = document.getElementById('quick-view-add-to-cart');
         
         if (title) title.textContent = product.name || 'Untitled Product';
         if (category) category.textContent = product.category || 'Clothing';
@@ -361,9 +333,6 @@ $(document).ready(function () {
         if (productCode) productCode.textContent = product.code || 'N/A';
         if (colorIndicator && product.color) {
             colorIndicator.style.backgroundColor = product.color;
-        }
-        if (addToCartBtn) {
-            addToCartBtn.setAttribute('data-product-id', productId);
         }
         
         // Initialize thumbnail functionality
@@ -396,6 +365,9 @@ $(document).ready(function () {
 
     // Function to initialize quick view action buttons
     function initQuickViewActions(productId) {
+        // Add to Cart button - DISABLED (button hidden via CSS)
+        // Note: The Add to Rent functionality has been disabled for the index page
+        
         // View Full Details button
         const fullDetailsBtn = document.querySelector('#quick-view-details-btn');
         if (fullDetailsBtn) {
@@ -412,97 +384,6 @@ $(document).ready(function () {
                 }, 500);
             });
         }
-        
-        // Add to Cart button
-        const addToCartBtn = document.querySelector('#quick-view-modal .add-to-cart-btn, #quick-view-add-to-cart');
-        if (addToCartBtn) {
-            addToCartBtn.addEventListener('click', async () => {
-                await handleQuickViewAddToCart(productId);
-            });
-        }
-    }
-
-    // Function to handle add to cart from quick view
-    async function handleQuickViewAddToCart(productId) {
-        try {
-            const user = auth.currentUser;
-            if (!user) {
-                notyf.error('Please sign in to add items to cart');
-                return;
-            }
-
-            const addToCartBtn = document.querySelector('#quick-view-modal .add-to-cart-btn');
-            if (addToCartBtn) {
-                addToCartBtn.disabled = true;
-                addToCartBtn.innerHTML = '<i class="fi fi-rs-spinner"></i> Adding...';
-            }
-
-            // Get user document
-            const userRef = doc(chandriaDB, "userAccounts", user.uid);
-            const userSnap = await getDoc(userRef);
-            
-            if (!userSnap.exists()) {
-                throw new Error('User account not found');
-            }
-
-            const userData = userSnap.data();
-            const currentCart = userData.added_to_cart || [];
-            
-            // Check if product already exists in cart
-            const existingItemIndex = currentCart.findIndex(item => item.productId === productId);
-            
-            if (existingItemIndex > -1) {
-                // Update quantity
-                currentCart[existingItemIndex].quantity = (parseInt(currentCart[existingItemIndex].quantity) + 1).toString();
-            } else {
-                // Add new item
-                const newCartItem = {
-                    productId: productId,
-                    quantity: "1",
-                    dateAdded: new Date().toISOString()
-                };
-                currentCart.push(newCartItem);
-            }
-
-            // Update user document
-            await updateDoc(userRef, {
-                added_to_cart: currentCart
-            });
-
-            // Update cart count
-            await updateCartCount();
-            
-            notyf.success('Product added to cart successfully!');
-            
-        } catch (error) {
-            console.error('Error adding to cart:', error);
-            notyf.error('Failed to add product to cart. Please try again.');
-        } finally {
-            const addToCartBtn = document.querySelector('#quick-view-modal .add-to-cart-btn');
-            if (addToCartBtn) {
-                addToCartBtn.disabled = false;
-                addToCartBtn.innerHTML = '<i class="fi fi-rs-shopping-cart"></i> Add to Cart';
-            }
-        }
-    }
-
-    // Function to close quick view modal
-    function closeQuickView() {
-        const modal = document.getElementById('quick-view-modal');
-        modal.classList.remove('show');
-        document.body.style.overflow = '';
-        currentQuickViewProduct = null;
-        
-        // Reset states after modal closes
-        setTimeout(() => {
-            const loading = document.getElementById('quick-view-loading');
-            const content = document.getElementById('quick-view-content');
-            const error = document.getElementById('quick-view-error');
-            
-            if (loading) loading.style.display = 'flex';
-            if (content) content.style.display = 'none';
-            if (error) error.style.display = 'none';
-        }, 300);
     }
 
     // Initialize quick view event listeners

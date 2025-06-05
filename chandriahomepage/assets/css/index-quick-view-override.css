@@ -1,0 +1,196 @@
+/* Index.html Quick View Modal Override Styles */
+/* This file ensures the quick view modal in index.html matches shop.html exactly */
+
+/* Force proper background colors */
+#quick-view-modal .quick-view-modal {
+    background: #ffffff !important;
+    color: #333333 !important;
+}
+
+#quick-view-modal .quick-view-content {
+    background: transparent !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+}
+
+#quick-view-modal .quick-view-images {
+    background: #ffffff !important;
+    padding: 20px !important;
+    border-radius: 20px 0 0 0 !important;
+}
+
+#quick-view-modal .quick-view-main-image {
+    background: #f8f9fa !important;
+    border-radius: 12px !important;
+    height: 400px !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#quick-view-modal .quick-view-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    border-radius: 12px !important;
+    background: transparent !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+}
+
+#quick-view-modal .quick-view-details {
+    background: #ffffff !important;
+    color: #333333 !important;
+    padding: 30px !important;
+}
+
+#quick-view-modal .quick-view-product-title {
+    color: #222222 !important;
+    font-size: 28px !important;
+    font-weight: 700 !important;
+}
+
+#quick-view-modal .quick-view-category {
+    background: hsl(346, 85%, 90%) !important;
+    color: hsl(346, 100%, 74%) !important;
+}
+
+#quick-view-modal .quick-view-new-price {
+    color: hsl(346, 100%, 74%) !important;
+    font-size: 32px !important;
+    font-weight: 700 !important;
+}
+
+#quick-view-modal .quick-view-desc-text {
+    color: #555555 !important;
+}
+
+#quick-view-modal .quick-view-features {
+    background: #f8f9fa !important;
+    padding: 20px !important;
+    border-radius: 12px !important;
+}
+
+#quick-view-modal .quick-view-feature {
+    color: #555555 !important;
+}
+
+#quick-view-modal .quick-view-feature i {
+    color: hsl(346, 100%, 74%) !important;
+}
+
+#quick-view-modal .quick-view-close {
+    background: hsl(346, 100%, 74%) !important;
+    color: white !important;
+}
+
+#quick-view-modal .quick-view-btn-primary {
+    background: hsl(346, 100%, 74%) !important;
+    color: white !important;
+}
+
+#quick-view-modal .quick-view-btn-secondary {
+    background: #f8f9fa !important;
+    color: #555555 !important;
+    border: 2px solid #dddddd !important;
+}
+
+/* Hide the Add to Rent button */
+#quick-view-modal #quick-view-add-to-cart {
+    display: none !important;
+}
+
+/* Make the View Full Details button full width */
+#quick-view-modal .quick-view-actions {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    margin-top: 25px !important;
+}
+
+#quick-view-modal #quick-view-details-btn {
+    flex: 1 !important;
+    width: 100% !important;
+    max-width: 400px !important;
+    padding: 15px 30px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+}
+
+#quick-view-modal #quick-view-details-btn:hover {
+    background: #e9ecef !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Improve thumbnail display */
+#quick-view-modal .quick-view-thumbnail-container {
+    display: flex !important;
+    gap: 10px !important;
+    margin-top: 15px !important;
+    justify-content: center !important;
+}
+
+#quick-view-modal .quick-view-thumbnail {
+    width: 80px !important;
+    height: 80px !important;
+    object-fit: cover !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Ensure modal content layout is proper */
+#quick-view-modal .quick-view-modal {
+    max-width: 1000px !important;
+    width: 95% !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    scrollbar-width: auto !important; /* Firefox */
+    scrollbar-color: #cccccc #f1f1f1 !important; /* Firefox */
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+#quick-view-modal .quick-view-modal::-webkit-scrollbar {
+    width: 12px !important;
+    background-color: #f1f1f1 !important;
+}
+
+#quick-view-modal .quick-view-modal::-webkit-scrollbar-track {
+    background: #f1f1f1 !important;
+    border-radius: 6px !important;
+}
+
+#quick-view-modal .quick-view-modal::-webkit-scrollbar-thumb {
+    background: #cccccc !important;
+    border-radius: 6px !important;
+    transition: background 0.3s ease !important;
+}
+
+#quick-view-modal .quick-view-modal::-webkit-scrollbar-thumb:hover {
+    background: #999999 !important;
+}
+
+/* Better responsive design for images */
+@media (max-width: 768px) {
+    #quick-view-modal .quick-view-content {
+        grid-template-columns: 1fr !important;
+    }
+    
+    #quick-view-modal .quick-view-main-image {
+        height: 300px !important;
+    }
+}
+
+/* Ensure proper overlay */
+#quick-view-modal.quick-view-modal-container {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Remove any dark mode or theme overrides */
+#quick-view-modal * {
+    box-sizing: border-box;
+}
