@@ -276,7 +276,6 @@ $(document).ready(function () {
                 </div>
 
                 <div class="product-content">
-                    <span class="product-category">${product.category}</span>                    
                     <a href="./details.html" data-id="${product.id}">
                         <h3 class="product-title">${product.name}</h3>
                     </a>

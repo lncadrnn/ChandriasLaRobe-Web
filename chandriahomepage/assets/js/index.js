@@ -97,7 +97,6 @@ $(document).ready(function () {
                 <div class="product-badge ${randomBadge}">New</div>
             </div>            
             <div class="product-content">
-                <span class="product-category">${categoryDisplay}</span>
                 <a href="chandriahomepage/details.html?id=${productId}">
                     <h3 class="product-title">${
                         product.name || "Untitled Product"

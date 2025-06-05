@@ -1222,7 +1222,7 @@ a[href] {
 .pagination-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 1rem;
     margin-top: 3rem;
     padding: 2rem 0;
@@ -1231,14 +1231,16 @@ a[href] {
 @media screen and (min-width: 768px) {
     .pagination-container {
         flex-direction: row;
-        justify-content: space-between;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 2rem;
     }
 }
 
 .pagination-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 1rem;
     width: 100%;
 }
@@ -1246,7 +1248,10 @@ a[href] {
 @media screen and (min-width: 768px) {
     .pagination-wrapper {
         flex-direction: row;
-        justify-content: space-between;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 2rem;
+        width: auto;
     }
 }
 
