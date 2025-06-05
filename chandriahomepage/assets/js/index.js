@@ -23,6 +23,29 @@ $(document).ready(function () {
         }
     });
 
+    // Function to create modernized no-products card HTML
+    function createNoProductsCard(title, message, actionText = "Browse Shop", actionLink = "chandriahomepage/shop.html") {
+        return `
+        <div class="no-products-container">
+            <div class="no-products-card">
+                <div class="no-products-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 11V7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7V11M5 11H19L18 21H6L5 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h3 class="no-products-title">${title}</h3>
+                <p class="no-products-message">${message}</p>
+                <a href="${actionLink}" class="no-products-action">
+                    ${actionText}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        `;
+    }
+
     // Function to create product HTML (returns a string like the original)
     function createProductHTML(product, productId) {
         const availableSizes = product.size
@@ -106,7 +129,11 @@ $(document).ready(function () {
 
             if (querySnapshot.empty) {
                 $freshContainer.html(
-                    '<div class="no-products">No products available at the moment.</div>'
+                    createNoProductsCard(
+                        "No Fresh Products", 
+                        "We're currently updating our fresh collection. Check back soon for new arrivals!",
+                        "Explore All Products"
+                    )
                 );
                 return;
             }
@@ -121,7 +148,11 @@ $(document).ready(function () {
 
             if (productsHTML === "") {
                 $freshContainer.html(
-                    '<div class="no-products">No products available at the moment.</div>'
+                    createNoProductsCard(
+                        "No Fresh Products", 
+                        "We're currently updating our fresh collection. Check back soon for new arrivals!",
+                        "Explore All Products"
+                    )
                 );
             } else {
                 $freshContainer.html(productsHTML);
@@ -161,13 +192,15 @@ $(document).ready(function () {
             const limitedHotProducts = hotProducts.slice(0, 4);
 
             if (limitedHotProducts.length === 0) {
-                $hotContainer.addClass('no-products-container').html(
-                    '<div class="no-products">No hot products available at the moment.</div>'
+                $hotContainer.html(
+                    createNoProductsCard(
+                        "No Hot Products", 
+                        "Our premium collection is currently being restocked. Discover other amazing pieces in our shop!",
+                        "Browse Premium Collection"
+                    )
                 );
                 return;
             }
-
-            $hotContainer.removeClass('no-products-container');
 
             let productsHTML = "";
             limitedHotProducts.forEach(productData => {
@@ -211,13 +244,15 @@ $(document).ready(function () {
             const limitedPopularProducts = popularProducts.slice(0, 4);
 
             if (limitedPopularProducts.length === 0) {
-                $popularContainer.addClass('no-products-container').html(
-                    '<div class="no-products">No popular products available at the moment.</div>'
+                $popularContainer.html(
+                    createNoProductsCard(
+                        "No Popular Products", 
+                        "Our trending gowns are flying off the racks! Explore our full collection for more stunning options.",
+                        "View All Gowns"
+                    )
                 );
                 return;
             }
-
-            $popularContainer.removeClass('no-products-container');
 
             let productsHTML = "";
             limitedPopularProducts.forEach(productData => {
