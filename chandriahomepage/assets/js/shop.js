@@ -1119,6 +1119,17 @@ $(document).ready(function () {
         e.stopPropagation();
         $(".category-checkbox").prop("checked", false);
         updateFilterButtonText();
+        
+        // Automatically apply the cleared filters
+        currentCategories = [];
+        
+        // Close dropdown
+        $(".filter-dropdown").removeClass("active");
+        
+        // Apply filters immediately
+        const searchTerm = $("#product-search").val().trim();
+        const sortBy = currentSort === 'default' ? '' : currentSort;
+        displayProducts(currentUser, 1, searchTerm, currentCategories, sortBy);
     });
 
     // Apply categories button
@@ -1169,6 +1180,7 @@ $(document).ready(function () {
             "Fairy Gown": "Fairy Gowns",
             "Long Gown": "Long Gowns",
             "Suit": "Suits",
+            "Suits": "Suits",
             "Short Gown": "Short Gowns",
             "Cocktail Dress": "Cocktail Dresses",
             "Evening Gown": "Evening Gowns"
