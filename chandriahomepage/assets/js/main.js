@@ -255,28 +255,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const welcomeModal = document.getElementById('welcomeModal');
   const closeWelcomeModal = document.getElementById('closeWelcomeModal');
   
-  // Show modal on page load (can be controlled based on user preferences)
-  const hasSeenModal = localStorage.getItem('hasSeenWelcomeModal');
+  // Only show modal on homepage (index.html)
+  const isHomepage = window.location.pathname === '/' || 
+                     window.location.pathname.endsWith('/index.html') || 
+                     window.location.pathname === '/index.html' ||
+                     window.location.pathname.includes('index.html');
   
-  if (!hasSeenModal) {
-    // Show modal after a brief delay for better UX
+  if (welcomeModal && isHomepage) {
+    // Show modal after a brief delay for better UX on homepage refresh
     setTimeout(() => {
-      if (welcomeModal) {
-        welcomeModal.classList.remove('hidden');
-      }
+      welcomeModal.classList.remove('hidden');
     }, 1000);
-  } else {
-    // Hide modal if user has seen it before
-    if (welcomeModal) {
-      welcomeModal.classList.add('hidden');
-    }
+  } else if (welcomeModal) {
+    // Ensure modal is hidden on other pages
+    welcomeModal.classList.add('hidden');
   }
   
   // Close modal functionality
   if (closeWelcomeModal && welcomeModal) {
     closeWelcomeModal.addEventListener('click', () => {
       welcomeModal.classList.add('hidden');
-      localStorage.setItem('hasSeenWelcomeModal', 'true');
     });
   }
   
@@ -285,7 +283,6 @@ document.addEventListener('DOMContentLoaded', () => {
     welcomeModal.addEventListener('click', (e) => {
       if (e.target === welcomeModal) {
         welcomeModal.classList.add('hidden');
-        localStorage.setItem('hasSeenWelcomeModal', 'true');
       }
     });
   }
@@ -294,15 +291,16 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && welcomeModal && !welcomeModal.classList.contains('hidden')) {
       welcomeModal.classList.add('hidden');
-      localStorage.setItem('hasSeenWelcomeModal', 'true');
     }
   });
   
-  // Modal action buttons functionality
+  // Modal action buttons functionality - close modal when any action button is clicked
   const modalButtons = document.querySelectorAll('.modal-btn');
   modalButtons.forEach(btn => {
     btn.addEventListener('click', () => {
-      localStorage.setItem('hasSeenWelcomeModal', 'true');
+      if (welcomeModal) {
+        welcomeModal.classList.add('hidden');
+      }
     });
   });
 });

@@ -267,50 +267,6 @@ $(document).ready(function () {
             );
         }
     }
-    function initWelcomeModal() {
-        const $modal = $("#welcomeModal");
-        const $closeBtn = $("#closeWelcomeModal");
-
-        const hasSeenWelcome = localStorage.getItem("hasSeenWelcome");
-
-        // Only show modal on first visit to index.html
-        if (!hasSeenWelcome) {
-            setTimeout(() => {
-                $modal.addClass("show");
-            }, 1000);
-        }
-
-        // Close modal function
-        function closeModal() {
-            $modal.removeClass("show");
-            localStorage.setItem("hasSeenWelcome", "true");
-        }
-
-        // Show modal function
-        function showModal() {
-            $modal.addClass("show");
-        }
-
-        // Event listeners
-        $closeBtn.on("click", closeModal);
-
-        // Close modal when clicking outside of it
-        $modal.on("click", function (e) {
-            if (e.target === this) {
-                closeModal();
-            }
-        });
-
-        // Close modal with ESC key
-        $(document).on("keydown", function (e) {
-            if (e.key === "Escape" && $modal.hasClass("show")) {
-                closeModal();
-            }
-        });
-    }
-
-    // Initialize welcome modal
-    initWelcomeModal();
 
     // Product Tabs functionality
     function initProductTabs() {
