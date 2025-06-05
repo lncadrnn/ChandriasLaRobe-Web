@@ -270,6 +270,14 @@ $(document).ready(function () {
     // QUICK VIEW FUNCTIONALITY
     let currentQuickViewProduct = null;
 
+    // Function to show details navigation loader
+    function showDetailsNavigationLoader() {
+        const loader = document.getElementById('details-navigation-loader');
+        if (loader) {
+            loader.classList.remove('hidden');
+        }
+    }
+
     // Function to open quick view modal
     async function openQuickView(productId) {
         try {
@@ -372,16 +380,16 @@ $(document).ready(function () {
         const fullDetailsBtn = document.querySelector('#quick-view-details-btn');
         if (fullDetailsBtn) {
             fullDetailsBtn.addEventListener('click', () => {
-                // Show loading state on button
-                const originalHTML = fullDetailsBtn.innerHTML;
-                fullDetailsBtn.innerHTML = '<div class="button-spinner"></div><span>Loading...</span>';
-                fullDetailsBtn.disabled = true;
+                // Show details navigation loader
+                showDetailsNavigationLoader();
                 
-                // Navigate after short delay to show loading state
+                // Close quick view modal
+                closeQuickView();
+                
+                // Navigate after short delay
                 setTimeout(() => {
-                    closeQuickView();
                     window.location.href = `chandriahomepage/details.html?id=${productId}`;
-                }, 500);
+                }, 300);
             });
         }
     }
