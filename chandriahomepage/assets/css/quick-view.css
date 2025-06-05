@@ -63,6 +63,34 @@
   transform: rotate(90deg) scale(1.1);
 }
 
+/* Ensure content visibility */
+.quick-view-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  padding: 30px;
+  visibility: visible !important;
+}
+
+.quick-view-content[style*="display: block"] {
+  display: grid !important;
+}
+
+/* Ensure actions are always visible */
+.quick-view-actions {
+  display: flex !important;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.quick-view-btn {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Original content styles */
 .quick-view-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -470,20 +498,219 @@
     height: 350px;
     padding: 30px;
   }
-  
-  .quick-view-img {
+    .quick-view-img {
     max-width: 70%;
     max-height: 70%;
   }
 }
 
+/* Extra large screens */
 @media screen and (min-width: 1400px) {
   .quick-view-modal {
     max-width: 1400px;
+    width: 80%;
+  }
+  
+  .quick-view-content {
+    grid-template-columns: 1.3fr 1fr;
+    gap: 50px;
+    padding: 50px;
   }
   
   .quick-view-main-image {
-    height: 380px;
+    height: 400px;
     padding: 35px;
   }
+  
+  .quick-view-product-title {
+    font-size: 32px;
+  }
+  
+  .quick-view-new-price {
+    font-size: 36px;
+  }
 }
+
+/* High DPI displays */
+@media screen and (-webkit-min-device-pixel-ratio: 2), 
+       screen and (min-resolution: 192dpi) {
+  .quick-view-img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  .quick-view-modal {
+    max-height: 95vh;
+  }
+  
+  .quick-view-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    padding: 15px;
+  }
+  
+  .quick-view-main-image {
+    height: 200px;
+  }
+}
+
+/* Print styles */
+@media print {
+  .quick-view-modal-container {
+    display: none !important;
+  }
+}
+
+/* Accessibility - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .quick-view-modal-container,
+  .quick-view-modal,
+  .quick-view-close,
+  .quick-view-img,
+  .quick-view-thumbnail,
+  .quick-view-btn,
+  .retry-btn {
+    transition: none;
+  }
+  
+  .quick-view-close:hover {
+    transform: none;
+  }
+  
+  .quick-view-img:hover {
+    transform: none;
+  }
+  
+  .quick-view-thumbnail:hover,
+  .quick-view-thumbnail.active {
+    transform: none;
+  }
+  
+  .button-spinner {
+    animation: none;
+  }
+  
+  .spinner {
+    animation: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .quick-view-modal {
+    border: 2px solid;
+  }
+  
+  .quick-view-thumbnail {
+    border-width: 2px;
+  }
+  
+  .quick-view-btn {
+    border: 2px solid;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .quick-view-modal {
+    background: #1a1a1a;
+    color: #e0e0e0;
+  }
+  
+  .quick-view-product-title {
+    color: #ffffff;
+  }
+  
+  .quick-view-desc-text {
+    color: #b0b0b0;
+  }
+  
+  .quick-view-features {
+    background: #2a2a2a;
+  }
+  
+  .quick-view-feature {
+    color: #b0b0b0;
+  }
+  
+  .quick-view-btn-secondary {
+    background: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #444;
+  }
+  
+  .quick-view-btn-secondary:hover {
+    background: #3a3a3a;
+    border-color: #666;
+  }
+}
+
+/* Focus styles for accessibility */
+.quick-view-close:focus,
+.quick-view-btn:focus,
+.quick-view-thumbnail:focus {
+  outline: 2px solid var(--first-color);
+  outline-offset: 2px;
+}
+
+/* Custom scrollbar for modal */
+.quick-view-modal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.quick-view-modal::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.quick-view-modal::-webkit-scrollbar-thumb {
+  background: var(--first-color);
+  border-radius: 4px;
+}
+
+.quick-view-modal::-webkit-scrollbar-thumb:hover {
+  background: hsl(346, 85%, 65%);
+}
+
+/* Animation keyframes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Staggered animation for features */
+.quick-view-feature:nth-child(1) { animation-delay: 0.1s; }
+.quick-view-feature:nth-child(2) { animation-delay: 0.2s; }
+.quick-view-feature:nth-child(3) { animation-delay: 0.3s; }
+.quick-view-feature:nth-child(4) { animation-delay: 0.4s; }
+
+/* Modal enter animations */
+.quick-view-modal-container.show .quick-view-features .quick-view-feature {
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+.quick-view-modal-container.show .quick-view-actions {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* =============== END QUICK VIEW MODAL STYLES =============== */

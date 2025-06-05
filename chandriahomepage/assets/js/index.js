@@ -301,8 +301,14 @@ $(document).ready(function () {
             populateQuickViewModal(productData, productId);
             
             // Hide loading, show content
-            loading.style.display = 'none';
-            content.style.display = 'block';
+            if (loading) loading.style.display = 'none';
+            if (content) {
+                content.style.display = 'block';
+                content.style.visibility = 'visible';
+            }
+            
+            // Initialize action buttons
+            initQuickViewActions(productId);
             
         } catch (error) {
             console.error('Error loading product for quick view:', error);
