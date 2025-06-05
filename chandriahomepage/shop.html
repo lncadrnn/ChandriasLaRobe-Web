@@ -117,6 +117,89 @@
         <main class="main">
             <!--=============== PRODUCTS ===============-->
             <section class="products section-lg container">
+                <!-- Search and Filter Section -->
+                <div class="shop-controls">
+                    <div class="search-container">
+                        <div class="search-input-wrapper">
+                            <input 
+                                type="text" 
+                                id="product-search" 
+                                class="search-input" 
+                                placeholder="Search for products..."
+                                autocomplete="off"
+                            />
+                            <i class="fi fi-rs-search search-icon"></i>
+                            <button type="button" id="clear-search" class="clear-search" style="display: none;">
+                                <i class="fi fi-rs-cross-small"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-container">
+                        <div class="filter-dropdown">
+                            <button class="filter-btn" id="category-filter-btn">
+                                <span class="filter-text">All Categories</span>
+                                <i class="fi fi-rs-angle-small-down filter-arrow"></i>
+                            </button>
+                            <div class="filter-dropdown-menu" id="category-dropdown">
+                                <div class="filter-option active" data-category="all">
+                                    <span>All Categories</span>
+                                    <i class="fi fi-rs-check"></i>
+                                </div>
+                                <div class="filter-option" data-category="Wedding Gown">
+                                    <span>Wedding Gowns</span>
+                                    <i class="fi fi-rs-check"></i>
+                                </div>
+                                <div class="filter-option" data-category="Long Gown">
+                                    <span>Long Gowns</span>
+                                    <i class="fi fi-rs-check"></i>
+                                </div>
+                                <div class="filter-option" data-category="Short Gown">
+                                    <span>Short Gowns</span>
+                                    <i class="fi fi-rs-check"></i>
+                                </div>
+                                <div class="filter-option" data-category="Suit">
+                                    <span>Suits</span>
+                                    <i class="fi fi-rs-check"></i>
+                                </div>
+                                <div class="filter-option" data-category="Accessories">
+                                    <span>Accessories</span>
+                                    <i class="fi fi-rs-check"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="sort-dropdown">
+                            <button class="sort-btn" id="sort-filter-btn">
+                                <span class="sort-text">Sort by: Default</span>
+                                <i class="fi fi-rs-angle-small-down sort-arrow"></i>
+                            </button>
+                            <div class="sort-dropdown-menu" id="sort-dropdown">
+                                <div class="sort-option active" data-sort="default">
+                                    <span>Default</span>
+                                    <i class="fi fi-rs-check"></i>
+                                </div>
+                                <div class="sort-option" data-sort="name-asc">
+                                    <span>Name (A-Z)</span>
+                                    <i class="fi fi-rs-check"></i>
+                                </div>
+                                <div class="sort-option" data-sort="name-desc">
+                                    <span>Name (Z-A)</span>
+                                    <i class="fi fi-rs-check"></i>
+                                </div>
+                                <div class="sort-option" data-sort="price-low">
+                                    <span>Price (Low to High)</span>
+                                    <i class="fi fi-rs-check"></i>
+                                </div>
+                                <div class="sort-option" data-sort="price-high">
+                                    <span>Price (High to Low)</span>
+                                    <i class="fi fi-rs-check"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- START OF MODAL CONTAINER -->
                 <div class="cart-modal-container">
                     <div class="cart-modal">
@@ -293,14 +376,15 @@
                 <!-- PRODUCTS CONTAINER -->
                 <div class="products-container grid"></div>
 
-                <ul class="pagination">
-                    <li><a href="#" class="pagination-link active">01</a></li>
-                    <li>
-                        <a href="#" class="pagination-link icon">
-                            <i class="fi-rs-angle-double-small-right"></i>
-                        </a>
-                    </li>
-                </ul>
+                <!-- Pagination Container -->
+                <div class="pagination-container">
+                    <div class="pagination-info">
+                        <span id="pagination-info-text">Showing 1-12 of 0 products</span>
+                    </div>
+                    <ul class="pagination" id="pagination">
+                        <!-- Pagination buttons will be dynamically generated -->
+                    </ul>
+                </div>
             </section>
         </main>
         <!--=============== LOGOUT MODAL ===============-->
