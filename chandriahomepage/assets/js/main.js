@@ -125,12 +125,17 @@ imgGallery();
 var swiperCategories = new Swiper(".categories-container", {
     spaceBetween: 24,
     loop: true,
-    loopedSlides: 6, // Total number of slides
+    loopedSlides: 18, // Total number of slides (6 categories x 3 sets)
     centeredSlides: true, // Center slides to show partial on both sides
     slideToClickedSlide: true, // Allow clicking on partial slides to navigate
     grabCursor: true, // Show grab cursor for better UX
     effect: 'slide', // Explicitly set slide effect (no fade)
-    speed: 400, // Smooth transition speed
+    speed: 600, // Smooth transition speed
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+      pauseOnMouseEnter: true,
+    },
     navigation: {
       nextEl: ".custom-next-btn",
       prevEl: ".custom-prev-btn",
@@ -140,6 +145,11 @@ var swiperCategories = new Swiper(".categories-container", {
         320: {
           slidesPerView: 1.2, // Show partial slides on mobile
           spaceBetween: 15,
+          centeredSlides: true,
+        },
+        480: {
+          slidesPerView: 1.5, // Show more partial slides on larger mobile
+          spaceBetween: 18,
           centeredSlides: true,
         },
         640: {
