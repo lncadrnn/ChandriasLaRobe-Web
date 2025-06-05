@@ -1,3 +1,176 @@
+/* =============== ANIMATED BUBBLES =============== */
+.bubbles-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.bubble {
+  position: absolute;
+  background: linear-gradient(135deg, rgba(255, 154, 175, 0.1), rgba(255, 154, 175, 0.3));
+  border: 1px solid rgba(255, 154, 175, 0.2);
+  border-radius: 50%;
+  animation: float-up 15s infinite linear;
+  backdrop-filter: blur(2px);
+}
+
+.bubble:nth-child(1) {
+  width: 40px;
+  height: 40px;
+  left: 10%;
+  animation-delay: 0s;
+  animation-duration: 12s;
+}
+
+.bubble:nth-child(2) {
+  width: 20px;
+  height: 20px;
+  left: 20%;
+  animation-delay: 2s;
+  animation-duration: 10s;
+}
+
+.bubble:nth-child(3) {
+  width: 50px;
+  height: 50px;
+  left: 25%;
+  animation-delay: 4s;
+  animation-duration: 18s;
+}
+
+.bubble:nth-child(4) {
+  width: 80px;
+  height: 80px;
+  left: 40%;
+  animation-delay: 0s;
+  animation-duration: 16s;
+}
+
+.bubble:nth-child(5) {
+  width: 25px;
+  height: 25px;
+  left: 70%;
+  animation-delay: 1s;
+  animation-duration: 11s;
+}
+
+.bubble:nth-child(6) {
+  width: 15px;
+  height: 15px;
+  left: 80%;
+  animation-delay: 3s;
+  animation-duration: 14s;
+}
+
+.bubble:nth-child(7) {
+  width: 45px;
+  height: 45px;
+  left: 32%;
+  animation-delay: 7s;
+  animation-duration: 13s;
+}
+
+.bubble:nth-child(8) {
+  width: 30px;
+  height: 30px;
+  left: 55%;
+  animation-delay: 15s;
+  animation-duration: 20s;
+}
+
+.bubble:nth-child(9) {
+  width: 10px;
+  height: 10px;
+  left: 25%;
+  animation-delay: 2s;
+  animation-duration: 15s;
+}
+
+.bubble:nth-child(10) {
+  width: 60px;
+  height: 60px;
+  left: 85%;
+  animation-delay: 11s;
+  animation-duration: 17s;
+}
+
+.bubble:nth-child(11) {
+  width: 35px;
+  height: 35px;
+  left: 5%;
+  animation-delay: 6s;
+  animation-duration: 12s;
+}
+
+.bubble:nth-child(12) {
+  width: 55px;
+  height: 55px;
+  left: 90%;
+  animation-delay: 9s;
+  animation-duration: 19s;
+}
+
+.bubble:nth-child(13) {
+  width: 18px;
+  height: 18px;
+  left: 15%;
+  animation-delay: 12s;
+  animation-duration: 8s;
+}
+
+.bubble:nth-child(14) {
+  width: 70px;
+  height: 70px;
+  left: 60%;
+  animation-delay: 5s;
+  animation-duration: 21s;
+}
+
+.bubble:nth-child(15) {
+  width: 28px;
+  height: 28px;
+  left: 75%;
+  animation-delay: 8s;
+  animation-duration: 14s;
+}
+
+@keyframes float-up {
+  0% {
+    bottom: -100px;
+    transform: translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    bottom: 100vh;
+    transform: translateX(-80px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Media queries for responsive bubbles */
+@media screen and (max-width: 768px) {
+  .bubble {
+    animation-duration: 8s;
+  }
+  
+  .bubble:nth-child(odd) {
+    width: calc(100% * 0.6);
+    height: calc(100% * 0.6);
+  }
+}
+
+/* =============== ROOT VARIABLES =============== */
 :root {
   --primary-color: hsl(346, 100%, 74%);
   --primary-color-light: hsl(346, 85%, 90%);
@@ -1219,4 +1392,313 @@ a[href] {
 .no-results .btn:hover {
     background-color: hsl(346, 100%, 60%);
     transform: translateY(-1px);
+}
+
+/* =============== NO PRODUCTS FOUND STYLES =============== */
+.no-products-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  min-height: 400px;
+  grid-column: 1 / -1; /* Span full width of grid */
+  background: linear-gradient(135deg, rgba(255, 133, 177, 0.05), rgba(255, 153, 175, 0.1));
+  border-radius: 20px;
+  border: 2px dashed rgba(255, 133, 177, 0.3);
+  margin: 2rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.no-products-found::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 133, 177, 0.03) 0%, transparent 70%);
+  animation: float 6s ease-in-out infinite;
+  z-index: 0;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+.no-products-icon {
+  font-size: 4rem;
+  color: var(--primary-color, #ff85b1);
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+.no-products-content {
+  position: relative;
+  z-index: 1;
+  max-width: 500px;
+}
+
+.no-products-title {
+  font-family: var(--second-font, 'Poppins', sans-serif);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--title-color, #333);
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.no-products-description {
+  font-size: 1.1rem;
+  color: var(--text-color, #666);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.no-products-suggestions {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(255, 133, 177, 0.1);
+  border: 1px solid rgba(255, 133, 177, 0.1);
+}
+
+.no-products-suggestion-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary-color, #ff85b1);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.no-products-suggestion-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.no-products-suggestion-list li {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+  color: var(--text-color, #666);
+  position: relative;
+}
+
+.no-products-suggestion-list li::before {
+  content: '✨';
+  margin-right: 0.75rem;
+  font-size: 1rem;
+}
+
+.no-products-suggestion-list li:not(:last-child) {
+  border-bottom: 1px solid rgba(255, 133, 177, 0.1);
+}
+
+/* Responsive design for no products found */
+@media screen and (max-width: 768px) {
+  .no-products-found {
+    padding: 3rem 1.5rem;
+    min-height: 350px;
+  }
+  
+  .no-products-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .no-products-title {
+    font-size: 1.5rem;
+  }
+  
+  .no-products-description {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .no-products-suggestions {
+    padding: 1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .no-products-found {
+    padding: 2rem 1rem;
+    min-height: 300px;
+    margin: 1rem 0;
+  }
+  
+  .no-products-icon {
+    font-size: 2.5rem;
+  }
+  
+  .no-products-title {
+    font-size: 1.25rem;
+  }
+  
+  .no-products-description {
+    font-size: 0.9rem;
+  }
+  
+  .no-products-suggestion-list li {
+    font-size: 0.85rem;
+  }
+}
+
+/* =============== CHECKBOX FILTER STYLES =============== */
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255, 133, 177, 0.2);
+  margin-bottom: 0.5rem;
+}
+
+.filter-header-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--title-color, #333);
+}
+
+.clear-filters-btn {
+  background: none;
+  border: none;
+  color: var(--primary-color, #ff85b1);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.clear-filters-btn:hover {
+  background: rgba(255, 133, 177, 0.1);
+}
+
+.filter-checkbox-option {
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.filter-checkbox-option:hover {
+  background: rgba(255, 133, 177, 0.05);
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  font-size: 0.9rem;
+  user-select: none;
+}
+
+.checkbox-container input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  height: 18px;
+  width: 18px;
+  background-color: white;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  margin-right: 0.75rem;
+  position: relative;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+  border-color: var(--primary-color, #ff85b1);
+}
+
+.checkbox-container input:checked ~ .checkmark {
+  background-color: var(--primary-color, #ff85b1);
+  border-color: var(--primary-color, #ff85b1);
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkbox-container .checkmark:after {
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-label {
+  color: var(--text-color, #666);
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.checkbox-container:hover .checkbox-label,
+.checkbox-container input:checked ~ .checkbox-label {
+  color: var(--title-color, #333);
+}
+
+.filter-actions {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid rgba(255, 133, 177, 0.2);
+  margin-top: 0.5rem;
+}
+
+.apply-filters-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--primary-color, #ff85b1), rgba(255, 133, 177, 0.8));
+  color: white;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 133, 177, 0.3);
+}
+
+.apply-filters-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 133, 177, 0.4);
+}
+
+.apply-filters-btn:active {
+  transform: translateY(0);
+}
+
+/* Update filter button text for multiple selections */
+.filter-text.multiple-selected {
+  color: var(--primary-color, #ff85b1);
+  font-weight: 600;
 }

@@ -27,6 +27,15 @@
         <title>Chandria's La Robe</title>
     </head>
     <body>
+        <!-- Animated Background Bubbles -->
+        <div class="bubbles-container">
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+        </div>
+
         <!-- Full Screen Shop Loader -->
         <div id="shop-loader" class="shop-loader">
             <div class="shop-loader-content">
@@ -102,13 +111,7 @@
                         <a href="shop.html" class="mobile-nav-link">Shop</a>
                     </li>
                     <li class="mobile-nav-item">
-                        <a href="cart.html" class="mobile-nav-link">Cart</a>
-                    </li>
-                    <li class="mobile-nav-item">
                         <a href="../index.html#contact" class="mobile-nav-link">Contact</a>
-                    </li>
-                    <li class="mobile-nav-item">
-                        <a href="accounts.html" class="mobile-nav-link">Account</a>
                     </li>
                 </ul>
             </div>
@@ -142,29 +145,51 @@
                                 <i class="fi fi-rs-angle-small-down filter-arrow"></i>
                             </button>
                             <div class="filter-dropdown-menu" id="category-dropdown">
-                                <div class="filter-option active" data-category="all">
-                                    <span>All Categories</span>
-                                    <i class="fi fi-rs-check"></i>
+                                <div class="filter-header">
+                                    <span class="filter-header-title">Filter by Categories</span>
+                                    <button type="button" class="clear-filters-btn" id="clear-categories">
+                                        <span>Clear All</span>
+                                    </button>
                                 </div>
-                                <div class="filter-option" data-category="Wedding Gown">
-                                    <span>Wedding Gowns</span>
-                                    <i class="fi fi-rs-check"></i>
+                                <div class="filter-checkbox-option">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" class="category-checkbox" data-category="Wedding Gown" />
+                                        <span class="checkmark"></span>
+                                        <span class="checkbox-label">Wedding Gowns</span>
+                                    </label>
                                 </div>
-                                <div class="filter-option" data-category="Long Gown">
-                                    <span>Long Gowns</span>
-                                    <i class="fi fi-rs-check"></i>
+                                <div class="filter-checkbox-option">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" class="category-checkbox" data-category="Ball Gown" />
+                                        <span class="checkmark"></span>
+                                        <span class="checkbox-label">Ball Gowns</span>
+                                    </label>
                                 </div>
-                                <div class="filter-option" data-category="Short Gown">
-                                    <span>Short Gowns</span>
-                                    <i class="fi fi-rs-check"></i>
+                                <div class="filter-checkbox-option">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" class="category-checkbox" data-category="Fairy Gown" />
+                                        <span class="checkmark"></span>
+                                        <span class="checkbox-label">Fairy Gowns</span>
+                                    </label>
                                 </div>
-                                <div class="filter-option" data-category="Suit">
-                                    <span>Suits</span>
-                                    <i class="fi fi-rs-check"></i>
+                                <div class="filter-checkbox-option">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" class="category-checkbox" data-category="Long Gown" />
+                                        <span class="checkmark"></span>
+                                        <span class="checkbox-label">Long Gowns</span>
+                                    </label>
                                 </div>
-                                <div class="filter-option" data-category="Accessories">
-                                    <span>Accessories</span>
-                                    <i class="fi fi-rs-check"></i>
+                                <div class="filter-checkbox-option">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" class="category-checkbox" data-category="Suit" />
+                                        <span class="checkmark"></span>
+                                        <span class="checkbox-label">Suits</span>
+                                    </label>
+                                </div>
+                                <div class="filter-actions">
+                                    <button type="button" class="apply-filters-btn" id="apply-categories">
+                                        <span>Apply Filters</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -198,6 +223,22 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Product Category Tabs -->
+                <div class="product-tabs">
+                    <button class="product-tab active-tab" data-tab="all">
+                        <i class="fi fi-rs-grid-alt"></i>
+                        <span>All Products</span>
+                    </button>
+                    <button class="product-tab" data-tab="clothing">
+                        <i class="fi fi-rs-dress"></i>
+                        <span>Clothing</span>
+                    </button>
+                    <button class="product-tab" data-tab="additionals">
+                        <i class="fi fi-rs-sparkles"></i>
+                        <span>Additionals</span>
+                    </button>
                 </div>
 
                 <!-- START OF MODAL CONTAINER -->
