@@ -124,27 +124,35 @@ $(document).ready(function () {
         currentUser = user;
         let userCart = []; // Will hold the user's cart items if logged in
 
+        // Show loading state
+        $(".products-container").html(`
+            <div class="products-loading">
+                <div class="spinner"></div>
+                <p>Loading products...</p>
+            </div>
+        `);
+
         // If user is logged in, fetch their cart from Firestore
-        if (user) {
-            const userRef = doc(chandriaDB, "userAccounts", user.uid); // User doc reference
-            const userSnap = await getDoc(userRef); // Get user data
+            if (user) {
+                const userRef = doc(chandriaDB, "userAccounts", user.uid); // User doc reference
+                const userSnap = await getDoc(userRef); // Get user data
 
-            if (userSnap.exists()) {
-                const data = userSnap.data();
-                userCart = data.added_to_cart || []; // Load cart items
+                if (userSnap.exists()) {
+                    const data = userSnap.data();
+                    userCart = data.added_to_cart || []; // Load cart items
+                }
             }
-        }
 
-        // Only fetch products if allProducts array is empty (first load)
-        if (allProducts.length === 0) {
-            const querySnapshot = await getDocs(collection(chandriaDB, "products"));
-            allProducts = [];
+            // Only fetch products if allProducts array is empty (first load)
+            if (allProducts.length === 0) {
+                const querySnapshot = await getDocs(collection(chandriaDB, "products"));
+                allProducts = [];
 
-            querySnapshot.forEach(doc => {
-                const data = doc.data();
-                allProducts.push({ id: doc.id, ...data });
-            });
-        }
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    allProducts.push({ id: doc.id, ...data });
+                });
+            }
 
         // Apply filters
         filteredProducts = allProducts.filter(product => {
@@ -765,7 +773,6 @@ $(document).ready(function () {
 
             // Show loading state
             openQuickViewModal();
-            showQuickViewLoading();
 
             try {
                 const docRef = doc(chandriaDB, "products", productId);
@@ -774,7 +781,11 @@ $(document).ready(function () {
                 if (docSnap.exists()) {
                     const product = docSnap.data();
                     populateQuickViewModal(product, productId);
-                    hideQuickViewLoading();
+                    
+                    // Hide loading and show content after data is loaded
+                    setTimeout(() => {
+                        hideQuickViewLoading();
+                    }, 300);
                 } else {
                     console.error("Product not found");
                     notyf.error("Product not found");
@@ -878,11 +889,23 @@ $(document).ready(function () {
                 </div>
             `);
         });
-    } // Function to open quick view modal
+    }    // Function to open quick view modal
     function openQuickViewModal() {
         console.log("Opening quick view modal"); // Debug log
+        const loadingElement = document.getElementById('quick-view-loading');
+        const contentElement = document.getElementById('quick-view-content');
+        
         $(".quick-view-modal-container").addClass("show");
         $("body").css("overflow", "hidden");
+
+        // Show loading spinner and hide content
+        if (loadingElement) {
+            loadingElement.classList.remove('hidden');
+            loadingElement.style.display = 'flex';
+        }
+        if (contentElement) {
+            contentElement.style.display = 'none';
+        }
 
         // Set first thumbnail as active
         $(".quick-view-thumbnail").removeClass("active");
@@ -892,10 +915,22 @@ $(document).ready(function () {
             "Quick view modal opened, has show class:",
             $(".quick-view-modal-container").hasClass("show")
         ); // Debug log
-    } // Function to close quick view modal
+    }    // Function to close quick view modal
     function closeQuickViewModal() {
+        const loadingElement = document.getElementById('quick-view-loading');
+        const contentElement = document.getElementById('quick-view-content');
+        
         $(".quick-view-modal-container").removeClass("show");
         $("body").css("overflow", "auto");
+        
+        // Reset modal state for next use
+        if (loadingElement) {
+            loadingElement.style.display = 'none';
+            loadingElement.classList.add('hidden');
+        }
+        if (contentElement) {
+            contentElement.style.display = 'none';
+        }
     }
 
     // Function to show loading state in quick view modal
@@ -913,9 +948,19 @@ $(document).ready(function () {
 
     // Function to hide loading state in quick view modal
     function hideQuickViewLoading() {
-        // Loading state is removed when populateQuickViewModal is called
-        // This function exists for consistency but the actual hiding is done in populateQuickViewModal
         console.log("Hiding quick view loading state"); // Debug log
+        
+        const loadingElement = document.getElementById('quick-view-loading');
+        const contentElement = document.getElementById('quick-view-content');
+        
+        // Hide loading spinner and show content
+        if (loadingElement) {
+            loadingElement.style.display = 'none';
+            loadingElement.classList.add('hidden');
+        }
+        if (contentElement) {
+            contentElement.style.display = 'grid';
+        }
     } // Close modal when clicking close button or backdrop
     $(document).on("click", ".quick-view-close", closeQuickViewModal);
     $(document).on("click", ".quick-view-modal-container", function (e) {

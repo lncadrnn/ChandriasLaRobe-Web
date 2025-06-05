@@ -116,9 +116,12 @@ $(document).ready(function () {
             const $freshContainer = $("#fresh-products-container");
             if ($freshContainer.length === 0) return;
 
-            $freshContainer.html(
-                '<div class="loading">Loading fresh products...</div>'
-            );
+            $freshContainer.html(`
+                <div class="products-loading">
+                    <div class="spinner"></div>
+                    <p>Loading fresh products...</p>
+                </div>
+            `);
 
             const productsQuery = query(
                 collection(chandriaDB, "products"),
@@ -160,9 +163,11 @@ $(document).ready(function () {
             }
         } catch (error) {
             console.error("Error loading fresh products:", error);
-            $("#fresh-products-container").html(
-                '<div class="error">Unable to load products. Please try again later.</div>'
-            );
+            $("#fresh-products-container").html(`
+                <div class="products-error">
+                    <p>Unable to load fresh products. Please try again later.</p>
+                </div>
+            `);
         }
     }
 
@@ -172,9 +177,12 @@ $(document).ready(function () {
             const $hotContainer = $("#hot-products-container");
             if ($hotContainer.length === 0) return;
 
-            $hotContainer.html(
-                '<div class="loading">Loading hot products...</div>'
-            );
+            $hotContainer.html(`
+                <div class="products-loading">
+                    <div class="spinner"></div>
+                    <p>Loading hot products...</p>
+                </div>
+            `);
 
             // Query products with price >= 3000 (considered "hot" high-end items)
             const querySnapshot = await getDocs(collection(chandriaDB, "products"));
@@ -211,9 +219,11 @@ $(document).ready(function () {
             $hotContainer.html(productsHTML);
         } catch (error) {
             console.error("Error loading hot products:", error);
-            $("#hot-products-container").html(
-                '<div class="error">Unable to load hot products. Please try again later.</div>'
-            );
+            $("#hot-products-container").html(`
+                <div class="products-error">
+                    <p>Unable to load hot products. Please try again later.</p>
+                </div>
+            `);
         }
     }
 
@@ -223,9 +233,12 @@ $(document).ready(function () {
             const $popularContainer = $("#popular-products-container");
             if ($popularContainer.length === 0) return;
 
-            $popularContainer.html(
-                '<div class="loading">Loading popular products...</div>'
-            );
+            $popularContainer.html(`
+                <div class="products-loading">
+                    <div class="spinner"></div>
+                    <p>Loading popular products...</p>
+                </div>
+            `);
 
             // Get products from popular categories (Wedding Gown, Long Gown, Short Gown)
             const querySnapshot = await getDocs(collection(chandriaDB, "products"));
@@ -263,6 +276,11 @@ $(document).ready(function () {
             $popularContainer.html(productsHTML);
         } catch (error) {
             console.error("Error loading popular products:", error);
+            $("#popular-products-container").html(`
+                <div class="products-error">
+                    <p>Unable to load popular products. Please try again later.</p>
+                </div>
+            `);
         }
     }
 
@@ -281,10 +299,21 @@ $(document).ready(function () {
     async function openQuickView(productId) {
         try {
             const modal = document.getElementById('quick-view-modal');
+            const loadingElement = document.getElementById('quick-view-loading');
+            const contentElement = document.getElementById('quick-view-content');
             
-            // Show modal
+            // Show modal with loading state
             modal.classList.add('show');
             document.body.style.overflow = 'hidden';
+            
+            // Show loading spinner and hide content
+            if (loadingElement) {
+                loadingElement.classList.remove('hidden');
+                loadingElement.style.display = 'flex';
+            }
+            if (contentElement) {
+                contentElement.style.display = 'none';
+            }
             
             // Fetch product data
             const productDoc = await getDoc(doc(chandriaDB, "products", productId));
@@ -299,6 +328,17 @@ $(document).ready(function () {
             // Populate modal with product data
             populateQuickViewModal(productData, productId);
             
+            // Hide loading spinner and show content after data is loaded
+            setTimeout(() => {
+                if (loadingElement) {
+                    loadingElement.style.display = 'none';
+                    loadingElement.classList.add('hidden');
+                }
+                if (contentElement) {
+                    contentElement.style.display = 'grid';
+                }
+            }, 300); // Small delay to ensure smooth transition
+            
         } catch (error) {
             console.error('Error loading product for quick view:', error);
             notyf.error('Failed to load product details');
@@ -309,9 +349,21 @@ $(document).ready(function () {
     // Function to close quick view modal
     function closeQuickView() {
         const modal = document.getElementById('quick-view-modal');
+        const loadingElement = document.getElementById('quick-view-loading');
+        const contentElement = document.getElementById('quick-view-content');
+        
         modal.classList.remove('show');
         document.body.style.overflow = '';
         currentQuickViewProduct = null;
+        
+        // Reset modal state for next use
+        if (loadingElement) {
+            loadingElement.style.display = 'none';
+            loadingElement.classList.add('hidden');
+        }
+        if (contentElement) {
+            contentElement.style.display = 'none';
+        }
     }
 
     // Function to populate quick view modal with product data
