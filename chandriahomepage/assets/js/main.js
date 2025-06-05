@@ -261,6 +261,9 @@ document.addEventListener('DOMContentLoaded', () => {
                      window.location.pathname === '/index.html' ||
                      window.location.pathname.includes('index.html');
   
+  // Check if user has already seen the welcome modal
+  const hasSeenWelcomeModal = localStorage.getItem('hasSeenWelcomeModal') === 'true';
+  
   // Function to prevent background scrolling
   function preventBackgroundScroll(prevent = true) {
     if (prevent) {
@@ -279,17 +282,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (welcomeModal) {
       welcomeModal.classList.add('hidden');
       preventBackgroundScroll(false); // Restore scrolling
+      // Mark that user has seen the welcome modal
+      localStorage.setItem('hasSeenWelcomeModal', 'true');
     }
   }
   
-  if (welcomeModal && isHomepage) {
-    // Show modal after a brief delay for better UX on homepage refresh
+  if (welcomeModal && isHomepage && !hasSeenWelcomeModal) {
+    // Show modal after a brief delay for better UX on first visit only
     setTimeout(() => {
       welcomeModal.classList.remove('hidden');
       preventBackgroundScroll(true); // Prevent background scrolling
     }, 1000);
   } else if (welcomeModal) {
-    // Ensure modal is hidden on other pages
+    // Ensure modal is hidden on other pages or if already seen
     welcomeModal.classList.add('hidden');
   }
   
