@@ -586,7 +586,23 @@
                 <button class="quick-view-close" id="quick-view-close">
                     &times;
                 </button>
-                <div class="quick-view-content">
+                
+                <!-- Loading Spinner -->
+                <div id="quick-view-loading" class="quick-view-loading">
+                    <div class="spinner"></div>
+                    <p>Loading product details...</p>
+                </div>
+                
+                <!-- Error State -->
+                <div id="quick-view-error" class="quick-view-error" style="display: none;">
+                    <div class="error-icon">
+                        <i class="fi fi-rs-exclamation"></i>
+                    </div>
+                    <p>Failed to load product details</p>
+                    <button class="retry-btn" onclick="retryQuickView()">Try Again</button>
+                </div>
+                
+                <div class="quick-view-content" id="quick-view-content" style="display: none;">
                     <div class="quick-view-images">
                         <div class="quick-view-main-image">
                             <img

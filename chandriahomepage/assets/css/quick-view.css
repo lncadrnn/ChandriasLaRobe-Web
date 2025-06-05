@@ -293,54 +293,88 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 40px;
+  min-height: 400px;
+  padding: 2rem;
   text-align: center;
-  min-height: 200px;
 }
 
-.quick-view-loading {
-  color: var(--first-color);
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.quick-view-loading::before {
-  content: '';
+.quick-view-loading .spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid var(--first-color-alt);
+  border: 3px solid rgba(255, 133, 177, 0.3);
   border-top: 3px solid var(--first-color);
   border-radius: 50%;
-  animation: quickViewSpin 1s linear infinite;
-  margin-bottom: 20px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
 }
 
-.quick-view-error {
-  color: #e74c3c;
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.quick-view-error::before {
-  content: '⚠️';
-  font-size: 40px;
-  margin-bottom: 15px;
-}
-
-@keyframes quickViewSpin {
+@keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-/* =============== LOADING STATE FOR BUTTONS =============== */
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  pointer-events: none;
+.quick-view-loading p {
+  color: var(--text-color);
+  font-size: var(--normal-font-size);
+  margin: 0;
 }
 
-.btn .fi-rs-spinner {
-  animation: quickViewSpin 1s linear infinite;
+.quick-view-error {
+  color: var(--text-color);
+}
+
+.quick-view-error .error-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.quick-view-error .error-icon i {
+  font-size: 24px;
+  color: white;
+}
+
+.quick-view-error p {
+  margin-bottom: 1rem;
+  font-size: var(--normal-font-size);
+}
+
+.retry-btn {
+  background: var(--first-color);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: var(--small-font-size);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.retry-btn:hover {
+  background: var(--first-color-alt);
+  transform: translateY(-2px);
+}
+
+/* Button Loading State */
+.button-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+.quick-view-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 /* Quick View Responsive Design */

@@ -35,20 +35,26 @@ $(document).ready(async function () {
   const productId = urlParams.get('id');
   
   if (!productId) {
-    alert("No product ID specified in URL.");
-    window.location.href = "shop.html"; // Redirect to shop if no product ID
+    console.error('No product ID found in URL');
+    showErrorState('No product ID specified in URL.');
+    setTimeout(() => {
+      window.location.href = 'shop.html';
+    }, 2000);
     return;
   }
 
-  try {
-    // Show loader before starting to fetch product details
-    showDetailsLoader();
+  // Show loading spinner
+  showDetailsLoader();
 
+  try {
     const docRef = doc(chandriaDB, "products", productId);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
       const data = docSnap.data();
+
+      // Update breadcrumbs dynamically
+      updateBreadcrumbs(data);
 
       // Image previews
       $('.frontImage').attr("src", data.frontImageUrl);
@@ -256,4 +262,78 @@ $(document).ready(async function () {
       $("#cart-count").text("0");
     }
   }
+
+  // Function to update breadcrumbs dynamically
+function updateBreadcrumbs(product) {
+    const breadcrumbContainer = document.querySelector('.breadcrumb');
+    if (!breadcrumbContainer) return;
+    
+    // Clear existing breadcrumbs
+    breadcrumbContainer.innerHTML = '';
+    
+    // Create breadcrumb structure
+    const breadcrumbs = [
+        { text: 'Home', url: '../index.html' },
+        { text: 'Shop', url: 'shop.html' },
+        { text: formatCategoryName(product.category), url: `shop.html?category=${encodeURIComponent(product.category)}` },
+        { text: product.name, url: null, active: true }
+    ];
+    
+    breadcrumbs.forEach((crumb, index) => {
+        const breadcrumbItem = document.createElement('li');
+        breadcrumbItem.className = 'breadcrumb-item';
+        
+        if (crumb.active) {
+            breadcrumbItem.classList.add('active');
+            breadcrumbItem.textContent = crumb.text;
+        } else {
+            const link = document.createElement('a');
+            link.href = crumb.url;
+            link.textContent = crumb.text;
+            link.className = 'breadcrumb-link';
+            breadcrumbItem.appendChild(link);
+        }
+        
+        breadcrumbContainer.appendChild(breadcrumbItem);
+        
+        // Add separator (except for last item)
+        if (index < breadcrumbs.length - 1) {
+            const separator = document.createElement('span');
+            separator.className = 'breadcrumb-separator';
+            separator.innerHTML = '<i class="fi fi-rs-angle-right"></i>';
+            breadcrumbContainer.appendChild(separator);
+        }
+    });
+}
+
+// Format category name for display
+function formatCategoryName(category) {
+    if (!category) return 'Products';
+    
+    return category
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+}
+
+// Enhanced error state function
+function showErrorState(message) {
+    hideDetailsLoader();
+    const productContainer = document.querySelector('.product-details') || document.querySelector('.container');
+    if (!productContainer) return;
+    
+    productContainer.innerHTML = `
+        <div class="error-container">
+            <div class="error-icon">
+                <i class="fi fi-rs-exclamation"></i>
+            </div>
+            <h3>Oops! Something went wrong</h3>
+            <p>${message}</p>
+            <div class="error-actions">
+                <button class="retry-btn" onclick="window.location.reload()">Try Again</button>
+                <a href="shop.html" class="back-btn">Back to Shop</a>
+            </div>
+        </div>
+    `;
+}
 });

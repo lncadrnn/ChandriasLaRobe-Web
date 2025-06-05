@@ -273,16 +273,19 @@ $(document).ready(function () {
     async function openQuickView(productId) {
         try {
             const modal = document.getElementById('quick-view-modal');
+            const loading = document.getElementById('quick-view-loading');
+            const content = document.getElementById('quick-view-content');
+            const error = document.getElementById('quick-view-error');
             
-            // Show modal
+            // Show modal and loading state
             modal.classList.add('show');
             document.body.style.overflow = 'hidden';
+            loading.style.display = 'flex';
+            content.style.display = 'none';
+            error.style.display = 'none';
             
-            // Show loading state on main image
-            const mainImg = document.getElementById('quick-view-main-img');
-            if (mainImg) {
-                mainImg.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTgiIHN0cm9rZT0iI2UwZTBlMCIgc3Ryb2tlLXdpZHRoPSI0Ii8+CjxwYXRoIGQ9Im0yMCAyYTE4IDE4IDAgMCAxIDE4IDE4IiBzdHJva2U9IiM5NDkzZjMiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj4KPGF1aW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiB0eXBlPSJyb3RhdGUiIGR1cj0iMXMiIHZhbHVlcz0iMCAyMCAyMDszNjAgMjAgMjAiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+CjwvcGF0aD4KPC9zdmc+';
-            }
+            // Store current product ID for retry functionality
+            window.currentQuickViewProductId = productId;
             
             // Fetch product data
             const productDoc = await getDoc(doc(chandriaDB, "products", productId));
@@ -297,12 +300,33 @@ $(document).ready(function () {
             // Populate modal with product data
             populateQuickViewModal(productData, productId);
             
+            // Hide loading, show content
+            loading.style.display = 'none';
+            content.style.display = 'block';
+            
         } catch (error) {
             console.error('Error loading product for quick view:', error);
-            notyf.error('Failed to load product details. Please try again.');
-            closeQuickView();
+            showQuickViewError();
         }
     }
+
+    // Function to show error state in quick view modal
+    function showQuickViewError() {
+        const loading = document.getElementById('quick-view-loading');
+        const content = document.getElementById('quick-view-content');
+        const error = document.getElementById('quick-view-error');
+        
+        if (loading) loading.style.display = 'none';
+        if (content) content.style.display = 'none';
+        if (error) error.style.display = 'flex';
+    }
+
+    // Global retry function for quick view
+    window.retryQuickView = function() {
+        if (window.currentQuickViewProductId) {
+            openQuickView(window.currentQuickViewProductId);
+        }
+    };
 
     // Function to populate quick view modal with product data
     function populateQuickViewModal(product, productId) {
@@ -370,8 +394,16 @@ $(document).ready(function () {
         const fullDetailsBtn = document.querySelector('#quick-view-details-btn');
         if (fullDetailsBtn) {
             fullDetailsBtn.addEventListener('click', () => {
-                closeQuickView();
-                window.location.href = `chandriahomepage/details.html?id=${productId}`;
+                // Show loading state on button
+                const originalHTML = fullDetailsBtn.innerHTML;
+                fullDetailsBtn.innerHTML = '<div class="button-spinner"></div><span>Loading...</span>';
+                fullDetailsBtn.disabled = true;
+                
+                // Navigate after short delay to show loading state
+                setTimeout(() => {
+                    closeQuickView();
+                    window.location.href = `chandriahomepage/details.html?id=${productId}`;
+                }, 500);
             });
         }
         
@@ -454,6 +486,17 @@ $(document).ready(function () {
         modal.classList.remove('show');
         document.body.style.overflow = '';
         currentQuickViewProduct = null;
+        
+        // Reset states after modal closes
+        setTimeout(() => {
+            const loading = document.getElementById('quick-view-loading');
+            const content = document.getElementById('quick-view-content');
+            const error = document.getElementById('quick-view-error');
+            
+            if (loading) loading.style.display = 'flex';
+            if (content) content.style.display = 'none';
+            if (error) error.style.display = 'none';
+        }, 300);
     }
 
     // Initialize quick view event listeners
