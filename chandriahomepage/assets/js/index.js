@@ -8,6 +8,7 @@ import {
     onAuthStateChanged,
     doc,
     getDoc,
+    updateDoc,
     signOut,
     query,
     orderBy,
@@ -85,8 +86,11 @@ $(document).ready(function () {
                     }
                 </a>                
                 <div class="product-actions">
-                    <a href="chandriahomepage/details.html?id=${productId}" class="action-btn" aria-label="View Details">
+                    <button class="action-btn quick-view-btn" aria-label="Quick View" data-product-id="${productId}">
                         <i class="fi fi-rs-eye"></i>
+                    </button>
+                    <a href="chandriahomepage/details.html?id=${productId}" class="action-btn" aria-label="View Details">
+                        <i class="fi fi-rs-shuffle"></i>
                     </a>
                     <a href="#" class="action-btn" aria-label="Add to Favorites">
                         <i class="fi fi-rs-heart"></i>
@@ -262,10 +266,298 @@ $(document).ready(function () {
             $popularContainer.html(productsHTML);
         } catch (error) {
             console.error("Error loading popular products:", error);
-            $("#popular-products-container").html(
-                '<div class="error">Unable to load popular products. Please try again later.</div>'
-            );
         }
+    }
+
+    // QUICK VIEW FUNCTIONALITY
+    let currentQuickViewProduct = null;
+
+    // Function to open quick view modal
+    async function openQuickView(productId) {
+        try {
+            const modal = document.getElementById('quickViewModal');
+            const modalContent = modal.querySelector('.quick-view-content');
+            
+            // Show modal with loading state
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            modalContent.innerHTML = '<div class="quick-view-loading">Loading product details...</div>';
+            
+            // Fetch product data
+            const productDoc = await getDoc(doc(chandriaDB, "products", productId));
+            
+            if (!productDoc.exists()) {
+                throw new Error('Product not found');
+            }
+            
+            const productData = productDoc.data();
+            currentQuickViewProduct = { id: productId, ...productData };
+            
+            // Populate modal with product data
+            populateQuickViewModal(productData, productId);
+            
+        } catch (error) {
+            console.error('Error loading product for quick view:', error);
+            const modal = document.getElementById('quickViewModal');
+            const modalContent = modal.querySelector('.quick-view-content');
+            modalContent.innerHTML = '<div class="quick-view-error">Failed to load product details. Please try again.</div>';
+        }
+    }
+
+    // Function to populate quick view modal with product data
+    function populateQuickViewModal(product, productId) {
+        const modal = document.getElementById('quickViewModal');
+        const modalContent = modal.querySelector('.quick-view-content');
+        
+        const availableSizes = product.size ? Object.keys(product.size).join(", ") : "N/A";
+        const price = product.price ? `₱ ${product.price} / rent` : "Price available in-store";
+        
+        // Create additional images array
+        const additionalImages = [];
+        if (product.backImageUrl) additionalImages.push(product.backImageUrl);
+        if (product.additionalImages && Array.isArray(product.additionalImages)) {
+            additionalImages.push(...product.additionalImages);
+        }
+        
+        modalContent.innerHTML = `
+            <div class="quick-view-images">
+                <div class="main-image-container">
+                    <img src="${product.frontImageUrl || 'chandriahomepage/assets/img/placeholder.jpg'}" 
+                         alt="${product.name || 'Product'}" 
+                         class="main-image" 
+                         id="quickViewMainImage">
+                </div>
+                ${additionalImages.length > 0 ? `
+                <div class="thumbnail-container">
+                    <div class="thumbnail active" data-image="${product.frontImageUrl}">
+                        <img src="${product.frontImageUrl}" alt="Front view">
+                    </div>
+                    ${additionalImages.map(img => `
+                        <div class="thumbnail" data-image="${img}">
+                            <img src="${img}" alt="Product view">
+                        </div>
+                    `).join('')}
+                </div>
+                ` : ''}
+            </div>
+            
+            <div class="quick-view-details">
+                <div class="product-header">
+                    <span class="product-category">${product.category || 'Clothing'}</span>
+                    <h2 class="product-title">${product.name || 'Untitled Product'}</h2>
+                    <div class="product-price">
+                        <span class="price">${price}</span>
+                    </div>
+                </div>
+                
+                <div class="product-description">
+                    <p>${product.description || 'No description available for this product.'}</p>
+                </div>
+                
+                <div class="product-features">
+                    <div class="feature-item">
+                        <span class="feature-label">Available Sizes:</span>
+                        <span class="feature-value">${availableSizes}</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-label">Category:</span>
+                        <span class="feature-value">${product.category || 'Clothing'}</span>
+                    </div>
+                    ${product.color ? `
+                    <div class="feature-item">
+                        <span class="feature-label">Color:</span>
+                        <span class="feature-value">${product.color}</span>
+                    </div>
+                    ` : ''}
+                    ${product.material ? `
+                    <div class="feature-item">
+                        <span class="feature-label">Material:</span>
+                        <span class="feature-value">${product.material}</span>
+                    </div>
+                    ` : ''}
+                </div>
+                
+                <div class="product-meta">
+                    <div class="meta-item">
+                        <i class="fi fi-rs-truck"></i>
+                        <span>Available for fitting appointments</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fi fi-rs-refresh"></i>
+                        <span>Professional alterations included</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fi fi-rs-shield-check"></i>
+                        <span>Quality guarantee</span>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary full-details-btn" data-product-id="${productId}">
+                        View Full Details
+                        <i class="fi fi-rs-arrow-right"></i>
+                    </button>
+                    <button class="btn btn-secondary add-to-cart-btn" data-product-id="${productId}">
+                        <i class="fi fi-rs-shopping-cart"></i>
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Initialize thumbnail functionality
+        initQuickViewThumbnails();
+        
+        // Initialize action buttons
+        initQuickViewActions(productId);
+    }
+
+    // Function to initialize thumbnail switching
+    function initQuickViewThumbnails() {
+        const thumbnails = document.querySelectorAll('#quickViewModal .thumbnail');
+        const mainImage = document.getElementById('quickViewMainImage');
+        
+        thumbnails.forEach(thumbnail => {
+            thumbnail.addEventListener('click', () => {
+                // Remove active class from all thumbnails
+                thumbnails.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked thumbnail
+                thumbnail.classList.add('active');
+                
+                // Update main image
+                const newImageSrc = thumbnail.dataset.image;
+                mainImage.src = newImageSrc;
+            });
+        });
+    }
+
+    // Function to initialize quick view action buttons
+    function initQuickViewActions(productId) {
+        // View Full Details button
+        const fullDetailsBtn = document.querySelector('#quickViewModal .full-details-btn');
+        if (fullDetailsBtn) {
+            fullDetailsBtn.addEventListener('click', () => {
+                closeQuickView();
+                window.location.href = `chandriahomepage/details.html?id=${productId}`;
+            });
+        }
+        
+        // Add to Cart button
+        const addToCartBtn = document.querySelector('#quickViewModal .add-to-cart-btn');
+        if (addToCartBtn) {
+            addToCartBtn.addEventListener('click', async () => {
+                await handleQuickViewAddToCart(productId);
+            });
+        }
+    }
+
+    // Function to handle add to cart from quick view
+    async function handleQuickViewAddToCart(productId) {
+        try {
+            const user = auth.currentUser;
+            if (!user) {
+                notyf.error('Please sign in to add items to cart');
+                return;
+            }
+
+            const addToCartBtn = document.querySelector('#quickViewModal .add-to-cart-btn');
+            if (addToCartBtn) {
+                addToCartBtn.disabled = true;
+                addToCartBtn.innerHTML = '<i class="fi fi-rs-spinner"></i> Adding...';
+            }
+
+            // Get user document
+            const userRef = doc(chandriaDB, "userAccounts", user.uid);
+            const userSnap = await getDoc(userRef);
+            
+            if (!userSnap.exists()) {
+                throw new Error('User account not found');
+            }
+
+            const userData = userSnap.data();
+            const currentCart = userData.added_to_cart || [];
+            
+            // Check if product already exists in cart
+            const existingItemIndex = currentCart.findIndex(item => item.productId === productId);
+            
+            if (existingItemIndex > -1) {
+                // Update quantity
+                currentCart[existingItemIndex].quantity = (parseInt(currentCart[existingItemIndex].quantity) + 1).toString();
+            } else {
+                // Add new item
+                const newCartItem = {
+                    productId: productId,
+                    quantity: "1",
+                    dateAdded: new Date().toISOString()
+                };
+                currentCart.push(newCartItem);
+            }
+
+            // Update user document
+            await updateDoc(userRef, {
+                added_to_cart: currentCart
+            });
+
+            // Update cart count
+            await updateCartCount();
+            
+            notyf.success('Product added to cart successfully!');
+            
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            notyf.error('Failed to add product to cart. Please try again.');
+        } finally {
+            const addToCartBtn = document.querySelector('#quickViewModal .add-to-cart-btn');
+            if (addToCartBtn) {
+                addToCartBtn.disabled = false;
+                addToCartBtn.innerHTML = '<i class="fi fi-rs-shopping-cart"></i> Add to Cart';
+            }
+        }
+    }
+
+    // Function to close quick view modal
+    function closeQuickView() {
+        const modal = document.getElementById('quickViewModal');
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+        currentQuickViewProduct = null;
+    }
+
+    // Initialize quick view event listeners
+    function initQuickViewListeners() {
+        // Event delegation for quick view buttons
+        $(document).on('click', '.quick-view-btn', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const productId = $(this).data('product-id');
+            if (productId) {
+                openQuickView(productId);
+            }
+        });
+
+        // Close modal events
+        const modal = document.getElementById('quickViewModal');
+        const closeBtn = document.querySelector('#quickViewModal .quick-view-close');
+        
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeQuickView);
+        }
+        
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeQuickView();
+                }
+            });
+        }
+
+        // ESC key to close modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal && modal.style.display === 'flex') {
+                closeQuickView();
+            }
+        });
     }
 
     // Product Tabs functionality
@@ -298,6 +590,9 @@ $(document).ready(function () {
 
     // Initialize product tabs
     initProductTabs();
+
+    // Initialize quick view functionality
+    initQuickViewListeners();
 
     // Smooth scrolling for anchor links
     $('a[href^="#"]').on("click", function (e) {
