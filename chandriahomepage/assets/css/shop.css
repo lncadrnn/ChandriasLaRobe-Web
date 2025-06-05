@@ -1235,6 +1235,21 @@ a[href] {
     }
 }
 
+.pagination-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+@media screen and (min-width: 768px) {
+    .pagination-wrapper {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
 .pagination-info {
     color: #6b7280;
     font-size: 14px;
@@ -1248,6 +1263,75 @@ a[href] {
     list-style: none;
     margin: 0;
     padding: 0;
+}
+
+.pagination-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.pagination-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #374151;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    outline: none;
+}
+
+.pagination-btn:hover {
+    border-color: hsl(346, 100%, 74%);
+    background-color: hsl(346, 100%, 95%);
+    color: hsl(346, 100%, 74%);
+}
+
+.pagination-btn.active {
+    background-color: hsl(346, 100%, 74%);
+    border-color: hsl(346, 100%, 74%);
+    color: #ffffff;
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Previous and Next buttons */
+.pagination-btn.prev-btn,
+.pagination-btn.next-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+.pagination-btn.prev-btn i,
+.pagination-btn.next-btn i {
+    font-size: 12px;
+}
+
+/* Page number buttons */
+.pagination-btn.page-btn {
+    min-width: 40px;
+    font-weight: 600;
 }
 
 .pagination li {
@@ -1336,10 +1420,22 @@ a[href] {
         justify-content: center;
     }
     
+    .pagination-btn,
     .pagination-link {
         min-width: 35px;
         height: 35px;
         font-size: 13px;
+    }
+    
+    .pagination-btn.prev-btn,
+    .pagination-btn.next-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .pagination-wrapper {
+        flex-direction: column;
+        gap: 0.75rem;
     }
 }
 

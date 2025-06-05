@@ -306,7 +306,8 @@ $(document).ready(function () {
         const paginationContainer = $(".pagination-container");
         paginationContainer.empty();
 
-        if (totalPages <= 1) return;
+        // Hide pagination only if no products at all
+        if (filteredProducts.length === 0) return;
 
         let paginationHTML = '<div class="pagination-wrapper">';
         
@@ -322,14 +323,14 @@ $(document).ready(function () {
         // Pagination controls
         paginationHTML += '<div class="pagination">';
 
-        // Previous button
-        if (currentPage > 1) {
+        // Previous button (only show if more than 1 page)
+        if (currentPage > 1 && totalPages > 1) {
             paginationHTML += `<button class="pagination-btn prev-btn" data-page="${currentPage - 1}">
                 <i class="fi fi-rs-angle-left"></i> Previous
             </button>`;
         }
 
-        // Page numbers
+        // Always show page numbers when there are products
         const maxVisiblePages = 5;
         let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
         let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
@@ -338,27 +339,33 @@ $(document).ready(function () {
             startPage = Math.max(1, endPage - maxVisiblePages + 1);
         }
 
-        if (startPage > 1) {
-            paginationHTML += `<button class="pagination-btn page-btn" data-page="1">1</button>`;
-            if (startPage > 2) {
-                paginationHTML += '<span class="pagination-dots">...</span>';
+        // If only one page, just show page 1
+        if (totalPages === 1) {
+            paginationHTML += `<button class="pagination-btn page-btn active" data-page="1">1</button>`;
+        } else {
+            // Multiple pages logic
+            if (startPage > 1) {
+                paginationHTML += `<button class="pagination-btn page-btn" data-page="1">1</button>`;
+                if (startPage > 2) {
+                    paginationHTML += '<span class="pagination-dots">...</span>';
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const activeClass = i === currentPage ? 'active' : '';
+                paginationHTML += `<button class="pagination-btn page-btn ${activeClass}" data-page="${i}">${i}</button>`;
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    paginationHTML += '<span class="pagination-dots">...</span>';
+                }
+                paginationHTML += `<button class="pagination-btn page-btn" data-page="${totalPages}">${totalPages}</button>`;
             }
         }
 
-        for (let i = startPage; i <= endPage; i++) {
-            const activeClass = i === currentPage ? 'active' : '';
-            paginationHTML += `<button class="pagination-btn page-btn ${activeClass}" data-page="${i}">${i}</button>`;
-        }
-
-        if (endPage < totalPages) {
-            if (endPage < totalPages - 1) {
-                paginationHTML += '<span class="pagination-dots">...</span>';
-            }
-            paginationHTML += `<button class="pagination-btn page-btn" data-page="${totalPages}">${totalPages}</button>`;
-        }
-
-        // Next button
-        if (currentPage < totalPages) {
+        // Next button (only show if more than 1 page)
+        if (currentPage < totalPages && totalPages > 1) {
             paginationHTML += `<button class="pagination-btn next-btn" data-page="${currentPage + 1}">
                 Next <i class="fi fi-rs-angle-right"></i>
             </button>`;
