@@ -1,0 +1,330 @@
+/* =============== DETAILS PAGE MOBILE STYLES =============== */
+
+/* Mobile layout for details page */
+@media screen and (max-width: 768px) {
+  /* Change grid layout to stack vertically */
+  .details-container {
+    grid-template-columns: 1fr !important;
+    gap: 2rem;
+    padding: 0 1rem;
+  }
+
+  /* Adjust order of elements for mobile - images at top, details at bottom */
+  .details-group:first-child {
+    order: 1;
+    margin-bottom: 0;
+  }
+
+  .details-group:last-child {
+    order: 2;
+    padding: 0 0.5rem;
+  }
+  /* Ensure the image section takes full width and has proper styling */
+  .details-img {
+    width: 100%;
+    height: auto;
+    max-height: 450px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Improve small images layout */
+  .details-small-images {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .details-small-img {
+    width: 100%;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+  .details-small-img:hover,
+  .details-small-img.active {
+    border-color: var(--first-color);
+    transform: translateY(-2px);
+  }
+  
+  /* Add smooth transition when switching images */
+  .details-img {
+    transition: all 0.3s ease;
+  }
+  /* Improve typography for mobile */
+  .details-title {
+    font-size: 1.5rem !important;
+    margin-top: 0.5rem;
+    line-height: 1.3;
+    color: var(--title-color);
+    letter-spacing: -0.01em;
+  }
+
+  .details-price {
+    margin: 0.75rem 0;
+    align-items: center;
+  }
+
+  .new-price {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--first-color);
+  }
+  
+  .old-price {
+    font-size: 1.1rem;
+    text-decoration: line-through;
+    color: var(--text-color-light);
+    margin-left: 10px;
+  }
+  
+  .save-price {
+    font-size: 0.9rem;
+    background-color: var(--first-color);
+    color: var(--body-color);
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-left: 10px;
+  }
+
+  /* Improve short description */
+  .short-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    color: var(--text-color);
+  }
+  /* Improve product list features */
+  .product-list {
+    margin-bottom: 1.5rem;
+    background-color: rgba(var(--first-color-rgb), 0.05);
+    padding: 1rem;
+    border-radius: 10px;
+  }
+
+  .list-item {
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+  }
+  
+  .list-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .list-item i {
+    color: var(--first-color);
+    margin-right: 0.75rem;
+    font-size: 1.1rem;
+  }
+  /* Improve color and size selectors */
+  .details-color,
+  .details-size {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid rgba(var(--title-color-rgb), 0.1);
+  }
+
+  .details-color-title,
+  .details-size-title {
+    min-width: 100px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--title-color);
+  }
+  
+  .color-list, 
+  .size-list {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .color-link {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+  
+  .color-link:hover,
+  .color-link.active {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px var(--body-color), 0 0 0 4px var(--first-color);
+  }
+
+  .size-link {
+    height: 35px;
+    width: 35px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    background-color: rgba(var(--title-color-rgb), 0.05);
+    transition: all 0.3s ease;
+  }
+  
+  .size-link:hover,
+  .size-link.size-active {
+    background-color: var(--first-color);
+    color: var(--body-color);
+  }
+  /* Improve action elements */
+  .details-action {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  .quantity {
+    width: 30%;
+    height: 48px;
+    padding: 0 0.75rem;
+    border: 1px solid rgba(var(--title-color-rgb), 0.2);
+    border-radius: 8px;
+    font-weight: 500;
+    text-align: center;
+    transition: border-color 0.3s ease;
+  }
+  
+  .quantity:focus {
+    border-color: var(--first-color);
+    outline: none;
+  }
+
+  .btn.btn-primary {
+    flex: 1;
+    height: 48px;
+    padding: 0 1.25rem;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+  
+  .btn.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(var(--first-color-rgb), 0.3);
+  }
+  
+  .details-action-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    background-color: rgba(var(--title-color-rgb), 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--title-color);
+    transition: all 0.3s ease;
+  }
+  
+  .details-action-btn:hover {
+    background-color: rgba(var(--first-color-rgb), 0.1);
+    color: var(--first-color);
+  }
+  /* Product metadata */
+  .details-meta {
+    background: rgba(var(--title-color-rgb), 0.05);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+  }
+
+  .meta-list {
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+  }
+  
+  .meta-list:last-child {
+    margin-bottom: 0;
+  }
+  
+  .meta-list span {
+    font-weight: 600;
+    color: var(--title-color);
+  }
+  
+  /* Add a space after the details section */
+  .details.section-lg {
+    padding-bottom: 2rem;
+  }
+}
+
+/* Even smaller screens */
+@media screen and (max-width: 480px) {
+  .details-container {
+    gap: 1.5rem;
+    padding: 0 0.75rem;
+  }
+
+  .details-small-images {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .details-small-img {
+    height: 60px;
+  }
+
+  .details-title {
+    font-size: 1.25rem !important;
+  }
+
+  .new-price {
+    font-size: 1.4rem;
+  }
+  
+  .old-price {
+    font-size: 1rem;
+  }
+  
+  .save-price {
+    font-size: 0.8rem;
+  }
+
+  .details-action {
+    flex-direction: column;
+  }
+
+  .quantity {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .btn.btn-primary {
+    width: 100%;
+  }
+  
+  .list-item {
+    font-size: 0.9rem;
+  }
+  
+  /* Tighten up vertical spacing */
+  .details-color,
+  .details-size {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+  }
+  
+  .product-list {
+    margin-bottom: 1.25rem;
+  }
+}
