@@ -36,10 +36,10 @@ $(document).ready(function () {
     let currentSort = 'default';
     let searchQuery = '';
     let currentQuickViewProduct = null;
-
+    
     // Initialize shop
     init();
-
+    
     async function init() {
         try {
             showShopLoader();
@@ -52,13 +52,21 @@ $(document).ready(function () {
             
             // Initialize with all products
             applyFiltersAndSort();
+            
+            // Update cart button status after products are loaded
+            setTimeout(() => {
+                updateAllCartButtonStatus();
+            }, 500);
+            
             hideShopLoader();
         } catch (error) {
             console.error("Error initializing shop:", error);
             hideShopLoader();
             showError("Failed to load shop. Please refresh the page.");
         }
-    }    // Loader functions
+    }
+    
+    // Loader functions
     function showShopLoader() {
         $("#shop-loader").removeClass("hidden").show();
     }
@@ -135,7 +143,12 @@ $(document).ready(function () {
         $(document).on("click", ".action-btn[aria-label='Quick View']", handleQuickViewClick);
         $("#quick-view-close").on("click", closeQuickView);
         $("#quick-view-view-details").on("click", handleViewDetails);
-        $("#quick-view-add-to-cart").on("click", handleQuickViewAddToCart);        // Cart modal (existing modal functionality)
+        $("#quick-view-add-to-cart").on("click", handleQuickViewAddToCart);
+
+        // Circular cart button functionality
+        $(document).on("click", ".circular-cart-btn", handleCircularCartClick);
+
+        // Cart modal (existing modal functionality)
         $(document).on("click", ".action-btn[aria-label='Add to Rent List']", handleAddToCartClick);
         $(document).on("click", ".add-to-cart-btn", handleAddToCartClick);
         $("#btn-close").on("click", closeCartModal);
@@ -195,12 +208,12 @@ $(document).ready(function () {
     function toggleCategoryDropdown() {
         $("#category-dropdown").toggleClass("show");
         $("#sort-dropdown").removeClass("show");
-    }
-
-    function toggleSortDropdown() {
+    }    function toggleSortDropdown() {
         $("#sort-dropdown").toggleClass("show");
         $("#category-dropdown").removeClass("show");
-    }    function clearCategoryFilters() {
+    }
+    
+    function clearCategoryFilters() {
         $(".category-checkbox").prop("checked", false);
         selectedCategories = [];
         updateCategoryFilterText();
@@ -312,7 +325,7 @@ $(document).ready(function () {
         }
     }
 
-    // Display products in grid
+    // Display products in grid    
     function displayProducts() {
         const container = $(".products-container");
         container.empty();
@@ -339,8 +352,12 @@ $(document).ready(function () {
         productsToDisplay.forEach(product => {
             productsHTML += createProductHTML(product);
         });
+          container.html(productsHTML);
         
-        container.html(productsHTML);
+        // Update cart button status after displaying products
+        setTimeout(() => {
+            updateAllCartButtonStatus();
+        }, 100);
     }
 
     // Create product HTML
@@ -368,20 +385,22 @@ $(document).ready(function () {
                 </div>
                 
                 <div class="product-badge">
-                    <span class="badge">Available</span>
-                </div>
-            </div>            <div class="product-content">
+                    <span class="badge">Available</span>                </div>
+            </div>
+            <div class="product-content">
                 <span class="product-category">${categoryDisplay}</span>
                 <a href="details.html?id=${product.id}">
                     <h3 class="product-title">${product.name || "Untitled Product"}</h3>
-                </a>                <div class="product-price-section">
+                </a>
+                <div class="product-price-section">
                     <div class="product-price flex">
                         <span class="new-price">${price}${product.price ? ' / rent' : ''}</span>
                     </div>
                     ${!product.isAdditional ? `
-                    <button class="btn btn-primary add-to-cart-btn" data-product-id="${product.id}">
-                        <i class="fi fi-rs-shopping-bag-add"></i>
-                        <span>Add to Cart</span>
+                    <button class="circular-cart-btn" data-product-id="${product.id}" data-in-cart="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M18,6A6,6,0,0,0,6,6H0V21a3,3,0,0,0,3,3H21a3,3,0,0,0,3-3V6ZM12,2a4,4,0,0,1,4,4H8A4,4,0,0,1,12,2ZM22,21a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V8H6v2H8V8h8v2h2V8h4Z"/>
+                        </svg>
                     </button>` : ''}
                 </div>
             </div>
@@ -532,7 +551,9 @@ $(document).ready(function () {
             notyf.error('Failed to load product details');
             closeQuickView();
         }
-    }    function populateQuickViewModal(product, productId) {
+    }
+    
+    function populateQuickViewModal(product, productId) {
         // Update images
         const mainImg = $("#quick-view-main-img");
         const frontThumb = $("#quick-view-front-thumb");
@@ -880,9 +901,168 @@ $(document).ready(function () {
         `);
     }
 
+    // Check if product is in user's cart
+    async function isProductInCart(productId) {
+        try {
+            const user = auth.currentUser;
+            if (!user) return false;
+            
+            const userRef = doc(chandriaDB, "userAccounts", user.uid);
+            const userSnap = await getDoc(userRef);
+            
+            if (!userSnap.exists()) return false;
+            
+            const cartItems = userSnap.data().added_to_cart || [];
+            return cartItems.some(item => item.productId === productId);
+            
+        } catch (error) {
+            console.error("Error checking cart status:", error);
+            return false;
+        }
+    }
+
+    // Update cart button status for all products
+    async function updateAllCartButtonStatus() {
+        const user = auth.currentUser;
+        if (!user) {
+            // If no user, set all buttons to not-in-cart state
+            $(".circular-cart-btn").each(function() {
+                $(this).attr("data-in-cart", "false").removeClass("loading");
+            });
+            return;
+        }
+
+        try {
+            const userRef = doc(chandriaDB, "userAccounts", user.uid);
+            const userSnap = await getDoc(userRef);
+            
+            if (!userSnap.exists()) {
+                $(".circular-cart-btn").each(function() {
+                    $(this).attr("data-in-cart", "false").removeClass("loading");
+                });
+                return;
+            }
+            
+            const cartItems = userSnap.data().added_to_cart || [];
+            const cartProductIds = new Set(cartItems.map(item => item.productId));
+            
+            $(".circular-cart-btn").each(function() {
+                const productId = $(this).data("product-id");
+                const isInCart = cartProductIds.has(productId);
+                $(this).attr("data-in-cart", isInCart.toString()).removeClass("loading");
+            });
+            
+        } catch (error) {
+            console.error("Error updating cart button status:", error);
+            $(".circular-cart-btn").each(function() {
+                $(this).attr("data-in-cart", "false").removeClass("loading");
+            });
+        }
+    }
+
+    // Handle circular cart button click
+    async function handleCircularCartClick(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const user = auth.currentUser;
+        if (!user) {
+            showAuthModal();
+            return;
+        }
+        
+        const button = $(this);
+        const productId = button.data("product-id");
+        const isInCart = button.attr("data-in-cart") === "true";
+        
+        if (!productId) return;
+        
+        // Add loading state
+        button.addClass("loading");
+        
+        try {
+            const userRef = doc(chandriaDB, "userAccounts", user.uid);
+            const userSnap = await getDoc(userRef);
+            
+            if (!userSnap.exists()) {
+                notyf.error("User account not found.");
+                return;
+            }
+            
+            const currentCart = userSnap.data().added_to_cart || [];
+            
+            if (isInCart) {
+                // Remove from cart - remove all instances of this product
+                const updatedCart = currentCart.filter(item => item.productId !== productId);
+                await updateDoc(userRef, { added_to_cart: updatedCart });
+                
+                button.attr("data-in-cart", "false");
+                notyf.success("Removed from cart!");
+                
+            } else {
+                // Add to cart - find product data to get available size
+                let productData = allProducts.find(p => p.id === productId);
+                
+                if (!productData) {
+                    // Fallback: fetch from Firebase
+                    const productDoc = await getDoc(doc(chandriaDB, "products", productId));
+                    if (!productDoc.exists()) {
+                        notyf.error("Product not found.");
+                        return;
+                    }
+                    productData = productDoc.data();
+                }
+                
+                // Find first available size
+                let selectedSize = "One Size";
+                if (productData.size) {
+                    const availableSizes = Object.entries(productData.size).filter(([size, stock]) => stock > 0);
+                    if (availableSizes.length > 0) {
+                        selectedSize = availableSizes[0][0];
+                    } else {
+                        notyf.error("Product is out of stock.");
+                        return;
+                    }
+                }
+                
+                // Check if same product/size combination already exists
+                const existingIndex = currentCart.findIndex(
+                    item => item.productId === productId && item.size === selectedSize
+                );
+                
+                if (existingIndex !== -1) {
+                    // Update quantity
+                    currentCart[existingIndex].quantity = (currentCart[existingIndex].quantity || 1) + 1;
+                    await updateDoc(userRef, { added_to_cart: currentCart });
+                } else {
+                    // Add new item
+                    await updateDoc(userRef, {
+                        added_to_cart: arrayUnion({
+                            productId,
+                            size: selectedSize,
+                            quantity: 1
+                        })
+                    });
+                }
+                
+                button.attr("data-in-cart", "true");
+                notyf.success("Added to cart!");
+            }
+            
+            // Update cart count
+            await updateCartCount();
+            
+        } catch (error) {
+            console.error("Error updating cart:", error);
+            notyf.error("An error occurred. Please try again.");
+        } finally {            button.removeClass("loading");
+        }
+    }
+    
     // Handle authentication state changes
     onAuthStateChanged(auth, async function (user) {
         await updateCartCount();
+        await updateAllCartButtonStatus();
         
         if (user) {
             // User is signed in
