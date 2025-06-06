@@ -533,9 +533,7 @@ $(document).ready(function () {
             notyf.error('Failed to load product details');
             closeQuickView();
         }
-    }
-
-    function populateQuickViewModal(product, productId) {
+    }    function populateQuickViewModal(product, productId) {
         // Update images
         const mainImg = $("#quick-view-main-img");
         const frontThumb = $("#quick-view-front-thumb");
@@ -559,11 +557,19 @@ $(document).ready(function () {
             $("#quick-view-color-indicator").css('backgroundColor', product.color);
         }
         
+        // Hide "Add to Rent" button for additionals
+        const addToCartBtn = $("#quick-view-add-to-cart");
+        if (product.isAdditional) {
+            addToCartBtn.hide();
+        } else {
+            addToCartBtn.show();
+        }
+        
         // Initialize thumbnail functionality
         initQuickViewThumbnails();
         
         // Store product ID for actions
-        $("#quick-view-add-to-cart").data('product-id', productId);
+        addToCartBtn.data('product-id', productId);
         $("#quick-view-view-details").data('product-id', productId);
     }
 

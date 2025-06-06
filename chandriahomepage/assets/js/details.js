@@ -55,11 +55,23 @@ $(document).ready(async function () {
   showDetailsLoader();
 
   try {
-    const docRef = doc(chandriaDB, "products", productId);
-    const docSnap = await getDoc(docRef);
+    // First try to load from products collection
+    let docRef = doc(chandriaDB, "products", productId);
+    let docSnap = await getDoc(docRef);
+    let isAdditional = false;
+
+    // If not found in products, try additionals collection
+    if (!docSnap.exists()) {
+      docRef = doc(chandriaDB, "additionals", productId);
+      docSnap = await getDoc(docRef);
+      isAdditional = true;
+    }
 
     if (docSnap.exists()) {
       const data = docSnap.data();
+      
+      // Add isAdditional flag to data
+      data.isAdditional = isAdditional;
 
       // Update breadcrumbs dynamically
       updateBreadcrumbs(data);
@@ -75,8 +87,17 @@ $(document).ready(async function () {
       $('#product-code').text(data.code);
       $('#product-color').css("background-color", data.color);
       
+      // Handle inclusions for additionals
+      if (isAdditional && data.inclusions) {
+        displayInclusions(data.inclusions);
+      }
+      
       // Load related products based on category and color
-      loadRelatedProducts(data.category, data.color, productId);
+      if (isAdditional) {
+        loadRelatedAdditionals(data.category, data.color, productId);
+      } else {
+        loadRelatedProducts(data.category, data.color, productId);
+      }
       
       // Store product info for breadcrumb
     if (productId) {
@@ -92,15 +113,30 @@ $(document).ready(async function () {
         }, 100);
     }
 
-    // Sizes
+    // Sizes (only for regular products)
     const sizeList = $('#product-sizes');
     sizeList.empty();
-    $.each(data.size, function (size, qty) {
-      sizeList.append(`<li><a href="#" class="size-link">${size}</a></li>`);
-    });
+    if (!isAdditional && data.size) {
+      $.each(data.size, function (size, qty) {
+        sizeList.append(`<li><a href="#" class="size-link">${size}</a></li>`);
+      });
+    }
 
-    // Stock
-    const totalStock = Object.values(data.size).reduce((a, b) => a + b, 0);      $('#product-stock').text(`${totalStock} in stocks`);
+    // Stock (only for regular products)
+    if (!isAdditional && data.size) {
+      const totalStock = Object.values(data.size).reduce((a, b) => a + b, 0);      $('#product-stock').text(`${totalStock} in stocks`);
+    } else if (isAdditional) {
+      $('#product-stock').text('Available');
+    }
+    
+    // Hide/show add to cart button for additionals
+    const addToCartBtn = $('#details-add-to-cart');
+    if (isAdditional) {
+      addToCartBtn.hide();
+    } else {
+      addToCartBtn.show();
+    }
+    
     } else {
       alert("Product not found.");
     }
@@ -500,6 +536,154 @@ function showErrorState(message) {
                 <a href="shop.html" class="back-btn">Back to Shop</a>
             </div>
         </div>
+    `;
+}
+
+// Function to display inclusions for additionals
+function displayInclusions(inclusions) {
+    // Find or create inclusions container
+    let inclusionsContainer = document.getElementById('product-inclusions');
+    
+    if (!inclusionsContainer) {
+        // Create inclusions section if it doesn't exist
+        const productInfo = document.querySelector('.product-details') || document.querySelector('.container');
+        if (productInfo) {
+            inclusionsContainer = document.createElement('div');
+            inclusionsContainer.id = 'product-inclusions';
+            inclusionsContainer.className = 'product-inclusions';
+            
+            // Insert after description
+            const descriptionElement = document.getElementById('product-description');
+            if (descriptionElement && descriptionElement.parentNode) {
+                descriptionElement.parentNode.insertBefore(inclusionsContainer, descriptionElement.nextSibling);
+            } else {
+                productInfo.appendChild(inclusionsContainer);
+            }
+        }
+    }
+    
+    if (inclusionsContainer && inclusions && inclusions.length > 0) {
+        inclusionsContainer.innerHTML = `
+            <h4>What's Included:</h4>
+            <ul class="inclusions-list">
+                ${inclusions.map(item => `<li><i class="fi fi-rs-check"></i> ${item}</li>`).join('')}
+            </ul>
+        `;
+    }
+}
+
+// Function to load related additionals
+async function loadRelatedAdditionals(category, color, currentProductId) {
+    try {
+        // Fetch all additionals from Firebase
+        const additionalsSnapshot = await getDocs(collection(chandriaDB, "additionals"));
+        const allAdditionals = [];
+        
+        additionalsSnapshot.forEach((doc) => {
+            const data = doc.data();
+            if (doc.id !== currentProductId) { // Exclude current product
+                allAdditionals.push({ id: doc.id, ...data, isAdditional: true });
+            }
+        });
+        
+        const productsContainer = document.querySelector('.products-container');
+        if (!productsContainer) return;
+        
+        // Clear existing related products
+        productsContainer.innerHTML = '';
+        
+        // Filter additionals by category (max 2)
+        const categoryAdditionals = allAdditionals
+            .filter(additional => additional.category === category)
+            .slice(0, 2);
+            
+        // Filter additionals by color (max 2)
+        const colorAdditionals = allAdditionals
+            .filter(additional => 
+                additional.color === color && 
+                !categoryAdditionals.some(p => p.id === additional.id) // Avoid duplicates from category
+            )
+            .slice(0, 2);
+        
+        // Combine related additionals (up to 4 total)
+        const relatedAdditionals = [...categoryAdditionals, ...colorAdditionals].slice(0, 4);
+        
+        // If we still don't have 4 additionals, add random ones
+        if (relatedAdditionals.length < 4) {
+            const randomAdditionals = allAdditionals
+                .filter(additional => 
+                    !relatedAdditionals.some(p => p.id === additional.id)
+                )
+                .sort(() => 0.5 - Math.random()) // Shuffle
+                .slice(0, 4 - relatedAdditionals.length);
+                
+            relatedAdditionals.push(...randomAdditionals);
+        }
+        
+        // Render related additionals
+        relatedAdditionals.forEach(additional => {
+            const additionalHTML = createAdditionalHTML(additional);
+            productsContainer.innerHTML += additionalHTML;
+        });
+        
+        console.log("Related additionals loaded:", {
+            category: categoryAdditionals.length,
+            color: colorAdditionals.length,
+            random: relatedAdditionals.length - (categoryAdditionals.length + colorAdditionals.length)
+        });
+    } catch (error) {
+        console.error("Error loading related additionals:", error);
+    }
+}
+
+// Function to create HTML for an additional item
+function createAdditionalHTML(additional) {
+    return `
+    <div class="product-item">
+        <div class="product-banner">
+            <a href="details.html?id=${additional.id}" class="product-images">
+                <img
+                    src="${additional.frontImageUrl}"
+                    alt="${additional.name}"
+                    class="product-img default"
+                />
+                <img
+                    src="${additional.backImageUrl || additional.frontImageUrl}"
+                    alt="${additional.name}"
+                    class="product-img hover"
+                />
+            </a>
+            <!-- Product actions are hidden via CSS -->
+            <div class="product-actions">
+                <a
+                    href="#"
+                    class="action-btn"
+                    aria-label="Quick View"
+                >
+                    <i class="fi fi-rs-eye"></i>
+                </a>
+                <a
+                    href="#"
+                    class="action-btn"
+                    aria-label="Add to Wishlist"
+                >
+                    <i class="fi fi-rs-heart"></i>
+                </a>
+            </div>
+        </div>
+        <div class="product-content">
+            <span class="product-category">${formatCategoryName(additional.category)}</span>
+            <a href="details.html?id=${additional.id}">
+                <h3 class="product-title">
+                    ${additional.name}
+                </h3>
+            </a>
+            <div class="product-price flex">
+                <span class="new-price">₱ ${additional.price}/24hr</span>
+            </div>
+            <!-- No rent button for additionals -->
+        </div>
+    </div>
     `;
 }
 });

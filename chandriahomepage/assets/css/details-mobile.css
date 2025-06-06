@@ -384,3 +384,52 @@
     margin-bottom: 1.25rem;
   }
 }
+
+/* =============== PRODUCT INCLUSIONS STYLES =============== */
+.product-inclusions {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid var(--first-color);
+}
+
+.product-inclusions h4 {
+  color: var(--title-color);
+  font-size: var(--normal-font-size);
+  font-weight: var(--font-medium);
+  margin-bottom: 0.75rem;
+}
+
+.inclusions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.inclusions-list li {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  color: var(--text-color);
+  font-size: var(--small-font-size);
+}
+
+.inclusions-list li i {
+  color: var(--first-color);
+  margin-right: 0.75rem;
+  font-size: 1rem;
+}
+
+@media screen and (max-width: 768px) {
+  .product-inclusions {
+    margin: 1rem 0;
+    padding: 0.75rem;
+  }
+  
+  .inclusions-list li {
+    padding: 0.375rem 0;
+  }
+}
+
+/* =============== EXISTING STYLES =============== */
