@@ -76,16 +76,35 @@ $(document).ready(async function () {
       // Update breadcrumbs dynamically
       updateBreadcrumbs(data);
 
-      // Image previews
-      $('.frontImage').attr("src", data.frontImageUrl);
-      $('.backImage').attr("src", data.backImageUrl);
+      // Image previews - handle differently for additionals vs regular products
+      if (isAdditional) {
+        // For additionals, use single image for both front and back
+        const singleImage = data.imageUrl || data.frontImageUrl || 'assets/img/placeholder.jpg';
+        $('.frontImage').attr("src", singleImage);
+        $('.backImage').attr("src", singleImage);
+      } else {
+        // For regular products, use separate front and back images
+        $('.frontImage').attr("src", data.frontImageUrl);
+        $('.backImage').attr("src", data.backImageUrl);
+      }
 
       // Text and values
       $('#product-name').text(data.name);
       $('#product-price').text(`₱ ${data.price}`);
-      $('#product-description').text(data.description);
+      
+      // Only hide description for additionals, keep everything else visible
+      if (isAdditional) {
+        $('#product-description').hide(); // Hide only the description element itself
+      } else {
+        $('#product-description').text(data.description).show();
+      }
+      
       $('#product-code').text(data.code);
-      $('#product-color').css("background-color", data.color);
+      
+      // Show color if available
+      if (data.color) {
+        $('#product-color').css("background-color", data.color);
+      }
       
       // Handle inclusions for additionals
       if (isAdditional && data.inclusions) {
@@ -113,23 +132,26 @@ $(document).ready(async function () {
         }, 100);
     }
 
-    // Sizes (only for regular products)
+    // Sizes (only for regular products, hide for additionals)
     const sizeList = $('#product-sizes');
     sizeList.empty();
     if (!isAdditional && data.size) {
       $.each(data.size, function (size, qty) {
         sizeList.append(`<li><a href="#" class="size-link">${size}</a></li>`);
       });
+      sizeList.parent().show(); // Show the sizes section for regular products
+    } else if (isAdditional) {
+      sizeList.parent().hide(); // Hide only the sizes section for additionals
     }
 
-    // Stock (only for regular products)
+    // Stock information (show for both but different content)
     if (!isAdditional && data.size) {
       const totalStock = Object.values(data.size).reduce((a, b) => a + b, 0);      $('#product-stock').text(`${totalStock} in stocks`);
     } else if (isAdditional) {
       $('#product-stock').text('Available');
     }
     
-    // Hide/show add to cart button for additionals
+    // Hide add to cart button only for additionals
     const addToCartBtn = $('#details-add-to-cart');
     if (isAdditional) {
       addToCartBtn.hide();
@@ -546,18 +568,19 @@ function displayInclusions(inclusions) {
     
     if (!inclusionsContainer) {
         // Create inclusions section if it doesn't exist
-        const productInfo = document.querySelector('.product-details') || document.querySelector('.container');
-        if (productInfo) {
-            inclusionsContainer = document.createElement('div');
-            inclusionsContainer.id = 'product-inclusions';
-            inclusionsContainer.className = 'product-inclusions';
-            
-            // Insert after description
-            const descriptionElement = document.getElementById('product-description');
-            if (descriptionElement && descriptionElement.parentNode) {
-                descriptionElement.parentNode.insertBefore(inclusionsContainer, descriptionElement.nextSibling);
-            } else {
-                productInfo.appendChild(inclusionsContainer);
+        inclusionsContainer = document.createElement('div');
+        inclusionsContainer.id = 'product-inclusions';
+        inclusionsContainer.className = 'product-inclusions';
+        
+        // Insert after the product list (benefits list) which is always visible
+        const productList = document.querySelector('.product-list');
+        if (productList) {
+            productList.parentNode.insertBefore(inclusionsContainer, productList.nextSibling);
+        } else {
+            // Fallback: insert after price if product list not found
+            const priceElement = document.querySelector('.details-price');
+            if (priceElement) {
+                priceElement.parentNode.insertBefore(inclusionsContainer, priceElement.nextSibling);
             }
         }
     }
@@ -569,6 +592,9 @@ function displayInclusions(inclusions) {
                 ${inclusions.map(item => `<li><i class="fi fi-rs-check"></i> ${item}</li>`).join('')}
             </ul>
         `;
+        inclusionsContainer.style.display = 'block';
+    } else if (inclusionsContainer) {
+        inclusionsContainer.style.display = 'none';
     }
 }
 
@@ -638,17 +664,18 @@ async function loadRelatedAdditionals(category, color, currentProductId) {
 
 // Function to create HTML for an additional item
 function createAdditionalHTML(additional) {
+    const imageUrl = additional.imageUrl || additional.frontImageUrl || 'assets/img/placeholder.jpg';
     return `
     <div class="product-item">
         <div class="product-banner">
             <a href="details.html?id=${additional.id}" class="product-images">
                 <img
-                    src="${additional.frontImageUrl}"
+                    src="${imageUrl}"
                     alt="${additional.name}"
                     class="product-img default"
                 />
                 <img
-                    src="${additional.backImageUrl || additional.frontImageUrl}"
+                    src="${imageUrl}"
                     alt="${additional.name}"
                     class="product-img hover"
                 />
