@@ -118,19 +118,20 @@
 .circular-cart-btn {
     width: 30%;
     height: 38px;
-    border-radius: 6px;
-    background-color: hsl(346, 100%, 74%);
+    border-radius: 50%;
+    background-color: #28a745;
     color: white;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
 }
 
 .circular-cart-btn:hover {
-    background-color: hsl(346, 100%, 68%);
+    background-color: #218838;
+    transform: scale(1.05);
 }
 
 .circular-cart-btn svg {
@@ -266,16 +267,17 @@
     width: 35px;
     height: 35px;
     border-radius: 50%;
-    background-color: white;
-    color: #333;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
+    background-color: #28a745;
+    color: white;
+    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
+    transition: all 0.25s ease;
     -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
 }
 
 .action-btn:hover {
-    background-color: hsl(346, 100%, 74%);
+    background-color: #218838;
     color: white;
+    transform: scale(1.05);
 }
 
 .action-btn:active {

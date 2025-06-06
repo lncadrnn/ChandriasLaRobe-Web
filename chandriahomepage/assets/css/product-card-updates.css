@@ -1,14 +1,14 @@
-/* Price tag styling for top right corner */
+/* Price tag styling for top left corner */
 .price-tag {
     position: absolute;
     top: 10px;
-    right: 0;
+    left: 0;
     background-color: hsl(346, 100%, 74%);
     color: white;
-    padding: 4px 8px 4px 12px;
+    padding: 4px 12px 4px 8px;
     font-weight: 600;
     font-size: 14px;
-    border-radius: 20px 0 0 20px;
+    border-radius: 0 20px 20px 0;
     z-index: 6;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
@@ -47,10 +47,10 @@
     width: 45px !important;
     height: 45px !important;
     border-radius: 50% !important;
-    background-color: white !important;
-    color: #333 !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
-    transition: all 0.3s ease !important;
+    background-color: #28a745 !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3) !important;
+    transition: all 0.25s ease !important;
     transform: scale(0.9) !important;
     border: 2px solid transparent !important;
     text-decoration: none !important;
@@ -61,11 +61,11 @@
 }
 
 .action-btn:hover {
-    background-color: hsl(346, 100%, 74%) !important;
+    background-color: #218838 !important;
     color: white !important;
-    transform: scale(1.15) !important;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
-    border-color: white !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 6px 20px rgba(33, 136, 56, 0.4) !important;
+    border-color: transparent !important;
 }
 
 /* Product banner overlay for better button visibility */

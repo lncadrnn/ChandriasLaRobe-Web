@@ -120,15 +120,15 @@
 .circular-cart-btn {
     width: 28%;
     height: 64px; /* Height to match both the size selector and quantity selector */
-    border-radius: 6px;
-    background-color: hsl(346, 100%, 74%);
+    border-radius: 50%;
+    background-color: #28a745;
     color: white;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
     position: absolute;
     right: 6px;
     top: 50%;
@@ -136,7 +136,8 @@
 }
 
 .circular-cart-btn:hover {
-    background-color: hsl(346, 100%, 68%);
+    background-color: #218838;
+    transform: translateY(-50%) scale(1.05);
 }
 
 .circular-cart-btn svg {
