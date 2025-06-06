@@ -425,7 +425,7 @@ $(document).ready(function () {
     // Function to initialize quick view action buttons
     function initQuickViewActions(productId) {
         // Add to Cart button - DISABLED (button hidden via CSS)
-        // Note: The Add to Rent functionality has been disabled for the index page
+        // Note: The Book Appointment functionality has been disabled for the index page
         
         // View Full Details button
         const fullDetailsBtn = document.querySelector('#quick-view-details-btn');

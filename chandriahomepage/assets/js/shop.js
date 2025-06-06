@@ -531,10 +531,8 @@ $(document).ready(function () {
         // Use global variable instead of .data()
         if (currentSizeStock[selectedSize] !== undefined) {
             const stock = currentSizeStock[selectedSize];
-            $("#size-available-stock").text(stock);
-
-            // Reset quantity to 1 if new stock is lower than current value or not 1
-            const $qty = $("#rent-quantity");
+            $("#size-available-stock").text(stock);            // Reset quantity to 1 if new stock is lower than current value or not 1
+            const $qty = $("#booking-quantity");
             $qty.val(1).trigger("input").css("background-color", "#ffeb3b"); // yellow highlight
             setTimeout(() => {
                 $qty.css("background-color", ""); // remove highlight
@@ -543,15 +541,12 @@ $(document).ready(function () {
             const currentQty = parseInt($qty.val(), 10) || 1;
             if (currentQty > stock || currentQty !== 1) {
                 $qty.val(1);
-            }
-        } else {
+            }        } else {
             $("#size-available-stock").text("0");
-            $("#rent-quantity").val(1).trigger("input"); // Reset to 1 when stock is 0 or invalid
+            $("#booking-quantity").val(1).trigger("input"); // Reset to 1 when stock is 0 or invalid
         }
-    });
-
-    // FUNCTION FOR QUANTITY INPUT TYPE
-    $(document).on("input", "#rent-quantity", function () {
+    });    // FUNCTION FOR QUANTITY INPUT TYPE
+    $(document).on("input", "#booking-quantity", function () {
         let val = $(this).val(); // Get the current value of the input
 
         // If the value is "0" or starts with one or more zeros (e.g., "00", "01"), reset it to "1"
@@ -571,33 +566,27 @@ $(document).ready(function () {
         if (currentVal > maxStock) {
             $(this).val(maxStock); // Set the input value to the max stock available
         }
-    });
-
-    // DISABLE RENT BUTTON BASED ON FINAL VALUE
-    $(document).on("input", "#rent-quantity", function () {
+    });    // DISABLE BOOKING BUTTON BASED ON FINAL VALUE
+    $(document).on("input", "#booking-quantity", function () {
         // Remove non-digit characters like ".", "-" etc.
         let cleaned = $(this).val().replace(/\D/g, "");
         $(this).val(cleaned);
 
-        const finalVal = parseInt(cleaned, 10);
-
-        if (isNaN(finalVal) || finalVal < 1) {
-            $("#btn-rent").addClass("disabled");
+        const finalVal = parseInt(cleaned, 10);        if (isNaN(finalVal) || finalVal < 1) {
+            $("#btn-book").addClass("disabled");
         } else {
-            $("#btn-rent").removeClass("disabled");
+            $("#btn-book").removeClass("disabled");
         }
-    });
-
-    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
-    // RENT BUTTON FUNCTION
-    $("#btn-rent").on("click", async function (e) {
+    });    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+    // BOOKING BUTTON FUNCTION
+    $("#btn-book").on("click", async function (e) {
         const user = auth.currentUser; // Get the currently signed-in user
         const button = $(this); // Reference to the clicked button
         const textSpan = button.find(".btn-text");
         const spinner = button.find(".spinner");
         const productId = $("#product-id").val(); // Get product ID from hidden input
         const selectedSize = $(".size-active").text().trim(); // Get the currently selected size
-        const quantity = parseInt($("#rent-quantity").val(), 10) || 1; // Get quantity input (default to 1 if invalid)
+        const quantity = parseInt($("#booking-quantity").val(), 10) || 1; // Get quantity input (default to 1 if invalid)
 
         const userRef = doc(chandriaDB, "userAccounts", user.uid); // Reference to the user's document in Firestore
 
@@ -643,7 +632,7 @@ $(document).ready(function () {
                     type: "custom-success",
                     message: "Added successfully to cart!"
                 });
-                $("#rent-quantity").val(1);
+                $("#booking-quantity").val(1);
             }
 
             // Optional: Add a visual style to the button
@@ -664,12 +653,10 @@ $(document).ready(function () {
             button.removeClass("disabled");
             $(".cart-modal-container").removeClass("show");
         }
-    });
-
-    // MODAL CLOSE TOGGLER
+    });    // MODAL CLOSE TOGGLER
     $(".cart-modal-container, #btn-close").on("click", function (e) {
         $(".cart-modal-container").removeClass("show");
-        $("#rent-quantity").val(1);
+        $("#booking-quantity").val(1);
     });
     // PREVENT DEFAULTS
     $(".cart-modal").on("click", function (e) {
