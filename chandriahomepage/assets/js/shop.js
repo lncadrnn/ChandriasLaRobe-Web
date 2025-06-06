@@ -1131,11 +1131,23 @@ $(document).ready(function () {
         if (!isOpen) {
             dropdown.addClass("active");
         }
-    });
-
-    // Checkbox change handler
+    });    // Checkbox change handler - automatically apply filters
     $(document).on("change", ".category-checkbox", function() {
         updateFilterButtonText();
+        
+        // Get selected categories
+        const selectedCategories = [];
+        $(".category-checkbox:checked").each(function() {
+            selectedCategories.push($(this).data("category"));
+        });
+        
+        // Update global variable
+        currentCategories = selectedCategories;
+        
+        // Apply filters immediately
+        const searchTerm = $("#product-search").val().trim();
+        const sortBy = currentSort === 'default' ? '' : currentSort;
+        displayProducts(currentUser, 1, searchTerm, currentCategories, sortBy);
     });
 
     // Clear categories button
@@ -1154,31 +1166,7 @@ $(document).ready(function () {
         const searchTerm = $("#product-search").val().trim();
         const sortBy = currentSort === 'default' ? '' : currentSort;
         displayProducts(currentUser, 1, searchTerm, currentCategories, sortBy);
-    });
-
-    // Apply categories button
-    $("#apply-categories").on("click", function(e) {
-        e.stopPropagation();
-        
-        // Get selected categories
-        const selectedCategories = [];
-        $(".category-checkbox:checked").each(function() {
-            selectedCategories.push($(this).data("category"));
-        });
-        
-        // Update global variable
-        currentCategories = selectedCategories;
-        
-        // Close dropdown
-        $(".filter-dropdown").removeClass("active");
-        
-        // Apply filters
-        const searchTerm = $("#product-search").val().trim();
-        const sortBy = currentSort === 'default' ? '' : currentSort;
-        displayProducts(currentUser, 1, searchTerm, currentCategories, sortBy);
-    });
-
-    // Function to update filter button text based on selected checkboxes
+    });    // Function to update filter button text based on selected checkboxes
     function updateFilterButtonText() {
         const checkedBoxes = $(".category-checkbox:checked");
         const count = checkedBoxes.length;
