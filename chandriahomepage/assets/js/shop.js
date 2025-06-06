@@ -135,22 +135,21 @@ $(document).ready(function () {
         $(".sort-option").on("click", handleSortSelection);
 
         // Product tabs
-        $(".product-tab").on("click", handleTabSwitch);
-
-        // Quick view modal
+        $(".product-tab").on("click", handleTabSwitch);        // Quick view modal
         $(document).on("click", ".action-btn[aria-label='Quick View']", handleQuickViewClick);
         $("#quick-view-close").on("click", closeQuickView);
         $("#quick-view-view-details").on("click", handleViewDetails);
-        $("#quick-view-add-to-cart").on("click", handleQuickViewAddToCart);
 
         // Circular cart button functionality
         $(document).on("click", ".circular-cart-btn", handleCircularCartClick);        // Size and quantity controls
         $(document).on("change", ".size-selector", handleSizeChange);
         $(document).on("click", ".quantity-btn.plus-btn", handleQuantityIncrease);
         $(document).on("click", ".quantity-btn.minus-btn", handleQuantityDecrease);
-        
-        // Color indicator tooltip
+          // Color indicator tooltip
         $(document).on("click", ".product-color-indicator", handleColorIndicatorClick);
+
+        // Product card click navigation
+        $(document).on("click", ".product-item", handleProductCardClick);
 
         // Cart modal (existing modal functionality)
         $(document).on("click", ".action-btn[aria-label='Add to Rent List']", handleAddToCartClick);
@@ -309,8 +308,7 @@ $(document).ready(function () {
         setTimeout(() => {
             productCard.removeClass("is-loading");        }, 300);
     }
-    
-    // Handle color indicator click
+      // Handle color indicator click
     function handleColorIndicatorClick(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -342,6 +340,34 @@ $(document).ready(function () {
                 'visibility': 'hidden'
             });
         }, 2000);
+    }
+
+    // Handle product card click navigation
+    function handleProductCardClick(e) {
+        // Don't navigate if clicking on action buttons, size selector, quantity controls, or cart button
+        if ($(e.target).closest('.action-btn, .size-selector, .quantity-btn, .circular-cart-btn, .product-color-indicator').length > 0) {
+            return;
+        }
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const productId = $(this).find('[data-product-id]').first().data('product-id');
+        if (!productId) return;
+        
+        // Get product data
+        let productData = allProducts.find(p => p.id === productId);
+        if (!productData) {
+            // Try to find in additionals
+            productData = allAdditionals.find(p => p.id === productId);
+        }
+        
+        if (productData) {
+            // Store product data for details page
+            localStorage.setItem('selectedProduct', JSON.stringify(productData));
+            // Navigate to details page
+            window.location.href = `details.html?id=${productId}`;
+        }
     }
 
     // Search functionality
@@ -810,34 +836,11 @@ $(document).ready(function () {
         $("#quick-view-modal").removeClass("show").hide();
         document.body.style.overflow = "";
         currentQuickViewProduct = null;
-    }
-
-    function handleViewDetails() {
+    }    function handleViewDetails() {
         const productId = $(this).data('product-id');
         if (productId) {
             window.location.href = `details.html?id=${productId}`;
         }
-    }
-
-    async function handleQuickViewAddToCart() {
-        const user = auth.currentUser;
-        if (!user) {
-            showAuthModal();
-            return;
-        }
-        
-        const productId = $(this).data('product-id');
-        if (!productId || !currentQuickViewProduct) return;
-        
-        // For additionals, add directly to cart
-        if (currentQuickViewProduct.isAdditional) {
-            await addAdditionalToCart(productId);
-            return;
-        }
-        
-        // For regular products, we need size selection - close quick view and open cart modal
-        closeQuickView();
-        await openCartModal(productId);
     }
 
     async function addAdditionalToCart(additionalId) {
