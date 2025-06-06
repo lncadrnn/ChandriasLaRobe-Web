@@ -23,7 +23,7 @@
     cursor: pointer;
 }
 
-.product-images:hover .product-color-indicator {
+.product-item:hover .product-color-indicator {
     transform: scale(1.2);
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
 }
@@ -194,7 +194,7 @@
 }
 
 /* Only scale the image on hover, not the entire card */
-.product-images:hover .product-img {
+.product-item:hover .product-img {
     transform: scale(1.05);
 }
 
@@ -204,11 +204,11 @@
 }
 
 /* Show second image on hover with smooth transition */
-.product-images:hover .product-img.default {
+.product-item:hover .product-img.default {
     opacity: 0;
 }
 
-.product-images:hover .product-img.hover {
+.product-item:hover .product-img.hover {
     opacity: 1;
 }
 
@@ -274,8 +274,8 @@
     z-index: 2;
 }
 
-/* Modified to trigger on product-images hover, not product-item hover */
-.product-images:hover ~ .product-actions,
+/* Modified to trigger on product-item hover, not product-images hover */
+.product-item:hover .product-actions,
 .product-actions:hover {
     opacity: 1;
     transform: translateX(0);
@@ -298,7 +298,7 @@
 
 .action-btn:hover {
     background-color: hsl(346, 100%, 74%); /* Pink on hover */
-    color: #333; /* Keep black text color on hover */
+    color: white; /* White text color on hover */
     transform: scale(1.05);
     box-shadow: 0 3px 10px rgba(255, 154, 175, 0.3);
     border-color: transparent;
@@ -439,7 +439,7 @@
 }
 
 /* Modify to trigger on image hover instead of card hover */
-.product-images:hover ~ .price-tag,
+.product-item:hover .price-tag,
 .price-tag:hover {
     background-color: hsl(346, 100%, 68%);
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
@@ -461,8 +461,8 @@
     flex-direction: row !important;
 }
 
-/* Modified to trigger on product-images hover, not product-item hover */
-.product-images:hover ~ .product-actions,
+/* Modified to trigger on product-item hover, not product-images hover */
+.product-item:hover .product-actions,
 .product-actions:hover {
     opacity: 1 !important;
     transform: translate(-50%, -50%) !important;
@@ -484,7 +484,7 @@
     text-decoration: none !important;
 }
 
-.product-images:hover ~ .product-actions .action-btn,
+.product-item:hover .product-actions .action-btn,
 .product-actions:hover .action-btn {
     transform: scale(1) !important;
 }
@@ -504,7 +504,7 @@
 }
 
 /* Remove the dark overlay on hover */
-.product-images:hover ~ .product-banner::after,
+.product-item:hover .product-banner::after,
 .product-banner:hover::after {
     background: rgba(0, 0, 0, 0);
 }
@@ -799,3 +799,25 @@
         width: 65%; /* Slightly narrower on mobile */
     }
 }
+
+/* ============= ENHANCED ACTION BUTTON HOVER STYLES ============= */
+/* More specific styles to override any conflicting styles from other CSS files */
+.product-item .product-actions .action-btn:hover {
+    background-color: hsl(346, 100%, 74%) !important; /* Pink on hover */
+    color: white !important; /* Force white text color on hover */
+    transform: scale(1.05) !important;
+    box-shadow: 0 3px 10px rgba(255, 154, 175, 0.3) !important;
+    border-color: transparent !important;
+}
+
+/* Ensure the enhanced action buttons also have white text on hover */
+.product-actions .action-btn:hover {
+    color: white !important;
+}
+
+/* Override any global action button hover styles for product cards specifically */
+.product-item:hover .product-actions .action-btn:hover {
+    color: white !important;
+}
+
+/* ============= END ENHANCED ACTION BUTTON HOVER STYLES ============= */
