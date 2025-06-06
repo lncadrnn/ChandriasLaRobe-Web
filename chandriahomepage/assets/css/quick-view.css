@@ -591,12 +591,11 @@
     border-radius: 0 0 20px 20px;
     background: #ffffff;
   }
-  
-  .quick-view-modal {
+    .quick-view-modal {
     width: 95%;
     max-width: 450px;
     max-height: 90vh;
-    margin: 0 auto;
+    margin: 20px auto;
   }
   
   .quick-view-product-title {
@@ -655,7 +654,7 @@
   .quick-view-modal {
     width: 95% !important;
     max-width: 400px !important;
-    margin: 1rem auto !important;
+    margin: 15px auto !important;
   }
 }
 

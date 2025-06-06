@@ -1822,11 +1822,11 @@ a[href] {
     order: 2 !important;
     border-radius: 0 0 20px 20px !important;
   }
-  
-  .quick-view-modal {
+    .quick-view-modal {
     width: 95% !important;
     max-width: 450px !important;
     max-height: 90vh !important;
+    margin: 20px auto !important;
   }
 }
 
@@ -1834,6 +1834,7 @@ a[href] {
   .quick-view-modal {
     width: 98% !important;
     max-width: 400px !important;
+    margin: 15px auto !important;
   }
   
   .quick-view-main-image {
