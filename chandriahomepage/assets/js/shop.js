@@ -866,9 +866,15 @@ $(document).ready(function () {
         console.log("Opening quick view modal"); // Debug log
         const loadingElement = document.getElementById('quick-view-loading');
         const contentElement = document.getElementById('quick-view-content');
+        const modalElement = document.querySelector('.quick-view-modal');
         
         $(".quick-view-modal-container").addClass("show");
         $("body").css("overflow", "hidden");
+        
+        // Add is-loading class to modal
+        if (modalElement) {
+            modalElement.classList.add('is-loading');
+        }
 
         // Show loading spinner and hide content
         if (loadingElement) {
@@ -887,15 +893,19 @@ $(document).ready(function () {
             "Quick view modal opened, has show class:",
             $(".quick-view-modal-container").hasClass("show")
         ); // Debug log
-    }    // Function to close quick view modal
-    function closeQuickViewModal() {
+    }    // Function to close quick view modal    function closeQuickViewModal() {
         const loadingElement = document.getElementById('quick-view-loading');
         const contentElement = document.getElementById('quick-view-content');
+        const modalElement = document.querySelector('.quick-view-modal');
         
         $(".quick-view-modal-container").removeClass("show");
         $("body").css("overflow", "auto");
         
         // Reset modal state for next use
+        if (modalElement) {
+            modalElement.classList.remove('is-loading');
+        }
+        
         if (loadingElement) {
             loadingElement.style.display = 'none';
             loadingElement.classList.add('hidden');
@@ -903,11 +913,17 @@ $(document).ready(function () {
         if (contentElement) {
             contentElement.style.display = 'none';
         }
-    }
-
-    // Function to show loading state in quick view modal
+    }    // Function to show loading state in quick view modal
     function showQuickViewLoading() {
         console.log("Showing quick view loading state"); // Debug log
+        
+        const modalElement = document.querySelector('.quick-view-modal');
+        
+        // Add is-loading class to modal to prevent scrolling
+        if (modalElement) {
+            modalElement.classList.add('is-loading');
+        }
+        
         $(".quick-view-details").html(`
             <div class="quick-view-loading">
                 <div class="spinner"></div>
@@ -916,14 +932,18 @@ $(document).ready(function () {
         `);
         $(".quick-view-images img").attr("src", "");
         console.log("Loading state applied"); // Debug log
-    }
-
-    // Function to hide loading state in quick view modal
+    }// Function to hide loading state in quick view modal
     function hideQuickViewLoading() {
         console.log("Hiding quick view loading state"); // Debug log
         
         const loadingElement = document.getElementById('quick-view-loading');
         const contentElement = document.getElementById('quick-view-content');
+        const modalElement = document.querySelector('.quick-view-modal');
+        
+        // Remove is-loading class from modal to restore scrolling
+        if (modalElement) {
+            modalElement.classList.remove('is-loading');
+        }
         
         // Hide loading spinner and show content
         if (loadingElement) {
@@ -933,7 +953,7 @@ $(document).ready(function () {
         if (contentElement) {
             contentElement.style.display = 'grid';
         }
-    } // Close modal when clicking close button or backdrop
+    }// Close modal when clicking close button or backdrop
     $(document).on("click", ".quick-view-close", closeQuickViewModal);
     $(document).on("click", ".quick-view-modal-container", function (e) {
         if (e.target === this) {
