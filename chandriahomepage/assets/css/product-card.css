@@ -163,6 +163,7 @@
     overflow: hidden;
     position: relative;
     background-color: white;
+    cursor: pointer;
 }
 
 /* Modification: Remove box-shadow change on hover for entire card */

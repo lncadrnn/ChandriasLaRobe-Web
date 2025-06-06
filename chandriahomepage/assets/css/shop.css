@@ -1,3 +1,13 @@
+/* =============== Quick View Button Fix =============== */
+/* Ensure "View Full Details" button has white text with higher specificity */
+#quick-view-view-details.quick-view-btn.quick-view-btn-primary {
+  color: white !important;
+}
+
+#quick-view-view-details.quick-view-btn.quick-view-btn-primary:hover {
+  color: white !important;
+}
+
 /* =============== ANIMATED BUBBLES =============== */
 .bubbles-container {
   position: fixed;
