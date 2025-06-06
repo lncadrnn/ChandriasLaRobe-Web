@@ -93,12 +93,10 @@ $(document).ready(function () {
     
     // Mobile hamburger menu functionality
     const hamburgerMenu = document.querySelector('.hamburger-menu');
-    const mobileNavMenu = document.querySelector('.mobile-nav-menu');
-
-    if (hamburgerMenu && mobileNavMenu) {
+    const mobileNavMenu = document.querySelector('.mobile-nav-menu');    if (hamburgerMenu && mobileNavMenu) {
         hamburgerMenu.addEventListener('click', () => {
             hamburgerMenu.classList.toggle('active');
-            mobileNavMenu.classList.toggle('active');
+            mobileNavMenu.classList.toggle('show');
         });
 
         // Close mobile menu when clicking on a link
@@ -106,7 +104,7 @@ $(document).ready(function () {
         mobileNavLinks.forEach(link => {
             link.addEventListener('click', () => {
                 hamburgerMenu.classList.remove('active');
-                mobileNavMenu.classList.remove('active');
+                mobileNavMenu.classList.remove('show');
             });
         });
 
@@ -114,7 +112,7 @@ $(document).ready(function () {
         document.addEventListener('click', (e) => {
             if (!hamburgerMenu.contains(e.target) && !mobileNavMenu.contains(e.target)) {
                 hamburgerMenu.classList.remove('active');
-                mobileNavMenu.classList.remove('active');
+                mobileNavMenu.classList.remove('show');
             }
         });
     }
