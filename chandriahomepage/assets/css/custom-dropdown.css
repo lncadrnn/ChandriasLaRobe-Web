@@ -1,0 +1,122 @@
+/* Custom Dropdown Styles for Stock Display */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.custom-dropdown-trigger {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: white;
+    font-size: 13px;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.custom-dropdown-trigger:focus,
+.custom-dropdown-trigger.active {
+    outline: none;
+    border-color: hsl(346, 100%, 74%);
+    box-shadow: 0 0 0 3px hsla(346, 100%, 74%, 0.1);
+}
+
+.custom-dropdown-arrow {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.2s ease;
+}
+
+.custom-dropdown-trigger.active .custom-dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.custom-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+
+.custom-dropdown-menu.show {
+    display: block;
+}
+
+.custom-dropdown-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #333;
+    transition: background-color 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.custom-dropdown-item:hover {
+    background-color: #f5f5f5;
+}
+
+.custom-dropdown-item.selected {
+    background-color: hsl(346, 100%, 95%);
+    color: hsl(346, 100%, 74%);
+}
+
+.custom-dropdown-item .size-name {
+    font-weight: 500;
+}
+
+.custom-dropdown-item .stock-info {
+    font-size: 11px;
+    color: #666;
+}
+
+.custom-dropdown-item .stock-info .stock-label {
+    color: #e74c3c;
+    font-weight: 500;
+}
+
+.custom-dropdown-item .stock-number {
+    font-weight: 500;
+    margin-left: 2px;
+}
+
+/* Low stock indicators */
+.custom-dropdown-item .stock-info.low-stock .stock-number {
+    color: #e67e22;
+}
+
+.custom-dropdown-item .stock-info.very-low-stock .stock-number {
+    color: #e74c3c;
+}
+
+/* Hide the original select when custom dropdown is active */
+.size-selector.custom-hidden {
+    display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .custom-dropdown-item {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+    
+    .custom-dropdown-item .stock-info {
+        font-size: 12px;
+    }
+}

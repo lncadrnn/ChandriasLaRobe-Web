@@ -1,0 +1,113 @@
+/* Price tag styling for top right corner */
+.price-tag {
+    position: absolute;
+    top: 10px;
+    right: 0;
+    background-color: hsl(346, 100%, 74%);
+    color: white;
+    padding: 4px 8px 4px 12px;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 20px 0 0 20px;
+    z-index: 6;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.product-item:hover .price-tag {
+    background-color: hsl(346, 100%, 68%);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Centralized action buttons on hover */
+.product-actions {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 15px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 4;
+    justify-content: center;
+    align-items: center;
+}
+
+.product-item:hover .product-actions {
+    opacity: 1;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: white;
+    color: #333;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    transform: scale(0.9);
+    border: 2px solid transparent;
+}
+
+.product-item:hover .action-btn {
+    transform: scale(1);
+}
+
+.action-btn:hover {
+    background-color: hsl(346, 100%, 74%);
+    color: white;
+    transform: scale(1.15);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    border-color: white;
+}
+
+/* Product banner overlay for better button visibility */
+.product-banner::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0);
+    transition: all 0.3s ease;
+    z-index: 2;
+    border-radius: 8px;
+}
+
+.product-item:hover .product-banner::after {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* Make the price in the content section not visible since it's in the top right now */
+.product-price-section {
+    display: none !important;
+}
+
+/* Additional responsive styles */
+@media (max-width: 768px) {
+    .action-btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .product-actions {
+        gap: 12px;
+    }
+    
+    .price-tag {
+        font-size: 12px;
+        padding: 3px 6px 3px 10px;
+    }
+}
+
+/* Ensure product banner has relative positioning for absolute children */
+.product-banner {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+}

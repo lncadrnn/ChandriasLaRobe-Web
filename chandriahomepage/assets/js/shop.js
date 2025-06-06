@@ -576,8 +576,7 @@ $(document).ready(function () {
             <div class="loading-state">
                 <div class="loading-spinner"></div>
             </div>
-            <div class="product-banner">
-                <a href="details.html?id=${product.id}" class="product-images">
+            <div class="product-banner">                <a href="details.html?id=${product.id}" class="product-images">
                     <img src="${imageUrl}" alt="${product.name || "Product"}" class="product-img default">
                     <img src="${backImageUrl}" alt="${product.name || "Product"}" class="product-img hover">
                 </a>
@@ -590,6 +589,7 @@ $(document).ready(function () {
                     </a>
                 </div>
                 
+                <div class="price-tag">${price}</div>
                 <div class="product-color-indicator" style="background-color: ${colorHex}" title="${product.colorName || 'Color'}" data-product-id="${product.id}"></div>
             </div>
             <div class="product-content">
@@ -597,11 +597,6 @@ $(document).ready(function () {
                 <a href="details.html?id=${product.id}">
                     <h3 class="product-title">${product.name || "Untitled Product"}</h3>
                 </a>
-                <div class="product-price-section">
-                    <div class="product-price flex">
-                        <span class="new-price">${price}${product.price ? ' / rent' : ''}</span>
-                    </div>
-                </div>
                 ${sizeOptionsHTML}
             </div>
         </div>
