@@ -19,50 +19,53 @@
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
 }
 
-/* Centralized action buttons on hover */
+/* Centralized action buttons on hover - Override existing styles */
 .product-actions {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    gap: 15px;
-    opacity: 0;
-    transition: all 0.3s ease;
-    z-index: 4;
-    justify-content: center;
-    align-items: center;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    display: flex !important;
+    gap: 15px !important;
+    opacity: 0 !important;
+    transition: all 0.3s ease !important;
+    z-index: 4 !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-direction: row !important;
 }
 
 .product-item:hover .product-actions {
-    opacity: 1;
+    opacity: 1 !important;
+    transform: translate(-50%, -50%) !important;
 }
 
 .action-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    background-color: white;
-    color: #333;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-    transform: scale(0.9);
-    border: 2px solid transparent;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 45px !important;
+    height: 45px !important;
+    border-radius: 50% !important;
+    background-color: white !important;
+    color: #333 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+    transition: all 0.3s ease !important;
+    transform: scale(0.9) !important;
+    border: 2px solid transparent !important;
+    text-decoration: none !important;
 }
 
 .product-item:hover .action-btn {
-    transform: scale(1);
+    transform: scale(1) !important;
 }
 
 .action-btn:hover {
-    background-color: hsl(346, 100%, 74%);
-    color: white;
-    transform: scale(1.15);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-    border-color: white;
+    background-color: hsl(346, 100%, 74%) !important;
+    color: white !important;
+    transform: scale(1.15) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+    border-color: white !important;
 }
 
 /* Product banner overlay for better button visibility */
@@ -91,12 +94,12 @@
 /* Additional responsive styles */
 @media (max-width: 768px) {
     .action-btn {
-        width: 40px;
-        height: 40px;
+        width: 40px !important;
+        height: 40px !important;
     }
     
     .product-actions {
-        gap: 12px;
+        gap: 12px !important;
     }
     
     .price-tag {
