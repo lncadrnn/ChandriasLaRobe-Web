@@ -14,11 +14,11 @@
     --accent-light: hsl(346, 85%, 85%);
     --secondary-color: hsl(346, 60%, 40%);
     --secondary-light: hsl(346, 50%, 50%);
-    
-    /* Neutral Colors */
+      /* Neutral Colors */
     --white: #FFFFFF;
     --light-gray: #FFFFFF;
-    --medium-gray: #E9ECEF;    --dark-gray: #000000;
+    --medium-gray: #E9ECEF;
+    --dark-gray: #000000;
     --text-primary: #000000;
     --text-secondary: #000000;
     --text-muted: #000000;
@@ -478,6 +478,91 @@
 
 .btn:hover i {
     transform: translateX(-2px);
+}
+
+/* ================================
+   NAVIGATION LINK FIXES
+   ================================ */
+/* Remove all outlines, borders, and box-shadows from nav links */
+.nav-link,
+.nav-link:hover,
+.nav-link:focus,
+.nav-link:active,
+.nav-link:visited,
+.nav-link:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: none !important;
+    text-shadow: none !important;
+}
+
+/* Ensure only pink color and underline for active/hover states */
+.nav-link:hover,
+.nav-link:focus,
+.nav-link:active,
+.nav-link.active-link {
+    color: var(--primary-color) !important;
+}
+
+/* Pink underline effect only */
+.nav-link.active-link::after,
+.nav-link:hover::after,
+.nav-link:focus::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 80% !important;
+    height: 2px !important;
+    background: var(--primary-color) !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Remove any default browser focus styles */
+.nav-link::-moz-focus-inner {
+    border: 0 !important;
+    outline: none !important;
+}
+
+/* Ensure mobile nav links also follow the same rules */
+.mobile-nav-link,
+.mobile-nav-link:hover,
+.mobile-nav-link:focus,
+.mobile-nav-link:active,
+.mobile-nav-link:visited,
+.mobile-nav-link:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: none !important;
+    text-shadow: none !important;
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-link:focus,
+.mobile-nav-link:active,
+.mobile-nav-link.active {
+    color: var(--primary-color) !important;
+}
+
+.mobile-nav-link:hover::after,
+.mobile-nav-link.active::after,
+.mobile-nav-link:focus::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 80% !important;
+    height: 2px !important;
+    background: var(--primary-color) !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 /* ================================
