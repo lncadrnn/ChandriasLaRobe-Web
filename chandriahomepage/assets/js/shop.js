@@ -377,8 +377,7 @@ $(document).ready(function () {
                     <h3 class="product-title">${product.name || "Untitled Product"}</h3>
                 </a>                <div class="product-price-section">
                     <div class="product-price flex">
-                        <span class="new-price">${price}</span>
-                        ${product.price ? '<span class="price-period">/ rent</span>' : ''}
+                        <span class="new-price">${price}${product.price ? ' / rent' : ''}</span>
                     </div>
                     ${!product.isAdditional ? `
                     <button class="btn btn-primary add-to-cart-btn" data-product-id="${product.id}">
