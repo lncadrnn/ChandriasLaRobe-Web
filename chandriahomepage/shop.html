@@ -21,10 +21,7 @@
             href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css"
         />        <!--=============== CSS ===============-->        <link rel="stylesheet" href="./assets/css/styles.css" />
         <link rel="stylesheet" href="./assets/css/shop.css" />
-        <link rel="stylesheet" href="./assets/css/product-card-modernized.css" />
-        <link rel="stylesheet" href="./assets/css/product-card-compact.css" />
-        <link rel="stylesheet" href="./assets/css/product-card-updates.css" />
-        <link rel="stylesheet" href="./assets/css/product-card-enhanced.css" />
+        <link rel="stylesheet" href="./assets/css/product-card.css" />
 
         <title>Chandria's La Robe</title>
     </head>    <body>
@@ -172,8 +169,217 @@
           font-size: 14px;
         }
         .quantity-value, .enhanced-quantity-value {
-          font-size: 13px;
-          min-width: 22px;
+          font-size: 13px;        min-width: 22px;
+        }
+      }
+      
+      /* Size-Quantity Modal Styles */
+      #size-quantity-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      #size-quantity-modal.show {
+        display: flex;
+      }
+      
+      .modal-content {
+        background: white;
+        border-radius: 16px;
+        max-width: 420px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        animation: modalSlideIn 0.3s ease-out;
+      }
+      
+      @keyframes modalSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      
+      .modal-header {
+        position: relative;
+        text-align: center;
+        padding: 0;
+      }
+      
+      .modal-product-image {
+        width: 100%;
+        height: 280px;
+        object-fit: cover;
+        border-radius: 16px 16px 0 0;
+      }
+      
+      .modal-body {
+        padding: 24px;
+      }
+      
+      .modal-product-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 8px;
+        text-align: center;
+      }
+      
+      .modal-product-price {
+        font-size: 18px;
+        font-weight: 600;
+        color: hsl(346, 100%, 74%);
+        text-align: center;
+        margin-bottom: 24px;
+      }
+      
+      .modal-form-group {
+        margin-bottom: 20px;
+      }
+      
+      .modal-form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 8px;
+      }
+      
+      .modal-size-select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 16px;
+        background: white;
+        color: #333;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      
+      .modal-size-select:focus {
+        border-color: hsl(346, 100%, 74%);
+      }
+      
+      .modal-quantity-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      
+      .modal-quantity-btn {
+        width: 40px;
+        height: 40px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        background: white;
+        color: #333;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+      
+      .modal-quantity-btn:hover {
+        background: #f8f9fa;
+        border-color: hsl(346, 100%, 74%);
+      }
+      
+      .modal-quantity-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      
+      .modal-quantity-value {
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+        min-width: 30px;
+        text-align: center;
+      }
+      
+      .modal-stock-info {
+        font-size: 12px;
+        color: #666;
+        margin-top: 4px;
+      }
+      
+      .modal-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+      }
+      
+      .modal-btn {
+        flex: 1;
+        padding: 14px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      
+      .modal-cancel-btn {
+        background: #f8f9fa;
+        color: #666;
+        border: 2px solid #e0e0e0;
+      }
+      
+      .modal-cancel-btn:hover {
+        background: #e9ecef;
+      }
+      
+      .modal-add-btn {
+        background: hsl(346, 100%, 74%);
+        color: white;
+      }
+      
+      .modal-add-btn:hover {
+        background: hsl(346, 100%, 68%);
+      }
+      
+      .modal-add-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      
+      /* Mobile responsiveness */
+      @media (max-width: 768px) {
+        .modal-content {
+          margin: 20px;
+          max-width: none;
+          width: calc(100% - 40px);
+        }
+        
+        .modal-product-image {
+          height: 240px;
+        }
+        
+        .modal-body {
+          padding: 20px;
+        }
+        
+        .modal-buttons {
+          flex-direction: column;
         }
       }
     </style>
@@ -461,8 +667,52 @@
                             </div>
                         </section>
                     </div>
+                </div>                <!-- END OF MODAL CONTAINER -->
+
+                <!-- SIZE AND QUANTITY SELECTION MODAL -->
+                <div id="size-quantity-modal" class="modal-overlay" style="display: none;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">Select Size and Quantity</h3>
+                            <button class="modal-close" id="size-quantity-close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="modal-product-info">
+                                <img id="modal-product-image" src="" alt="" class="modal-product-img">
+                                <div class="modal-product-details">
+                                    <h4 id="modal-product-name" class="modal-product-title"></h4>
+                                    <p id="modal-product-price" class="modal-product-price"></p>
+                                </div>
+                            </div>
+                            <div class="modal-form">
+                                <div class="form-group">
+                                    <label for="modal-size-select">Select Size:</label>
+                                    <select id="modal-size-select" class="modal-select">
+                                        <option value="">Choose a size</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="modal-quantity">Quantity:</label>
+                                    <div class="quantity-controls">
+                                        <button type="button" class="quantity-btn" id="modal-qty-minus">-</button>
+                                        <input type="number" id="modal-quantity" class="quantity-input" value="1" min="1">
+                                        <button type="button" class="quantity-btn" id="modal-qty-plus">+</button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="stock-info">
+                                        <span>Available Stock: </span>
+                                        <span id="modal-stock-count">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" id="modal-cancel">Cancel</button>
+                            <button class="btn btn-primary" id="modal-add-to-cart">Add to Rent</button>
+                        </div>
+                    </div>
                 </div>
-                <!-- END OF MODAL CONTAINER -->
 
                 <p class="total-products">
                     We found <span>...</span> items for you

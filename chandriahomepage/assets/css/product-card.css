@@ -1,3 +1,13 @@
+/* ============= MERGED PRODUCT CARD STYLES ============= */
+/* This file contains merged styles from:
+ * - product-card-modernized.css
+ * - product-card-compact.css
+ * - product-card-updates.css
+ * - product-card-enhanced.css
+ * - product-card-hover-fix.css
+ */
+
+/* ============= FROM product-card-modernized.css ============= */
 /* Product Color Indicator */
 .product-color-indicator {
     position: absolute;
@@ -155,9 +165,9 @@
     background-color: white;
 }
 
+/* Modification: Remove box-shadow change on hover for entire card */
 .product-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .product-banner {
@@ -183,12 +193,14 @@
     transition: all 0.5s ease;
 }
 
+/* Only scale the image on hover, not the entire card */
 .product-images:hover .product-img {
     transform: scale(1.05);
 }
 
 .product-img.hover {
     opacity: 0;
+    transition: opacity 0.5s ease;
 }
 
 .product-images:hover .product-img.default {
@@ -247,6 +259,7 @@
 }
 
 /* Product actions (Quick View and Wishlist buttons) */
+/* Updated to only appear on image hover, not entire card hover */
 .product-actions {
     position: absolute;
     top: 10px;
@@ -260,7 +273,9 @@
     z-index: 2;
 }
 
-.product-item:hover .product-actions {
+/* Modified to trigger on product-images hover, not product-item hover */
+.product-images:hover ~ .product-actions,
+.product-actions:hover {
     opacity: 1;
     transform: translateX(0);
 }
@@ -361,7 +376,310 @@
     border-top: 5px solid rgba(0, 0, 0, 0.8);
 }
 
-/* Media Queries */
+/* ============= FROM product-card-compact.css ============= */
+/* Product Size and Quantity Selection - High priority overrides */
+.product-size-options {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important; /* Further reduced from 8px */
+    padding: 6px !important; /* Further reduced padding */
+    background-color: #f9f9f9 !important;
+    border-radius: 0 0 8px 8px !important;
+    border-top: 1px solid #eee !important;
+    margin-top: 4px !important; /* Further reduced */
+    transition: all 0.3s ease !important;
+    position: relative !important; /* Added for absolute positioning of cart button */
+}
+
+.size-selection {
+    position: relative;
+    display: flex;
+    width: 100%;
+}
+
+.size-selector-container {
+    position: relative;
+    width: 70%; /* Consistent width */
+}
+
+.quantity-btn:hover {
+    background-color: #e9e9e9;
+}
+
+.quantity-btn:active {
+    transform: scale(0.95);
+}
+
+.quantity-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.quantity-cart-container {
+    display: flex;
+    width: 100%;
+}
+
+/* ============= FROM product-card-updates.css ============= */
+/* Price tag styling for top left corner */
+.price-tag {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    background-color: hsl(346, 100%, 74%);
+    color: white;
+    padding: 4px 12px 4px 8px;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 0 20px 20px 0;
+    z-index: 6;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+/* Modify to trigger on image hover instead of card hover */
+.product-images:hover ~ .price-tag,
+.price-tag:hover {
+    background-color: hsl(346, 100%, 68%);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Centralized action buttons on hover - Override existing styles */
+.product-actions {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    display: flex !important;
+    gap: 15px !important;
+    opacity: 0 !important;
+    transition: all 0.3s ease !important;
+    z-index: 4 !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-direction: row !important;
+}
+
+/* Modified to trigger on product-images hover, not product-item hover */
+.product-images:hover ~ .product-actions,
+.product-actions:hover {
+    opacity: 1 !important;
+    transform: translate(-50%, -50%) !important;
+}
+
+.action-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 45px !important;
+    height: 45px !important;
+    border-radius: 50% !important;
+    background-color: white !important;
+    color: #333 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.25s ease !important;
+    transform: scale(0.9) !important;
+    border: 2px solid #eee !important;
+    text-decoration: none !important;
+}
+
+.product-images:hover ~ .product-actions .action-btn,
+.product-actions:hover .action-btn {
+    transform: scale(1) !important;
+}
+
+/* Product banner overlay for better button visibility */
+.product-banner::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0);
+    transition: all 0.3s ease;
+    z-index: 2;
+    border-radius: 8px;
+}
+
+/* Modified to trigger on product-images hover, not product-item hover */
+.product-images:hover ~ .product-banner::after,
+.product-banner:hover::after {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* Make the price in the content section not visible since it's in the top right now */
+.product-price-section {
+    display: none !important;
+}
+
+/* ============= FROM product-card-enhanced.css ============= */
+/* Improved Product Card with Size, Quantity and Rental Button */
+
+/* Add this CSS to enhance the product card with size, quantity, and rental functionality */
+.product-card-enhanced {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+/* Improved product image container */
+.product-image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px 8px 0 0;
+    padding-top: 125%; /* Maintain aspect ratio */
+}
+
+/* Hover animation for product image */
+.product-image-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.product-image-container:hover img {
+    transform: scale(1.05);
+}
+
+/* Size and quantity section styling */
+.product-options-section {
+    background-color: #f9f9f9;
+    border-radius: 0 0 8px 8px;
+    border-top: 1px solid #eee;
+    padding: 12px 10px;
+    margin-top: auto; /* Push to bottom of card */
+}
+
+/* Flex container for size and quantity controls */
+.size-quantity-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Row layout for controls and add button */
+.control-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Size selector: modern look */
+.enhanced-size-selector {
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
+  color: #222;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 8px 12px;
+  transition: border-color 0.2s;
+}
+
+.enhanced-size-selector:focus {
+  border-color: #28a745;
+  outline: none;
+}
+
+/* Quantity controls: modern pill look */
+.quantity-control {
+  background: #f8f9fa;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 70%;
+}
+
+.enhanced-quantity-btn {
+  background: #fff;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 6px;
+  color: #222;
+  font-weight: bold;
+  width: 28px;
+  height: 28px;
+  font-size: 16px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.enhanced-quantity-btn:hover {
+  background: #e9f7ef;
+  border-color: #28a745;
+}
+
+.enhanced-quantity-value {
+  font-size: 15px;
+  font-weight: 600;
+  min-width: 28px;
+  text-align: center;
+  color: #222;
+}
+
+/* Enhanced Add to Rent button */
+.enhanced-cart-btn {
+    height: 36px;
+    border-radius: 6px;
+    background-color: white;
+    color: #333;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.25s ease;
+    gap: 5px;
+}
+
+.enhanced-cart-btn:hover {
+    background-color: hsl(346, 100%, 74%);
+    color: #333;
+    border-color: transparent;
+}
+
+.enhanced-cart-btn i {
+    font-size: 14px;
+}
+
+/* Stock indicator */
+.stock-label {
+    font-size: 11px;
+    color: #666;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.stock-label i {
+    font-size: 12px;
+}
+
+.stock-low {
+    color: #e67e22;
+}
+
+.stock-very-low {
+    color: #e74c3c;
+}
+
+.stock-available {
+    color: #2ecc71;
+}
+
+/* ============= MEDIA QUERIES (COMBINED) ============= */
+/* Media Queries for responsiveness */
 @media (max-width: 768px) {
     .product-size-options {
         padding: 10px 8px;
@@ -393,21 +711,47 @@
     .new-price {
         font-size: 14px;
     }
-      /* Make action buttons visible by default on mobile */
+    
+    /* Make action buttons visible by default on mobile */
     .product-actions {
         opacity: 1 !important;
-        transform: translateX(0) !important;
+        transform: translate(-50%, -50%) !important;
         display: flex !important;
         visibility: visible !important;
     }
     
     .action-btn {
-        width: 32px;
-        height: 32px;
+        width: 40px !important;
+        height: 40px !important;
     }
     
     .action-btn i {
         font-size: 14px;
+    }
+    
+    .price-tag {
+        font-size: 12px;
+        padding: 3px 6px 3px 10px;
+    }
+    
+    /* Make sure overlay is visible on mobile for better button contrast */
+    .product-banner::after {
+        background: rgba(0, 0, 0, 0.2);
+    }
+    
+    .enhanced-size-selector,
+    .quantity-control {
+        height: 36px;
+    }
+    
+    .enhanced-cart-btn {
+        height: 36px;
+        font-size: 12px;
+    }
+    
+    .enhanced-quantity-btn {
+        width: 24px;
+        height: 24px;
     }
 }
 
@@ -415,7 +759,7 @@
 @media (hover: none) {
     .product-actions {
         opacity: 1 !important;
-        transform: translateX(0) !important;
+        transform: translate(-50%, -50%) !important;
         display: flex !important;
         visibility: visible !important;
     }
@@ -423,14 +767,26 @@
     .product-item:active {
         transform: translateY(-2px);
     }
-      /* Simulate hover effect on tap for action buttons */
+    
+    /* Simulate hover effect on tap for action buttons */
     .action-btn:active {
         background-color: hsl(346, 100%, 74%) !important;
         color: #333 !important;
+        transform: scale(1.05) !important;
+    }
+    
+    /* Always show a light overlay for better button contrast */
+    .product-banner::after {
+        background: rgba(0, 0, 0, 0.2);
+    }
+    
+    .enhanced-cart-btn:active {
+        background-color: hsl(346, 100%, 74%);
+        color: #333;
     }
 }
 
-/* Add a media query for smaller screens */
+/* For smaller screens */
 @media (max-width: 576px) {
     .size-selector, .quantity-selection {
         width: 62%; /* Slightly narrower on mobile */
@@ -438,5 +794,9 @@
     
     .circular-cart-btn {
         width: 36%; /* Slightly wider on mobile */
+    }
+    
+    .size-selector-container, .quantity-selection {
+        width: 65%; /* Slightly narrower on mobile */
     }
 }
