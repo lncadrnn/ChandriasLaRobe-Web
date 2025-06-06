@@ -11,10 +11,10 @@
     --primary-light: hsl(346, 85%, 90%);
     --primary-dark: hsl(346, 80%, 60%);
     --accent-color: hsl(346, 100%, 74%);
-    --accent-light: hsl(346, 85%, 85%);
-    --secondary-color: hsl(346, 60%, 40%);
+    --accent-light: hsl(346, 85%, 85%);    --secondary-color: hsl(346, 60%, 40%);
     --secondary-light: hsl(346, 50%, 50%);
-      /* Neutral Colors */
+    
+    /* Neutral Colors */
     --white: #FFFFFF;
     --light-gray: #FFFFFF;
     --medium-gray: #E9ECEF;
@@ -382,6 +382,7 @@
     transition: all var(--transition-normal);
     position: relative;
     overflow: hidden;
+    z-index: 10;
 }
 
 .contact-item-policy::before {
@@ -615,87 +616,6 @@
 }
 
 /* ================================
-   RESPONSIVE DESIGN
-   ================================ */
-@media (max-width: 768px) {
-    .policy-section {
-        padding: var(--spacing-lg);
-        margin-bottom: var(--spacing-lg);
-    }
-    
-    .policy-section-title {
-        font-size: 1.5rem;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--spacing-sm);
-    }
-    
-    .services-grid {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-md);
-    }
-    
-    .contact-info-policy {
-        grid-template-columns: 1fr;
-    }
-    
-    .policy-footer {
-        flex-direction: column;
-        align-items: center;
-        gap: var(--spacing-md);
-    }
-    
-    .btn {
-        width: 100%;
-        justify-content: center;
-        max-width: 300px;
-    }
-}
-
-@media (max-width: 480px) {
-    .about-section, .policies-section {
-        padding: var(--spacing-lg) 0;
-    }
-    
-    .policy-section {
-        padding: var(--spacing-md);
-        border-radius: var(--radius-lg);
-    }
-    
-    .policy-text li {
-        padding-left: var(--spacing-lg);
-    }
-    
-    .policy-text li:hover {
-        padding-left: calc(var(--spacing-lg) + 4px);
-    }
-}
-
-/* ================================
-   DARK MODE SUPPORT (Future Enhancement)
-   ================================ */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --white: #FFFFFF;
-        --light-gray: #FFFFFF;
-        --medium-gray: #E9ECEF;
-        --text-primary: #000000;
-        --text-secondary: #000000;
-        --text-muted: #000000;
-    }
-    
-    .policy-section {
-        background: white;
-        backdrop-filter: none;
-        border-color: #ddd;
-    }
-    
-    .service-item {
-        background: white;
-    }
-}
-
-/* ================================
    PRINT STYLES
    ================================ */
 @media print {
@@ -716,3 +636,27 @@
         transition: none !important;
     }
 }
+
+/* ================================
+   MAIN CONTAINER POSITIONING
+   ================================ */
+.main {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* ================================
+   HEADER AND NAVIGATION Z-INDEX
+   ================================ */
+.header {
+    position: relative;
+    z-index: 100;
+}
+
+.nav {
+    position: relative;
+    z-index: 100;
+}
+
+/* ================================
