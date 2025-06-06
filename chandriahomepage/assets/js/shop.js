@@ -116,9 +116,7 @@ $(document).ready(function () {
             console.error("Error loading additionals:", error);
             throw error;
         }
-    }
-
-    // Initialize all event listeners
+    }    // Initialize all event listeners
     function initializeEventListeners() {
         // Search functionality
         $("#product-search").on("input", handleSearch);
@@ -146,7 +144,13 @@ $(document).ready(function () {
         $("#quick-view-add-to-cart").on("click", handleQuickViewAddToCart);
 
         // Circular cart button functionality
-        $(document).on("click", ".circular-cart-btn", handleCircularCartClick);
+        $(document).on("click", ".circular-cart-btn", handleCircularCartClick);        // Size and quantity controls
+        $(document).on("change", ".size-selector", handleSizeChange);
+        $(document).on("click", ".quantity-btn.plus-btn", handleQuantityIncrease);
+        $(document).on("click", ".quantity-btn.minus-btn", handleQuantityDecrease);
+        
+        // Color indicator tooltip
+        $(document).on("click", ".product-color-indicator", handleColorIndicatorClick);
 
         // Cart modal (existing modal functionality)
         $(document).on("click", ".action-btn[aria-label='Add to Rent List']", handleAddToCartClick);
@@ -177,11 +181,179 @@ $(document).ready(function () {
         $(document).on("click", function(e) {
             if ($(e.target).hasClass("quick-view-modal-container")) {
                 closeQuickView();
-            }
-            if ($(e.target).hasClass("cart-modal-container")) {
+            }            if ($(e.target).hasClass("cart-modal-container")) {
                 closeCartModal();
             }
         });
+    }
+    
+    // Handle size change in product card
+    function handleSizeChange() {
+        const productId = $(this).data("product-id");
+        const newSize = $(this).val();
+        const productCard = $(this).closest('.product-item');
+        const quantityElement = productCard.find(".quantity-value");
+        const stockIndicator = productCard.find(".stock-indicator");
+        const plusButton = productCard.find(".plus-btn");
+        
+        // Show loading state
+        productCard.addClass("is-loading");
+        
+        // Get product data to check stock
+        let productData = allProducts.find(p => p.id === productId);
+        
+        // If we have the product data and a selected size, check stock limits
+        if (productData && productData.size && newSize && productData.size[newSize]) {
+            const maxStock = productData.size[newSize];
+            let currentQuantity = parseInt(quantityElement.text()) || 1;
+            
+            // Update stock indicator
+            stockIndicator.text(`Stock: ${maxStock}`);
+            
+            // Update stock indicator class
+            stockIndicator.removeClass("low-stock very-low-stock");
+            if (maxStock <= 3) {
+                stockIndicator.addClass("very-low-stock");
+            } else if (maxStock <= 5) {
+                stockIndicator.addClass("low-stock");
+            }
+            
+            // If current quantity exceeds available stock, adjust it
+            if (currentQuantity > maxStock) {
+                currentQuantity = maxStock;
+                quantityElement.text(maxStock);
+                notyf.warning(`Quantity adjusted to available stock for size ${newSize}: ${maxStock}`);
+            }
+            
+            // Disable plus button if at max stock
+            if (currentQuantity >= maxStock) {
+                plusButton.prop("disabled", true).addClass("disabled");
+            } else {
+                plusButton.prop("disabled", false).removeClass("disabled");
+            }
+        }
+          // Remove loading state after a short delay
+        setTimeout(() => {
+            productCard.removeClass("is-loading");
+        }, 300);
+    }
+      // Handle quantity increase in product card
+    function handleQuantityIncrease() {
+        const productId = $(this).data("product-id");
+        const productCard = $(this).closest('.product-item');
+        const quantityElement = $(this).siblings(".quantity-value");
+        const selectedSize = productCard.find('.size-selector').val();
+        const minusBtn = productCard.find('.minus-btn');
+        let currentQuantity = parseInt(quantityElement.text()) || 1;
+        
+        // Show loading animation
+        productCard.addClass("is-loading");
+        
+        // Get product data to check stock
+        let productData = allProducts.find(p => p.id === productId);
+        
+        // If we have the product data and a selected size, check stock limits
+        if (productData && productData.size && selectedSize && productData.size[selectedSize]) {
+            const maxStock = productData.size[selectedSize];
+            if (currentQuantity < maxStock) {
+                currentQuantity++;
+                quantityElement.text(currentQuantity);
+                
+                // Enable minus button when quantity is more than 1
+                minusBtn.prop("disabled", false).removeClass("disabled");
+                
+                // Disable plus button if at max stock
+                if (currentQuantity >= maxStock) {
+                    $(this).prop("disabled", true).addClass("disabled");
+                }
+            } else {
+                notyf.error(`Maximum available stock for size ${selectedSize} is ${maxStock}`);
+            }
+        } else {
+            // If we can't check stock, just increment (fallback)
+            currentQuantity++;
+            quantityElement.text(currentQuantity);
+            
+            // Enable minus button when quantity is more than 1
+            minusBtn.prop("disabled", false).removeClass("disabled");
+        }
+        
+        // Remove loading animation after a short delay
+        setTimeout(() => {
+            productCard.removeClass("is-loading");
+        }, 300);
+    }    // Handle quantity decrease in product card
+    function handleQuantityDecrease() {
+        const productId = $(this).data("product-id");
+        const productCard = $(this).closest('.product-item');
+        const quantityElement = $(this).siblings(".quantity-value");
+        const selectedSize = productCard.find('.size-selector').val();
+        const plusBtn = productCard.find('.plus-btn');
+        let currentQuantity = parseInt(quantityElement.text()) || 1;
+        
+        // Show loading animation
+        productCard.addClass("is-loading");
+        
+        // Get product data to check stock
+        let productData = allProducts.find(p => p.id === productId);
+        
+        if (currentQuantity > 1) {
+            currentQuantity--;
+            quantityElement.text(currentQuantity);
+            
+            // Disable minus button when quantity reaches 1
+            if (currentQuantity === 1) {
+                $(this).prop("disabled", true).addClass("disabled");
+            }
+            
+            // Enable plus button if previously disabled due to max stock
+            if (productData && productData.size && selectedSize && productData.size[selectedSize]) {
+                const maxStock = productData.size[selectedSize];
+                if (currentQuantity < maxStock) {
+                    plusBtn.prop("disabled", false).removeClass("disabled");
+                }
+            } else {
+                plusBtn.prop("disabled", false).removeClass("disabled");
+            }
+        }
+        
+        // Remove loading animation after a short delay
+        setTimeout(() => {
+            productCard.removeClass("is-loading");        }, 300);
+    }
+    
+    // Handle color indicator click
+    function handleColorIndicatorClick(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const colorName = $(this).attr('title') || 'Color';
+        const productId = $(this).data('product-id');
+        
+        // Create or get tooltip
+        let tooltip = $('.color-tooltip');
+        if (tooltip.length === 0) {
+            $('body').append('<div class="color-tooltip"></div>');
+            tooltip = $('.color-tooltip');
+        }
+        
+        // Position tooltip near the color indicator
+        const position = $(this).offset();
+        tooltip.text(colorName)
+            .css({
+                'top': position.top - 30,
+                'left': position.left - (tooltip.width() / 2) + 12,
+                'opacity': 1,
+                'visibility': 'visible'
+            });
+        
+        // Hide tooltip after a short delay
+        setTimeout(() => {
+            tooltip.css({
+                'opacity': 0,
+                'visibility': 'hidden'
+            });
+        }, 2000);
     }
 
     // Search functionality
@@ -358,24 +530,58 @@ $(document).ready(function () {
         setTimeout(() => {
             updateAllCartButtonStatus();
         }, 100);
-    }
-
-    // Create product HTML
+    }    // Create product HTML
     function createProductHTML(product) {
-        const availableSizes = product.size ? Object.keys(product.size).join(", ") : "N/A";
+        const availableSizes = product.size ? Object.keys(product.size).filter(size => product.size[size] > 0) : [];
         const categoryDisplay = product.category || "Item";
         const price = product.price ? `₱ ${product.price}` : "Price available in-store";
         const imageUrl = product.frontImageUrl || product.imageUrl || "assets/img/placeholder.jpg";
         const backImageUrl = product.backImageUrl || imageUrl;
-
-        return `
+        const colorHex = product.color || "#f8f9fa";        // Create size options HTML
+        let sizeOptionsHTML = '';
+        if (availableSizes.length > 0 && !product.isAdditional) {
+            // Create options with stock information
+            const sizeOptions = availableSizes.map(size => {
+                const stock = product.size[size];
+                return `<option value="${size}" data-stock="${stock}">${size}</option>`;
+            }).join('');
+            
+            // Get initial stock for first size
+            const initialSize = availableSizes[0];
+            const initialStock = product.size[initialSize];
+            
+            // Determine stock class
+            let stockClass = '';
+            if (initialStock <= 3) stockClass = 'very-low-stock';
+            else if (initialStock <= 5) stockClass = 'low-stock';
+            
+            sizeOptionsHTML = `
+            <div class="product-size-options">
+                <div class="size-selection">
+                    <select class="size-selector" data-product-id="${product.id}">
+                        ${sizeOptions}
+                    </select>
+                    <span class="stock-indicator ${stockClass}" data-product-id="${product.id}">
+                        Stock: ${initialStock}
+                    </span>
+                </div>
+                <div class="quantity-selection">
+                    <button class="quantity-btn minus-btn" data-product-id="${product.id}">-</button>
+                    <span class="quantity-value" data-product-id="${product.id}">1</span>
+                    <button class="quantity-btn plus-btn" data-product-id="${product.id}" ${initialStock <= 1 ? 'disabled' : ''}>+</button>
+                </div>
+            </div>`;
+        }        return `
         <div class="product-item">
+            <div class="loading-state">
+                <div class="loading-spinner"></div>
+            </div>
             <div class="product-banner">
                 <a href="details.html?id=${product.id}" class="product-images">
                     <img src="${imageUrl}" alt="${product.name || "Product"}" class="product-img default">
                     <img src="${backImageUrl}" alt="${product.name || "Product"}" class="product-img hover">
                 </a>
-                  <div class="product-actions">
+                <div class="product-actions">
                     <a href="#" class="action-btn" aria-label="Quick View" data-product-id="${product.id}">
                         <i class="fi fi-rs-eye"></i>
                     </a>
@@ -384,8 +590,7 @@ $(document).ready(function () {
                     </a>
                 </div>
                 
-                <div class="product-badge">
-                    <span class="badge">Available</span>                </div>
+                <div class="product-color-indicator" style="background-color: ${colorHex}" title="${product.colorName || 'Color'}" data-product-id="${product.id}"></div>
             </div>
             <div class="product-content">
                 <span class="product-category">${categoryDisplay}</span>
@@ -403,6 +608,7 @@ $(document).ready(function () {
                         </svg>
                     </button>` : ''}
                 </div>
+                ${sizeOptionsHTML}
             </div>
         </div>
         `;
@@ -958,9 +1164,7 @@ $(document).ready(function () {
                 $(this).attr("data-in-cart", "false").removeClass("loading");
             });
         }
-    }
-
-    // Handle circular cart button click
+    }    // Handle circular cart button click
     async function handleCircularCartClick(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -1000,7 +1204,7 @@ $(document).ready(function () {
                 notyf.success("Removed from cart!");
                 
             } else {
-                // Add to cart - find product data to get available size
+                // Get product data
                 let productData = allProducts.find(p => p.id === productId);
                 
                 if (!productData) {
@@ -1012,10 +1216,28 @@ $(document).ready(function () {
                     }
                     productData = productDoc.data();
                 }
+                  // Get selected size and quantity from the product card
+                const productCard = button.closest('.product-item');
+                let selectedSize = productCard.find('.size-selector').val();
+                let selectedQuantity = parseInt(productCard.find('.quantity-value').text()) || 1;
                 
-                // Find first available size
-                let selectedSize = "One Size";
-                if (productData.size) {
+                // Check stock for the selected size
+                if (selectedSize && productData.size && productData.size[selectedSize]) {
+                    const stock = productData.size[selectedSize];
+                    if (stock <= 0) {
+                        notyf.error(`Size ${selectedSize} is out of stock.`);
+                        return;
+                    }
+                    
+                    // Limit quantity to available stock
+                    if (selectedQuantity > stock) {
+                        selectedQuantity = stock;
+                        notyf.warning(`Quantity limited to available stock: ${stock}`);
+                    }
+                }
+                
+                // Fallback to auto-selecting size if not available on the card
+                if (!selectedSize && productData.size) {
                     const availableSizes = Object.entries(productData.size).filter(([size, stock]) => stock > 0);
                     if (availableSizes.length > 0) {
                         selectedSize = availableSizes[0][0];
@@ -1023,6 +1245,8 @@ $(document).ready(function () {
                         notyf.error("Product is out of stock.");
                         return;
                     }
+                } else if (!selectedSize) {
+                    selectedSize = "One Size";
                 }
                 
                 // Check if same product/size combination already exists
@@ -1032,7 +1256,7 @@ $(document).ready(function () {
                 
                 if (existingIndex !== -1) {
                     // Update quantity
-                    currentCart[existingIndex].quantity = (currentCart[existingIndex].quantity || 1) + 1;
+                    currentCart[existingIndex].quantity = (currentCart[existingIndex].quantity || 1) + selectedQuantity;
                     await updateDoc(userRef, { added_to_cart: currentCart });
                 } else {
                     // Add new item
@@ -1040,13 +1264,13 @@ $(document).ready(function () {
                         added_to_cart: arrayUnion({
                             productId,
                             size: selectedSize,
-                            quantity: 1
+                            quantity: selectedQuantity
                         })
                     });
                 }
                 
                 button.attr("data-in-cart", "true");
-                notyf.success("Added to cart!");
+                notyf.success(`Added to cart! Size: ${selectedSize}, Qty: ${selectedQuantity}`);
             }
             
             // Update cart count
@@ -1055,7 +1279,8 @@ $(document).ready(function () {
         } catch (error) {
             console.error("Error updating cart:", error);
             notyf.error("An error occurred. Please try again.");
-        } finally {            button.removeClass("loading");
+        } finally {
+            button.removeClass("loading");
         }
     }
     
