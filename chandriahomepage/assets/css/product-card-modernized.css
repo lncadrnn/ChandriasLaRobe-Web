@@ -13,7 +13,7 @@
     cursor: pointer;
 }
 
-.product-item:hover .product-color-indicator {
+.product-images:hover .product-color-indicator {
     transform: scale(1.2);
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
 }
@@ -181,6 +181,10 @@
     height: 100%;
     object-fit: cover;
     transition: all 0.5s ease;
+}
+
+.product-images:hover .product-img {
+    transform: scale(1.05);
 }
 
 .product-img.hover {

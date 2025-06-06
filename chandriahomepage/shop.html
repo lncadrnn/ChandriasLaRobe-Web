@@ -20,15 +20,20 @@
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css"
         />        <!--=============== CSS ===============-->        <link rel="stylesheet" href="./assets/css/styles.css" />
-        <link rel="stylesheet" href="./assets/css/shop.css" />        <link rel="stylesheet" href="./assets/css/product-card-modernized.css" />
+        <link rel="stylesheet" href="./assets/css/shop.css" />
+        <link rel="stylesheet" href="./assets/css/product-card-modernized.css" />
         <link rel="stylesheet" href="./assets/css/product-card-compact.css" />
         <link rel="stylesheet" href="./assets/css/product-card-updates.css" />
         <link rel="stylesheet" href="./assets/css/product-card-enhanced.css" />
-        <link rel="stylesheet" href="./assets/css/size-stock-styling.css" />
 
         <title>Chandria's La Robe</title>
     </head>    <body>
         <style>
+      /* Hide size and quantity controls on product cards */
+      .product-size-options {
+        display: none !important;
+      }
+      
       /* Modernize quantity, size, and Add to Rent button on product cards */
       .products-container .product-item {
         border-radius: 14px;
