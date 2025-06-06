@@ -30,13 +30,18 @@ function hideDetailsLoader() {
 }
 
 $(document).ready(async function () {
-  // Get product ID from URL parameter
+  // Get product ID from URL parameter first, then try localStorage if not found
   const urlParams = new URLSearchParams(window.location.search);
-  const productId = urlParams.get('id');
+  let productId = urlParams.get('id');
+  
+  // If not found in URL, try to get from localStorage
+  if (!productId) {
+    productId = localStorage.getItem("selectedProductId");
+  }
   
   if (!productId) {
-    console.error('No product ID found in URL');
-    showErrorState('No product ID specified in URL.');
+    console.error('No product ID found in URL or localStorage');
+    showErrorState('No product ID specified. Please select a product from the shop.');
     setTimeout(() => {
       window.location.href = 'shop.html';
     }, 2000);

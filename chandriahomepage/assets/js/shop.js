@@ -254,9 +254,8 @@ $(document).ready(function () {
             );
             const selectedClass = isInCart ? "selected" : "";            // Build product card
             const card = `
-            <div class="product-item">
-                <div class="product-banner">
-                    <a href="./details.html" class="product-images" data-id="${product.id}">
+            <div class="product-item">                <div class="product-banner">
+                    <a href="./details.html?id=${product.id}" class="product-images" data-id="${product.id}">
                         <img src="${product.frontImageUrl}" alt="" class="product-img default">
                         <img src="${product.backImageUrl}" alt="" class="product-img hover">
                     </a>
@@ -270,7 +269,7 @@ $(document).ready(function () {
                     </div>                </div>
 
                 <div class="product-content">
-                    <a href="./details.html" data-id="${product.id}">
+                    <a href="./details.html?id=${product.id}" data-id="${product.id}">
                         <h3 class="product-title">${product.name}</h3>
                     </a>
                     
@@ -1056,7 +1055,9 @@ $(document).ready(function () {
 
         // Close quick view modal
         closeQuickViewModal();
-    }); // Quick view "View Full Details" button click handler
+    }); 
+    
+    // Quick view "View Full Details" button click handler
     $(document).on("click", "#quick-view-view-details", function (e) {
         e.preventDefault();
         const productId = $(this).data("id");
@@ -1073,7 +1074,7 @@ $(document).ready(function () {
             );
         }
 
-        window.location.href = "./details.html";
+        window.location.href = `./details.html?id=${productId}`;
     });
 
     // Close modal with Escape key
