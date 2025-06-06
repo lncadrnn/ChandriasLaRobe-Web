@@ -190,7 +190,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: all 0.5s ease;
+    transition: transform 0.5s ease;
 }
 
 /* Only scale the image on hover, not the entire card */
@@ -203,6 +203,7 @@
     transition: opacity 0.5s ease;
 }
 
+/* Show second image on hover with smooth transition */
 .product-images:hover .product-img.default {
     opacity: 0;
 }
@@ -502,10 +503,10 @@
     border-radius: 8px;
 }
 
-/* Modified to trigger on product-images hover, not product-item hover */
+/* Remove the dark overlay on hover */
 .product-images:hover ~ .product-banner::after,
 .product-banner:hover::after {
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0);
 }
 
 /* Make the price in the content section not visible since it's in the top right now */
@@ -733,10 +734,9 @@
         font-size: 12px;
         padding: 3px 6px 3px 10px;
     }
-    
-    /* Make sure overlay is visible on mobile for better button contrast */
+  /* Make sure overlay is always transparent for better visibility */
     .product-banner::after {
-        background: rgba(0, 0, 0, 0.2);
+        background: rgba(0, 0, 0, 0);
     }
     
     .enhanced-size-selector,
@@ -774,10 +774,9 @@
         color: #333 !important;
         transform: scale(1.05) !important;
     }
-    
-    /* Always show a light overlay for better button contrast */
+      /* Always keep overlay transparent */
     .product-banner::after {
-        background: rgba(0, 0, 0, 0.2);
+        background: rgba(0, 0, 0, 0);
     }
     
     .enhanced-cart-btn:active {
