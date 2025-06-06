@@ -135,10 +135,9 @@ $(document).ready(function () {
         $(document).on("click", ".action-btn[aria-label='Quick View']", handleQuickViewClick);
         $("#quick-view-close").on("click", closeQuickView);
         $("#quick-view-view-details").on("click", handleViewDetails);
-        $("#quick-view-add-to-cart").on("click", handleQuickViewAddToCart);
-
-        // Cart modal (existing modal functionality)
+        $("#quick-view-add-to-cart").on("click", handleQuickViewAddToCart);        // Cart modal (existing modal functionality)
         $(document).on("click", ".action-btn[aria-label='Add to Rent List']", handleAddToCartClick);
+        $(document).on("click", ".add-to-cart-btn", handleAddToCartClick);
         $("#btn-close").on("click", closeCartModal);
         $("#btn-rent").on("click", handleAddToCart);
 
@@ -360,39 +359,32 @@ $(document).ready(function () {
                     <img src="${imageUrl}" alt="${product.name || "Product"}" class="product-img default">
                     <img src="${backImageUrl}" alt="${product.name || "Product"}" class="product-img hover">
                 </a>
-                
-                <div class="product-actions">
+                  <div class="product-actions">
                     <a href="#" class="action-btn" aria-label="Quick View" data-product-id="${product.id}">
                         <i class="fi fi-rs-eye"></i>
                     </a>
                     <a href="#" class="action-btn" aria-label="Add to Rent List" data-product-id="${product.id}">
                         <i class="fi fi-rs-heart"></i>
                     </a>
-                    <a href="#" class="action-btn" aria-label="share">
-                        <i class="fi fi-rs-share"></i>
-                    </a>
                 </div>
                 
                 <div class="product-badge">
                     <span class="badge">Available</span>
                 </div>
-            </div>
-
-            <div class="product-content">
+            </div>            <div class="product-content">
                 <span class="product-category">${categoryDisplay}</span>
                 <a href="details.html?id=${product.id}">
                     <h3 class="product-title">${product.name || "Untitled Product"}</h3>
-                </a>
-                <div class="product-rating">
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
-                </div>
-                <div class="product-price flex">
-                    <span class="new-price">${price}</span>
-                    ${product.price ? '<span class="price-period">/ rent</span>' : ''}
+                </a>                <div class="product-price-section">
+                    <div class="product-price flex">
+                        <span class="new-price">${price}</span>
+                        ${product.price ? '<span class="price-period">/ rent</span>' : ''}
+                    </div>
+                    ${!product.isAdditional ? `
+                    <button class="btn btn-primary add-to-cart-btn" data-product-id="${product.id}">
+                        <i class="fi fi-rs-shopping-bag-add"></i>
+                        <span>Add to Cart</span>
+                    </button>` : ''}
                 </div>
             </div>
         </div>
