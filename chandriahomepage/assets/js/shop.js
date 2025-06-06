@@ -521,12 +521,11 @@ $(document).ready(function () {
             $qty.val(1).trigger("input").css("background-color", "#ffeb3b"); // yellow highlight
             setTimeout(() => {
                 $qty.css("background-color", ""); // remove highlight
-            }, 300);
-
-            const currentQty = parseInt($qty.val(), 10) || 1;
+            }, 300);            const currentQty = parseInt($qty.val(), 10) || 1;
             if (currentQty > stock || currentQty !== 1) {
                 $qty.val(1);
-            }        } else {
+            }
+        } else {
             $("#size-available-stock").text("0");
             $("#booking-quantity").val(1).trigger("input"); // Reset to 1 when stock is 0 or invalid
         }
@@ -767,9 +766,10 @@ $(document).ready(function () {
                 console.error("Error fetching product:", error);
                 notyf.error("Failed to load product details");
                 closeQuickViewModal();
-            }
-        }
-    ); // Function to populate quick view modal with product data
+            }        }
+    );
+
+    // Function to populate quick view modal with product data
     function populateQuickViewModal(product, productId) {
         // Restore the original details HTML structure if it was replaced by loading
         if ($(".quick-view-loading").length > 0) {
@@ -858,10 +858,11 @@ $(document).ready(function () {
                 <div class="quick-view-feature">
                     <i class="${feature.icon}"></i>
                     <span>${feature.text}</span>
-                </div>
-            `);
+                </div>            `);
         });
-    }    // Function to open quick view modal
+    }
+
+    // Function to open quick view modal
     function openQuickViewModal() {
         console.log("Opening quick view modal"); // Debug log
         const loadingElement = document.getElementById('quick-view-loading');
@@ -891,9 +892,11 @@ $(document).ready(function () {
 
         console.log(
             "Quick view modal opened, has show class:",
-            $(".quick-view-modal-container").hasClass("show")
-        ); // Debug log
-    }    // Function to close quick view modal    function closeQuickViewModal() {
+            $(".quick-view-modal-container").hasClass("show")        ); // Debug log
+    }
+
+    // Function to close quick view modal
+    function closeQuickViewModal() {
         const loadingElement = document.getElementById('quick-view-loading');
         const contentElement = document.getElementById('quick-view-content');
         const modalElement = document.querySelector('.quick-view-modal');
@@ -911,9 +914,10 @@ $(document).ready(function () {
             loadingElement.classList.add('hidden');
         }
         if (contentElement) {
-            contentElement.style.display = 'none';
-        }
-    }    // Function to show loading state in quick view modal
+            contentElement.style.display = 'none';        }
+    }
+
+    // Function to show loading state in quick view modal
     function showQuickViewLoading() {
         console.log("Showing quick view loading state"); // Debug log
         
@@ -930,9 +934,10 @@ $(document).ready(function () {
                 <p>Loading product details...</p>
             </div>
         `);
-        $(".quick-view-images img").attr("src", "");
-        console.log("Loading state applied"); // Debug log
-    }// Function to hide loading state in quick view modal
+        $(".quick-view-images img").attr("src", "");        console.log("Loading state applied"); // Debug log
+    }
+
+    // Function to hide loading state in quick view modal
     function hideQuickViewLoading() {
         console.log("Hiding quick view loading state"); // Debug log
         
@@ -951,9 +956,10 @@ $(document).ready(function () {
             loadingElement.classList.add('hidden');
         }
         if (contentElement) {
-            contentElement.style.display = 'grid';
-        }
-    }// Close modal when clicking close button or backdrop
+            contentElement.style.display = 'grid';        }
+    }
+
+    // Close modal when clicking close button or backdrop
     $(document).on("click", ".quick-view-close", closeQuickViewModal);
     $(document).on("click", ".quick-view-modal-container", function (e) {
         if (e.target === this) {
@@ -961,10 +967,11 @@ $(document).ready(function () {
         }
     });
 
-    // Prevent modal from closing when clicking modal content
-    $(document).on("click", ".quick-view-content", function (e) {
+    // Prevent modal from closing when clicking modal content    $(document).on("click", ".quick-view-content", function (e) {
         e.stopPropagation();
-    }); // Thumbnail image switching
+    });
+
+    // Thumbnail image switching
     $(document).on("click", ".quick-view-thumbnail", function () {
         const newSrc = $(this).attr("src");
         $("#quick-view-main-img").attr("src", newSrc);
@@ -1150,9 +1157,10 @@ $(document).ready(function () {
         $(".filter-dropdown, .sort-dropdown").removeClass("active");
         
         if (!isOpen) {
-            dropdown.addClass("active");
-        }
-    });    // Checkbox change handler - automatically apply filters
+            dropdown.addClass("active");        }
+    });
+
+    // Checkbox change handler - automatically apply filters
     $(document).on("change", ".category-checkbox", function() {
         updateFilterButtonText();
         
@@ -1287,7 +1295,4 @@ $(document).ready(function () {
         const searchTerm = $("#product-search").val().trim();
         const sortBy = currentSort === 'default' ? '' : currentSort;
         displayProducts(currentUser, 1, searchTerm, currentCategories, sortBy);
-    });
-
-    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
-});
+    });    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
