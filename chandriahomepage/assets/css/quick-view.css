@@ -114,6 +114,15 @@
   padding: 0;
 }
 
+/* Ensure proper ordering on desktop */
+.quick-view-images {
+  order: 1;
+}
+
+.quick-view-details {
+  order: 2;
+}
+
 /* Images Section - Clean white background like shop.html */
 .quick-view-images {
   display: flex;
@@ -540,34 +549,47 @@
     grid-template-columns: 1fr;
     gap: 0;
     padding: 0;
+    /* Ensure images are at the top on mobile */
+    grid-template-areas: 
+      "images"
+      "details";
   }
   
-  /* Images section improvements for mobile */
+  /* Images section improvements for mobile - positioned at top */
   .quick-view-images {
-    padding: 15px 15px 10px 15px;
+    grid-area: images;
+    order: 1;
+    padding: 20px 15px 15px 15px;
     border-radius: 20px 20px 0 0;
+    background: #ffffff;
   }
   
   .quick-view-main-image {
-    height: 320px;
+    height: 350px;
     border-radius: 12px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   
   .quick-view-thumbnail-container {
-    gap: 8px;
-    padding: 5px 0;
+    gap: 10px;
+    padding: 8px 0;
+    justify-content: center;
   }
   
   .quick-view-thumbnail {
-    width: 70px;
-    height: 70px;
+    width: 75px;
+    height: 75px;
+    border-radius: 8px;
   }
   
-  /* Details section with better spacing for mobile */
+  /* Details section with better spacing for mobile - positioned below images */
   .quick-view-details {
-    padding: 25px 20px 20px 20px;
+    grid-area: details;
+    order: 2;
+    padding: 25px 20px 25px 20px;
     border-radius: 0 0 20px 20px;
+    background: #ffffff;
   }
   
   .quick-view-modal {
@@ -621,87 +643,19 @@
   }
 }
 
+/* Extra mobile optimization for very small screens */
 @media screen and (max-width: 480px) {
-  .quick-view-close {
-    top: 10px;
-    right: 15px;
-    width: 35px;
-    height: 35px;
-    font-size: 20px;
+  #quick-view-modal .quick-view-content {
+    grid-template-columns: 1fr !important;
+    grid-template-areas: 
+      "images"
+      "details" !important;
   }
   
-  /* Even smaller modal for tiny screens */
   .quick-view-modal {
-    width: 98%;
-    max-width: 380px;
-    margin: 0 auto;
-  }
-  
-  /* Compact image section */
-  .quick-view-images {
-    padding: 12px 12px 8px 12px;
-  }
-  
-  .quick-view-main-image {
-    height: 280px;
-    border-radius: 12px;
-    margin-bottom: 8px;
-  }
-  
-  .quick-view-thumbnail {
-    width: 60px;
-    height: 60px;
-  }
-  
-  .quick-view-thumbnail-container {
-    gap: 6px;
-  }
-    /* Compact details section */
-  .quick-view-details {
-    padding: 20px 15px 15px 15px;
-  }
-  
-  .quick-view-product-title {
-    font-size: 20px;
-    line-height: 1.2;
-    margin-bottom: 10px;
-  }
-  
-  .quick-view-new-price {
-    font-size: 24px;
-  }
-  
-  .quick-view-description {
-    padding: 12px 0;
-  }
-  
-  .quick-view-desc-text {
-    font-size: 14px;
-    line-height: 1.5;
-  }
-  
-  .quick-view-features {
-    padding: 12px;
-    margin: 12px 0;
-  }
-  
-  .quick-view-feature {
-    font-size: 13px;
-  }
-  
-  .quick-view-meta {
-    gap: 10px;
-    padding: 12px 0;
-  }
-  
-  .quick-view-actions {
-    gap: 10px;
-    margin-top: 15px;
-  }
-  
-  .quick-view-btn {
-    padding: 14px 16px;
-    font-size: 15px;
+    width: 95% !important;
+    max-width: 400px !important;
+    margin: 1rem auto !important;
   }
 }
 

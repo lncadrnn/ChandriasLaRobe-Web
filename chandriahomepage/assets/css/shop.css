@@ -1779,3 +1779,46 @@ a[href] {
   color: var(--primary-color, #ff85b1);
   font-weight: 600;
 }
+
+/* =============== QUICK VIEW MOBILE OVERRIDES =============== */
+@media screen and (max-width: 768px) {
+  .quick-view-content {
+    grid-template-columns: 1fr !important;
+    grid-template-areas: 
+      "images"
+      "details" !important;
+    gap: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .quick-view-images {
+    grid-area: images !important;
+    order: 1 !important;
+    border-radius: 20px 20px 0 0 !important;
+  }
+  
+  .quick-view-details {
+    grid-area: details !important;
+    order: 2 !important;
+    border-radius: 0 0 20px 20px !important;
+  }
+  
+  .quick-view-modal {
+    width: 95% !important;
+    max-width: 450px !important;
+    max-height: 90vh !important;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .quick-view-modal {
+    width: 98% !important;
+    max-width: 400px !important;
+  }
+  
+  .quick-view-main-image {
+    height: 300px !important;
+  }
+}
+
+/*=============== END QUICK VIEW MOBILE OVERRIDES ===============*/

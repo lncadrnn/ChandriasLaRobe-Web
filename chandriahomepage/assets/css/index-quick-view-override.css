@@ -183,6 +183,55 @@
     }
 }
 
+/* Mobile responsive overrides for index.html quick view */
+@media screen and (max-width: 768px) {
+    #quick-view-modal .quick-view-content {
+        grid-template-columns: 1fr !important;
+        grid-template-areas: 
+            "images"
+            "details" !important;
+    }
+    
+    #quick-view-modal .quick-view-images {
+        order: 1 !important;
+        grid-area: images !important;
+        border-radius: 20px 20px 0 0 !important;
+        padding: 20px 15px 15px 15px !important;
+    }
+    
+    #quick-view-modal .quick-view-details {
+        order: 2 !important;
+        grid-area: details !important;
+        border-radius: 0 0 20px 20px !important;
+        padding: 25px 20px 25px 20px !important;
+    }
+    
+    #quick-view-modal .quick-view-main-image {
+        height: 350px !important;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    #quick-view-modal .quick-view-content {
+        grid-template-columns: 1fr !important;
+        grid-template-areas: 
+            "images"
+            "details" !important;
+    }
+    
+    #quick-view-modal .quick-view-images {
+        padding: 15px 12px 12px 12px !important;
+    }
+    
+    #quick-view-modal .quick-view-main-image {
+        height: 300px !important;
+    }
+    
+    #quick-view-modal .quick-view-details {
+        padding: 20px 15px 20px 15px !important;
+    }
+}
+
 /* Ensure proper overlay */
 #quick-view-modal.quick-view-modal-container {
     background-color: rgba(0, 0, 0, 0.5) !important;
