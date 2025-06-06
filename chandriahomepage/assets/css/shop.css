@@ -1,11 +1,18 @@
 /* =============== Quick View Button Fix =============== */
-/* Ensure "View Full Details" button has white text with higher specificity */
+/* Custom styling for "View Full Details" button - white background with black text */
 #quick-view-view-details.quick-view-btn.quick-view-btn-primary {
-  color: white !important;
+  background: #ffffff !important;
+  color: #333333 !important;
+  border: 2px solid #e0e0e0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
 }
 
 #quick-view-view-details.quick-view-btn.quick-view-btn-primary:hover {
-  color: white !important;
+  background: #f8f9fa !important;
+  color: #222222 !important;
+  border-color: #d0d0d0 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
 /* =============== ANIMATED BUBBLES =============== */
