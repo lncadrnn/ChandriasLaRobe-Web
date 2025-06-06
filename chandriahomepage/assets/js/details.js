@@ -94,9 +94,25 @@ $(document).ready(async function () {
       
       // Handle description differently for additionals vs regular products
       if (isAdditional) {
-        $('#product-description').text('No description has been added for this product.').show();
+        if (data.inclusions && data.inclusions.length > 0) {
+          // Hide description and show inclusions table instead
+          $('#product-description').hide();
+          displayInclusionsTable(data.inclusions);
+          
+          // Hide other info sections for additionals with inclusions (keep only color and quantity)
+          $('.product-list').hide();
+          $('.details-meta').hide();
+        } else {
+          $('#product-description').text('No description has been added for this product.').show();
+          // Show all sections for additionals without inclusions
+          $('.product-list').show();
+          $('.details-meta').show();
+        }
       } else {
         $('#product-description').text(data.description).show();
+        // Show all sections for regular products
+        $('.product-list').show();
+        $('.details-meta').show();
       }
       
       $('#product-code').text(data.code);
@@ -104,11 +120,6 @@ $(document).ready(async function () {
       // Show color if available
       if (data.color) {
         $('#product-color').css("background-color", data.color);
-      }
-      
-      // Handle inclusions for additionals
-      if (isAdditional && data.inclusions) {
-        displayInclusions(data.inclusions);
       }
       
       // Load related products based on category and color
@@ -349,7 +360,6 @@ function updateBreadcrumbs(product) {
     const breadcrumbs = [
         { text: 'Home', url: '../index.html' },
         { text: 'Shop', url: 'shop.html' },
-        { text: formatCategoryName(product.category), url: `shop.html?category=${encodeURIComponent(product.category)}` },
         { text: product.name, url: null, active: true }
     ];
     
@@ -532,7 +542,7 @@ function createProductHTML(product) {
                 </h3>
             </a>
             <div class="product-price flex">
-                <span class="new-price">₱ ${product.price}/24hr</span>
+                <span class="new-price">₱ ${product.price}/rent</span>
             </div>
             <!-- Rent button removed from related products -->
         </div>
@@ -561,8 +571,8 @@ function showErrorState(message) {
     `;
 }
 
-// Function to display inclusions for additionals
-function displayInclusions(inclusions) {
+// Function to display inclusions table for additionals
+function displayInclusionsTable(inclusions) {
     // Find or create inclusions container
     let inclusionsContainer = document.getElementById('product-inclusions');
     
@@ -572,12 +582,12 @@ function displayInclusions(inclusions) {
         inclusionsContainer.id = 'product-inclusions';
         inclusionsContainer.className = 'product-inclusions';
         
-        // Insert after the product list (benefits list) which is always visible
-        const productList = document.querySelector('.product-list');
-        if (productList) {
-            productList.parentNode.insertBefore(inclusionsContainer, productList.nextSibling);
+        // Insert after the description element to replace it visually
+        const descriptionElement = document.getElementById('product-description');
+        if (descriptionElement) {
+            descriptionElement.parentNode.insertBefore(inclusionsContainer, descriptionElement.nextSibling);
         } else {
-            // Fallback: insert after price if product list not found
+            // Fallback: insert after price if description not found
             const priceElement = document.querySelector('.details-price');
             if (priceElement) {
                 priceElement.parentNode.insertBefore(inclusionsContainer, priceElement.nextSibling);
@@ -587,10 +597,23 @@ function displayInclusions(inclusions) {
     
     if (inclusionsContainer && inclusions && inclusions.length > 0) {
         inclusionsContainer.innerHTML = `
-            <h4>What's Included:</h4>
-            <ul class="inclusions-list">
-                ${inclusions.map(item => `<li><i class="fi fi-rs-check"></i> ${item}</li>`).join('')}
-            </ul>
+            <div class="inclusions-table-container">
+                <h4>What's Included:</h4>
+                <table class="inclusions-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${inclusions.map(item => `
+                            <tr>
+                                <td><i class="fi fi-rs-check"></i> ${item}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
         `;
         inclusionsContainer.style.display = 'block';
     } else if (inclusionsContainer) {
@@ -706,7 +729,7 @@ function createAdditionalHTML(additional) {
                 </h3>
             </a>
             <div class="product-price flex">
-                <span class="new-price">₱ ${additional.price}/24hr</span>
+                <span class="new-price">₱ ${additional.price}/rent</span>
             </div>
             <!-- No rent button for additionals -->
         </div>

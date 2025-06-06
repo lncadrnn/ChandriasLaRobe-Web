@@ -10,6 +10,12 @@
             href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css"
         />
 
+        <!--BoxIcon CDN-->
+        <link
+            href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+            rel="stylesheet"
+        />
+
         <!--=============== SWIPER CSS ===============-->
         <link
             rel="stylesheet"
@@ -70,6 +76,89 @@
                 justify-content: space-between;
                 padding-bottom: 15px;
             }
+            
+            /* Inclusions Table Styling */
+            .inclusions-table-container {
+                margin: 1rem 0;
+            }
+            
+            .inclusions-table-container h4 {
+                color: var(--title-color);
+                font-size: var(--normal-font-size);
+                font-weight: var(--font-semibold);
+                margin-bottom: 0.75rem;
+            }
+            
+            .inclusions-table {
+                width: 100%;
+                border-collapse: collapse;
+                background: var(--body-color);
+                border-radius: 0.5rem;
+                overflow: hidden;
+                box-shadow: 0 2px 8px hsla(0, 0%, 0%, 0.05);
+                font-size: var(--small-font-size);
+            }
+            
+            .inclusions-table thead {
+                background: var(--first-color);
+            }
+            
+            .inclusions-table thead th {
+                color: var(--body-color);
+                font-weight: var(--font-semibold);
+                padding: 0.75rem;
+                text-align: left;
+                font-size: var(--small-font-size);
+            }
+            
+            .inclusions-table tbody tr {
+                border-bottom: 1px solid var(--border-color);
+                transition: background-color 0.3s ease;
+            }
+            
+            .inclusions-table tbody tr:hover {
+                background-color: var(--container-color);
+            }
+            
+            .inclusions-table tbody tr:last-child {
+                border-bottom: none;
+            }
+            
+            .inclusions-table tbody td {
+                padding: 0.75rem;
+                color: var(--text-color);
+                font-size: var(--small-font-size);
+            }
+            
+            .inclusions-table tbody td i {
+                color: var(--first-color);
+                margin-right: 0.4rem;
+                font-size: 0.9rem;
+            }
+            
+            /* Responsive design for inclusions table */
+            @media screen and (max-width: 576px) {
+                .inclusions-table-container {
+                    margin: 0.75rem 0;
+                }
+                
+                .inclusions-table-container h4 {
+                    font-size: var(--small-font-size);
+                    margin-bottom: 0.5rem;
+                }
+                
+                .inclusions-table thead th,
+                .inclusions-table tbody td {
+                    padding: 0.5rem 0.4rem;
+                    font-size: var(--smaller-font-size);
+                }
+                
+                .inclusions-table tbody td i {
+                    font-size: 0.8rem;
+                    margin-right: 0.3rem;
+                }
+            }
+
         </style>
 
         <title>Chandria's La Robe</title>
@@ -162,10 +251,20 @@
 
         <!--=============== MAIN ===============-->
         <main class="main">
+            <!--=============== BREADCRUMBS ===============-->
+            <div class="breadcrumb">
+                <div class="container">
+                    <ul class="breadcrumb-list">
+                        <!-- Breadcrumbs will be dynamically generated -->
+                    </ul>
+                </div>
+            </div>
+            
             <!--=============== DETAILS ===============-->
             <section class="details section-lg">
                 <div class="details-container container grid">
                     <div class="details-group">
+                        
                         <img
                             src="assets/img/product-6-1.jpg"
                             alt=""
@@ -603,6 +702,7 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
             crossorigin="anonymous"        ></script>        <!-- EXTERNAL SCRIPT -->
         <script src="./assets/js/mobile-nav.js"></script>
+        <script src="./assets/js/dynamic-breadcrumb.js"></script>
         <script type="module" src="./assets/js/details.js"></script>
         <script src="./assets/js/details-mobile.js"></script>
     </body>
