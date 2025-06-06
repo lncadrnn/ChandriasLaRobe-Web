@@ -52,14 +52,11 @@ $(document).ready(function () {
     function createProductHTML(product, productId) {
         const availableSizes = product.size
             ? Object.keys(product.size).join(", ")
-            : "N/A";
-
-        const categoryDisplay = product.category || "Clothing";
+            : "N/A";        const categoryDisplay = product.category || "Clothing";
 
         const price = product.price
-            ? `₱ ${product.price} / rent`            : "Price available in-store";
-
-        return `
+            ? `₱ ${product.price}`
+            : "Price available in-store";return `
         <div class="product-item">
             <div class="product-banner">
                 <a href="chandriahomepage/details.html?id=${productId}" class="product-images">
@@ -84,16 +81,17 @@ $(document).ready(function () {
                     <a href="#" class="action-btn" aria-label="Add to Favorites">
                         <i class="fi fi-rs-heart"></i>
                     </a>
-                </div>            </div>
+                </div>
+                  <div class="price-tag">${price}</div>
+                <div class="product-color-indicator" style="background-color: ${product.color || '#f8f9fa'}" title="${product.colorName || product.color || 'Color'}" data-product-id="${productId}"></div>
+            </div>
             <div class="product-content">
+                <span class="product-category">${categoryDisplay}</span>
                 <a href="chandriahomepage/details.html?id=${productId}">
                     <h3 class="product-title">${
                         product.name || "Untitled Product"
                     }</h3>
                 </a>
-                <div class="product-price">
-                    <span class="new-price">${price}</span>
-                </div>
             </div>
         </div>
     `;

@@ -520,6 +520,14 @@ $(document).ready(function () {
         }, 100);
     }    // Create product HTML
     function createProductHTML(product) {
+        // Debug: Log product data to check backImageUrl
+        console.log('Product data:', {
+            id: product.id,
+            name: product.name,
+            frontImageUrl: product.frontImageUrl,
+            backImageUrl: product.backImageUrl
+        });
+        
         const availableSizes = product.size ? Object.keys(product.size).filter(size => product.size[size] > 0) : [];
         const categoryDisplay = product.category || "Item";
         const price = product.price ? `₱ ${product.price}` : "Price available in-store";
