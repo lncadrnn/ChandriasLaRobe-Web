@@ -62,7 +62,7 @@
 
 .action-btn:hover {
     background-color: hsl(346, 100%, 74%) !important; /* Pink on hover */
-    color: white !important;
+    color: #333 !important; /* Keep black text color on hover */
     transform: scale(1.05) !important;
     box-shadow: 0 6px 20px rgba(255, 154, 175, 0.4) !important;
     border-color: transparent !important;
@@ -132,11 +132,10 @@
         display: flex !important;
         visibility: visible !important;
     }
-    
-    /* Simulate hover effect on tap */
+      /* Simulate hover effect on tap */
     .action-btn:active {
         background-color: hsl(346, 100%, 74%) !important;
-        color: white !important;
+        color: #333 !important;
         transform: scale(1.05) !important;
     }
     

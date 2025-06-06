@@ -118,10 +118,10 @@
 .circular-cart-btn {
     width: 30%;
     height: 38px;
-    border-radius: 50%;
-    background-color: #28a745;
-    color: white;
-    border: none;
+    border-radius: 6px;
+    background-color: white;
+    color: #333;
+    border: 1px solid #ddd;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -130,7 +130,8 @@
 }
 
 .circular-cart-btn:hover {
-    background-color: #218838;
+    background-color: hsl(346, 100%, 74%);
+    color: #333;
     transform: scale(1.05);
 }
 
@@ -277,7 +278,7 @@
 
 .action-btn:hover {
     background-color: hsl(346, 100%, 74%); /* Pink on hover */
-    color: white;
+    color: #333; /* Keep black text color on hover */
     transform: scale(1.05);
     box-shadow: 0 3px 10px rgba(255, 154, 175, 0.3);
     border-color: transparent;
@@ -418,11 +419,10 @@
     .product-item:active {
         transform: translateY(-2px);
     }
-    
-    /* Simulate hover effect on tap for action buttons */
+      /* Simulate hover effect on tap for action buttons */
     .action-btn:active {
         background-color: hsl(346, 100%, 74%) !important;
-        color: white !important;
+        color: #333 !important;
     }
 }
 

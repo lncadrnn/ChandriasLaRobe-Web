@@ -19,15 +19,145 @@
         <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css"
-        />        <!--=============== CSS ===============-->
-        <link rel="stylesheet" href="./assets/css/styles.css" />
+        />        <!--=============== CSS ===============-->        <link rel="stylesheet" href="./assets/css/styles.css" />
         <link rel="stylesheet" href="./assets/css/shop.css" />
         <link rel="stylesheet" href="./assets/css/product-card-modernized.css" />
         <link rel="stylesheet" href="./assets/css/product-card-compact.css" />
         <link rel="stylesheet" href="./assets/css/product-card-updates.css" />
+        <link rel="stylesheet" href="./assets/css/product-card-enhanced.css" />
 
         <title>Chandria's La Robe</title>
     </head>    <body>
+        <style>
+      /* Modernize quantity, size, and Add to Rent button on product cards */
+      .products-container .product-item {
+        border-radius: 14px;
+        box-shadow: 0 2px 16px rgba(40, 167, 69, 0.07);
+        background: #fff;
+        transition: box-shadow 0.2s;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+      .products-container .product-item:hover {
+        box-shadow: 0 4px 24px rgba(40, 167, 69, 0.13);
+      }
+      .size-selector, .enhanced-size-selector {
+        border-radius: 999px;
+        border: 1.5px solid #e0e0e0;
+        background: #f8f9fa;
+        padding: 4px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #222;
+        margin-bottom: 8px;
+        outline: none;
+        transition: border 0.2s;
+      }
+      .size-selector:focus, .enhanced-size-selector:focus {
+        border-color: #28a745;
+      }
+      .quantity-selection, .quantity-control {
+        background: #f8f9fa;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 999px;
+        padding: 4px 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 70%;
+        margin-bottom: 8px;
+      }
+      .quantity-btn, .enhanced-quantity-btn {
+        background: #fff;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 6px;
+        color: #222;
+        font-weight: bold;
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+        transition: background 0.2s, border-color 0.2s;
+        cursor: pointer;
+      }
+      .quantity-btn:hover, .enhanced-quantity-btn:hover {
+        background: #e9f7ef;
+        border-color: #28a745;
+      }
+      .quantity-value, .enhanced-quantity-value {
+        font-size: 15px;
+        font-weight: 600;
+        min-width: 28px;
+        text-align: center;
+        color: #222;
+      }
+      .circular-cart-btn, .enhanced-cart-btn {
+        height: 40px;
+        border-radius: 999px;
+        background: #28a745;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 20px;
+        font-size: 15px;
+        font-weight: 600;
+        transition: background 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.10);
+        gap: 8px;
+      }
+      .circular-cart-btn[data-in-cart="true"], .enhanced-cart-btn[data-in-cart="true"] {
+        background: #e74c3c;
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(231, 76, 60, 0.10);
+      }
+      .circular-cart-btn[data-in-cart="false"], .enhanced-cart-btn[data-in-cart="false"] {
+        background: #28a745;
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.10);
+      }
+      .circular-cart-btn:hover, .enhanced-cart-btn:hover {
+        filter: brightness(1.08);
+        box-shadow: 0 4px 16px rgba(40, 167, 69, 0.18);
+      }
+      .circular-cart-btn[data-in-cart="true"]:hover, .enhanced-cart-btn[data-in-cart="true"]:hover {
+        background: #c0392b;
+      }
+      .circular-cart-btn[data-in-cart="false"]:hover, .enhanced-cart-btn[data-in-cart="false"]:hover {
+        background: #218838;
+      }
+      /* Responsive/mobile tweaks */
+      @media (max-width: 768px) {
+        .products-container .product-item {
+          border-radius: 10px;
+        }
+        .size-selector, .enhanced-size-selector {
+          font-size: 13px;
+          padding: 4px 10px;
+        }
+        .quantity-selection, .quantity-control {
+          padding: 3px 4px;
+          gap: 4px;
+        }
+        .circular-cart-btn, .enhanced-cart-btn {
+          height: 36px;
+          font-size: 13px;
+          padding: 0 12px;
+        }
+        .quantity-btn, .enhanced-quantity-btn {
+          width: 24px;
+          height: 24px;
+          font-size: 14px;
+        }
+        .quantity-value, .enhanced-quantity-value {
+          font-size: 13px;
+          min-width: 22px;
+        }
+      }
+    </style>
         <!-- Full Screen Shop Loader -->
         <div id="shop-loader" class="shop-loader">
             <div class="shop-loader-content">
