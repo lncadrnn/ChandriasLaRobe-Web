@@ -92,9 +92,9 @@ $(document).ready(async function () {
       $('#product-name').text(data.name);
       $('#product-price').text(`₱ ${data.price}`);
       
-      // Only hide description for additionals, keep everything else visible
+      // Handle description differently for additionals vs regular products
       if (isAdditional) {
-        $('#product-description').hide(); // Hide only the description element itself
+        $('#product-description').text('No description has been added for this product.').show();
       } else {
         $('#product-description').text(data.description).show();
       }

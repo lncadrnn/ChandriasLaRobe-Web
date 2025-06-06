@@ -100,9 +100,9 @@
     line-height: 1.6;
     margin-bottom: 1.25rem;
     color: var(--text-color);
-  }
-  /* Improve product list features */
+  }  /* Improve product list features */
   .product-list {
+    margin-top: 1.5rem;
     margin-bottom: 1.5rem;
     background-color: rgba(var(--first-color-rgb), 0.05);
     padding: 1rem;
