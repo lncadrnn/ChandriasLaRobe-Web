@@ -537,7 +537,9 @@ $(document).ready(function () {
         const price = product.price ? `₱ ${product.price}` : "Price available in-store";
         const imageUrl = product.frontImageUrl || product.imageUrl || "assets/img/placeholder.jpg";
         const backImageUrl = product.backImageUrl || imageUrl;
-        const colorHex = product.color || "#f8f9fa";        // Create size options HTML
+        const colorHex = product.color || "#f8f9fa";
+        
+        // Create size options HTML
         let sizeOptionsHTML = '';
         if (availableSizes.length > 0 && !product.isAdditional) {
             // Create options with stock information
@@ -555,6 +557,7 @@ $(document).ready(function () {
             if (initialStock <= 3) stockClass = 'very-low-stock';
             else if (initialStock <= 5) stockClass = 'low-stock';
             
+            // Modified layout with size selector taking 68% width and cart button on the right
             sizeOptionsHTML = `
             <div class="product-size-options">
                 <div class="size-selection">
@@ -564,14 +567,24 @@ $(document).ready(function () {
                     <span class="stock-indicator ${stockClass}" data-product-id="${product.id}">
                         Stock: ${initialStock}
                     </span>
+                    ${!product.isAdditional ? `
+                    <button class="circular-cart-btn" data-product-id="${product.id}" data-in-cart="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M18,6A6,6,0,0,0,6,6H0V21a3,3,0,0,0,3,3H21a3,3,0,0,0,3-3V6ZM12,2a4,4,0,0,1,4,4H8A4,4,0,0,1,12,2ZM22,21a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V8H6v2H8V8h8v2h2V8h4Z"/>
+                        </svg>
+                    </button>` : ''}
                 </div>
-                <div class="quantity-selection">
-                    <button class="quantity-btn minus-btn" data-product-id="${product.id}">-</button>
-                    <span class="quantity-value" data-product-id="${product.id}">1</span>
-                    <button class="quantity-btn plus-btn" data-product-id="${product.id}" ${initialStock <= 1 ? 'disabled' : ''}>+</button>
+                <div class="quantity-cart-container">
+                    <div class="quantity-selection">
+                        <button class="quantity-btn minus-btn" data-product-id="${product.id}">-</button>
+                        <span class="quantity-value" data-product-id="${product.id}">1</span>
+                        <button class="quantity-btn plus-btn" data-product-id="${product.id}" ${initialStock <= 1 ? 'disabled' : ''}>+</button>
+                    </div>
                 </div>
             </div>`;
-        }        return `
+        }
+        
+        return `
         <div class="product-item">
             <div class="loading-state">
                 <div class="loading-spinner"></div>
@@ -601,12 +614,6 @@ $(document).ready(function () {
                     <div class="product-price flex">
                         <span class="new-price">${price}${product.price ? ' / rent' : ''}</span>
                     </div>
-                    ${!product.isAdditional ? `
-                    <button class="circular-cart-btn" data-product-id="${product.id}" data-in-cart="false">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <path d="M18,6A6,6,0,0,0,6,6H0V21a3,3,0,0,0,3,3H21a3,3,0,0,0,3-3V6ZM12,2a4,4,0,0,1,4,4H8A4,4,0,0,1,12,2ZM22,21a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V8H6v2H8V8h8v2h2V8h4Z"/>
-                        </svg>
-                    </button>` : ''}
                 </div>
                 ${sizeOptionsHTML}
             </div>
