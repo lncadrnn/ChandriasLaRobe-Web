@@ -200,12 +200,11 @@ $(document).ready(function () {
     function toggleSortDropdown() {
         $("#sort-dropdown").toggleClass("show");
         $("#category-dropdown").removeClass("show");
-    }
-
-    function clearCategoryFilters() {
+    }    function clearCategoryFilters() {
         $(".category-checkbox").prop("checked", false);
         selectedCategories = [];
         updateCategoryFilterText();
+        applyFiltersAndSort(); // Apply filters after clearing
     }
 
     function applyCategoryFilters() {
