@@ -186,14 +186,12 @@ $(document).ready(function () {
             }
         });
     }
-    
-    // Handle size change in product card
+      // Handle size change in product card
     function handleSizeChange() {
         const productId = $(this).data("product-id");
         const newSize = $(this).val();
         const productCard = $(this).closest('.product-item');
         const quantityElement = productCard.find(".quantity-value");
-        const stockIndicator = productCard.find(".stock-indicator");
         const plusButton = productCard.find(".plus-btn");
         
         // Show loading state
@@ -206,17 +204,6 @@ $(document).ready(function () {
         if (productData && productData.size && newSize && productData.size[newSize]) {
             const maxStock = productData.size[newSize];
             let currentQuantity = parseInt(quantityElement.text()) || 1;
-            
-            // Update stock indicator
-            stockIndicator.text(`Stock: ${maxStock}`);
-            
-            // Update stock indicator class
-            stockIndicator.removeClass("low-stock very-low-stock");
-            if (maxStock <= 3) {
-                stockIndicator.addClass("very-low-stock");
-            } else if (maxStock <= 5) {
-                stockIndicator.addClass("low-stock");
-            }
             
             // If current quantity exceeds available stock, adjust it
             if (currentQuantity > maxStock) {
@@ -232,7 +219,8 @@ $(document).ready(function () {
                 plusButton.prop("disabled", false).removeClass("disabled");
             }
         }
-          // Remove loading state after a short delay
+        
+        // Remove loading state after a short delay
         setTimeout(() => {
             productCard.removeClass("is-loading");
         }, 300);
@@ -545,7 +533,7 @@ $(document).ready(function () {
             // Create options with stock information
             const sizeOptions = availableSizes.map(size => {
                 const stock = product.size[size];
-                return `<option value="${size}" data-stock="${stock}">${size}</option>`;
+                return `<option value="${size}" data-stock="${stock}">${size} (${stock})</option>`;
             }).join('');
             
             // Get initial stock for first size
@@ -557,22 +545,15 @@ $(document).ready(function () {
             if (initialStock <= 3) stockClass = 'very-low-stock';
             else if (initialStock <= 5) stockClass = 'low-stock';
             
-            // Modified layout with size selector taking 68% width and cart button on the right
+            // Modified layout with centered cart button
             sizeOptionsHTML = `
             <div class="product-size-options">
                 <div class="size-selection">
-                    <select class="size-selector" data-product-id="${product.id}">
-                        ${sizeOptions}
-                    </select>
-                    <span class="stock-indicator ${stockClass}" data-product-id="${product.id}">
-                        Stock: ${initialStock}
-                    </span>
-                    ${!product.isAdditional ? `
-                    <button class="circular-cart-btn" data-product-id="${product.id}" data-in-cart="false">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <path d="M18,6A6,6,0,0,0,6,6H0V21a3,3,0,0,0,3,3H21a3,3,0,0,0,3-3V6ZM12,2a4,4,0,0,1,4,4H8A4,4,0,0,1,12,2ZM22,21a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V8H6v2H8V8h8v2h2V8h4Z"/>
-                        </svg>
-                    </button>` : ''}
+                    <div class="size-selector-container">
+                        <select class="size-selector" data-product-id="${product.id}">
+                            ${sizeOptions}
+                        </select>
+                    </div>
                 </div>
                 <div class="quantity-cart-container">
                     <div class="quantity-selection">
@@ -581,6 +562,12 @@ $(document).ready(function () {
                         <button class="quantity-btn plus-btn" data-product-id="${product.id}" ${initialStock <= 1 ? 'disabled' : ''}>+</button>
                     </div>
                 </div>
+                ${!product.isAdditional ? `
+                <button class="circular-cart-btn" data-product-id="${product.id}" data-in-cart="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M18,6A6,6,0,0,0,6,6H0V21a3,3,0,0,0,3,3H21a3,3,0,0,0,3-3V6ZM12,2a4,4,0,0,1,4,4H8A4,4,0,0,1,12,2ZM22,21a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V8H6v2H8V8h8v2h2V8h4Z"/>
+                    </svg>
+                </button>` : ''}
             </div>`;
         }
         
