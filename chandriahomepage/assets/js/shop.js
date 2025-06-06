@@ -252,19 +252,7 @@ $(document).ready(function () {
             const isInCart = userCart.some(
                 item => item.productId === product.id
             );
-            const selectedClass = isInCart ? "selected" : "";
-
-            // Generate random badge variations for visual appeal
-            const badges = [
-                "light-pink",
-                "light-green",
-                "light-orange",
-                "light-blue"
-            ];
-            const randomBadge =
-                badges[Math.floor(Math.random() * badges.length)];
-
-            // Build product card
+            const selectedClass = isInCart ? "selected" : "";            // Build product card
             const card = `
             <div class="product-item">
                 <div class="product-banner">
@@ -279,9 +267,7 @@ $(document).ready(function () {
                         <a href="#" class="action-btn" aria-label="Add to Favorites">
                             <i class="fi fi-rs-heart"></i>
                         </a>
-                    </div>
-                    <div class="product-badge ${randomBadge}">New</div>
-                </div>
+                    </div>                </div>
 
                 <div class="product-content">
                     <a href="./details.html" data-id="${product.id}">

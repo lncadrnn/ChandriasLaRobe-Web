@@ -57,16 +57,7 @@ $(document).ready(function () {
         const categoryDisplay = product.category || "Clothing";
 
         const price = product.price
-            ? `₱ ${product.price} / rent`
-            : "Price available in-store";
-
-        const badges = [
-            "light-pink",
-            "light-green",
-            "light-orange",
-            "light-blue"
-        ];
-        const randomBadge = badges[Math.floor(Math.random() * badges.length)];
+            ? `₱ ${product.price} / rent`            : "Price available in-store";
 
         return `
         <div class="product-item">
@@ -93,9 +84,7 @@ $(document).ready(function () {
                     <a href="#" class="action-btn" aria-label="Add to Favorites">
                         <i class="fi fi-rs-heart"></i>
                     </a>
-                </div>
-                <div class="product-badge ${randomBadge}">New</div>
-            </div>            
+                </div>            </div>
             <div class="product-content">
                 <a href="chandriahomepage/details.html?id=${productId}">
                     <h3 class="product-title">${
