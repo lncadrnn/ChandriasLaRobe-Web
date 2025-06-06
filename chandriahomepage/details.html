@@ -50,6 +50,26 @@
             .products-container .product-actions {
                 display: none !important;
             }
+            
+            /* Hide cart buttons in related products section */
+            .products-container .action-btn.cart-btn {
+                display: none !important;
+            }
+            
+            /* Ensure related product cards have consistent height */
+            .products-container .product-item {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+            
+            .products-container .product-content {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                padding-bottom: 15px;
+            }
         </style>
 
         <title>Chandria's La Robe</title>

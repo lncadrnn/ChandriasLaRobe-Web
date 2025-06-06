@@ -43,6 +43,9 @@ $(document).ready(async function () {
     return;
   }
 
+  // Store the product ID for later use
+  localStorage.setItem("selectedProductId", productId);
+
   // Show loading spinner
   showDetailsLoader();
 
@@ -65,7 +68,12 @@ $(document).ready(async function () {
       $('#product-price').text(`₱ ${data.price}`);
       $('#product-description').text(data.description);
       $('#product-code').text(data.code);
-      $('#product-color').css("background-color", data.color);// Store product info for breadcrumb
+      $('#product-color').css("background-color", data.color);
+      
+      // Load related products based on category and color
+      loadRelatedProducts(data.category, data.color, productId);
+      
+      // Store product info for breadcrumb
     if (productId) {
         localStorage.setItem(`product_${productId}_name`, data.name || 'Product Details');
         // Don't store category for breadcrumb since we don't want it to show
@@ -233,6 +241,9 @@ $(document).ready(async function () {
     }
   });
 
+  // NOTE: The event handler for related products' cart buttons has been removed 
+  // since rent buttons have been removed from related products
+
   // Update cart count on auth state change
   onAuthStateChanged(auth, async user => {
     await updateCartCount();
@@ -314,6 +325,156 @@ function formatCategoryName(category) {
         .split('-')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
+}
+
+// Function to load related products based on category and color
+async function loadRelatedProducts(category, color, currentProductId) {
+    try {
+        // Clear existing related products
+        const productsContainer = document.querySelector('.products-container');
+        if (!productsContainer) return;
+        
+        productsContainer.innerHTML = ''; // Clear existing products
+        
+        // Get all products from Firestore
+        const productsCollection = collection(chandriaDB, "products");
+        const querySnapshot = await getDocs(productsCollection);
+        
+        // Get current product data to access sizes
+        const currentProductRef = doc(chandriaDB, "products", currentProductId);
+        const currentProductSnap = await getDoc(currentProductRef);
+        const currentProductData = currentProductSnap.exists() ? currentProductSnap.data() : null;
+        const currentProductSizes = currentProductData?.size ? Object.keys(currentProductData.size) : [];
+        
+        const allProducts = [];
+        querySnapshot.forEach(doc => {
+            if (doc.id !== currentProductId) { // Exclude current product
+                allProducts.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            }
+        });
+        
+        // Filter products by category (max 2)
+        const categoryProducts = allProducts
+            .filter(product => product.category === category)
+            .slice(0, 2);
+            
+        // Filter products by color (max 2)
+        const colorProducts = allProducts
+            .filter(product => 
+                product.color === color && 
+                !categoryProducts.some(p => p.id === product.id) // Avoid duplicates from category
+            )
+            .slice(0, 2);
+        
+        // If we have fewer than 2 color-matched products, try to find products with the same size
+        let sizeProducts = [];
+        if (colorProducts.length < 2 && currentProductSizes.length > 0) {
+            sizeProducts = allProducts
+                .filter(product => {
+                    // Avoid duplicates from already selected products
+                    if (categoryProducts.some(p => p.id === product.id) || 
+                        colorProducts.some(p => p.id === product.id)) {
+                        return false;
+                    }
+                    
+                    // Check if this product has any size that matches the current product
+                    const productSizes = product.size ? Object.keys(product.size) : [];
+                    return productSizes.some(size => currentProductSizes.includes(size));
+                })
+                .slice(0, 2 - colorProducts.length);
+        }
+        
+        // Combine related products (up to 4 total)
+        const relatedProducts = [...categoryProducts, ...colorProducts, ...sizeProducts].slice(0, 4);
+        
+        // If we still don't have 4 products, add random products
+        if (relatedProducts.length < 4) {
+            const randomProducts = allProducts
+                .filter(product => 
+                    !relatedProducts.some(p => p.id === product.id)
+                )
+                .sort(() => 0.5 - Math.random()) // Shuffle
+                .slice(0, 4 - relatedProducts.length);
+                
+            relatedProducts.push(...randomProducts);
+        }
+        
+        // Render related products
+        relatedProducts.forEach(product => {
+            const productHTML = createProductHTML(product);
+            productsContainer.innerHTML += productHTML;
+        });
+        
+        console.log("Related products loaded:", {
+            category: categoryProducts.length,
+            color: colorProducts.length,
+            size: sizeProducts.length,
+            random: relatedProducts.length - (categoryProducts.length + colorProducts.length + sizeProducts.length)
+        });
+    } catch (error) {
+        console.error("Error loading related products:", error);
+    }
+}
+
+// Function to create HTML for a product
+function createProductHTML(product) {
+    return `
+    <div class="product-item">
+        <div class="product-banner">
+            <a href="details.html?id=${product.id}" class="product-images">
+                <img
+                    src="${product.frontImageUrl}"
+                    alt="${product.name}"
+                    class="product-img default"
+                />
+                <img
+                    src="${product.backImageUrl || product.frontImageUrl}"
+                    alt="${product.name}"
+                    class="product-img hover"
+                />
+            </a>
+            <!-- Product actions are hidden via CSS -->
+            <div class="product-actions">
+                <a
+                    href="#"
+                    class="action-btn"
+                    aria-label="Quick View"
+                >
+                    <i class="fi fi-rs-eye"></i>
+                </a>
+                <a
+                    href="#"
+                    class="action-btn"
+                    aria-label="Add to Rent List"
+                >
+                    <i class="fi fi-rs-heart"></i>
+                </a>
+                <a
+                    href="#"
+                    class="action-btn"
+                    aria-label="share"
+                >
+                    <i class="fi fi-rs-shuffle"></i>
+                </a>
+            </div>
+        </div>
+        <div class="product-content">
+            <span class="product-category">${formatCategoryName(product.category)}</span>
+            <a href="details.html?id=${product.id}">
+                <h3 class="product-title">
+                    ${product.name}
+                </h3>
+            </a>
+            <div class="product-price flex">
+                <span class="new-price">₱ ${product.price}/24hr</span>
+            </div>
+            <!-- Rent button removed from related products -->
+        </div>
+    </div>
+    `;
 }
 
 // Enhanced error state function
