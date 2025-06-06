@@ -511,12 +511,12 @@ $(document).ready(function () {
         let productsHTML = "";
         productsToDisplay.forEach(product => {
             productsHTML += createProductHTML(product);
-        });
-          container.html(productsHTML);
+        });        container.html(productsHTML);
         
         // Update cart button status after displaying products
         setTimeout(() => {
             updateAllCartButtonStatus();
+            applyStockStyling(); // Apply red styling to stock numbers
         }, 100);
     }    // Create product HTML
     function createProductHTML(product) {
@@ -529,11 +529,10 @@ $(document).ready(function () {
         
         // Create size options HTML
         let sizeOptionsHTML = '';
-        if (availableSizes.length > 0 && !product.isAdditional) {
-            // Create options with stock information
+        if (availableSizes.length > 0 && !product.isAdditional) {            // Create options with stock information
             const sizeOptions = availableSizes.map(size => {
                 const stock = product.size[size];
-                return `<option value="${size}" data-stock="${stock}">${size} (${stock})</option>`;
+                return `<option value="${size}" data-stock="${stock}">${size} Stock: ${stock}</option>`;
             }).join('');
             
             // Get initial stock for first size
@@ -599,8 +598,39 @@ $(document).ready(function () {
                 </a>
                 ${sizeOptionsHTML}
             </div>
-        </div>
-        `;
+        </div>        `;
+    }
+
+    // Function to apply stock number styling after products are rendered
+    function applyStockStyling() {
+        // Apply red styling to stock numbers in select options
+        $('.size-selector option').each(function() {
+            const optionText = $(this).text();
+            const stockMatch = optionText.match(/Stock:\s*(\d+)/);
+            if (stockMatch) {
+                const size = optionText.split(' Stock:')[0];
+                const stock = stockMatch[1];
+                // Update the option text with styled stock number
+                $(this).html(`${size} Stock: <span class="stock-info">${stock}</span>`);
+            }
+        });
+        
+        // Also apply styling to any existing stock displays
+        $('.product-size-options').each(function() {
+            const container = $(this);
+            container.find('select option').each(function() {
+                const option = $(this);
+                const text = option.text();
+                if (text.includes('Stock:')) {
+                    const parts = text.split('Stock:');
+                    if (parts.length === 2) {
+                        const size = parts[0].trim();
+                        const stock = parts[1].trim();
+                        option.attr('data-stock-number', stock);
+                    }
+                }
+            });
+        });
     }
 
     // Update product count display
@@ -1188,9 +1218,8 @@ $(document).ready(function () {
                 // Remove from cart - remove all instances of this product
                 const updatedCart = currentCart.filter(item => item.productId !== productId);
                 await updateDoc(userRef, { added_to_cart: updatedCart });
-                
-                button.attr("data-in-cart", "false");
-                notyf.success("Removed from cart!");
+                  button.attr("data-in-cart", "false");
+                notyf.error("Removed from cart!");
                 
             } else {
                 // Get product data
