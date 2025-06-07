@@ -227,7 +227,7 @@
 }
 
 .auth-input-group input {
-  padding: 0.5rem 0.75rem;
+  padding: 1.2rem 1.5rem;
   border: 2px solid #e5e7eb;
   border-radius: 12px;
   font-size: 1rem;
@@ -271,7 +271,7 @@
 
 /* =============== MODERN BUTTONS =============== */
 .auth-btn {
-  padding: 0.5rem 1.25rem;
+  padding: .75rem;
   border: none;
   border-radius: 12px;
   font-size: 1rem;
@@ -385,7 +385,7 @@
 /* =============== MODERN FORM SWITCH =============== */
 .auth-switch {
   text-align: center;
-  margin-top: 1rem;
+  margin-top: 0;
 }
 
 .auth-switch span {
@@ -605,7 +605,6 @@
   gap: 0.5rem;
   display: flex;
   flex-direction: column;
-  padding-right: 0.5; /* Remove right padding to let scrollbar align with the edge */
   padding-bottom: 1rem; /* Add bottom padding for better spacing */
   /* Ensure content starts at the top */
   margin-top: 0;
@@ -725,10 +724,31 @@
   overflow: hidden; /* No scrollbar for sign-in and forgot forms */
 }
 
+/* Specific styling for sign-in form inputs to match sign-up form */
+#signin-form .auth-input-group input {
+  padding: 0.5rem 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 400;
+  transition: all 0.2s ease;
+  background: #ffffff;
+  color: #111827;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 /* Ensure consistent input styling across all forms */
 .auth-input-group input {
   width: 100%;
   box-sizing: border-box;
+}
+
+#signin-form .auth-input-group input:focus {
+  outline: none;
+  border-color: hsl(346, 100%, 74%);
+  box-shadow: 0 0 0 3px rgba(255, 133, 177, 0.1);
+  background: #ffffff;
 }
 
 /* Override any inconsistent input styling */
