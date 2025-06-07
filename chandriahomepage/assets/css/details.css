@@ -42,6 +42,109 @@
     padding-bottom: 15px;
 }
 
+/* =============== DESKTOP DETAILS ACTION STYLES =============== */
+/* Default desktop styles for details-action */
+@media screen and (min-width: 769px) {
+  .details-action {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 15px !important;
+    margin: 20px 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    border: none !important;
+  }
+
+  .booking-product-name {
+    display: none !important;
+  }  .quantity-container {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0 !important;
+  }
+  
+  .details-action .quantity {
+    display: inline-block !important;
+    width: 60px !important;
+    height: 45px !important;
+    border: 2px solid #ff7eb4 !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 0 !important;
+    text-align: center !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: var(--title-color) !important;
+    background: var(--body-color) !important;
+    transition: all 0.3s ease !important;
+    margin: 0 !important;    -webkit-appearance: textfield !important;
+    -moz-appearance: textfield !important;
+    appearance: textfield !important;
+  }
+  
+  /* Hide number input spinners completely */
+  .details-action .quantity::-webkit-outer-spin-button,
+  .details-action .quantity::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+  }
+  
+  .details-action .quantity[type=number] {
+    -moz-appearance: textfield !important;
+  }
+  
+  .quantity-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 35px !important;
+    height: 45px !important;
+    border: 2px solid #ff7eb4 !important;
+    background: var(--body-color) !important;
+    color: var(--title-color) !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+  }
+
+  .quantity-btn:hover {
+    background: #ff7eb4 !important;
+    color: white !important;
+  }
+
+  .quantity-btn.decrease {
+    border-radius: 8px 0 0 8px !important;
+    border-right: none !important;
+  }
+
+  .quantity-btn.increase {
+    border-radius: 0 8px 8px 0 !important;
+    border-left: none !important;
+  }
+
+  /* Desktop grid layout for related products */
+  .products-container.grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 2rem !important;
+    padding: 0 !important;
+  }
+
+  /* Restore normal product layout for desktop */
+  .product-content {
+    display: block !important;
+    text-align: left !important;
+  }
+
+  .product-price {
+    width: auto !important;
+    justify-content: flex-start !important;
+    margin-bottom: 8px !important;
+  }
+}
+
 /* Enhanced Quantity Input Styling */
 .details-action .quantity {
     width: 80px;
@@ -55,11 +158,21 @@
     background: var(--body-color);
     transition: all 0.3s ease;
     margin-right: 15px;
-    position: relative;
-    /* Show the native arrows */
+    position: relative;    /* Hide the native arrows/spinners */
     -webkit-appearance: textfield;
     -moz-appearance: textfield;
     appearance: textfield;
+}
+
+/* Hide number input spinners completely */
+.details-action .quantity::-webkit-outer-spin-button,
+.details-action .quantity::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.details-action .quantity[type=number] {
+    -moz-appearance: textfield;
 }
 
 .details-action .quantity:focus {
@@ -90,6 +203,7 @@
 /* Firefox spin buttons */
 .details-action .quantity[type="number"] {
     -moz-appearance: number-input;
+    appearance: textfield;
 }
 
 /* Size Selection Enhancement */
