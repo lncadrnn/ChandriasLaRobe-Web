@@ -70,8 +70,9 @@
 .auth-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  min-height: 600px;
+  min-height: auto; /* Remove fixed min-height to let content determine size */
   max-height: 95vh;
+  height: fit-content; /* Only take up space needed for content */
 }
 
 /* =============== MODERN IMAGE SECTION =============== */
@@ -137,13 +138,14 @@
 
 /* =============== MODERN FORM SECTION =============== */
 .auth-form-section {
-  padding: 5rem;
+  padding: 2rem; /* Further reduced from 3rem to 2rem */
   background: #ffffff;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start; /* Changed from center to flex-start */
   overflow-y: hidden;
   position: relative;
+  min-height: 0; /* Remove any minimum height constraints */
 }
 
 .auth-form-section::-webkit-scrollbar {
@@ -386,6 +388,7 @@
 .auth-switch {
   text-align: center;
   margin-top: 0;
+  margin-bottom: 2rem;
 }
 
 .auth-switch span {
@@ -526,19 +529,17 @@
     max-height: calc(100vh - 2rem);
     border-radius: 20px;
   }
-  
-  .auth-content {
+    .auth-content {
     grid-template-columns: 1fr;
   }
   
   .auth-image-section {
-    min-height: 200px;
-    grid-row: 1;
-  }
-  .auth-form-section {
+    display: none; /* Hide the image section on mobile */
+  }  .auth-form-section {
     padding: 1rem;
-    max-height: 80vh; /* Limit height to ensure it fits on mobile screens */
-    overflow-y: auto; /* Enable scrolling when needed */
+    max-height: none; /* Remove height constraint */
+    overflow-y: visible; /* Change to visible to prevent unnecessary scrolling */
+    min-height: 0; /* Remove minimum height */
   }
   
   .auth-form-section::-webkit-scrollbar {
@@ -563,17 +564,19 @@
   .auth-input-row {
     grid-template-columns: 1fr;
     gap: 1rem;
-  }
-  /* Mobile sign-up form */
-  #signup-form {
-    max-height: 70vh; /* Adjusted height for mobile to ensure proper scrolling */
-    padding-top: 0.5rem; /* Less top padding on mobile */
+  }  /* Mobile sign-up and sign-in forms - consistent behavior */
+  #signup-form, #signin-form, #forgot-form {
+    max-height: none; /* Remove height constraint on mobile */
+    padding-top: 0.25rem; /* Minimal top padding on mobile */
     width: 100%; /* Full width on mobile */
-    overflow-y: auto; /* Ensure scrolling works */
+    overflow-y: visible; /* Change to visible */
   }
   
-  #signup-form .auth-form-content {
+  #signup-form .auth-form-content,
+  #signin-form .auth-form-content,
+  #forgot-form .auth-form-content {
     padding-right: 0.5rem; /* Small right padding for some breathing room */
+    margin-bottom: 0; /* Ensure no bottom margin */
   }
   
   /* Show scrollbars on mobile when needed */
@@ -590,13 +593,26 @@
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 10px;
   }
-    /* Sign-up form section padding override for mobile */
+  /* Mobile form section adjustments for consistent height behavior */
+  #signup-form, #signin-form, #forgot-form {
+    max-height: none; /* Remove height constraints for auto-adjustment */
+    overflow-y: visible; /* Match signup form behavior */
+  }
+  
+  .auth-form-section {
+    max-height: none; /* Remove height constraints for auto-adjustment */
+    overflow-y: visible; /* Match signup form behavior */
+    min-height: 0; /* Remove minimum height constraints */
+  }
+  
+  /* Sign-up and sign-in form section padding override for mobile */
   .auth-modal:has(#signup-form.active) .auth-form-section,
   .auth-modal:has(#signin-form.active) .auth-form-section,
   .auth-modal:has(#forgot-form.active) .auth-form-section,
   .auth-form-section.signup-active {
-    padding: 1rem;
-    overflow-y: auto; /* Enable scrolling */
+    padding: 1rem 0 0 1rem; /* Match consistent padding for all forms */
+    overflow-y: visible; /* Change from auto to visible for consistent behavior */
+    min-height: 0; /* Remove minimum height */
   }
   
   .auth-social {
@@ -624,15 +640,16 @@
 /* =============== SIGN-UP FORM SPECIFIC STYLING =============== */
 #signup-form {
   padding: 0;
-  padding-top: 1rem; /* Add top padding to ensure the header is visible */
-  max-height: 550px; /* Further increased height to show more content */
-  overflow-y: auto; /* Enable vertical scrolling */
+  padding-top: 0.5rem; /* Reduced top padding further */
+  max-height: none; /* Remove max-height constraint completely */
+  overflow-y: visible; /* Change to visible to prevent unnecessary scrolling */
   overflow-x: hidden;
   /* Ensure the form starts from the top */
   display: flex;
   flex-direction: column;
   width: 100%; /* Ensure form takes full width */
   box-sizing: border-box; /* Include padding in width calculation */
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 /* Using default browser scrollbar */
@@ -641,9 +658,10 @@
   gap: 0.5rem;
   display: flex;
   flex-direction: column;
-  padding-bottom: 1rem; /* Add bottom padding for better spacing */
+  padding-bottom: 0; /* Removed bottom padding completely */
   /* Ensure content starts at the top */
   margin-top: 0;
+  margin-bottom: 0; /* Ensure no bottom margin */
   padding-right: 1.5rem;
   padding-top: 0;
   width: 100%; /* Ensure content takes full width */
@@ -722,57 +740,72 @@
 #signup-form .auth-btn {
   padding: 0.75rem;
   margin-top: 0.125rem;
+  margin-bottom: 0; /* Remove bottom margin */
 }
 
 #signup-form .auth-switch {
   margin-top: 0.5rem;
+  margin-bottom: 0.5rem; /* Remove bottom margin */
 }
 
-/* Sign-up form section specific padding */
-.auth-form-section:has(#signup-form.active) {
-  padding: 5rem 0 5rem 5rem; /* Removed right padding to let scrollbar align with edge */
-  padding-top: 1rem; /* Reduced top padding */
-  /* Ensure sign-up form starts from the top */
-  justify-content: flex-start;
-  align-items: stretch;
+/* =============== CONSISTENT AUTO-HEIGHT BEHAVIOR FOR ALL FORMS =============== */
+/* Ensure all forms (signup, signin, forgot) have identical height behavior */
+#signup-form, #signin-form, #forgot-form {
+  /* Remove all height constraints to allow auto-adjustment */
+  max-height: none !important;
+  min-height: auto !important;
+  height: auto !important;
+  overflow-y: visible !important;
 }
 
-/* Override padding specifically for sign-up form section */
-.auth-modal:has(#signup-form.active) .auth-form-section {
-  padding: 2rem 0 2rem 2rem; /* Removed right padding to let scrollbar align with edge */
-  padding-top: 1rem; /* Reduced top padding */
-  /* Ensure sign-up form starts from the top */
-  justify-content: flex-start;
-  align-items: stretch;
+/* Ensure all form sections have consistent mobile behavior */
+.auth-form-section:has(#signup-form.active),
+.auth-form-section:has(#signin-form.active),
+.auth-form-section:has(#forgot-form.active) {
+  padding: 1rem 0 0 1rem !important;
+  overflow-y: visible !important;
+  min-height: 0 !important;
+  max-height: none !important;
 }
 
-/* Fallback for browsers that don't support :has() */
-.auth-form-section.signup-active {
-  padding: 1.5rem 0 1.5rem 1.5rem; /* Removed right padding to let scrollbar align with edge */
-  padding-top: 1rem; /* Reduced top padding */
-  /* Ensure sign-up form starts from the top */
-  justify-content: flex-start;
-  align-items: stretch;
+.auth-header h2 {
+  font-size: 1.5rem;
 }
 
-/* =============== SIGN-IN AND FORGOT PASSWORD FORM STYLING =============== */
-#signin-form, #forgot-form {
-  overflow-y: auto; /* Enable vertical scrolling when needed */
+/* =============== SIGN-IN FORM SPECIFIC STYLING (COPIED FROM SIGN-UP) =============== */
+#signin-form {
+  padding: 0;
+  padding-top: 0.5rem; /* Reduced top padding further */
+  max-height: none; /* Remove max-height constraint completely */
+  overflow-y: visible; /* Change to visible to prevent unnecessary scrolling */
   overflow-x: hidden;
-  max-height: 80vh; /* Limit height to ensure scrolling triggers */
-  width: 100%; /* Full width */
+  /* Ensure the form starts from the top */
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* Ensure form takes full width */
   box-sizing: border-box; /* Include padding in width calculation */
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
-/* Add scroll behavior for mobile sign-in and forgot forms */
-@media (max-width: 768px) {
-  #signin-form, #forgot-form {
-    max-height: 70vh; /* Smaller height on mobile to ensure scrolling */
-    padding: 0.5rem;
-  }
+#signin-form .auth-form-content {
+  gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0; /* Removed bottom padding completely */
+  /* Ensure content starts at the top */
+  margin-top: 0;
+  margin-bottom: 0; /* Ensure no bottom margin */
+  padding-right: 1.5rem;
+  padding-top: 0;
+  width: 100%; /* Ensure content takes full width */
 }
 
-/* Specific styling for sign-in form inputs to match sign-up form */
+#signin-form .auth-input-group {
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Ensure consistent input styling for sign-in form */
 #signin-form .auth-input-group input {
   padding: 0.5rem 0.75rem;
   border: 2px solid #e5e7eb;
@@ -786,12 +819,6 @@
   box-sizing: border-box;
 }
 
-/* Ensure consistent input styling across all forms */
-.auth-input-group input {
-  width: 100%;
-  box-sizing: border-box;
-}
-
 #signin-form .auth-input-group input:focus {
   outline: none;
   border-color: hsl(346, 100%, 74%);
@@ -799,8 +826,96 @@
   background: #ffffff;
 }
 
-/* Override any inconsistent input styling */
-.auth-form-content .auth-input-group input {
+#signin-form .auth-input-group input::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+#signin-form .auth-input-group label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+  letter-spacing: 0.025em;
+  margin-bottom: 0.25rem;
+}
+
+/* Reset alignment - remove the problematic margin calculations */
+#signin-form .auth-form-content > .auth-input-group {
+  margin-left: 0;
+  width: auto;
+}
+
+/* Row container for side-by-side input groups */
+#signin-form .auth-input-row {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+#signin-form .auth-input-row .auth-input-group {
+  flex: 1;
+  min-width: 0; /* Prevent flex items from overflowing */
+  margin-bottom: 0; /* Override the margin from regular input groups */
+}
+
+#signin-form .auth-header {
+  margin-bottom: 1rem;
+  /* Ensure header is always visible */
+  margin-top: 0;
+  padding-top: 0;
+  top: 0;
+  background: white;
+  z-index: 2;
+  padding-bottom: 0.5rem;
+}
+
+#signin-form .auth-btn {
+  padding: 0.75rem;
+  margin-top: 0.125rem;
+  margin-bottom: 0; /* Remove bottom margin */
+}
+
+#signin-form .auth-switch {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem; /* Remove bottom margin */
+}
+
+/* =============== FORGOT PASSWORD FORM STYLING =============== */
+#forgot-form {
+  padding: 0;
+  padding-top: 0.5rem; /* Reduced top padding further */
+  max-height: none; /* Remove max-height constraint completely */
+  overflow-y: visible; /* Change to visible to prevent unnecessary scrolling */
+  overflow-x: hidden;
+  /* Ensure the form starts from the top */
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* Ensure form takes full width */
+  box-sizing: border-box; /* Include padding in width calculation */
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+#forgot-form .auth-form-content {
+  gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0; /* Removed bottom padding completely */
+  /* Ensure content starts at the top */
+  margin-top: 0;
+  margin-bottom: 0; /* Ensure no bottom margin */
+  padding-right: 1.5rem;
+  padding-top: 0;
+  width: 100%; /* Ensure content takes full width */
+}
+
+#forgot-form .auth-input-group {
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Ensure consistent input styling for forgot form */
+#forgot-form .auth-input-group input {
   padding: 0.5rem 0.75rem;
   border: 2px solid #e5e7eb;
   border-radius: 12px;
@@ -809,70 +924,56 @@
   transition: all 0.2s ease;
   background: #ffffff;
   color: #111827;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Consistent focus styling across all forms */
-.auth-form-content .auth-input-group input:focus {
+#forgot-form .auth-input-group input:focus {
   outline: none;
   border-color: hsl(346, 100%, 74%);
   box-shadow: 0 0 0 3px rgba(255, 133, 177, 0.1);
   background: #ffffff;
 }
 
-/* Consistent label styling across all forms */
-.auth-form-content .auth-input-group label {
+#forgot-form .auth-input-group input::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+#forgot-form .auth-input-group label {
   font-weight: 600;
   color: #374151;
   font-size: 0.875rem;
   letter-spacing: 0.025em;
-  display: block;
   margin-bottom: 0.25rem;
 }
 
-/* =============== MODERN HOVER EFFECTS =============== */
-.auth-btn:hover:not(:disabled):not(.loading) {
-  transform: translateY(-2px);
+/* Reset alignment - remove the problematic margin calculations */
+#forgot-form .auth-form-content > .auth-input-group {
+  margin-left: 0;
+  width: auto;
 }
 
-.auth-social-btn:hover:not(.loading) {
-  transform: translateY(-2px);
+#forgot-form .auth-header {
+  margin-bottom: 1rem;
+  /* Ensure header is always visible */
+  margin-top: 0;
+  padding-top: 0;
+  top: 0;
+  background: white;
+  z-index: 2;
+  padding-bottom: 0.5rem;
 }
 
-/* =============== MODERN FOCUS STYLES =============== */
-.auth-btn:focus-visible {
-  outline: 2px solid hsl(346, 100%, 74%);
-  outline-offset: 2px;
+#forgot-form .auth-btn {
+  padding: 0.75rem;
+  margin-top: 0.125rem;
+  margin-bottom: 0; /* Remove bottom margin */
 }
 
-.auth-social-btn:focus-visible {
-  outline: 2px solid hsl(346, 100%, 74%);
-  outline-offset: 2px;
+#forgot-form .auth-switch {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem; /* Remove bottom margin */
 }
 
-/* =============== SMOOTH ANIMATIONS =============== */
-* {
-  scroll-behavior: smooth;
-}
-
-.auth-modal-container * {
-  box-sizing: border-box;
-}
-
-/* =============== ENHANCED VISUAL FEEDBACK =============== */
-.auth-input-group input:valid:not(:placeholder-shown) {
-  border-color: #10b981;
-  background-image: url("data:image/svg+xml,%3csvg width='16' height='16' fill='%2310b981' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z'/%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  background-size: 16px;
-}
-
-.auth-input-group input:invalid:not(:placeholder-shown):not(:focus) {
-  border-color: #ef4444;
-}
-
-/* =============== LOADING SPINNER IMPROVEMENTS =============== */
-.auth-btn i.fi-rs-spinner,
-.auth-social-btn i.fi-rs-spinner {
-  margin-right: 0.5rem;
-}
+/* =============== CONSISTENT AUTO-HEIGHT BEHAVIOR FOR ALL FORMS =============== */
