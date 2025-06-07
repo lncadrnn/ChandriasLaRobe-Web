@@ -626,7 +626,7 @@ $(document).ready(function () {
                         </a>
                     </div>                    ${!product.isAdditional ? `
                     <button class="add-to-cart-action-btn" data-product-id="${product.id}" data-in-cart="false" title="View Details">
-                        <i class="fi fi-rs-eye"></i>
+                        <i class="fi fi-rs-shopping-bag-add"></i>
                     </button>` : ''}
                 </div>
                 ${sizeOptionsHTML}
