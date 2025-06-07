@@ -1341,21 +1341,27 @@ window.addEventListener('resize', function() {
   async function openQuickView(productId) {
     try {
       const modal = document.getElementById('quick-view-modal');
+      const modalContainer = document.getElementById('quick-view-modal');
       const loadingElement = document.getElementById('quick-view-loading');
       const contentElement = document.getElementById('quick-view-content');
       
-      // Show modal with loading state
+      // Show modal with loading state immediately
       modal.classList.add('show');
+      modalContainer.classList.add('loading');
       document.body.style.overflow = 'hidden';
       
-      // Show loading spinner and hide content
+      // Show loading spinner and hide content immediately
       if (loadingElement) {
         loadingElement.classList.remove('hidden');
+        loadingElement.classList.add('show');
         loadingElement.style.display = 'flex';
       }
       if (contentElement) {
         contentElement.style.display = 'none';
       }
+      
+      // Small delay to ensure spinner is visible before async operation
+      await new Promise(resolve => setTimeout(resolve, 100));
       
       // Fetch product data
       const productDoc = await getDoc(doc(chandriaDB, "products", productId));
@@ -1372,13 +1378,15 @@ window.addEventListener('resize', function() {
       
       // Hide loading spinner and show content after data is loaded
       setTimeout(() => {
-        if (loadingElement) {
-          loadingElement.style.display = 'none';
+                if (loadingElement) {
+          loadingElement.classList.remove('show');
           loadingElement.classList.add('hidden');
+          loadingElement.style.display = 'none';
         }
         if (contentElement) {
           contentElement.style.display = 'grid';
         }
+        modalContainer.classList.remove('loading');
       }, 300); // Small delay to ensure smooth transition
       
     } catch (error) {
@@ -1391,17 +1399,20 @@ window.addEventListener('resize', function() {
   // Function to close quick view modal
   function closeQuickView() {
     const modal = document.getElementById('quick-view-modal');
+    const modalContainer = modal;
     const loadingElement = document.getElementById('quick-view-loading');
     const contentElement = document.getElementById('quick-view-content');
     
     modal.classList.remove('show');
+    modalContainer.classList.remove('loading');
     document.body.style.overflow = '';
     currentQuickViewProduct = null;
     
     // Reset modal state for next use
     if (loadingElement) {
-      loadingElement.style.display = 'none';
+      loadingElement.classList.remove('show');
       loadingElement.classList.add('hidden');
+      loadingElement.style.display = 'none';
     }
     if (contentElement) {
       contentElement.style.display = 'none';
