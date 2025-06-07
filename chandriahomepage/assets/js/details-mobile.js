@@ -6,16 +6,18 @@ document.addEventListener('DOMContentLoaded', function() {
   // Only run on mobile devices
   if (window.innerWidth <= 768) {
     initMobileImageGallery();
-    initStickyAddToCart();
+    // Disabled sticky cart to avoid redundant "Add to Booking" buttons
+    // initStickyAddToCart();
   }
   
   // Re-initialize on resize
   window.addEventListener('resize', function() {
     if (window.innerWidth <= 768) {
       initMobileImageGallery();
-      initStickyAddToCart();
+      // Disabled sticky cart to avoid redundant "Add to Booking" buttons
+      // initStickyAddToCart();
     } else {
-      removeStickyAddToCart();
+      // removeStickyAddToCart();
     }
   });
 });
