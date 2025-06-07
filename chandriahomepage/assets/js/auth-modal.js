@@ -742,10 +742,29 @@ class AuthModal {
 
 // Initialize the auth modal when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    const authModal = new AuthModal();
-    
-    // Make functions globally accessible
-    window.showAuthModal = () => authModal.show();
+    const authModal = new AuthModal();    // Make functions globally accessible
+    window.showAuthModal = () => {
+        // Check if user is already logged in
+        const userEmail = localStorage.getItem('userEmail');
+        const currentUser = auth.currentUser;
+        
+        if (userEmail && currentUser && currentUser.emailVerified) {
+            // Determine the correct path to accounts.html based on current location
+            const currentPath = window.location.pathname;
+            let accountsPath = './accounts.html';
+            
+            // If we're in the root directory (index.html), adjust path
+            if (currentPath === '/' || currentPath.includes('index.html') || !currentPath.includes('chandriahomepage')) {
+                accountsPath = './chandriahomepage/accounts.html';
+            }
+            
+            // Redirect to accounts page if user is logged in
+            window.location.href = accountsPath;
+        } else {
+            // Show auth modal if user is not logged in
+            authModal.show();
+        }
+    };
     window.hideAuthModal = () => authModal.hide();
     window.authModal = authModal;
 });

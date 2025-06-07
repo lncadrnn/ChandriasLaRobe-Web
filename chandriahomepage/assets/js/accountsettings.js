@@ -95,9 +95,9 @@ $(document).ready(function () {
                     $("body").addClass("loaded");
                 }
             } else {
-                // Not signed in, redirect to login
+                // Not signed in, redirect to homepage
                 setTimeout(() => {
-                    window.location.href = "./user_authentication.html";
+                    window.location.href = "../index.html";
                 }, 2500);
             }
         });
@@ -437,10 +437,21 @@ $(document).ready(function () {
     $("#logout-yes").on("click", function () {
         signOut(auth)
             .then(() => {
-                window.location.href = "./user_authentication.html";
+                // Clear any stored user data
+                localStorage.removeItem('userEmail');
+                sessionStorage.clear();
+                
+                // Show success message
+                notyf.success("Successfully logged out!");
+                
+                // Redirect to homepage after a short delay
+                setTimeout(() => {
+                    window.location.href = "../index.html";
+                }, 1000);
             })
             .catch(error => {
                 console.error("Error during logout:", error);
+                notyf.error("Error logging out. Please try again.");
             });
         $("#logout-modal").hide();
     });
