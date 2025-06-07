@@ -306,6 +306,24 @@
     border-radius: 0 8px 8px 0 !important;
   }
 
+  /* Disabled mobile quantity button styles */
+  .quantity-btn:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    background: #f5f5f5 !important;
+    color: #999 !important;
+    border-color: #ddd !important;
+    transform: none !important;
+  }
+
+  .quantity-btn:disabled:hover,
+  .quantity-btn:disabled:active {
+    background: #f5f5f5 !important;
+    color: #999 !important;
+    border-color: #ddd !important;
+    transform: none !important;
+  }
+
   /* Enhanced Add to Booking button */
   .btn.btn-primary {
     height: 50px !important;

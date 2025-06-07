@@ -157,8 +157,7 @@ function initStickyAddToCart() {
       stickyQuantity.value = quantityInput.value;
     });
   }
-  
-  // Handle quantity button clicks
+    // Handle quantity button clicks with stock validation
   stickyDecreaseBtn.addEventListener('click', () => {
     if (decreaseBtn) {
       decreaseBtn.click();
@@ -167,9 +166,29 @@ function initStickyAddToCart() {
   });
   
   stickyIncreaseBtn.addEventListener('click', () => {
-    if (increaseBtn) {
-      increaseBtn.click();
-      stickyQuantity.value = quantityInput.value;
+    const selectedSize = document.querySelector('.size-active');
+    const currentValue = parseInt(stickyQuantity.value) || 1;
+    
+    if (selectedSize) {
+      const maxStock = parseInt(selectedSize.dataset.stock) || 0;
+      
+      if (currentValue < maxStock) {
+        if (increaseBtn) {
+          increaseBtn.click();
+          stickyQuantity.value = quantityInput.value;
+        }
+      } else {
+        // Show error notification for mobile
+        if (typeof notyf !== 'undefined') {
+          notyf.error(`Maximum available stock for this size is ${maxStock}`);
+        }
+      }
+    } else {
+      // Fallback if no size is selected
+      if (increaseBtn) {
+        increaseBtn.click();
+        stickyQuantity.value = quantityInput.value;
+      }
     }
   });
   

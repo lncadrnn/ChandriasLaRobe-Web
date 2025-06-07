@@ -269,7 +269,11 @@ $(document).ready(async function () {
     const currentQuantity = parseInt(quantityInput.val()) || 1;
     if (currentQuantity > stock) {
       quantityInput.val(stock);
-      notyf.warning(`Quantity adjusted to available stock: ${stock}`);
+      // Trigger change event to sync mobile sticky bar
+      quantityInput[0].dispatchEvent(new Event('change'));
+      if (typeof notyf !== 'undefined') {
+        notyf.warning(`Quantity adjusted to available stock: ${stock}`);
+      }
     }
   });
   
@@ -283,10 +287,20 @@ $(document).ready(async function () {
     // Validate quantity bounds
     if (value < 1) {
       input.val(1);
-      notyf.error("Minimum quantity is 1");
+      if (typeof notyf !== 'undefined') {
+        notyf.error("Minimum quantity is 1");
+      }
     } else if (value > maxStock) {
       input.val(maxStock);
-      notyf.error(`Maximum available stock for this size is ${maxStock}`);
+      if (typeof notyf !== 'undefined') {
+        notyf.error(`Maximum available stock for this size is ${maxStock}`);
+      }
+    }
+    
+    // Sync mobile sticky bar quantity if it exists
+    const stickyQuantity = document.querySelector('.mobile-sticky-quantity');
+    if (stickyQuantity) {
+      stickyQuantity.value = input.val();
     }
     
     // Add visual feedback for quantity change
@@ -794,12 +808,25 @@ function createAdditionalHTML(additional) {
 }
 
 // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
-// QUANTITY BUTTON FUNCTIONS FOR MOBILE
+// QUANTITY BUTTON FUNCTIONS WITH STOCK VALIDATION
 window.increaseQuantity = function() {
     const quantityInput = document.getElementById('details-quantity');
-    if (quantityInput) {
+    const selectedSize = document.querySelector('.size-active');
+    
+    if (quantityInput && selectedSize) {
         let currentValue = parseInt(quantityInput.value) || 1;
-        quantityInput.value = currentValue + 1;
+        const maxStock = parseInt(selectedSize.dataset.stock) || 0;
+        
+        if (currentValue < maxStock) {
+            quantityInput.value = currentValue + 1;
+            // Trigger change event to sync mobile sticky bar
+            quantityInput.dispatchEvent(new Event('change'));
+        } else {
+            // Show error notification
+            if (typeof notyf !== 'undefined') {
+                notyf.error(`Maximum available stock for this size is ${maxStock}`);
+            }
+        }
     }
 };
 
@@ -809,6 +836,8 @@ window.decreaseQuantity = function() {
         let currentValue = parseInt(quantityInput.value) || 1;
         if (currentValue > 1) {
             quantityInput.value = currentValue - 1;
+            // Trigger change event to sync mobile sticky bar
+            quantityInput.dispatchEvent(new Event('change'));
         }
     }
 };
