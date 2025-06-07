@@ -142,13 +142,13 @@ class AuthModal {    constructor() {
                 firstInput.focus();
             }
         }, 100);
-    }
-
-    closeModal() {
+    }    closeModal() {
         this.modal.classList.remove('show');
         document.body.style.overflow = '';
         this.clearForms();
         this.clearErrors();
+        // Reset to sign-in form when modal is closed
+        this.switchForm('signin');
     }    switchForm(formType) {
         // Clear errors first
         this.clearErrors();
@@ -157,6 +157,12 @@ class AuthModal {    constructor() {
         this.signInForm.classList.remove('active');
         this.signUpForm.classList.remove('active');
         this.forgotPasswordForm.classList.remove('active');
+        
+        // Remove signup-active class from form section
+        const formSection = document.querySelector('.auth-form-section');
+        if (formSection) {
+            formSection.classList.remove('signup-active');
+        }
 
         // Small delay to ensure clean transition
         setTimeout(() => {
@@ -165,6 +171,10 @@ class AuthModal {    constructor() {
                 case 'signup':
                     this.signUpForm.classList.add('active');
                     this.currentForm = 'signup';
+                    // Add signup-active class to form section for reduced padding
+                    if (formSection) {
+                        formSection.classList.add('signup-active');
+                    }
                     break;
                 case 'forgot':
                     this.forgotPasswordForm.classList.add('active');

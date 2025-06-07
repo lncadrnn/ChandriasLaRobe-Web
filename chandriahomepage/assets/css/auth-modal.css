@@ -139,7 +139,7 @@
 
 /* =============== MODERN FORM SECTION =============== */
 .auth-form-section {
-  padding: 1.5rem;
+  padding: 5rem;
   background: #ffffff;
   display: flex;
   flex-direction: column;
@@ -166,7 +166,8 @@
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;  padding: 1.5rem;
+  bottom: 0;  
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -548,6 +549,24 @@
     grid-template-columns: 1fr;
     gap: 1rem;
   }
+    /* Enhanced scrollbar for mobile sign-up form */
+  #signup-form {
+    max-height: 300px; /* Reduced height for mobile to ensure scrolling */
+  }
+  
+  #signup-form::-webkit-scrollbar {
+    width: 10px; /* Wider scrollbar for mobile touch interfaces */
+  }
+  
+  #signup-form .auth-form-content {
+    padding-right: 1rem; /* Ensure adequate spacing on mobile */
+  }
+  
+  /* Sign-up form section padding override for mobile */
+  .auth-modal:has(#signup-form.active) .auth-form-section,
+  .auth-form-section.signup-active {
+    padding: 1rem;
+  }
     .auth-social {
     gap: 1rem;
     margin: 0;
@@ -568,6 +587,167 @@
     width: 40px;
     height: 40px;
   }
+}
+
+/* =============== SIGN-UP FORM SPECIFIC STYLING =============== */
+#signup-form {
+  padding: 0;
+  max-height: 400px; /* Set a fixed max height to enable scrolling */
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar for sign-up form only */
+#signup-form::-webkit-scrollbar {
+  width: 8px; /* Slightly wider for better visibility */
+}
+
+#signup-form::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+  margin: 4px 0; /* Add margin to track */
+}
+
+#signup-form::-webkit-scrollbar-thumb {
+  background: hsl(346, 100%, 74%);
+  border-radius: 4px;
+  border: 1px solid #ffffff; /* Add white border for better definition */
+}
+
+#signup-form::-webkit-scrollbar-thumb:hover {
+  background: hsl(346, 85%, 65%);
+}
+
+#signup-form::-webkit-scrollbar-corner {
+  background: #f1f1f1;
+}
+
+/* Firefox scrollbar styling for sign-up form */
+#signup-form {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(346, 100%, 74%) #f1f1f1;
+}
+
+#signup-form .auth-form-content {
+  gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  padding-right: 1rem; /* Increased padding to prevent content from touching scrollbar */
+  padding-bottom: 1rem; /* Add bottom padding for better spacing */
+}
+
+#signup-form .auth-input-group {
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Ensure consistent input styling for sign-up form */
+#signup-form .auth-input-group input {
+  padding: 0.5rem 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 400;
+  transition: all 0.2s ease;
+  background: #ffffff;
+  color: #111827;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#signup-form .auth-input-group input:focus {
+  outline: none;
+  border-color: hsl(346, 100%, 74%);
+  box-shadow: 0 0 0 3px rgba(255, 133, 177, 0.1);
+  background: #ffffff;
+}
+
+#signup-form .auth-input-group input::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+#signup-form .auth-input-group label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+  letter-spacing: 0.025em;
+  margin-bottom: 0.25rem;
+}
+
+/* Reset alignment - remove the problematic margin calculations */
+#signup-form .auth-form-content > .auth-input-group {
+  margin-left: 0;
+  width: auto;
+}
+
+#signup-form .auth-header {
+  margin-bottom: 0.5rem;
+}
+
+#signup-form .auth-btn {
+  padding: 0.75rem;
+  margin-top: 0.125rem;
+}
+
+#signup-form .auth-switch {
+  margin-top: 0.5rem;
+}
+
+/* Sign-up form section specific padding */
+.auth-form-section:has(#signup-form.active) {
+  padding: 2rem;
+}
+
+/* Override padding specifically for sign-up form section */
+.auth-modal:has(#signup-form.active) .auth-form-section {
+  padding: 2rem;
+}
+
+/* Fallback for browsers that don't support :has() */
+.auth-form-section.signup-active {
+  padding: 2rem;
+}
+
+/* =============== SIGN-IN AND FORGOT PASSWORD FORM STYLING =============== */
+#signin-form, #forgot-form {
+  overflow: hidden; /* No scrollbar for sign-in and forgot forms */
+}
+
+/* Ensure consistent input styling across all forms */
+.auth-input-group input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Override any inconsistent input styling */
+.auth-form-content .auth-input-group input {
+  padding: 0.5rem 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 400;
+  transition: all 0.2s ease;
+  background: #ffffff;
+  color: #111827;
+}
+
+/* Consistent focus styling across all forms */
+.auth-form-content .auth-input-group input:focus {
+  outline: none;
+  border-color: hsl(346, 100%, 74%);
+  box-shadow: 0 0 0 3px rgba(255, 133, 177, 0.1);
+  background: #ffffff;
+}
+
+/* Consistent label styling across all forms */
+.auth-form-content .auth-input-group label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+  letter-spacing: 0.025em;
+  display: block;
+  margin-bottom: 0.25rem;
 }
 
 /* =============== MODERN HOVER EFFECTS =============== */
