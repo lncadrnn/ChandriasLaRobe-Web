@@ -394,9 +394,6 @@ button.add-to-rent-btn,
     display: block !important;
     text-align: center !important;
     text-decoration: none !important;
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    outline: none !important;
 }
 
 .details.section-lg .products.container .products-container .product-item .product-content .add-to-rent-btn:hover,
@@ -544,13 +541,27 @@ button.add-to-rent-btn:active,
     font-size: 20px !important;
 }
 
-.products-container .add-to-booking-btn.loading {
-    pointer-events: none !important;
-    opacity: 0.7 !important;
+/* Cart validation styling for add-to-booking-btn */
+.products-container .add-to-booking-btn[data-in-cart="true"] {
+    background: #e74c3c !important;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3) !important;
 }
 
-.products-container .add-to-booking-btn.loading i {
-    animation: spin 1s linear infinite !important;
+.products-container .add-to-booking-btn[data-in-cart="false"] {
+    background: #28a745 !important;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3) !important;
+}
+
+.products-container .add-to-booking-btn[data-in-cart="true"]:hover {
+    background: #c0392b !important;
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4) !important;
+    transform: scale(1.1) !important;
+}
+
+.products-container .add-to-booking-btn[data-in-cart="false"]:hover {
+    background: #218838 !important;
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4) !important;
+    transform: scale(1.1) !important;
 }
 
 /* Product images */

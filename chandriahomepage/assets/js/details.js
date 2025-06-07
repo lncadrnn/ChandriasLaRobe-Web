@@ -399,6 +399,7 @@ $(document).ready(async function () {
   // Update cart count on auth state change
   onAuthStateChanged(auth, async user => {
     await updateCartCount();
+    await updateAllCartButtonStatus();
   });
 
   // Event handlers for related products
@@ -581,8 +582,9 @@ $(document).ready(async function () {
       
       notyf.success(`Added to booking! Size: ${selectedSize}`);
       
-      // Update cart count
+      // Update cart count and button status
       await updateCartCount();
+      await updateAllCartButtonStatus();
       
     } catch (error) {
       console.error("Error adding to booking:", error);
@@ -618,6 +620,47 @@ $(document).ready(async function () {
     }
   }
 
+  // Function to update all cart button statuses with visual validation
+  async function updateAllCartButtonStatus() {
+    const user = auth.currentUser;
+    
+    if (!user) {
+      // If no user, set all buttons to "not in cart" state
+      $('.add-to-booking-btn').attr('data-in-cart', 'false');
+      return;
+    }
+
+    try {
+      const userRef = doc(chandriaDB, "userAccounts", user.uid);
+      const userSnap = await getDoc(userRef);
+      
+      if (userSnap.exists()) {
+        const cartItems = userSnap.data().added_to_cart || [];
+        
+        // Update each related product button
+        $('.add-to-booking-btn').each(function() {
+          const button = $(this);
+          const productId = button.data('product-id');
+          
+          if (!productId) return;
+          
+          // Check if this product is in cart (any size/quantity)
+          const isInCart = cartItems.some(item => item.productId === productId);
+          
+          // Set data attribute for CSS styling
+          button.attr('data-in-cart', isInCart ? 'true' : 'false');
+        });
+      } else {
+        // User document doesn't exist, set all to "not in cart"
+        $('.add-to-booking-btn').attr('data-in-cart', 'false');
+      }
+    } catch (error) {
+      console.error("Error updating cart button status:", error);
+      // On error, set all to "not in cart" as fallback
+      $('.add-to-booking-btn').attr('data-in-cart', 'false');
+    }
+  }
+  
   // Function to update breadcrumbs dynamically
 function updateBreadcrumbs(product) {
     const breadcrumbContainer = document.querySelector('.breadcrumb');
