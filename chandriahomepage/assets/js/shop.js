@@ -624,10 +624,9 @@ $(document).ready(function () {
                         <a href="details.html?id=${product.id}">
                             <h3 class="product-title">${product.name || "Untitled Product"}</h3>
                         </a>
-                    </div>
-                    ${!product.isAdditional ? `
-                    <button class="add-to-cart-action-btn" data-product-id="${product.id}" data-in-cart="false" title="Add to Cart">
-                        <i class="fi fi-rs-shopping-bag-add"></i>
+                    </div>                    ${!product.isAdditional ? `
+                    <button class="add-to-cart-action-btn" data-product-id="${product.id}" data-in-cart="false" title="View Details">
+                        <i class="fi fi-rs-eye"></i>
                     </button>` : ''}
                 </div>
                 ${sizeOptionsHTML}
@@ -876,13 +875,22 @@ $(document).ready(function () {
         } finally {
             button.prop('disabled', false).html('<i class="fi fi-rs-shopping-bag-add"></i><span>Add to Rent</span>');
         }
-    }
-
-    // Cart Modal functionality (existing modal in shop.html)
+    }    // Cart Modal functionality (existing modal in shop.html)
     async function handleAddToCartClick(e) {
         e.preventDefault();
         e.stopPropagation();
         
+        // Check if this is the add-to-cart-action-btn (the large button beside product info)
+        if ($(this).hasClass('add-to-cart-action-btn')) {
+            const productId = $(this).data("product-id");
+            if (productId) {
+                // Redirect to details.html with the product ID
+                window.location.href = `details.html?id=${productId}`;
+                return;
+            }
+        }
+        
+        // For other add to cart buttons, check authentication and open modal
         const user = auth.currentUser;
         if (!user) {
             showAuthModal();
