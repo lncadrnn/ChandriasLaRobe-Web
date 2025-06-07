@@ -130,6 +130,7 @@
   gap: 15px;
   background: #ffffff;
   padding: 20px;
+  margin: 20px;
   border-radius: 20px 0 0 0;
 }
 
@@ -189,6 +190,7 @@
   flex-direction: column;
   gap: 20px;
   padding: 30px;
+  margin: 20px;
 }
 
 .quick-view-header {
@@ -554,12 +556,12 @@
       "images"
       "details";
   }
-  
-  /* Images section improvements for mobile - positioned at top */
+    /* Images section improvements for mobile - positioned at top */
   .quick-view-images {
     grid-area: images;
     order: 1;
     padding: 20px 15px 15px 15px;
+    margin: 15px;
     border-radius: 20px 20px 0 0;
     background: #ffffff;
   }
@@ -582,12 +584,12 @@
     height: 75px;
     border-radius: 8px;
   }
-  
-  /* Details section with better spacing for mobile - positioned below images */
+    /* Details section with better spacing for mobile - positioned below images */
   .quick-view-details {
     grid-area: details;
     order: 2;
     padding: 25px 20px 25px 20px;
+    margin: 15px;
     border-radius: 0 0 20px 20px;
     background: #ffffff;
   }
