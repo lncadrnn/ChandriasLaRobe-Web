@@ -346,22 +346,22 @@
 }
 
 .google-btn {
-  color: #4285f4;
+  color: hsl(346, 100%, 74%);
 }
 
 .google-btn:hover {
-  border-color: #4285f4;
+  border-color: hsl(346, 100%, 74%);
   background: #fafaff;
   transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(66, 133, 244, 0.2);
 }
 
 .facebook-btn {
-  color: #1877f2;
+  color: hsl(346, 100%, 74%);
 }
 
 .facebook-btn:hover {
-  border-color: #1877f2;
+  border-color: hsl(346, 100%, 74%);
   background: #fafaff;
   transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(24, 119, 242, 0.2);
@@ -535,8 +535,25 @@
     min-height: 200px;
     grid-row: 1;
   }
-    .auth-form-section {
+  .auth-form-section {
     padding: 1rem;
+    max-height: 80vh; /* Limit height to ensure it fits on mobile screens */
+    overflow-y: auto; /* Enable scrolling when needed */
+  }
+  
+  .auth-form-section::-webkit-scrollbar {
+    width: 6px; /* Narrow scrollbar for mobile */
+    display: block; /* Show scrollbar when needed */
+  }
+  
+  .auth-form-section::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+  }
+  
+  .auth-form-section {
+    scrollbar-width: thin; /* For Firefox */
+    -ms-overflow-style: auto; /* For IE/Edge */
   }
   
   .auth-form.active {
@@ -547,23 +564,42 @@
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-    /* Mobile sign-up form */
+  /* Mobile sign-up form */
   #signup-form {
-    max-height: 400px; /* Increased height for mobile to ensure content visibility */
+    max-height: 70vh; /* Adjusted height for mobile to ensure proper scrolling */
     padding-top: 0.5rem; /* Less top padding on mobile */
     width: 100%; /* Full width on mobile */
+    overflow-y: auto; /* Ensure scrolling works */
   }
   
   #signup-form .auth-form-content {
-    padding-right: 0; /* No right padding to align scrollbar with edge */
+    padding-right: 0.5rem; /* Small right padding for some breathing room */
   }
   
-  /* Sign-up form section padding override for mobile */
+  /* Show scrollbars on mobile when needed */
+  #signup-form::-webkit-scrollbar,
+  #signin-form::-webkit-scrollbar,
+  #forgot-form::-webkit-scrollbar {
+    width: 5px;
+    display: block;
+  }
+  
+  #signup-form::-webkit-scrollbar-thumb,
+  #signin-form::-webkit-scrollbar-thumb,
+  #forgot-form::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+  }
+    /* Sign-up form section padding override for mobile */
   .auth-modal:has(#signup-form.active) .auth-form-section,
+  .auth-modal:has(#signin-form.active) .auth-form-section,
+  .auth-modal:has(#forgot-form.active) .auth-form-section,
   .auth-form-section.signup-active {
     padding: 1rem;
+    overflow-y: auto; /* Enable scrolling */
   }
-    .auth-social {
+  
+  .auth-social {
     gap: 1rem;
     margin: 0;
   }
@@ -721,7 +757,19 @@
 
 /* =============== SIGN-IN AND FORGOT PASSWORD FORM STYLING =============== */
 #signin-form, #forgot-form {
-  overflow: hidden; /* No scrollbar for sign-in and forgot forms */
+  overflow-y: auto; /* Enable vertical scrolling when needed */
+  overflow-x: hidden;
+  max-height: 80vh; /* Limit height to ensure scrolling triggers */
+  width: 100%; /* Full width */
+  box-sizing: border-box; /* Include padding in width calculation */
+}
+
+/* Add scroll behavior for mobile sign-in and forgot forms */
+@media (max-width: 768px) {
+  #signin-form, #forgot-form {
+    max-height: 70vh; /* Smaller height on mobile to ensure scrolling */
+    padding: 0.5rem;
+  }
 }
 
 /* Specific styling for sign-in form inputs to match sign-up form */
