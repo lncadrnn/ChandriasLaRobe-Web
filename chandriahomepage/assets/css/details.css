@@ -1,47 +1,3 @@
-/* Override product card layout */
-.product-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.product-price {
-    width: 100%;
-    justify-content: center;
-    margin-bottom: 16px !important;
-}
-
-.action-btn.cart-btn {
-    position: static !important;
-    transform: none !important;
-    margin-top: 5px;
-}
-
-/* Hide product action buttons in related products section */
-.products-container .product-actions {
-    display: none !important;
-}
-
-/* Hide cart buttons in related products section */
-.products-container .action-btn.cart-btn {
-    display: none !important;
-}
-
-/* Ensure related product cards have consistent height */
-.products-container .product-item {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.products-container .product-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding-bottom: 15px;
-}
-
 /* =============== DESKTOP DETAILS ACTION STYLES =============== */
 /* Default desktop styles for details-action */
 /* Desktop styles - hide mobile stock indicator */
@@ -466,82 +422,7 @@ button.add-to-rent-btn:active,
     text-decoration: none !important;
 }
 
-/* =============== RELATED PRODUCTS ENHANCED STYLING =============== */
-/* Basic product card styling for related products */
-.products-container .product-item {
-    border-radius: 14px !important;
-    box-shadow: 0 2px 16px rgba(40, 167, 69, 0.07) !important;
-    background: #fff !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-    position: relative !important;
-    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
-}
-
-.products-container .product-item:hover {
-    transform: translateY(-5px) !important;
-    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.15) !important;
-}
-
-/* Product actions - initially hidden, show on hover - MATCHING SHOP.HTML STYLE */
-.products-container .product-actions {
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    display: flex !important;
-    gap: 15px !important;
-    opacity: 0 !important;
-    transition: all 0.3s ease !important;
-    z-index: 4 !important;
-    justify-content: center !important;
-    align-items: center !important;
-    flex-direction: row !important;
-}
-
-.products-container .product-item:hover .product-actions,
-.products-container .product-actions:hover {
-    opacity: 1 !important;
-    transform: translate(-50%, -50%) !important;
-}
-
-.products-container .action-btn {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 45px !important;
-    height: 45px !important;
-    border-radius: 50% !important;
-    background-color: white !important;
-    color: #333 !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
-    transition: all 0.25s ease !important;
-    transform: scale(0.9) !important;
-    border: 2px solid #eee !important;
-    text-decoration: none !important;
-}
-
-.products-container .product-item:hover .product-actions .action-btn,
-.products-container .product-actions:hover .action-btn {
-    transform: scale(1) !important;
-}
-
-.products-container .action-btn:hover {
-    background-color: hsl(346, 100%, 74%) !important; /* Pink on hover */
-    color: white !important; /* White text color on hover */
-    transform: scale(1.05) !important;
-    box-shadow: 0 3px 10px rgba(255, 154, 175, 0.3) !important;
-    border-color: transparent !important;
-}
-
-.products-container .action-btn:active {
-    transform: scale(0.95) !important;
-}
-
-.products-container .action-btn i {
-    font-size: 15px !important;
-}
+/* =============== INCLUSIONS TABLE STYLING =============== */
 
 /* Favorited state for heart button */
 .products-container .action-btn.favorited {
@@ -582,7 +463,7 @@ button.add-to-rent-btn:active,
 /* Color indicator */
 .products-container .product-color-indicator {
     position: absolute !important;
-    bottom: 15px !important;
+    top: 15px !important;
     right: 15px !important;
     width: 20px !important;
     height: 20px !important;
