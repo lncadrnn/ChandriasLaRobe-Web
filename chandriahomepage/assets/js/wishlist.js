@@ -110,6 +110,10 @@ $(document).ready(function () {
                 return;
             }
 
+            // Show the table header when there are items
+            const tableHeader = $(".table thead");
+            tableHeader.show();
+
             const wishlistTable = $("#wishlist-body");
             wishlistTable.empty();
 
@@ -173,6 +177,10 @@ $(document).ready(function () {
     }    function showEmptyWishlist() {
         const user = auth.currentUser;
         const wishlistTable = $("#wishlist-body");
+        const tableHeader = $(".table thead");
+        
+        // Hide the table header when wishlist is empty
+        tableHeader.hide();
         
         if (!user) {
             // For unauthenticated users, ensure main content is hidden
