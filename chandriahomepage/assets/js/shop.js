@@ -139,10 +139,10 @@ $(document).ready(function () {
         $(document).on("click", ".action-btn[aria-label='Quick View']", handleQuickViewClick);
         $("#quick-view-close").on("click", closeQuickView);
         $("#quick-view-view-details").on("click", handleViewDetails);        // Circular cart button functionality
-        $(document).on("click", ".circular-cart-btn", handleCircularCartClick);
+        $(document).on("click", ".circular-cart-btn, .enhanced-cart-btn, .add-to-cart-action-btn", handleCircularCartClick);
         
         // Add to cart action button functionality (new button beside category/title)
-        $(document).on("click", ".add-to-cart-action-btn", handleAddToCartClick);// Size and quantity controls
+        // $(document).on("click", ".add-to-cart-action-btn", handleAddToCartClick); // Now handled by handleCircularCartClick// Size and quantity controls
         $(document).on("change", ".size-selector", handleSizeChange);
         $(document).on("click", ".quantity-btn.plus-btn", handleQuantityIncrease);
         $(document).on("click", ".quantity-btn.minus-btn", handleQuantityDecrease);        // Color indicator tooltip
@@ -1128,15 +1128,14 @@ $(document).ready(function () {
         } catch (error) {
             console.error("Error checking cart status:", error);
             return false;
-        }
-    }
-
+        }    }
+    
     // Update cart button status for all products
     async function updateAllCartButtonStatus() {
         const user = auth.currentUser;
         if (!user) {
             // If no user, set all buttons to not-in-cart state
-            $(".circular-cart-btn").each(function() {
+            $(".circular-cart-btn, .enhanced-cart-btn, .add-to-cart-action-btn").each(function() {
                 $(this).attr("data-in-cart", "false").removeClass("loading");
             });
             return;
@@ -1147,7 +1146,7 @@ $(document).ready(function () {
             const userSnap = await getDoc(userRef);
             
             if (!userSnap.exists()) {
-                $(".circular-cart-btn").each(function() {
+                $(".circular-cart-btn, .enhanced-cart-btn, .add-to-cart-action-btn").each(function() {
                     $(this).attr("data-in-cart", "false").removeClass("loading");
                 });
                 return;
@@ -1156,7 +1155,7 @@ $(document).ready(function () {
             const cartItems = userSnap.data().added_to_cart || [];
             const cartProductIds = new Set(cartItems.map(item => item.productId));
             
-            $(".circular-cart-btn").each(function() {
+            $(".circular-cart-btn, .enhanced-cart-btn, .add-to-cart-action-btn").each(function() {
                 const productId = $(this).data("product-id");
                 const isInCart = cartProductIds.has(productId);
                 $(this).attr("data-in-cart", isInCart.toString()).removeClass("loading");
@@ -1164,14 +1163,25 @@ $(document).ready(function () {
             
         } catch (error) {
             console.error("Error updating cart button status:", error);
-            $(".circular-cart-btn").each(function() {
+            $(".circular-cart-btn, .enhanced-cart-btn, .add-to-cart-action-btn").each(function() {
                 $(this).attr("data-in-cart", "false").removeClass("loading");
             });
         }
-    }    // Handle circular cart button click
+    }    
+    // Handle circular cart button click
     async function handleCircularCartClick(e) {
         e.preventDefault();
         e.stopPropagation();
+        
+        // Check if this is the add-to-cart-action-btn (the large button beside product info)
+        if ($(this).hasClass('add-to-cart-action-btn')) {
+            const productId = $(this).data("product-id");
+            if (productId) {
+                // Redirect to details.html with the product ID
+                window.location.href = `details.html?id=${productId}`;
+                return;
+            }
+        }
         
         const user = auth.currentUser;
         if (!user) {
