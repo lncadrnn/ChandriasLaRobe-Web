@@ -5,8 +5,25 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         <!--=============== FLATICON ===============-->
-        <link
-            rel="stylesheet"
+                                 <div class="details-action">
+                            <div class="booking-product-name" id="booking-product-name">Colorful Pattern Shirt</div>
+                            <div class="quantity-container">
+                                <button type="button" class="quantity-btn decrease" onclick="decreaseQuantity()">−</button>
+                                <input
+                                    type="number"
+                                    class="quantity"
+                                    min="1"
+                                    value="1"
+                                    id="details-quantity"
+                                    readonly
+                                />
+                                <button type="button" class="quantity-btn increase" onclick="increaseQuantity()">+</button>
+                            </div>
+                            <button class="btn btn-primary" id="details-add-to-cart">Add to Booking</button>
+                            <!--               <a href="#" class="details-action-btn">
+  <i class="fi fi-rs-heart"></i>
+</a> -->
+                        </div>sheet"
             href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css"
         />
 

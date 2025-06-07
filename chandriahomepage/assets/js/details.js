@@ -90,6 +90,7 @@ $(document).ready(async function () {
 
       // Text and values
       $('#product-name').text(data.name);
+      $('#booking-product-name').text(data.name);
       $('#product-price').text(`₱ ${data.price}`);
       
       // Handle description differently for additionals vs regular products
@@ -791,4 +792,24 @@ function createAdditionalHTML(additional) {
     </div>
     `;
 }
+
+// #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+// QUANTITY BUTTON FUNCTIONS FOR MOBILE
+window.increaseQuantity = function() {
+    const quantityInput = document.getElementById('details-quantity');
+    if (quantityInput) {
+        let currentValue = parseInt(quantityInput.value) || 1;
+        quantityInput.value = currentValue + 1;
+    }
+};
+
+window.decreaseQuantity = function() {
+    const quantityInput = document.getElementById('details-quantity');
+    if (quantityInput) {
+        let currentValue = parseInt(quantityInput.value) || 1;
+        if (currentValue > 1) {
+            quantityInput.value = currentValue - 1;
+        }
+    }
+};
 });

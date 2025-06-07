@@ -177,16 +177,16 @@
   .size-link.size-active {
     background-color: var(--first-color);
     color: var(--body-color);
-  }  /* Improve action elements - Hide on mobile */
+  }  /* Improve action elements - Show on mobile with custom styling */
   .details-action {
-    display: none !important;
-  }
-
-  /* Hide individual elements within details-action */
-  .quantity,
-  .btn.btn-primary,
-  .details-action-btn {
-    display: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+    margin: 20px 0 !important;
+    padding: 20px !important;
+    background: rgba(var(--first-color-rgb), 0.05) !important;
+    border-radius: 12px !important;
+    border: 2px solid var(--first-color) !important;
   }
   /* Product metadata */
   .details-meta {
@@ -214,11 +214,113 @@
   /* Add a space after the details section */
   .details.section-lg {
     padding-bottom: 2rem;
+  }  /* Show quantity and booking controls on mobile with custom styling */
+  .details-action {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+    margin: 20px 0 !important;
+    padding: 20px !important;
+    background: rgba(var(--first-color-rgb), 0.05) !important;
+    border-radius: 12px !important;
+    border: 2px solid var(--first-color) !important;
+    box-shadow: 0 4px 12px rgba(var(--first-color-rgb), 0.15) !important;
   }
 
-  /* Hide quantity and booking controls on mobile */
-  .details-action {
-    display: none !important;
+  /* Product name above booking button */
+  .booking-product-name {
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    color: var(--title-color) !important;
+    text-align: center !important;
+    margin-bottom: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+  }
+
+  /* Custom quantity input with pink border and styled buttons */
+  .quantity-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    width: 140px !important;
+    margin: 0 auto !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+  }
+
+  .quantity {
+    width: 80px !important;
+    height: 48px !important;
+    text-align: center !important;
+    border: 2px solid var(--first-color) !important;
+    border-left: none !important;
+    border-right: none !important;
+    background: white !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    color: var(--title-color) !important;
+    outline: none !important;
+    appearance: textfield !important;
+    -moz-appearance: textfield !important;
+    -webkit-appearance: textfield !important;
+  }
+
+  .quantity::-webkit-outer-spin-button,
+  .quantity::-webkit-inner-spin-button {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+  }
+
+  .quantity-btn {
+    width: 30px !important;
+    height: 48px !important;
+    background: var(--first-color) !important;
+    border: 2px solid var(--first-color) !important;
+    color: white !important;
+    font-size: 1.2rem !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s ease !important;
+    user-select: none !important;
+  }
+
+  .quantity-btn:hover,
+  .quantity-btn:active {
+    background: hsl(346, 100%, 68%) !important;
+    border-color: hsl(346, 100%, 68%) !important;
+    transform: scale(0.95) !important;
+  }
+
+  .quantity-btn.decrease {
+    border-radius: 8px 0 0 8px !important;
+  }
+
+  .quantity-btn.increase {
+    border-radius: 0 8px 8px 0 !important;
+  }
+
+  /* Enhanced Add to Booking button */
+  .btn.btn-primary {
+    height: 50px !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    box-shadow: 0 4px 15px rgba(var(--first-color-rgb), 0.3) !important;
+    transition: all 0.3s ease !important;
+  }
+
+  .btn.btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(var(--first-color-rgb), 0.4) !important;
   }
 
   /* Hide any share buttons if they exist */
@@ -388,13 +490,32 @@
   .old-price {
     font-size: 1rem;
   }
-    .save-price {
+  .save-price {
     font-size: 0.8rem;
   }
 
-  /* Keep details-action hidden on smaller screens too */
+  /* Keep details-action visible on smaller screens too */
   .details-action {
-    display: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    padding: 15px !important;
+  }
+
+  .quantity-container {
+    width: 120px !important;
+  }
+
+  .quantity {
+    width: 60px !important;
+    height: 44px !important;
+    font-size: 1rem !important;
+  }
+
+  .quantity-btn {
+    width: 30px !important;
+    height: 44px !important;
+    font-size: 1.1rem !important;
   }
   
   .list-item {
