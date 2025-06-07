@@ -157,9 +157,8 @@ $(document).ready(function () {
         // Size selection in cart modal
         $(document).on("click", ".size-link", handleSizeSelection);        // Authentication modal
         $(".auth-close, #auth-modal-cancel").on("click", hideAuthModal);
-        $("#auth-modal-login").on("click", () => {
-            window.location.href = "user_authentication.html";
-        });
+        // Remove the login button handler since we're using the modal directly
+        // No need to redirect to user_authentication.html anymore
 
         // Close dropdowns when clicking outside
         $(document).on("click", function(e) {

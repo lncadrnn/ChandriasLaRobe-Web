@@ -36,19 +36,32 @@ $(document).ready(function () {
     // Listen for authentication state changes
     onAuthStateChanged(auth, async user => {
         if (user) {
-            // User logged in
+            // User logged in - show main content
             $("#nav-login").hide();
             localStorage.setItem('userEmail', user.email);
+            
+            // Show the wishlist section
+            $(".wishlist.section-lg.container").addClass("authenticated").show();
+            
             await updateCartCount();
             await updateWishlistCount();
             await displayWishlistItems();
         } else {
-            // User not logged in - just show empty state without modal
+            // User not logged in - hide main content and show authentication modal
             $("#nav-login").show();
             localStorage.removeItem('userEmail');
             $("#cart-count").text("0");
             $("#wishlist-count").text("0");
+            
+            // Hide the wishlist section
+            $(".wishlist.section-lg.container").removeClass("authenticated").hide();
+            
             showEmptyWishlist();
+            
+            // Show authentication modal for unauthenticated users visiting wishlist
+            setTimeout(() => {
+                showAuthModal();
+            }, 500); // Small delay to ensure page has loaded properly
         }
     });    // AUTHENTICATION MODAL FUNCTIONS
     function initializeAuthModal() {
@@ -59,10 +72,8 @@ $(document).ready(function () {
             hideAuthModal();
         });
         
-        // Login button handler
-        $(document).on("click", "#auth-modal-login", function(e) {
-            window.location.href = "user_authentication.html";
-        });
+        // Remove the login button handler since we're using the modal directly
+        // No need to redirect to user_authentication.html anymore
         
         // Close modal when clicking outside
         $(document).on("click", "#auth-modal", function(e) {
@@ -86,6 +97,12 @@ $(document).ready(function () {
             authModal.classList.remove("show");
             document.body.style.overflow = ""; // Restore scrolling
         }
+        
+        // If user is not authenticated and closes modal, ensure content stays hidden
+        const user = auth.currentUser;
+        if (!user) {
+            $(".wishlist.section-lg.container").removeClass("authenticated").hide();
+        }
     }
 
     // Make showAuthModal globally accessible
@@ -98,6 +115,9 @@ $(document).ready(function () {
             showEmptyWishlist();
             return;
         }
+
+        // Ensure content is visible for authenticated users
+        $(".wishlist.section-lg.container").addClass("authenticated").show();
 
         try {
             const userRef = doc(chandriaDB, "userAccounts", user.uid);
@@ -177,19 +197,43 @@ $(document).ready(function () {
             showEmptyWishlist();
         }
     }    function showEmptyWishlist() {
+        const user = auth.currentUser;
         const wishlistTable = $("#wishlist-body");
-        wishlistTable.html(`
-            <tr>
-                <td colspan="6" style="text-align: center; padding: 2rem;">
-                    <div class="empty-wishlist">
-                        <i class="fi fi-rs-heart" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
-                        <h3>Your wishlist is empty</h3>
-                        <p>Add items to your wishlist to see them here</p>
-                        <a href="shop.html" class="btn btn-primary" style="margin-top: 1rem;">Browse Products</a>
-                    </div>
-                </td>
-            </tr>
-        `);
+        
+        if (!user) {
+            // For unauthenticated users, ensure main content is hidden
+            $(".wishlist.section-lg.container").removeClass("authenticated").hide();
+            
+            // Show login prompt in table (this will be hidden anyway, but for completeness)
+            wishlistTable.html(`
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 2rem;">
+                        <div class="empty-wishlist">
+                            <i class="fi fi-rs-heart" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                            <h3>Please log in to view your wishlist</h3>
+                            <p>Sign in to save and manage your favorite items</p>
+                            <button onclick="showAuthModal()" class="btn btn-primary" style="margin-top: 1rem; margin-right: 0.5rem;">Log In</button>
+                            <a href="shop.html" class="btn btn-secondary" style="margin-top: 1rem;">Browse Products</a>
+                        </div>
+                    </td>
+                </tr>
+            `);
+        } else {
+            // Show empty wishlist message for authenticated users
+            $(".wishlist.section-lg.container").addClass("authenticated").show();
+            wishlistTable.html(`
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 2rem;">
+                        <div class="empty-wishlist">
+                            <i class="fi fi-rs-heart" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                            <h3>Your wishlist is empty</h3>
+                            <p>Add items to your wishlist to see them here</p>
+                            <a href="shop.html" class="btn btn-primary" style="margin-top: 1rem;">Browse Products</a>
+                        </div>
+                    </td>
+                </tr>
+            `);
+        }
     }
 
     // ADD TO CART FROM WISHLIST

@@ -78,7 +78,8 @@ $(document).ready(function () {
     );
 
     $(document).on("click", "#auth-modal-login", function () {
-        window.location.href = "./user_authentication.html";
+        // No need to redirect to user_authentication.html anymore
+        // Authentication is handled directly in the modal
     });
 
     // Close modal when clicking outside
@@ -367,7 +368,7 @@ $(document).ready(function () {
 
         const user = auth.currentUser;
         if (!user) {
-            window.location.href = "./user_authentication.html";
+            showAuthModal();
             return;
         }
 

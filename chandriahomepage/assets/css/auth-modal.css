@@ -989,4 +989,13 @@
   margin-bottom: 0.5rem; /* Remove bottom margin */
 }
 
+/* =============== WISHLIST CONTENT VISIBILITY =============== */
+.wishlist.section-lg.container {
+  display: none; /* Hidden by default until user is authenticated */
+}
+
+.wishlist.section-lg.container.authenticated {
+  display: block; /* Show when user is authenticated */
+}
+
 /* =============== CONSISTENT AUTO-HEIGHT BEHAVIOR FOR ALL FORMS =============== */
