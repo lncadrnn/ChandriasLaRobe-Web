@@ -237,7 +237,7 @@ $(document).ready(async function () {
   }
 
   // Authentication modal event listeners
-  $(document).on('click', '#auth-modal-close, #auth-modal-cancel', function() {
+  $(document).on('click', '.auth-close, #auth-modal-cancel', function() {
     hideAuthModal();
   });
 

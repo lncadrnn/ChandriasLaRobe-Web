@@ -55,8 +55,8 @@ $(document).ready(function () {
         // Modal already exists in HTML, just set up event handlers
         
         // Close modal handlers
-        $(document).on("click", ".auth-modal-close, #auth-modal-close, #auth-modal-cancel", function(e) {
-            $("#auth-modal").hide();
+        $(document).on("click", ".auth-close, #auth-modal-cancel", function(e) {
+            hideAuthModal();
         });
         
         // Login button handler
@@ -65,14 +65,31 @@ $(document).ready(function () {
         });
         
         // Close modal when clicking outside
-        $(document).on("click", ".auth-modal-overlay", function(e) {
+        $(document).on("click", "#auth-modal", function(e) {
             if (e.target === this) {
-                $("#auth-modal").hide();
+                hideAuthModal();
             }
         });
-    }    function showAuthModal() {
-        $("#auth-modal").show();
     }
+
+    function showAuthModal() {
+        const authModal = document.getElementById("auth-modal");
+        if (authModal) {
+            authModal.classList.add("show");
+            document.body.style.overflow = "hidden"; // Prevent background scrolling
+        }
+    }
+
+    function hideAuthModal() {
+        const authModal = document.getElementById("auth-modal");
+        if (authModal) {
+            authModal.classList.remove("show");
+            document.body.style.overflow = ""; // Restore scrolling
+        }
+    }
+
+    // Make showAuthModal globally accessible
+    window.showAuthModal = showAuthModal;
 
     // DISPLAY WISHLIST ITEMS
     async function displayWishlistItems() {

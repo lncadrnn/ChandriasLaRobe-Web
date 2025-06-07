@@ -65,10 +65,13 @@ $(document).ready(function () {
         }
     }
 
+    // Make showAuthModal globally accessible
+    window.showAuthModal = showAuthModal;
+
     // Authentication modal event listeners
     $(document).on(
         "click",
-        "#auth-modal-close, #auth-modal-cancel",
+        ".auth-close, #auth-modal-cancel",
         function () {
             hideAuthModal();
         }

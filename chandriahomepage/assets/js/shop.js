@@ -155,10 +155,8 @@ $(document).ready(function () {
         $("#btn-rent").on("click", handleAddToCart);
 
         // Size selection in cart modal
-        $(document).on("click", ".size-link", handleSizeSelection);
-
-        // Authentication modal
-        $("#auth-modal-close, #auth-modal-cancel").on("click", hideAuthModal);
+        $(document).on("click", ".size-link", handleSizeSelection);        // Authentication modal
+        $(".auth-close, #auth-modal-cancel").on("click", hideAuthModal);
         $("#auth-modal-login").on("click", () => {
             window.location.href = "user_authentication.html";
         });
@@ -1062,16 +1060,25 @@ $(document).ready(function () {
             button.find('.btn-text').show();
             button.find('.spinner').hide();
         }
-    }
-
-    // Authentication modal functions
+    }    // Authentication modal functions
     function showAuthModal() {
-        $("#auth-modal").addClass("show").show();
+        const authModal = document.getElementById("auth-modal");
+        if (authModal) {
+            authModal.classList.add("show");
+            document.body.style.overflow = "hidden"; // Prevent background scrolling
+        }
     }
 
     function hideAuthModal() {
-        $("#auth-modal").removeClass("show").hide();
+        const authModal = document.getElementById("auth-modal");
+        if (authModal) {
+            authModal.classList.remove("show");
+            document.body.style.overflow = ""; // Restore scrolling
+        }
     }
+
+    // Make showAuthModal globally accessible
+    window.showAuthModal = showAuthModal;
 
     // Cart count function
     async function updateCartCount() {
