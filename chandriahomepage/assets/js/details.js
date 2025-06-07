@@ -399,6 +399,7 @@ $(document).ready(async function () {
   // Update cart count on auth state change
   onAuthStateChanged(auth, async user => {
     await updateCartCount();
+    await updateRelatedProductsCartStatus();
   });
 
   // Cart count function
@@ -482,7 +483,7 @@ function formatCategoryName(category) {
 async function loadRelatedProducts(category, color, currentProductId) {
     try {
         // Clear existing related products
-        const productsContainer = document.querySelector('.products-container');
+        const productsContainer = document.getElementById('related-products-container');
         if (!productsContainer) return;
         
         productsContainer.innerHTML = ''; // Clear existing products
@@ -559,6 +560,11 @@ async function loadRelatedProducts(category, color, currentProductId) {
             productsContainer.innerHTML += productHTML;
         });
         
+        // Update cart button status for related products
+        setTimeout(() => {
+            updateRelatedProductsCartStatus();
+        }, 100);
+        
         console.log("Related products loaded:", {
             category: categoryProducts.length,
             color: colorProducts.length,
@@ -570,59 +576,86 @@ async function loadRelatedProducts(category, color, currentProductId) {
     }
 }
 
-// Function to create HTML for a product
+// Function to create HTML for a product (enhanced version similar to shop.html)
 function createProductHTML(product) {
+    const availableSizes = product.size ? Object.keys(product.size).filter(size => product.size[size] > 0) : [];
+    const categoryDisplay = formatCategoryName(product.category) || "Item";
+    const price = product.price ? `₱ ${product.price}` : "Price available in-store";
+    const imageUrl = product.frontImageUrl || product.imageUrl || "assets/img/placeholder.jpg";
+    const backImageUrl = product.backImageUrl || imageUrl;
+    const colorHex = product.color || "#f8f9fa";
+    
+    // Create size options HTML
+    let sizeOptionsHTML = '';
+    if (availableSizes.length > 0 && !product.isAdditional) {
+        // Create options with stock information
+        const sizeOptions = availableSizes.map(size => {
+            const stock = product.size[size];
+            return `<option value="${size}" data-stock="${stock}">${size} (${stock})</option>`;
+        }).join('');
+        
+        // Get initial stock for first size
+        const initialSize = availableSizes[0];
+        const initialStock = product.size[initialSize];
+        
+        // Determine stock class
+        let stockClass = '';
+        if (initialStock <= 3) stockClass = 'very-low-stock';
+        else if (initialStock <= 5) stockClass = 'low-stock';
+          
+        sizeOptionsHTML = `
+        <div class="product-size-options">
+            <div class="size-selection">
+                <div class="size-selector-container">
+                    <select class="size-selector" data-product-id="${product.id}">
+                        ${sizeOptions}
+                    </select>
+                </div>
+            </div>
+            <div class="quantity-selection">
+                <button class="quantity-btn minus-btn" data-product-id="${product.id}" disabled>-</button>
+                <span class="quantity-value" data-product-id="${product.id}">1</span>
+                <button class="quantity-btn plus-btn" data-product-id="${product.id}" ${initialStock <= 1 ? 'disabled' : ''}>+</button>
+            </div>
+        </div>`;
+    }
+    
     return `
     <div class="product-item">
+        <div class="loading-state">
+            <div class="loading-spinner"></div>
+        </div>
         <div class="product-banner">
             <a href="details.html?id=${product.id}" class="product-images">
-                <img
-                    src="${product.frontImageUrl}"
-                    alt="${product.name}"
-                    class="product-img default"
-                />
-                <img
-                    src="${product.backImageUrl || product.frontImageUrl}"
-                    alt="${product.name}"
-                    class="product-img hover"
-                />
+                <img src="${imageUrl}" alt="${product.name || "Product"}" class="product-img default">
+                <img src="${backImageUrl}" alt="${product.name || "Product"}" class="product-img hover">
             </a>
-            <!-- Product actions are hidden via CSS -->
             <div class="product-actions">
-                <a
-                    href="#"
-                    class="action-btn"
-                    aria-label="Quick View"
-                >
+                <a href="#" class="action-btn" aria-label="Quick View" data-product-id="${product.id}">
                     <i class="fi fi-rs-eye"></i>
                 </a>
-                <a
-                    href="#"
-                    class="action-btn"
-                    aria-label="Add to Rent List"
-                >
+                <a href="#" class="action-btn" aria-label="Add to Rent List" data-product-id="${product.id}">
                     <i class="fi fi-rs-heart"></i>
                 </a>
-                <a
-                    href="#"
-                    class="action-btn"
-                    aria-label="share"
-                >
-                    <i class="fi fi-rs-shuffle"></i>
-                </a>
             </div>
+            
+            <div class="price-tag">${price}</div>
+            <div class="product-color-indicator" style="background-color: ${colorHex}" title="${product.colorName || 'Color'}" data-product-id="${product.id}"></div>
         </div>
         <div class="product-content">
-            <span class="product-category">${formatCategoryName(product.category)}</span>
-            <a href="details.html?id=${product.id}">
-                <h3 class="product-title">
-                    ${product.name}
-                </h3>
-            </a>
-            <div class="product-price flex">
-                <span class="new-price">₱ ${product.price}/rent</span>
+            <div class="product-header">
+                <div class="product-info">
+                    <span class="product-category">${categoryDisplay}</span>
+                    <a href="details.html?id=${product.id}">
+                        <h3 class="product-title">${product.name || "Untitled Product"}</h3>
+                    </a>
+                </div>
+                ${!product.isAdditional ? `
+                <button class="add-to-cart-action-btn" data-product-id="${product.id}" data-in-cart="false" title="Add to Cart">
+                    <i class="fi fi-rs-shopping-bag-add"></i>
+                </button>` : ''}
             </div>
-            <!-- Rent button removed from related products -->
+            ${sizeOptionsHTML}
         </div>
     </div>
     `;
@@ -890,4 +923,267 @@ window.addEventListener('resize', function() {
         }
     }
 });
+
+// #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+// ENHANCED PRODUCT CARD EVENT HANDLERS FOR RELATED PRODUCTS
+  
+  // Size selection in related products
+  $(document).on("change", "#related-products-container .size-selector", function() {
+    const productId = $(this).data("product-id");
+    const newSize = $(this).val();
+    const productCard = $(this).closest('.product-item');
+    const quantityElement = productCard.find(".quantity-value");
+    const plusButton = productCard.find(".plus-btn");
+    const minusButton = productCard.find(".minus-btn");
+    
+    // Show loading state
+    productCard.addClass("is-loading");
+    
+    // Reset quantity to 1 when size changes
+    quantityElement.text("1");
+    minusButton.prop("disabled", true).addClass("disabled");
+    
+    // Check stock for new size
+    setTimeout(() => {
+      const sizeOption = $(this).find(`option[value="${newSize}"]`);
+      const stock = parseInt(sizeOption.data("stock")) || 0;
+      
+      if (stock <= 1) {
+        plusButton.prop("disabled", true).addClass("disabled");
+      } else {
+        plusButton.prop("disabled", false).removeClass("disabled");
+      }
+      
+      productCard.removeClass("is-loading");
+    }, 300);
+  });
+  
+  // Quantity increase in related products
+  $(document).on("click", "#related-products-container .quantity-btn.plus-btn", function() {
+    const productId = $(this).data("product-id");
+    const productCard = $(this).closest('.product-item');
+    const quantityElement = $(this).siblings(".quantity-value");
+    const selectedSize = productCard.find('.size-selector').val();
+    const minusBtn = productCard.find('.minus-btn');
+    let currentQuantity = parseInt(quantityElement.text()) || 1;
+    
+    // Show loading animation
+    productCard.addClass("is-loading");
+    
+    // Get stock limit from size selector option
+    const sizeOption = productCard.find('.size-selector option:selected');
+    const maxStock = parseInt(sizeOption.data("stock")) || 0;
+    
+    if (currentQuantity < maxStock) {
+      currentQuantity++;
+      quantityElement.text(currentQuantity);
+      
+      // Enable minus button when quantity is more than 1
+      minusBtn.prop("disabled", false).removeClass("disabled");
+      
+      // Disable plus button if at max stock
+      if (currentQuantity >= maxStock) {
+        $(this).prop("disabled", true).addClass("disabled");
+      }
+    } else {
+      notyf.error(`Maximum available stock for size ${selectedSize} is ${maxStock}`);
+    }
+    
+    // Remove loading animation after a short delay
+    setTimeout(() => {
+      productCard.removeClass("is-loading");
+    }, 300);
+  });
+  
+  // Quantity decrease in related products
+  $(document).on("click", "#related-products-container .quantity-btn.minus-btn", function() {
+    const productId = $(this).data("product-id");
+    const productCard = $(this).closest('.product-item');
+    const quantityElement = $(this).siblings(".quantity-value");
+    const plusBtn = productCard.find('.plus-btn');
+    let currentQuantity = parseInt(quantityElement.text()) || 1;
+    
+    // Show loading animation
+    productCard.addClass("is-loading");
+    
+    if (currentQuantity > 1) {
+      currentQuantity--;
+      quantityElement.text(currentQuantity);
+      
+      // Disable minus button when quantity reaches 1
+      if (currentQuantity === 1) {
+        $(this).prop("disabled", true).addClass("disabled");
+      }
+      
+      // Enable plus button if previously disabled due to max stock
+      plusBtn.prop("disabled", false).removeClass("disabled");
+    }
+    
+    // Remove loading animation after a short delay
+    setTimeout(() => {
+      productCard.removeClass("is-loading");
+    }, 300);
+  });
+  
+  // Add to cart functionality for related products
+  $(document).on("click", "#related-products-container .add-to-cart-action-btn", async function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const user = auth.currentUser;
+    if (!user) {
+      showAuthModal();
+      return;
+    }
+    
+    const button = $(this);
+    const productId = button.data("product-id");
+    const isInCart = button.attr("data-in-cart") === "true";
+    
+    if (!productId) return;
+    
+    // Add loading state
+    button.addClass("loading");
+    
+    try {
+      const userRef = doc(chandriaDB, "userAccounts", user.uid);
+      const userSnap = await getDoc(userRef);
+      
+      if (!userSnap.exists()) {
+        notyf.error("User account not found.");
+        return;
+      }
+      
+      const currentCart = userSnap.data().added_to_cart || [];
+      
+      if (isInCart) {
+        // Remove from cart - remove all instances of this product
+        const updatedCart = currentCart.filter(item => item.productId !== productId);
+        await updateDoc(userRef, { added_to_cart: updatedCart });
+        
+        button.attr("data-in-cart", "false");
+        button.find('i').removeClass('fi-rs-shopping-bag-added').addClass('fi-rs-shopping-bag-add');
+        notyf.success("Removed from cart!");
+        
+      } else {
+        // Get selected size and quantity from the product card
+        const productCard = button.closest('.product-item');
+        let selectedSize = productCard.find('.size-selector').val();
+        let selectedQuantity = parseInt(productCard.find('.quantity-value').text()) || 1;
+        
+        // Fallback to auto-selecting size if not available on the card
+        if (!selectedSize) {
+          selectedSize = "One Size";
+        }
+        
+        // Check if same product/size combination already exists
+        const existingIndex = currentCart.findIndex(
+          item => item.productId === productId && item.size === selectedSize
+        );
+        
+        if (existingIndex !== -1) {
+          // Update quantity
+          currentCart[existingIndex].quantity = (currentCart[existingIndex].quantity || 1) + selectedQuantity;
+          await updateDoc(userRef, { added_to_cart: currentCart });
+        } else {
+          // Add new item
+          await updateDoc(userRef, {
+            added_to_cart: arrayUnion({
+              productId,
+              size: selectedSize,
+              quantity: selectedQuantity
+            })
+          });
+        }
+        
+        button.attr("data-in-cart", "true");
+        button.find('i').removeClass('fi-rs-shopping-bag-add').addClass('fi-rs-shopping-bag-added');
+        notyf.success(`Added to cart! Size: ${selectedSize}, Qty: ${selectedQuantity}`);
+      }
+      
+      // Update cart count
+      await updateCartCount();
+      
+    } catch (error) {
+      console.error("Error updating cart:", error);
+      notyf.error("An error occurred. Please try again.");
+    } finally {
+      button.removeClass("loading");
+    }
+  });
+  
+  // Color indicator tooltip for related products
+  $(document).on("click", "#related-products-container .product-color-indicator", function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const colorName = $(this).attr('title') || 'Color';
+    
+    // Create or get tooltip
+    let tooltip = $('.color-tooltip');
+    if (tooltip.length === 0) {
+      $('body').append('<div class="color-tooltip"></div>');
+      tooltip = $('.color-tooltip');
+    }
+    
+    // Position tooltip near the color indicator
+    const position = $(this).offset();
+    tooltip.text(colorName)
+      .css({
+        'top': position.top - 30,
+        'left': position.left - (tooltip.width() / 2) + 12,
+        'opacity': 1,
+        'visibility': 'visible'
+      });
+    
+    // Hide tooltip after 2 seconds
+    setTimeout(() => {
+      tooltip.css({
+        'opacity': 0,
+        'visibility': 'hidden'
+      });
+    }, 2000);
+  });
+  
+  // Function to update cart button status for related products
+  async function updateRelatedProductsCartStatus() {
+    const user = auth.currentUser;
+    if (!user) {
+      // Reset all buttons to default state
+      $('#related-products-container .add-to-cart-action-btn').attr('data-in-cart', 'false');
+      $('#related-products-container .add-to-cart-action-btn i').removeClass('fi-rs-shopping-bag-added').addClass('fi-rs-shopping-bag-add');
+      return;
+    }
+    
+    try {
+      const userRef = doc(chandriaDB, "userAccounts", user.uid);
+      const userSnap = await getDoc(userRef);
+      
+      if (!userSnap.exists()) return;
+      
+      const cartItems = userSnap.data().added_to_cart || [];
+      const cartProductIds = cartItems.map(item => item.productId);
+      
+      // Update each button based on cart status
+      $('#related-products-container .add-to-cart-action-btn').each(function() {
+        const productId = $(this).data('product-id');
+        const isInCart = cartProductIds.includes(productId);
+        
+        $(this).attr('data-in-cart', isInCart ? 'true' : 'false');
+        
+        const icon = $(this).find('i');
+        if (isInCart) {
+          icon.removeClass('fi-rs-shopping-bag-add').addClass('fi-rs-shopping-bag-added');
+        } else {
+          icon.removeClass('fi-rs-shopping-bag-added').addClass('fi-rs-shopping-bag-add');
+        }
+      });
+      
+    } catch (error) {
+      console.error('Error updating related products cart status:', error);
+    }
+  }
+
+  // Initial cart status update
+  updateRelatedProductsCartStatus();
 });

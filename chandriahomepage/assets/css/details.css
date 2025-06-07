@@ -360,3 +360,108 @@
     border-radius: 8px 0 0 8px !important;
     border-right: none !important;
   }
+
+/* Related Products Add to Rent Button - High specificity to override existing styles */
+.products-container .product-item .product-content .add-to-rent-btn {
+    width: 100% !important;
+    padding: 12px 16px !important;
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3) !important;
+    margin-top: 8px !important;
+    position: relative !important;
+    overflow: hidden !important;
+    display: block !important;
+    text-align: center !important;
+    text-decoration: none !important;
+}
+
+.products-container .product-item .product-content .add-to-rent-btn:hover {
+    background: linear-gradient(135deg, #45a049 0%, #4CAF50 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4) !important;
+    color: white !important;
+}
+
+.products-container .product-item .product-content .add-to-rent-btn:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3) !important;
+    color: white !important;
+}
+
+.products-container .product-item .product-content .add-to-rent-btn::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent) !important;
+    transition: left 0.5s ease !important;
+}
+
+.products-container .product-item .product-content .add-to-rent-btn:hover::before {
+    left: 100% !important;
+}
+
+/* =============== HIGHEST PRIORITY OVERRIDES =============== */
+/* Force override any conflicting styles for add-to-rent buttons */
+.details.section-lg .products.container .products-container .product-item .product-content .add-to-rent-btn,
+.products.container .products-container .product-item .product-content .add-to-rent-btn,
+.section.products .products-container .product-item .product-content .add-to-rent-btn,
+button.add-to-rent-btn,
+.add-to-rent-btn {
+    width: 100% !important;
+    padding: 12px 16px !important;
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3) !important;
+    margin-top: 8px !important;
+    position: relative !important;
+    overflow: hidden !important;
+    display: block !important;
+    text-align: center !important;
+    text-decoration: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    outline: none !important;
+}
+
+.details.section-lg .products.container .products-container .product-item .product-content .add-to-rent-btn:hover,
+.products.container .products-container .product-item .product-content .add-to-rent-btn:hover,
+.section.products .products-container .product-item .product-content .add-to-rent-btn:hover,
+button.add-to-rent-btn:hover,
+.add-to-rent-btn:hover {
+    background: linear-gradient(135deg, #45a049 0%, #388e3c 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4) !important;
+    color: white !important;
+    text-decoration: none !important;
+}
+
+.details.section-lg .products.container .products-container .product-item .product-content .add-to-rent-btn:active,
+.products.container .products-container .product-item .product-content .add-to-rent-btn:active,
+.section.products .products-container .product-item .product-content .add-to-rent-btn:active,
+button.add-to-rent-btn:active,
+.add-to-rent-btn:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3) !important;
+    color: white !important;
+    text-decoration: none !important;
+}

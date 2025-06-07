@@ -33,10 +33,271 @@
         <link rel="stylesheet" href="./assets/css/product-card.css" />
         <link rel="stylesheet" href="./assets/css/details.css" />
         <link rel="stylesheet" href="./assets/css/details-mobile.css" />
+        <link rel="stylesheet" href="./assets/css/force-override.css" />
         
         <title>Chandria's La Robe</title>
     </head>
     <body>
+        <style>
+      /* Enhanced product card styling for related products */
+      .product-size-options {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+        padding: 10px 8px !important;
+        background-color: #f9f9f9 !important;
+        border-radius: 0 0 8px 8px !important;
+        border-top: 1px solid #eee !important;
+        margin-top: 5px !important;
+        transition: all 0.3s ease !important;
+      }
+      
+      /* Modernize quantity, size, and Add to Rent button on product cards */      
+      .products-container .product-item {
+        border-radius: 14px;
+        box-shadow: 0 2px 16px rgba(40, 167, 69, 0.07);
+        background: #fff;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+      
+      .size-selector, .enhanced-size-selector {
+        border-radius: 6px;
+        border: 1.5px solid #e0e0e0;
+        background: #f8f9fa;
+        padding: 4px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #222;
+        margin-bottom: 8px;
+        outline: none;
+        transition: border 0.2s;
+        width: 68%;
+      }
+      
+      .size-selector:focus, .enhanced-size-selector:focus {
+        border-color: hsl(346, 100%, 74%); /* Pink */
+      }
+      
+      .quantity-selection, .quantity-control {
+        background: #f8f9fa;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 4px 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 70%;
+        margin-bottom: 8px;
+      }
+      
+      .quantity-btn, .enhanced-quantity-btn {
+        background: #fff;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 8px;
+        color: #222;
+        font-weight: bold;
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+        transition: background 0.2s, border-color 0.2s;
+        cursor: pointer;
+      }
+      
+      .quantity-btn:hover, .enhanced-quantity-btn:hover {
+        background: #ffe6f0;
+        border-color: hsl(346, 100%, 74%);
+      }
+      
+      .quantity-value, .enhanced-quantity-value {
+        font-size: 15px;
+        font-weight: 600;
+        min-width: 28px;
+        text-align: center;
+        color: #222;
+      }      
+      
+      .circular-cart-btn, .enhanced-cart-btn {
+        height: 40px;
+        border-radius: 999px;
+        background: #28a745;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 20px;
+        font-size: 15px;
+        font-weight: 600;
+        transition: none !important;
+        transform: none !important;
+        animation: none !important;
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.10);
+        gap: 8px;
+        width: 30%;
+      }      
+      
+      .circular-cart-btn[data-in-cart="true"], .enhanced-cart-btn[data-in-cart="true"], .add-to-cart-action-btn[data-in-cart="true"] {
+        background: #e74c3c;
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(231, 76, 60, 0.10);
+      }
+      
+      .circular-cart-btn[data-in-cart="false"], .enhanced-cart-btn[data-in-cart="false"], .add-to-cart-action-btn[data-in-cart="false"] {
+        background: #28a745;
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.10);
+      }      
+      
+      .circular-cart-btn:hover, .enhanced-cart-btn:hover, .add-to-cart-action-btn:hover {
+        transform: none !important;
+        animation: none !important;
+      }
+      
+      .circular-cart-btn[data-in-cart="true"]:hover, .enhanced-cart-btn[data-in-cart="true"]:hover, .add-to-cart-action-btn[data-in-cart="true"]:hover {
+        background: #c0392b !important;
+        box-shadow: 0 2px 8px rgba(231, 76, 60, 0.10) !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      
+      .circular-cart-btn[data-in-cart="false"]:hover, .enhanced-cart-btn[data-in-cart="false"]:hover, .add-to-cart-action-btn[data-in-cart="false"]:hover {
+        background: #218838 !important;
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.10) !important;
+        transform: none !important;
+        animation: none !important;
+      }
+
+      .size-selection {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .size-selector-container {
+        width: 68%;
+      }
+
+      .quantity-cart-container {
+        display: flex;
+        width: 100%;
+        gap: 8px;
+      }
+
+      /* Color indicator tooltip */
+      .color-tooltip {
+        position: absolute;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s, visibility 0.3s;
+        z-index: 1000;
+        pointer-events: none;
+      }
+      
+      .color-tooltip::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 5px solid transparent;
+        border-top-color: rgba(0, 0, 0, 0.8);
+      }
+      
+      /* Loading spinner for product cards */
+      .product-item.is-loading::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 20px;
+        height: 20px;
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #ff9aaf;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        z-index: 100;
+      }
+      
+      .product-item.is-loading {
+        position: relative;
+        pointer-events: none;
+        opacity: 0.7;
+      }
+      
+      @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+      }
+      
+      /* Enhanced cart button loading state */
+      .add-to-cart-action-btn.loading {
+        opacity: 0.6;
+        pointer-events: none;
+      }
+      
+      .add-to-cart-action-btn.loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 12px;
+        height: 12px;
+        border: 1px solid #ffffff40;
+        border-top: 1px solid #ffffff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      
+      /* Icon change when in cart */
+      .add-to-cart-action-btn[data-in-cart="true"] {
+        background-color: #28a745;
+      }
+      
+      .add-to-cart-action-btn[data-in-cart="true"]:hover {
+        background-color: #218838;
+      }
+
+      /* Responsive/mobile tweaks */
+      @media (max-width: 768px) {
+        .products-container .product-item {
+          border-radius: 10px;
+        }
+        .size-selector, .enhanced-size-selector {
+          font-size: 13px;
+          padding: 4px 10px;
+        }
+        .quantity-selection, .quantity-control {
+          padding: 3px 4px;
+          gap: 4px;
+        }
+        .circular-cart-btn, .enhanced-cart-btn {
+          height: 36px;
+          font-size: 13px;
+          padding: 0 12px;
+        }
+        .quantity-btn, .enhanced-quantity-btn {
+          width: 24px;
+          height: 24px;
+          font-size: 14px;
+        }
+        .quantity-value, .enhanced-quantity-value {
+          font-size: 13px;
+          min-width: 24px;
+        }
+      }
+      </style>
         <!-- Full Screen Details Loader -->
         <div id="details-loader" class="shop-loader">
             <div class="shop-loader-content">
@@ -281,182 +542,8 @@
             <section class="products container section-lg">
                 <h3 class="section-title">Related Products</h3>
 
-                <div class="products-container grid">
-                    <div class="product-item">
-                        <div class="loading-state">
-                            <div class="loading-spinner"></div>
-                        </div>
-                        <div class="product-banner">
-                            <a href="details.html" class="product-images">
-                                <img
-                                    src="assets/img/product-2-1.jpg"
-                                    alt="Colorful Pattern Shirt"
-                                    class="product-img default"
-                                />
-                                <img
-                                    src="assets/img/product-2-2.jpg"
-                                    alt="Colorful Pattern Shirt"
-                                    class="product-img hover"
-                                />
-                            </a>
-                            <div class="product-actions">
-                                <a href="#" class="action-btn" aria-label="Quick View" data-product-id="product-2">
-                                    <i class="fi fi-rs-eye"></i>
-                                </a>
-                                <a href="#" class="action-btn" aria-label="Add to Rent List" data-product-id="product-2">
-                                    <i class="fi fi-rs-heart"></i>
-                                </a>
-                            </div>
-                            
-                            <div class="price-tag">₱ 1500/24hr</div>
-                            <div class="product-color-indicator" style="background-color: #ff6b9d" title="Pink" data-product-id="product-2"></div>
-                        </div>
-                        <div class="product-content">
-                            <div class="product-header">
-                                <div class="product-info">
-                                    <span class="product-category">Clothing</span>
-                                    <a href="details.html">
-                                        <h3 class="product-title">Colorful Pattern Shirt</h3>
-                                    </a>
-                                </div>
-                                <button class="add-to-cart-action-btn" data-product-id="product-2" data-in-cart="false" title="View Details">
-                                    <i class="fi fi-rs-shopping-bag-add"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="product-item">
-                        <div class="loading-state">
-                            <div class="loading-spinner"></div>
-                        </div>
-                        <div class="product-banner">
-                            <a href="details.html" class="product-images">
-                                <img
-                                    src="assets/img/product-3-1.jpg"
-                                    alt="Elegant Dress"
-                                    class="product-img default"
-                                />
-                                <img
-                                    src="assets/img/product-3-2.jpg"
-                                    alt="Elegant Dress"
-                                    class="product-img hover"
-                                />
-                            </a>
-                            <div class="product-actions">
-                                <a href="#" class="action-btn" aria-label="Quick View" data-product-id="product-3">
-                                    <i class="fi fi-rs-eye"></i>
-                                </a>
-                                <a href="#" class="action-btn" aria-label="Add to Rent List" data-product-id="product-3">
-                                    <i class="fi fi-rs-heart"></i>
-                                </a>
-                            </div>
-                            
-                            <div class="price-tag">₱ 2200/24hr</div>
-                            <div class="product-color-indicator" style="background-color: #4a90e2" title="Blue" data-product-id="product-3"></div>
-                        </div>
-                        <div class="product-content">
-                            <div class="product-header">
-                                <div class="product-info">
-                                    <span class="product-category">Dresses</span>
-                                    <a href="details.html">
-                                        <h3 class="product-title">Elegant Cocktail Dress</h3>
-                                    </a>
-                                </div>
-                                <button class="add-to-cart-action-btn" data-product-id="product-3" data-in-cart="false" title="View Details">
-                                    <i class="fi fi-rs-shopping-bag-add"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="product-item">
-                        <div class="loading-state">
-                            <div class="loading-spinner"></div>
-                        </div>
-                        <div class="product-banner">
-                            <a href="details.html" class="product-images">
-                                <img
-                                    src="assets/img/product-5-1.jpg"
-                                    alt="Summer Blouse"
-                                    class="product-img default"
-                                />
-                                <img
-                                    src="assets/img/product-5-2.jpg"
-                                    alt="Summer Blouse"
-                                    class="product-img hover"
-                                />
-                            </a>
-                            <div class="product-actions">
-                                <a href="#" class="action-btn" aria-label="Quick View" data-product-id="product-5">
-                                    <i class="fi fi-rs-eye"></i>
-                                </a>
-                                <a href="#" class="action-btn" aria-label="Add to Rent List" data-product-id="product-5">
-                                    <i class="fi fi-rs-heart"></i>
-                                </a>
-                            </div>
-                            
-                            <div class="price-tag">₱ 1800/24hr</div>
-                            <div class="product-color-indicator" style="background-color: #f39c12" title="Orange" data-product-id="product-5"></div>
-                        </div>
-                        <div class="product-content">
-                            <div class="product-header">
-                                <div class="product-info">
-                                    <span class="product-category">Tops</span>
-                                    <a href="details.html">
-                                        <h3 class="product-title">Summer Floral Blouse</h3>
-                                    </a>
-                                </div>
-                                <button class="add-to-cart-action-btn" data-product-id="product-5" data-in-cart="false" title="View Details">
-                                    <i class="fi fi-rs-shopping-bag-add"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="product-item">
-                        <div class="loading-state">
-                            <div class="loading-spinner"></div>
-                        </div>
-                        <div class="product-banner">
-                            <a href="details.html" class="product-images">
-                                <img
-                                    src="assets/img/product-6-1.jpg"
-                                    alt="Evening Gown"
-                                    class="product-img default"
-                                />
-                                <img
-                                    src="assets/img/product-6-2.jpg"
-                                    alt="Evening Gown"
-                                    class="product-img hover"
-                                />
-                            </a>
-                            <div class="product-actions">
-                                <a href="#" class="action-btn" aria-label="Quick View" data-product-id="product-6">
-                                    <i class="fi fi-rs-eye"></i>
-                                </a>
-                                <a href="#" class="action-btn" aria-label="Add to Rent List" data-product-id="product-6">
-                                    <i class="fi fi-rs-heart"></i>
-                                </a>
-                            </div>
-                            
-                            <div class="price-tag">₱ 3500/24hr</div>
-                            <div class="product-color-indicator" style="background-color: #8e44ad" title="Purple" data-product-id="product-6"></div>
-                        </div>
-                        <div class="product-content">
-                            <div class="product-header">
-                                <div class="product-info">
-                                    <span class="product-category">Gowns</span>
-                                    <a href="details.html">
-                                        <h3 class="product-title">Luxurious Evening Gown</h3>
-                                    </a>
-                                </div>
-                                <button class="add-to-cart-action-btn" data-product-id="product-6" data-in-cart="false" title="View Details">
-                                    <i class="fi fi-rs-shopping-bag-add"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="products-container grid" id="related-products-container">
+                    <!-- Related products will be dynamically loaded here -->
                 </div>            </section>
         </main>
 
