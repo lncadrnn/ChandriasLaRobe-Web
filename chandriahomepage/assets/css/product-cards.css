@@ -511,6 +511,10 @@
         visibility: visible !important;
         transform: translate(-50%, -50%) !important;
         gap: 10px !important;
+        background: transparent !important;
+        backdrop-filter: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
     }
     
     .action-btn {
