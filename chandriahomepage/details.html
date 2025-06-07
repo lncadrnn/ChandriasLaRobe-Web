@@ -77,6 +77,97 @@
                 padding-bottom: 15px;
             }
             
+            /* Enhanced Quantity Input Styling */
+            .details-action .quantity {
+                width: 80px;
+                height: 45px;
+                border: 2px solid #ff7eb4; /* Pink border */
+                border-radius: 8px;
+                text-align: center;
+                font-size: 16px;
+                font-weight: 600;
+                color: var(--title-color);
+                background: var(--body-color);
+                transition: all 0.3s ease;
+                margin-right: 15px;
+                position: relative;
+                /* Show the native arrows */
+                -webkit-appearance: textfield;
+                -moz-appearance: textfield;
+                appearance: textfield;
+            }
+            
+            .details-action .quantity:focus {
+                border-color: #ff4da6; /* Darker pink on focus */
+                box-shadow: 0 0 0 3px rgba(255, 126, 180, 0.3);
+                outline: none;
+                transform: scale(1.02);
+            }
+            
+            .details-action .quantity.quantity-changed {
+                border-color: #2ecc71;
+                box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+                transform: scale(1.05);
+                background: rgba(46, 204, 113, 0.05);
+            }
+            
+            /* Force show spin buttons on all browsers */
+            .details-action .quantity::-webkit-outer-spin-button,
+            .details-action .quantity::-webkit-inner-spin-button {
+                -webkit-appearance: inner-spin-button;
+                appearance: inner-spin-button;
+                margin: 0;
+                opacity: 1;
+                height: 20px;
+                width: 20px;
+            }
+            
+            /* Firefox spin buttons */
+            .details-action .quantity[type="number"] {
+                -moz-appearance: number-input;
+            }
+            
+            /* Size Selection Enhancement */
+            .size-link {
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .size-link.size-active {
+                background: var(--first-color) !important;
+                color: var(--body-color) !important;
+                transform: scale(1.05);
+                box-shadow: 0 4px 12px rgba(255, 126, 172, 0.3);
+            }
+            
+            .size-link:hover:not(.size-active) {
+                background: rgba(255, 126, 172, 0.1);
+                transform: translateY(-2px);
+            }
+            
+            /* Stock indicator for sizes */
+            .size-link[data-stock]:after {
+                content: attr(data-stock) " left";
+                position: absolute;
+                bottom: -20px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 10px;
+                color: #666;
+                background: rgba(255, 255, 255, 0.9);
+                padding: 2px 6px;
+                border-radius: 10px;
+                opacity: 0;
+                transition: all 0.3s ease;
+                white-space: nowrap;
+            }
+            
+            .size-link:hover[data-stock]:after {
+                opacity: 1;
+                bottom: -18px;
+            }
+            
             /* Inclusions Table Styling */
             .inclusions-table-container {
                 margin: 1rem 0;

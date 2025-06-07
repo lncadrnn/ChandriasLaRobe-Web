@@ -147,9 +147,31 @@ $(document).ready(async function () {
     const sizeList = $('#product-sizes');
     sizeList.empty();
     if (!isAdditional && data.size) {
-      $.each(data.size, function (size, qty) {
-        sizeList.append(`<li><a href="#" class="size-link">${size}</a></li>`);
+      // Define size order
+      const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+      
+      // Sort sizes according to predefined order
+      const sortedSizes = Object.entries(data.size)
+        .filter(([size, qty]) => qty > 0) // Only show sizes with stock
+        .sort(([sizeA], [sizeB]) => {
+          const indexA = sizeOrder.indexOf(sizeA);
+          const indexB = sizeOrder.indexOf(sizeB);
+          // If size not in predefined order, put it at the end
+          const orderA = indexA === -1 ? sizeOrder.length : indexA;
+          const orderB = indexB === -1 ? sizeOrder.length : indexB;
+          return orderA - orderB;
+        });
+      
+      // Add sizes to the list
+      sortedSizes.forEach(([size, qty]) => {
+        sizeList.append(`<li><a href="#" class="size-link" data-stock="${qty}">${size}</a></li>`);
       });
+      
+      // Auto-select first available size if any
+      if (sortedSizes.length > 0) {
+        sizeList.find('.size-link').first().addClass('size-active');
+      }
+      
       sizeList.parent().show(); // Show the sizes section for regular products
     } else if (isAdditional) {
       sizeList.parent().hide(); // Hide only the sizes section for additionals
@@ -236,6 +258,39 @@ $(document).ready(async function () {
     e.preventDefault();
     $('.size-link').removeClass('size-active');
     $(this).addClass('size-active');
+    
+    // Update quantity max based on selected size stock
+    const stock = parseInt($(this).data('stock')) || 1;
+    const quantityInput = $('#details-quantity');
+    quantityInput.attr('max', stock);
+    
+    // Adjust current quantity if it exceeds stock
+    const currentQuantity = parseInt(quantityInput.val()) || 1;
+    if (currentQuantity > stock) {
+      quantityInput.val(stock);
+      notyf.warning(`Quantity adjusted to available stock: ${stock}`);
+    }
+  });
+  
+  // Enhanced quantity input functionality
+  $(document).on('input change', '#details-quantity', function() {
+    const input = $(this);
+    const value = parseInt(input.val()) || 1;
+    const selectedSize = $('.size-active');
+    const maxStock = selectedSize.length ? parseInt(selectedSize.data('stock')) || 999 : 999;
+    
+    // Validate quantity bounds
+    if (value < 1) {
+      input.val(1);
+      notyf.error("Minimum quantity is 1");
+    } else if (value > maxStock) {
+      input.val(maxStock);
+      notyf.error(`Maximum available stock for this size is ${maxStock}`);
+    }
+    
+    // Add visual feedback for quantity change
+    input.addClass('quantity-changed');
+    setTimeout(() => input.removeClass('quantity-changed'), 500);
   });
   // Add to Cart functionality
   $('#details-add-to-cart').on('click', async function(e) {
@@ -246,7 +301,7 @@ $(document).ready(async function () {
       if (typeof window.showAuthModal === 'function') {
         window.showAuthModal();
       } else {
-        alert("Please log in to add items to cart.");
+        notyf.error("Please log in to add items to cart.");
       }
       return;
     }
@@ -257,12 +312,12 @@ $(document).ready(async function () {
     const productId = localStorage.getItem("selectedProductId");
 
     if (!selectedSize) {
-      alert("Please select a size.");
+      notyf.error("Please select a size first");
       return;
     }
 
     if (quantity < 1) {
-      alert("Please enter a valid quantity.");
+      notyf.error("Please enter a valid quantity.");
       return;
     }
 
