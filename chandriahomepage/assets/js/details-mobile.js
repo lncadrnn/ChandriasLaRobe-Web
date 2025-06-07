@@ -6,18 +6,16 @@ document.addEventListener('DOMContentLoaded', function() {
   // Only run on mobile devices
   if (window.innerWidth <= 768) {
     initMobileImageGallery();
-    // Disabled sticky cart to avoid redundant "Add to Booking" buttons
-    // initStickyAddToCart();
+    initStickyAddToCart();
   }
   
   // Re-initialize on resize
   window.addEventListener('resize', function() {
     if (window.innerWidth <= 768) {
       initMobileImageGallery();
-      // Disabled sticky cart to avoid redundant "Add to Booking" buttons
-      // initStickyAddToCart();
+      initStickyAddToCart();
     } else {
-      // removeStickyAddToCart();
+      removeStickyAddToCart();
     }
   });
 });
@@ -103,6 +101,8 @@ function initStickyAddToCart() {
   
   const addToCartBtn = document.querySelector('#details-add-to-cart');
   const quantityInput = document.querySelector('#details-quantity');
+  const decreaseBtn = document.querySelector('.quantity-btn.decrease');
+  const increaseBtn = document.querySelector('.quantity-btn.increase');
   
   if (!addToCartBtn) return;
   
@@ -110,19 +110,42 @@ function initStickyAddToCart() {
   const stickyBar = document.createElement('div');
   stickyBar.className = 'mobile-sticky-cart';
   
-  // Create content
+  // Create quantity container
+  const quantityContainer = document.createElement('div');
+  quantityContainer.className = 'mobile-quantity-container';
+  
+  // Create decrease button
+  const stickyDecreaseBtn = document.createElement('button');
+  stickyDecreaseBtn.className = 'mobile-quantity-btn decrease';
+  stickyDecreaseBtn.textContent = '−';
+  stickyDecreaseBtn.type = 'button';
+  
+  // Create quantity input
   const stickyQuantity = document.createElement('input');
   stickyQuantity.type = 'number';
   stickyQuantity.className = 'mobile-sticky-quantity';
   stickyQuantity.min = '1';
   stickyQuantity.value = quantityInput ? quantityInput.value : '1';
+  stickyQuantity.readOnly = true;
   
+  // Create increase button
+  const stickyIncreaseBtn = document.createElement('button');
+  stickyIncreaseBtn.className = 'mobile-quantity-btn increase';
+  stickyIncreaseBtn.textContent = '+';
+  stickyIncreaseBtn.type = 'button';
+  
+  // Create add to booking button
   const stickyButton = document.createElement('button');
   stickyButton.className = 'mobile-sticky-button';
-  stickyButton.textContent = addToCartBtn.textContent;
+  stickyButton.textContent = 'Add to Booking';
   
-  // Add elements to bar
-  stickyBar.appendChild(stickyQuantity);
+  // Add elements to quantity container
+  quantityContainer.appendChild(stickyDecreaseBtn);
+  quantityContainer.appendChild(stickyQuantity);
+  quantityContainer.appendChild(stickyIncreaseBtn);
+  
+  // Add elements to sticky bar
+  stickyBar.appendChild(quantityContainer);
   stickyBar.appendChild(stickyButton);
   
   // Add bar to page
@@ -133,18 +156,28 @@ function initStickyAddToCart() {
     quantityInput.addEventListener('change', () => {
       stickyQuantity.value = quantityInput.value;
     });
-    
-    stickyQuantity.addEventListener('change', () => {
-      quantityInput.value = stickyQuantity.value;
-    });
   }
   
-  // Handle button click
+  // Handle quantity button clicks
+  stickyDecreaseBtn.addEventListener('click', () => {
+    if (decreaseBtn) {
+      decreaseBtn.click();
+      stickyQuantity.value = quantityInput.value;
+    }
+  });
+  
+  stickyIncreaseBtn.addEventListener('click', () => {
+    if (increaseBtn) {
+      increaseBtn.click();
+      stickyQuantity.value = quantityInput.value;
+    }
+  });
+  
+  // Handle add to booking button click
   stickyButton.addEventListener('click', () => {
     addToCartBtn.click();
   });
-  
-  // Add sticky bar styles
+    // Add sticky bar styles
   const style = document.createElement('style');
   style.innerHTML = `
     .mobile-sticky-cart {
@@ -153,45 +186,116 @@ function initStickyAddToCart() {
       left: 0;
       right: 0;
       background: var(--body-color);
-      padding: 12px 16px;
+      padding: 8px 16px;
       display: flex;
-      gap: 10px;
-      box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
-      z-index: 100;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
       transform: translateY(100%);
       animation: slideUp 0.3s forwards;
+      border-top: 1px solid rgba(var(--title-color-rgb), 0.1);
     }
     
     @keyframes slideUp {
       to { transform: translateY(0); }
     }
     
-    .mobile-sticky-quantity {
-      width: 70px;
-      height: 48px;
-      padding: 0 0.5rem;
-      border: 1px solid rgba(var(--title-color-rgb), 0.2);
+    .mobile-quantity-container {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--container-color);
       border-radius: 8px;
-      font-weight: 500;
+      border: 2px solid #ff7eb4;
+      overflow: hidden;
+    }
+    
+    .mobile-quantity-btn {
+      width: 32px;
+      height: 40px;
+      background: var(--body-color);
+      border: none;
+      color: var(--title-color);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .mobile-quantity-btn:hover {
+      background: #ff7eb4;
+      color: white;
+    }
+    
+    .mobile-quantity-btn.decrease {
+      border-right: 1px solid rgba(var(--title-color-rgb), 0.1);
+    }
+    
+    .mobile-quantity-btn.increase {
+      border-left: 1px solid rgba(var(--title-color-rgb), 0.1);
+    }
+    
+    .mobile-sticky-quantity {
+      width: 50px;
+      height: 40px;
+      border: none;
+      background: var(--body-color);
+      color: var(--title-color);
       text-align: center;
+      font-weight: 600;
+      font-size: 14px;
+      outline: none;
+      -webkit-appearance: textfield;
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+    
+    .mobile-sticky-quantity::-webkit-outer-spin-button,
+    .mobile-sticky-quantity::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
     }
     
     .mobile-sticky-button {
       flex: 1;
-      height: 48px;
-      background-color: var(--first-color);
-      color: var(--body-color);
+      height: 44px;
+      background: #ff7eb4;
+      color: white;
       border: none;
       border-radius: 8px;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 14px;
       text-transform: uppercase;
       cursor: pointer;
+      transition: all 0.2s ease;
+      letter-spacing: 0.5px;
     }
     
-    /* Add some padding to the bottom of the page so content isn't hidden behind the sticky bar */
-    .main {
-      padding-bottom: 80px;
+    .mobile-sticky-button:hover {
+      background: #ff4da6;
+      transform: translateY(-1px);
+    }
+    
+    .mobile-sticky-button:active {
+      transform: translateY(0);
+    }
+    
+    /* Add padding to main content to prevent overlap */
+    @media screen and (max-width: 768px) {
+      .main {
+        padding-bottom: 70px !important;
+      }
+    }
+    
+    /* Hide the original details-action on mobile when sticky bar is active */
+    @media screen and (max-width: 768px) {
+      .details-action {
+        display: none !important;
+      }
     }
   `;
   
