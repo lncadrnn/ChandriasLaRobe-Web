@@ -46,7 +46,7 @@
   position: absolute;
   top: 24px;
   right: 24px;
-  background: rgba(255, 255, 255, 0.9);
+  background: transparent;
   border: none;
   border-radius: 12px;
   width: 44px;
@@ -59,11 +59,9 @@
   justify-content: center;
   z-index: 20;
   transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
 }
 
 .auth-close:hover {
-  background: rgba(255, 255, 255, 1);
   color: #374151;
   transform: scale(1.05);
 }
@@ -170,7 +168,7 @@
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start; /* Start content from top */
 }
 
 .auth-form.active {
@@ -549,17 +547,15 @@
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-    /* Enhanced scrollbar for mobile sign-up form */
+    /* Mobile sign-up form */
   #signup-form {
-    max-height: 300px; /* Reduced height for mobile to ensure scrolling */
-  }
-  
-  #signup-form::-webkit-scrollbar {
-    width: 10px; /* Wider scrollbar for mobile touch interfaces */
+    max-height: 400px; /* Increased height for mobile to ensure content visibility */
+    padding-top: 0.5rem; /* Less top padding on mobile */
+    width: 100%; /* Full width on mobile */
   }
   
   #signup-form .auth-form-content {
-    padding-right: 1rem; /* Ensure adequate spacing on mobile */
+    padding-right: 0; /* No right padding to align scrollbar with edge */
   }
   
   /* Sign-up form section padding override for mobile */
@@ -592,48 +588,30 @@
 /* =============== SIGN-UP FORM SPECIFIC STYLING =============== */
 #signup-form {
   padding: 0;
-  max-height: 400px; /* Set a fixed max height to enable scrolling */
+  padding-top: 1rem; /* Add top padding to ensure the header is visible */
+  max-height: 550px; /* Further increased height to show more content */
   overflow-y: auto; /* Enable vertical scrolling */
   overflow-x: hidden;
+  /* Ensure the form starts from the top */
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* Ensure form takes full width */
+  box-sizing: border-box; /* Include padding in width calculation */
 }
 
-/* Custom scrollbar for sign-up form only */
-#signup-form::-webkit-scrollbar {
-  width: 8px; /* Slightly wider for better visibility */
-}
-
-#signup-form::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-  margin: 4px 0; /* Add margin to track */
-}
-
-#signup-form::-webkit-scrollbar-thumb {
-  background: hsl(346, 100%, 74%);
-  border-radius: 4px;
-  border: 1px solid #ffffff; /* Add white border for better definition */
-}
-
-#signup-form::-webkit-scrollbar-thumb:hover {
-  background: hsl(346, 85%, 65%);
-}
-
-#signup-form::-webkit-scrollbar-corner {
-  background: #f1f1f1;
-}
-
-/* Firefox scrollbar styling for sign-up form */
-#signup-form {
-  scrollbar-width: thin;
-  scrollbar-color: hsl(346, 100%, 74%) #f1f1f1;
-}
+/* Using default browser scrollbar */
 
 #signup-form .auth-form-content {
   gap: 0.5rem;
   display: flex;
   flex-direction: column;
-  padding-right: 1rem; /* Increased padding to prevent content from touching scrollbar */
+  padding-right: 0.5; /* Remove right padding to let scrollbar align with the edge */
   padding-bottom: 1rem; /* Add bottom padding for better spacing */
+  /* Ensure content starts at the top */
+  margin-top: 0;
+  padding-right: 1.5rem;
+  padding-top: 0;
+  width: 100%; /* Ensure content takes full width */
 }
 
 #signup-form .auth-input-group {
@@ -682,7 +660,14 @@
 }
 
 #signup-form .auth-header {
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  /* Ensure header is always visible */
+  margin-top: 0;
+  padding-top: 0;
+  top: 0;
+  background: white;
+  z-index: 2;
+  padding-bottom: 0.5rem;
 }
 
 #signup-form .auth-btn {
@@ -696,17 +681,29 @@
 
 /* Sign-up form section specific padding */
 .auth-form-section:has(#signup-form.active) {
-  padding: 2rem;
+  padding: 5rem 0 5rem 5rem; /* Removed right padding to let scrollbar align with edge */
+  padding-top: 1rem; /* Reduced top padding */
+  /* Ensure sign-up form starts from the top */
+  justify-content: flex-start;
+  align-items: stretch;
 }
 
 /* Override padding specifically for sign-up form section */
 .auth-modal:has(#signup-form.active) .auth-form-section {
-  padding: 2rem;
+  padding: 2rem 0 2rem 2rem; /* Removed right padding to let scrollbar align with edge */
+  padding-top: 1rem; /* Reduced top padding */
+  /* Ensure sign-up form starts from the top */
+  justify-content: flex-start;
+  align-items: stretch;
 }
 
 /* Fallback for browsers that don't support :has() */
 .auth-form-section.signup-active {
-  padding: 2rem;
+  padding: 1.5rem 0 1.5rem 1.5rem; /* Removed right padding to let scrollbar align with edge */
+  padding-top: 1rem; /* Reduced top padding */
+  /* Ensure sign-up form starts from the top */
+  justify-content: flex-start;
+  align-items: stretch;
 }
 
 /* =============== SIGN-IN AND FORGOT PASSWORD FORM STYLING =============== */
