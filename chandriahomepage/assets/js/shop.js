@@ -145,12 +145,8 @@ $(document).ready(function () {
         $(document).on("click", ".add-to-cart-action-btn", handleAddToCartClick);// Size and quantity controls
         $(document).on("change", ".size-selector", handleSizeChange);
         $(document).on("click", ".quantity-btn.plus-btn", handleQuantityIncrease);
-        $(document).on("click", ".quantity-btn.minus-btn", handleQuantityDecrease);
-          // Color indicator tooltip
+        $(document).on("click", ".quantity-btn.minus-btn", handleQuantityDecrease);        // Color indicator tooltip
         $(document).on("click", ".product-color-indicator", handleColorIndicatorClick);
-
-        // Product card click navigation
-        $(document).on("click", ".product-item", handleProductCardClick);
 
         // Cart modal (existing modal functionality)
         $(document).on("click", ".action-btn[aria-label='Add to Rent List']", handleAddToCartClick);
@@ -341,9 +337,9 @@ $(document).ready(function () {
                 'visibility': 'hidden'
             });
         }, 2000);
-    }
-
-    // Handle product card click navigation
+    }    // Handle product card click navigation - DISABLED
+    // Product cards no longer navigate on click, only the add-to-cart button does
+    /*
     function handleProductCardClick(e) {
         // Don't navigate if clicking on action buttons, size selector, quantity controls, or cart button
         if ($(e.target).closest('.action-btn, .size-selector, .quantity-btn, .circular-cart-btn, .product-color-indicator').length > 0) {
@@ -370,6 +366,7 @@ $(document).ready(function () {
             window.location.href = `details.html?id=${productId}`;
         }
     }
+    */
 
     // Search functionality
     function handleSearch(e) {
