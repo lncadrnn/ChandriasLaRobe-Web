@@ -163,7 +163,6 @@
     overflow: hidden;
     position: relative;
     background-color: white;
-    cursor: pointer;
 }
 
 /* Modification: Remove box-shadow change on hover for entire card */
@@ -295,6 +294,7 @@
     transition: all 0.25s ease;
     -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
     border: 2px solid #eee;
+    cursor: pointer;
 }
 
 .action-btn:hover {
