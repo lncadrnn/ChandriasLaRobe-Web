@@ -568,10 +568,10 @@
     gap: 1rem;
   }  /* Mobile sign-up and sign-in forms - consistent behavior */
   #signup-form, #signin-form, #forgot-form {
-    max-height: none; /* Remove height constraint on mobile */
+    max-height: 70vh; /* Set a max height to enable scrolling on mobile */
     padding-top: 0.25rem; /* Minimal top padding on mobile */
     width: 100%; /* Full width on mobile */
-    overflow-y: visible; /* Change to visible */
+    overflow-y: auto; /* Enable scrollbar when content overflows */
   }
   
   #signup-form .auth-form-content,
@@ -594,11 +594,10 @@
   #forgot-form::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 10px;
-  }
-  /* Mobile form section adjustments for consistent height behavior */
+  }  /* Mobile form section adjustments for consistent height behavior */
   #signup-form, #signin-form, #forgot-form {
-    max-height: none; /* Remove height constraints for auto-adjustment */
-    overflow-y: visible; /* Match signup form behavior */
+    max-height: 70vh; /* Set max height to enable scrolling */
+    overflow-y: auto; /* Enable scrollbar when needed */
   }
   
   .auth-form-section {
@@ -753,11 +752,16 @@
 /* =============== CONSISTENT AUTO-HEIGHT BEHAVIOR FOR ALL FORMS =============== */
 /* Ensure all forms (signup, signin, forgot) have identical height behavior */
 #signup-form, #signin-form, #forgot-form {
-  /* Remove all height constraints to allow auto-adjustment */
-  max-height: none !important;
-  min-height: auto !important;
+  /* Remove all height constraints to allow auto-adjustment on desktop */
   height: auto !important;
-  overflow-y: visible !important;
+}
+
+/* Mobile-specific overrides */
+@media (max-width: 768px) {
+  #signup-form, #signin-form, #forgot-form {
+    max-height: 70vh !important; /* Enable scrolling on mobile */
+    overflow-y: auto !important; /* Enable scrollbar on mobile */
+  }
 }
 
 /* Ensure all form sections have consistent mobile behavior */
@@ -779,7 +783,7 @@
   padding: 0;
   padding-top: 0.5rem; /* Reduced top padding further */
   max-height: none; /* Remove max-height constraint completely */
-  overflow-y: visible; /* Change to visible to prevent unnecessary scrolling */
+  overflow-y: auto; /* Enable scrollbar when content overflows */
   overflow-x: hidden;
   /* Ensure the form starts from the top */
   display: flex;
