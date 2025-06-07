@@ -498,12 +498,9 @@ class AuthModal {
         }
 
         return message;
-    }
-
-    async handleGoogleSignIn() {
-        try {            this.showLoading(document.getElementById('google-signin'));
-            
-            // Simulate Google OAuth
+    }    async handleGoogleSignIn() {
+        try {
+            // Simulate Google OAuth without loading spinner
             await this.simulateAuthRequest();
             
             this.notyf.success('Google sign in successful!');
@@ -513,15 +510,10 @@ class AuthModal {
 
         } catch (error) {
             this.notyf.error('Google sign in failed. Please try again.');
-        } finally {
-            this.hideLoading(document.getElementById('google-signin'));
         }
-    }
-
-    async handleFacebookSignIn() {
-        try {            this.showLoading(document.getElementById('facebook-signin'));
-            
-            // Simulate Facebook OAuth
+    }    async handleFacebookSignIn() {
+        try {
+            // Simulate Facebook OAuth without loading spinner
             await this.simulateAuthRequest();
             
             this.notyf.success('Facebook sign in successful!');
@@ -531,10 +523,8 @@ class AuthModal {
 
         } catch (error) {
             this.notyf.error('Facebook sign in failed. Please try again.');
-        } finally {
-            this.hideLoading(document.getElementById('facebook-signin'));
         }
-    }    validateSignInForm(email, password) {
+    }validateSignInForm(email, password) {
         let isValid = true;
 
         if (!this.validateEmail(email)) {
@@ -599,14 +589,10 @@ class AuthModal {
     validatePhone(phone) {
         const contactPattern = /^09\d{9}$/;
         return contactPattern.test(phone);
-    }setupFormValidation() {
-        // Real-time validation for all inputs
+    }    setupFormValidation() {
+        // Only visual error clearing, no validation on blur
         const inputs = this.modal.querySelectorAll('input');
         inputs.forEach(input => {
-            input.addEventListener('blur', () => {
-                this.validateField(input);
-            });
-
             input.addEventListener('input', () => {
                 // Clear visual error state when user starts typing
                 input.classList.remove('error');
@@ -669,15 +655,26 @@ class AuthModal {
     clearForms() {
         const forms = this.modal.querySelectorAll('form');
         forms.forEach(form => form.reset());
-    }
-
-    showLoading(element) {
+    }    showLoading(element) {
         const button = element.querySelector('button[type="submit"]') || element;
         button.disabled = true;
         
         const originalText = button.textContent;
         button.dataset.originalText = originalText;
-        button.innerHTML = '<i class="fi fi-rs-spinner"></i> Loading...';
+        
+        // Check if it's a sign in button and use simple text, otherwise use spinner
+        if (button.textContent.includes('Sign In') || button.id === 'signin-submit') {
+            button.textContent = 'Signing in...';
+        } else if (button.id === 'google-signin' || button.classList.contains('google-btn')) {
+            // For Google button, remove spinner
+            button.textContent = 'Google';
+        } else if (button.id === 'facebook-signin' || button.classList.contains('facebook-btn')) {
+            // For Facebook button, remove spinner  
+            button.textContent = 'Facebook';
+        } else {
+            button.innerHTML = '<i class="fi fi-rs-spinner"></i> Loading...';
+        }
+        
         button.classList.add('loading');
     }
 

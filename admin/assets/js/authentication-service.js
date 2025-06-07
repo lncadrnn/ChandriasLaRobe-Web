@@ -89,7 +89,7 @@ $(document).ready(function () {
         isLoggingIn = true;
 
         // Disable the login button while attempting login
-        loginBtn.attr("disabled", true).text("Logging In...");
+        loginBtn.attr("disabled", true).text("Signing in...");
 
         const email = $("#login-email").val().trim();
         const password = $("#login-password").val().trim();
@@ -110,7 +110,7 @@ $(document).ready(function () {
                 });
 
                 // Re-enable login button
-                loginBtn.attr("disabled", false).text("Login");
+                loginBtn.attr("disabled", false).text("Sign In");
                 return;
             }
 
@@ -133,7 +133,7 @@ $(document).ready(function () {
                     duration: 5000
                 });
 
-                loginBtn.attr("disabled", false).text("PROCEED");
+                loginBtn.attr("disabled", false).text("Sign In");
                 return;
             }
 
@@ -153,7 +153,7 @@ $(document).ready(function () {
             console.error("Unable to Login: " + error.code + error.message);
 
             // Re-enable the login button after login attempt
-            loginBtn.attr("disabled", false).text("Login");
+            loginBtn.attr("disabled", false).text("Sign In");
 
             // Format user-friendly error message
             const errorMsg = formatErrorMessage(error.code);
