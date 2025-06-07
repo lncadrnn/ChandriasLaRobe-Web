@@ -484,48 +484,63 @@ button.add-to-rent-btn:active,
     box-shadow: 0 8px 25px rgba(40, 167, 69, 0.15) !important;
 }
 
-/* Product actions - initially hidden, show on hover */
+/* Product actions - initially hidden, show on hover - MATCHING SHOP.HTML STYLE */
 .products-container .product-actions {
     position: absolute !important;
-    top: 15px !important;
-    right: 15px !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
     display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
+    gap: 15px !important;
     opacity: 0 !important;
-    visibility: hidden !important;
-    transform: translateY(-10px) !important;
     transition: all 0.3s ease !important;
-    z-index: 5 !important;
+    z-index: 4 !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-direction: row !important;
 }
 
-.products-container .product-item:hover .product-actions {
+.products-container .product-item:hover .product-actions,
+.products-container .product-actions:hover {
     opacity: 1 !important;
-    visibility: visible !important;
-    transform: translateY(0) !important;
+    transform: translate(-50%, -50%) !important;
 }
 
 .products-container .action-btn {
-    width: 40px !important;
-    height: 40px !important;
-    background: rgba(255, 255, 255, 0.95) !important;
-    border: 1px solid rgba(40, 167, 69, 0.2) !important;
-    border-radius: 50% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    color: var(--text-color) !important;
+    width: 45px !important;
+    height: 45px !important;
+    border-radius: 50% !important;
+    background-color: white !important;
+    color: #333 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.25s ease !important;
+    transform: scale(0.9) !important;
+    border: 2px solid #eee !important;
     text-decoration: none !important;
-    transition: all 0.3s ease !important;
-    backdrop-filter: blur(10px) !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+.products-container .product-item:hover .product-actions .action-btn,
+.products-container .product-actions:hover .action-btn {
+    transform: scale(1) !important;
 }
 
 .products-container .action-btn:hover {
-    background: var(--first-color) !important;
-    color: white !important;
-    transform: scale(1.1) !important;
-    border-color: var(--first-color) !important;
+    background-color: hsl(346, 100%, 74%) !important; /* Pink on hover */
+    color: white !important; /* White text color on hover */
+    transform: scale(1.05) !important;
+    box-shadow: 0 3px 10px rgba(255, 154, 175, 0.3) !important;
+    border-color: transparent !important;
+}
+
+.products-container .action-btn:active {
+    transform: scale(0.95) !important;
+}
+
+.products-container .action-btn i {
+    font-size: 15px !important;
 }
 
 /* Favorited state for heart button */
@@ -580,18 +595,31 @@ button.add-to-rent-btn:active,
 
 /* Product content styling */
 .products-container .product-content {
-    padding: 20px !important;
+    padding: 15px 20px 20px 20px !important;
     flex-grow: 1 !important;
     display: flex !important;
     flex-direction: column !important;
 }
 
+/* Product header with title, category and add to booking button */
+.products-container .product-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    margin-bottom: 15px !important;
+}
+
+.products-container .product-info {
+    flex: 1 !important;
+}
+
 .products-container .product-category {
     color: var(--text-color-light) !important;
-    font-size: 0.875rem !important;
+    font-size: 0.75rem !important;
     text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
-    margin-bottom: 8px !important;
+    margin-bottom: 4px !important;
+    font-weight: 500 !important;
 }
 
 .products-container .product-title {
@@ -600,11 +628,48 @@ button.add-to-rent-btn:active,
     font-weight: 600 !important;
     line-height: 1.4 !important;
     margin: 0 !important;
-    transition: color 0.3s ease !important;
+    text-decoration: none !important;
 }
 
 .products-container .product-title:hover {
     color: var(--first-color) !important;
+}
+
+/* Add to booking button */
+.products-container .add-to-booking-btn {
+    width: 45px !important;
+    height: 45px !important;
+    background: var(--first-color) !important;
+    border: none !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: white !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    flex-shrink: 0 !important;
+    margin-left: 10px !important;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3) !important;
+}
+
+.products-container .add-to-booking-btn:hover {
+    background: var(--first-color-alt) !important;
+    transform: scale(1.1) !important;
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4) !important;
+}
+
+.products-container .add-to-booking-btn i {
+    font-size: 20px !important;
+}
+
+.products-container .add-to-booking-btn.loading {
+    pointer-events: none !important;
+    opacity: 0.7 !important;
+}
+
+.products-container .add-to-booking-btn.loading i {
+    animation: spin 1s linear infinite !important;
 }
 
 /* Product images */
@@ -613,6 +678,26 @@ button.add-to-rent-btn:active,
     display: block !important;
     overflow: hidden !important;
     border-radius: 14px 14px 0 0 !important;
+}
+
+/* Product banner overlay for better button visibility */
+.products-container .product-images::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(0, 0, 0, 0) !important;
+    transition: all 0.3s ease !important;
+    z-index: 2 !important;
+    border-radius: 14px 14px 0 0 !important;
+}
+
+/* Keep overlay transparent on hover for cleaner look */
+.products-container .product-item:hover .product-images::after,
+.products-container .product-images:hover::after {
+    background: rgba(0, 0, 0, 0) !important;
 }
 
 .products-container .product-img {
@@ -672,15 +757,38 @@ button.add-to-rent-btn:active,
     .products-container .product-actions {
         opacity: 1 !important;
         visibility: visible !important;
-        transform: translateY(0) !important;
+        transform: translate(-50%, -50%) !important;
+        gap: 10px !important;
     }
     
     .products-container .action-btn {
         width: 36px !important;
         height: 36px !important;
+        transform: scale(1) !important;
+    }
+    
+    .products-container .action-btn i {
+        font-size: 14px !important;
     }
     
     .products-container .product-img {
         height: 220px !important;
+    }
+    
+    .products-container .product-content {
+        padding: 12px 16px 16px 16px !important;
+    }
+    
+    .products-container .product-header {
+        margin-bottom: 10px !important;
+    }
+    
+    .products-container .add-to-booking-btn {
+        width: 36px !important;
+        height: 36px !important;
+    }
+    
+    .products-container .add-to-booking-btn i {
+        font-size: 16px !important;
     }
 }

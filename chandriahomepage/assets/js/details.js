@@ -509,6 +509,90 @@ $(document).ready(async function () {
     }, 2000);
   });
 
+  // Add to booking button functionality for related products
+  $(document).on('click', '#related-products-container .add-to-booking-btn', async function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const user = auth.currentUser;
+    if (!user) {
+      showAuthModal();
+      return;
+    }
+    
+    const button = $(this);
+    const productId = button.data('product-id');
+    
+    if (!productId) return;
+    
+    // Add loading state
+    button.addClass('loading');
+    const icon = button.find('i');
+    const originalIcon = icon.attr('class');
+    icon.attr('class', 'fi fi-rs-spinner');
+    
+    try {
+      const userRef = doc(chandriaDB, "userAccounts", user.uid);
+      const userSnap = await getDoc(userRef);
+      
+      if (!userSnap.exists()) {
+        notyf.error("User account not found.");
+        return;
+      }
+      
+      // Get product data to check if it's available
+      const productDoc = await getDoc(doc(chandriaDB, "products", productId));
+      if (!productDoc.exists()) {
+        notyf.error("Product not found.");
+        return;
+      }
+      
+      const productData = productDoc.data();
+      
+      // For related products, we'll use default size and quantity
+      const availableSizes = productData.size ? Object.keys(productData.size).filter(size => productData.size[size] > 0) : [];
+      let selectedSize = "One Size";
+      
+      if (availableSizes.length > 0) {
+        selectedSize = availableSizes[0]; // Use first available size
+      }
+      
+      const currentCart = userSnap.data().added_to_cart || [];
+      
+      // Check if same product/size combination already exists
+      const existingIndex = currentCart.findIndex(
+        item => item.productId === productId && item.size === selectedSize
+      );
+      
+      if (existingIndex !== -1) {
+        // Update quantity
+        currentCart[existingIndex].quantity = (currentCart[existingIndex].quantity || 1) + 1;
+        await updateDoc(userRef, { added_to_cart: currentCart });
+      } else {
+        // Add new item
+        await updateDoc(userRef, {
+          added_to_cart: arrayUnion({
+            productId,
+            size: selectedSize,
+            quantity: 1
+          })
+        });
+      }
+      
+      notyf.success(`Added to booking! Size: ${selectedSize}`);
+      
+      // Update cart count
+      await updateCartCount();
+      
+    } catch (error) {
+      console.error("Error adding to booking:", error);
+      notyf.error("An error occurred. Please try again.");
+    } finally {
+      button.removeClass('loading');
+      icon.attr('class', originalIcon);
+    }
+  });
+
   // Cart count function
   async function updateCartCount() {
     const user = auth.currentUser;
@@ -705,10 +789,17 @@ function createProductHTML(product) {
             <div class="product-color-indicator" style="background-color: ${colorHex}" title="${product.colorName || 'Color'}" data-product-id="${product.id}"></div>
         </div>
         <div class="product-content">
-            <span class="product-category">${categoryDisplay}</span>
-            <a href="details.html?id=${product.id}">
-                <h3 class="product-title">${product.name || "Untitled Product"}</h3>
-            </a>
+            <div class="product-header">
+                <div class="product-info">
+                    <span class="product-category">${categoryDisplay}</span>
+                    <a href="details.html?id=${product.id}">
+                        <h3 class="product-title">${product.name || "Untitled Product"}</h3>
+                    </a>
+                </div>
+                <button class="add-to-booking-btn" data-product-id="${product.id}" title="Add to Booking">
+                    <i class="fi fi-rs-shopping-bag-add"></i>
+                </button>
+            </div>
         </div>
     </div>
     `;
