@@ -614,17 +614,22 @@ $(document).ready(function () {
                 
                 <div class="price-tag">${price}</div>
                 <div class="product-color-indicator" style="background-color: ${colorHex}" title="${product.colorName || 'Color'}" data-product-id="${product.id}"></div>
-            </div>            <div class="product-content">
-                <div class="product-header">
+            </div>            <div class="product-content">                <div class="product-header">
                     <div class="product-info">
                         <span class="product-category">${categoryDisplay}</span>
                         <a href="details.html?id=${product.id}">
                             <h3 class="product-title">${product.name || "Untitled Product"}</h3>
                         </a>
-                    </div>                    ${!product.isAdditional ? `
-                    <button class="add-to-cart-action-btn" data-product-id="${product.id}" data-in-cart="false" title="View Details">
-                        <i class="fi fi-rs-shopping-bag-add"></i>
-                    </button>` : ''}
+                    </div>
+                    ${!product.isAdditional ? `
+                    <div class="product-header-buttons">
+                        <button class="add-to-cart-action-btn" data-product-id="${product.id}" data-in-cart="false" title="View Details">
+                            <i class="fi fi-rs-shopping-bag-add"></i>
+                        </button>
+                        <button class="circular-cart-btn" data-product-id="${product.id}" data-in-cart="false" title="Add to Cart">
+                            <i class="fi fi-rs-shopping-cart-add"></i>
+                        </button>
+                    </div>` : ''}
                 </div>
                 ${sizeOptionsHTML}
             </div>
