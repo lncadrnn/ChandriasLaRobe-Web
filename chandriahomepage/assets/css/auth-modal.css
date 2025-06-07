@@ -659,6 +659,20 @@
   width: auto;
 }
 
+/* Row container for side-by-side input groups */
+#signup-form .auth-input-row {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+#signup-form .auth-input-row .auth-input-group {
+  flex: 1;
+  min-width: 0; /* Prevent flex items from overflowing */
+  margin-bottom: 0; /* Override the margin from regular input groups */
+}
+
 #signup-form .auth-header {
   margin-bottom: 1rem;
   /* Ensure header is always visible */
