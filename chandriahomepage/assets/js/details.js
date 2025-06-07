@@ -399,7 +399,6 @@ $(document).ready(async function () {
   // Update cart count on auth state change
   onAuthStateChanged(auth, async user => {
     await updateCartCount();
-    await updateRelatedProductsCartStatus();
   });
 
   // Cart count function
@@ -553,18 +552,12 @@ async function loadRelatedProducts(category, color, currentProductId) {
                 
             relatedProducts.push(...randomProducts);
         }
-        
-        // Render related products
+         // Render related products
         relatedProducts.forEach(product => {
             const productHTML = createProductHTML(product);
             productsContainer.innerHTML += productHTML;
         });
-        
-        // Update cart button status for related products
-        setTimeout(() => {
-            updateRelatedProductsCartStatus();
-        }, 100);
-        
+
         console.log("Related products loaded:", {
             category: categoryProducts.length,
             color: colorProducts.length,
@@ -576,55 +569,16 @@ async function loadRelatedProducts(category, color, currentProductId) {
     }
 }
 
-// Function to create HTML for a product (enhanced version similar to shop.html)
+// Function to create HTML for a product (simplified version without size/quantity controls)
 function createProductHTML(product) {
-    const availableSizes = product.size ? Object.keys(product.size).filter(size => product.size[size] > 0) : [];
     const categoryDisplay = formatCategoryName(product.category) || "Item";
     const price = product.price ? `₱ ${product.price}` : "Price available in-store";
     const imageUrl = product.frontImageUrl || product.imageUrl || "assets/img/placeholder.jpg";
     const backImageUrl = product.backImageUrl || imageUrl;
     const colorHex = product.color || "#f8f9fa";
     
-    // Create size options HTML
-    let sizeOptionsHTML = '';
-    if (availableSizes.length > 0 && !product.isAdditional) {
-        // Create options with stock information
-        const sizeOptions = availableSizes.map(size => {
-            const stock = product.size[size];
-            return `<option value="${size}" data-stock="${stock}">${size} (${stock})</option>`;
-        }).join('');
-        
-        // Get initial stock for first size
-        const initialSize = availableSizes[0];
-        const initialStock = product.size[initialSize];
-        
-        // Determine stock class
-        let stockClass = '';
-        if (initialStock <= 3) stockClass = 'very-low-stock';
-        else if (initialStock <= 5) stockClass = 'low-stock';
-          
-        sizeOptionsHTML = `
-        <div class="product-size-options">
-            <div class="size-selection">
-                <div class="size-selector-container">
-                    <select class="size-selector" data-product-id="${product.id}">
-                        ${sizeOptions}
-                    </select>
-                </div>
-            </div>
-            <div class="quantity-selection">
-                <button class="quantity-btn minus-btn" data-product-id="${product.id}" disabled>-</button>
-                <span class="quantity-value" data-product-id="${product.id}">1</span>
-                <button class="quantity-btn plus-btn" data-product-id="${product.id}" ${initialStock <= 1 ? 'disabled' : ''}>+</button>
-            </div>
-        </div>`;
-    }
-    
     return `
     <div class="product-item">
-        <div class="loading-state">
-            <div class="loading-spinner"></div>
-        </div>
         <div class="product-banner">
             <a href="details.html?id=${product.id}" class="product-images">
                 <img src="${imageUrl}" alt="${product.name || "Product"}" class="product-img default">
@@ -643,19 +597,13 @@ function createProductHTML(product) {
             <div class="product-color-indicator" style="background-color: ${colorHex}" title="${product.colorName || 'Color'}" data-product-id="${product.id}"></div>
         </div>
         <div class="product-content">
-            <div class="product-header">
-                <div class="product-info">
-                    <span class="product-category">${categoryDisplay}</span>
-                    <a href="details.html?id=${product.id}">
-                        <h3 class="product-title">${product.name || "Untitled Product"}</h3>
-                    </a>
-                </div>
-                ${!product.isAdditional ? `
-                <button class="add-to-cart-action-btn" data-product-id="${product.id}" data-in-cart="false" title="Add to Cart">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                </button>` : ''}
+            <span class="product-category">${categoryDisplay}</span>
+            <a href="details.html?id=${product.id}">
+                <h3 class="product-title">${product.name || "Untitled Product"}</h3>
+            </a>
+            <div class="product-price flex">
+                <span class="new-price">₱ ${product.price}/rent</span>
             </div>
-            ${sizeOptionsHTML}
         </div>
     </div>
     `;
@@ -1145,45 +1093,5 @@ window.addEventListener('resize', function() {
     }, 2000);
   });
   
-  // Function to update cart button status for related products
-  async function updateRelatedProductsCartStatus() {
-    const user = auth.currentUser;
-    if (!user) {
-      // Reset all buttons to default state
-      $('#related-products-container .add-to-cart-action-btn').attr('data-in-cart', 'false');
-      $('#related-products-container .add-to-cart-action-btn i').removeClass('fi-rs-shopping-bag-added').addClass('fi-rs-shopping-bag-add');
-      return;
-    }
-    
-    try {
-      const userRef = doc(chandriaDB, "userAccounts", user.uid);
-      const userSnap = await getDoc(userRef);
-      
-      if (!userSnap.exists()) return;
-      
-      const cartItems = userSnap.data().added_to_cart || [];
-      const cartProductIds = cartItems.map(item => item.productId);
-      
-      // Update each button based on cart status
-      $('#related-products-container .add-to-cart-action-btn').each(function() {
-        const productId = $(this).data('product-id');
-        const isInCart = cartProductIds.includes(productId);
-        
-        $(this).attr('data-in-cart', isInCart ? 'true' : 'false');
-        
-        const icon = $(this).find('i');
-        if (isInCart) {
-          icon.removeClass('fi-rs-shopping-bag-add').addClass('fi-rs-shopping-bag-added');
-        } else {
-          icon.removeClass('fi-rs-shopping-bag-added').addClass('fi-rs-shopping-bag-add');
-        }
-      });
-      
-    } catch (error) {
-      console.error('Error updating related products cart status:', error);
-    }
-  }
-
-  // Initial cart status update
-  updateRelatedProductsCartStatus();
+  // Initial setup complete
 });
