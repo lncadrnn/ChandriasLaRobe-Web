@@ -1,0 +1,179 @@
+/* Details Quick View Modal Override Styles */
+/* This file fixes the modal sizing and background issues specifically for details.html */
+
+/* Override modal background to be lighter (less dark gray) */
+.quick-view-modal-container {
+  background-color: rgba(0, 0, 0, 0.3) !important; /* Even lighter background */
+}
+
+/* Override modal sizing to be more reasonable */
+.quick-view-modal {
+  max-width: 800px !important; /* Reduced from 1000px-1400px */
+  width: 85% !important;
+  max-height: 80vh !important; /* Reduced from 85vh */
+}
+
+/* Make scrollbar default (remove custom styling) */
+.quick-view-modal, .quick-view-content, .quick-view-details {
+  scrollbar-width: auto !important;
+  scrollbar-color: initial !important;
+}
+
+.quick-view-modal::-webkit-scrollbar,
+.quick-view-content::-webkit-scrollbar,
+.quick-view-details::-webkit-scrollbar {
+  width: initial !important;
+  background: initial !important;
+}
+
+.quick-view-modal::-webkit-scrollbar-thumb,
+.quick-view-content::-webkit-scrollbar-thumb,
+.quick-view-details::-webkit-scrollbar-thumb {
+  background: initial !important;
+  border-radius: initial !important;
+}
+
+/* Reset all scrollbar properties to browser defaults */
+.quick-view-modal *::-webkit-scrollbar,
+.quick-view-content *::-webkit-scrollbar,
+.quick-view-details *::-webkit-scrollbar {
+  width: unset !important;
+  height: unset !important;
+  background: unset !important;
+  border-radius: unset !important;
+}
+
+.quick-view-modal *::-webkit-scrollbar-track,
+.quick-view-content *::-webkit-scrollbar-track,
+.quick-view-details *::-webkit-scrollbar-track {
+  background: unset !important;
+  border-radius: unset !important;
+}
+
+.quick-view-modal *::-webkit-scrollbar-thumb,
+.quick-view-content *::-webkit-scrollbar-thumb,
+.quick-view-details *::-webkit-scrollbar-thumb {
+  background: unset !important;
+  border-radius: unset !important;
+  border: unset !important;
+}
+
+/* Make product title and description black */
+.quick-view-product-title, 
+#quick-view-title {
+  color: #000000 !important; /* Pure black for title */
+}
+
+.quick-view-desc-text,
+#quick-view-desc {
+  color: #000000 !important; /* Pure black for description */
+}
+
+/* Change features section background from black to light gray */
+.quick-view-features {
+  background-color: #f8f9fa !important; /* Light gray instead of black */
+  color: #333333 !important; /* Dark text for light background */
+  padding: 15px !important;
+  border-radius: 8px !important;
+  margin: 15px 0 !important;
+}
+
+.quick-view-feature {
+  color: #333333 !important; /* Ensure feature text is dark */
+}
+
+.quick-view-feature i {
+  color: hsl(346, 100%, 74%) !important; /* Keep icons colored */
+}
+
+/* Desktop overrides */
+@media screen and (min-width: 1024px) {
+  .quick-view-modal {
+    max-width: 900px !important; /* Reduced from 1200px */
+    width: 80% !important; /* Reduced from 85% */
+  }
+}
+
+/* Extra large screens override */
+@media screen and (min-width: 1400px) {
+  .quick-view-modal {
+    max-width: 1000px !important; /* Reduced from 1400px */
+    width: 75% !important; /* Reduced from 80% */
+  }
+}
+
+/* Ensure proper content grid on larger screens */
+@media screen and (min-width: 768px) {
+  .quick-view-content {
+    grid-template-columns: 1fr 1fr !important; /* Equal columns instead of 1.2fr 1fr */
+  }
+  
+  .quick-view-images {
+    padding: 25px !important;
+  }
+  
+  .quick-view-details {
+    padding: 25px !important;
+    color:black;
+  }
+}
+
+/* Mobile improvements */
+@media screen and (max-width: 767px) {
+  .quick-view-modal {
+    width: 92% !important;
+    max-width: 420px !important;
+    margin: 10px auto !important;
+  }
+  
+  .quick-view-modal-container {
+    background-color: rgba(0, 0, 0, 0.35) !important; /* Lighter on mobile too */
+  }
+}
+
+/* Fix any potential conflicts with details page styles */
+#quick-view-modal .quick-view-modal {
+  background: #ffffff !important;
+  color: #333333 !important;
+}
+
+#quick-view-modal .quick-view-content {
+  background: transparent !important;
+}
+
+/* Center single button and adjust layout */
+.quick-view-actions {
+  display: flex !important;
+  justify-content: center !important;
+  margin-top: 20px !important;
+}
+
+.quick-view-btn {
+  min-width: 180px !important;
+  max-width: 220px !important;
+  padding: 12px 20px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+/* Close button styling */
+.quick-view-close {
+  background: hsl(346, 100%, 74%) !important;
+  width: 35px !important;
+  height: 35px !important;
+  font-size: 20px !important;
+}
+
+/* Style the View Full Details button as white (secondary button) */
+#quick-view-details-btn {
+  background: #ffffff !important;
+  color: #333333 !important;
+  border: 2px solid #dddddd !important;
+  transition: all 0.3s ease !important;
+}
+
+#quick-view-details-btn:hover {
+  background: #f8f9fa !important;
+  border-color: #cccccc !important;
+  color: #222222 !important;
+}

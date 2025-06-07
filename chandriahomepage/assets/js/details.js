@@ -11,6 +11,9 @@ import {
     arrayUnion
 } from "./sdk/chandrias-sdk.js";
 
+// Global variables
+let currentQuickViewProduct = null;
+
 // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
 // DETAILS LOADER FUNCTIONS
 function showDetailsLoader() {
@@ -411,8 +414,8 @@ $(document).ready(async function () {
     
     const productId = $(this).data('product-id');
     if (productId) {
-      // Navigate to details page for quick view
-      window.location.href = `details.html?id=${productId}`;
+      // Open quick view modal instead of navigating
+      openQuickView(productId);
     }
   });
   
@@ -1327,6 +1330,187 @@ window.addEventListener('resize', function() {
       });
     }, 2000);
   });
+  
+  // Initial setup complete
+
+  // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+  // QUICK VIEW MODAL FUNCTIONALITY
+  // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+  
+  // Function to open quick view modal
+  async function openQuickView(productId) {
+    try {
+      const modal = document.getElementById('quick-view-modal');
+      const loadingElement = document.getElementById('quick-view-loading');
+      const contentElement = document.getElementById('quick-view-content');
+      
+      // Show modal with loading state
+      modal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+      
+      // Show loading spinner and hide content
+      if (loadingElement) {
+        loadingElement.classList.remove('hidden');
+        loadingElement.style.display = 'flex';
+      }
+      if (contentElement) {
+        contentElement.style.display = 'none';
+      }
+      
+      // Fetch product data
+      const productDoc = await getDoc(doc(chandriaDB, "products", productId));
+      
+      if (!productDoc.exists()) {
+        throw new Error('Product not found');
+      }
+      
+      const productData = productDoc.data();
+      currentQuickViewProduct = { id: productId, ...productData };
+      
+      // Populate modal with product data
+      populateQuickViewModal(productData, productId);
+      
+      // Hide loading spinner and show content after data is loaded
+      setTimeout(() => {
+        if (loadingElement) {
+          loadingElement.style.display = 'none';
+          loadingElement.classList.add('hidden');
+        }
+        if (contentElement) {
+          contentElement.style.display = 'grid';
+        }
+      }, 300); // Small delay to ensure smooth transition
+      
+    } catch (error) {
+      console.error('Error loading product for quick view:', error);
+      notyf.error('Failed to load product details');
+      closeQuickView();
+    }
+  }
+
+  // Function to close quick view modal
+  function closeQuickView() {
+    const modal = document.getElementById('quick-view-modal');
+    const loadingElement = document.getElementById('quick-view-loading');
+    const contentElement = document.getElementById('quick-view-content');
+    
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+    currentQuickViewProduct = null;
+    
+    // Reset modal state for next use
+    if (loadingElement) {
+      loadingElement.style.display = 'none';
+      loadingElement.classList.add('hidden');
+    }
+    if (contentElement) {
+      contentElement.style.display = 'none';
+    }
+  }
+
+  // Function to populate quick view modal with product data
+  function populateQuickViewModal(product, productId) {
+    // Update images
+    const mainImg = document.getElementById('quick-view-main-img');
+    const frontThumb = document.getElementById('quick-view-front-thumb');
+    const backThumb = document.getElementById('quick-view-back-thumb');
+    
+    if (mainImg) mainImg.src = product.frontImageUrl || 'assets/img/placeholder.jpg';
+    if (frontThumb) frontThumb.src = product.frontImageUrl || 'assets/img/placeholder.jpg';
+    if (backThumb) backThumb.src = product.backImageUrl || 'assets/img/placeholder.jpg';
+    
+    // Update product details
+    const title = document.getElementById('quick-view-title');
+    const category = document.getElementById('quick-view-category');
+    const price = document.getElementById('quick-view-price');
+    const description = document.getElementById('quick-view-desc');
+    const productCode = document.getElementById('quick-view-product-code');
+    const colorIndicator = document.getElementById('quick-view-color-indicator');
+    
+    if (title) title.textContent = product.name || 'Untitled Product';
+    if (category) category.textContent = product.category || 'Clothing';
+    if (price) price.textContent = product.price ? `₱${product.price}` : '₱0';
+    if (description) description.textContent = product.description || 'No description available for this product.';
+    if (productCode) productCode.textContent = product.code || 'N/A';
+    if (colorIndicator && product.color) {
+      colorIndicator.style.backgroundColor = product.color;
+    }
+    
+    // Initialize thumbnail functionality
+    initQuickViewThumbnails();
+    
+    // Initialize action buttons
+    initQuickViewActions(productId);
+  }
+
+  // Function to initialize thumbnail switching
+  function initQuickViewThumbnails() {
+    const thumbnails = document.querySelectorAll('#quick-view-modal .quick-view-thumbnail');
+    const mainImage = document.getElementById('quick-view-main-img');
+    
+    thumbnails.forEach(thumbnail => {
+      thumbnail.addEventListener('click', () => {
+        // Remove active class from all thumbnails
+        thumbnails.forEach(t => t.classList.remove('active'));
+        
+        // Add active class to clicked thumbnail
+        thumbnail.classList.add('active');
+        
+        // Update main image with thumbnail's src
+        if (mainImage) {
+          mainImage.src = thumbnail.src;
+        }
+      });
+    });
+  }
+
+  // Function to initialize quick view action buttons
+  function initQuickViewActions(productId) {
+    // View Full Details button
+    const fullDetailsBtn = document.querySelector('#quick-view-details-btn');
+    if (fullDetailsBtn) {
+      // Remove any existing event listeners
+      fullDetailsBtn.replaceWith(fullDetailsBtn.cloneNode(true));
+      const newFullDetailsBtn = document.querySelector('#quick-view-details-btn');
+      
+      newFullDetailsBtn.addEventListener('click', () => {
+        // Close quick view modal
+        closeQuickView();
+        
+        // Navigate to product details page
+        window.location.href = `details.html?id=${productId}`;
+      });
+    }
+  }
+
+  // Initialize quick view event listeners
+  function initQuickViewListeners() {
+    // Close modal events
+    const modal = document.getElementById('quick-view-modal');
+    const closeBtn = document.querySelector('#quick-view-modal .quick-view-close');
+    
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeQuickView);
+    }
+    
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeQuickView();
+        }
+      });
+    }
+
+    // ESC key to close modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal && modal.classList.contains('show')) {
+        closeQuickView();
+      }
+    });
+  }
+
+  // Initialize quick view listeners
+  initQuickViewListeners();
   
   // Initial setup complete
 });
