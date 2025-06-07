@@ -499,88 +499,16 @@ $(document).ready(async function () {
     }, 2000);
   });
 
-  // Add to booking button functionality for related products
-  $(document).on('click', '#related-products-container .add-to-booking-btn', async function(e) {
+  // Add to booking button functionality for related products - redirect to product details
+  $(document).on('click', '#related-products-container .add-to-booking-btn', function(e) {
     e.preventDefault();
     e.stopPropagation();
-    
-    const user = auth.currentUser;
-    if (!user) {
-      showAuthModal();
-      return;
-    }
     
     const button = $(this);
     const productId = button.data('product-id');
     
-    if (!productId) return;
-    
-    // Add loading state
-    button.addClass('loading');
-    const icon = button.find('i');
-    const originalIcon = icon.attr('class');
-    icon.attr('class', 'fi fi-rs-spinner');
-    
-    try {
-      const userRef = doc(chandriaDB, "userAccounts", user.uid);
-      const userSnap = await getDoc(userRef);
-      
-      if (!userSnap.exists()) {
-        notyf.error("User account not found.");
-        return;
-      }
-      
-      // Get product data to check if it's available
-      const productDoc = await getDoc(doc(chandriaDB, "products", productId));
-      if (!productDoc.exists()) {
-        notyf.error("Product not found.");
-        return;
-      }
-      
-      const productData = productDoc.data();
-      
-      // For related products, we'll use default size and quantity
-      const availableSizes = productData.size ? Object.keys(productData.size).filter(size => productData.size[size] > 0) : [];
-      let selectedSize = "One Size";
-      
-      if (availableSizes.length > 0) {
-        selectedSize = availableSizes[0]; // Use first available size
-      }
-      
-      const currentCart = userSnap.data().added_to_cart || [];
-      
-      // Check if same product/size combination already exists
-      const existingIndex = currentCart.findIndex(
-        item => item.productId === productId && item.size === selectedSize
-      );
-      
-      if (existingIndex !== -1) {
-        // Update quantity
-        currentCart[existingIndex].quantity = (currentCart[existingIndex].quantity || 1) + 1;
-        await updateDoc(userRef, { added_to_cart: currentCart });
-      } else {
-        // Add new item
-        await updateDoc(userRef, {
-          added_to_cart: arrayUnion({
-            productId,
-            size: selectedSize,
-            quantity: 1
-          })
-        });
-      }
-      
-      notyf.success(`Added to booking! Size: ${selectedSize}`);
-      
-      // Update cart count and button status
-      await updateCartCount();
-      await updateAllCartButtonStatus();
-      
-    } catch (error) {
-      console.error("Error adding to booking:", error);
-      notyf.error("An error occurred. Please try again.");
-    } finally {
-      button.removeClass('loading');
-      icon.attr('class', originalIcon);
+    if (productId) {
+      window.location.href = `details.html?id=${productId}`;
     }
   });
 
@@ -1197,90 +1125,15 @@ window.addEventListener('resize', function() {
     }, 300);
   });
   
-  // Add to cart functionality for related products
-  $(document).on("click", "#related-products-container .add-to-cart-action-btn", async function(e) {
+  // Redirect to product details for related products cart button
+  $(document).on("click", "#related-products-container .add-to-cart-action-btn", function(e) {
     e.preventDefault();
     e.stopPropagation();
     
-    const user = auth.currentUser;
-    if (!user) {
-      showAuthModal();
-      return;
-    }
-    
-    const button = $(this);
-    const productId = button.data("product-id");
-    const isInCart = button.attr("data-in-cart") === "true";
-    
-    if (!productId) return;
-    
-    // Add loading state
-    button.addClass("loading");
-    
-    try {
-      const userRef = doc(chandriaDB, "userAccounts", user.uid);
-      const userSnap = await getDoc(userRef);
-      
-      if (!userSnap.exists()) {
-        notyf.error("User account not found.");
-        return;
-      }
-      
-      const currentCart = userSnap.data().added_to_cart || [];
-      
-      if (isInCart) {
-        // Remove from cart - remove all instances of this product
-        const updatedCart = currentCart.filter(item => item.productId !== productId);
-        await updateDoc(userRef, { added_to_cart: updatedCart });
-        
-        button.attr("data-in-cart", "false");
-        button.find('i').removeClass('fi-rs-shopping-bag-added').addClass('fi-rs-shopping-bag-add');
-        notyf.success("Removed from cart!");
-        
-      } else {
-        // Get selected size and quantity from the product card
-        const productCard = button.closest('.product-item');
-        let selectedSize = productCard.find('.size-selector').val();
-        let selectedQuantity = parseInt(productCard.find('.quantity-value').text()) || 1;
-        
-        // Fallback to auto-selecting size if not available on the card
-        if (!selectedSize) {
-          selectedSize = "One Size";
-        }
-        
-        // Check if same product/size combination already exists
-        const existingIndex = currentCart.findIndex(
-          item => item.productId === productId && item.size === selectedSize
-        );
-        
-        if (existingIndex !== -1) {
-          // Update quantity
-          currentCart[existingIndex].quantity = (currentCart[existingIndex].quantity || 1) + selectedQuantity;
-          await updateDoc(userRef, { added_to_cart: currentCart });
-        } else {
-          // Add new item
-          await updateDoc(userRef, {
-            added_to_cart: arrayUnion({
-              productId,
-              size: selectedSize,
-              quantity: selectedQuantity
-            })
-          });
-        }
-        
-        button.attr("data-in-cart", "true");
-        button.find('i').removeClass('fi-rs-shopping-bag-add').addClass('fi-rs-shopping-bag-added');
-        notyf.success(`Added to cart! Size: ${selectedSize}, Qty: ${selectedQuantity}`);
-      }
-      
-      // Update cart count
-      await updateCartCount();
-      
-    } catch (error) {
-      console.error("Error updating cart:", error);
-      notyf.error("An error occurred. Please try again.");
-    } finally {
-      button.removeClass("loading");
+    const productId = $(this).data("product-id");
+    if (productId) {
+      // Redirect to details.html with the product ID
+      window.location.href = `details.html?id=${productId}`;
     }
   });
   
