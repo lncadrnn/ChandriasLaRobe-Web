@@ -84,15 +84,12 @@ $(document).ready(function () {
                 </div>
                   <div class="price-tag">${price}</div>
                 <div class="product-color-indicator" style="background-color: ${product.color || '#f8f9fa'}" title="${product.colorName || product.color || 'Color'}" data-product-id="${productId}"></div>            </div>
-            <div class="product-content">
-                <div class="product-header">
+            <div class="product-content">                <div class="product-header">
                     <div class="product-info">
                         <span class="product-category">${categoryDisplay}</span>
-                        <a href="chandriahomepage/details.html?id=${productId}">
-                            <h3 class="product-title">${
-                                product.name || "Untitled Product"
-                            }</h3>
-                        </a>
+                        <h3 class="product-title">${
+                            product.name || "Untitled Product"
+                        }</h3>
                     </div>
                 </div>
             </div>

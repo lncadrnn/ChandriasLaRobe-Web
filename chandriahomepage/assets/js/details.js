@@ -792,9 +792,7 @@ function createProductHTML(product) {
             <div class="product-header">
                 <div class="product-info">
                     <span class="product-category">${categoryDisplay}</span>
-                    <a href="details.html?id=${product.id}">
-                        <h3 class="product-title">${product.name || "Untitled Product"}</h3>
-                    </a>
+                    <h3 class="product-title">${product.name || "Untitled Product"}</h3>
                 </div>
                 <button class="add-to-booking-btn" data-product-id="${product.id}" title="Add to Booking">
                     <i class="fi fi-rs-shopping-bag-add"></i>
@@ -978,11 +976,9 @@ function createAdditionalHTML(additional) {
         </div>
         <div class="product-content">
             <span class="product-category">${formatCategoryName(additional.category)}</span>
-            <a href="details.html?id=${additional.id}">
-                <h3 class="product-title">
-                    ${additional.name}
-                </h3>
-            </a>
+            <h3 class="product-title">
+                ${additional.name}
+            </h3>
             <div class="product-price flex">
                 <span class="new-price">₱ ${additional.price}/rent</span>
             </div>

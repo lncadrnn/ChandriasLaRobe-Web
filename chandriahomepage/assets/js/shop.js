@@ -617,9 +617,7 @@ $(document).ready(function () {
             </div>            <div class="product-content">                <div class="product-header">
                     <div class="product-info">
                         <span class="product-category">${categoryDisplay}</span>
-                        <a href="details.html?id=${product.id}">
-                            <h3 class="product-title">${product.name || "Untitled Product"}</h3>
-                        </a>
+                        <h3 class="product-title">${product.name || "Untitled Product"}</h3>
                     </div>
                     ${!product.isAdditional ? `
                     <div class="product-header-buttons">
