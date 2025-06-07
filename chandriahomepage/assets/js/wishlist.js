@@ -63,39 +63,16 @@ $(document).ready(function () {
                 showAuthModal();
             }, 500); // Small delay to ensure page has loaded properly
         }
-    });    // AUTHENTICATION MODAL FUNCTIONS
+    });    // AUTHENTICATION MODAL FUNCTIONS - Now handled by auth-modal.js module
     function initializeAuthModal() {
-        // Modal already exists in HTML, just set up event handlers
-        
-        // Close modal handlers
-        $(document).on("click", ".auth-close, #auth-modal-cancel", function(e) {
-            hideAuthModal();
-        });
-        
-        // Remove the login button handler since we're using the modal directly
-        // No need to redirect to user_authentication.html anymore
-        
-        // Close modal when clicking outside
-        $(document).on("click", "#auth-modal", function(e) {
-            if (e.target === this) {
-                hideAuthModal();
-            }
-        });
-    }
-
-    function showAuthModal() {
-        const authModal = document.getElementById("auth-modal");
-        if (authModal) {
-            authModal.classList.add("show");
-            document.body.style.overflow = "hidden"; // Prevent background scrolling
-        }
+        // Modal functions are now handled by the global auth-modal.js module
+        // The global showAuthModal() and hideAuthModal() functions are available
     }
 
     function hideAuthModal() {
-        const authModal = document.getElementById("auth-modal");
-        if (authModal) {
-            authModal.classList.remove("show");
-            document.body.style.overflow = ""; // Restore scrolling
+        // Custom wishlist-specific logic when hiding auth modal
+        if (window.hideAuthModal) {
+            window.hideAuthModal();
         }
         
         // If user is not authenticated and closes modal, ensure content stays hidden
@@ -104,9 +81,6 @@ $(document).ready(function () {
             $(".wishlist.section-lg.container").removeClass("authenticated").hide();
         }
     }
-
-    // Make showAuthModal globally accessible
-    window.showAuthModal = showAuthModal;
 
     // DISPLAY WISHLIST ITEMS
     async function displayWishlistItems() {

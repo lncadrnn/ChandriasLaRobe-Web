@@ -48,53 +48,7 @@ $(document).ready(function () {
     });
 
     // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
-    // AUTHENTICATION MODAL FUNCTIONS
-    function showAuthModal() {
-        const authModal = document.getElementById("auth-modal");
-        if (authModal) {
-            authModal.classList.add("show");
-            document.body.style.overflow = "hidden"; // Prevent background scrolling
-        }
-    }
-
-    function hideAuthModal() {
-        const authModal = document.getElementById("auth-modal");
-        if (authModal) {
-            authModal.classList.remove("show");
-            document.body.style.overflow = ""; // Restore scrolling
-        }
-    }
-
-    // Make showAuthModal globally accessible
-    window.showAuthModal = showAuthModal;
-
-    // Authentication modal event listeners
-    $(document).on(
-        "click",
-        ".auth-close, #auth-modal-cancel",
-        function () {
-            hideAuthModal();
-        }
-    );
-
-    $(document).on("click", "#auth-modal-login", function () {
-        // No need to redirect to user_authentication.html anymore
-        // Authentication is handled directly in the modal
-    });
-
-    // Close modal when clicking outside
-    $(document).on("click", "#auth-modal", function (e) {
-        if (e.target === this) {
-            hideAuthModal();
-        }
-    });
-
-    // Close modal on escape key
-    $(document).on("keydown", function (e) {
-        if (e.key === "Escape") {
-            hideAuthModal();
-        }
-    }); // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+    // AUTHENTICATION MODAL FUNCTIONS - Now handled by auth-modal.js module // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // LISTEN FOR AUTH STATE CHANGES
     onAuthStateChanged(auth, async user => {
         if (!user) {

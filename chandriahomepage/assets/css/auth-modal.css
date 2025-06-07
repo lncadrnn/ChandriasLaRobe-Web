@@ -999,3 +999,12 @@
 }
 
 /* =============== CONSISTENT AUTO-HEIGHT BEHAVIOR FOR ALL FORMS =============== */
+
+/* =============== NOTYF NOTIFICATIONS Z-INDEX FIX =============== */
+.notyf {
+  z-index: 20000 !important;
+}
+
+.notyf__toast {
+  z-index: 20001 !important;
+}

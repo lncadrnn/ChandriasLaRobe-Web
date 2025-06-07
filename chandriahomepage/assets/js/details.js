@@ -219,22 +219,7 @@ $(document).ready(async function () {
       y: "top"
     }
   });
-  // AUTHENTICATION MODAL FUNCTIONS (Matching shop.js implementation)
-  function showAuthModal() {
-    const authModal = document.getElementById('auth-modal');
-    if (authModal) {
-      authModal.classList.add('show');
-      document.body.style.overflow = 'hidden'; // Prevent background scrolling
-    }
-  }
-
-  function hideAuthModal() {
-    const authModal = document.getElementById('auth-modal');
-    if (authModal) {
-      authModal.classList.remove('show');
-      document.body.style.overflow = ''; // Restore scrolling
-    }
-  }
+  // AUTHENTICATION MODAL FUNCTIONS - Now handled by auth-modal.js module
 
   // Authentication modal event listeners
   $(document).on('click', '.auth-close, #auth-modal-cancel', function() {

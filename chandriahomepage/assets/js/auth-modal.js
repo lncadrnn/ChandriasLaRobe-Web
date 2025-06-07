@@ -1,18 +1,42 @@
-// Authentication Modal JavaScript
-class AuthModal {    constructor() {
+// Authentication Modal JavaScript with Firebase Integration
+import {
+    auth,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail,
+    chandriaDB,
+    collection,
+    getDocs,
+    getDoc,
+    signOut,
+    createUserWithEmailAndPassword,
+    validatePassword,
+    sendEmailVerification,
+    query,
+    where,
+    setDoc,
+    doc,
+    updateProfile,
+    getAuth
+} from "./sdk/chandrias-sdk.js";
+
+class AuthModal {
+    constructor() {
         this.modal = document.getElementById('auth-modal');
         this.signInForm = document.getElementById('signin-form');
         this.signUpForm = document.getElementById('signup-form');
         this.forgotPasswordForm = document.getElementById('forgot-form');
         this.currentForm = 'signin';
-        
-        // Initialize Notyf for notifications
+        this.isLoggingIn = false;
+          // Initialize Notyf for notifications
         this.notyf = new Notyf({
             duration: 4000,
             position: {
-                x: 'right',
+                x: 'center',
                 y: 'top',
             },
+            dismissible: true,
+            ripple: true,
             types: [
                 {
                     type: 'warning',
@@ -35,20 +59,21 @@ class AuthModal {    constructor() {
             ]
         });
         
+        // Set Notyf container z-index to be higher than auth modal
+        setTimeout(() => {
+            const notyfContainer = document.querySelector('.notyf');
+            if (notyfContainer) {
+                notyfContainer.style.zIndex = '20000';
+            }
+        }, 100);
+        
         this.initializeEventListeners();
-    }
-
-    initializeEventListeners() {        // Modal open/close events
-        const userAccountLink = document.getElementById('user-account-link');
+        this.setupPasswordToggles();
+        this.setupAuthStateListener();
+    }    initializeEventListeners() {
+        // Modal open/close events
         const closeBtn = document.querySelector('.auth-close');
         const modalOverlay = this.modal;
-
-        if (userAccountLink) {
-            userAccountLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.openModal();
-            });
-        }
 
         if (closeBtn) {
             closeBtn.addEventListener('click', () => this.closeModal());
@@ -60,7 +85,9 @@ class AuthModal {    constructor() {
                     this.closeModal();
                 }
             });
-        }        // Form switching events
+        }
+
+        // Form switching events
         document.addEventListener('click', (e) => {
             if (e.target.id === 'switch-to-signup') {
                 e.preventDefault();
@@ -75,7 +102,9 @@ class AuthModal {    constructor() {
                 e.preventDefault();
                 this.switchForm('forgot');
             }
-        });        // Form submission events
+        });
+
+        // Form submission events
         const signInFormElement = document.getElementById('signin-form-element');
         const signUpFormElement = document.getElementById('signup-form-element');
         const forgotFormElement = document.getElementById('forgot-form-element');
@@ -101,34 +130,93 @@ class AuthModal {    constructor() {
             });
         }
 
-        // Social login events
-        const googleBtn = document.getElementById('google-signin');
-        const facebookBtn = document.getElementById('facebook-signin');
-
-        if (googleBtn) {
-            googleBtn.addEventListener('click', () => this.handleGoogleSignIn());
-        }
-
-        if (facebookBtn) {
-            facebookBtn.addEventListener('click', () => this.handleFacebookSignIn());
-        }
-
-        // Password visibility toggles
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('toggle-password')) {
-                this.togglePasswordVisibility(e.target);
-            }
-        });
-
-        // Real-time validation
-        this.setupFormValidation();
-
         // ESC key to close modal
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.modal.classList.contains('show')) {
                 this.closeModal();
             }
         });
+
+        // Setup real-time validation
+        this.setupFormValidation();
+    }
+
+    setupAuthStateListener() {
+        // Listen for authentication state changes
+        onAuthStateChanged(auth, async (user) => {
+            if (user && !this.isLoggingIn) {
+                // Check if user exists in adminAccounts and redirect them
+                const adminDocRef = doc(chandriaDB, "adminAccounts", user.uid);
+                const adminDocSnap = await getDoc(adminDocRef);
+
+                if (adminDocSnap.exists()) {
+                    // If user is admin, sign them out
+                    await signOut(auth);
+                    return;
+                }
+
+                // Update UI for authenticated user
+                this.updateUIForAuthenticatedUser(user);
+                this.closeModal();
+            } else if (!user) {
+                // Update UI for unauthenticated user
+                this.updateUIForUnauthenticatedUser();
+            }
+        });
+    }
+
+    updateUIForAuthenticatedUser(user) {
+        // Update navigation
+        const loginNav = document.getElementById('nav-login');
+        const userNav = document.getElementById('nav-user');
+        
+        if (loginNav) loginNav.style.display = 'none';
+        if (userNav) userNav.style.display = 'block';
+
+        // Store user email in localStorage
+        localStorage.setItem('userEmail', user.email);
+
+        // Trigger cart/wishlist count updates if functions exist
+        if (typeof updateCartCount === 'function') {
+            updateCartCount();
+        }
+        if (typeof updateWishlistCount === 'function') {
+            updateWishlistCount();
+        }
+
+        // Refresh page content if needed
+        if (typeof location !== 'undefined' && location.reload) {
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        }
+    }
+
+    updateUIForUnauthenticatedUser() {
+        // Update navigation
+        const loginNav = document.getElementById('nav-login');
+        const userNav = document.getElementById('nav-user');
+        
+        if (loginNav) loginNav.style.display = 'block';
+        if (userNav) userNav.style.display = 'none';
+
+        // Clear stored data
+        localStorage.removeItem('userEmail');
+
+        // Reset counts
+        const cartCount = document.getElementById('cart-count');
+        const wishlistCount = document.getElementById('wishlist-count');
+        
+        if (cartCount) cartCount.textContent = '0';
+        if (wishlistCount) wishlistCount.textContent = '0';
+    }
+
+    show() {
+        this.openModal();
+    }
+
+    hide() {
+        this.closeModal();
     }
 
     openModal() {
@@ -199,9 +287,7 @@ class AuthModal {    constructor() {
             case 'forgot': return this.forgotPasswordForm;
             default: return this.signInForm;
         }
-    }
-
-    async handleSignIn(event) {
+    }    async handleSignIn(event) {
         const formData = new FormData(event.target);
         const email = formData.get('email');
         const password = formData.get('password');
@@ -210,47 +296,138 @@ class AuthModal {    constructor() {
             return;
         }
 
-        this.showLoading(event.target);        try {
-            // Simulate API call
-            await this.simulateAuthRequest();
-            
-            this.notyf.success('Sign in successful! Welcome back.');
-            setTimeout(() => {
-                this.closeModal();
-                // Redirect or update UI as needed
-            }, 1500);
+        this.isLoggingIn = true;
+        this.showLoading(event.target);
 
+        try {
+            // Check if email exists in userAccounts collection
+            const emailQuery = await getDocs(
+                query(
+                    collection(chandriaDB, "userAccounts"),
+                    where("email", "==", email)
+                )
+            );
+
+            // If email does not exist, show error and return
+            if (emailQuery.empty) {
+                this.notyf.error("Email is not registered. Please sign up first.");
+                return;
+            }
+
+            // Sign in with Firebase Authentication
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+            // Check if verified
+            const user = userCredential.user;
+            if (!user.emailVerified) {
+                // Sign out the unverified user
+                await auth.signOut();
+                this.notyf.error("Please verify your email before logging in.");
+                return;
+            }
+
+            // Success
+            this.notyf.success("Login successful! Welcome back.");
+            
+            // The auth state listener will handle UI updates and modal closing
+            
         } catch (error) {
-            this.notyf.error('Invalid email or password. Please try again.');
+            console.error("Login error:", error.code, error.message);
+            
+            const errorMsg = this.formatErrorMessage(error.code);
+            if (errorMsg) {
+                this.notyf.error(errorMsg);
+            } else {
+                this.notyf.error("Login failed. Please try again.");
+            }
         } finally {
+            this.isLoggingIn = false;
             this.hideLoading(event.target);
         }
     }    async handleSignUp(event) {
         const formData = new FormData(event.target);
-        const firstName = formData.get('firstname');
-        const lastName = formData.get('lastname');
+        const fullname = formData.get('fullname');
         const username = formData.get('username');
         const email = formData.get('email');
         const contact = formData.get('contact');
         const password = formData.get('password');
         const confirmPassword = formData.get('confirm-password');
 
-        if (!this.validateSignUpForm(firstName, lastName, username, email, contact, password, confirmPassword)) {
+        if (!this.validateSignUpForm(fullname, username, email, contact, password, confirmPassword)) {
             return;
         }
 
-        this.showLoading(event.target);        try {
-            // Simulate API call
-            await this.simulateAuthRequest();
+        this.isLoggingIn = true;
+        this.showLoading(event.target);
+
+        try {
+            // Password strength validation
+            const status = await validatePassword(auth, password);
+            if (!status.isValid) {
+                const minLength = status.passwordPolicy.customStrengthOptions.minPasswordLength;
+                let errorMsg = `<strong>Password doesn't meet requirements:</strong><ul>`;
+                if (!status.containsLowercaseLetter) errorMsg += "<li>Lowercase letter</li>";
+                if (!status.containsUppercaseLetter) errorMsg += "<li>Uppercase letter</li>";
+                if (!status.containsNumericCharacter) errorMsg += "<li>Number</li>";
+                if (!status.containsNonAlphanumericCharacter) errorMsg += "<li>Special character</li>";
+                if (minLength && password.length < minLength) errorMsg += `<li>At least ${minLength} characters</li>`;
+                errorMsg += "</ul>";
+
+                this.notyf.open({
+                    type: "error",
+                    message: errorMsg,
+                    duration: 5000
+                });
+                return;
+            }
+
+            // Check if username exists
+            const usernameQuery = await getDocs(
+                query(
+                    collection(chandriaDB, "userAccounts"),
+                    where("username", "==", username)
+                )
+            );
+            if (!usernameQuery.empty) {
+                this.notyf.error("Username is already taken. Please choose another.");
+                return;
+            }
+
+            // Firebase Auth sign-up
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            await getAuth().signOut(); // Sign out immediately after registration
+            await sendEmailVerification(userCredential.user);
+            await updateProfile(userCredential.user, { displayName: fullname });
+
+            // Form data
+            const userData = {
+                fullname,
+                contact,
+                username,
+                email,
+                createdAt: new Date()
+            };
+
+            // Save user info to Firestore
+            await setDoc(
+                doc(chandriaDB, "userAccounts", userCredential.user.uid),
+                userData
+            );
+
+            // Success message
+            this.notyf.success("Account created successfully! Check your email for verification.");
             
-            this.notyf.success('Account created successfully! Please check your email for verification.');
             setTimeout(() => {
                 this.switchForm('signin');
             }, 2000);
 
         } catch (error) {
-            this.notyf.error('Failed to create account. Please try again.');
+            console.error("Sign-up error:", error.code, error.message);
+            
+            const errorMsg = this.formatErrorMessage(error.code);
+            this.notyf.error(errorMsg || "Sign-up failed. Please try again.");
         } finally {
+            this.isLoggingIn = false;
             this.hideLoading(event.target);
         }
     }    async handleForgotPassword(event) {
@@ -265,19 +442,53 @@ class AuthModal {    constructor() {
         this.showLoading(event.target);
 
         try {
-            // Simulate API call
-            await this.simulateAuthRequest();
-            
+            // Check if email exists in Firestore
+            const exists = await this.emailExistsInFirestore(email);
+            if (!exists) {
+                this.notyf.error("Email not found. Please try another.");
+                return;
+            }
+
+            await sendPasswordResetEmail(auth, email);
             this.notyf.success('Password reset link sent to your email.');
+            
             setTimeout(() => {
                 this.switchForm('signin');
             }, 2000);
 
         } catch (error) {
-            this.notyf.error('Failed to send reset email. Please try again.');
+            console.error("Reset error:", error.code, error.message);
+            this.notyf.error("Something went wrong. Please try again.");
         } finally {
             this.hideLoading(event.target);
         }
+    }
+
+    async emailExistsInFirestore(email) {
+        const usersRef = collection(chandriaDB, "userAccounts");
+        const snapshot = await getDocs(usersRef);
+        const exists = snapshot.docs.some(doc => doc.data().email === email);
+        return exists;
+    }
+
+    formatErrorMessage(errorCode) {
+        let message = "";
+
+        if (errorCode === "auth/invalid-email" || errorCode === "auth/missing-email") {
+            message = "Please enter a valid email";
+        } else if (errorCode === "auth/missing-password" || errorCode === "auth/weak-password") {
+            message = "Password must be at least 6 characters long";
+        } else if (errorCode === "auth/email-already-in-use") {
+            message = "Email is already taken";
+        } else if (errorCode === "auth/user-not-found") {
+            message = "No user found with this email";
+        } else if (errorCode === "auth/wrong-password") {
+            message = "Incorrect password";
+        } else if (errorCode === "auth/invalid-credential") {
+            message = "Incorrect Email or Password";
+        }
+
+        return message;
     }
 
     async handleGoogleSignIn() {
@@ -328,16 +539,18 @@ class AuthModal {    constructor() {
         }
 
         return isValid;
-    }    validateSignUpForm(firstName, lastName, username, email, contact, password, confirmPassword) {
-        let isValid = true;        
+    }        validateSignUpForm(fullname, username, email, contact, password, confirmPassword) {
+        let isValid = true;
 
-        if (!firstName || firstName.trim().length < 2) {
-            this.notyf.error('First name must be at least 2 characters long.');
+        if (!fullname || fullname.trim().length < 2) {
+            this.notyf.error('Full name must be at least 2 characters long.');
             isValid = false;
         }
 
-        if (!lastName || lastName.trim().length < 2) {
-            this.notyf.error('Last name must be at least 2 characters long.');
+        // Validate full name pattern (at least two words, each starting with capital letter)
+        const fullnamePattern = /^([A-Z][a-z]+)( [A-Z][a-z]+)+$/;
+        if (fullname && !fullnamePattern.test(fullname)) {
+            this.notyf.error('Full name must be at least two words, only letters, and each starting with a capital letter.');
             isValid = false;
         }
 
@@ -352,14 +565,14 @@ class AuthModal {    constructor() {
         }
 
         if (!this.validatePhone(contact)) {
-            this.notyf.error('Please enter a valid phone number.');
+            this.notyf.error('Contact number must start with "09" and be exactly 11 digits.');
             isValid = false;
         }
 
         if (!password || password.length < 6) {
             this.notyf.error('Password must be at least 6 characters long.');
             isValid = false;
-        }        
+        }
 
         if (password !== confirmPassword) {
             this.notyf.error('Passwords do not match.');
@@ -375,9 +588,9 @@ class AuthModal {    constructor() {
     }
 
     validatePhone(phone) {
-        const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-        return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
-    }    setupFormValidation() {
+        const contactPattern = /^09\d{9}$/;
+        return contactPattern.test(phone);
+    }setupFormValidation() {
         // Real-time validation for all inputs
         const inputs = this.modal.querySelectorAll('input');
         inputs.forEach(input => {
@@ -483,6 +696,31 @@ class AuthModal {    constructor() {
         }
     }
 
+    setupPasswordToggles() {
+        // Add password toggle functionality for all password fields
+        const passwordFields = this.modal.querySelectorAll('input[type="password"]');
+        
+        passwordFields.forEach(field => {
+            // Create toggle button if it doesn't exist
+            const toggleExists = field.parentNode.querySelector('.password-toggle');
+            if (!toggleExists) {
+                const toggleBtn = document.createElement('button');
+                toggleBtn.type = 'button';
+                toggleBtn.className = 'password-toggle';
+                toggleBtn.innerHTML = '<i class="fi fi-rs-eye"></i>';
+                toggleBtn.setAttribute('aria-label', 'Toggle password visibility');
+                
+                // Insert after the input field
+                field.parentNode.insertBefore(toggleBtn, field.nextSibling);
+                
+                // Add click event listener
+                toggleBtn.addEventListener('click', () => {
+                    this.togglePasswordVisibility(toggleBtn);
+                });
+            }
+        });
+    }
+
     simulateAuthRequest() {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -495,5 +733,10 @@ class AuthModal {    constructor() {
 
 // Initialize the auth modal when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new AuthModal();
+    const authModal = new AuthModal();
+    
+    // Make functions globally accessible
+    window.showAuthModal = () => authModal.show();
+    window.hideAuthModal = () => authModal.hide();
+    window.authModal = authModal;
 });

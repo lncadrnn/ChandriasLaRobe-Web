@@ -1058,26 +1058,7 @@ $(document).ready(function () {
             button.prop('disabled', false);
             button.find('.btn-text').show();
             button.find('.spinner').hide();
-        }
-    }    // Authentication modal functions
-    function showAuthModal() {
-        const authModal = document.getElementById("auth-modal");
-        if (authModal) {
-            authModal.classList.add("show");
-            document.body.style.overflow = "hidden"; // Prevent background scrolling
-        }
-    }
-
-    function hideAuthModal() {
-        const authModal = document.getElementById("auth-modal");
-        if (authModal) {
-            authModal.classList.remove("show");
-            document.body.style.overflow = ""; // Restore scrolling
-        }
-    }
-
-    // Make showAuthModal globally accessible
-    window.showAuthModal = showAuthModal;
+        }    }    // Authentication modal functions - Now handled by auth-modal.js module
 
     // Cart count function
     async function updateCartCount() {
