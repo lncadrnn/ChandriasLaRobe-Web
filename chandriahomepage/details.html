@@ -30,6 +30,7 @@
         <!--=============== CSS ===============-->
         <link rel="stylesheet" href="assets/css/styles.css" />
         <link rel="stylesheet" href="./assets/css/shop.css" />
+        <link rel="stylesheet" href="./assets/css/product-card.css" />
         <link rel="stylesheet" href="./assets/css/details.css" />
         <link rel="stylesheet" href="./assets/css/details-mobile.css" />        <title>Chandria's La Robe</title>
     </head>
@@ -269,258 +270,178 @@
 
                 <div class="products-container grid">
                     <div class="product-item">
+                        <div class="loading-state">
+                            <div class="loading-spinner"></div>
+                        </div>
                         <div class="product-banner">
                             <a href="details.html" class="product-images">
                                 <img
                                     src="assets/img/product-2-1.jpg"
-                                    alt=""
+                                    alt="Colorful Pattern Shirt"
                                     class="product-img default"
                                 />
-
                                 <img
                                     src="assets/img/product-2-2.jpg"
-                                    alt=""
+                                    alt="Colorful Pattern Shirt"
                                     class="product-img hover"
                                 />
                             </a>
-
                             <div class="product-actions">
-                                <a
-                                    href="#"
-                                    class="action-btn"
-                                    aria-label="Quick View"
-                                >
+                                <a href="#" class="action-btn" aria-label="Quick View" data-product-id="product-2">
                                     <i class="fi fi-rs-eye"></i>
                                 </a>
-
-                                <a
-                                    href="#"
-                                    class="action-btn"
-                                    aria-label="Add to Rent List"
-                                >
+                                <a href="#" class="action-btn" aria-label="Add to Rent List" data-product-id="product-2">
                                     <i class="fi fi-rs-heart"></i>
                                 </a>
-
-                                <a
-                                    href="#"
-                                    class="action-btn"
-                                    aria-label="share"
-                                >
-                                    <i class="fi fi-rs-shuffle"></i>
-                                </a>
                             </div>
+                            
+                            <div class="price-tag">₱ 1500/24hr</div>
+                            <div class="product-color-indicator" style="background-color: #ff6b9d" title="Pink" data-product-id="product-2"></div>
                         </div>
-
                         <div class="product-content">
-                            <span class="product-category">Clothing</span>
-                            <a href="details.html">
-                                <h3 class="product-title">
-                                    Colorful Pattern Shirts
-                                </h3>
-                            </a>
-                            <div class="product-price flex">
-                                <span class="new-price">₱ 1500/24hr</span>
+                            <div class="product-header">
+                                <div class="product-info">
+                                    <span class="product-category">Clothing</span>
+                                    <a href="details.html">
+                                        <h3 class="product-title">Colorful Pattern Shirt</h3>
+                                    </a>
+                                </div>
+                                <button class="add-to-cart-action-btn" data-product-id="product-2" data-in-cart="false" title="View Details">
+                                    <i class="fi fi-rs-shopping-bag-add"></i>
+                                </button>
                             </div>
-
-                            <a
-                                href="#"
-                                class="action-btn cart-btn"
-                                aria-label="Add to Rent List"
-                            >
-                                <i class="fi fi-rs-shopping-bag-add"></i>
-                            </a>
                         </div>
                     </div>
 
                     <div class="product-item">
+                        <div class="loading-state">
+                            <div class="loading-spinner"></div>
+                        </div>
                         <div class="product-banner">
                             <a href="details.html" class="product-images">
                                 <img
                                     src="assets/img/product-3-1.jpg"
-                                    alt=""
+                                    alt="Elegant Dress"
                                     class="product-img default"
                                 />
-
                                 <img
                                     src="assets/img/product-3-2.jpg"
-                                    alt=""
+                                    alt="Elegant Dress"
                                     class="product-img hover"
                                 />
                             </a>
-
                             <div class="product-actions">
-                                <a
-                                    href="#"
-                                    class="action-btn"
-                                    aria-label="Quick View"
-                                >
+                                <a href="#" class="action-btn" aria-label="Quick View" data-product-id="product-3">
                                     <i class="fi fi-rs-eye"></i>
                                 </a>
-
-                                <a
-                                    href="#"
-                                    class="action-btn"
-                                    aria-label="Add to Rent List"
-                                >
+                                <a href="#" class="action-btn" aria-label="Add to Rent List" data-product-id="product-3">
                                     <i class="fi fi-rs-heart"></i>
                                 </a>
-
-                                <a
-                                    href="#"
-                                    class="action-btn"
-                                    aria-label="share"
-                                >
-                                    <i class="fi fi-rs-shuffle"></i>
-                                </a>
                             </div>
+                            
+                            <div class="price-tag">₱ 2200/24hr</div>
+                            <div class="product-color-indicator" style="background-color: #4a90e2" title="Blue" data-product-id="product-3"></div>
                         </div>
-
                         <div class="product-content">
-                            <span class="product-category">Clothing</span>
-                            <a href="details.html">
-                                <h3 class="product-title">
-                                    Colorful Pattern Shirts
-                                </h3>
-                            </a>
-                            <div class="product-price flex">
-                                <span class="new-price">₱ 1500/24hr</span>
+                            <div class="product-header">
+                                <div class="product-info">
+                                    <span class="product-category">Dresses</span>
+                                    <a href="details.html">
+                                        <h3 class="product-title">Elegant Cocktail Dress</h3>
+                                    </a>
+                                </div>
+                                <button class="add-to-cart-action-btn" data-product-id="product-3" data-in-cart="false" title="View Details">
+                                    <i class="fi fi-rs-shopping-bag-add"></i>
+                                </button>
                             </div>
-
-                            <a
-                                href="#"
-                                class="action-btn cart-btn"
-                                aria-label="Add to Rent List"
-                            >
-                                <i class="fi fi-rs-shopping-bag-add"></i>
-                            </a>
                         </div>
                     </div>
 
                     <div class="product-item">
+                        <div class="loading-state">
+                            <div class="loading-spinner"></div>
+                        </div>
                         <div class="product-banner">
                             <a href="details.html" class="product-images">
                                 <img
                                     src="assets/img/product-5-1.jpg"
-                                    alt=""
+                                    alt="Summer Blouse"
                                     class="product-img default"
                                 />
-
                                 <img
                                     src="assets/img/product-5-2.jpg"
-                                    alt=""
+                                    alt="Summer Blouse"
                                     class="product-img hover"
                                 />
                             </a>
-
                             <div class="product-actions">
-                                <a
-                                    href="#"
-                                    class="action-btn"
-                                    aria-label="Quick View"
-                                >
+                                <a href="#" class="action-btn" aria-label="Quick View" data-product-id="product-5">
                                     <i class="fi fi-rs-eye"></i>
                                 </a>
-
-                                <a
-                                    href="#"
-                                    class="action-btn"
-                                    aria-label="Add to Rent List"
-                                >
+                                <a href="#" class="action-btn" aria-label="Add to Rent List" data-product-id="product-5">
                                     <i class="fi fi-rs-heart"></i>
                                 </a>
-
-                                <a
-                                    href="#"
-                                    class="action-btn"
-                                    aria-label="share"
-                                >
-                                    <i class="fi fi-rs-shuffle"></i>
-                                </a>
                             </div>
+                            
+                            <div class="price-tag">₱ 1800/24hr</div>
+                            <div class="product-color-indicator" style="background-color: #f39c12" title="Orange" data-product-id="product-5"></div>
                         </div>
-
                         <div class="product-content">
-                            <span class="product-category">Clothing</span>
-                            <a href="details.html">
-                                <h3 class="product-title">
-                                    Colorful Pattern Shirts
-                                </h3>
-                            </a>
-                            <div class="product-price flex">
-                                <span class="new-price">₱ 1500/24hr</span>
+                            <div class="product-header">
+                                <div class="product-info">
+                                    <span class="product-category">Tops</span>
+                                    <a href="details.html">
+                                        <h3 class="product-title">Summer Floral Blouse</h3>
+                                    </a>
+                                </div>
+                                <button class="add-to-cart-action-btn" data-product-id="product-5" data-in-cart="false" title="View Details">
+                                    <i class="fi fi-rs-shopping-bag-add"></i>
+                                </button>
                             </div>
-
-                            <a
-                                href="#"
-                                class="action-btn cart-btn"
-                                aria-label="Add to Rent List"
-                            >
-                                <i class="fi fi-rs-shopping-bag-add"></i>
-                            </a>
                         </div>
                     </div>
 
                     <div class="product-item">
+                        <div class="loading-state">
+                            <div class="loading-spinner"></div>
+                        </div>
                         <div class="product-banner">
                             <a href="details.html" class="product-images">
                                 <img
                                     src="assets/img/product-6-1.jpg"
-                                    alt=""
+                                    alt="Evening Gown"
                                     class="product-img default"
                                 />
-
                                 <img
                                     src="assets/img/product-6-2.jpg"
-                                    alt=""
+                                    alt="Evening Gown"
                                     class="product-img hover"
                                 />
                             </a>
-
                             <div class="product-actions">
-                                <a
-                                    href="#"
-                                    class="action-btn"
-                                    aria-label="Quick View"
-                                >
+                                <a href="#" class="action-btn" aria-label="Quick View" data-product-id="product-6">
                                     <i class="fi fi-rs-eye"></i>
                                 </a>
-
-                                <a
-                                    href="#"
-                                    class="action-btn"
-                                    aria-label="Add to Rent List"
-                                >
+                                <a href="#" class="action-btn" aria-label="Add to Rent List" data-product-id="product-6">
                                     <i class="fi fi-rs-heart"></i>
                                 </a>
-
-                                <a
-                                    href="#"
-                                    class="action-btn"
-                                    aria-label="share"
-                                >
-                                    <i class="fi fi-rs-shuffle"></i>
-                                </a>
                             </div>
+                            
+                            <div class="price-tag">₱ 3500/24hr</div>
+                            <div class="product-color-indicator" style="background-color: #8e44ad" title="Purple" data-product-id="product-6"></div>
                         </div>
-
                         <div class="product-content">
-                            <span class="product-category">Clothing</span>
-                            <a href="details.html">
-                                <h3 class="product-title">
-                                    Colorful Pattern Shirts
-                                </h3>
-                            </a>
-                            <div class="product-price flex">
-                                <span class="new-price">₱ 1500/24hr</span>
+                            <div class="product-header">
+                                <div class="product-info">
+                                    <span class="product-category">Gowns</span>
+                                    <a href="details.html">
+                                        <h3 class="product-title">Luxurious Evening Gown</h3>
+                                    </a>
+                                </div>
+                                <button class="add-to-cart-action-btn" data-product-id="product-6" data-in-cart="false" title="View Details">
+                                    <i class="fi fi-rs-shopping-bag-add"></i>
+                                </button>
                             </div>
-
-                            <a
-                                href="#"
-                                class="action-btn cart-btn"
-                                aria-label="Add to Rent List"
-                            >
-                                <i class="fi fi-rs-shopping-bag-add"></i>
-                            </a>
                         </div>
                     </div>
                 </div>            </section>

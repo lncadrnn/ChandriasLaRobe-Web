@@ -306,10 +306,74 @@
     justify-content: center !important;
     margin-bottom: 16px !important;
   }
-  
-  /* Add proper spacing at the bottom of product cards to compensate for removed buttons */
+    /* Add proper spacing at the bottom of product cards to compensate for removed buttons */
   .products-container .product-item {
     margin-bottom: 15px;
+  }
+
+  /* Related Products Mobile Layout - Single Column */
+  .products.container .products-container {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+    padding: 0 15px;
+  }
+  
+  .products.container .product-item {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 20px 0 !important;
+  }
+  
+  .products.container .product-banner {
+    width: 100% !important;
+  }
+  
+  .products.container .product-content {
+    width: 100% !important;
+    padding: 15px !important;
+  }
+  
+  .products.container {
+    padding: 0 20px !important;
+    margin: 0 auto !important;
+  }
+  
+  .products.container .section-title {
+    text-align: center;
+    margin-bottom: 25px;
+    padding: 0 15px;
+  }
+  
+  /* Ensure product actions are visible on mobile */
+  .products.container .product-actions {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
+  /* Make sure price tags and color indicators are visible */
+  .products.container .price-tag {
+    display: block !important;
+    visibility: visible !important;
+  }
+  
+  .products.container .product-color-indicator {
+    display: block !important;
+    visibility: visible !important;
+  }
+  
+  /* Adjust product header for mobile */
+  .products.container .product-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+  
+  .products.container .add-to-cart-action-btn {
+    flex-shrink: 0 !important;
+    min-width: 40px !important;
+    height: 40px !important;
   }
 }
 
@@ -324,11 +388,22 @@
   .products-container .product-price {
     justify-content: center !important;
   }
-  
-  /* Adjust grid for better mobile display of related products */
+    /* Adjust grid for better mobile display of related products */
   .products-container.grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 12px !important;
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+  }
+
+  /* Override the 2-column layout for very small screens - force single column */
+  .products.container .products-container {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+    padding: 0 10px;
+  }
+  
+  .products.container .product-item {
+    width: 100% !important;
+    margin: 0 0 15px 0 !important;
   }
 
   .details-small-images {
