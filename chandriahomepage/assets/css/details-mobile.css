@@ -177,66 +177,16 @@
   .size-link.size-active {
     background-color: var(--first-color);
     color: var(--body-color);
-  }
-  /* Improve action elements */
+  }  /* Improve action elements - Hide on mobile */
   .details-action {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 1.5rem;
+    display: none !important;
   }
 
-  .quantity {
-    width: 30%;
-    height: 48px;
-    padding: 0 0.75rem;
-    border: 1px solid rgba(var(--title-color-rgb), 0.2);
-    border-radius: 8px;
-    font-weight: 500;
-    text-align: center;
-    transition: border-color 0.3s ease;
-  }
-  
-  .quantity:focus {
-    border-color: var(--first-color);
-    outline: none;
-  }
-
-  .btn.btn-primary {
-    flex: 1;
-    height: 48px;
-    padding: 0 1.25rem;
-    border-radius: 8px;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    text-transform: uppercase;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-  }
-  
-  .btn.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(var(--first-color-rgb), 0.3);
-  }
-  
+  /* Hide individual elements within details-action */
+  .quantity,
+  .btn.btn-primary,
   .details-action-btn {
-    width: 48px;
-    height: 48px;
-    border-radius: 8px;
-    background-color: rgba(var(--title-color-rgb), 0.05);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--title-color);
-    transition: all 0.3s ease;
-  }
-  
-  .details-action-btn:hover {
-    background-color: rgba(var(--first-color-rgb), 0.1);
-    color: var(--first-color);
+    display: none !important;
   }
   /* Product metadata */
   .details-meta {
@@ -261,10 +211,22 @@
     font-weight: 600;
     color: var(--title-color);
   }
-    /* Add a space after the details section */
+  /* Add a space after the details section */
   .details.section-lg {
     padding-bottom: 2rem;
-  }  /* Related products styles */
+  }
+
+  /* Hide quantity and booking controls on mobile */
+  .details-action {
+    display: none !important;
+  }
+
+  /* Hide any share buttons if they exist */
+  .share-button,
+  .social-share,
+  .details-share {
+    display: none !important;
+  }/* Related products styles */
   .products-container .product-price {
     justify-content: center;
     margin-top: 8px;
@@ -426,22 +388,13 @@
   .old-price {
     font-size: 1rem;
   }
-  
-  .save-price {
+    .save-price {
     font-size: 0.8rem;
   }
 
+  /* Keep details-action hidden on smaller screens too */
   .details-action {
-    flex-direction: column;
-  }
-
-  .quantity {
-    width: 100%;
-    margin-bottom: 0.5rem;
-  }
-
-  .btn.btn-primary {
-    width: 100%;
+    display: none !important;
   }
   
   .list-item {
