@@ -401,6 +401,114 @@ $(document).ready(async function () {
     await updateCartCount();
   });
 
+  // Event handlers for related products
+  
+  // Quick View button functionality
+  $(document).on('click', '#related-products-container .action-btn[aria-label="Quick View"]', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const productId = $(this).data('product-id');
+    if (productId) {
+      // Navigate to details page for quick view
+      window.location.href = `details.html?id=${productId}`;
+    }
+  });
+  
+  // Add to Favorites button functionality
+  $(document).on('click', '#related-products-container .action-btn[aria-label="Add to Rent List"]', async function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const user = auth.currentUser;
+    if (!user) {
+      showAuthModal();
+      return;
+    }
+    
+    const button = $(this);
+    const productId = button.data('product-id');
+    
+    if (!productId) return;
+    
+    // Add loading state with visual feedback
+    button.addClass('loading');
+    button.find('i').addClass('fa-spin');
+    
+    try {
+      const userRef = doc(chandriaDB, "userAccounts", user.uid);
+      const userSnap = await getDoc(userRef);
+      
+      if (!userSnap.exists()) {
+        notyf.error("User account not found.");
+        return;
+      }
+      
+      const currentWishlist = userSnap.data().wishlist || [];
+      const isInWishlist = currentWishlist.includes(productId);
+      
+      if (isInWishlist) {
+        // Remove from wishlist
+        const updatedWishlist = currentWishlist.filter(id => id !== productId);
+        await updateDoc(userRef, { wishlist: updatedWishlist });
+        
+        button.find('i').removeClass('fi-rs-heart-filled').addClass('fi-rs-heart');
+        button.removeClass('favorited');
+        notyf.success("Removed from favorites!");
+        
+      } else {
+        // Add to wishlist
+        await updateDoc(userRef, {
+          wishlist: arrayUnion(productId)
+        });
+        
+        button.find('i').removeClass('fi-rs-heart').addClass('fi-rs-heart-filled');
+        button.addClass('favorited');
+        notyf.success("Added to favorites!");
+      }
+      
+    } catch (error) {
+      console.error("Error updating wishlist:", error);
+      notyf.error("An error occurred. Please try again.");
+    } finally {
+      button.removeClass('loading');
+      button.find('i').removeClass('fa-spin');
+    }
+  });
+  
+  // Color indicator tooltip for related products
+  $(document).on('click', '#related-products-container .product-color-indicator', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const colorName = $(this).attr('title') || 'Color';
+    
+    // Create or get tooltip
+    let tooltip = $('.color-tooltip');
+    if (tooltip.length === 0) {
+      $('body').append('<div class="color-tooltip"></div>');
+      tooltip = $('.color-tooltip');
+    }
+    
+    // Position tooltip near the color indicator
+    const position = $(this).offset();
+    tooltip.text(colorName)
+      .css({
+        'top': position.top - 30,
+        'left': position.left - (tooltip.width() / 2) + 12,
+        'opacity': 1,
+        'visibility': 'visible'
+      });
+    
+    // Hide tooltip after 2 seconds
+    setTimeout(() => {
+      tooltip.css({
+        'opacity': 0,
+        'visibility': 'hidden'
+      });
+    }, 2000);
+  });
+
   // Cart count function
   async function updateCartCount() {
     const user = auth.currentUser;
@@ -601,9 +709,6 @@ function createProductHTML(product) {
             <a href="details.html?id=${product.id}">
                 <h3 class="product-title">${product.name || "Untitled Product"}</h3>
             </a>
-            <div class="product-price flex">
-                <span class="new-price">₱ ${product.price}/rent</span>
-            </div>
         </div>
     </div>
     `;

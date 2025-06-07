@@ -38,51 +38,6 @@
         <title>Chandria's La Robe</title>
     </head>
     <body>
-        <style>
-      /* Basic product card styling for related products */
-      .products-container .product-item {
-        border-radius: 14px;
-        box-shadow: 0 2px 16px rgba(40, 167, 69, 0.07);
-        background: #fff;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-      }
-      
-      /* Color indicator tooltip */
-      .color-tooltip {
-        position: absolute;
-        background: rgba(0, 0, 0, 0.8);
-        color: white;
-        padding: 6px 10px;
-        border-radius: 4px;
-        font-size: 12px;
-        white-space: nowrap;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s, visibility 0.3s;
-        z-index: 1000;
-        pointer-events: none;
-      }
-      
-      .color-tooltip::after {
-        content: '';
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        border: 5px solid transparent;
-        border-top-color: rgba(0, 0, 0, 0.8);
-      }
-
-      /* Responsive/mobile tweaks */
-      @media (max-width: 768px) {
-        .products-container .product-item {
-          border-radius: 10px;
-        }
-      }
-      </style>
         <!-- Full Screen Details Loader -->
         <div id="details-loader" class="shop-loader">
             <div class="shop-loader-content">
