@@ -170,7 +170,12 @@ $(document).ready(async function () {
       
       // Auto-select first available size if any
       if (sortedSizes.length > 0) {
-        sizeList.find('.size-link').first().addClass('size-active');
+        const firstSize = sizeList.find('.size-link').first();
+        firstSize.addClass('size-active');
+        
+        // Initialize mobile stock indicator with first size stock
+        const firstSizeStock = parseInt(firstSize.data('stock')) || 0;
+        updateMobileStockIndicator(firstSizeStock);
       }
       
       sizeList.parent().show(); // Show the sizes section for regular products
@@ -264,6 +269,9 @@ $(document).ready(async function () {
     const stock = parseInt($(this).data('stock')) || 1;
     const quantityInput = $('#details-quantity');
     quantityInput.attr('max', stock);
+    
+    // Update mobile stock indicator
+    updateMobileStockIndicator(stock);
     
     // Adjust current quantity if it exceeds stock
     const currentQuantity = parseInt(quantityInput.val()) || 1;
@@ -841,4 +849,45 @@ window.decreaseQuantity = function() {
         }
     }
 };
+
+// Function to update mobile stock indicator
+function updateMobileStockIndicator(stock) {
+    const indicator = document.getElementById('mobile-stock-indicator');
+    const stockNumber = document.getElementById('mobile-stock-number');
+    
+    if (indicator && stockNumber) {
+        stockNumber.textContent = stock;
+        
+        // Remove existing stock classes
+        indicator.classList.remove('low-stock', 'very-low-stock', 'out-of-stock');
+        
+        // Add appropriate class based on stock level
+        if (stock === 0) {
+            indicator.classList.add('out-of-stock');
+        } else if (stock <= 2) {
+            indicator.classList.add('very-low-stock');
+        } else if (stock <= 5) {
+            indicator.classList.add('low-stock');
+        }
+        
+        // Show the indicator on mobile
+        if (window.innerWidth <= 768) {
+            indicator.style.display = 'flex';
+        } else {
+            indicator.style.display = 'none';
+        }
+    }
+}
+
+// Handle window resize to show/hide mobile stock indicator
+window.addEventListener('resize', function() {
+    const indicator = document.getElementById('mobile-stock-indicator');
+    if (indicator) {
+        if (window.innerWidth <= 768) {
+            indicator.style.display = 'flex';
+        } else {
+            indicator.style.display = 'none';
+        }
+    }
+});
 });

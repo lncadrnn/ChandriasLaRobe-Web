@@ -44,7 +44,12 @@
 
 /* =============== DESKTOP DETAILS ACTION STYLES =============== */
 /* Default desktop styles for details-action */
+/* Desktop styles - hide mobile stock indicator */
 @media screen and (min-width: 769px) {
+  .mobile-stock-indicator {
+    display: none !important;
+  }
+
   .details-action {
     display: flex !important;
     flex-direction: row !important;
