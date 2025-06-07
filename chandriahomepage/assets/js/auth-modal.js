@@ -139,12 +139,10 @@ class AuthModal {
 
         // Setup real-time validation
         this.setupFormValidation();
-    }
-
-    setupAuthStateListener() {
+    }    setupAuthStateListener() {
         // Listen for authentication state changes
         onAuthStateChanged(auth, async (user) => {
-            if (user && !this.isLoggingIn) {
+            if (user && this.isLoggingIn) {
                 // Check if user exists in adminAccounts and redirect them
                 const adminDocRef = doc(chandriaDB, "adminAccounts", user.uid);
                 const adminDocSnap = await getDoc(adminDocRef);
@@ -152,20 +150,20 @@ class AuthModal {
                 if (adminDocSnap.exists()) {
                     // If user is admin, sign them out
                     await signOut(auth);
+                    this.isLoggingIn = false;
                     return;
                 }
 
                 // Update UI for authenticated user
                 this.updateUIForAuthenticatedUser(user);
                 this.closeModal();
-            } else if (!user) {
+                this.isLoggingIn = false;
+            } else if (!user && !this.isLoggingIn) {
                 // Update UI for unauthenticated user
                 this.updateUIForUnauthenticatedUser();
             }
         });
-    }
-
-    updateUIForAuthenticatedUser(user) {
+    }    updateUIForAuthenticatedUser(user) {
         // Update navigation
         const loginNav = document.getElementById('nav-login');
         const userNav = document.getElementById('nav-user');
@@ -184,12 +182,12 @@ class AuthModal {
             updateWishlistCount();
         }
 
-        // Refresh page content if needed
-        if (typeof location !== 'undefined' && location.reload) {
-            setTimeout(() => {
+        // Delay page reload to allow UI updates to complete
+        setTimeout(() => {
+            if (typeof location !== 'undefined' && location.reload) {
                 location.reload();
-            }, 1000);
-        }
+            }
+        }, 2000);
     }
 
     updateUIForUnauthenticatedUser() {
@@ -311,6 +309,8 @@ class AuthModal {
             // If email does not exist, show error and return
             if (emailQuery.empty) {
                 this.notyf.error("Email is not registered. Please sign up first.");
+                this.isLoggingIn = false;
+                this.hideLoading(event.target);
                 return;
             }
 
@@ -321,8 +321,10 @@ class AuthModal {
             const user = userCredential.user;
             if (!user.emailVerified) {
                 // Sign out the unverified user
-                await auth.signOut();
+                await signOut(auth);
                 this.notyf.error("Please verify your email before logging in.");
+                this.isLoggingIn = false;
+                this.hideLoading(event.target);
                 return;
             }
 
@@ -338,9 +340,9 @@ class AuthModal {
             if (errorMsg) {
                 this.notyf.error(errorMsg);
             } else {
-                this.notyf.error("Login failed. Please try again.");
+                this.notyf.error("Wrong email or password entered");
             }
-        } finally {
+            
             this.isLoggingIn = false;
             this.hideLoading(event.target);
         }
@@ -378,6 +380,8 @@ class AuthModal {
                     message: errorMsg,
                     duration: 5000
                 });
+                this.isLoggingIn = false;
+                this.hideLoading(event.target);
                 return;
             }
 
@@ -390,6 +394,8 @@ class AuthModal {
             );
             if (!usernameQuery.empty) {
                 this.notyf.error("Username is already taken. Please choose another.");
+                this.isLoggingIn = false;
+                this.hideLoading(event.target);
                 return;
             }
 
@@ -417,6 +423,9 @@ class AuthModal {
             // Success message
             this.notyf.success("Account created successfully! Check your email for verification.");
             
+            this.isLoggingIn = false;
+            this.hideLoading(event.target);
+            
             setTimeout(() => {
                 this.switchForm('signin');
             }, 2000);
@@ -426,11 +435,11 @@ class AuthModal {
             
             const errorMsg = this.formatErrorMessage(error.code);
             this.notyf.error(errorMsg || "Sign-up failed. Please try again.");
-        } finally {
+            
             this.isLoggingIn = false;
             this.hideLoading(event.target);
         }
-    }    async handleForgotPassword(event) {
+    }async handleForgotPassword(event) {
         const formData = new FormData(event.target);
         const email = formData.get('email');
 
@@ -469,9 +478,7 @@ class AuthModal {
         const snapshot = await getDocs(usersRef);
         const exists = snapshot.docs.some(doc => doc.data().email === email);
         return exists;
-    }
-
-    formatErrorMessage(errorCode) {
+    }    formatErrorMessage(errorCode) {
         let message = "";
 
         if (errorCode === "auth/invalid-email" || errorCode === "auth/missing-email") {
@@ -481,11 +488,13 @@ class AuthModal {
         } else if (errorCode === "auth/email-already-in-use") {
             message = "Email is already taken";
         } else if (errorCode === "auth/user-not-found") {
-            message = "No user found with this email";
+            message = "Wrong email or password entered";
         } else if (errorCode === "auth/wrong-password") {
-            message = "Incorrect password";
+            message = "Wrong email or password entered";
         } else if (errorCode === "auth/invalid-credential") {
-            message = "Incorrect Email or Password";
+            message = "Wrong email or password entered";
+        } else if (errorCode === "auth/too-many-requests") {
+            message = "Too many failed attempts. Please try again later";
         }
 
         return message;
