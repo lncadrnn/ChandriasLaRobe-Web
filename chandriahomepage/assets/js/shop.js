@@ -138,10 +138,11 @@ $(document).ready(function () {
         $(".product-tab").on("click", handleTabSwitch);        // Quick view modal
         $(document).on("click", ".action-btn[aria-label='Quick View']", handleQuickViewClick);
         $("#quick-view-close").on("click", closeQuickView);
-        $("#quick-view-view-details").on("click", handleViewDetails);
-
-        // Circular cart button functionality
-        $(document).on("click", ".circular-cart-btn", handleCircularCartClick);        // Size and quantity controls
+        $("#quick-view-view-details").on("click", handleViewDetails);        // Circular cart button functionality
+        $(document).on("click", ".circular-cart-btn", handleCircularCartClick);
+        
+        // Add to cart action button functionality (new button beside category/title)
+        $(document).on("click", ".add-to-cart-action-btn", handleAddToCartClick);// Size and quantity controls
         $(document).on("change", ".size-selector", handleSizeChange);
         $(document).on("click", ".quantity-btn.plus-btn", handleQuantityIncrease);
         $(document).on("click", ".quantity-btn.minus-btn", handleQuantityDecrease);
@@ -578,8 +579,7 @@ $(document).ready(function () {
             let stockClass = '';
             if (initialStock <= 3) stockClass = 'very-low-stock';
             else if (initialStock <= 5) stockClass = 'low-stock';
-            
-            // Modified layout with centered cart button
+              // Modified layout without cart button
             sizeOptionsHTML = `
             <div class="product-size-options">
                 <div class="size-selection">
@@ -589,19 +589,11 @@ $(document).ready(function () {
                         </select>
                     </div>
                 </div>
-                <div class="quantity-cart-container">
-                    <div class="quantity-selection">
-                        <button class="quantity-btn minus-btn" data-product-id="${product.id}">-</button>
-                        <span class="quantity-value" data-product-id="${product.id}">1</span>
-                        <button class="quantity-btn plus-btn" data-product-id="${product.id}" ${initialStock <= 1 ? 'disabled' : ''}>+</button>
-                    </div>
+                <div class="quantity-selection">
+                    <button class="quantity-btn minus-btn" data-product-id="${product.id}">-</button>
+                    <span class="quantity-value" data-product-id="${product.id}">1</span>
+                    <button class="quantity-btn plus-btn" data-product-id="${product.id}" ${initialStock <= 1 ? 'disabled' : ''}>+</button>
                 </div>
-                ${!product.isAdditional ? `
-                <button class="circular-cart-btn" data-product-id="${product.id}" data-in-cart="false">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M18,6A6,6,0,0,0,6,6H0V21a3,3,0,0,0,3,3H21a3,3,0,0,0,3-3V6ZM12,2a4,4,0,0,1,4,4H8A4,4,0,0,1,12,2ZM22,21a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V8H6v2H8V8h8v2h2V8h4Z"/>
-                    </svg>
-                </button>` : ''}
             </div>`;
         }
         
@@ -625,12 +617,19 @@ $(document).ready(function () {
                 
                 <div class="price-tag">${price}</div>
                 <div class="product-color-indicator" style="background-color: ${colorHex}" title="${product.colorName || 'Color'}" data-product-id="${product.id}"></div>
-            </div>
-            <div class="product-content">
-                <span class="product-category">${categoryDisplay}</span>
-                <a href="details.html?id=${product.id}">
-                    <h3 class="product-title">${product.name || "Untitled Product"}</h3>
-                </a>
+            </div>            <div class="product-content">
+                <div class="product-header">
+                    <div class="product-info">
+                        <span class="product-category">${categoryDisplay}</span>
+                        <a href="details.html?id=${product.id}">
+                            <h3 class="product-title">${product.name || "Untitled Product"}</h3>
+                        </a>
+                    </div>
+                    ${!product.isAdditional ? `
+                    <button class="add-to-cart-action-btn" data-product-id="${product.id}" data-in-cart="false" title="Add to Cart">
+                        <i class="fi fi-rs-shopping-bag-add"></i>
+                    </button>` : ''}
+                </div>
                 ${sizeOptionsHTML}
             </div>
         </div>

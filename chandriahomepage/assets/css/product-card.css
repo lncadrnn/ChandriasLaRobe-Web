@@ -873,3 +873,58 @@
 }
 
 /* ============= END ENHANCED ACTION BUTTON HOVER STYLES ============= */
+/* Product header layout with add to cart button */
+.product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 5px;
+}
+
+.product-info {
+    flex: 1;
+    min-width: 0; /* Allow text to truncate */
+}
+
+.add-to-cart-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: white;
+    color: #333;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+    padding: 0;
+    font-size: 18px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.add-to-cart-action-btn:hover {
+    background-color: hsl(346, 100%, 74%);
+    color: white;
+    border-color: transparent;
+    transform: scale(1.05);
+}
+
+.add-to-cart-action-btn:active {
+    transform: scale(0.95);
+}
+
+.add-to-cart-action-btn i {
+    font-size: 12px;
+}
+
+/* Ensure product info takes available space */
+.product-info .product-category {
+    margin-bottom: 3px;
+}
+
+.product-info .product-title {
+    margin-bottom: 0;
+}
