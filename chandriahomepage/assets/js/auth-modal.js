@@ -690,10 +690,9 @@ class AuthModal {
             button.textContent = originalText;
         }
         button.classList.remove('loading');
-    }
-
-    togglePasswordVisibility(toggleButton) {
-        const passwordField = toggleButton.previousElementSibling;
+    }    togglePasswordVisibility(toggleButton) {
+        // Find the password field in the same wrapper
+        const passwordField = toggleButton.parentNode.querySelector('input[type="password"], input[type="text"]');
         const icon = toggleButton.querySelector('i');
         
         if (passwordField.type === 'password') {
@@ -703,9 +702,7 @@ class AuthModal {
             passwordField.type = 'password';
             icon.className = 'fi fi-rs-eye';
         }
-    }
-
-    setupPasswordToggles() {
+    }setupPasswordToggles() {
         // Add password toggle functionality for all password fields
         const passwordFields = this.modal.querySelectorAll('input[type="password"]');
         
@@ -713,14 +710,28 @@ class AuthModal {
             // Create toggle button if it doesn't exist
             const toggleExists = field.parentNode.querySelector('.password-toggle');
             if (!toggleExists) {
+                // Create a wrapper div for the input and toggle
+                const wrapper = document.createElement('div');
+                wrapper.className = 'password-input-wrapper';
+                wrapper.style.position = 'relative';
+                wrapper.style.display = 'flex';
+                wrapper.style.alignItems = 'center';
+                
+                // Insert wrapper before input
+                field.parentNode.insertBefore(wrapper, field);
+                
+                // Move input into wrapper
+                wrapper.appendChild(field);
+                
+                // Create toggle button
                 const toggleBtn = document.createElement('button');
                 toggleBtn.type = 'button';
                 toggleBtn.className = 'password-toggle';
                 toggleBtn.innerHTML = '<i class="fi fi-rs-eye"></i>';
                 toggleBtn.setAttribute('aria-label', 'Toggle password visibility');
                 
-                // Insert after the input field
-                field.parentNode.insertBefore(toggleBtn, field.nextSibling);
+                // Append toggle to wrapper
+                wrapper.appendChild(toggleBtn);
                 
                 // Add click event listener
                 toggleBtn.addEventListener('click', () => {

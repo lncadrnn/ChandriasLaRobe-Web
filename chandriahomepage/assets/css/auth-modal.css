@@ -497,6 +497,61 @@
   position: relative;
 }
 
+.password-input-wrapper {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.password-input-wrapper input {
+  flex: 1;
+  padding-right: 3.5rem !important;
+}
+
+.password-toggle {
+  position: absolute !important;
+  right: 1rem !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  font-size: 1.125rem;
+  padding: 0.5rem;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.password-toggle:hover {
+  color: #6b7280;
+  background: #f9fafb;
+}
+
+.password-toggle:focus {
+  outline: none;
+  color: hsl(346, 100%, 74%);
+  background: rgba(255, 133, 177, 0.1);
+}
+
+.password-toggle i {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* Ensure password inputs have proper padding for the toggle button */
+.auth-input-group input[type="password"],
+.auth-input-group input[type="text"] {
+  padding-right: 3.5rem; /* Only override right padding to make space for toggle button */
+}
+
+/* Legacy class support for backward compatibility */
 .toggle-password {
   position: absolute;
   right: 1rem;
@@ -515,12 +570,6 @@
 .toggle-password:hover {
   color: #6b7280;
   background: #f9fafb;
-}
-
-.auth-input-group input[type="password"],
-.auth-input-group input[type="text"] {
-  padding: 0.5rem 0.75rem;
-  padding-right: 3rem;
 }
 
 /* =============== MODERN RESPONSIVE DESIGN =============== */
