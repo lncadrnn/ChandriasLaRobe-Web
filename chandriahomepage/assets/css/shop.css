@@ -1936,100 +1936,132 @@ a[href] {
 
 /*=============== END PRODUCT CARD ENHANCEMENTS ===============*/
 /*=============== CIRCULAR CART BUTTON STYLES ===============*/
-.circular-cart-btn {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  border: none;
-  background: #28a745; /* Green background for items not in cart */
-  color: white;
-  cursor: pointer;  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-  position: relative;
-  overflow: hidden;
+/* Circular cart button with styling copied from add-to-booking-btn in details.css */
+.circular-cart-btn, .add-to-cart-action-btn {
+    width: 45px !important;
+    height: 45px !important;
+    background: var(--first-color) !important;
+    border: none !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: white !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    flex-shrink: 0 !important;
+    margin-left: 10px !important;
+    box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3) !important;
+    padding: 0 !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    min-width: 45px !important;
+    max-width: 45px !important;
+    min-height: 45px !important;
+    max-height: 45px !important;
 }
 
-.circular-cart-btn svg {
-  width: 20px;
-  height: 20px;
-  fill: currentColor;
-  transition: transform 0.25s ease;
+.circular-cart-btn:hover, .add-to-cart-action-btn:hover {
+    background: var(--first-color-alt) !important;
+    transform: scale(1.1) !important;
+    box-shadow: 0 6px 20px rgba(255, 107, 157, 0.4) !important;
 }
 
-.circular-cart-btn:hover {
-  transform: translateY(-2px) scale(1.05);
-  background: #218838; /* Dark green on hover */
-  box-shadow: 0 6px 20px rgba(33, 136, 56, 0.4);
+.circular-cart-btn i,
+.circular-cart-btn svg,
+.add-to-cart-action-btn i,
+.add-to-cart-action-btn svg {
+    font-size: 20px !important;
+    width: 20px !important;
+    height: 20px !important;
 }
 
-.circular-cart-btn:hover svg {
-  transform: scale(1.1);
+.circular-cart-btn.loading, .add-to-cart-action-btn.loading {
+    pointer-events: none !important;
+    opacity: 0.7 !important;
 }
 
-.circular-cart-btn:active {
-  transform: translateY(0) scale(1);
-  transition: transform 0.1s ease;
+.circular-cart-btn.loading i,
+.circular-cart-btn.loading svg,
+.add-to-cart-action-btn.loading i,
+.add-to-cart-action-btn.loading svg {
+    animation: spin 1s linear infinite !important;
 }
 
-/* Red background for items already in cart */
-.circular-cart-btn[data-in-cart="true"] {
-  background: #dc3545; /* Red background for items in cart */
-  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+/* Cart state variations */
+.circular-cart-btn[data-in-cart="true"],
+.add-to-cart-action-btn[data-in-cart="true"] {
+    background: #e74c3c !important;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3) !important;
 }
 
-.circular-cart-btn[data-in-cart="true"]:hover {
-  transform: translateY(-2px) scale(1.05);
-  background: #c82333; /* Dark red on hover */
-  box-shadow: 0 6px 20px rgba(200, 35, 51, 0.4);
+.circular-cart-btn[data-in-cart="false"],
+.add-to-cart-action-btn[data-in-cart="false"] {
+    background: #28a745 !important;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3) !important;
 }
 
-/* Loading state */
-.circular-cart-btn.loading {
-  pointer-events: none;
-  opacity: 0.7;
+.circular-cart-btn[data-in-cart="true"]:hover,
+.add-to-cart-action-btn[data-in-cart="true"]:hover {
+    background: #c0392b !important;
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4) !important;
+    transform: scale(1.1) !important;
 }
 
-.circular-cart-btn.loading svg {
-  animation: spin 1s linear infinite;
+.circular-cart-btn[data-in-cart="false"]:hover,
+.add-to-cart-action-btn[data-in-cart="false"]:hover {
+    background: #218838 !important;
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4) !important;
+    transform: scale(1.1) !important;
+}
+
+/* Ripple effect */
+.circular-cart-btn::after,
+.add-to-cart-action-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease;
+}
+
+.circular-cart-btn:active::after,
+.add-to-cart-action-btn:active::after {
+    width: 100%;
+    height: 100%;
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* Ripple effect on click */
-.circular-cart-btn::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;  background: rgba(255, 255, 255, 0.3);
-  transform: translate(-50%, -50%);
-  transition: width 0.25s ease, height 0.25s ease;
-}
-
-.circular-cart-btn:active::after {
-  width: 100%;
-  height: 100%;
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 /* Mobile responsive adjustments */
-@media screen and (max-width: 768px) {
-  .circular-cart-btn {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .circular-cart-btn svg {
-    width: 18px;
-    height: 18px;
-  }
+@media (max-width: 768px) {
+    .circular-cart-btn,
+    .add-to-cart-action-btn {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        max-width: 36px !important;
+        min-height: 36px !important;
+        max-height: 36px !important;
+        border-radius: 50% !important;
+    }
+    
+    .circular-cart-btn i,
+    .circular-cart-btn svg,
+    .add-to-cart-action-btn i,
+    .add-to-cart-action-btn svg {
+        font-size: 16px !important;
+        width: 16px !important;
+        height: 16px !important;
+    }
 }
 
 /*=============== END CIRCULAR CART BUTTON STYLES ===============*/

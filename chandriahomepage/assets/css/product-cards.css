@@ -250,62 +250,41 @@
     align-items: flex-start;
 }
 
-.product-category {
-    color: var(--text-color-light, #666);
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
-    font-weight: 500;
-}
-
-.product-title {
-    color: var(--title-color, #333);
-    font-size: 1.125rem;
-    font-weight: 600;
-    line-height: 1.4;
-    margin: 0;
-    text-decoration: none;
-}
-
-.product-title:hover {
-    color: var(--first-color, hsl(346, 100%, 74%));
-}
-
-/* ============= ADD TO BOOKING BUTTON ============= */
-.add-to-booking-btn {
-    width: 45px;
-    height: 45px;
+/* ============= ADD TO CART ACTION BUTTON ============= */
+.add-to-cart-action-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
     background: var(--first-color, hsl(346, 100%, 74%));
+    color: #fff;
     border: none;
-    border-radius: 50%;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
     transition: all 0.3s ease;
-    flex-shrink: 0;
-    margin-left: 10px;
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    box-shadow: 0 2px 8px rgba(255, 105, 135, 0.3);
+    margin-top: 8px;
 }
 
-.add-to-booking-btn:hover {
+.add-to-cart-action-btn:hover {
     background: var(--first-color-alt, hsl(346, 100%, 68%));
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 105, 135, 0.4);
 }
 
-.add-to-booking-btn i {
-    font-size: 20px;
+.add-to-cart-action-btn:active {
+    transform: translateY(0);
 }
 
-.add-to-booking-btn.loading {
+.add-to-cart-action-btn.loading {
     pointer-events: none;
-    opacity: 0.7;
+    opacity: 0.8;
 }
 
-.add-to-booking-btn.loading i {
+.add-to-cart-action-btn.loading i {
     animation: spin 1s linear infinite;
 }
 
@@ -418,25 +397,29 @@
 
 /* ============= CIRCULAR CART BUTTON ============= */
 .circular-cart-btn {
-    width: 40px;
-    height: 40px;
+    width: 45px !important;
+    height: 45px !important;
     border-radius: 50% !important;
-    background: #28a745;
-    color: #fff;
-    border: none;
+    background: var(--first-color) !important;
+    color: white !important;
+    border: none !important;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     padding: 0 !important;
-    font-size: 15px;
-    font-weight: 600;
-    transition: none !important;
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
     transform: none !important;
     animation: none !important;
-    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.10);
+    box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3) !important;
     margin-top: 8px;
     position: relative;
+    min-width: 45px !important;
+    max-width: 45px !important;
+    min-height: 45px !important;
+    max-height: 45px !important;
 }
 
 .circular-cart-btn svg {
