@@ -134,6 +134,181 @@
         </div>
     </section>
     
+    <!-- Edit Transaction Modal -->
+    <div id="edit-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content edit-modal-content">
+            <div class="modal-header">
+                <h2>Edit Transaction</h2>
+                <button class="close-btn" onclick="closeEditModal()">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-transaction-form">
+                    <div class="form-section">
+                        <h3>Customer Information</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="edit-fullName">Full Name *</label>
+                                <input type="text" id="edit-fullName" name="fullName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-contactNumber">Contact Number *</label>
+                                <input type="tel" id="edit-contactNumber" name="contactNumber" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-address">Address</label>
+                                <input type="text" id="edit-address" name="address">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-city">City</label>
+                                <input type="text" id="edit-city" name="city">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-region">Region</label>
+                                <input type="text" id="edit-region" name="region">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Event Details</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="edit-eventType">Event Type</label>
+                                <input type="text" id="edit-eventType" name="eventType">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-rentalType">Rental Type</label>
+                                <select id="edit-rentalType" name="rentalType">
+                                    <option value="Fixed Rental">Fixed Rental</option>
+                                    <option value="Open Rental">Open Rental</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-eventStartDate">Event Start Date</label>
+                                <input type="date" id="edit-eventStartDate" name="eventStartDate">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-eventEndDate">Event End Date</label>
+                                <input type="date" id="edit-eventEndDate" name="eventEndDate">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Payment Information</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="edit-paymentMethod">Payment Method</label>
+                                <select id="edit-paymentMethod" name="paymentMethod">
+                                    <option value="Cash">Cash</option>
+                                    <option value="GCash">GCash</option>
+                                    <option value="PayMaya">PayMaya</option>
+                                    <option value="Bank Transfer">Bank Transfer</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-paymentType">Payment Type</label>
+                                <select id="edit-paymentType" name="paymentType">
+                                    <option value="Full Payment">Full Payment</option>
+                                    <option value="Partial Payment">Partial Payment</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-rentalFee">Rental Fee</label>
+                                <input type="number" id="edit-rentalFee" name="rentalFee" step="0.01" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-totalPayment">Total Payment</label>
+                                <input type="number" id="edit-totalPayment" name="totalPayment" step="0.01" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-remainingBalance">Remaining Balance</label>
+                                <input type="number" id="edit-remainingBalance" name="remainingBalance" step="0.01" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-referenceNo">Reference Number</label>
+                                <input type="text" id="edit-referenceNo" name="referenceNo">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Additional Notes</h3>
+                        <div class="form-group">
+                            <label for="edit-notes">Notes</label>
+                            <textarea id="edit-notes" name="notes" rows="3"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+                        <button type="submit" class="btn-primary">
+                            <i class='bx bx-save'></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content delete-modal-content">
+            <div class="modal-header delete-header">
+                <h2><i class='bx bx-error-circle'></i> Confirm Deletion</h2>
+                <button class="close-btn" onclick="closeDeleteModal()">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="warning-section">
+                    <div class="warning-icon">
+                        <i class='bx bx-error-circle'></i>
+                    </div>
+                    <div class="warning-content">
+                        <h3>⚠️ WARNING: This action cannot be undone!</h3>
+                        <p>You are about to permanently delete this transaction. This will:</p>
+                        <ul class="warning-list">
+                            <li>Remove all customer information</li>
+                            <li>Delete rental history records</li>
+                            <li>Remove payment information</li>
+                            <li>Clear all associated data</li>
+                        </ul>
+                        <p class="final-warning">
+                            <strong>This data will be FOREVER GONE and cannot be recovered!</strong>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="transaction-summary">
+                    <h4>Transaction to be deleted:</h4>
+                    <div class="summary-content">
+                        <p><strong>Customer:</strong> <span id="delete-customer-name">-</span></p>
+                        <p><strong>Transaction Code:</strong> <span id="delete-transaction-code">-</span></p>
+                        <p><strong>Event Date:</strong> <span id="delete-event-date">-</span></p>
+                        <p><strong>Total Amount:</strong> <span id="delete-total-amount">-</span></p>
+                    </div>
+                </div>
+                
+                <div class="confirmation-section">
+                    <p>Type <strong>DELETE</strong> to confirm:</p>
+                    <input type="text" id="delete-confirmation-input" placeholder="Type DELETE to confirm" class="confirmation-input">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeDeleteModal()">
+                        <i class='bx bx-x'></i> Cancel
+                    </button>
+                    <button type="button" class="btn-danger" id="confirm-delete-btn" disabled onclick="confirmDelete()">
+                        <i class='bx bx-trash'></i> DELETE FOREVER
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>

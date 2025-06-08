@@ -81,6 +81,14 @@ class ProfileNavService {
             }
         });
     }    /**
+     * Check if we're on the accounts page
+     */
+    isAccountsPage() {
+        return window.location.pathname.includes('accounts.html') || 
+               document.title.includes('My Account');
+    }
+
+    /**
      * Display user profile image in the account button
      */
     displayProfileImage(button) {
@@ -90,19 +98,46 @@ class ProfileNavService {
         // Clear existing content
         button.innerHTML = '';
         
+        // Check if we're on the accounts page for special handling
+        const isAccountsPage = this.isAccountsPage();
+        
         // Create profile image element
         const profileImg = document.createElement('img');
         profileImg.src = this.profileImageUrl;
         profileImg.alt = 'Profile Picture';
         profileImg.className = 'profile-nav-image';
-        profileImg.style.cssText = `
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid rgba(255, 133, 177, 0.3);
-            transition: all 0.3s ease;
-        `;
+        
+        if (isAccountsPage) {
+            // Larger profile image for accounts page - replace entire button
+            profileImg.style.cssText = `
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 3px solid rgba(255, 133, 177, 0.4);
+                transition: all 0.3s ease;
+                cursor: pointer;
+                box-shadow: 0 4px 12px rgba(255, 133, 177, 0.2);
+            `;
+            button.style.cssText = `
+                background: none !important;
+                border: none !important;
+                padding: 0 !important;
+                cursor: pointer;
+                border-radius: 50%;
+                transition: all 0.3s ease;
+            `;
+        } else {
+            // Standard size for other pages
+            profileImg.style.cssText = `
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid rgba(255, 133, 177, 0.3);
+                transition: all 0.3s ease;
+            `;
+        }
 
         // Add error handling for broken images
         profileImg.onerror = () => {
@@ -111,9 +146,11 @@ class ProfileNavService {
 
         button.appendChild(profileImg);
         button.classList.add('has-profile-image');
-    }
-
-    /**
+        
+        if (isAccountsPage) {
+            button.classList.add('accounts-page-profile');
+        }
+    }    /**
      * Display default user icon
      */
     displayDefaultIcon(button) {
@@ -123,18 +160,46 @@ class ProfileNavService {
         // Clear existing content
         button.innerHTML = '';
 
+        // Check if we're on the accounts page for special handling
+        const isAccountsPage = this.isAccountsPage();
+
         // Create default icon element
         const defaultIcon = document.createElement('img');
         defaultIcon.src = 'assets/img/icon-user.svg';
         defaultIcon.alt = 'Account';
-        defaultIcon.style.cssText = `
-            width: 24px;
-            height: 24px;
-            transition: filter 0.3s ease;
-        `;
+        
+        if (isAccountsPage) {
+            // Larger icon for accounts page
+            defaultIcon.style.cssText = `
+                width: 48px;
+                height: 48px;
+                transition: filter 0.3s ease;
+                filter: brightness(0) saturate(100%) invert(65%) sepia(53%) saturate(1347%) hue-rotate(309deg) brightness(101%) contrast(102%);
+            `;
+            button.style.cssText = `
+                background: rgba(255, 133, 177, 0.1) !important;
+                border: 3px solid rgba(255, 133, 177, 0.3) !important;
+                padding: 8px !important;
+                cursor: pointer;
+                border-radius: 50%;
+                transition: all 0.3s ease;
+            `;
+        } else {
+            // Standard size for other pages
+            defaultIcon.style.cssText = `
+                width: 24px;
+                height: 24px;
+                transition: filter 0.3s ease;
+            `;
+        }
 
         button.appendChild(defaultIcon);
         button.classList.remove('has-profile-image');
+        button.classList.remove('accounts-page-profile');
+        
+        if (isAccountsPage) {
+            button.classList.add('accounts-page-default');
+        }
     }
 
     /**
@@ -216,11 +281,72 @@ const profileNavStyles = `
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
+    /* Special styling for accounts page - larger profile image */
+    .header-action-btn.accounts-page-profile {
+        width: 48px !important;
+        height: 48px !important;
+        padding: 0 !important;
+        border-radius: 50% !important;
+        background: none !important;
+        border: none !important;
+    }
+
+    .header-action-btn.accounts-page-profile:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 6px 20px rgba(255, 133, 177, 0.3) !important;
+    }
+
+    .header-action-btn.accounts-page-profile .profile-nav-image {
+        box-shadow: 0 4px 12px rgba(255, 133, 177, 0.2);
+    }
+
+    .header-action-btn.accounts-page-profile:hover .profile-nav-image {
+        border-color: rgba(255, 133, 177, 0.7);
+        box-shadow: 0 6px 20px rgba(255, 133, 177, 0.3);
+    }
+
+    /* Special styling for accounts page default icon */
+    .header-action-btn.accounts-page-default {
+        width: 64px !important;
+        height: 64px !important;
+        border-radius: 50% !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .header-action-btn.accounts-page-default:hover {
+        background: rgba(255, 133, 177, 0.2) !important;
+        border-color: rgba(255, 133, 177, 0.4) !important;
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 6px 20px rgba(255, 133, 177, 0.2) !important;
+    }
+
     /* Ensure proper sizing on different screen sizes */
     @media screen and (max-width: 768px) {
         .header-action-btn .profile-nav-image {
             width: 20px;
             height: 20px;
+        }
+        
+        .header-action-btn.accounts-page-profile {
+            width: 40px !important;
+            height: 40px !important;
+        }
+        
+        .header-action-btn.accounts-page-profile .profile-nav-image {
+            width: 40px !important;
+            height: 40px !important;
+        }
+        
+        .header-action-btn.accounts-page-default {
+            width: 56px !important;
+            height: 56px !important;
+        }
+        
+        .header-action-btn.accounts-page-default img {
+            width: 40px !important;
+            height: 40px !important;
         }
     }
 
@@ -229,9 +355,29 @@ const profileNavStyles = `
             width: 18px;
             height: 18px;
         }
+        
+        .header-action-btn.accounts-page-profile {
+            width: 36px !important;
+            height: 36px !important;
+        }
+        
+        .header-action-btn.accounts-page-profile .profile-nav-image {
+            width: 36px !important;
+            height: 36px !important;
+        }
+        
+        .header-action-btn.accounts-page-default {
+            width: 50px !important;
+            height: 50px !important;
+        }
+        
+        .header-action-btn.accounts-page-default img {
+            width: 36px !important;
+            height: 36px !important;
+        }
     }
 
-    /* Special styling for accounts page */
+    /* Legacy support for body.page-accounts class */
     body.page-accounts .header-action-btn.has-profile-image {
         background: rgba(255, 133, 177, 0.1) !important;
         border: 2px solid rgba(255, 133, 177, 0.3) !important;

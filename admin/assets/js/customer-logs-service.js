@@ -1,9 +1,11 @@
 // Import Firebase configuration
-import { chandriaDB, collection, getDocs, doc, getDoc } from './sdk/chandrias-sdk.js';
+import { chandriaDB, collection, getDocs, doc, getDoc, updateDoc, deleteDoc } from './sdk/chandrias-sdk.js';
 
 // Initialize Firebase
 let allTransactions = [];
 let filteredTransactions = [];
+let currentEditingTransaction = null;
+let currentDeletingTransaction = null;
 
 // DOM elements
 const tableBody = document.getElementById('rental-history-tbody');
@@ -34,6 +36,59 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners
     searchInput?.addEventListener('input', handleSearch);
     refreshBtn?.addEventListener('click', loadTransactions);
+    
+    // Edit form event listener
+    const editForm = document.getElementById('edit-transaction-form');
+    if (editForm) {
+        editForm.addEventListener('submit', handleEditSubmit);
+    }
+    
+    // Delete confirmation input event listener
+    const deleteConfirmInput = document.getElementById('delete-confirmation-input');
+    if (deleteConfirmInput) {
+        deleteConfirmInput.addEventListener('input', handleDeleteConfirmation);
+    }
+    
+    // Modal click outside to close
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal-overlay')) {
+            if (e.target.id === 'edit-modal') {
+                closeEditModal();
+            } else if (e.target.id === 'delete-modal') {
+                closeDeleteModal();
+            }
+        }
+    });
+    
+    // Add CSS for animations
+    if (!document.getElementById('modal-animations')) {
+        const style = document.createElement('style');
+        style.id = 'modal-animations';
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
 });
 
 // Load transactions from Firebase
@@ -320,7 +375,7 @@ async function showTransactionDetails(transactionId) {
     if (!transaction) return;
     
     // Create detailed view of products with images
-    let productsHtml = '<p>No products</p>';
+    let productsHtml = '<p class="no-items">No products</p>';
     if (transaction.products && transaction.products.length > 0) {
         const productDetailsPromises = transaction.products.map(async (product) => {
             const productDetails = await fetchProductDetails(product.id);
@@ -351,7 +406,7 @@ async function showTransactionDetails(transactionId) {
     }
     
     // Create detailed view of accessories with images
-    let accessoriesHtml = '<p>No additional items</p>';
+    let accessoriesHtml = '<p class="no-items">No additional items</p>';
     if (transaction.accessories && transaction.accessories.length > 0) {
         const accessoryDetailsPromises = transaction.accessories.map(async (accessory) => {
             const accessoryDetails = await fetchAccessoryDetails(accessory.id);
@@ -379,70 +434,93 @@ async function showTransactionDetails(transactionId) {
         accessoriesHtml = accessoryResults.join('');
     }
     
+    // Format dates
+    const eventStartDate = transaction.eventStartDate ? new Date(transaction.eventStartDate).toLocaleDateString() : 'N/A';
+    const eventEndDate = transaction.eventEndDate ? new Date(transaction.eventEndDate).toLocaleDateString() : null;
+    const transactionDate = transaction.timestamp ? new Date(transaction.timestamp).toLocaleDateString() : 'N/A';
+    const lastUpdated = transaction.lastUpdated ? new Date(transaction.lastUpdated).toLocaleDateString() : null;
+    
     const modalContent = `
         <div class="transaction-modal-overlay" onclick="closeTransactionModal()">
             <div class="transaction-modal-content" onclick="event.stopPropagation()">
                 <div class="modal-header">
-                    <h2>Transaction Details</h2>
+                    <h2><i class='bx bx-receipt'></i> Transaction Details</h2>
                     <button class="close-btn" onclick="closeTransactionModal()">
                         <i class='bx bx-x'></i>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="customer-info">
-                        <h3>Customer Information</h3>
-                        <p><strong>Name:</strong> ${transaction.fullName || 'N/A'}</p>
-                        <p><strong>Contact:</strong> ${transaction.contactNumber || 'N/A'}</p>
-                        <p><strong>Address:</strong> ${[transaction.address, transaction.city, transaction.region].filter(Boolean).join(', ') || 'N/A'}</p>
-                        <p><strong>Event Type:</strong> ${transaction.eventType || 'N/A'}</p>
-                        <p><strong>Rental Type:</strong> ${transaction.rentalType || 'N/A'}</p>
-                        <p><strong>Event Start:</strong> ${transaction.eventStartDate ? new Date(transaction.eventStartDate).toLocaleDateString() : 'N/A'}</p>
-                        ${transaction.eventEndDate ? `<p><strong>Event End:</strong> ${new Date(transaction.eventEndDate).toLocaleDateString()}</p>` : ''}
-                        <p><strong>Transaction Date:</strong> ${transaction.timestamp ? new Date(transaction.timestamp).toLocaleDateString() : 'N/A'}</p>
+                        <h3><i class='bx bx-user'></i> Customer Information</h3>
+                        <div class="info-grid">
+                            <p><strong>Name:</strong> ${transaction.fullName || 'N/A'}</p>
+                            <p><strong>Contact:</strong> ${transaction.contactNumber || 'N/A'}</p>
+                            <p><strong>Address:</strong> ${[transaction.address, transaction.city, transaction.region].filter(Boolean).join(', ') || 'N/A'}</p>
+                            <p><strong>Event Type:</strong> ${transaction.eventType || 'N/A'}</p>
+                            <p><strong>Rental Type:</strong> ${transaction.rentalType || 'N/A'}</p>
+                            <p><strong>Event Start:</strong> ${eventStartDate}</p>
+                            ${eventEndDate ? `<p><strong>Event End:</strong> ${eventEndDate}</p>` : ''}
+                            <p><strong>Transaction Date:</strong> ${transactionDate}</p>
+                            ${lastUpdated ? `<p><strong>Last Updated:</strong> ${lastUpdated}</p>` : ''}
+                        </div>
                     </div>
                     
                     <div class="rental-items">
-                        <h3>Products Rented</h3>
+                        <h3><i class='bx bx-package'></i> Products Rented</h3>
                         <div class="products-detail">${productsHtml}</div>
                         
-                        <h3>Additional Items</h3>
+                        <h3><i class='bx bx-plus-circle'></i> Additional Items</h3>
                         <div class="accessories-detail">${accessoriesHtml}</div>
                     </div>
                     
                     <div class="payment-info">
-                        <h3>Payment Information</h3>
-                        <p><strong>Payment Method:</strong> ${transaction.paymentMethod || 'N/A'}</p>
-                        <p><strong>Payment Type:</strong> ${transaction.paymentType || 'N/A'}</p>
-                        <p><strong>Rental Fee:</strong> ₱${transaction.rentalFee?.toLocaleString() || '0'}</p>
-                        <p><strong>Total Payment:</strong> ₱${transaction.totalPayment?.toLocaleString() || '0'}</p>
-                        <p><strong>Remaining Balance:</strong> ₱${transaction.remainingBalance?.toLocaleString() || '0'}</p>
-                        <p><strong>Reference Number:</strong> ${transaction.referenceNo || 'N/A'}</p>
+                        <h3><i class='bx bx-credit-card'></i> Payment Information</h3>
+                        <div class="info-grid">
+                            <p><strong>Payment Method:</strong> ${transaction.paymentMethod || 'N/A'}</p>
+                            <p><strong>Payment Type:</strong> ${transaction.paymentType || 'N/A'}</p>
+                            <p><strong>Rental Fee:</strong> ₱${transaction.rentalFee?.toLocaleString() || '0'}</p>
+                            <p><strong>Total Payment:</strong> ₱${transaction.totalPayment?.toLocaleString() || '0'}</p>
+                            <p><strong>Remaining Balance:</strong> ₱${transaction.remainingBalance?.toLocaleString() || '0'}</p>
+                            <p><strong>Reference Number:</strong> ${transaction.referenceNo || 'N/A'}</p>
+                        </div>
                     </div>
                     
                     ${transaction.notes ? `
                     <div class="additional-notes">
-                        <h3>Additional Notes</h3>
-                        <p>${transaction.notes}</p>
+                        <h3><i class='bx bx-note'></i> Additional Notes</h3>
+                        <p class="notes-content">${transaction.notes}</p>
                     </div>
                     ` : ''}
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeTransactionModal()">
+                        <i class='bx bx-x'></i> Close
+                    </button>
+                    <button type="button" class="btn-primary" onclick="closeTransactionModal(); editTransaction('${transaction.id}')">
+                        <i class='bx bx-edit'></i> Edit Transaction
+                    </button>
                 </div>
             </div>
         </div>
     `;
     
-    // Add modal to DOM
+    // Remove existing modal if any
     const existingModal = document.querySelector('.transaction-modal-overlay');
     if (existingModal) {
         existingModal.remove();
     }
     
+    // Add modal to DOM
     document.body.insertAdjacentHTML('beforeend', modalContent);
+    document.body.style.overflow = 'hidden';
     
     // Make close function globally available
     window.closeTransactionModal = function() {
         const modal = document.querySelector('.transaction-modal-overlay');
         if (modal) {
             modal.remove();
+            document.body.style.overflow = '';
         }
     };
 }
@@ -510,11 +588,105 @@ function editTransaction(transactionId) {
         return;
     }
     
-    // For now, just show an alert - you can implement actual edit functionality later
-    alert(`Edit functionality for transaction ${transaction.transactionCode || transactionId.substring(0, 8)} will be implemented here.`);
+    currentEditingTransaction = transaction;
+    populateEditForm(transaction);
+    showEditModal();
+}
+
+// Show edit modal
+function showEditModal() {
+    const modal = document.getElementById('edit-modal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+// Close edit modal
+function closeEditModal() {
+    const modal = document.getElementById('edit-modal');
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+    currentEditingTransaction = null;
+}
+
+// Populate edit form with transaction data
+function populateEditForm(transaction) {
+    document.getElementById('edit-fullName').value = transaction.fullName || '';
+    document.getElementById('edit-contactNumber').value = transaction.contactNumber || '';
+    document.getElementById('edit-address').value = transaction.address || '';
+    document.getElementById('edit-city').value = transaction.city || '';
+    document.getElementById('edit-region').value = transaction.region || '';
+    document.getElementById('edit-eventType').value = transaction.eventType || '';
+    document.getElementById('edit-rentalType').value = transaction.rentalType || 'Fixed Rental';
+    document.getElementById('edit-eventStartDate').value = transaction.eventStartDate ? 
+        new Date(transaction.eventStartDate).toISOString().split('T')[0] : '';
+    document.getElementById('edit-eventEndDate').value = transaction.eventEndDate ? 
+        new Date(transaction.eventEndDate).toISOString().split('T')[0] : '';
+    document.getElementById('edit-paymentMethod').value = transaction.paymentMethod || 'Cash';
+    document.getElementById('edit-paymentType').value = transaction.paymentType || 'Full Payment';
+    document.getElementById('edit-rentalFee').value = transaction.rentalFee || '';
+    document.getElementById('edit-totalPayment').value = transaction.totalPayment || '';
+    document.getElementById('edit-remainingBalance').value = transaction.remainingBalance || '';
+    document.getElementById('edit-referenceNo').value = transaction.referenceNo || '';
+    document.getElementById('edit-notes').value = transaction.notes || '';
+}
+
+// Handle edit form submission
+async function handleEditSubmit(e) {
+    e.preventDefault();
     
-    // TODO: Implement edit modal or redirect to edit page
-    // Example: window.location.href = `edit-rental.html?id=${transactionId}`;
+    if (!currentEditingTransaction) return;
+    
+    const formData = new FormData(e.target);
+    const updatedData = {};
+    
+    // Collect form data
+    for (let [key, value] of formData.entries()) {
+        if (value.trim() !== '') {
+            // Convert numeric fields
+            if (['rentalFee', 'totalPayment', 'remainingBalance'].includes(key)) {
+                updatedData[key] = parseFloat(value) || 0;
+            } else {
+                updatedData[key] = value.trim();
+            }
+        }
+    }
+    
+    // Add timestamp for last update
+    updatedData.lastUpdated = new Date().toISOString();
+    
+    try {
+        // Show loading state
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Saving...';
+        submitBtn.disabled = true;
+        
+        // Update document in Firebase
+        await updateDoc(doc(chandriaDB, 'transaction', currentEditingTransaction.id), updatedData);
+        
+        // Update local data
+        const index = allTransactions.findIndex(t => t.id === currentEditingTransaction.id);
+        if (index !== -1) {
+            allTransactions[index] = { ...allTransactions[index], ...updatedData };
+            filteredTransactions = [...allTransactions];
+        }
+        
+        // Close modal and refresh table
+        closeEditModal();
+        renderTransactionTable();
+        
+        // Show success message
+        showSuccessMessage('Transaction updated successfully!');
+        
+    } catch (error) {
+        console.error('Error updating transaction:', error);
+        alert('Error updating transaction. Please try again.');
+        
+        // Restore button state
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
 }
 
 // Delete transaction function
@@ -525,24 +697,142 @@ function deleteTransaction(transactionId) {
         return;
     }
     
-    // Confirm deletion
-    const customerName = transaction.fullName || 'Unknown';
-    const transactionCode = transaction.transactionCode || transactionId.substring(0, 8);
+    currentDeletingTransaction = transaction;
+    populateDeleteModal(transaction);
+    showDeleteModal();
+}
+
+// Show delete modal
+function showDeleteModal() {
+    const modal = document.getElementById('delete-modal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
     
-    if (confirm(`Are you sure you want to delete the transaction for ${customerName} (${transactionCode})?\n\nThis action cannot be undone.`)) {
-        // For now, just show an alert - you can implement actual delete functionality later
-        alert(`Delete functionality for transaction ${transactionCode} will be implemented here.`);
-        
-        // TODO: Implement actual deletion from Firebase
-        // Example:
-        // deleteDoc(doc(chandriaDB, 'rentals', transactionId))
-        //     .then(() => {
-        //         alert('Transaction deleted successfully');
-        //         loadTransactions(); // Reload the table
-        //     })
-        //     .catch(error => {
-        //         console.error('Error deleting transaction:', error);
-        //         alert('Error deleting transaction');
-        //     });
+    // Reset confirmation input
+    const confirmInput = document.getElementById('delete-confirmation-input');
+    confirmInput.value = '';
+    document.getElementById('confirm-delete-btn').disabled = true;
+}
+
+// Close delete modal
+function closeDeleteModal() {
+    const modal = document.getElementById('delete-modal');
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+    currentDeletingTransaction = null;
+}
+
+// Populate delete modal with transaction data
+function populateDeleteModal(transaction) {
+    document.getElementById('delete-customer-name').textContent = transaction.fullName || 'Unknown';
+    document.getElementById('delete-transaction-code').textContent = 
+        transaction.transactionCode || transaction.id.substring(0, 8);
+    
+    // Format event date
+    let eventDate = 'N/A';
+    if (transaction.eventStartDate) {
+        const startDate = new Date(transaction.eventStartDate);
+        if (transaction.eventEndDate && transaction.rentalType === 'Open Rental') {
+            const endDate = new Date(transaction.eventEndDate);
+            eventDate = `${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`;
+        } else {
+            eventDate = startDate.toLocaleDateString();
+        }
+    }
+    document.getElementById('delete-event-date').textContent = eventDate;
+    document.getElementById('delete-total-amount').textContent = 
+        `₱${(transaction.totalPayment || 0).toLocaleString()}`;
+}
+
+// Handle delete confirmation input
+function handleDeleteConfirmation() {
+    const input = document.getElementById('delete-confirmation-input');
+    const confirmBtn = document.getElementById('confirm-delete-btn');
+    
+    if (input.value.toUpperCase() === 'DELETE') {
+        confirmBtn.disabled = false;
+    } else {
+        confirmBtn.disabled = true;
     }
 }
+
+// Confirm and execute deletion
+async function confirmDelete() {
+    if (!currentDeletingTransaction) return;
+    
+    try {
+        // Show loading state
+        const deleteBtn = document.getElementById('confirm-delete-btn');
+        const originalText = deleteBtn.innerHTML;
+        deleteBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Deleting...';
+        deleteBtn.disabled = true;
+        
+        // Delete document from Firebase
+        await deleteDoc(doc(chandriaDB, 'transaction', currentDeletingTransaction.id));
+        
+        // Remove from local arrays
+        allTransactions = allTransactions.filter(t => t.id !== currentDeletingTransaction.id);
+        filteredTransactions = filteredTransactions.filter(t => t.id !== currentDeletingTransaction.id);
+        
+        // Close modal and refresh table
+        closeDeleteModal();
+        renderTransactionTable();
+        
+        // Show success message
+        showSuccessMessage('Transaction deleted successfully!');
+        
+    } catch (error) {
+        console.error('Error deleting transaction:', error);
+        alert('Error deleting transaction. Please try again.');
+        
+        // Restore button state
+        const deleteBtn = document.getElementById('confirm-delete-btn');
+        deleteBtn.innerHTML = originalText;
+        deleteBtn.disabled = false;
+    }
+}
+
+// Show success message
+function showSuccessMessage(message) {
+    // Create success toast
+    const toast = document.createElement('div');
+    toast.className = 'success-toast';
+    toast.innerHTML = `
+        <i class='bx bx-check-circle'></i>
+        <span>${message}</span>
+    `;
+    
+    // Add styles
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #28a745;
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        z-index: 9999;
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        animation: slideInRight 0.3s ease-out;
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        toast.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// Make functions globally available
+window.closeEditModal = closeEditModal;
+window.closeDeleteModal = closeDeleteModal;
+window.confirmDelete = confirmDelete;

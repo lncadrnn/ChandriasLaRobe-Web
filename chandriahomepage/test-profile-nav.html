@@ -29,10 +29,17 @@
 </head>
 <body>
     <h1>Profile Navigation Service Test Page</h1>
-    
-    <div class="test-section">
-        <h2>Account Button Test</h2>
-        <p>Click the account button below to test the profile navigation service:</p>
+      <div class="test-section">
+        <h2>Navigation Buttons Test</h2>
+        <p>Test both cart and account buttons:</p>
+        
+        <!-- Cart button with count -->
+        <a href="cart.html" class="header-action-btn" style="margin-right: 10px;">
+            <img src="assets/img/icon-cart.svg" alt="" />
+            <span class="count" id="cart-count">3</span>
+        </a>
+        
+        <!-- Account button -->
         <button onclick="window.profileNavService?.handleAccountClick() || showAuthModal()" class="header-action-btn" id="account-btn">
             <img src="assets/img/icon-user.svg" alt="" />
         </button>
