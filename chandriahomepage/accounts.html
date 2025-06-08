@@ -276,23 +276,19 @@
             </div>
         </div>
 
-        <!-- Logout Confirmation Modal -->
-        <div id="logout-modal" class="modal-overlay">
-            <div class="modal-container">
-                <div class="modal-icon">
-                    <i class="fas fa-sign-out-alt"></i>
-                </div>
-                <div class="modal-content">
-                    <h3 class="modal-title">Confirm Logout</h3>
-                    <p class="modal-message">
-                        Are you sure you want to log out of your account?
-                    </p>
-                    <div class="modal-actions">
-                        <button id="logout-no" class="btn btn-secondary">
+        <!-- LOGOUT CONFIRMATION MODAL -->
+        <div class="logout-modal-container" id="logout-modal">
+            <div class="logout-modal-box">
+                <div class="logout-modal-content">
+                    <h3>Confirm Logout</h3>
+                    <p>Are you sure you want to log out?</p>
+                    <div class="btn-group">
+                        <button class="btn-cancel" id="logout-cancel">
                             Cancel
                         </button>
-                        <button id="logout-yes" class="btn btn-primary">
-                            Logout
+                        <button class="btn-submit" id="logout-confirm">
+                            <span id="logout-btn-text">Logout</span>
+                            <span id="logout-btn-spinner" class="btn-spinner" style="display: none"></span>
                         </button>
                     </div>
                 </div>

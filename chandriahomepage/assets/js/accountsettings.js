@@ -430,11 +430,26 @@ $(document).ready(function () {
         }
     });
 
-    $("#logout-no").on("click", function () {
-        $("#logout-modal").hide();
+    // Logout functionality with confirmation modal
+    $("#logout-btn").on("click", function (e) {
+        e.preventDefault();
+        // Show the logout confirmation modal
+        $("#logout-modal").addClass("show");
     });
 
-    $("#logout-yes").on("click", function () {
+    // Handle logout modal cancel button
+    $("#logout-cancel").on("click", function () {
+        // Hide the logout modal
+        $("#logout-modal").removeClass("show");
+    });
+
+    // Handle logout modal confirm button
+    $("#logout-confirm").on("click", function () {
+        // Disable the button and show spinner
+        $(this).addClass("disabled");
+        $("#logout-btn-text").hide();
+        $("#logout-btn-spinner").show();
+        
         signOut(auth)
             .then(() => {
                 // Clear any stored user data
@@ -452,72 +467,18 @@ $(document).ready(function () {
             .catch(error => {
                 console.error("Error during logout:", error);
                 notyf.error("Error logging out. Please try again.");
+                
+                // Re-enable the button and hide spinner
+                $("#logout-confirm").removeClass("disabled");
+                $("#logout-btn-text").show();
+                $("#logout-btn-spinner").hide();
             });
-        $("#logout-modal").hide();
     });
 
-    // DOM VARIABLES
-    const $logoutButton = $("#logout-btn");
-    const $logoutModal = $("#logout-modal");
-    const $confirmLogout = $("#logout-yes");
-    const $cancelLogout = $("#logout-no");
-
-    function showLogoutModal() {
-        if ($logoutModal.length) {
-            $logoutModal.css("display", "flex");
-            setTimeout(() => {
-                $logoutModal.addClass("show");
-            }, 10);
-        }
-    }
-
-    function hideLogoutModal() {
-        if ($logoutModal.length) {
-            $logoutModal.removeClass("show");
-            setTimeout(() => {
-                $logoutModal.css("display", "none");
-            }, 300);
-        }
-    }
-
-    // Show modal on logout button click
-    $logoutButton.on("click", showLogoutModal);
-
-    // Confirm logout
-    $confirmLogout.on("click", function () {
-        const notyf = new Notyf({
-            position: { x: "center", y: "top" },
-            duration: 3000
-        });
-
-        notyf.success("Logging out...");
-
-        signOut(auth)
-            .then(() => {
-                window.location.href = "./user_authentication.html";
-            })
-            .catch(error => {
-                console.error("Error during logout:", error);
-                notyf.error("Logout failed. Please try again.");
-            });
-
-        hideLogoutModal();
-    });
-
-    // Cancel logout
-    $cancelLogout.on("click", hideLogoutModal);
-
-    // Close modal on background click
-    $logoutModal.on("click", function (e) {
+    // Close logout modal when clicking outside of it
+    $("#logout-modal").on("click", function (e) {
         if (e.target === this) {
-            hideLogoutModal();
-        }
-    });
-
-    // Close modal on Escape key
-    $(document).on("keydown", function (e) {
-        if (e.key === "Escape" && $logoutModal.css("display") !== "none") {
-            hideLogoutModal();
+            $(this).removeClass("show");
         }
     });
 
