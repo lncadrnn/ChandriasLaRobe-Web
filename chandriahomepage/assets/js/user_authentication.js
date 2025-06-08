@@ -208,7 +208,7 @@ $(document).ready(function () {
             return;
         }
 
-        forgotBtn.attr("disabled", true).text("Submitting...");
+        forgotBtn.attr("disabled", true).text("Sending Reset Link...");
 
         try {
             //
@@ -253,7 +253,6 @@ $(document).ready(function () {
     // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // DOM VARIABLES
     const $fullname = $("#signup-fullname"),
-        $username = $("#signup-username"),
         $email = $("#signup-email"),
         $contact = $("#signup-contact"),
         $password = $("#signup-password"),
@@ -266,7 +265,6 @@ $(document).ready(function () {
 
         // Variables
         const fullname = $fullname.val();
-        const username = $username.val().trim();
         const email = $email.val().trim();
         const contact = $contact.val().trim();
         const password = $password.val().trim();
@@ -277,7 +275,6 @@ $(document).ready(function () {
         // --- VALIDATIONS ---
         if (
             !fullname ||
-            !username ||
             !email ||
             !contact ||
             !password ||
@@ -336,20 +333,6 @@ $(document).ready(function () {
                 return enableButton();
             }
 
-            // CHECK IF USERNAME EXISTS
-            const usernameQuery = await getDocs(
-                query(
-                    collection(chandriaDB, "userAccounts"),
-                    where("username", "==", username)
-                )
-            );
-            if (!usernameQuery.empty) {
-                notyf.error(
-                    "Username is already taken. Please choose another."
-                );
-                return enableButton();
-            }
-
             // FIREBASE AUTH SIGN-UP
             const userCredential = await createUserWithEmailAndPassword(
                 auth,
@@ -364,7 +347,6 @@ $(document).ready(function () {
             const userData = {
                 fullname,
                 contact,
-                username,
                 email,
                 createdAt: new Date()
             };

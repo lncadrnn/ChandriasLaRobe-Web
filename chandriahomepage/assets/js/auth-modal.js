@@ -349,13 +349,12 @@ class AuthModal {
     }    async handleSignUp(event) {
         const formData = new FormData(event.target);
         const fullname = formData.get('fullname');
-        const username = formData.get('username');
         const email = formData.get('email');
         const contact = formData.get('contact');
         const password = formData.get('password');
         const confirmPassword = formData.get('confirm-password');
 
-        if (!this.validateSignUpForm(fullname, username, email, contact, password, confirmPassword)) {
+        if (!this.validateSignUpForm(fullname, email, contact, password, confirmPassword)) {
             return;
         }
 
@@ -381,35 +380,17 @@ class AuthModal {
                     duration: 5000
                 });
                 this.isLoggingIn = false;
-                this.hideLoading(event.target);
-                return;
-            }
-
-            // Check if username exists
-            const usernameQuery = await getDocs(
-                query(
-                    collection(chandriaDB, "userAccounts"),
-                    where("username", "==", username)
-                )
-            );
-            if (!usernameQuery.empty) {
-                this.notyf.error("Username is already taken. Please choose another.");
-                this.isLoggingIn = false;
-                this.hideLoading(event.target);
-                return;
+                this.hideLoading(event.target);                return;
             }
 
             // Firebase Auth sign-up
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             await getAuth().signOut(); // Sign out immediately after registration
             await sendEmailVerification(userCredential.user);
-            await updateProfile(userCredential.user, { displayName: fullname });
-
-            // Form data
+            await updateProfile(userCredential.user, { displayName: fullname });            // Form data
             const userData = {
                 fullname,
                 contact,
-                username,
                 email,
                 createdAt: new Date()
             };
@@ -538,7 +519,7 @@ class AuthModal {
         }
 
         return isValid;
-    }        validateSignUpForm(fullname, username, email, contact, password, confirmPassword) {
+    }    validateSignUpForm(fullname, email, contact, password, confirmPassword) {
         let isValid = true;
 
         if (!fullname || fullname.trim().length < 2) {
@@ -550,11 +531,6 @@ class AuthModal {
         const fullnamePattern = /^([A-Z][a-z]+)( [A-Z][a-z]+)+$/;
         if (fullname && !fullnamePattern.test(fullname)) {
             this.notyf.error('Full name must be at least two words, only letters, and each starting with a capital letter.');
-            isValid = false;
-        }
-
-        if (!username || username.trim().length < 3) {
-            this.notyf.error('Username must be at least 3 characters long.');
             isValid = false;
         }
 
@@ -662,9 +638,13 @@ class AuthModal {
         const originalText = button.textContent;
         button.dataset.originalText = originalText;
         
-        // Check if it's a sign in button and use simple text, otherwise use spinner
+        // Check button type and use appropriate loading text
         if (button.textContent.includes('Sign In') || button.id === 'signin-submit') {
             button.textContent = 'Signing in...';
+        } else if (button.textContent.includes('Sign Up') || button.textContent.includes('Create Account')) {
+            button.textContent = 'Signing Up...';
+        } else if (button.textContent.includes('Send Reset Link') || button.textContent.includes('Reset Password')) {
+            button.textContent = 'Sending Reset Link...';
         } else if (button.id === 'google-signin' || button.classList.contains('google-btn')) {
             // For Google button, remove spinner
             button.textContent = 'Google';

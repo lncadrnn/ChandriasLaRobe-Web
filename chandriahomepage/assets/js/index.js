@@ -582,13 +582,17 @@ $(document).ready(function () {
                 $userAccountLink.attr("href", "chandriahomepage/accounts.html");
             }
             localStorage.setItem("userEmail", user.email);
-            await updateCartCount();
-        } else {
+            await updateCartCount();        } else {
             if ($userAccountLink.length) {
-                $userAccountLink.attr(
-                    "href",
-                    "chandriahomepage/user_authentication.html"
-                );
+                // Open auth modal instead of redirecting to standalone page
+                $userAccountLink.attr("href", "#");
+                $userAccountLink.click(function(e) {
+                    e.preventDefault();
+                    // Trigger auth modal
+                    if (window.authModal) {
+                        window.authModal.openModal();
+                    }
+                });
             }
             localStorage.removeItem("userEmail");
             await updateCartCount();

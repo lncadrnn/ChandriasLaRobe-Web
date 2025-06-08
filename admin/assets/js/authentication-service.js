@@ -197,7 +197,7 @@ $(document).ready(function () {
             return;
         }
 
-        forgotBtn.attr("disabled", true).text("Submitting...");
+        forgotBtn.attr("disabled", true).text("Sending Reset Link...");
 
         try {
             //

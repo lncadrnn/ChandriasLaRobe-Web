@@ -874,8 +874,8 @@
 #signin-form {
   padding: 0;
   padding-top: 0.5rem; /* Reduced top padding further */
-  padding-left: 1.5rem; /* Add left padding for sign in form only */
-  padding-right: 1.5rem; /* Add right padding for sign in form only */
+  padding-left: 2rem; /* Add left padding for sign in form only */
+  padding-right: 2rem; /* Add right padding for sign in form only */
   max-height: none; /* Remove max-height constraint completely */
   overflow-y: auto; /* Enable scrollbar when content overflows */
   overflow-x: hidden;
@@ -985,6 +985,8 @@
 #forgot-form {
   padding: 0;
   padding-top: 0.5rem; /* Reduced top padding further */
+  padding-left: 2rem; /* Add left padding for forgot password form only */
+  padding-right: 2rem; /* Add right padding for forgot password form only */
   max-height: none; /* Remove max-height constraint completely */
   overflow-y: visible; /* Change to visible to prevent unnecessary scrolling */
   overflow-x: hidden;
