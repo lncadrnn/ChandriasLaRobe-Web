@@ -39,9 +39,7 @@ export const ChatbotPersistence = {
             console.log('Could not load chatbot position');
         }
         return null;
-    },
-
-    // Save chatbot state (open/closed)
+    },    // Save chatbot state (open/closed)
     saveState(isMinimized) {
         try {
             const state = { isMinimized, timestamp: Date.now() };
@@ -51,13 +49,23 @@ export const ChatbotPersistence = {
         }
     },
 
-    // Load chatbot state - always return minimized for new page loads
+    // Load chatbot state - maintain state across pages
     loadState() {
-        // Always start minimized when navigating to a new page
+        try {
+            const saved = localStorage.getItem('chandria-chatbot-state');
+            if (saved) {
+                const state = JSON.parse(saved);
+                // Return state if it was saved within the last hour (active session)
+                if (Date.now() - state.timestamp < 60 * 60 * 1000) {
+                    return { isMinimized: state.isMinimized };
+                }
+            }
+        } catch (error) {
+            console.log('Could not load chatbot state');
+        }
+        // Default to minimized if no recent state found
         return { isMinimized: true };
-    },
-
-    // Apply saved position to chatbot bubble
+    },    // Apply saved position to chatbot bubble - restrict to sides only
     applyPosition() {
         const bubble = document.getElementById('chatbotBubble');
         if (!bubble) return;
@@ -67,13 +75,33 @@ export const ChatbotPersistence = {
             const bubbleSize = bubble.offsetWidth || 60;
             const margin = 20;
             
-            // Ensure position is within current viewport bounds
-            let x = Math.max(margin, Math.min(window.innerWidth - bubbleSize - margin, savedPosition.x));
-            let y = Math.max(margin, Math.min(window.innerHeight - bubbleSize - margin, savedPosition.y));
+            // Force position to either left or right side
+            let x, y;
+            
+            // Determine which side based on saved x position
+            if (savedPosition.x < window.innerWidth / 2) {
+                // Snap to left side
+                x = margin;
+            } else {
+                // Snap to right side
+                x = window.innerWidth - bubbleSize - margin;
+            }
+            
+            // Keep vertical position but ensure it's within bounds
+            y = Math.max(margin, Math.min(window.innerHeight - bubbleSize - margin, savedPosition.y));
             
             bubble.style.position = 'fixed';
             bubble.style.left = x + 'px';
             bubble.style.top = y + 'px';
+            bubble.style.right = 'auto';
+            bubble.style.bottom = 'auto';
+        } else {
+            // Default position: right side, middle of screen
+            const bubbleSize = bubble.offsetWidth || 60;
+            const margin = 20;
+            bubble.style.position = 'fixed';
+            bubble.style.left = (window.innerWidth - bubbleSize - margin) + 'px';
+            bubble.style.top = (window.innerHeight / 2 - bubbleSize / 2) + 'px';
             bubble.style.right = 'auto';
             bubble.style.bottom = 'auto';
         }
@@ -81,18 +109,24 @@ export const ChatbotPersistence = {
     initializePersistence(chatbotInstance) {
         if (!chatbotInstance) return;
 
-        // Apply saved position and ensure minimized state after a short delay
+        // Apply saved position and restore state after a short delay
         setTimeout(() => {
             this.applyPosition();
             
-            // Ensure chatbot starts minimized on every page load
+            // Load and apply saved state
+            const savedState = this.loadState();
             const chatbot = document.getElementById('chandriasChatbot');
             const bubble = document.getElementById('chatbotBubble');
             
             if (chatbot && bubble) {
-                chatbot.classList.add('hidden');
-                bubble.classList.remove('hidden');
-                chatbotInstance.isMinimized = true;
+                if (savedState.isMinimized) {
+                    chatbot.classList.add('hidden');
+                    bubble.classList.remove('hidden');
+                } else {
+                    chatbot.classList.remove('hidden');
+                    bubble.classList.add('hidden');
+                }
+                chatbotInstance.isMinimized = savedState.isMinimized;
             }
         }, 100);
     }

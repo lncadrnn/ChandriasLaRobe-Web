@@ -54,29 +54,12 @@ class ChandriasChatbot {    constructor() {
         this.loadChatHistory();
         this.attachEventListeners();
         
-        // Ensure chatbot always starts minimized on page load
-        this.forceMinimizedState();
-        
         // Add drag functionality to the bubble
         setTimeout(() => {
             this.makeChatbotBubbleDraggable();
         }, 100); // Small delay to ensure DOM is ready
         
         this.initialized = true;
-    }
-
-    forceMinimizedState() {
-        // Always start in minimized state when page loads
-        setTimeout(() => {
-            const chatbot = document.getElementById('chandriasChatbot');
-            const bubble = document.getElementById('chatbotBubble');
-            
-            if (chatbot && bubble) {
-                chatbot.classList.add('hidden');
-                bubble.classList.remove('hidden');
-                this.isMinimized = true;
-            }
-        }, 50);
     }
 
     createChatbotHTML() {
@@ -246,15 +229,18 @@ class ChandriasChatbot {    constructor() {
     updateFAQSuggestions() {
         const faqContainer = document.getElementById('faqSuggestions');
         faqContainer.innerHTML = this.renderFAQSuggestions();
-    }
-
-    minimizeChatbot() {
+    }    minimizeChatbot() {
         const chatbot = document.getElementById('chandriasChatbot');
         const bubble = document.getElementById('chatbotBubble');
         
         chatbot.classList.add('hidden');
         bubble.classList.remove('hidden');
         this.isMinimized = true;
+        
+        // Save state for persistence across pages
+        if (window.ChatbotPersistence) {
+            window.ChatbotPersistence.saveState(true);
+        }
     }
 
     maximizeChatbot() {
@@ -264,6 +250,11 @@ class ChandriasChatbot {    constructor() {
         chatbot.classList.remove('hidden');
         bubble.classList.add('hidden');
         this.isMinimized = false;
+        
+        // Save state for persistence across pages
+        if (window.ChatbotPersistence) {
+            window.ChatbotPersistence.saveState(false);
+        }
     }
 
     closeChatbot() {
@@ -272,11 +263,9 @@ class ChandriasChatbot {    constructor() {
 
     makeChatbotBubbleDraggable() {
         const bubble = document.getElementById('chatbotBubble');
-        if (!bubble) return;
-
-        let isDragging = false;
+        if (!bubble) return;        let isDragging = false;
         let startX, startY, initialX, initialY;
-        let currentX = 0, currentY = 0;
+        let currentY = 0;
 
         // Add draggable class
         bubble.classList.add('draggable');
@@ -306,26 +295,31 @@ class ChandriasChatbot {    constructor() {
 
             isDragging = true;
             bubble.classList.add('dragging');
-        }
-
-        function drag(e) {
+        }        function drag(e) {
             if (!isDragging) return;
             e.preventDefault();
 
             const event = e.type.includes('touch') ? e.touches[0] : e;
-            currentX = event.clientX - startX;
             currentY = event.clientY - startY;
 
-            // Calculate new position
-            let newX = initialX + currentX;
+            // Calculate new vertical position only
             let newY = initialY + currentY;
 
-            // Keep bubble within viewport bounds
+            // Keep bubble within viewport bounds vertically
             const bubbleSize = bubble.offsetWidth;
-            const margin = 10; // Minimum distance from viewport edge
+            const margin = 10;
 
-            newX = Math.max(margin, Math.min(window.innerWidth - bubbleSize - margin, newX));
             newY = Math.max(margin, Math.min(window.innerHeight - bubbleSize - margin, newY));
+
+            // Keep horizontal position locked to current side
+            let newX = initialX;
+            if (initialX < window.innerWidth / 2) {
+                // Lock to left side
+                newX = margin;
+            } else {
+                // Lock to right side
+                newX = window.innerWidth - bubbleSize - margin;
+            }
 
             // Apply new position
             bubble.style.position = 'fixed';
@@ -345,27 +339,22 @@ class ChandriasChatbot {    constructor() {
                 window.ChatbotPersistence.savePosition(rect.left, rect.top);
             }
 
-            // Optional: Snap to edges for better UX
+            // Snap to edges for better UX
             snapToEdges();
-        }        function snapToEdges() {
+        }function snapToEdges() {
             const rect = bubble.getBoundingClientRect();
             const bubbleSize = bubble.offsetWidth;
             const margin = 20;
             
-            let newX = rect.left;
-            let newY = rect.top;
+            let newX, newY = rect.top;
 
-            // Snap to nearest vertical edge if close enough
+            // Determine which side to snap to based on current position
             if (rect.left < window.innerWidth / 2) {
-                // Snap to left edge
-                if (rect.left < 100) {
-                    newX = margin;
-                }
+                // Snap to left side
+                newX = margin;
             } else {
-                // Snap to right edge
-                if (rect.right > window.innerWidth - 100) {
-                    newX = window.innerWidth - bubbleSize - margin;
-                }
+                // Snap to right side
+                newX = window.innerWidth - bubbleSize - margin;
             }
 
             // Ensure it stays within vertical bounds
@@ -387,14 +376,13 @@ class ChandriasChatbot {    constructor() {
             setTimeout(() => {
                 bubble.style.transition = '';
             }, 300);
-        }// Replace the existing click handler with one that handles dragging
+        }        // Replace the existing click handler with one that handles dragging
         bubble.removeEventListener('click', this.maximizeChatbotHandler);
         bubble.addEventListener('click', (e) => {
-            // If the user dragged more than 5px, don't trigger chat opening
-            if (Math.abs(currentX) > 5 || Math.abs(currentY) > 5) {
+            // If the user dragged more than 5px vertically, don't trigger chat opening
+            if (Math.abs(currentY) > 5) {
                 e.preventDefault();
                 e.stopPropagation();
-                currentX = 0;
                 currentY = 0;
                 return;
             }
