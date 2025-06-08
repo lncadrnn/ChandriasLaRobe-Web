@@ -54,12 +54,29 @@ class ChandriasChatbot {    constructor() {
         this.loadChatHistory();
         this.attachEventListeners();
         
+        // Ensure chatbot always starts minimized on page load
+        this.forceMinimizedState();
+        
         // Add drag functionality to the bubble
         setTimeout(() => {
             this.makeChatbotBubbleDraggable();
         }, 100); // Small delay to ensure DOM is ready
         
         this.initialized = true;
+    }
+
+    forceMinimizedState() {
+        // Always start in minimized state when page loads
+        setTimeout(() => {
+            const chatbot = document.getElementById('chandriasChatbot');
+            const bubble = document.getElementById('chatbotBubble');
+            
+            if (chatbot && bubble) {
+                chatbot.classList.add('hidden');
+                bubble.classList.remove('hidden');
+                this.isMinimized = true;
+            }
+        }, 50);
     }
 
     createChatbotHTML() {
@@ -316,19 +333,21 @@ class ChandriasChatbot {    constructor() {
             bubble.style.top = newY + 'px';
             bubble.style.right = 'auto';
             bubble.style.bottom = 'auto';
-        }
-
-        function dragEnd(e) {
+        }        function dragEnd(e) {
             if (!isDragging) return;
             
             isDragging = false;
             bubble.classList.remove('dragging');
 
+            // Save position to localStorage for persistence
+            const rect = bubble.getBoundingClientRect();
+            if (window.ChatbotPersistence) {
+                window.ChatbotPersistence.savePosition(rect.left, rect.top);
+            }
+
             // Optional: Snap to edges for better UX
             snapToEdges();
-        }
-
-        function snapToEdges() {
+        }        function snapToEdges() {
             const rect = bubble.getBoundingClientRect();
             const bubbleSize = bubble.offsetWidth;
             const margin = 20;
@@ -357,11 +376,18 @@ class ChandriasChatbot {    constructor() {
             bubble.style.left = newX + 'px';
             bubble.style.top = newY + 'px';
 
+            // Save final position after animation
+            setTimeout(() => {
+                if (window.ChatbotPersistence) {
+                    window.ChatbotPersistence.savePosition(newX, newY);
+                }
+            }, 300);
+
             // Remove transition after animation completes
             setTimeout(() => {
                 bubble.style.transition = '';
             }, 300);
-        }        // Replace the existing click handler with one that handles dragging
+        }// Replace the existing click handler with one that handles dragging
         bubble.removeEventListener('click', this.maximizeChatbotHandler);
         bubble.addEventListener('click', (e) => {
             // If the user dragged more than 5px, don't trigger chat opening
