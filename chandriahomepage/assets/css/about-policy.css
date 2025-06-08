@@ -625,9 +625,7 @@
         break-inside: avoid;
         margin-bottom: var(--spacing-lg);
     }
-    
-    .policy-footer,
-    .breadcrumb {
+      .policy-footer {
         display: none;
     }
     

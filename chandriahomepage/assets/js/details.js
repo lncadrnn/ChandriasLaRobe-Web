@@ -76,9 +76,6 @@ $(document).ready(async function () {
       // Add isAdditional flag to data
       data.isAdditional = isAdditional;
 
-      // Update breadcrumbs dynamically
-      updateBreadcrumbs(data);
-
       // Image previews - handle differently for additionals vs regular products
       if (isAdditional) {
         // For additionals, use single image for both front and back
@@ -132,20 +129,6 @@ $(document).ready(async function () {
       } else {
         loadRelatedProducts(data.category, data.color, productId);
       }
-      
-      // Store product info for breadcrumb
-    if (productId) {
-        localStorage.setItem(`product_${productId}_name`, data.name || 'Product Details');
-        // Don't store category for breadcrumb since we don't want it to show
-    }
-
-    // Update breadcrumb if dynamic breadcrumb is available
-    if (window.dynamicBreadcrumb) {
-        // Small delay to ensure localStorage is updated
-        setTimeout(() => {
-            window.dynamicBreadcrumb.refresh();
-        }, 100);
-    }
 
     // Sizes (only for regular products, hide for additionals)
     const sizeList = $('#product-sizes');
@@ -578,49 +561,7 @@ $(document).ready(async function () {
     }
   }
   
-  // Function to update breadcrumbs dynamically
-function updateBreadcrumbs(product) {
-    const breadcrumbContainer = document.querySelector('.breadcrumb');
-    if (!breadcrumbContainer) return;
-    
-    // Clear existing breadcrumbs
-    breadcrumbContainer.innerHTML = '';
-    
-    // Create breadcrumb structure
-    const breadcrumbs = [
-        { text: 'Home', url: '../index.html' },
-        { text: 'Shop', url: 'shop.html' },
-        { text: product.name, url: null, active: true }
-    ];
-    
-    breadcrumbs.forEach((crumb, index) => {
-        const breadcrumbItem = document.createElement('li');
-        breadcrumbItem.className = 'breadcrumb-item';
-        
-        if (crumb.active) {
-            breadcrumbItem.classList.add('active');
-            breadcrumbItem.textContent = crumb.text;
-        } else {
-            const link = document.createElement('a');
-            link.href = crumb.url;
-            link.textContent = crumb.text;
-            link.className = 'breadcrumb-link';
-            breadcrumbItem.appendChild(link);
-        }
-        
-        breadcrumbContainer.appendChild(breadcrumbItem);
-        
-        // Add separator (except for last item)
-        if (index < breadcrumbs.length - 1) {
-            const separator = document.createElement('span');
-            separator.className = 'breadcrumb-separator';
-            separator.innerHTML = '<i class="fi fi-rs-angle-right"></i>';
-            breadcrumbContainer.appendChild(separator);
-        }
-    });
-}
-
-// Format category name for display
+  // Format category name for display
 function formatCategoryName(category) {
     if (!category) return 'Products';
     
