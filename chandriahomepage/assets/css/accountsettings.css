@@ -1,60 +1,423 @@
+/* Modern Pink & White Theme - Account Settings */
+:root {
+    --accent-pink: hsl(346, 80%, 65%);
+    --accent-pink-light: hsl(346, 60%, 85%);
+    --accent-pink-soft: hsl(346, 30%, 95%);
+    --white: #ffffff;
+    --gray-25: #fcfcfc;
+    --gray-50: #fafafa;
+    --gray-100: #f5f5f5;
+    --gray-200: #e5e5e5;
+    --gray-300: #d4d4d4;
+    --gray-400: #a3a3a3;
+    --gray-600: #525252;
+    --gray-700: #374151;
+    --gray-800: #262626;
+    --gray-900: #111827;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --border-radius-sm: 0.375rem;
+    --border-radius-md: 0.5rem;
+    --border-radius-lg: 0.75rem;
+}
+
 /* Base styling */
 body {
-    font-family: "Poppins", sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     margin: 0;
-    background-color: #ffffff;
-    color: #333;
+    background: var(--white);
+    color: var(--gray-800);
+    line-height: 1.6;
+    min-height: 100vh;
 }
 
-/*=============== HEADER & NAV ===============*/
-.header-top {
-    background-color: var(--first-color-alt);
-    padding-block: 0.88rem;
+/* Account Page Layout - Remove main container */
+.account-page {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+    min-height: calc(100vh - 200px);
 }
-.header-container {
+
+.account-page-container {
+    max-width: 1400px;
+    width: 100%;
+    /* Remove background, border-radius, box-shadow, backdrop-filter, border */
+}
+
+.account-layout {
+    display: flex;
+    min-height: 70vh;
+}
+
+/* Sidebar Styles */
+.account-sidebar {
+    width: 280px;
+    background: var(--gray-50);
+    border-right: 1px solid var(--gray-200);
+    position: relative;
+    overflow: hidden;
+}
+
+.account-sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="pink" opacity="0.03"/><circle cx="25" cy="25" r="0.5" fill="pink" opacity="0.01"/><circle cx="75" cy="75" r="0.8" fill="pink" opacity="0.02"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    pointer-events: none;
+}
+
+.sidebar-nav {
+    padding: 2rem 0;
+    position: relative;
+    z-index: 1;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-item {
+    margin-bottom: 0.5rem;
+    padding: 0 1.5rem;
+}
+
+.sidebar-link {
     display: flex;
     align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    color: var(--gray-700);
+    background: transparent;
+    border: none;
+    border-radius: var(--border-radius-lg);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
+    transition: left 0.5s ease;
+}
+
+.sidebar-link:hover::before {
+    left: 100%;
+}
+
+.sidebar-link:hover {
+    background: var(--accent-pink-soft);
+    color: var(--accent-pink);
+    transform: translateX(4px);
+}
+
+.sidebar-item.active .sidebar-link {
+    background: var(--accent-pink-soft);
+    color: var(--accent-pink);
+    box-shadow: var(--shadow-sm);
+}
+
+.sidebar-link i {
+    font-size: 1.2rem;
+    width: 20px;
+    text-align: center;
+    color: var(--accent-pink);
+}
+
+/* Content Area */
+.account-content {
+    flex: 1;
+    background: var(--white);
+    position: relative;
+    overflow: hidden;
+}
+
+.content-section {
+    display: none;
+    padding: 3rem;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.content-section.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section-header {
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+    font-size: 1.1rem;
+    color: var(--gray-600);
+    font-weight: 400;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Settings Section Styles */
+.settings-content-wrapper {
+    display: flex;
+    gap: 3rem;
     justify-content: space-between;
 }
-.header-container span:first-child {
-    margin-right: 2rem;
-}
-.header-contact span,
-.header-alert-news,
-.header-top-action {
-    font-size: var(--small-font-size);
-}
-.header-alert-news {
-    color: var(--text-color);
-    font-weight: var(--weight-600);
-}
-.header-top-action {
-    color: var(--text-color);
+
+.settings-form-column {
+    flex: 1;
+    max-width: 60%;
 }
 
-#nav-login {
-    display: none;
+.settings-avatar-column {
+    flex: 1;
+    max-width: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.header-search {
-    width: 340px;
-    position: relative;
-}
-.header-search .form-input {
+/* Booking History Styles */
+.bookings-content {
     width: 100%;
 }
-.search-btn {
-    position: absolute;
-    top: 24%;
-    right: 1.25rem;
-    cursor: pointer;
-}
-/* Active link */
-.active-link,
-.nav-link:hover {
-    color: var(--first-color);
+
+.bookings-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
 }
 
+.filter-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-select,
+.filter-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.filter-select:focus,
+.filter-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.bookings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.booking-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border: 2px solid #f0f0f0;
+    border-radius: 12px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.booking-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.booking-image {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.booking-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.booking-details {
+    flex: 1;
+}
+
+.booking-title {
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem 0;
+}
+
+.booking-details p {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0.25rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.booking-details i {
+    color: #667eea;
+    width: 16px;
+}
+
+.booking-status {
+    flex-shrink: 0;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-upcoming {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.status-completed {
+    background: #e8f5e8;
+    color: #2e7d32;
+}
+
+.status-cancelled {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.booking-actions {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.btn-action {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.btn-view {
+    background: #667eea;
+    color: white;
+}
+
+.btn-view:hover {
+    background: #5a6fd8;
+    transform: translateY(-1px);
+}
+
+.btn-cancel {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+.btn-review {
+    background: #ffc107;
+    color: #212529;
+}
+
+.btn-review:hover {
+    background: #e0a800;
+    transform: translateY(-1px);
+}
+
+.empty-bookings {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #666;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: #ddd;
+    margin-bottom: 1.5rem;
+}
+
+.empty-bookings h3 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.empty-bookings p {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+}
+
+.empty-bookings .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+}
+
+/* Legacy styles for backward compatibility */
 .account-settings-page {
     display: flex;
     justify-content: center;
@@ -125,8 +488,8 @@ input[type="password"] {
 
 input:focus {
     outline: none;
-    border-color: hsl(346, 100%, 74%);
-    box-shadow: 0 0 0 2px rgba(232, 62, 140, 0.1);
+    border-color: var(--accent-pink);
+    box-shadow: 0 0 0 2px var(--accent-pink-soft);
 }
 
 /* Avatar styling */
@@ -190,7 +553,7 @@ input:focus {
 }
 
 .btn-upload {
-    background-color: hsl(346, 100%, 74%);
+    background-color: var(--accent-pink);
     color: white;
     padding: 0.7rem 1.5rem;
     border-radius: 50px;
@@ -205,7 +568,7 @@ input:focus {
 }
 
 .btn-upload:hover {
-    background-color: hsl(346, 98%, 69%);
+    background-color: var(--accent-pink-light);
 }
 
 .form-actions {
@@ -235,40 +598,44 @@ input:focus {
 }
 
 .btn-save {
-    background-color: hsl(346, 100%, 74%);
+    background-color: var(--accent-pink);
     color: white;
-    border: 1px solid hsl(346, 100%, 74%);
+    border: 1px solid var(--accent-pink);
 }
 
 .btn-save:hover {
-    background-color: hsl(346, 98%, 69%);
+    background-color: var(--accent-pink-light);
     color: white;
 }
 
 .delete-account-link {
-    color: hsl(346, 100%, 74%) !important;
+    color: var(--gray-500) !important;
     font-size: 0.8rem;
     text-decoration: none !important;
-    margin-top: 5rem; /* Reduced from 5rem for better spacing */
+    margin-top: 5rem;
     display: flex;
     align-items: center;
-    justify-content: center; /* Center it horizontally */
-    align-self: center; /* Center within the parent container */
+    justify-content: center;
+    align-self: center;
     gap: 0.3rem;
-    width: 100%; /* Take the same width as the parent */
-    text-align: center; /* Center the text */
+    width: 100%;
+    text-align: center;
 }
 
 .delete-account-link:hover {
     text-decoration: underline !important;
-    color: hsl(346, 80%, 60%) !important;
+    color: var(--gray-600) !important;
 }
 
 .delete-account-link:link,
 .delete-account-link:visited,
 .delete-account-link:active {
-    color: hsl(346, 100%, 74%) !important;
+    color: var(--gray-500) !important;
     text-decoration: none !important;
+}
+
+.delete-account-link i {
+    color: var(--gray-500);
 }
 
 .delete-account-link i {
@@ -278,7 +645,7 @@ input:focus {
 /* Change Password Button */
 .btn-change-password {
     background-color: transparent;
-    color: hsl(346, 100%, 74%) !important;
+    color: var(--accent-pink) !important;
     border: none;
     padding: 0;
     font-size: 0.9rem;
@@ -286,11 +653,17 @@ input:focus {
     font-weight: 500;
     cursor: pointer;
     margin-bottom: 1rem;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .btn-change-password:hover {
     text-decoration: underline !important;
+}
+
+.btn-change-password i {
+    color: var(--accent-pink);
 }
 
 /* Password Fields Container */
@@ -299,7 +672,7 @@ input:focus {
     padding: 0.75rem;
     border-radius: 8px;
     margin-bottom: 1rem;
-    border-left: 3px solid hsl(346, 100%, 74%);
+    border-left: 3px solid var(--accent-pink);
 }
 
 /* Logout Button */
@@ -500,7 +873,7 @@ input[type="file"] {
 
 /* Fix button styles to prevent blue hyperlink appearance */
 .btn {
-    background-color: hsl(346, 100%, 74%);
+    background-color: var(--accent-pink);
     color: white !important;
     border: none;
     border-radius: 50px;
@@ -515,41 +888,41 @@ input[type="file"] {
 }
 
 .btn:hover {
-    background-color: hsl(346, 98%, 69%) !important;
+    background-color: var(--accent-pink-light) !important;
     color: white !important;
     text-decoration: none !important;
 }
 
 .btn-primary {
-    background-color: hsl(346, 100%, 74%) !important;
+    background-color: var(--accent-pink) !important;
     color: white !important;
-    border: 2px solid hsl(346, 100%, 74%);
+    border: 2px solid var(--accent-pink);
 }
 
 .btn-primary:hover {
-    background-color: hsl(346, 98%, 69%) !important;
-    border-color: hsl(346, 98%, 69%);
+    background-color: var(--accent-pink-light) !important;
+    border-color: var(--accent-pink-light);
     color: white !important;
 }
 
 .btn-secondary {
     background-color: transparent !important;
-    color: hsl(346, 100%, 74%) !important;
-    border: 2px solid hsl(346, 100%, 74%);
+    color: var(--gray-600) !important;
+    border: 2px solid var(--gray-300);
 }
 
 .btn-secondary:hover {
-    background-color: hsl(346, 100%, 74%) !important;
-    color: white !important;
+    background-color: var(--gray-50) !important;
+    color: var(--gray-700) !important;
 }
 
 /* Specific Cancel Button Hover Animation - Override general btn-secondary */
 .btn-secondary.cancel-btn:hover {
-    background: transparent !important;
-    color: hsl(346, 100%, 74%) !important;
-    border: 2px solid hsl(346, 100%, 74%) !important;
+    background: var(--gray-50) !important;
+    color: var(--gray-700) !important;
+    border: 2px solid var(--gray-400) !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 4px 15px rgba(255, 133, 177, 0.3) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* All links with href */
@@ -573,31 +946,171 @@ input:disabled {
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
-    .account-settings-content-wrapper {
+@media (max-width: 992px) {
+    .account-layout {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .account-sidebar {
+        width: 100%;
+        position: static;
+        border-radius: 8px;
+    }
+    
+    .sidebar-menu {
+        display: flex;
+        overflow-x: auto;
+        padding: 0 1rem;
+    }
+    
+    .sidebar-item {
+        flex-shrink: 0;
+        margin: 0 0.5rem;
+    }
+    
+    .sidebar-link {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        min-width: 120px;
+        text-align: center;
+        border-radius: 8px;
+    }
+    
+    .sidebar-link span {
+        font-size: 0.8rem;
+    }
+    
+    .sidebar-item.active .sidebar-link {
+        border-left: none;
+        border-bottom: 3px solid white;
+    }
+    
+    .account-content {
+        padding: 1.5rem;
+        border-radius: 8px;
+    }
+    
+    .settings-content-wrapper {
         flex-direction: column-reverse;
         gap: 2rem;
     }
-
-    .account-form-column,
-    .account-avatar-column {
+    
+    .settings-form-column,
+    .settings-avatar-column {
         max-width: 100%;
-    }
-
-    .form-actions {
-        flex-direction: column;
-    }
-
-    .btn {
-        width: 100%;
-    }
-
-    .delete-account-link {
-        align-self: center;
-        margin-top: 2rem;
     }
 }
 
+@media (max-width: 768px) {
+    .account-page {
+        padding: 1rem 0.5rem;
+    }
+    
+    .account-page-title {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 1.4rem;
+    }
+    
+    .bookings-filters {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .filter-group {
+        min-width: auto;
+    }
+    
+    .booking-card {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .booking-image {
+        width: 60px;
+        height: 60px;
+        align-self: center;
+    }
+    
+    .booking-details {
+        text-align: center;
+    }
+    
+    .booking-actions {
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .btn-action {
+        min-width: auto;
+        flex: 1;
+        max-width: 140px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+    
+    .empty-bookings {
+        padding: 2rem 1rem;
+    }
+    
+    .empty-icon {
+        font-size: 3rem;
+    }
+    
+    .empty-bookings h3 {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar-menu {
+        padding: 0 0.5rem;
+    }
+    
+    .sidebar-link {
+        min-width: 100px;
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .sidebar-link i {
+        font-size: 1rem;
+    }
+    
+    .account-content {
+        padding: 1rem;
+    }
+    
+    .section-header {
+        margin-bottom: 1.5rem;
+    }
+    
+    .booking-card {
+        padding: 0.75rem;
+    }
+    
+    .booking-actions {
+        gap: 0.5rem;
+    }
+    
+    .btn-action {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+}
 .disabled {
   color: black;
   pointer-events: none;
@@ -619,9 +1132,8 @@ input:disabled {
     width: 60px;
     height: 60px;
     border: 4px solid #f3f3f3;
-    border-top: 4px solid hsl(346, 100%, 74%);
+    border-top: 4px solid var(--accent-pink);
     border-radius: 50%;
-
     animation: spin 1s ease infinite;
     margin-top: 10px;
 }
@@ -757,7 +1269,7 @@ body.loaded #loader {
   border: none;
   border-radius: 2em;
   font-weight: 500;
-  background: linear-gradient(135deg, var(--first-color), hsl(346, 98%, 74%));
+  background: linear-gradient(135deg, var(--accent-pink), var(--accent-pink-light));
   color: white;
 }
 
@@ -828,7 +1340,7 @@ body.loaded #loader {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--first-color), hsl(346, 98%, 74%));
+  background: linear-gradient(90deg, var(--accent-pink), var(--accent-pink-light));
   border-radius: 24px 24px 0 0;
 }
 

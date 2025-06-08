@@ -83,4 +83,283 @@ select:disabled {
   cursor: not-allowed !important;
 }
 
+/* === PAGE NAME SECTION === */
+.page-name {
+    height: 100vh;
+    left: 260px;
+    position: relative;
+    background: var(--body-color);
+    padding: 2rem;
+    transition: var(--tran-05);
+    overflow-y: auto;
+}
+
+.sidebar.close ~ .page-name {
+    left: 78px;
+}
+
+.page-name .text {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.page-name .text::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 80px;
+    height: 3px;
+    background: var(--primary-color);
+    border-radius: 2px;
+}
+
+/* === TABLE CONTAINER === */
+.table-container {
+    background: var(--sidebar-color);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(255, 105, 180, 0.1);
+    overflow: hidden;
+    border: 1px solid var(--secondary-color);
+}
+
+/* === TABLE STYLES === */
+#rental-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+#rental-history-table thead {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+#rental-history-table thead th {
+    padding: 1.2rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+    border: none;
+    position: relative;
+}
+
+#rental-history-table thead th:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+#rental-history-table tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+#rental-history-table tbody tr:hover {
+    background: linear-gradient(135deg, rgba(255, 105, 180, 0.05), rgba(255, 182, 193, 0.05));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.1);
+}
+
+#rental-history-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+#rental-history-table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    color: var(--text-color);
+    border: none;
+}
+
+/* === STATUS BADGES === */
+.status-badge {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin: 0;
+}
+
+.status-upcoming {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.status-ongoing {
+    background: linear-gradient(135deg, #d4edda, #a7f3d0);
+    color: #155724;
+    border: 1px solid #a7f3d0;
+}
+
+.status-completed {
+    background: linear-gradient(135deg, #d1ecf1, #a7d8e7);
+    color: #0c5460;
+    border: 1px solid #a7d8e7;
+}
+
+.status-overdue {
+    background: linear-gradient(135deg, #f8d7da, #fca5a5);
+    color: #721c24;
+    border: 1px solid #fca5a5;
+}
+
+/* === PAYMENT STATUS === */
+.payment-status {
+    font-weight: 600;
+}
+
+.payment-fully-paid {
+    color: #155724;
+}
+
+.payment-balance {
+    color: #e74c3c;
+}
+
+/* === ACTION BUTTONS === */
+.action-btn {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 105, 180, 0.3);
+    text-decoration: none;
+    color: white;
+}
+
+.action-btn:active {
+    transform: translateY(0);
+}
+
+/* === LOADING STATES === */
+.table-loading {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-color);
+    font-style: italic;
+}
+
+.table-empty {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 768px) {
+    .page-name {
+        left: 78px;
+        padding: 1rem;
+    }
+    
+    .table-container {
+        border-radius: 12px;
+        overflow-x: auto;
+    }
+    
+    #rental-history-table {
+        min-width: 600px;
+    }
+    
+    #rental-history-table thead th,
+    #rental-history-table tbody td {
+        padding: 0.8rem 0.6rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* === SEARCH AND FILTER BAR === */
+.table-header {
+    background: var(--sidebar-color);
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--secondary-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.table-search {
+    position: relative;
+    flex: 1;
+    max-width: 300px;
+}
+
+.table-search input {
+    width: 100%;
+    padding: 0.8rem 1rem 0.8rem 2.5rem;
+    border: 2px solid var(--secondary-color);
+    border-radius: 25px;
+    background: white;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.table-search input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.1);
+}
+
+.table-search .search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.filter-btn {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 105, 180, 0.3);
+}
+
 /* Google Fonts */

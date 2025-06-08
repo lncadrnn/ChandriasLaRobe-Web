@@ -1183,6 +1183,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }    function showClearAllModal() {
         const modal = document.getElementById('clearAllModal');
         
+        // Update modal text to show current month
+        const currentMonthYear = calendar.currentDate.toLocaleDateString('en-US', { 
+            month: 'long', 
+            year: 'numeric' 
+        });
+        const modalBody = modal.querySelector('.modal-body p');
+        modalBody.innerHTML = `
+            Are you sure you want to delete
+            <strong>ALL</strong> events from <strong>${currentMonthYear}</strong>?
+        `;
+        
         // Show modal
         document.body.classList.add('modal-open');
         modal.style.display = 'block';
@@ -1190,9 +1201,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function confirmClearAllEvents() {
-        // Clear all events
-        calendar.events = {};
-        localStorage.removeItem('calendarEvents');
+        // Clear events only for the current month
+        const currentYear = calendar.currentDate.getFullYear();
+        const currentMonth = calendar.currentDate.getMonth();
+        
+        // Get the first and last day of the current month
+        const firstDay = new Date(currentYear, currentMonth, 1);
+        const lastDay = new Date(currentYear, currentMonth + 1, 0);
+        
+        // Remove events for all dates in the current month
+        for (let date = new Date(firstDay); date <= lastDay; date.setDate(date.getDate() + 1)) {
+            const dateStr = calendar.formatDate(date);
+            if (calendar.events[dateStr]) {
+                delete calendar.events[dateStr];
+            }
+        }
+        
+        // Save updated events to localStorage
+        localStorage.setItem('calendarEvents', JSON.stringify(calendar.events));
         calendar.render();
         hideClearAllModal();
     }    function hideClearAllModal() {

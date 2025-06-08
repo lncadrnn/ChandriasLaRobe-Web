@@ -626,4 +626,155 @@ $(document).ready(function () {
         e.stopPropagation();
     });
     // --====== END OF DELETE ACCOUNT FUNCTION ======--
+
+    // SIDEBAR NAVIGATION FUNCTIONALITY
+    function initializeSidebarNavigation() {
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const contentSections = document.querySelectorAll('.content-section');
+
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                const targetSection = this.getAttribute('data-section');
+                
+                // Remove active class from all sidebar items
+                document.querySelectorAll('.sidebar-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Add active class to clicked item
+                this.closest('.sidebar-item').classList.add('active');
+                
+                // Hide all content sections
+                contentSections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show target section
+                const targetElement = document.getElementById(targetSection + '-section');
+                if (targetElement) {
+                    targetElement.classList.add('active');
+                }
+            });
+        });
+    }
+
+    // BOOKING HISTORY FUNCTIONALITY
+    function initializeBookingHistory() {
+        // Filter functionality
+        const statusFilter = document.getElementById('status-filter');
+        const dateFilter = document.getElementById('date-filter');
+        const searchFilter = document.getElementById('search-filter');
+        const bookingsList = document.getElementById('bookings-list');
+
+        function filterBookings() {
+            const statusValue = statusFilter ? statusFilter.value : 'all';
+            const dateValue = dateFilter ? dateFilter.value : '';
+            const searchValue = searchFilter ? searchFilter.value.toLowerCase() : '';
+            
+            const bookingCards = bookingsList ? bookingsList.querySelectorAll('.booking-card') : [];
+            let visibleCount = 0;
+
+            bookingCards.forEach(card => {
+                const title = card.querySelector('.booking-title')?.textContent.toLowerCase() || '';
+                const status = card.querySelector('.status-badge')?.textContent.toLowerCase() || '';
+                const dateText = card.querySelector('.booking-date')?.textContent || '';
+                
+                let showCard = true;
+
+                // Filter by status
+                if (statusValue !== 'all' && !status.includes(statusValue)) {
+                    showCard = false;
+                }
+
+                // Filter by search term
+                if (searchValue && !title.includes(searchValue)) {
+                    showCard = false;
+                }
+
+                // Filter by date (basic implementation)
+                if (dateValue && !dateText.includes(dateValue)) {
+                    showCard = false;
+                }
+
+                if (showCard) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Show/hide empty state
+            const emptyState = bookingsList ? bookingsList.querySelector('.empty-bookings') : null;
+            if (emptyState) {
+                emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+            }
+        }
+
+        // Add event listeners for filters
+        if (statusFilter) statusFilter.addEventListener('change', filterBookings);
+        if (dateFilter) dateFilter.addEventListener('change', filterBookings);
+        if (searchFilter) searchFilter.addEventListener('input', filterBookings);
+
+        // Booking action handlers
+        const bookingActions = document.querySelectorAll('.btn-action');
+        bookingActions.forEach(button => {
+            button.addEventListener('click', function() {
+                const action = this.classList.contains('btn-view') ? 'view' :
+                              this.classList.contains('btn-cancel') ? 'cancel' :
+                              this.classList.contains('btn-review') ? 'review' : 'unknown';
+                
+                const bookingCard = this.closest('.booking-card');
+                const bookingTitle = bookingCard ? bookingCard.querySelector('.booking-title')?.textContent : 'Unknown';
+                
+                handleBookingAction(action, bookingTitle, bookingCard);
+            });
+        });
+    }
+
+    function handleBookingAction(action, bookingTitle, bookingCard) {
+        switch(action) {
+            case 'view':
+                // Implement view booking details
+                notyf.success(`Viewing details for: ${bookingTitle}`);
+                // You can add a modal or redirect to booking details page
+                break;
+                
+            case 'cancel':
+                // Implement cancel booking
+                if (confirm(`Are you sure you want to cancel the booking for "${bookingTitle}"?`)) {
+                    notyf.success(`Booking cancelled: ${bookingTitle}`);
+                    // Update the booking status in the UI
+                    const statusBadge = bookingCard.querySelector('.status-badge');
+                    if (statusBadge) {
+                        statusBadge.textContent = 'Cancelled';
+                        statusBadge.className = 'status-badge status-cancelled';
+                    }
+                    // Update action buttons
+                    const actionsContainer = bookingCard.querySelector('.booking-actions');
+                    if (actionsContainer) {
+                        actionsContainer.innerHTML = `
+                            <button class="btn-action btn-view">
+                                <i class="fas fa-eye"></i>
+                                View Details
+                            </button>
+                        `;
+                    }
+                }
+                break;
+                
+            case 'review':
+                // Implement review functionality
+                notyf.info(`Opening review form for: ${bookingTitle}`);
+                // You can add a modal for review form
+                break;
+                
+            default:
+                console.warn('Unknown booking action:', action);
+        }
+    }
+
+    // Initialize all functionality
+    initializeSidebarNavigation();
+    initializeBookingHistory();
 });
