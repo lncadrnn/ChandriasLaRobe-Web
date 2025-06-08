@@ -252,6 +252,8 @@ button.header-action-btn img[src*="icon-user"] {
   transition: all 0.3s ease;
   border: 2px solid transparent;
   background: none;
+  z-index: 1000;
+  position: relative;
 }
 
 .hamburger-menu:hover {
