@@ -152,31 +152,31 @@ button.header-action-btn {
 }
 
 .header-action-btn:hover {
+  background: rgba(255, 133, 177, 0.2);
+  border-color: rgba(255, 133, 177, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(255, 133, 177, 0.15);
+}
+
+/* Ensure button elements have consistent hover styling */
+button.header-action-btn:hover {
+  background: rgba(255, 133, 177, 0.2) !important;
+  border-color: rgba(255, 133, 177, 0.4) !important;
+}
+
+/* Active state styling - using the old hover effect */
+.header-action-btn.active,
+.header-action-btn:active {
   background: rgba(255, 192, 203, 0.3);
   border-color: rgba(255, 192, 203, 0.5);
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(255, 192, 203, 0.2);
 }
 
-/* Ensure button elements have consistent hover styling */
-button.header-action-btn:hover {
-  background: rgba(255, 192, 203, 0.3) !important;
-  border-color: rgba(255, 192, 203, 0.5) !important;
-}
-
-/* Active state styling */
-.header-action-btn.active,
-.header-action-btn:active {
-  background: rgba(255, 192, 203, 0.4);
-  border-color: #e91e63;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 133, 177, 0.3);
-}
-
 button.header-action-btn.active,
 button.header-action-btn:active {
-  background: rgba(255, 192, 203, 0.4) !important;
-  border-color: #e91e63 !important;
+  background: rgba(255, 192, 203, 0.3) !important;
+  border-color: rgba(255, 192, 203, 0.5) !important;
 }
 
 .header-action-btn img {
@@ -371,40 +371,82 @@ body.nav-open {
 
 /*=============== PAGE-SPECIFIC ACTIVE STATES ===============*/
 /* These styles will be applied when on specific pages to show which page is active */
+/* White background with darker pink thick border for active page icons */
+/* Active state styling without hover effects */
 
 /* Wishlist page active state */
-body.wishlist-page .header-action-btn[href*="wishlist"] {
-  background: rgba(255, 192, 203, 0.4) !important;
-  border-color: #e91e63 !important;
+body.page-wishlist .header-action-btn[href*="wishlist"] {
+  background: white !important;
+  border: 4px solid #b91c5c !important;
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 133, 177, 0.3);
+  box-shadow: 0 5px 15px rgba(185, 28, 92, 0.4) !important;
 }
 
-body.wishlist-page .header-action-btn[href*="wishlist"] img {
+body.page-wishlist .header-action-btn[href*="wishlist"] img {
+  filter: hue-rotate(315deg) saturate(1.5) brightness(0.8) !important;
+}
+
+/* Remove hover effect for active wishlist icon */
+body.page-wishlist .header-action-btn[href*="wishlist"]:hover {
+  background: white !important;
+  border: 4px solid #b91c5c !important;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(185, 28, 92, 0.4) !important;
+}
+
+body.page-wishlist .header-action-btn[href*="wishlist"]:hover img {
   filter: hue-rotate(315deg) saturate(1.5) brightness(0.8) !important;
 }
 
 /* Cart page active state */
-body.cart-page .header-action-btn[href*="cart"] {
-  background: rgba(255, 192, 203, 0.4) !important;
-  border-color: #e91e63 !important;
+body.page-cart .header-action-btn[href*="cart"] {
+  background: white !important;
+  border: 4px solid #b91c5c !important;
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 133, 177, 0.3);
+  box-shadow: 0 5px 15px rgba(185, 28, 92, 0.4) !important;
 }
 
-body.cart-page .header-action-btn[href*="cart"] img {
+body.page-cart .header-action-btn[href*="cart"] img {
+  filter: hue-rotate(315deg) saturate(1.5) brightness(0.8) !important;
+}
+
+/* Remove hover effect for active cart icon */
+body.page-cart .header-action-btn[href*="cart"]:hover {
+  background: white !important;
+  border: 4px solid #b91c5c !important;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(185, 28, 92, 0.4) !important;
+}
+
+body.page-cart .header-action-btn[href*="cart"]:hover img {
   filter: hue-rotate(315deg) saturate(1.5) brightness(0.8) !important;
 }
 
 /* Account page active state */
-body.account-page .header-action-btn[onclick*="showAuthModal"] {
-  background: rgba(255, 192, 203, 0.4) !important;
-  border-color: #e91e63 !important;
+body.page-accounts .header-action-btn[onclick*="showAuthModal"],
+body.page-accounts button.header-action-btn[onclick*="showAuthModal"] {
+  background: white !important;
+  border: 4px solid #b91c5c !important;
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 133, 177, 0.3);
+  box-shadow: 0 5px 15px rgba(185, 28, 92, 0.4) !important;
 }
 
-body.account-page .header-action-btn[onclick*="showAuthModal"] img {
+body.page-accounts .header-action-btn[onclick*="showAuthModal"] img,
+body.page-accounts button.header-action-btn[onclick*="showAuthModal"] img {
+  filter: hue-rotate(315deg) saturate(1.5) brightness(0.8) !important;
+}
+
+/* Remove hover effect for active account icon */
+body.page-accounts .header-action-btn[onclick*="showAuthModal"]:hover,
+body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:hover {
+  background: white !important;
+  border: 4px solid #b91c5c !important;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(185, 28, 92, 0.4) !important;
+}
+
+body.page-accounts .header-action-btn[onclick*="showAuthModal"]:hover img,
+body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:hover img {
   filter: hue-rotate(315deg) saturate(1.5) brightness(0.8) !important;
 }
 
@@ -525,4 +567,63 @@ body.account-page .header-action-btn[onclick*="showAuthModal"] img {
 .hamburger-menu:focus-visible {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
+}
+
+/*=============== HIGH SPECIFICITY OVERRIDES ===============*/
+/* These overrides ensure our page-specific active states work correctly 
+   by overriding conflicting styles from other CSS files */
+
+/* Override conflicting styles from styles.css with higher specificity */
+html body.page-wishlist .header-action-btn[href*="wishlist"],
+html body.page-wishlist .header-action-btn[href*="wishlist"]:hover,
+html body.page-wishlist .header-action-btn[href*="wishlist"]:focus {
+  background: white !important;
+  border: 4px solid #b91c5c !important;
+  border-color: #b91c5c !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 5px 15px rgba(185, 28, 92, 0.4) !important;
+}
+
+html body.page-wishlist .header-action-btn[href*="wishlist"] img,
+html body.page-wishlist .header-action-btn[href*="wishlist"]:hover img,
+html body.page-wishlist .header-action-btn[href*="wishlist"]:focus img {
+  filter: hue-rotate(315deg) saturate(1.5) brightness(0.8) !important;
+}
+
+html body.page-cart .header-action-btn[href*="cart"],
+html body.page-cart .header-action-btn[href*="cart"]:hover,
+html body.page-cart .header-action-btn[href*="cart"]:focus {
+  background: white !important;
+  border: 4px solid #b91c5c !important;
+  border-color: #b91c5c !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 5px 15px rgba(185, 28, 92, 0.4) !important;
+}
+
+html body.page-cart .header-action-btn[href*="cart"] img,
+html body.page-cart .header-action-btn[href*="cart"]:hover img,
+html body.page-cart .header-action-btn[href*="cart"]:focus img {
+  filter: hue-rotate(315deg) saturate(1.5) brightness(0.8) !important;
+}
+
+html body.page-accounts .header-action-btn[onclick*="showAuthModal"],
+html body.page-accounts button.header-action-btn[onclick*="showAuthModal"],
+html body.page-accounts .header-action-btn[onclick*="showAuthModal"]:hover,
+html body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:hover,
+html body.page-accounts .header-action-btn[onclick*="showAuthModal"]:focus,
+html body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:focus {
+  background: white !important;
+  border: 4px solid #b91c5c !important;
+  border-color: #b91c5c !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 5px 15px rgba(185, 28, 92, 0.4) !important;
+}
+
+html body.page-accounts .header-action-btn[onclick*="showAuthModal"] img,
+html body.page-accounts button.header-action-btn[onclick*="showAuthModal"] img,
+html body.page-accounts .header-action-btn[onclick*="showAuthModal"]:hover img,
+html body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:hover img,
+html body.page-accounts .header-action-btn[onclick*="showAuthModal"]:focus img,
+html body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:focus img {
+  filter: hue-rotate(315deg) saturate(1.5) brightness(0.8) !important;
 }
