@@ -27,30 +27,30 @@ $(document).ready(function () {
     // FLAG TO PREVENT IMMEDIATE REDIRECT AFTER LOGIN
     let isLoggingIn = false;
 
-    // Check if user is already signed in, if so, redirect to profile page
-    onAuthStateChanged(auth, async user => {
-        if (user && !isLoggingIn) {
-            // Delay just a bit to allow UI elements to load before redirecting
-            setTimeout(() => {
-                window.location.href = "/admin/dashboard.html"; // Redirect to profile page if already logged in
-            }, 800);
+    // COMMENTED OUT: Check if user is already signed in, if so, redirect to profile page
+    // onAuthStateChanged(auth, async user => {
+    //     if (user && !isLoggingIn) {
+    //         // Delay just a bit to allow UI elements to load before redirecting
+    //         setTimeout(() => {
+    //             window.location.href = "/admin/dashboard.html"; // Redirect to profile page if already logged in
+    //         }, 800);
 
-            // Check if user exists in adminAccounts
-            const userDocRef = doc(chandriaDB, "userAccounts", user.uid);
-            const userDocSnap = await getDoc(userDocRef);
+    //         // Check if user exists in adminAccounts
+    //         const userDocRef = doc(chandriaDB, "userAccounts", user.uid);
+    //         const userDocSnap = await getDoc(userDocRef);
 
-            if (userDocSnap.exists()) {
-                // If user is admin, sign them out
-                await signOut(auth);
-                $("#login-loader").addClass("hidden");
-                return;
-            }
-        }
+    //         if (userDocSnap.exists()) {
+    //             // If user is admin, sign them out
+    //             await signOut(auth);
+    //             $("#login-loader").addClass("hidden");
+    //             return;
+    //         }
+    //     }
 
-        if (!user) {
-            $("#login-loader").addClass("hidden");
-        }
-    });
+    //     if (!user) {
+    //         $("#login-loader").addClass("hidden");
+    //     }
+    // });
 
     // ERROR MESSAGES FORMAT
     const formatErrorMessage = errorCode => {

@@ -36,21 +36,21 @@ window.resetAvatar = function() {
 };
 
 $(document).ready(function () {
-    // Check if the user is logged in and display the email
-    onAuthStateChanged(auth, user => {
-        if (user) {
-            // User is signed in
-            const userEmail = user.email;
-            $("#email").val(userEmail); // Update the email input field
+    // COMMENTED OUT: Check if the user is logged in and display the email
+    // onAuthStateChanged(auth, user => {
+    //     if (user) {
+    //         // User is signed in
+    //         const userEmail = user.email;
+    //         $("#email").val(userEmail); // Update the email input field
             
-            // Extract name from email (part before @) or use displayName if available
-            const userName = user.displayName || userEmail.split('@')[0];
-            $("#name").val(userName);
-        } else {
-            // If no user is logged in, redirect to login page
-            window.location.href = "authentication.html";
-        }
-    });
+    //         // Extract name from email (part before @) or use displayName if available
+    //         const userName = user.displayName || userEmail.split('@')[0];
+    //         $("#name").val(userName);
+    //     } else {
+    //         // If no user is logged in, redirect to login page
+    //         window.location.href = "authentication.html";
+    //     }
+    // });
 
     // Password fields toggle
     $("#togglePasswordFields").on("click", function() {
