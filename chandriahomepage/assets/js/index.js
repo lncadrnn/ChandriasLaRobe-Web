@@ -464,30 +464,11 @@ $(document).ready(function () {
                 closeQuickView();
             }
         });
-    }
-
-    // Initialize product card click navigation
+    }    // Initialize product card click navigation - DISABLED
+    // Product cards no longer redirect to details.html when clicked
     function initProductCardClickNavigation() {
-        $(document).on('click', '.product-item', function(e) {
-            // Don't navigate if clicking on action buttons or quick view buttons
-            if ($(e.target).closest('.action-btn, .quick-view-btn').length > 0) {
-                return;
-            }
-            
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const productId = $(this).find('[data-product-id]').first().data('product-id');
-            if (!productId) return;
-            
-            // Show details navigation loader
-            showDetailsNavigationLoader();
-            
-            // Navigate to details page after short delay
-            setTimeout(() => {
-                window.location.href = `chandriahomepage/details.html?id=${productId}`;
-            }, 300);
-        });
+        // This function has been disabled to prevent product card clicks from redirecting to details.html
+        // Users can still use action buttons (quick view, add to favorites) to interact with products
     }
 
     // Product Tabs functionality
@@ -522,8 +503,8 @@ $(document).ready(function () {
     initProductTabs();    // Initialize quick view functionality
     initQuickViewListeners();
 
-    // Initialize product card click navigation
-    initProductCardClickNavigation();
+    // Initialize product card click navigation - DISABLED
+    // initProductCardClickNavigation(); // Commented out to prevent product card clicks from redirecting to details.html
 
     // Smooth scrolling for anchor links
     $('a[href^="#"]').on("click", function (e) {
