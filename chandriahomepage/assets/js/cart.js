@@ -66,6 +66,9 @@ $(document).ready(function () {
             
             // Keep the main cart section visible but show auth content
             $(".cart.section-lg.container").show();
+            
+            // Show the authentication modal
+            showAuthModal();
             return;
         } else {
             // User is logged in, hide auth modal and show cart content

@@ -2,7 +2,6 @@
 import {
     onAuthStateChanged,
     auth,
-    chandriaDB,
     getFirestore,
     collection,
     getDocs,
@@ -69,6 +68,9 @@ $(document).ready(function () {
             // Show the auth required content and keep main section visible
             $("#wishlist-auth-required").show();
             $(".wishlist.section-lg.container").show();
+            
+            // Show the authentication modal
+            showAuthModal();
             
             // Hide the loader for unauthenticated users
             hideWishlistLoader();
