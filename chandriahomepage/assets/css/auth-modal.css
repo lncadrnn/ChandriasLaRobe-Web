@@ -527,8 +527,8 @@
 
 .password-toggle {
   position: absolute !important;
-  right: 1rem !important;
-  top: 50% !important;
+  right: 0.5rem !important;
+  top: 55% !important;
   transform: translateY(-50%) !important;
   background: none;
   border: none;
