@@ -1,6 +1,11 @@
 /*=============== UNIFIED NAVIGATION BAR STYLES ===============*/
 /* This file consolidates all navigation styles across the website for consistency */
 
+/* Fallback for header height if not defined elsewhere */
+:root {
+  --header-height: 4rem;
+}
+
 /*=============== HEADER ===============*/
 .header {
   position: fixed;

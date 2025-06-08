@@ -1300,17 +1300,6 @@ $(document).ready(function () {
             // User is signed out
             console.log("User signed out");
         }
-    });
-
-    // Mobile hamburger menu functionality
-    $("#hamburger-menu").on("click", function() {
-        $(this).toggleClass("active");
-        $("#mobile-nav-menu").toggleClass("active");
-    });
-
-    // Close mobile menu when clicking on links
-    $(".mobile-nav-link").on("click", function() {
-        $("#hamburger-menu").removeClass("active");
-        $("#mobile-nav-menu").removeClass("active");
-    });
+    });    // Mobile hamburger menu functionality is handled by nav-bar.js
+    // Removed conflicting implementation to ensure consistency across all pages
 });

@@ -49,38 +49,6 @@ body {
     right: 1.25rem;
     cursor: pointer;
 }
-.header-user-actions {
-    column-gap: 1.25rem;
-}
-.header-action-btn {
-    position: relative;
-}
-.header-action-btn img {
-    width: 20px;
-    height: 20px;
-    object-fit: contain;
-    filter: brightness(0);
-}
-
-/* Make account icon slightly larger to match nav-bar.css */
-button.header-action-btn img[src*="icon-user"] {
-    width: 24px;
-    height: 24px;
-}
-
-.header-action-btn .count {
-    position: absolute;
-    top: -0.625rem;
-    right: -0.625rem;
-    background-color: var(--first-color);
-    color: var(--body-color);
-    height: 18px;
-    width: 18px;
-    line-height: 18px;
-    border-radius: 50%;
-    text-align: center;
-    font-size: var(--tiny-font-size);
-}
 /* Active link */
 .active-link,
 .nav-link:hover {
