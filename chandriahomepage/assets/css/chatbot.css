@@ -203,9 +203,9 @@
     position: fixed;
     bottom: 20px;
     right: 20px;
-    width: 50px;
-    height: 50px;
-    background: #fff;
+    width: 60px;
+    height: 60px;
+    background: #ffffff;
     border-radius: 50%;
     box-shadow: 0 5px 25px rgba(251, 173, 181, 0.4);
     cursor: pointer;
@@ -215,12 +215,13 @@
     align-items: center;
     justify-content: center;
     animation: pulse 2s infinite;
+    border: 3px solid #fbadb5;
 }
 
 @media screen and (max-width: 480px) {
     .chatbot-bubble {
-        width: 45px;
-        height: 45px;
+        width: 55px;
+        height: 55px;
         bottom: 15px;
         right: 15px;
     }

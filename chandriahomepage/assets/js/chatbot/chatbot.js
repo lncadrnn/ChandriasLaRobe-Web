@@ -61,9 +61,8 @@ class ChandriasChatbot {    constructor() {
     createChatbotHTML() {
         const chatbotHTML = `
             <div class="chandrias-chatbot" id="chandriasChatbot">
-                <div class="chatbot-header">
-                    <div class="chatbot-header-info">
-                        <img src="/chandriahomepage/assets/img/icon-chatbot-avatar.svg" alt="Chatbot Avatar" class="chatbot-avatar">
+                <div class="chatbot-header">                <div class="chatbot-header-info">
+                        <img src="/chandriahomepage/assets/img/icon-chatbot-img.png" alt="Chatbot Avatar" class="chatbot-avatar">
                         <div class="chatbot-title">
                             <h3>Chandria's LaRobe</h3>
                             <p>typically replies within a minute</p>
@@ -89,10 +88,9 @@ class ChandriasChatbot {    constructor() {
                     <button id="sendMessage">
                         <img src="/chandriahomepage/assets/img/icon-chatsend.svg" alt="Send" class="send-icon">
                     </button>
-                </div>
-            </div>
+                </div>            </div>
             <div class="chatbot-bubble hidden" id="chatbotBubble">
-                <img src="/chandriahomepage/assets/img/icon-chatbot-avatar.svg" alt="Chatbot">
+                <img src="/chandriahomepage/assets/img/icon-chatbot-img.png" alt="Chatbot">
             </div>
         `;
 
