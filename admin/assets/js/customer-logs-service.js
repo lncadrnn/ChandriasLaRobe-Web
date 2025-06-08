@@ -450,18 +450,32 @@ async function showTransactionDetails(transactionId) {
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="customer-info">
-                        <h3><i class='bx bx-user'></i> Customer Information</h3>
-                        <div class="info-grid">
-                            <p><strong>Name:</strong> ${transaction.fullName || 'N/A'}</p>
-                            <p><strong>Contact:</strong> ${transaction.contactNumber || 'N/A'}</p>
-                            <p><strong>Address:</strong> ${[transaction.address, transaction.city, transaction.region].filter(Boolean).join(', ') || 'N/A'}</p>
-                            <p><strong>Event Type:</strong> ${transaction.eventType || 'N/A'}</p>
-                            <p><strong>Rental Type:</strong> ${transaction.rentalType || 'N/A'}</p>
-                            <p><strong>Event Start:</strong> ${eventStartDate}</p>
-                            ${eventEndDate ? `<p><strong>Event End:</strong> ${eventEndDate}</p>` : ''}
-                            <p><strong>Transaction Date:</strong> ${transactionDate}</p>
-                            ${lastUpdated ? `<p><strong>Last Updated:</strong> ${lastUpdated}</p>` : ''}
+                    <div class="customer-payment-section">
+                        <div class="customer-info">
+                            <h3><i class='bx bx-user'></i> Customer Information</h3>
+                            <div class="info-grid">
+                                <p><strong>Name:</strong> ${transaction.fullName || 'N/A'}</p>
+                                <p><strong>Contact:</strong> ${transaction.contactNumber || 'N/A'}</p>
+                                <p><strong>Address:</strong> ${[transaction.address, transaction.city, transaction.region].filter(Boolean).join(', ') || 'N/A'}</p>
+                                <p><strong>Event Type:</strong> ${transaction.eventType || 'N/A'}</p>
+                                <p><strong>Rental Type:</strong> ${transaction.rentalType || 'N/A'}</p>
+                                <p><strong>Event Start:</strong> ${eventStartDate}</p>
+                                ${eventEndDate ? `<p><strong>Event End:</strong> ${eventEndDate}</p>` : ''}
+                                <p><strong>Transaction Date:</strong> ${transactionDate}</p>
+                                ${lastUpdated ? `<p><strong>Last Updated:</strong> ${lastUpdated}</p>` : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="payment-info">
+                            <h3><i class='bx bx-credit-card'></i> Payment Information</h3>
+                            <div class="info-grid">
+                                <p><strong>Payment Method:</strong> ${transaction.paymentMethod || 'N/A'}</p>
+                                <p><strong>Payment Type:</strong> ${transaction.paymentType || 'N/A'}</p>
+                                <p><strong>Rental Fee:</strong> ₱${transaction.rentalFee?.toLocaleString() || '0'}</p>
+                                <p><strong>Total Payment:</strong> ₱${transaction.totalPayment?.toLocaleString() || '0'}</p>
+                                <p><strong>Remaining Balance:</strong> ₱${transaction.remainingBalance?.toLocaleString() || '0'}</p>
+                                <p><strong>Reference Number:</strong> ${transaction.referenceNo || 'N/A'}</p>
+                            </div>
                         </div>
                     </div>
                     
@@ -471,18 +485,6 @@ async function showTransactionDetails(transactionId) {
                         
                         <h3><i class='bx bx-plus-circle'></i> Additional Items</h3>
                         <div class="accessories-detail">${accessoriesHtml}</div>
-                    </div>
-                    
-                    <div class="payment-info">
-                        <h3><i class='bx bx-credit-card'></i> Payment Information</h3>
-                        <div class="info-grid">
-                            <p><strong>Payment Method:</strong> ${transaction.paymentMethod || 'N/A'}</p>
-                            <p><strong>Payment Type:</strong> ${transaction.paymentType || 'N/A'}</p>
-                            <p><strong>Rental Fee:</strong> ₱${transaction.rentalFee?.toLocaleString() || '0'}</p>
-                            <p><strong>Total Payment:</strong> ₱${transaction.totalPayment?.toLocaleString() || '0'}</p>
-                            <p><strong>Remaining Balance:</strong> ₱${transaction.remainingBalance?.toLocaleString() || '0'}</p>
-                            <p><strong>Reference Number:</strong> ${transaction.referenceNo || 'N/A'}</p>
-                        </div>
                     </div>
                     
                     ${transaction.notes ? `

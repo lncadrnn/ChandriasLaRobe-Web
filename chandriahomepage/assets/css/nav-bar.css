@@ -202,24 +202,34 @@ button.header-action-btn:active img {
 /*=============== NOTIFICATION COUNT BUBBLE ===============*/
 .header-action-btn .count {
   position: absolute;
-  top: -5px;
-  right: -5px;
-  background: #ff4757;
+  top: -6px;
+  right: -6px;
+  background: linear-gradient(135deg, #ff4757, #ff3742);
   color: white;
-  font-size: 11px;
-  font-weight: 600;
-  min-width: 18px;
-  height: 18px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-width: 20px;
+  height: 20px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 4px;
+  padding: 0;
   border: 2px solid white;
-  box-shadow: 0 2px 6px rgba(255, 71, 87, 0.3);
-  transition: all 0.3s ease;
-  z-index: 10;
+  box-shadow: 
+    0 2px 8px rgba(255, 71, 87, 0.4),
+    0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 20;
   line-height: 1;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+/* Better number centering for single and double digits */
+.header-action-btn .count {
+  padding: 0 1px;
 }
 
 .header-action-btn .count:empty {
@@ -230,14 +240,56 @@ button.header-action-btn:active img {
   display: none;
 }
 
+/* Enhanced hover animation */
 .header-action-btn:hover .count {
-  transform: scale(1.1);
-  box-shadow: 0 3px 8px rgba(255, 71, 87, 0.4);
+  transform: scale(1.15) translateY(-1px);
+  box-shadow: 
+    0 4px 12px rgba(255, 71, 87, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #ff3742, #ff2233);
 }
 
 /* Ensure count bubble shows above profile images */
 .header-action-btn.has-profile-image .count {
-  z-index: 15;
+  z-index: 25;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+}
+
+/* Active state for notification bubble */
+.header-action-btn:active .count {
+  transform: scale(1.05);
+  transition-duration: 0.1s;
+}
+
+/* High number handling (99+) */
+.header-action-btn .count[data-count*="99"] {
+  font-size: 8px;
+  min-width: 22px;
+  padding: 0;
+  letter-spacing: -0.8px;
+}
+
+/* Pulse animation for new notifications */
+@keyframes notificationPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.header-action-btn .count.new-notification {
+  animation: notificationPulse 0.6s ease-in-out 2;
+}
+
+/* Better positioning for different button states */
+.header-action-btn.has-profile-image .count {
+  top: -7px;
+  right: -7px;
+}
+
+/* Focus accessibility for notification bubbles */
+.header-action-btn:focus .count {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 1px;
 }
 
 /*=============== PROFILE IMAGE IN NAVIGATION ===============*/
@@ -286,7 +338,8 @@ button.header-action-btn:active img {
   flex-direction: column;
   cursor: pointer;
   padding: 0.5rem;
-  border-radius: 8px;  transition: all 0.3s ease;
+  border-radius: 8px;
+  transition: all 0.3s ease;
   border: 2px solid transparent;
   background: none;
   z-index: 850;
@@ -539,14 +592,20 @@ body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:hover img 
     width: 20px;
     height: 20px;
   }
-  
-  /* Responsive notification bubble for tablets */
+    /* Responsive notification bubble for tablets */
   .header-action-btn .count {
-    min-width: 16px;
-    height: 16px;
-    font-size: 10px;
-    top: -4px;
-    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    font-size: 9px;
+    top: -5px;
+    right: -5px;
+    font-weight: 700;
+  }
+  
+  /* High number handling for tablets */
+  .header-action-btn .count[data-count*="99"] {
+    font-size: 7px;
+    min-width: 20px;
   }
   
   .nav-logo-img {
@@ -578,10 +637,33 @@ body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:hover img 
     width: 35px;
     height: 35px;
   }
-  
-  .header-action-btn img {
+    .header-action-btn img {
     width: 16px;
     height: 16px;
+  }
+  
+  /* Enhanced mobile notification bubble */
+  .header-action-btn .count {
+    min-width: 16px;
+    height: 16px;
+    font-size: 8px;
+    top: -4px;
+    right: -4px;
+    font-weight: 700;
+    border: 1.5px solid white;
+  }
+  
+  /* Mobile high number handling */
+  .header-action-btn .count[data-count*="99"] {
+    font-size: 6px;
+    min-width: 18px;
+    letter-spacing: -1px;
+  }
+  
+  /* Profile image responsive styling for mobile */
+  .profile-nav-image {
+    width: 18px !important;
+    height: 18px !important;
   }
   
   .nav-logo-img {

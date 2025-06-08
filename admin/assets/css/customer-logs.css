@@ -619,6 +619,14 @@ select:disabled {
     min-height: 0;
 }
 
+/* === CUSTOMER AND PAYMENT SECTION LAYOUT === */
+.customer-payment-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
 .customer-info, .rental-items, .payment-info, .additional-notes {
     margin-bottom: 2rem;
 }
@@ -684,6 +692,52 @@ select:disabled {
     height: 60px;
     object-fit: cover;
     margin-bottom: 1rem;
+}
+
+/* === MODAL FOOTER === */
+.modal-footer {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #f0f0f0;
+    background: rgba(255, 105, 180, 0.02);
+    border-radius: 0 0 20px 20px;
+}
+
+.modal-footer .btn-primary,
+.modal-footer .btn-secondary {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.modal-footer .btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.modal-footer .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 105, 180, 0.3);
+}
+
+.modal-footer .btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.modal-footer .btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
 }
 
 /* === SCROLLBAR STYLING === */
@@ -905,10 +959,13 @@ select:disabled {
     background: #fff3cd;
     border: 1px solid #ffeaa7;
     border-radius: 12px;
+    flex-direction: column;
+    text-align: center;
 }
 
 .warning-icon {
     flex-shrink: 0;
+    align-self: center;
 }
 
 .warning-icon i {
@@ -1022,5 +1079,22 @@ select:disabled {
     
     .warning-icon {
         align-self: center;
+    }
+    
+    /* Customer and payment layout for mobile */
+    .customer-payment-section {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .modal-footer .btn-primary,
+    .modal-footer .btn-secondary {
+        width: 100%;
+        justify-content: center;
     }
 }
