@@ -19,7 +19,7 @@
 </head>
 <body>
     <!-------------------------------- HEADER -------------------------------->
-    <header class="header">
+    <header class="header modern-header" id="header">
         <nav class="nav container">
             <a href="../index.html" class="nav-logo">
                 <img src="assets/img/logo1.png" alt="" class="nav-logo-img">
@@ -45,6 +45,14 @@
                 </ul>
             </div>
 
+            <!-- Mobile Hamburger Menu -->
+            <div class="hamburger-menu" id="hamburger-menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </div>
+
+            <!-- User Actions -->
             <div class="header-user-actions">
                 <a href="wishlist.html" class="header-action-btn">
                     <img src="assets/img/icon-heart.svg" alt="">
@@ -59,6 +67,27 @@
                 <button class="header-action-btn" id="user-account-link" onclick="showAuthModal()">
                     <img src="assets/img/icon-user.svg" alt="">
                 </button>
+            </div>
+
+            <!-- Mobile Navigation Menu -->
+            <div class="mobile-nav-menu" id="mobile-nav-menu">
+                <ul class="mobile-nav-list">
+                    <li class="mobile-nav-item">
+                        <a href="../index.html" class="mobile-nav-link">Home</a>
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="../index.html#categories" class="mobile-nav-link">Categories</a>
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="shop.html" class="mobile-nav-link">Shop</a>
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="#about" class="mobile-nav-link">About</a>
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="#policies" class="mobile-nav-link">Policies</a>
+                    </li>
+                </ul>
             </div>
         </nav>
     </header>
@@ -551,6 +580,7 @@
     <!-------------------------------- JS --------------------------------->
     <script src="assets/js/auth-modal.js"></script>
     <script src="assets/js/main.js"></script>
+    <script src="assets/js/mobile-nav.js"></script>
     
     <script src="assets/js/about-policy.js"></script>
 </body>
