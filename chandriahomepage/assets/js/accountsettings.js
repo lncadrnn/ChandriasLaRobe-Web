@@ -973,6 +973,10 @@ $(document).ready(function () {
                             <i class="fas fa-calendar"></i>
                             ${formattedDate}
                         </p>
+                        <p class="booking-created">
+                            <i class="fas fa-clock"></i>
+                            Booked: ${formatCreatedDate(booking.createdAt)}
+                        </p>
                         <p class="booking-items">
                             <i class="fas fa-box"></i>
                             ${itemCount} item${itemCount > 1 ? 's' : ''} • Total: ₱${booking.totalAmount.toLocaleString()}
@@ -1038,6 +1042,32 @@ $(document).ready(function () {
         }
     }
 
+    function formatCreatedDate(createdAt) {
+        if (!createdAt) return 'Unknown';
+        
+        try {
+            let dateObj;
+            if (createdAt.toDate) {
+                // Firestore Timestamp
+                dateObj = createdAt.toDate();
+            } else if (createdAt instanceof Date) {
+                dateObj = createdAt;
+            } else {
+                dateObj = new Date(createdAt);
+            }
+            
+            return dateObj.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        } catch (error) {
+            return 'Unknown';
+        }
+    }
+
     // ATTACH EVENT LISTENERS FOR BOOKING ACTIONS
     function attachBookingActionListeners() {
         const bookingActions = document.querySelectorAll('.btn-action');
@@ -1063,9 +1093,7 @@ $(document).ready(function () {
                 break;
                 
             case 'cancel':
-                if (confirm(`Are you sure you want to cancel the booking for "${bookingTitle}"?`)) {
-                    await cancelBooking(bookingId, bookingCard);
-                }
+                await showCancelConfirmationModal(bookingId, bookingTitle, bookingCard);
                 break;
                 
             default:
@@ -1221,35 +1249,82 @@ $(document).ready(function () {
         return itemsHTML;
     }
 
-    // CANCEL BOOKING FUNCTION
+    // SHOW CANCEL CONFIRMATION MODAL
+    async function showCancelConfirmationModal(bookingId, bookingTitle, bookingCard) {
+        const modalContent = `
+            <div class="cancel-confirmation-modal" id="cancel-confirmation-modal">
+                <div class="modal-backdrop" onclick="closeCancelModal()"></div>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-exclamation-triangle" style="color: #dc2626;"></i> Cancel Booking</h3>
+                        <button class="close-btn" onclick="closeCancelModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="warning-content">
+                            <p><strong>Are you sure you want to cancel this booking?</strong></p>
+                            <p class="booking-title-display">"${bookingTitle}"</p>
+                            <div class="warning-message">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <p>This will permanently cancel your booking and you cannot undo this action. The booking will be completely removed from your history.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" onclick="closeCancelModal()">
+                            <i class="fas fa-arrow-left"></i>
+                            Keep Booking
+                        </button>
+                        <button class="btn btn-danger" onclick="confirmCancelBooking('${bookingId}', '${bookingCard ? 'card' : 'none'}')">
+                            <i class="fas fa-trash"></i>
+                            Yes, Cancel Booking
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Add modal to page
+        document.body.insertAdjacentHTML('beforeend', modalContent);
+        
+        // Store booking card reference for later use
+        window.currentBookingCard = bookingCard;
+    }
+
+    // CANCEL BOOKING FUNCTION (DELETE FROM DATABASE)
     async function cancelBooking(bookingId, bookingCard) {
         try {
+            // Delete the booking from the database
             const appointmentRef = doc(chandriaDB, "appointments", bookingId);
-            await updateDoc(appointmentRef, {
-                checkoutStatus: 'Cancelled',
-                cancelledAt: new Date()
-            });
+            await deleteDoc(appointmentRef);
 
-            notyf.success('Booking cancelled successfully');
+            notyf.success('Booking cancelled and removed successfully');
             
-            // Update the UI
-            const statusBadge = bookingCard.querySelector('.status-badge');
-            if (statusBadge) {
-                statusBadge.textContent = 'Cancelled';
-                statusBadge.className = 'status-badge status-cancelled';
-            }
-            
-            // Update action buttons
-            const actionsContainer = bookingCard.querySelector('.booking-actions');
-            if (actionsContainer) {
-                actionsContainer.innerHTML = `
-                    <button class="btn-action btn-view" data-booking-id="${bookingId}">
-                        <i class="fas fa-eye"></i>
-                        View Details
-                    </button>
-                `;
-                // Re-attach event listeners
-                attachBookingActionListeners();
+            // Remove the booking card from the UI
+            if (bookingCard) {
+                bookingCard.style.transition = 'opacity 0.3s ease';
+                bookingCard.style.opacity = '0';
+                setTimeout(() => {
+                    bookingCard.remove();
+                    
+                    // Check if there are any bookings left
+                    const remainingBookings = document.querySelectorAll('.booking-card');
+                    if (remainingBookings.length === 0) {
+                        const bookingsList = document.getElementById('bookings-list');
+                        if (bookingsList) {
+                            bookingsList.innerHTML = `
+                                <div class="empty-bookings">
+                                    <i class="fas fa-calendar-alt empty-icon"></i>
+                                    <h3>No Booking History</h3>
+                                    <p>You haven't made any appointments yet.</p>
+                                    <a href="shop.html" class="btn">
+                                        <i class="fas fa-shopping-bag"></i>
+                                        Start Shopping
+                                    </a>
+                                </div>
+                            `;
+                        }
+                    }
+                }, 300);
             }
             
         } catch (error) {
@@ -1263,6 +1338,33 @@ $(document).ready(function () {
         const modal = document.getElementById('booking-details-modal');
         if (modal) {
             modal.remove();
+        }
+    }
+
+    // CLOSE CANCEL CONFIRMATION MODAL
+    window.closeCancelModal = function() {
+        const modal = document.getElementById('cancel-confirmation-modal');
+        if (modal) {
+            modal.remove();
+        }
+        // Clean up stored reference
+        window.currentBookingCard = null;
+    }
+
+    // CONFIRM CANCEL BOOKING
+    window.confirmCancelBooking = async function(bookingId, cardRef) {
+        try {
+            const bookingCard = window.currentBookingCard;
+            
+            // Close the modal first
+            closeCancelModal();
+            
+            // Cancel the booking
+            await cancelBooking(bookingId, bookingCard);
+            
+        } catch (error) {
+            console.error('Error in confirm cancel booking:', error);
+            notyf.error('Error cancelling booking. Please try again.');
         }
     }
 
