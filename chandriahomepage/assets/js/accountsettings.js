@@ -7,6 +7,11 @@ import {
     updateDoc,
     deleteDoc,
     doc,
+    collection,
+    query,
+    where,
+    getDocs,
+    orderBy,
     EmailAuthProvider,
     reauthenticateWithCredential,
     updatePassword,
@@ -633,7 +638,7 @@ $(document).ready(function () {
         const contentSections = document.querySelectorAll('.content-section');
 
         sidebarLinks.forEach(link => {
-            link.addEventListener('click', function() {
+            link.addEventListener('click', async function() {
                 const targetSection = this.getAttribute('data-section');
                 
                 // Remove active class from all sidebar items
@@ -653,6 +658,11 @@ $(document).ready(function () {
                 const targetElement = document.getElementById(targetSection + '-section');
                 if (targetElement) {
                     targetElement.classList.add('active');
+                    
+                    // Load booking history when bookings section is accessed
+                    if (targetSection === 'bookings') {
+                        await loadBookingHistory();
+                    }
                 }
             });
         });
@@ -774,7 +784,495 @@ $(document).ready(function () {
         }
     }
 
+    // FETCH AND DISPLAY BOOKING HISTORY FROM APPOINTMENTS
+    async function loadBookingHistory() {
+        const user = auth.currentUser;
+        if (!user) {
+            console.log('No user logged in');
+            return;
+        }
+
+        console.log('Loading booking history for user:', user.uid);
+
+        try {
+            const bookingsList = document.getElementById('bookings-list');
+            if (!bookingsList) {
+                console.error('Bookings list element not found');
+                return;
+            }
+
+            // Show loading state
+            bookingsList.innerHTML = `
+                <div class="loading-state" style="text-align: center; padding: 2rem;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--accent-pink);"></i>
+                    <p style="margin-top: 1rem; color: var(--gray-600);">Loading your booking history...</p>
+                </div>
+            `;
+
+            // Query appointments for current user by email
+            console.log('Fetching user data...');
+            const userRef = doc(chandriaDB, "userAccounts", user.uid);
+            const userSnap = await getDoc(userRef);
+            
+            if (!userSnap.exists()) {
+                throw new Error('User data not found');
+            }
+
+            const userData = userSnap.data();
+            const userEmail = userData.email || user.email;
+            console.log('User email for query:', userEmail);
+
+            // Query appointments collection by email
+            console.log('Querying appointments...');
+            const appointmentsQuery = query(
+                collection(chandriaDB, "appointments"),
+                where("customerEmail", "==", userEmail)
+            );
+
+            const appointmentsSnapshot = await getDocs(appointmentsQuery);
+            let appointmentDocs = appointmentsSnapshot.docs;
+            console.log('Found appointments:', appointmentDocs.length);
+            
+            // Sort by createdAt in JavaScript if orderBy fails
+            appointmentDocs.sort((a, b) => {
+                const aTime = a.data().createdAt?.toDate?.() || new Date(0);
+                const bTime = b.data().createdAt?.toDate?.() || new Date(0);
+                return bTime - aTime; // descending order
+            });
+            const bookings = [];
+
+            for (const appointmentDoc of appointmentDocs) {
+                const appointmentData = appointmentDoc.data();
+                
+                // Process cart items to get product details
+                const cartItems = appointmentData.cartItems || [];
+                const processedItems = [];
+
+                for (const item of cartItems) {
+                    try {
+                        let productData = null;
+                        
+                        // Try to get product data from products or additionals collection
+                        if (item.type === "accessory") {
+                            const additionalRef = doc(chandriaDB, "additionals", item.productId);
+                            const additionalSnap = await getDoc(additionalRef);
+                            if (additionalSnap.exists()) {
+                                productData = additionalSnap.data();
+                            }
+                        } else {
+                            const productRef = doc(chandriaDB, "products", item.productId);
+                            const productSnap = await getDoc(productRef);
+                            if (productSnap.exists()) {
+                                productData = productSnap.data();
+                            }
+                        }
+
+                        if (productData) {
+                            processedItems.push({
+                                id: item.productId,
+                                name: productData.name || item.name || 'Unknown Product',
+                                code: productData.code || 'N/A',
+                                image: productData.frontImageUrl || productData.imageUrl || 'assets/img/placeholder.jpg',
+                                price: productData.price || item.price || 0,
+                                quantity: item.quantity || 1,
+                                size: item.size || 'N/A',
+                                type: item.type || 'product'
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error fetching product data:', error);
+                    }
+                }
+
+                // Create booking object
+                const booking = {
+                    id: appointmentDoc.id,
+                    customerName: appointmentData.customerName || 'N/A',
+                    customerEmail: appointmentData.customerEmail || 'N/A',
+                    customerContact: appointmentData.customerContact || 'N/A',
+                    checkoutDate: appointmentData.checkoutDate || 'N/A',
+                    checkoutTime: appointmentData.checkoutTime || 'N/A',
+                    checkoutStatus: appointmentData.checkoutStatus || 'Upcoming',
+                    customerRequest: appointmentData.customerRequest || '',
+                    createdAt: appointmentData.createdAt,
+                    items: processedItems,
+                    totalAmount: processedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+                };
+
+                bookings.push(booking);
+            }
+
+            // Display bookings
+            displayBookings(bookings);
+
+        } catch (error) {
+            console.error('Error loading booking history:', error);
+            console.error('Error details:', {
+                code: error.code,
+                message: error.message,
+                stack: error.stack
+            });
+            
+            const bookingsList = document.getElementById('bookings-list');
+            if (bookingsList) {
+                bookingsList.innerHTML = `
+                    <div class="error-state" style="text-align: center; padding: 2rem;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: #dc2626;"></i>
+                        <p style="margin-top: 1rem; color: var(--gray-600);">Error loading booking history.</p>
+                        <p style="color: var(--gray-500); font-size: 0.9rem;">${error.message}</p>
+                        <button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: var(--accent-pink); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            Try Again
+                        </button>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    // DISPLAY BOOKINGS FUNCTION
+    function displayBookings(bookings) {
+        const bookingsList = document.getElementById('bookings-list');
+        if (!bookingsList) return;
+
+        if (bookings.length === 0) {
+            bookingsList.innerHTML = `
+                <div class="empty-bookings">
+                    <i class="fas fa-calendar-alt empty-icon"></i>
+                    <h3>No Booking History</h3>
+                    <p>You haven't made any appointments yet.</p>
+                    <a href="shop.html" class="btn">
+                        <i class="fas fa-shopping-bag"></i>
+                        Start Shopping
+                    </a>
+                </div>
+            `;
+            return;
+        }
+
+        const bookingsHTML = bookings.map(booking => {
+            // Get the first item for main display
+            const mainItem = booking.items[0];
+            const itemCount = booking.items.length;
+            
+            // Format status
+            const statusClass = getStatusClass(booking.checkoutStatus);
+            
+            // Format date
+            const formattedDate = formatBookingDate(booking.checkoutDate, booking.checkoutTime);
+
+            return `
+                <div class="booking-card" data-booking-id="${booking.id}">
+                    <div class="booking-image">
+                        <img src="${mainItem ? mainItem.image : 'assets/img/placeholder.svg'}" 
+                             alt="${mainItem ? mainItem.name : 'No items'}" 
+                             onerror="this.src='assets/img/placeholder.svg'" />
+                    </div>
+                    <div class="booking-details">
+                        <h4 class="booking-title">${mainItem ? mainItem.name : 'Multiple Items'}</h4>
+                        <p class="booking-date">
+                            <i class="fas fa-calendar"></i>
+                            ${formattedDate}
+                        </p>
+                        <p class="booking-items">
+                            <i class="fas fa-box"></i>
+                            ${itemCount} item${itemCount > 1 ? 's' : ''} • Total: ₱${booking.totalAmount.toLocaleString()}
+                        </p>
+                        ${mainItem && mainItem.size !== 'N/A' ? `
+                        <p class="booking-size">
+                            <i class="fas fa-ruler"></i>
+                            Size: ${mainItem.size}
+                        </p>
+                        ` : ''}
+                    </div>
+                    <div class="booking-status">
+                        <span class="status-badge ${statusClass}">${booking.checkoutStatus}</span>
+                    </div>
+                    <div class="booking-actions">
+                        <button class="btn-action btn-view" data-booking-id="${booking.id}">
+                            <i class="fas fa-eye"></i>
+                            View Details
+                        </button>
+                        ${booking.checkoutStatus.toLowerCase() === 'upcoming' ? `
+                        <button class="btn-action btn-cancel" data-booking-id="${booking.id}">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        bookingsList.innerHTML = bookingsHTML;
+
+        // Re-attach event listeners for the new booking cards
+        attachBookingActionListeners();
+    }
+
+    // HELPER FUNCTIONS
+    function getStatusClass(status) {
+        const statusLower = status.toLowerCase();
+        if (statusLower.includes('upcoming')) return 'status-upcoming';
+        if (statusLower.includes('completed')) return 'status-completed';
+        if (statusLower.includes('cancelled')) return 'status-cancelled';
+        return 'status-upcoming'; // default
+    }
+
+    function formatBookingDate(date, time) {
+        if (!date) return 'Date not set';
+        
+        try {
+            const dateObj = new Date(date);
+            const formattedDate = dateObj.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            if (time) {
+                return `${formattedDate} at ${time}`;
+            }
+            return formattedDate;
+        } catch (error) {
+            return date + (time ? ` at ${time}` : '');
+        }
+    }
+
+    // ATTACH EVENT LISTENERS FOR BOOKING ACTIONS
+    function attachBookingActionListeners() {
+        const bookingActions = document.querySelectorAll('.btn-action');
+        bookingActions.forEach(button => {
+            button.addEventListener('click', async function() {
+                const bookingId = this.getAttribute('data-booking-id');
+                const action = this.classList.contains('btn-view') ? 'view' :
+                              this.classList.contains('btn-cancel') ? 'cancel' : 'unknown';
+                
+                const bookingCard = this.closest('.booking-card');
+                const bookingTitle = bookingCard ? bookingCard.querySelector('.booking-title')?.textContent : 'Unknown';
+                
+                await handleBookingActionWithData(action, bookingTitle, bookingCard, bookingId);
+            });
+        });
+    }
+
+    // ENHANCED BOOKING ACTION HANDLER WITH DATA
+    async function handleBookingActionWithData(action, bookingTitle, bookingCard, bookingId) {
+        switch(action) {
+            case 'view':
+                await showBookingDetails(bookingId);
+                break;
+                
+            case 'cancel':
+                if (confirm(`Are you sure you want to cancel the booking for "${bookingTitle}"?`)) {
+                    await cancelBooking(bookingId, bookingCard);
+                }
+                break;
+                
+            default:
+                console.warn('Unknown booking action:', action);
+        }
+    }
+
+    // SHOW BOOKING DETAILS MODAL
+    async function showBookingDetails(bookingId) {
+        try {
+            const appointmentRef = doc(chandriaDB, "appointments", bookingId);
+            const appointmentSnap = await getDoc(appointmentRef);
+            
+            if (!appointmentSnap.exists()) {
+                notyf.error('Booking not found');
+                return;
+            }
+
+            const appointmentData = appointmentSnap.data();
+            
+            // Create modal content
+            const modalContent = `
+                <div class="booking-details-modal" id="booking-details-modal">
+                    <div class="modal-backdrop" onclick="closeBookingModal()"></div>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Booking Details</h3>
+                            <button class="close-btn" onclick="closeBookingModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="booking-info-section">
+                                <h4>Appointment Information</h4>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label>Customer Name:</label>
+                                        <span>${appointmentData.customerName || 'N/A'}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Email:</label>
+                                        <span>${appointmentData.customerEmail || 'N/A'}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Contact:</label>
+                                        <span>${appointmentData.customerContact || 'N/A'}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Date:</label>
+                                        <span>${appointmentData.checkoutDate || 'N/A'}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Time:</label>
+                                        <span>${appointmentData.checkoutTime || 'N/A'}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Status:</label>
+                                        <span class="status-badge ${getStatusClass(appointmentData.checkoutStatus)}">${appointmentData.checkoutStatus || 'Upcoming'}</span>
+                                    </div>
+                                </div>
+                                ${appointmentData.customerRequest ? `
+                                <div class="info-item full-width">
+                                    <label>Special Requests:</label>
+                                    <span>${appointmentData.customerRequest}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                            
+                            <div class="booking-items-section">
+                                <h4>Booked Items</h4>
+                                <div class="items-list">
+                                    ${await renderBookingItems(appointmentData.cartItems || [])}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Add modal to page
+            document.body.insertAdjacentHTML('beforeend', modalContent);
+            
+        } catch (error) {
+            console.error('Error showing booking details:', error);
+            notyf.error('Error loading booking details');
+        }
+    }
+
+    // RENDER BOOKING ITEMS
+    async function renderBookingItems(cartItems) {
+        if (!cartItems || cartItems.length === 0) {
+            return '<p>No items found</p>';
+        }
+
+        let itemsHTML = '';
+        let totalAmount = 0;
+
+        for (const item of cartItems) {
+            try {
+                let productData = null;
+                
+                // Try to get product data
+                if (item.type === "accessory") {
+                    const additionalRef = doc(chandriaDB, "additionals", item.productId);
+                    const additionalSnap = await getDoc(additionalRef);
+                    if (additionalSnap.exists()) {
+                        productData = additionalSnap.data();
+                    }
+                } else {
+                    const productRef = doc(chandriaDB, "products", item.productId);
+                    const productSnap = await getDoc(productRef);
+                    if (productSnap.exists()) {
+                        productData = productSnap.data();
+                    }
+                }
+
+                const name = productData?.name || item.name || 'Unknown Product';
+                const code = productData?.code || 'N/A';
+                const image = productData?.frontImageUrl || productData?.imageUrl || 'assets/img/placeholder.svg';
+                const price = productData?.price || item.price || 0;
+                const quantity = item.quantity || 1;
+                const size = item.size || 'N/A';
+                const type = item.type || 'product';
+                const itemTotal = price * quantity;
+                totalAmount += itemTotal;
+
+                itemsHTML += `
+                    <div class="booking-item">
+                        <img src="${image}" 
+                             alt="${name}" 
+                             class="item-image"
+                             onerror="this.src='assets/img/placeholder.svg'">
+                        <div class="item-details">
+                            <h5>${name}</h5>
+                            <p><strong>Code:</strong> ${code}</p>
+                            <p><strong>Type:</strong> ${type}</p>
+                            ${size !== 'N/A' ? `<p><strong>Size:</strong> ${size}</p>` : ''}
+                            <p><strong>Quantity:</strong> ${quantity}</p>
+                            <p><strong>Price:</strong> ₱${price.toLocaleString()}</p>
+                            <p><strong>Total:</strong> ₱${itemTotal.toLocaleString()}</p>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error rendering item:', error);
+            }
+        }
+
+        itemsHTML += `
+            <div class="booking-total">
+                <h4>Total Amount: ₱${totalAmount.toLocaleString()}</h4>
+            </div>
+        `;
+
+        return itemsHTML;
+    }
+
+    // CANCEL BOOKING FUNCTION
+    async function cancelBooking(bookingId, bookingCard) {
+        try {
+            const appointmentRef = doc(chandriaDB, "appointments", bookingId);
+            await updateDoc(appointmentRef, {
+                checkoutStatus: 'Cancelled',
+                cancelledAt: new Date()
+            });
+
+            notyf.success('Booking cancelled successfully');
+            
+            // Update the UI
+            const statusBadge = bookingCard.querySelector('.status-badge');
+            if (statusBadge) {
+                statusBadge.textContent = 'Cancelled';
+                statusBadge.className = 'status-badge status-cancelled';
+            }
+            
+            // Update action buttons
+            const actionsContainer = bookingCard.querySelector('.booking-actions');
+            if (actionsContainer) {
+                actionsContainer.innerHTML = `
+                    <button class="btn-action btn-view" data-booking-id="${bookingId}">
+                        <i class="fas fa-eye"></i>
+                        View Details
+                    </button>
+                `;
+                // Re-attach event listeners
+                attachBookingActionListeners();
+            }
+            
+        } catch (error) {
+            console.error('Error cancelling booking:', error);
+            notyf.error('Error cancelling booking. Please try again.');
+        }
+    }
+
+    // CLOSE BOOKING MODAL
+    window.closeBookingModal = function() {
+        const modal = document.getElementById('booking-details-modal');
+        if (modal) {
+            modal.remove();
+        }
+    }
+
     // Initialize all functionality
     initializeSidebarNavigation();
     initializeBookingHistory();
+    
+    // Load booking history if bookings section is active on page load
+    const bookingsSection = document.getElementById('bookings-section');
+    if (bookingsSection && bookingsSection.classList.contains('active')) {
+        loadBookingHistory();
+    }
 });

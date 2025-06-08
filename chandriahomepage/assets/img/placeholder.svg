@@ -1,0 +1,11 @@
+<!-- Placeholder SVG for missing product images -->
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <rect width="120" height="120" fill="#f3f4f6"/>
+  <g fill="#9ca3af" text-anchor="middle" font-family="Arial, sans-serif" font-size="12">
+    <text x="60" y="55">No Image</text>
+    <text x="60" y="70">Available</text>
+  </g>
+  <rect x="35" y="25" width="50" height="35" fill="none" stroke="#9ca3af" stroke-width="1" stroke-dasharray="2,2"/>
+  <circle cx="45" cy="35" r="3" fill="#9ca3af"/>
+  <path d="M42 50 L48 44 L54 50 L60 44 L66 50" stroke="#9ca3af" stroke-width="1" fill="none"/>
+</svg>
