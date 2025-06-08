@@ -47,6 +47,129 @@
     pointer-events: none;
 }
 
+/* =============== CART AUTH REQUIRED STATE =============== */
+.cart-auth-required {
+  text-align: center;
+  padding: 4rem 2rem;
+  margin: 2rem 0;
+}
+
+.cart-auth-required .auth-required-content {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.cart-auth-required .auth-required-icon {
+  font-size: 4rem;
+  color: var(--first-color);
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.cart-auth-required .auth-required-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--title-color);
+  margin-bottom: 1rem;
+  font-family: var(--second-font);
+}
+
+.cart-auth-required .auth-required-text {
+  color: var(--text-color-light);
+  margin-bottom: 2.5rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.cart-auth-required .auth-required-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cart-auth-required .auth-required-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.cart-auth-required .auth-required-actions .btn-primary {
+  background: var(--first-color);
+  color: white;
+}
+
+.cart-auth-required .auth-required-actions .btn-primary:hover {
+  background: var(--first-color-alt);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 133, 177, 0.3);
+}
+
+.cart-auth-required .auth-required-actions .btn-secondary {
+  background: transparent;
+  color: var(--text-color);
+  border: 2px solid var(--border-color);
+}
+
+.cart-auth-required .auth-required-actions .btn-secondary:hover {
+  background: transparent;
+  color: var(--first-color);
+  border-color: var(--first-color);
+  transform: translateY(-2px);
+}
+
+/* =============== RESPONSIVE DESIGN =============== */
+@media (max-width: 768px) {
+  .cart-auth-required .auth-required-content {
+    padding: 0 1rem;
+  }
+  
+  .cart-auth-required .auth-required-title {
+    font-size: 1.5rem;
+  }
+  
+  .cart-auth-required .auth-required-text {
+    font-size: 1rem;
+  }
+  
+  .cart-auth-required .auth-required-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .cart-auth-required .auth-required-actions .btn {
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .cart-auth-required {
+    padding: 3rem 1rem;
+  }
+  
+  .cart-auth-required .auth-required-icon {
+    font-size: 3rem;
+  }
+  
+  .cart-auth-required .auth-required-title {
+    font-size: 1.25rem;
+  }
+  
+  .cart-auth-required .auth-required-text {
+    font-size: 0.9rem;
+  }
+}
+
 @keyframes cartSpin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }

@@ -80,7 +80,7 @@ class ChandriasChatbot {    constructor() {
                 <div class="chatbot-body">
                     <div class="chatbot-messages" id="chatbotMessages">
                         <div class="message bot-message">
-                            <p>👋 Hi! Welcome to Chandria's LaRobe. How can I help you today?</p>
+                            <p>👋 Hi! Welcome to Chandria's La Robe. How can I help you today?</p>
                             <span class="timestamp">${this.getTimestamp()}</span>
                         </div>
                     </div>

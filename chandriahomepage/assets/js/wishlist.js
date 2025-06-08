@@ -40,6 +40,11 @@ $(document).ready(function () {
             $("#nav-login").hide();
             localStorage.setItem('userEmail', user.email);
             
+            // Hide auth required content and show wishlist content
+            $("#wishlist-auth-required").hide();
+            $(".wishlist-header").show();
+            $("#wishlist-table-container").show();
+            
             // Show the wishlist section
             $(".wishlist.section-lg.container").addClass("authenticated").show();
             
@@ -50,24 +55,23 @@ $(document).ready(function () {
             // Hide the loader after everything loads
             hideWishlistLoader();
         } else {
-            // User not logged in - hide main content and show authentication modal
+            // User not logged in - show auth required content
             $("#nav-login").show();
             localStorage.removeItem('userEmail');
             $("#cart-count").text("0");
             $("#wishlist-count").text("0");
             
-            // Hide the wishlist section
-            $(".wishlist.section-lg.container").removeClass("authenticated").hide();
+            // Hide the wishlist header, table and authenticated content
+            $(".wishlist-header").hide();
+            $("#wishlist-table-container").hide();
+            $("#wishlist-empty-state").hide();
             
-            showEmptyWishlist();
+            // Show the auth required content and keep main section visible
+            $("#wishlist-auth-required").show();
+            $(".wishlist.section-lg.container").show();
             
-            // Hide the loader for unauthenticated users too
+            // Hide the loader for unauthenticated users
             hideWishlistLoader();
-            
-            // Show authentication modal for unauthenticated users visiting wishlist
-            setTimeout(() => {
-                showAuthModal();
-            }, 500); // Small delay to ensure page has loaded properly
         }
     });
 

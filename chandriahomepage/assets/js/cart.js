@@ -52,17 +52,31 @@ $(document).ready(function () {
     // LISTEN FOR AUTH STATE CHANGES
     onAuthStateChanged(auth, async user => {
         if (!user) {
-            // User not logged in, show authentication modal and hide cart content
+            // User not logged in, show auth required content
             $("#cart-loader").addClass("hidden");
-            showAuthModal();
-            $(".cart.section-lg.container").hide();
+            
+            // Hide cart header, content and actions
+            $(".cart-header").hide();
+            $(".cart-table").hide();
+            $("#empty-cart").hide();
             $(".cart-actions").hide();
+            
+            // Show auth required content
+            $("#cart-auth-required").show();
+            
+            // Keep the main cart section visible but show auth content
+            $(".cart.section-lg.container").show();
             return;
         } else {
             // User is logged in, hide auth modal and show cart content
             hideAuthModal();
-            $(".cart.section-lg.container").show();
+            
+            // Hide auth required content and show cart content
+            $("#cart-auth-required").hide();
+            $(".cart-header").show();
+            $(".cart-table").show();
             $(".cart-actions").show();
+            $(".cart.section-lg.container").show();
         }
 
         try {
