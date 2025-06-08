@@ -405,9 +405,7 @@
 
                     <a href="./cart.html" class="header-action-btn">
                         <img src="assets/img/icon-cart.svg" alt="" />
-                        <span class="count" id="cart-count">0</span>                    </a>
-
-                    <button onclick="showAuthModal()" class="header-action-btn" style="background: none; border: none; cursor: pointer;">
+                        <span class="count" id="cart-count">0</span>                    </a>                    <button onclick="window.profileNavService?.handleAccountClick() || showAuthModal()" class="header-action-btn" style="background: none; border: none; cursor: pointer;" id="account-btn">
                         <img src="assets/img/icon-user.svg" alt="" />
                     </button>
                 </div>
@@ -1038,6 +1036,7 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
             crossorigin="anonymous"        ></script>        <!--=============== MAIN JS ===============-->
         <script src="./assets/js/nav-bar.js"></script>
+        <script type="module" src="./assets/js/profile-nav-service.js"></script>
         <script type="module" src="./assets/js/auth-modal.js"></script>
         <script type="module" src="./assets/js/shop.js"></script>
         <script type="module">

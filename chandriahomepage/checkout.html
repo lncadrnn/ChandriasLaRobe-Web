@@ -89,7 +89,7 @@
                         <img src="assets/img/icon-cart.svg" alt="" />
                         <span class="count" id="cart-count">0</span>
                     </a>
-                    <button class="header-action-btn" onclick="handleAccountClick()">
+                    <button class="header-action-btn" onclick="window.profileNavService?.handleAccountClick() || handleAccountClick()" id="account-btn">
                         <img src="assets/img/icon-user.svg" alt="" />
                     </button>
                 </div>
@@ -404,6 +404,7 @@
         <!-- BOOTSTRAP CLOCKPICKER JS -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.js"></script>        <!--=============== EXTERNAL SCRIPT ===============-->
         <script src="./assets/js/nav-bar.js"></script>
+        <script type="module" src="./assets/js/profile-nav-service.js"></script>
         <script src="assets/js/auth-modal.js"></script>
         <script type="module" src="./assets/js/checkout.js"></script>
         <script type="module" src="./assets/js/chatbot/chatbot-init.js"></script>

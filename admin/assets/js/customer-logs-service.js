@@ -189,7 +189,7 @@ async function renderTransactionTable() {
     if (filteredTransactions.length === 0) {
         tableBody.innerHTML = `
             <tr>
-                <td colspan="10" class="table-empty">
+                <td colspan="9" class="table-empty">
                     <i class='bx bx-file'></i> No transactions found
                 </td>
             </tr>
@@ -268,9 +268,11 @@ async function renderTransactionTable() {
                 <td><span class="payment-status ${paymentClass}">${paymentStatus}</span></td>
                 <td><span class="status-badge ${statusClass}">${rentalStatus}</span></td>
                 <td><strong>₱${totalPayment.toLocaleString()}</strong></td>
-                <td><button class="action-btn view-details" data-id="${transaction.id}">View Details</button></td>
                 <td>
                     <div class="action-buttons">
+                        <button class="view-details-btn" data-id="${transaction.id}" title="View Details">
+                            <i class='bx bx-show'></i> View
+                        </button>
                         <button class="edit-btn" data-id="${transaction.id}" title="Edit Transaction">
                             <i class='bx bx-edit'></i> Edit
                         </button>
@@ -288,9 +290,9 @@ async function renderTransactionTable() {
     tableBody.innerHTML = tableRows.join('');
 
     // Add click event listeners for view details buttons
-    document.querySelectorAll('.view-details').forEach(btn => {
+    document.querySelectorAll('.view-details-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const transactionId = e.target.dataset.id;
+            const transactionId = e.target.closest('.view-details-btn').dataset.id;
             showTransactionDetails(transactionId);
         });
     });
@@ -482,7 +484,7 @@ function handleSearch() {
 function showLoading() {
     tableBody.innerHTML = `
         <tr>
-            <td colspan="10" class="table-loading">
+            <td colspan="9" class="table-loading">
                 <i class='bx bx-loader-alt bx-spin'></i> Loading rental history...
             </td>
         </tr>
@@ -493,7 +495,7 @@ function showLoading() {
 function showError(message) {
     tableBody.innerHTML = `
         <tr>
-            <td colspan="10" class="table-error">
+            <td colspan="9" class="table-error">
                 <i class='bx bx-error'></i> ${message}
             </td>
         </tr>
@@ -504,48 +506,43 @@ function showError(message) {
 function editTransaction(transactionId) {
     const transaction = allTransactions.find(t => t.id === transactionId);
     if (!transaction) {
-        alert('Transaction not found!');
+        alert('Transaction not found');
         return;
     }
     
-    // Redirect to rental.html with transaction ID for editing
-    const editUrl = `rental.html?edit=${transactionId}`;
-    window.location.href = editUrl;
+    // For now, just show an alert - you can implement actual edit functionality later
+    alert(`Edit functionality for transaction ${transaction.transactionCode || transactionId.substring(0, 8)} will be implemented here.`);
+    
+    // TODO: Implement edit modal or redirect to edit page
+    // Example: window.location.href = `edit-rental.html?id=${transactionId}`;
 }
 
 // Delete transaction function
-async function deleteTransaction(transactionId) {
+function deleteTransaction(transactionId) {
     const transaction = allTransactions.find(t => t.id === transactionId);
     if (!transaction) {
-        alert('Transaction not found!');
+        alert('Transaction not found');
         return;
     }
     
     // Confirm deletion
-    const confirmMessage = `Are you sure you want to delete the transaction for ${transaction.fullName || 'Unknown Customer'}?\n\nTransaction Code: ${transaction.transactionCode || transactionId.substring(0, 8)}\nThis action cannot be undone.`;
+    const customerName = transaction.fullName || 'Unknown';
+    const transactionCode = transaction.transactionCode || transactionId.substring(0, 8);
     
-    if (!confirm(confirmMessage)) {
-        return;
-    }
-    
-    try {
-        // Import deleteDoc function
-        const { deleteDoc, doc } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js');
+    if (confirm(`Are you sure you want to delete the transaction for ${customerName} (${transactionCode})?\n\nThis action cannot be undone.`)) {
+        // For now, just show an alert - you can implement actual delete functionality later
+        alert(`Delete functionality for transaction ${transactionCode} will be implemented here.`);
         
-        // Delete from Firebase
-        await deleteDoc(doc(chandriaDB, 'rentals', transactionId));
-        
-        // Remove from local arrays
-        allTransactions = allTransactions.filter(t => t.id !== transactionId);
-        filteredTransactions = filteredTransactions.filter(t => t.id !== transactionId);
-        
-        // Re-render table
-        await renderTransactionTable();
-        
-        alert('Transaction deleted successfully!');
-        
-    } catch (error) {
-        console.error('Error deleting transaction:', error);
-        alert('Error deleting transaction. Please try again.');
+        // TODO: Implement actual deletion from Firebase
+        // Example:
+        // deleteDoc(doc(chandriaDB, 'rentals', transactionId))
+        //     .then(() => {
+        //         alert('Transaction deleted successfully');
+        //         loadTransactions(); // Reload the table
+        //     })
+        //     .catch(error => {
+        //         console.error('Error deleting transaction:', error);
+        //         alert('Error deleting transaction');
+        //     });
     }
 }

@@ -71,7 +71,7 @@
             <span class="count" id="cart-count">0</span>
           </a>
 
-          <button onclick="showAuthModal()" class="header-action-btn" style="background: none; border: none; cursor: pointer;">
+          <button onclick="window.profileNavService?.handleAccountClick() || showAuthModal()" class="header-action-btn" style="background: none; border: none; cursor: pointer;" id="account-btn">
             <img src="assets/img/icon-user.svg" alt="" />
           </button>
         </div>
@@ -302,6 +302,7 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <!--=============== PAGE FOCUS JS ===============-->
     <script src="assets/js/nav-bar.js"></script>
+    <script type="module" src="assets/js/profile-nav-service.js"></script>
     <script src="assets/js/page-focus.js"></script>
     <!--=============== WISHLIST JS ===============-->
     <script type="module" src="assets/js/auth-modal.js"></script>

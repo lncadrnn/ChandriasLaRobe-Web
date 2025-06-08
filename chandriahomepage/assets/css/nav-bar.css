@@ -205,50 +205,44 @@ button.header-action-btn img[src*="icon-user"] {
   height: 24px;
 }
 
-.header-action-btn:hover img {
-  filter: hue-rotate(315deg) saturate(1.5) brightness(0.8);
+/*=============== PROFILE IMAGE IN NAVIGATION ===============*/
+/* Profile image navigation styles */
+.header-action-btn.has-profile-image {
+  padding: 2px;
+  background: rgba(255, 133, 177, 0.1) !important;
+  border: 2px solid rgba(255, 133, 177, 0.3) !important;
 }
 
-/* Count badge for cart and wishlist */
-.header-action-btn .count {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background: var(--first-color);
-  color: white;
-  font-size: var(--tiny-font-size);
-  font-weight: var(--weight-600);
+.header-action-btn.has-profile-image:hover {
+  background: rgba(255, 133, 177, 0.2) !important;
+  border-color: rgba(255, 133, 177, 0.4) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(255, 133, 177, 0.15) !important;
+}
+
+.profile-nav-image {
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  object-fit: cover;
+  border: 2px solid rgba(255, 133, 177, 0.3);
   transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.header-action-btn:hover .count {
-  background: var(--primary-color);
-  color: white;
-  box-shadow: 0 2px 8px rgba(255, 133, 177, 0.4);
-  animation: pulse-count 2s infinite;
+.header-action-btn.has-profile-image:hover .profile-nav-image {
+  border-color: rgba(255, 133, 177, 0.6);
+  transform: scale(1.1);
 }
 
-/* Active state count badge */
-.header-action-btn.active .count,
-.header-action-btn:active .count {
-  background: var(--primary-color);
-  color: white;
-  box-shadow: 0 2px 8px rgba(255, 133, 177, 0.3);
+/* Override default image filters for profile images */
+.header-action-btn.has-profile-image .profile-nav-image {
+  filter: none !important;
 }
 
-@keyframes pulse-count {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
+.header-action-btn.has-profile-image:hover .profile-nav-image,
+.header-action-btn.has-profile-image:active .profile-nav-image {
+  filter: none !important;
 }
 
 /*=============== HAMBURGER MENU ===============*/
@@ -499,6 +493,17 @@ body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:hover img 
   .header-action-btn img {
     width: 18px;
     height: 18px;
+  }
+  
+  /* Profile image responsive styling for tablets */
+  .profile-nav-image {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  button.header-action-btn img[src*="icon-user"] {
+    width: 20px;
+    height: 20px;
   }
   
   .nav-logo-img {
