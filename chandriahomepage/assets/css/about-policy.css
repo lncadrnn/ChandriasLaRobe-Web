@@ -65,16 +65,14 @@
     font-weight: 800;
     color: var(--primary-color);
     text-align: center;
-    margin-bottom: var(--spacing-md);
-    position: relative;
+    margin-bottom: var(--spacing-md);    position: relative;
 }
 
 .section-title.typewriter {
-    overflow: hidden;
     border-right: 3px solid var(--primary-color);
     white-space: nowrap;
     margin: 0 auto;
-    animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+    animation: blink-caret 0.75s step-end infinite;
 }
 
 @keyframes typing {
@@ -101,17 +99,14 @@
     font-weight: 700;
     color: var(--primary-color);
     text-align: center;
-    margin-bottom: var(--spacing-md);
-    position: relative;
+    margin-bottom: var(--spacing-md);    position: relative;
 }
 
 .policy-title.typewriter {
-    overflow: hidden;
     border-right: 3px solid var(--primary-color);
     white-space: nowrap;
     margin: 0 auto;
-    animation: typing 3.5s steps(30, end) 1s, blink-caret 0.75s step-end infinite 1s;
-    animation-fill-mode: both;
+    animation: blink-caret 0.75s step-end infinite;
 }
 
 /* ================================
@@ -657,4 +652,667 @@
     z-index: 100;
 }
 
+/* ================================   TYPING ANIMATION IMPROVEMENTS
+   ================================ */
+.section-title.typewriter {
+    border-right: 3px solid var(--primary-color);
+    white-space: nowrap;
+    margin: 0 auto;
+    animation: blink-caret 0.75s step-end infinite;
+}
+
+.policy-title.typewriter {
+    border-right: 3px solid var(--primary-color);
+    white-space: nowrap;
+    margin: 0 auto;
+    animation: blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: var(--primary-color) }
+}
+
+@keyframes remove-caret {
+    to { border-right: none; }
+}
+
 /* ================================
+   COMPREHENSIVE RESPONSIVE DESIGN
+   ================================ */
+
+/* ================================
+   LARGE DESKTOPS (1400px+)
+   ================================ */
+@media screen and (min-width: 1400px) {
+    .about-section, .policies-section {
+        padding: var(--spacing-2xl) 0;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    
+    .policy-section {
+        padding: 3rem;
+        margin-bottom: 2.5rem;
+    }
+    
+    .section-title {
+        font-size: 4rem;
+        margin-bottom: 2rem;
+    }
+    
+    .policy-title {
+        font-size: 3rem;
+        margin-bottom: 2rem;
+    }
+}
+
+/* ================================
+   DESKTOP & LARGE TABLETS (992px - 1399px)
+   ================================ */
+@media screen and (max-width: 1399px) and (min-width: 992px) {
+    .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+    
+    .policy-section {
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .section-title {
+        font-size: 3.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .policy-title {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .policy-section-title {
+        font-size: 1.65rem;
+    }
+    
+    .services-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+}
+
+/* ================================
+   TABLETS (768px - 991px)
+   ================================ */
+@media screen and (max-width: 991px) and (min-width: 768px) {
+    .about-section, .policies-section {
+        padding: 3rem 0;
+    }
+    
+    .container {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+    
+    .policy-section {
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        border-radius: var(--radius-xl);
+    }
+    
+    .section-title {
+        font-size: 3rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .policy-title {
+        font-size: 2.25rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .about-subtitle, .policy-subtitle {
+        font-size: 1.125rem;
+        margin-bottom: 2rem;
+    }
+    
+    .policy-section-title {
+        font-size: 1.5rem;
+        margin-bottom: 1.25rem;
+        gap: 0.75rem;
+    }
+    
+    .policy-section-title i {
+        font-size: 1.75rem;
+    }
+    
+    .policy-text h3 {
+        font-size: 1.125rem;
+        margin: 1.25rem 0 0.75rem 0;
+    }
+    
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+    }
+      /* Adjust typewriter animation for tablets */
+    .section-title.typewriter,
+    .policy-title.typewriter {
+        font-size: 2.5rem;
+        animation: blink-caret 0.75s step-end infinite;
+    }
+
+    .policy-title.typewriter {
+        animation: blink-caret 0.75s step-end infinite;
+    }
+}
+
+/* ================================
+   MOBILE LANDSCAPE & SMALL TABLETS (576px - 767px)
+   ================================ */
+@media screen and (max-width: 767px) and (min-width: 576px) {
+    .about-section, .policies-section {
+        padding: 2.5rem 0;
+    }
+    
+    .container {
+        max-width: 540px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+    
+    .policy-section {
+        padding: 1.5rem;
+        margin-bottom: 1.25rem;
+        border-radius: var(--radius-lg);
+    }
+    
+    .section-title {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+    
+    .policy-title {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+    
+    .about-subtitle, .policy-subtitle {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+    }
+    
+    .policy-section-title {
+        font-size: 1.375rem;
+        margin-bottom: 1rem;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+    
+    .policy-section-title i {
+        font-size: 1.5rem;
+    }
+    
+    .policy-text {
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+    
+    .policy-text h3 {
+        font-size: 1rem;
+        margin: 1rem 0 0.5rem 0;
+        padding-left: 0.75rem;
+    }
+    
+    .policy-text h3::before {
+        width: 3px;
+        height: 16px;
+    }
+    
+    .policy-text li {
+        padding: 0.5rem 0 0.5rem 2rem;
+        font-size: 0.9rem;
+    }
+    
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .service-item {
+        padding: 1.25rem;
+        text-align: center;
+    }
+      /* Adjust typewriter animation for mobile landscape */
+    .section-title.typewriter {
+        font-size: 2rem;
+        animation: blink-caret 0.75s step-end infinite;
+    }
+    
+    .policy-title.typewriter {
+        font-size: 1.75rem;
+        animation: blink-caret 0.75s step-end infinite;
+    }
+}
+
+/* ================================
+   MOBILE PORTRAIT (375px - 575px)
+   ================================ */
+@media screen and (max-width: 575px) and (min-width: 375px) {
+    .about-section, .policies-section {
+        padding: 2rem 0;
+    }
+    
+    .container {
+        padding: 0 0.75rem;
+    }
+    
+    .policy-section {
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .section-title {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+        line-height: 1.1;
+    }
+    
+    .policy-title {
+        font-size: 1.75rem;
+        margin-bottom: 0.75rem;
+        line-height: 1.1;
+    }
+    
+    .about-subtitle, .policy-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 1.25rem;
+        line-height: 1.4;
+    }
+    
+    .policy-section-title {
+        font-size: 1.25rem;
+        margin-bottom: 0.875rem;
+        gap: 0.5rem;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .policy-section-title i {
+        font-size: 1.375rem;
+        align-self: center;
+    }
+    
+    .policy-text {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    
+    .policy-text h3 {
+        font-size: 0.95rem;
+        margin: 0.875rem 0 0.5rem 0;
+        padding-left: 0.5rem;
+        text-align: center;
+    }
+    
+    .policy-text h3::before {
+        display: none;
+    }
+    
+    .policy-text p {
+        margin-bottom: 0.75rem;
+        text-align: justify;
+    }
+    
+    .policy-text li {
+        padding: 0.375rem 0 0.375rem 1.5rem;
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+    
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: 0.875rem;
+    }
+    
+    .service-item {
+        padding: 1rem;
+        text-align: center;
+        min-height: auto;
+    }
+      /* Adjust typewriter animation for mobile */
+    .section-title.typewriter {
+        font-size: 1.75rem;
+        animation: blink-caret 0.75s step-end infinite;
+        white-space: normal;
+        overflow: visible;
+    }
+    
+    .policy-title.typewriter {
+        font-size: 1.5rem;
+        animation: blink-caret 0.75s step-end infinite;
+        white-space: normal;
+        overflow: visible;
+    }
+    
+    /* Disable complex animations on mobile for better performance */
+    .policy-section:hover {
+        transform: none;
+        box-shadow: var(--shadow-md);
+    }
+    
+    .policy-section-title:hover {
+        transform: none;
+    }
+    
+    .policy-text h3:hover {
+        transform: none;
+    }
+    
+    .policy-text p:hover {
+        transform: none;
+        background: transparent;
+    }
+    
+    .policy-text li:hover {
+        transform: none;
+        background: transparent;
+        padding-left: 1.5rem;
+    }
+}
+
+/* ================================
+   EXTRA SMALL MOBILE (320px - 374px)
+   ================================ */
+@media screen and (max-width: 374px) {
+    .about-section, .policies-section {
+        padding: 1.5rem 0;
+    }
+    
+    .container {
+        padding: 0 0.5rem;
+    }
+    
+    .policy-section {
+        padding: 1rem;
+        margin-bottom: 0.875rem;
+        border-radius: var(--radius-sm);
+    }
+    
+    .section-title {
+        font-size: 1.625rem;
+        margin-bottom: 0.625rem;
+        line-height: 1.05;
+    }
+    
+    .policy-title {
+        font-size: 1.5rem;
+        margin-bottom: 0.625rem;
+        line-height: 1.05;
+    }
+    
+    .about-subtitle, .policy-subtitle {
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+        line-height: 1.3;
+    }
+    
+    .policy-section-title {
+        font-size: 1.125rem;
+        margin-bottom: 0.75rem;
+        gap: 0.375rem;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .policy-section-title i {
+        font-size: 1.25rem;
+    }
+    
+    .policy-text {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+    
+    .policy-text h3 {
+        font-size: 0.9rem;
+        margin: 0.75rem 0 0.375rem 0;
+        padding-left: 0;
+        text-align: center;
+    }
+    
+    .policy-text p {
+        margin-bottom: 0.625rem;
+        text-align: left;
+    }
+    
+    .policy-text li {
+        padding: 0.25rem 0 0.25rem 1.25rem;
+        font-size: 0.8rem;
+        line-height: 1.3;
+    }
+    
+    .policy-text li::before {
+        width: 18px;
+        height: 18px;
+        font-size: 0.65rem;
+        left: -8px;
+    }
+    
+    .service-item {
+        padding: 0.875rem;
+    }
+    
+    /* Simplified typewriter for very small screens */
+    .section-title.typewriter,
+    .policy-title.typewriter {
+        animation: none;
+        border-right: none;
+        white-space: normal;
+        overflow: visible;
+    }
+    
+    /* Disable all hover effects and animations on extra small screens */
+    * {
+        animation-duration: 0.01ms !important;
+        animation-delay: -0.01ms !important;
+        animation-iteration-count: 1 !important;
+        background-attachment: initial !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ================================
+   NAVIGATION RESPONSIVE FIXES
+   ================================ */
+@media screen and (max-width: 768px) {
+    .header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+    }
+    
+    .nav {
+        padding: 0.75rem 1rem;
+    }
+    
+    .nav-logo-img {
+        width: 120px;
+        height: auto;
+    }
+    
+    .header-action-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .header-action-btn img {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .nav {
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .nav-logo-img {
+        width: 100px;
+    }
+    
+    .header-action-btn {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .header-action-btn img {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .header-user-actions {
+        gap: 0.25rem;
+    }
+}
+
+/* ================================
+   ACCESSIBILITY & PERFORMANCE
+   ================================ */
+@media (prefers-reduced-motion: reduce) {
+    .section-title.typewriter,
+    .policy-title.typewriter {
+        animation: none;
+        border-right: none;
+    }
+    
+    .policy-section,
+    .policy-section-title,
+    .policy-text h3,
+    .policy-text p,
+    .policy-text li {
+        transition: none;
+    }
+    
+    .policy-section:hover,
+    .policy-section-title:hover,
+    .policy-text h3:hover,
+    .policy-text p:hover,
+    .policy-text li:hover {
+        transform: none;
+    }
+}
+
+/* ================================
+   HIGH CONTRAST MODE
+   ================================ */
+@media (prefers-contrast: high) {
+    .policy-section {
+        border: 2px solid var(--text-primary);
+        background: var(--white);
+    }
+    
+    .section-title,
+    .policy-title {
+        color: var(--text-primary);
+        text-shadow: none;
+    }
+    
+    .policy-section-title i {
+        color: var(--text-primary);
+    }
+}
+
+/* ================================
+   LANDSCAPE ORIENTATION FIXES
+   ================================ */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+    .about-section, .policies-section {
+        padding: 1.5rem 0;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .policy-title {
+        font-size: 1.75rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .policy-section {
+        padding: 1.25rem;
+        margin-bottom: 0.875rem;
+    }
+}
+
+/* ================================
+   ABOUT HEADER RESPONSIVE DESIGN
+   ================================ */
+.about-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    padding: 0 1rem;
+}
+
+@media screen and (max-width: 768px) {
+    .about-header {
+        margin-bottom: var(--spacing-lg);
+        padding: 0 0.75rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .about-header {
+        margin-bottom: var(--spacing-md);
+        padding: 0 0.5rem;
+    }
+}
+
+/* ================================
+   CONTENT GRID RESPONSIVE
+   ================================ */
+.about-content {
+    display: grid;
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
+}
+
+@media screen and (max-width: 992px) {
+    .about-content {
+        gap: var(--spacing-lg);
+        margin-top: var(--spacing-lg);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .about-content {
+        gap: var(--spacing-md);
+        margin-top: var(--spacing-md);
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .about-content {
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-sm);
+    }
+}

@@ -19,18 +19,48 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         });
-    });
-
-    // Enhanced typewriter initialization
+    });    // Enhanced typewriter initialization with proper letter-by-letter typing
     function initializeTypewriterEffects() {
-        // Handle typewriter elements with CSS animations
         const typewriterElements = document.querySelectorAll('.typewriter');
         
         typewriterElements.forEach((element, index) => {
-            // Add staggered delay for multiple typewriter elements
-            element.style.animationDelay = `${index * 4}s`;
+            const text = element.textContent;
+            element.textContent = '';
+            
+            // Get the primary color from CSS custom property
+            const primaryColor = getComputedStyle(document.documentElement)
+                .getPropertyValue('--primary-color').trim() || 'hsl(346, 100%, 74%)';
+            
+            element.style.borderRight = `3px solid ${primaryColor}`;
+            element.style.animation = 'blink-caret 0.75s step-end infinite';
+            
+            // Start typing with staggered delay
+            setTimeout(() => {
+                typeText(element, text, 80); // 80ms per character
+            }, index * 2000); // 2 second delay between elements
         });
-    }    // Simple hover effects for service items
+    }
+
+    // Function to type text letter by letter
+    function typeText(element, text, speed) {
+        let i = 0;
+        
+        function typeCharacter() {
+            if (i < text.length) {
+                element.textContent += text.charAt(i);
+                i++;
+                setTimeout(typeCharacter, speed);
+            } else {
+                // Remove cursor after typing is complete
+                setTimeout(() => {
+                    element.style.borderRight = 'none';
+                    element.style.animation = 'none';
+                }, 1000); // Wait 1 second before removing cursor
+            }
+        }
+        
+        typeCharacter();
+    }// Simple hover effects for service items
     const serviceItems = document.querySelectorAll('.service-item');
     serviceItems.forEach(item => {
         item.addEventListener('mouseenter', function() {
