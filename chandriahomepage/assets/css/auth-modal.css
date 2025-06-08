@@ -25,17 +25,21 @@
 
 .auth-modal {
   background: #ffffff;
-  border-radius: 24px;  box-shadow: 
+  border-radius: 24px;
+  box-shadow: 
     0 32px 64px rgba(0, 0, 0, 0.12),
     0 16px 32px rgba(0, 0, 0, 0.08),
     0 8px 16px rgba(0, 0, 0, 0.04);
-  width: 95vw;
-  max-width: 1000px;
-  max-height: 95vh;
+  width: 90vw;
+  max-width: 900px;
+  max-height: 80vh; /* Reduced from 85vh to leave more room */
+  min-height: 550px; /* Slightly reduced minimum height */
   overflow: hidden;
   position: relative;
   transform: scale(0.9) translateY(40px);
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  aspect-ratio: 1.4/1; /* Make it more square-like */
+  margin-top: 2vh; /* Add top margin to better center in viewport */
 }
 
 .auth-modal-container.show .auth-modal {
@@ -71,9 +75,9 @@
 .auth-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  min-height: auto; /* Remove fixed min-height to let content determine size */
-  max-height: 95vh;
-  height: fit-content; /* Only take up space needed for content */
+  height: 100%; /* Use full height of the modal */
+  max-height: none; /* Remove max-height constraint */
+  overflow: hidden; /* Prevent overflow */
 }
 
 /* =============== MODERN IMAGE SECTION =============== */
@@ -84,6 +88,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  height: 100%; /* Ensure it takes full height of the grid */
 }
 
 .auth-image {
@@ -139,14 +144,15 @@
 
 /* =============== MODERN FORM SECTION =============== */
 .auth-form-section {
-  padding: 2rem; /* Further reduced from 3rem to 2rem */
+  padding: 1.5rem 2rem 2rem 2rem; /* Reduced padding to fit better */
   background: #ffffff;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Changed from center to flex-start */
-  overflow-y: hidden;
+  justify-content: flex-start; /* Start from top to utilize full height */
+  overflow-y: auto; /* Allow scrolling if needed */
   position: relative;
-  min-height: 0; /* Remove any minimum height constraints */
+  min-height: 0;
+  height: 100%; /* Take full height of the modal */
 }
 
 .auth-form-section::-webkit-scrollbar {
@@ -168,10 +174,11 @@
   left: 0;
   right: 0;
   bottom: 0;  
-  padding: 1.5rem;
+  padding: 1.5rem 2rem 2rem 2rem; /* Reduced top padding, increased bottom padding */
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Start content from top */
+  justify-content: space-between; /* Distribute content to use full height */
+  height: 100%; /* Take full height */
 }
 
 .auth-form.active {
@@ -179,13 +186,18 @@
   visibility: visible;
   transform: translateY(0);
   position: relative;
-  padding: 0;
+  padding: 1rem 1.5rem 2rem 1.5rem; /* Better distribution with more bottom padding */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Use full height available */
+  height: 100%;
 }
 
 /* =============== MODERN FORM HEADERS =============== */
 .auth-header {
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem; /* Optimized margin for better fit */
+  flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .auth-header h2 {
@@ -207,7 +219,9 @@
 .auth-form-content {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem; /* Optimized gap for better fit */
+  flex-grow: 1; /* Allow content to grow and fill available space */
+  justify-content: space-around; /* Better distribution that fits within bounds */
 }
 
 .auth-input-row {
@@ -230,7 +244,7 @@
 }
 
 .auth-input-group input {
-  padding: 1.2rem 1.5rem;
+  padding: 1.25rem 1.75rem; /* Increased padding for better visual spacing */
   border: 2px solid #e5e7eb;
   border-radius: 12px;
   font-size: 1rem;
@@ -274,7 +288,7 @@
 
 /* =============== MODERN BUTTONS =============== */
 .auth-btn {
-  padding: .75rem;
+  padding: 1rem; /* Increased from .75rem for better button size */
   border: none;
   border-radius: 12px;
   font-size: 1rem;
@@ -308,7 +322,8 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin: 0.5rem 0;
+  margin: 1.25rem 0; /* Optimized margins for better fit */
+  flex-shrink: 0; /* Prevent divider from shrinking */
 }
 
 .auth-divider::before,
@@ -331,7 +346,8 @@
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin: 0;
+  margin: 1.25rem 0 0.75rem 0; /* Optimized margins for better fit */
+  flex-shrink: 0; /* Prevent social buttons from shrinking */
 }
 
 .auth-social-btn {
@@ -388,8 +404,9 @@
 /* =============== MODERN FORM SWITCH =============== */
 .auth-switch {
   text-align: center;
-  margin-top: 0;
-  margin-bottom: 2rem;
+  margin-top: 1.25rem; /* Optimized top margin */
+  margin-bottom: 0.5rem; /* Small bottom margin */
+  flex-shrink: 0; /* Prevent switch from shrinking */
 }
 
 .auth-switch span {
@@ -573,11 +590,30 @@
 }
 
 /* =============== MODERN RESPONSIVE DESIGN =============== */
-/* Desktop: Reduced width for better proportion */
+/* Desktop: Square-like proportions with better padding */
 @media (min-width: 769px) {
   .auth-modal {
-    width: 80vw;
-    max-width: 800px;
+    width: 85vw;
+    max-width: 900px;
+    min-height: 600px; /* Optimized minimum height */
+    max-height: 75vh; /* Better constraint for viewport */
+    aspect-ratio: 1.4/1; /* Maintain square-like aspect ratio */
+    margin-top: 3vh; /* Better top margin for desktop */
+  }
+  
+  .auth-form-section {
+    padding: 2rem 2.5rem 2.5rem 2.5rem; /* Optimized padding for desktop */
+    height: 100%; /* Ensure full height usage */
+  }
+  
+  .auth-form.active {
+    padding: 1rem 1.5rem 2rem 1.5rem; /* Balanced padding for desktop active forms */
+    height: 100%; /* Use full available height */
+  }
+  
+  .auth-form-content {
+    gap: 1.5rem; /* Appropriate gaps on desktop */
+    justify-content: space-between; /* Better distribution on desktop */
   }
 }
 
@@ -787,7 +823,7 @@
   margin-bottom: 1rem;
   /* Ensure header is always visible */
   margin-top: 0;
-  padding-top: 0;
+  padding-top: 2rem; /* Added padding-top for spacing above Welcome Back */
   top: 0;
   background: white;
   z-index: 2;
@@ -925,7 +961,7 @@
   margin-bottom: 1rem;
   /* Ensure header is always visible */
   margin-top: 0;
-  padding-top: 0;
+  padding-top: 2rem; /* Added padding-top for spacing above Welcome Back */
   top: 0;
   background: white;
   z-index: 2;
@@ -1020,7 +1056,7 @@
   margin-bottom: 1rem;
   /* Ensure header is always visible */
   margin-top: 0;
-  padding-top: 0;
+  padding-top: 2rem; /* Added padding-top for spacing above Welcome Back */
   top: 0;
   background: white;
   z-index: 2;
