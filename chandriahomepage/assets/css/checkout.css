@@ -51,3 +51,295 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/*=============== CHECKOUT PAGE STYLES ===============*/
+.checkout {
+    padding: 2rem 0;
+    min-height: 100vh;
+    background-color: hsl(0, 0%, 99%);
+}
+
+.checkout-section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: hsl(230, 16%, 15%);
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.checkout-section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background-color: hsl(346, 100%, 74%);
+    border-radius: 2px;
+}
+
+.checkout-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+}
+
+.checkout-group {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid hsl(0, 0%, 94%);
+}
+
+/*=============== FORM STYLES ===============*/
+.form {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid hsl(0, 0%, 90%);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: hsl(230, 16%, 15%);
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: hsl(346, 100%, 74%);
+    box-shadow: 0 0 0 3px hsla(346, 100%, 74%, 0.1);
+}
+
+.form-input::placeholder {
+    color: hsl(230, 16%, 45%);
+}
+
+.textarea {
+    resize: vertical;
+    min-height: 120px;
+    font-family: inherit;
+}
+
+/*=============== ORDER TABLE STYLES ===============*/
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+}
+
+.order-table th,
+.order-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid hsl(0, 0%, 90%);
+}
+
+.order-table th {
+    background-color: hsl(0, 0%, 98%);
+    font-weight: 600;
+    color: hsl(230, 16%, 15%);
+    font-size: 1.1rem;
+}
+
+.order-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.table-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: hsl(230, 16%, 15%);
+    margin-bottom: 0.25rem;
+}
+
+.table-quantity {
+    font-size: 0.875rem;
+    color: hsl(230, 16%, 45%);
+    margin: 0;
+}
+
+.table-price {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: hsl(346, 100%, 74%);
+}
+
+.order-subtitle {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: hsl(230, 16%, 15%);
+}
+
+.order-grand-total {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: hsl(346, 100%, 74%);
+}
+
+/*=============== BUTTON STYLES ===============*/
+.place-rent {
+    margin-top: 1.5rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-primary {
+    background-color: hsl(346, 100%, 74%);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: hsl(346, 100%, 68%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 105, 180, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/*=============== RESPONSIVE DESIGN ===============*/
+@media screen and (max-width: 992px) {
+    .checkout-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .checkout-section-title {
+        font-size: 2rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .checkout {
+        padding: 1rem 0;
+    }
+    
+    .checkout-container {
+        padding: 0 0.5rem;
+        gap: 1.5rem;
+    }
+    
+    .checkout-group {
+        padding: 1.5rem;
+    }
+    
+    .checkout-section-title {
+        font-size: 1.75rem;
+        margin-bottom: 2rem;
+    }
+    
+    .form {
+        gap: 1rem;
+    }
+    
+    .form-input {
+        padding: 0.875rem 1rem;
+        font-size: 0.95rem;
+    }
+    
+    .order-table th,
+    .order-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .order-img {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .table-title {
+        font-size: 0.9rem;
+    }
+    
+    .table-quantity {
+        font-size: 0.8rem;
+    }
+    
+    .table-price {
+        font-size: 1rem;
+    }
+    
+    .order-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .order-grand-total {
+        font-size: 1.3rem;
+    }
+    
+    .btn {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .checkout-container {
+        padding: 0 0.25rem;
+    }
+    
+    .checkout-group {
+        padding: 1rem;
+    }
+    
+    .checkout-section-title {
+        font-size: 1.5rem;
+    }
+    
+    .form-input {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .textarea {
+        min-height: 100px;
+    }
+    
+    .order-table th,
+    .order-table td {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.9rem;
+    }
+    
+    .order-img {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .table-title {
+        font-size: 0.85rem;
+    }
+    
+    .order-grand-total {
+        font-size: 1.2rem;
+    }
+}
