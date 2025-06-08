@@ -88,7 +88,7 @@ select:disabled {
     height: 100vh;
     left: 260px;
     position: relative;
-    background: var(--body-color);
+    background: white;
     padding: 2rem;
     transition: var(--tran-05);
     overflow-y: auto;
@@ -117,20 +117,16 @@ select:disabled {
     border-radius: 2px;
 }
 
-/* === TABLE CONTAINER === */
-.table-container {
-    background: var(--sidebar-color);
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(255, 105, 180, 0.1);
-    overflow: hidden;
-    border: 1px solid var(--secondary-color);
-}
-
 /* === TABLE STYLES === */
 #rental-history-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.9rem;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(255, 105, 180, 0.1);
+    border: 1px solid var(--secondary-color);
 }
 
 #rental-history-table thead {
@@ -272,94 +268,256 @@ select:disabled {
     opacity: 0.7;
 }
 
-/* === RESPONSIVE DESIGN === */
-@media (max-width: 768px) {
-    .page-name {
-        left: 78px;
-        padding: 1rem;
+/* === PRODUCT/ACCESSORY IMAGES === */
+.product-image, .accessory-image {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid var(--secondary-color);
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.products-cell, .accessories-cell {
+    max-width: 200px;
+}
+
+.product-item, .accessory-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 8px;
+    background: rgba(255, 105, 180, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid var(--primary-color);
+}
+
+.product-item:last-child, .accessory-item:last-child {
+    margin-bottom: 0;
+}
+
+.item-details {
+    flex: 1;
+}
+
+.item-name {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 0.85rem;
+}
+
+.item-code {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 2px;
+}
+
+.item-sizes {
+    font-size: 0.75rem;
+    color: var(--primary-color);
+    margin-top: 2px;
+}
+
+.no-items {
+    color: #999;
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
+/* === TRANSACTION MODAL === */
+.transaction-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+}
+
+.transaction-modal-content {
+    background: white;
+    border-radius: 20px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(255, 105, 180, 0.3);
+    animation: modalSlideUp 0.3s ease-out;
+}
+
+@keyframes modalSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
     }
-    
-    .table-container {
-        border-radius: 12px;
-        overflow-x: auto;
-    }
-    
-    #rental-history-table {
-        min-width: 600px;
-    }
-    
-    #rental-history-table thead th,
-    #rental-history-table tbody td {
-        padding: 0.8rem 0.6rem;
-        font-size: 0.8rem;
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
     }
 }
 
-/* === SEARCH AND FILTER BAR === */
-.table-header {
-    background: var(--sidebar-color);
-    padding: 1.5rem;
-    border-bottom: 1px solid var(--secondary-color);
+.modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.table-search {
-    position: relative;
-    flex: 1;
-    max-width: 300px;
-}
-
-.table-search input {
-    width: 100%;
-    padding: 0.8rem 1rem 0.8rem 2.5rem;
-    border: 2px solid var(--secondary-color);
-    border-radius: 25px;
-    background: white;
-    color: var(--text-color);
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-}
-
-.table-search input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.1);
-}
-
-.table-search .search-icon {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-color);
-    font-size: 1rem;
-}
-
-.table-actions {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-}
-
-.filter-btn {
+    padding: 2rem;
+    border-bottom: 1px solid var(--secondary-color);
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: white;
-    border: none;
-    padding: 0.8rem 1.2rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    border-radius: 20px 20px 0 0;
 }
 
-.filter-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 105, 180, 0.3);
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.customer-info, .rental-items, .payment-info, .additional-notes {
+    margin-bottom: 2rem;
+}
+
+.customer-info h3, .rental-items h3, .payment-info h3, .additional-notes h3 {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 0.5rem;
+}
+
+.customer-info p, .payment-info p, .additional-notes p {
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+.customer-info strong, .payment-info strong {
+    color: #333;
+    margin-right: 0.5rem;
+}
+
+.products-detail, .accessories-detail {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.detail-product, .detail-accessory {
+    background: rgba(255, 105, 180, 0.05);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.detail-product h4, .detail-accessory h4 {
+    color: var(--primary-color);
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+}
+
+.detail-product p, .detail-accessory p {
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.detail-product ul, .detail-accessory ul {
+    margin-left: 1rem;
+    margin-top: 0.5rem;
+}
+
+.detail-product li, .detail-accessory li {
+    color: var(--text-color);
+    font-size: 0.85rem;
+    margin-bottom: 0.2rem;
+}
+
+.modal-product-image, .modal-accessory-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+/* === ENHANCED TABLE STYLING === */
+.table-container {
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+}
+
+/* === SCROLLBAR STYLING === */
+.transaction-modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.transaction-modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.transaction-modal-content::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
+}
+
+.transaction-modal-content::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+/* === RESPONSIVE MODAL === */
+@media (max-width: 768px) {
+    .transaction-modal-content {
+        width: 95%;
+        margin: 1rem;
+        max-height: 95vh;
+    }
+    
+    .modal-header {
+        padding: 1.5rem;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .products-detail, .accessories-detail {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Google Fonts */

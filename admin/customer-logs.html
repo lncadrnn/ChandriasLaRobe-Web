@@ -96,41 +96,39 @@
 
     <section class="page-name">
         <div class="text">Rental History</div>
-        <div class="table-container">
-            <div class="table-header">
-                <div class="table-search">
-                    <i class='bx bx-search search-icon'></i>
-                    <input type="text" placeholder="Search by customer name, transaction code..." id="search-input">
-                </div>
-                <div class="table-actions">
-                    <button class="filter-btn" id="refresh-btn">
-                        <i class='bx bx-refresh'></i> Refresh
-                    </button>
-                </div>
+        <div class="table-header">
+            <div class="table-search">
+                <i class='bx bx-search search-icon'></i>
+                <input type="text" placeholder="Search by customer name, transaction code..." id="search-input">
             </div>
-            <table id="rental-history-table">
-                <thead>
-                    <tr>
-                        <th>Customer Name</th>
-                        <th>Transaction Code</th>
-                        <th>Products Rented</th>
-                        <th>Additional Items</th>
-                        <th>Event Date</th>
-                        <th>Payment Status</th>
-                        <th>Rental Status</th>
-                        <th>Total Amount</th>
-                        <th>Details</th>
-                    </tr>
-                </thead>
-                <tbody id="rental-history-tbody">
-                    <tr>
-                        <td colspan="7" class="table-loading">
-                            <i class='bx bx-loader-alt bx-spin'></i> Loading rental history...
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-actions">
+                <button class="filter-btn" id="refresh-btn">
+                    <i class='bx bx-refresh'></i> Refresh
+                </button>
+            </div>
         </div>
+        <table id="rental-history-table">
+            <thead>
+                <tr>
+                    <th>Customer Name</th>
+                    <th>Transaction Code</th>
+                    <th>Products Rented</th>
+                    <th>Additional Items</th>
+                    <th>Event Date</th>
+                    <th>Payment Status</th>
+                    <th>Rental Status</th>
+                    <th>Total Amount</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody id="rental-history-tbody">
+                <tr>
+                    <td colspan="9" class="table-loading">
+                        <i class='bx bx-loader-alt bx-spin'></i> Loading rental history...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </section>
     
     <!-- Firebase SDK -->
