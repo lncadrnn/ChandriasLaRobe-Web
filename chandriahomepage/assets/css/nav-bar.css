@@ -219,15 +219,25 @@ button.header-action-btn:active img {
   box-shadow: 0 2px 6px rgba(255, 71, 87, 0.3);
   transition: all 0.3s ease;
   z-index: 10;
+  line-height: 1;
 }
 
 .header-action-btn .count:empty {
   display: none;
 }
 
+.header-action-btn .count[data-count="0"] {
+  display: none;
+}
+
 .header-action-btn:hover .count {
   transform: scale(1.1);
   box-shadow: 0 3px 8px rgba(255, 71, 87, 0.4);
+}
+
+/* Ensure count bubble shows above profile images */
+.header-action-btn.has-profile-image .count {
+  z-index: 15;
 }
 
 /*=============== PROFILE IMAGE IN NAVIGATION ===============*/
@@ -514,8 +524,7 @@ body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:hover img 
     width: 40px;
     height: 40px;
   }
-  
-  .header-action-btn img {
+    .header-action-btn img {
     width: 18px;
     height: 18px;
   }
@@ -529,6 +538,15 @@ body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:hover img 
   button.header-action-btn img[src*="icon-user"] {
     width: 20px;
     height: 20px;
+  }
+  
+  /* Responsive notification bubble for tablets */
+  .header-action-btn .count {
+    min-width: 16px;
+    height: 16px;
+    font-size: 10px;
+    top: -4px;
+    right: -4px;
   }
   
   .nav-logo-img {

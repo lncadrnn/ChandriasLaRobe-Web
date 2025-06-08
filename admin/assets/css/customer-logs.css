@@ -532,9 +532,11 @@ select:disabled {
     max-width: 800px;
     width: 90%;
     max-height: 90vh;
-    overflow-y: auto;
+    overflow: hidden;
     box-shadow: 0 20px 60px rgba(255, 105, 180, 0.3);
     animation: modalSlideUp 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
 }
 
 @keyframes modalSlideUp {
@@ -587,6 +589,34 @@ select:disabled {
 
 .modal-body {
     padding: 2rem;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+.transaction-modal-content .modal-body {
+    padding: 2rem;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
 }
 
 .customer-info, .rental-items, .payment-info, .additional-notes {
@@ -657,21 +687,21 @@ select:disabled {
 }
 
 /* === SCROLLBAR STYLING === */
-.transaction-modal-content::-webkit-scrollbar {
+.transaction-modal-content .modal-body::-webkit-scrollbar {
     width: 8px;
 }
 
-.transaction-modal-content::-webkit-scrollbar-track {
+.transaction-modal-content .modal-body::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 10px;
 }
 
-.transaction-modal-content::-webkit-scrollbar-thumb {
+.transaction-modal-content .modal-body::-webkit-scrollbar-thumb {
     background: var(--primary-color);
     border-radius: 10px;
 }
 
-.transaction-modal-content::-webkit-scrollbar-thumb:hover {
+.transaction-modal-content .modal-body::-webkit-scrollbar-thumb:hover {
     background: var(--secondary-color);
 }
 
@@ -717,9 +747,11 @@ select:disabled {
     max-width: 900px;
     width: 90%;
     max-height: 90vh;
-    overflow-y: auto;
+    overflow: hidden;
     box-shadow: 0 20px 60px rgba(255, 105, 180, 0.3);
     animation: modalSlideUp 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
 }
 
 /* === EDIT MODAL STYLES === */
@@ -914,6 +946,7 @@ select:disabled {
     border-radius: 6px;
     border: 1px solid #f5c6cb;
     margin-top: 1rem !important;
+    text-align: center;
 }
 
 .transaction-summary {
