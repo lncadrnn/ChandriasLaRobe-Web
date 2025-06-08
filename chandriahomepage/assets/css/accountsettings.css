@@ -319,6 +319,20 @@ input:focus {
     border-color: #cc0000;
 }
 
+/* Red styling for main form logout button */
+#logout-btn {
+    background: rgb(193, 2, 2) !important;
+    color: white !important;
+    border: 1px solid rgb(193, 2, 2) !important;
+}
+
+#logout-btn:hover {
+    background: rgb(150, 0, 0) !important;
+    border-color: rgb(150, 0, 0) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(193, 2, 2, 0.4);
+}
+
 /* Modal Styles */
 .modal {
     position: fixed;
@@ -881,7 +895,7 @@ body.loaded #loader {
   padding: 0.875rem 1.75rem;
   border: none;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--first-color), hsl(346, 98%, 74%));
+  background: rgb(193, 2, 2) !important;
   color: white !important;
   font-weight: 500;
   font-size: 0.95rem;
@@ -890,13 +904,13 @@ body.loaded #loader {
   min-width: 100px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 14px rgba(255, 154, 175, 0.4);
+  box-shadow: 0 4px 14px rgba(193, 2, 2, 0.4);
 }
 
 .logout-modal-content .btn-submit:hover:not(.disabled) {
-  background: linear-gradient(135deg, hsl(346, 98%, 74%), var(--first-color));
+  background: rgb(150, 0, 0) !important;
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(255, 154, 175, 0.5);
+  box-shadow: 0 6px 20px rgba(193, 2, 2, 0.5);
 }
 
 .logout-modal-content .btn-submit.disabled {
