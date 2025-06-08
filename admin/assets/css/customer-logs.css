@@ -181,30 +181,13 @@ select:disabled {
 /* === TABLE STYLES === */
 .table-wrapper {
     flex: 1;
-    overflow: auto;
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(255, 105, 180, 0.1);
     border: 1px solid var(--secondary-color);
     min-height: 0;
-}
-
-.table-wrapper::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-.table-wrapper::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: 4px;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb:hover {
-    background: var(--secondary-color);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 #rental-history-table {
@@ -213,6 +196,46 @@ select:disabled {
     border-collapse: collapse;
     font-size: 0.85rem;
     background: white;
+    display: block;
+    height: 100%;
+}
+
+#rental-history-table thead,
+#rental-history-table tbody {
+    display: block;
+    width: 100%;
+}
+
+#rental-history-table tbody {
+    overflow-y: auto;
+    overflow-x: auto;
+    flex: 1;
+    max-height: calc(100vh - 200px);
+}
+
+#rental-history-table tbody::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+#rental-history-table tbody::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+#rental-history-table tbody::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+#rental-history-table tbody::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+#rental-history-table tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
 }
 
 /* Make specific columns wider */
@@ -253,6 +276,7 @@ select:disabled {
     font-size: 0.75rem;
     border: none;
     position: relative;
+    display: table-cell;
 }
 
 #rental-history-table thead th:not(:last-child)::after {
@@ -284,6 +308,7 @@ select:disabled {
     vertical-align: middle;
     color: var(--text-color);
     border: none;
+    display: table-cell;
 }
 
 /* === STATUS BADGES === */

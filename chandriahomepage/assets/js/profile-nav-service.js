@@ -16,7 +16,7 @@ class ProfileNavService {
     constructor() {
         this.currentUser = null;
         this.profileImageUrl = null;
-        this.accountButtonSelector = 'button.header-action-btn[onclick*="showAuthModal"], .header-action-btn[onclick*="showAuthModal"]';
+        this.accountButtonSelector = '#account-btn, button.header-action-btn[onclick*="showAuthModal"], .header-action-btn[onclick*="showAuthModal"], button.header-action-btn[onclick*="handleAccountClick"]';
         this.init();
     }
 
@@ -225,7 +225,8 @@ document.head.appendChild(styleSheet);
 // Initialize the service
 const profileNavService = new ProfileNavService();
 
-// Export for global use
+// Export for global use (both camelCase and PascalCase for compatibility)
+window.profileNavService = profileNavService;
 window.ProfileNavService = profileNavService;
 
 export default profileNavService;
