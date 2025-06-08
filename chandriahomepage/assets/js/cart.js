@@ -92,11 +92,11 @@ $(document).ready(function () {
 
         if (cartItems.length === 0) {
             $("#empty-cart").show();
-            $(".cart-table, .cart-actions").hide();
+            $(".cart-table, .cart-actions, .cart-header").hide();
             return;
         } else {
             $("#empty-cart").hide();
-            $(".cart-table, .cart-actions").show();
+            $(".cart-table, .cart-actions, .cart-header").show();
         }
 
         let totalItems = 0;
@@ -433,7 +433,7 @@ $(document).ready(function () {
                 // Check if cart is now empty
                 if (updatedCart.length === 0) {
                     $("#empty-cart").fadeIn(0);
-                    $(".cart-table, .cart-actions").fadeOut(0);
+                    $(".cart-table, .cart-actions, .cart-header").fadeOut(0);
                 } else {
                     // Update totals if items remain
                     updateGrandTotal();
