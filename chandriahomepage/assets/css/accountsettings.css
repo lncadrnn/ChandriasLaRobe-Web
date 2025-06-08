@@ -534,6 +534,19 @@ input:focus {
     overflow: hidden;
 }
 
+.avatar-placeholder img {
+    border-radius: 50%;
+    border: 3px solid rgba(255, 133, 177, 0.3);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-placeholder:hover img {
+    border-color: rgba(255, 133, 177, 0.6);
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
 .avatar-reset-btn {
     position: absolute;
     top: 10px;
@@ -551,6 +564,8 @@ input:focus {
     font-size: 0.8rem;
     transition: all 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    opacity: 0.8;
+    transform: scale(0.9);
 }
 
 .avatar-reset-btn:hover {
@@ -558,6 +573,15 @@ input:focus {
     transform: scale(1.1);
 }
 
+.avatar-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+}
+
+/* Enhanced avatar content for better default state */
 .avatar-content {
     display: flex;
     flex-direction: column;

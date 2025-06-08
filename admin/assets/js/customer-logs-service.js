@@ -11,6 +11,11 @@ let currentDeletingTransaction = null;
 const tableBody = document.getElementById('rental-history-tbody');
 const searchInput = document.getElementById('search-input');
 const refreshBtn = document.getElementById('refresh-btn');
+const sortBtn = document.getElementById('sort-btn');
+const sortOptions = document.getElementById('sort-options');
+
+// Sort state
+let currentSort = 'recent'; // Default sort by recent
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
@@ -37,6 +42,19 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput?.addEventListener('input', handleSearch);
     refreshBtn?.addEventListener('click', loadTransactions);
     
+    // Sort functionality
+    sortBtn?.addEventListener('click', toggleSortOptions);
+    
+    // Sort option event listeners
+    const sortOptionElements = document.querySelectorAll('.sort-option');
+    sortOptionElements.forEach(option => {
+        option.addEventListener('click', (e) => {
+            const sortType = e.currentTarget.getAttribute('data-sort');
+            handleSort(sortType);
+            closeSortOptions();
+        });
+    });
+    
     // Edit form event listener
     const editForm = document.getElementById('edit-transaction-form');
     if (editForm) {
@@ -57,6 +75,11 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (e.target.id === 'delete-modal') {
                 closeDeleteModal();
             }
+        }
+        
+        // Close sort dropdown when clicking outside
+        if (!e.target.closest('.sort-dropdown')) {
+            closeSortOptions();
         }
     });
     
@@ -108,15 +131,8 @@ async function loadTransactions() {
             });
         });
         
-        // Sort by timestamp (newest first)
-        allTransactions.sort((a, b) => {
-            const dateA = new Date(a.timestamp || 0);
-            const dateB = new Date(b.timestamp || 0);
-            return dateB - dateA;
-        });
-        
         filteredTransactions = [...allTransactions];
-        renderTransactionTable();
+        applySorting(); // Apply current sort
         
     } catch (error) {
         console.error('Error loading transactions:', error);
@@ -557,7 +573,7 @@ function handleSearch() {
         });
     }
     
-    renderTransactionTable();
+    applySorting(); // Apply current sort after filtering
 }
 
 // Show loading state
@@ -834,7 +850,134 @@ function showSuccessMessage(message) {
     }, 3000);
 }
 
+// === SORT FUNCTIONALITY ===
+
+// Toggle sort dropdown
+function toggleSortOptions() {
+    const sortOptions = document.getElementById('sort-options');
+    const sortBtn = document.getElementById('sort-btn');
+    
+    if (sortOptions && sortBtn) {
+        const isOpen = sortOptions.classList.contains('show');
+        
+        if (isOpen) {
+            closeSortOptions();
+        } else {
+            openSortOptions();
+        }
+    }
+}
+
+// Open sort dropdown
+function openSortOptions() {
+    const sortOptions = document.getElementById('sort-options');
+    const sortBtn = document.getElementById('sort-btn');
+    
+    if (sortOptions && sortBtn) {
+        sortOptions.classList.add('show');
+        sortBtn.classList.add('active');
+        
+        // Update active sort option
+        updateActiveSortOption();
+    }
+}
+
+// Close sort dropdown
+function closeSortOptions() {
+    const sortOptions = document.getElementById('sort-options');
+    const sortBtn = document.getElementById('sort-btn');
+    
+    if (sortOptions && sortBtn) {
+        sortOptions.classList.remove('show');
+        sortBtn.classList.remove('active');
+    }
+}
+
+// Update active sort option visual indicator
+function updateActiveSortOption() {
+    const sortOptionElements = document.querySelectorAll('.sort-option');
+    sortOptionElements.forEach(option => {
+        option.classList.remove('active');
+        if (option.getAttribute('data-sort') === currentSort) {
+            option.classList.add('active');
+        }
+    });
+}
+
+// Handle sort selection
+function handleSort(sortType) {
+    currentSort = sortType;
+    updateActiveSortOption();
+    applySorting();
+}
+
+// Apply sorting to current filtered transactions
+function applySorting() {
+    switch (currentSort) {
+        case 'name-asc':
+            filteredTransactions.sort((a, b) => {
+                const nameA = (a.fullName || '').toLowerCase();
+                const nameB = (b.fullName || '').toLowerCase();
+                return nameA.localeCompare(nameB);
+            });
+            break;
+            
+        case 'name-desc':
+            filteredTransactions.sort((a, b) => {
+                const nameA = (a.fullName || '').toLowerCase();
+                const nameB = (b.fullName || '').toLowerCase();
+                return nameB.localeCompare(nameA);
+            });
+            break;
+            
+        case 'recent':
+            filteredTransactions.sort((a, b) => {
+                const dateA = new Date(a.timestamp || 0);
+                const dateB = new Date(b.timestamp || 0);
+                return dateB - dateA; // Newest first
+            });
+            break;
+            
+        case 'oldest':
+            filteredTransactions.sort((a, b) => {
+                const dateA = new Date(a.timestamp || 0);
+                const dateB = new Date(b.timestamp || 0);
+                return dateA - dateB; // Oldest first
+            });
+            break;
+            
+        case 'event-asc':
+            filteredTransactions.sort((a, b) => {
+                const dateA = new Date(a.eventStartDate || 0);
+                const dateB = new Date(b.eventStartDate || 0);
+                return dateA - dateB; // Earliest first
+            });
+            break;
+            
+        case 'event-desc':
+            filteredTransactions.sort((a, b) => {
+                const dateA = new Date(a.eventStartDate || 0);
+                const dateB = new Date(b.eventStartDate || 0);
+                return dateB - dateA; // Latest first
+            });
+            break;
+            
+        default:
+            // Default to recent (newest first)
+            filteredTransactions.sort((a, b) => {
+                const dateA = new Date(a.timestamp || 0);
+                const dateB = new Date(b.timestamp || 0);
+                return dateB - dateA;
+            });
+    }
+    
+    // Re-render the table with sorted data
+    renderTransactionTable();
+}
+
 // Make functions globally available
+window.toggleSortOptions = toggleSortOptions;
+window.handleSort = handleSort;
 window.closeEditModal = closeEditModal;
 window.closeDeleteModal = closeDeleteModal;
 window.confirmDelete = confirmDelete;

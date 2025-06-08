@@ -90,11 +90,39 @@ $(document).ready(function () {
 
                     // ✅ Load profile image if available
                     if (userData.profileImageUrl) {
+                        const $img = $("<img>", {
+                            src: userData.profileImageUrl,
+                            alt: "Profile Picture",
+                            css: {
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                                borderRadius: "50%"
+                            },
+                            error: function() {
+                                // Fallback to default avatar if image fails to load
+                                console.warn("Profile image failed to load, showing default avatar");
+                                $(".avatar-placeholder").html(`
+                                    <div class="avatar-content">
+                                        <i class="fas fa-user"></i>
+                                        <span>AVATAR</span>
+                                    </div>
+                                `);
+                                $(".avatar-reset-btn").hide();
+                            }
+                        });
+                        
+                        $(".avatar-placeholder").empty().append($img);
+                        $(".avatar-reset-btn").css("display", "flex");
+                    } else {
+                        // No profile image, show default avatar
                         $(".avatar-placeholder").html(`
-                        <img src="${userData.profileImageUrl}" 
-                             alt="Profile Picture"
-                             style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />
-                    `);
+                            <div class="avatar-content">
+                                <i class="fas fa-user"></i>
+                                <span>AVATAR</span>
+                            </div>
+                        `);
+                        $(".avatar-reset-btn").hide();
                     }
 
                     $("body").addClass("loaded");
@@ -142,11 +170,11 @@ $(document).ready(function () {
         const $fileInput = $("#profile-image-upload");
 
         $avatarPlaceholder.html(`
-        <div class="avatar-content">
-            <i class="fas fa-cloud"></i>
-            <span>AVATAR</span>
-        </div>
-    `);
+            <div class="avatar-content">
+                <i class="fas fa-user"></i>
+                <span>AVATAR</span>
+            </div>
+        `);
 
         $resetButton.hide();
         $fileInput.val("");
