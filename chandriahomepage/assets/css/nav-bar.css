@@ -145,11 +145,38 @@
   cursor: pointer;
 }
 
+/* Ensure button elements have consistent styling */
+button.header-action-btn {
+  background: rgba(255, 133, 177, 0.1) !important;
+  border: 2px solid transparent !important;
+}
+
 .header-action-btn:hover {
-  background: var(--first-color);
-  border-color: var(--first-color);
+  background: rgba(255, 192, 203, 0.3);
+  border-color: rgba(255, 192, 203, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 192, 203, 0.2);
+}
+
+/* Ensure button elements have consistent hover styling */
+button.header-action-btn:hover {
+  background: rgba(255, 192, 203, 0.3) !important;
+  border-color: rgba(255, 192, 203, 0.5) !important;
+}
+
+/* Active state styling */
+.header-action-btn.active,
+.header-action-btn:active {
+  background: rgba(255, 192, 203, 0.4);
+  border-color: #e91e63;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(255, 133, 177, 0.3);
+}
+
+button.header-action-btn.active,
+button.header-action-btn:active {
+  background: rgba(255, 192, 203, 0.4) !important;
+  border-color: #e91e63 !important;
 }
 
 .header-action-btn img {
@@ -158,8 +185,14 @@
   transition: filter 0.3s ease;
 }
 
+/* Make account icon slightly larger */
+button.header-action-btn img[src*="icon-user"] {
+  width: 24px;
+  height: 24px;
+}
+
 .header-action-btn:hover img {
-  filter: brightness(0) invert(1);
+  filter: hue-rotate(315deg) saturate(1.5) brightness(0.8);
 }
 
 /* Count badge for cart and wishlist */
@@ -181,10 +214,18 @@
 }
 
 .header-action-btn:hover .count {
-  background: white;
-  color: var(--first-color);
-  box-shadow: 0 2px 8px rgba(255, 133, 177, 0.3);
+  background: var(--primary-color);
+  color: white;
+  box-shadow: 0 2px 8px rgba(255, 133, 177, 0.4);
   animation: pulse-count 2s infinite;
+}
+
+/* Active state count badge */
+.header-action-btn.active .count,
+.header-action-btn:active .count {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: 0 2px 8px rgba(255, 133, 177, 0.4);
 }
 
 @keyframes pulse-count {
@@ -328,49 +369,43 @@ body.nav-open {
   outline: none !important;
 }
 
-/*=============== PAGE-SPECIFIC FOCUS STATES ===============*/
-/* Wishlist page focus state */
-body:has([src*="wishlist.html"]) .header-action-btn[href*="wishlist"],
-.header-action-btn[href*="wishlist"]:has(+ *):where(:target),
-body:where(:has(section.wishlist)) .header-action-btn[href*="wishlist"] {
-  background: var(--primary-color) !important;
-  border-color: var(--primary-color) !important;
+/*=============== PAGE-SPECIFIC ACTIVE STATES ===============*/
+/* These styles will be applied when on specific pages to show which page is active */
+
+/* Wishlist page active state */
+body.wishlist-page .header-action-btn[href*="wishlist"] {
+  background: rgba(255, 192, 203, 0.4) !important;
+  border-color: #e91e63 !important;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(255, 133, 177, 0.3);
 }
 
-body:has([src*="wishlist.html"]) .header-action-btn[href*="wishlist"] img,
-.header-action-btn[href*="wishlist"]:has(+ *):where(:target) img,
-body:where(:has(section.wishlist)) .header-action-btn[href*="wishlist"] img {
-  filter: brightness(0) invert(1) !important;
+body.wishlist-page .header-action-btn[href*="wishlist"] img {
+  filter: hue-rotate(315deg) saturate(1.5) brightness(0.8) !important;
 }
 
-/* Cart page focus state */
-body:has([src*="cart.html"]) .header-action-btn[href*="cart"],
-body:where(:has(section.cart)) .header-action-btn[href*="cart"] {
-  background: var(--primary-color) !important;
-  border-color: var(--primary-color) !important;
+/* Cart page active state */
+body.cart-page .header-action-btn[href*="cart"] {
+  background: rgba(255, 192, 203, 0.4) !important;
+  border-color: #e91e63 !important;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(255, 133, 177, 0.3);
 }
 
-body:has([src*="cart.html"]) .header-action-btn[href*="cart"] img,
-body:where(:has(section.cart)) .header-action-btn[href*="cart"] img {
-  filter: brightness(0) invert(1) !important;
+body.cart-page .header-action-btn[href*="cart"] img {
+  filter: hue-rotate(315deg) saturate(1.5) brightness(0.8) !important;
 }
 
-/* Account/Settings page focus state */
-body:has([src*="accounts.html"]) .header-action-btn[href*="accounts"],
-body:where(:has(section.account-settings)) .header-action-btn[href*="accounts"] {
-  background: var(--primary-color) !important;
-  border-color: var(--primary-color) !important;
+/* Account page active state */
+body.account-page .header-action-btn[onclick*="showAuthModal"] {
+  background: rgba(255, 192, 203, 0.4) !important;
+  border-color: #e91e63 !important;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(255, 133, 177, 0.3);
 }
 
-body:has([src*="accounts.html"]) .header-action-btn[href*="accounts"] img,
-body:where(:has(section.account-settings)) .header-action-btn[href*="accounts"] img {
-  filter: brightness(0) invert(1) !important;
+body.account-page .header-action-btn[onclick*="showAuthModal"] img {
+  filter: hue-rotate(315deg) saturate(1.5) brightness(0.8) !important;
 }
 
 /*=============== RESPONSIVE DESIGN ===============*/
