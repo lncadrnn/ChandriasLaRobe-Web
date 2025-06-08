@@ -265,7 +265,7 @@ class ChandriasChatbot {    constructor() {
         const bubble = document.getElementById('chatbotBubble');
         if (!bubble) return;        let isDragging = false;
         let startX, startY, initialX, initialY;
-        let currentY = 0;
+        let currentX = 0, currentY = 0;
 
         // Add draggable class
         bubble.classList.add('draggable');
@@ -300,25 +300,54 @@ class ChandriasChatbot {    constructor() {
             e.preventDefault();
 
             const event = e.type.includes('touch') ? e.touches[0] : e;
+            currentX = event.clientX - startX;
             currentY = event.clientY - startY;
 
-            // Calculate new vertical position only
+            // Calculate new position
+            let newX = initialX + currentX;
             let newY = initialY + currentY;
 
-            // Keep bubble within viewport bounds vertically
             const bubbleSize = bubble.offsetWidth;
             const margin = 10;
+            const edgeThreshold = 80; // Distance from edge to be considered "on edge"
 
+            // Constrain to edges only
+            newX = Math.max(margin, Math.min(window.innerWidth - bubbleSize - margin, newX));
             newY = Math.max(margin, Math.min(window.innerHeight - bubbleSize - margin, newY));
 
-            // Keep horizontal position locked to current side
-            let newX = initialX;
-            if (initialX < window.innerWidth / 2) {
-                // Lock to left side
+            // Determine which edge the bubble should snap to while dragging
+            const distanceToLeft = newX;
+            const distanceToRight = window.innerWidth - newX - bubbleSize;
+            const distanceToTop = newY;
+            const distanceToBottom = window.innerHeight - newY - bubbleSize;
+
+            // Find the closest edge
+            const minDistance = Math.min(distanceToLeft, distanceToRight, distanceToTop, distanceToBottom);
+
+            // Snap to the closest edge
+            if (minDistance === distanceToLeft && distanceToLeft < edgeThreshold) {
+                // Snap to left edge
                 newX = margin;
-            } else {
-                // Lock to right side
+            } else if (minDistance === distanceToRight && distanceToRight < edgeThreshold) {
+                // Snap to right edge
                 newX = window.innerWidth - bubbleSize - margin;
+            } else if (minDistance === distanceToTop && distanceToTop < edgeThreshold) {
+                // Snap to top edge
+                newY = margin;
+            } else if (minDistance === distanceToBottom && distanceToBottom < edgeThreshold) {
+                // Snap to bottom edge
+                newY = window.innerHeight - bubbleSize - margin;
+            } else {
+                // If not close to any edge, snap to the nearest edge
+                if (minDistance === distanceToLeft) {
+                    newX = margin;
+                } else if (minDistance === distanceToRight) {
+                    newX = window.innerWidth - bubbleSize - margin;
+                } else if (minDistance === distanceToTop) {
+                    newY = margin;
+                } else {
+                    newY = window.innerHeight - bubbleSize - margin;
+                }
             }
 
             // Apply new position
@@ -327,7 +356,7 @@ class ChandriasChatbot {    constructor() {
             bubble.style.top = newY + 'px';
             bubble.style.right = 'auto';
             bubble.style.bottom = 'auto';
-        }        function dragEnd(e) {
+        }function dragEnd(e) {
             if (!isDragging) return;
             
             isDragging = false;
@@ -341,23 +370,40 @@ class ChandriasChatbot {    constructor() {
 
             // Snap to edges for better UX
             snapToEdges();
-        }function snapToEdges() {
+        }        function snapToEdges() {
             const rect = bubble.getBoundingClientRect();
             const bubbleSize = bubble.offsetWidth;
             const margin = 20;
             
-            let newX, newY = rect.top;
+            let newX = rect.left;
+            let newY = rect.top;
 
-            // Determine which side to snap to based on current position
-            if (rect.left < window.innerWidth / 2) {
-                // Snap to left side
+            // Calculate distances to each edge
+            const distanceToLeft = rect.left;
+            const distanceToRight = window.innerWidth - rect.right;
+            const distanceToTop = rect.top;
+            const distanceToBottom = window.innerHeight - rect.bottom;
+
+            // Find the closest edge
+            const minDistance = Math.min(distanceToLeft, distanceToRight, distanceToTop, distanceToBottom);
+
+            // Snap to the closest edge
+            if (minDistance === distanceToLeft) {
+                // Snap to left edge
                 newX = margin;
-            } else {
-                // Snap to right side
+            } else if (minDistance === distanceToRight) {
+                // Snap to right edge
                 newX = window.innerWidth - bubbleSize - margin;
+            } else if (minDistance === distanceToTop) {
+                // Snap to top edge
+                newY = margin;
+            } else {
+                // Snap to bottom edge
+                newY = window.innerHeight - bubbleSize - margin;
             }
 
-            // Ensure it stays within vertical bounds
+            // Ensure it stays within bounds
+            newX = Math.max(margin, Math.min(window.innerWidth - bubbleSize - margin, newX));
             newY = Math.max(margin, Math.min(window.innerHeight - bubbleSize - margin, newY));
 
             // Animate to final position
@@ -379,10 +425,11 @@ class ChandriasChatbot {    constructor() {
         }        // Replace the existing click handler with one that handles dragging
         bubble.removeEventListener('click', this.maximizeChatbotHandler);
         bubble.addEventListener('click', (e) => {
-            // If the user dragged more than 5px vertically, don't trigger chat opening
-            if (Math.abs(currentY) > 5) {
+            // If the user dragged more than 5px in any direction, don't trigger chat opening
+            if (Math.abs(currentX) > 5 || Math.abs(currentY) > 5) {
                 e.preventDefault();
                 e.stopPropagation();
+                currentX = 0;
                 currentY = 0;
                 return;
             }

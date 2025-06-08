@@ -65,7 +65,7 @@ export const ChatbotPersistence = {
         }
         // Default to minimized if no recent state found
         return { isMinimized: true };
-    },    // Apply saved position to chatbot bubble - restrict to sides only
+    },    // Apply saved position to chatbot bubble - restrict to edges only
     applyPosition() {
         const bubble = document.getElementById('chatbotBubble');
         if (!bubble) return;
@@ -75,20 +75,31 @@ export const ChatbotPersistence = {
             const bubbleSize = bubble.offsetWidth || 60;
             const margin = 20;
             
-            // Force position to either left or right side
-            let x, y;
+            let x = savedPosition.x;
+            let y = savedPosition.y;
             
-            // Determine which side based on saved x position
-            if (savedPosition.x < window.innerWidth / 2) {
-                // Snap to left side
-                x = margin;
+            // Ensure position is within current viewport bounds
+            x = Math.max(margin, Math.min(window.innerWidth - bubbleSize - margin, x));
+            y = Math.max(margin, Math.min(window.innerHeight - bubbleSize - margin, y));
+            
+            // Determine which edge this position is closest to and snap to it
+            const distanceToLeft = x;
+            const distanceToRight = window.innerWidth - x - bubbleSize;
+            const distanceToTop = y;
+            const distanceToBottom = window.innerHeight - y - bubbleSize;
+            
+            const minDistance = Math.min(distanceToLeft, distanceToRight, distanceToTop, distanceToBottom);
+            
+            // Snap to the closest edge
+            if (minDistance === distanceToLeft) {
+                x = margin; // Left edge
+            } else if (minDistance === distanceToRight) {
+                x = window.innerWidth - bubbleSize - margin; // Right edge
+            } else if (minDistance === distanceToTop) {
+                y = margin; // Top edge
             } else {
-                // Snap to right side
-                x = window.innerWidth - bubbleSize - margin;
+                y = window.innerHeight - bubbleSize - margin; // Bottom edge
             }
-            
-            // Keep vertical position but ensure it's within bounds
-            y = Math.max(margin, Math.min(window.innerHeight - bubbleSize - margin, savedPosition.y));
             
             bubble.style.position = 'fixed';
             bubble.style.left = x + 'px';
@@ -96,7 +107,7 @@ export const ChatbotPersistence = {
             bubble.style.right = 'auto';
             bubble.style.bottom = 'auto';
         } else {
-            // Default position: right side, middle of screen
+            // Default position: right edge, middle of screen
             const bubbleSize = bubble.offsetWidth || 60;
             const margin = 20;
             bubble.style.position = 'fixed';
@@ -105,7 +116,7 @@ export const ChatbotPersistence = {
             bubble.style.right = 'auto';
             bubble.style.bottom = 'auto';
         }
-    },    // Initialize persistence for a chatbot instance
+    },// Initialize persistence for a chatbot instance
     initializePersistence(chatbotInstance) {
         if (!chatbotInstance) return;
 
