@@ -1151,6 +1151,10 @@ $(document).ready(function () {
                                         <label>Status:</label>
                                         <span class="status-badge ${getStatusClass(appointmentData.checkoutStatus)}">${appointmentData.checkoutStatus || 'Upcoming'}</span>
                                     </div>
+                                    <div class="info-item">
+                                        <label>Booking Created:</label>
+                                        <span>${formatCreatedDate(appointmentData.createdAt)}</span>
+                                    </div>
                                 </div>
                                 ${appointmentData.customerRequest ? `
                                 <div class="info-item full-width">
@@ -1274,7 +1278,7 @@ $(document).ready(function () {
                             <i class="fas fa-arrow-left"></i>
                             Keep Booking
                         </button>
-                        <button class="btn btn-danger" onclick="confirmCancelBooking('${bookingId}', '${bookingCard ? 'card' : 'none'}')">
+                        <button class="btn btn-danger" onclick="confirmCancelBooking('${bookingId}')">
                             <i class="fas fa-trash"></i>
                             Yes, Cancel Booking
                         </button>
@@ -1352,7 +1356,7 @@ $(document).ready(function () {
     }
 
     // CONFIRM CANCEL BOOKING
-    window.confirmCancelBooking = async function(bookingId, cardRef) {
+    window.confirmCancelBooking = async function(bookingId) {
         try {
             const bookingCard = window.currentBookingCard;
             

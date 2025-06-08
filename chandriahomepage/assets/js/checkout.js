@@ -313,4 +313,20 @@ $(document).ready(function () {
             $("#cart-count").text("0"); // Fallback to 0 on error
         }
     }
+
+    // HANDLE ACCOUNT ICON CLICK
+    window.handleAccountClick = function() {
+        const userEmail = localStorage.getItem('userEmail');
+        const currentUser = auth.currentUser;
+        
+        if (userEmail && currentUser && currentUser.emailVerified) {
+            // Redirect to accounts page if user is logged in
+            window.location.href = './accounts.html';
+        } else {
+            // Show auth modal if user is not logged in
+            if (typeof window.showAuthModal === 'function') {
+                window.showAuthModal();
+            }
+        }
+    };
 });

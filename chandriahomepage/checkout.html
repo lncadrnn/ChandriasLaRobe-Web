@@ -89,7 +89,7 @@
                         <img src="assets/img/icon-cart.svg" alt="" />
                         <span class="count" id="cart-count">0</span>
                     </a>
-                    <button class="header-action-btn" onclick="showAuthModal()">
+                    <button class="header-action-btn" onclick="handleAccountClick()">
                         <img src="assets/img/icon-user.svg" alt="" />
                     </button>
                 </div>
@@ -127,18 +127,21 @@
                                 placeholder="Name"
                                 class="form-input"
                                 id="customer-name"
+                                readonly
                             />
                             <input
                                 type="email"
                                 placeholder="Email"
                                 class="form-input"
                                 id="customer-email"
+                                readonly
                             />
                             <input
                                 type="tel"
                                 placeholder="Phone"
                                 class="form-input"
                                 id="customer-contact"
+                                readonly
                             />
                             <input
                                 type="date"

@@ -189,7 +189,7 @@ async function renderTransactionTable() {
     if (filteredTransactions.length === 0) {
         tableBody.innerHTML = `
             <tr>
-                <td colspan="9" class="table-empty">
+                <td colspan="10" class="table-empty">
                     <i class='bx bx-file'></i> No transactions found
                 </td>
             </tr>
@@ -269,6 +269,16 @@ async function renderTransactionTable() {
                 <td><span class="status-badge ${statusClass}">${rentalStatus}</span></td>
                 <td><strong>₱${totalPayment.toLocaleString()}</strong></td>
                 <td><button class="action-btn view-details" data-id="${transaction.id}">View Details</button></td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="edit-btn" data-id="${transaction.id}" title="Edit Transaction">
+                            <i class='bx bx-edit'></i> Edit
+                        </button>
+                        <button class="delete-btn" data-id="${transaction.id}" title="Delete Transaction">
+                            <i class='bx bx-trash'></i> Delete
+                        </button>
+                    </div>
+                </td>
             </tr>
         `;
         
@@ -282,6 +292,22 @@ async function renderTransactionTable() {
         btn.addEventListener('click', (e) => {
             const transactionId = e.target.dataset.id;
             showTransactionDetails(transactionId);
+        });
+    });
+
+    // Add click event listeners for edit buttons
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const transactionId = e.target.closest('.edit-btn').dataset.id;
+            editTransaction(transactionId);
+        });
+    });
+
+    // Add click event listeners for delete buttons
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const transactionId = e.target.closest('.delete-btn').dataset.id;
+            deleteTransaction(transactionId);
         });
     });
 }
@@ -456,7 +482,7 @@ function handleSearch() {
 function showLoading() {
     tableBody.innerHTML = `
         <tr>
-            <td colspan="9" class="table-loading">
+            <td colspan="10" class="table-loading">
                 <i class='bx bx-loader-alt bx-spin'></i> Loading rental history...
             </td>
         </tr>
@@ -467,9 +493,59 @@ function showLoading() {
 function showError(message) {
     tableBody.innerHTML = `
         <tr>
-            <td colspan="9" class="table-error">
+            <td colspan="10" class="table-error">
                 <i class='bx bx-error'></i> ${message}
             </td>
         </tr>
     `;
+}
+
+// Edit transaction function
+function editTransaction(transactionId) {
+    const transaction = allTransactions.find(t => t.id === transactionId);
+    if (!transaction) {
+        alert('Transaction not found!');
+        return;
+    }
+    
+    // Redirect to rental.html with transaction ID for editing
+    const editUrl = `rental.html?edit=${transactionId}`;
+    window.location.href = editUrl;
+}
+
+// Delete transaction function
+async function deleteTransaction(transactionId) {
+    const transaction = allTransactions.find(t => t.id === transactionId);
+    if (!transaction) {
+        alert('Transaction not found!');
+        return;
+    }
+    
+    // Confirm deletion
+    const confirmMessage = `Are you sure you want to delete the transaction for ${transaction.fullName || 'Unknown Customer'}?\n\nTransaction Code: ${transaction.transactionCode || transactionId.substring(0, 8)}\nThis action cannot be undone.`;
+    
+    if (!confirm(confirmMessage)) {
+        return;
+    }
+    
+    try {
+        // Import deleteDoc function
+        const { deleteDoc, doc } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js');
+        
+        // Delete from Firebase
+        await deleteDoc(doc(chandriaDB, 'rentals', transactionId));
+        
+        // Remove from local arrays
+        allTransactions = allTransactions.filter(t => t.id !== transactionId);
+        filteredTransactions = filteredTransactions.filter(t => t.id !== transactionId);
+        
+        // Re-render table
+        await renderTransactionTable();
+        
+        alert('Transaction deleted successfully!');
+        
+    } catch (error) {
+        console.error('Error deleting transaction:', error);
+        alert('Error deleting transaction. Please try again.');
+    }
 }

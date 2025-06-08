@@ -317,6 +317,10 @@ body {
     gap: 0.5rem;
 }
 
+.booking-details p:first-of-type {
+    margin-top: 0;
+}
+
 .booking-details i {
     color: var(--accent-pink);
     width: 16px;
@@ -1808,3 +1812,242 @@ body.loaded #loader {
     }
 }
 /* --====== END OF BOOKING DETAILS MODAL STYLES ======-- */
+
+/* --====== CANCEL CONFIRMATION MODAL STYLES ======-- */
+.cancel-confirmation-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.cancel-confirmation-modal .modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.cancel-confirmation-modal .modal-content {
+    position: relative;
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    width: 90%;
+    max-width: 480px;
+    margin: 1rem;
+    animation: slideInUp 0.3s ease;
+    overflow: hidden;
+}
+
+.cancel-confirmation-modal .modal-header {
+    padding: 1.5rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: between;
+    gap: 1rem;
+    background: #fef2f2;
+}
+
+.cancel-confirmation-modal .modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.cancel-confirmation-modal .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--gray-600);
+    padding: 0.25rem;
+    border-radius: var(--border-radius-sm);
+    transition: all 0.2s ease;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cancel-confirmation-modal .close-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: var(--gray-800);
+}
+
+.cancel-confirmation-modal .modal-body {
+    padding: 1.5rem;
+}
+
+.cancel-confirmation-modal .warning-content p {
+    margin: 0 0 1rem 0;
+    line-height: 1.6;
+}
+
+.cancel-confirmation-modal .booking-title-display {
+    font-weight: 600;
+    color: var(--accent-pink);
+    font-size: 1.1rem;
+    margin: 0.5rem 0 1.5rem 0 !important;
+    padding: 0.75rem;
+    background: var(--accent-pink-soft);
+    border-radius: var(--border-radius-sm);
+    border-left: 4px solid var(--accent-pink);
+}
+
+.cancel-confirmation-modal .warning-message {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: var(--border-radius-sm);
+    padding: 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.cancel-confirmation-modal .warning-message i {
+    color: #dc2626;
+    font-size: 1.25rem;
+    margin-top: 0.125rem;
+    flex-shrink: 0;
+}
+
+.cancel-confirmation-modal .warning-message p {
+    margin: 0;
+    color: #7f1d1d;
+    font-weight: 500;
+}
+
+.cancel-confirmation-modal .modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    background: var(--gray-50);
+}
+
+.cancel-confirmation-modal .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.cancel-confirmation-modal .btn-secondary {
+    background: var(--gray-200);
+    color: var(--gray-700);
+}
+
+.cancel-confirmation-modal .btn-secondary:hover {
+    background: var(--gray-300);
+}
+
+.cancel-confirmation-modal .btn-danger {
+    background: #dc2626;
+    color: white;
+}
+
+.cancel-confirmation-modal .btn-danger:hover {
+    background: #b91c1c;
+}
+
+/* Animations for cancel modal */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Mobile responsiveness for cancel modal */
+@media (max-width: 768px) {
+    .cancel-confirmation-modal .modal-content {
+        width: 95%;
+        margin: 0.5rem;
+    }
+    
+    .cancel-confirmation-modal .modal-header {
+        padding: 1rem;
+    }
+    
+    .cancel-confirmation-modal .modal-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .cancel-confirmation-modal .modal-body {
+        padding: 1rem;
+    }
+    
+    .cancel-confirmation-modal .modal-footer {
+        padding: 1rem;
+        flex-direction: column;
+    }
+    
+    .cancel-confirmation-modal .btn {
+        padding: 0.875rem;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .cancel-confirmation-modal .modal-content {
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .cancel-confirmation-modal .modal-body {
+        flex: 1;
+        overflow-y: auto;
+    }
+}
+/* --====== END OF CANCEL CONFIRMATION MODAL STYLES ======-- */
+
+/* Style for booking created date */
+.booking-created {
+    font-size: 0.85rem;
+    color: var(--gray-600);
+    margin: 0.25rem 0 0.5rem 0;
+}
+
+.booking-created i {
+    margin-right: 0.5rem;
+    color: var(--accent-pink);
+}

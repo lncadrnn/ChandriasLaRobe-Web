@@ -125,6 +125,21 @@
     color: hsl(230, 16%, 45%);
 }
 
+/* Readonly form input styling */
+.form-input[readonly] {
+    background: hsl(0, 0%, 98%);
+    color: hsl(230, 16%, 45%);
+    border-color: hsl(0, 0%, 85%);
+    cursor: not-allowed;
+    font-weight: 500;
+}
+
+.form-input[readonly]:focus {
+    border-color: hsl(0, 0%, 85%);
+    box-shadow: none;
+    transform: none;
+}
+
 .textarea {
     resize: vertical;
     min-height: 120px;
