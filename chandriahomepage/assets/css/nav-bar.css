@@ -377,9 +377,9 @@ body.nav-open {
 /* Wishlist page active state */
 body.page-wishlist .header-action-btn[href*="wishlist"] {
   background: white !important;
-  border: 4px solid #b91c5c !important;
+  border: 3px solid var(--primary-color) !important;
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(185, 28, 92, 0.4) !important;
+  box-shadow: 0 5px 15px rgba(255, 133, 177, 0.4) !important;
 }
 
 body.page-wishlist .header-action-btn[href*="wishlist"] img {
@@ -389,9 +389,9 @@ body.page-wishlist .header-action-btn[href*="wishlist"] img {
 /* Remove hover effect for active wishlist icon */
 body.page-wishlist .header-action-btn[href*="wishlist"]:hover {
   background: white !important;
-  border: 4px solid #b91c5c !important;
+  border: 3px solid var(--primary-color) !important;
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(185, 28, 92, 0.4) !important;
+  box-shadow: 0 5px 15px rgba(255, 133, 177, 0.4) !important;
 }
 
 body.page-wishlist .header-action-btn[href*="wishlist"]:hover img {
@@ -401,9 +401,9 @@ body.page-wishlist .header-action-btn[href*="wishlist"]:hover img {
 /* Cart page active state */
 body.page-cart .header-action-btn[href*="cart"] {
   background: white !important;
-  border: 4px solid #b91c5c !important;
+  border: 3px solid var(--primary-color) !important;
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(185, 28, 92, 0.4) !important;
+  box-shadow: 0 5px 15px rgba(255, 133, 177, 0.4) !important;
 }
 
 body.page-cart .header-action-btn[href*="cart"] img {
@@ -413,9 +413,9 @@ body.page-cart .header-action-btn[href*="cart"] img {
 /* Remove hover effect for active cart icon */
 body.page-cart .header-action-btn[href*="cart"]:hover {
   background: white !important;
-  border: 4px solid #b91c5c !important;
+  border: 3px solid var(--primary-color) !important;
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(185, 28, 92, 0.4) !important;
+  box-shadow: 0 5px 15px rgba(255, 133, 177, 0.4) !important;
 }
 
 body.page-cart .header-action-btn[href*="cart"]:hover img {
@@ -426,9 +426,9 @@ body.page-cart .header-action-btn[href*="cart"]:hover img {
 body.page-accounts .header-action-btn[onclick*="showAuthModal"],
 body.page-accounts button.header-action-btn[onclick*="showAuthModal"] {
   background: white !important;
-  border: 4px solid #b91c5c !important;
+  border: 3px solid var(--primary-color) !important;
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(185, 28, 92, 0.4) !important;
+  box-shadow: 0 5px 15px rgba(255, 133, 177, 0.4) !important;
 }
 
 body.page-accounts .header-action-btn[onclick*="showAuthModal"] img,
@@ -440,9 +440,9 @@ body.page-accounts button.header-action-btn[onclick*="showAuthModal"] img {
 body.page-accounts .header-action-btn[onclick*="showAuthModal"]:hover,
 body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:hover {
   background: white !important;
-  border: 4px solid #b91c5c !important;
+  border: 3px solid var(--primary-color) !important;
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(185, 28, 92, 0.4) !important;
+  box-shadow: 0 5px 15px rgba(255, 133, 177, 0.4) !important;
 }
 
 body.page-accounts .header-action-btn[onclick*="showAuthModal"]:hover img,
@@ -578,8 +578,8 @@ html body.page-wishlist .header-action-btn[href*="wishlist"],
 html body.page-wishlist .header-action-btn[href*="wishlist"]:hover,
 html body.page-wishlist .header-action-btn[href*="wishlist"]:focus {
   background: white !important;
-  border: 4px solid #b91c5c !important;
-  border-color: #b91c5c !important;
+  border: 3px solid var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
   transform: translateY(-2px) !important;
   box-shadow: 0 5px 15px rgba(185, 28, 92, 0.4) !important;
 }
@@ -594,8 +594,8 @@ html body.page-cart .header-action-btn[href*="cart"],
 html body.page-cart .header-action-btn[href*="cart"]:hover,
 html body.page-cart .header-action-btn[href*="cart"]:focus {
   background: white !important;
-  border: 4px solid #b91c5c !important;
-  border-color: #b91c5c !important;
+  border: 3px solid var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
   transform: translateY(-2px) !important;
   box-shadow: 0 5px 15px rgba(185, 28, 92, 0.4) !important;
 }
@@ -613,8 +613,8 @@ html body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:hover
 html body.page-accounts .header-action-btn[onclick*="showAuthModal"]:focus,
 html body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:focus {
   background: white !important;
-  border: 4px solid #b91c5c !important;
-  border-color: #b91c5c !important;
+  border: 3px solid var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
   transform: translateY(-2px) !important;
   box-shadow: 0 5px 15px rgba(185, 28, 92, 0.4) !important;
 }
