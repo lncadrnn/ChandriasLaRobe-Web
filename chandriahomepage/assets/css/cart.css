@@ -126,6 +126,18 @@
   transform: translateY(-2px);
 }
 
+/* =============== CART BUTTON SPECIFIC STYLES =============== */
+/* Override btn-secondary hover for Continue Shopping button in cart */
+.cart-action-buttons .btn-secondary:hover {
+  background: transparent !important; /* Keep background transparent */
+  color: var(--title-color) !important; /* Keep original text color */
+  border: 2px solid hsl(346, 100%, 74%) !important; /* Pink border only */
+  transform: translateY(-1px); /* Subtle lift effect */
+  box-shadow: 0 2px 8px rgba(255, 133, 177, 0.2); /* Subtle pink shadow */
+}
+
+/*=============== END CART BUTTON STYLES ===============*/
+
 /* =============== RESPONSIVE DESIGN =============== */
 @media (max-width: 768px) {
   .cart-auth-required .auth-required-content {
@@ -418,6 +430,15 @@
     padding: 1rem;
     font-size: 1rem;
     justify-content: center;
+  }
+  
+  /* Reverse button order on mobile - Book for Appointment first */
+  .cart-action-buttons .btn-secondary {
+    order: 2;
+  }
+  
+  .cart-action-buttons .btn-primary {
+    order: 1;
   }
 }
 
