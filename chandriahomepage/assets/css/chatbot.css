@@ -229,6 +229,24 @@
     justify-content: center;
     animation: pulse 2s infinite;
     border: 3px solid #fbadb5;
+    /* Add will-change for better performance during dragging */
+    will-change: transform;
+}
+
+/* Draggable styles */
+.chatbot-bubble.draggable {
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.chatbot-bubble.dragging {
+    cursor: grabbing;
+    z-index: 1001;
+    animation: none; /* Disable pulse animation while dragging */
+    transition: none; /* Disable transitions while dragging */
 }
 
 @media screen and (max-width: 480px) {

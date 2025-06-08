@@ -47,14 +47,18 @@ class ChandriasChatbot {    constructor() {
                 response: "Our Rental Policies:\n\n1. Rental Duration:\n- Standard: 24 hours\n- Extended rental available\n\n2. Requirements:\n- Valid ID\n- Security deposit\n- Signed rental agreement\n\n3. Care Instructions:\n- Handle with care\n- Do not wash items\n- Report any issues immediately\n\n4. Late Returns:\n- Additional fees apply\n- Contact us if delayed\n\n5. Damage Policy:\n- Inspect items before rental\n- Report pre-existing damage\n- Customer responsible for new damage"
             }
         };
-    }
-
-    initialize() {
+    }    initialize() {
         if (this.initialized) return;
         
         this.createChatbotHTML();
         this.loadChatHistory();
         this.attachEventListeners();
+        
+        // Add drag functionality to the bubble
+        setTimeout(() => {
+            this.makeChatbotBubbleDraggable();
+        }, 100); // Small delay to ensure DOM is ready
+        
         this.initialized = true;
     }
 
@@ -97,9 +101,7 @@ class ChandriasChatbot {    constructor() {
         const chatbotContainer = document.createElement('div');
         chatbotContainer.innerHTML = chatbotHTML;
         document.body.appendChild(chatbotContainer);
-    }
-
-    attachEventListeners() {
+    }    attachEventListeners() {
         const chatbot = document.getElementById('chandriasChatbot');
         const chatbotBubble = document.getElementById('chatbotBubble');
         const input = document.getElementById('chatbotInput');
@@ -114,7 +116,10 @@ class ChandriasChatbot {    constructor() {
 
         minimizeBtn.addEventListener('click', () => this.minimizeChatbot());
         closeBtn.addEventListener('click', () => this.closeChatbot());
-        chatbotBubble.addEventListener('click', () => this.maximizeChatbot());
+        
+        // Store reference to the maximize function for the draggable functionality
+        this.maximizeChatbotHandler = () => this.maximizeChatbot();
+        chatbotBubble.addEventListener('click', this.maximizeChatbotHandler);
 
         // FAQ suggestion clicks
         document.getElementById('faqSuggestions').addEventListener('click', (e) => {
@@ -248,37 +253,149 @@ class ChandriasChatbot {    constructor() {
         this.minimizeChatbot();
     }
 
-    saveChatHistory() {
-        localStorage.setItem('chandriasChatHistory', JSON.stringify(this.chatHistory));
-    }
+    makeChatbotBubbleDraggable() {
+        const bubble = document.getElementById('chatbotBubble');
+        if (!bubble) return;
+
+        let isDragging = false;
+        let startX, startY, initialX, initialY;
+        let currentX = 0, currentY = 0;
+
+        // Add draggable class
+        bubble.classList.add('draggable');
+
+        // Mouse events
+        bubble.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
+
+        // Touch events for mobile
+        bubble.addEventListener('touchstart', dragStart, { passive: false });
+        document.addEventListener('touchmove', drag, { passive: false });
+        document.addEventListener('touchend', dragEnd);
+
+        function dragStart(e) {
+            e.preventDefault();
+            
+            // Get initial positions
+            const event = e.type.includes('touch') ? e.touches[0] : e;
+            startX = event.clientX;
+            startY = event.clientY;
+
+            // Get current bubble position
+            const rect = bubble.getBoundingClientRect();
+            initialX = rect.left;
+            initialY = rect.top;
+
+            isDragging = true;
+            bubble.classList.add('dragging');
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+
+            const event = e.type.includes('touch') ? e.touches[0] : e;
+            currentX = event.clientX - startX;
+            currentY = event.clientY - startY;
+
+            // Calculate new position
+            let newX = initialX + currentX;
+            let newY = initialY + currentY;
+
+            // Keep bubble within viewport bounds
+            const bubbleSize = bubble.offsetWidth;
+            const margin = 10; // Minimum distance from viewport edge
+
+            newX = Math.max(margin, Math.min(window.innerWidth - bubbleSize - margin, newX));
+            newY = Math.max(margin, Math.min(window.innerHeight - bubbleSize - margin, newY));
+
+            // Apply new position
+            bubble.style.position = 'fixed';
+            bubble.style.left = newX + 'px';
+            bubble.style.top = newY + 'px';
+            bubble.style.right = 'auto';
+            bubble.style.bottom = 'auto';
+        }
+
+        function dragEnd(e) {
+            if (!isDragging) return;
+            
+            isDragging = false;
+            bubble.classList.remove('dragging');
+
+            // Optional: Snap to edges for better UX
+            snapToEdges();
+        }
+
+        function snapToEdges() {
+            const rect = bubble.getBoundingClientRect();
+            const bubbleSize = bubble.offsetWidth;
+            const margin = 20;
+            
+            let newX = rect.left;
+            let newY = rect.top;
+
+            // Snap to nearest vertical edge if close enough
+            if (rect.left < window.innerWidth / 2) {
+                // Snap to left edge
+                if (rect.left < 100) {
+                    newX = margin;
+                }
+            } else {
+                // Snap to right edge
+                if (rect.right > window.innerWidth - 100) {
+                    newX = window.innerWidth - bubbleSize - margin;
+                }
+            }
+
+            // Ensure it stays within vertical bounds
+            newY = Math.max(margin, Math.min(window.innerHeight - bubbleSize - margin, newY));
+
+            // Animate to final position
+            bubble.style.transition = 'all 0.3s ease';
+            bubble.style.left = newX + 'px';
+            bubble.style.top = newY + 'px';
+
+            // Remove transition after animation completes
+            setTimeout(() => {
+                bubble.style.transition = '';
+            }, 300);
+        }        // Replace the existing click handler with one that handles dragging
+        bubble.removeEventListener('click', this.maximizeChatbotHandler);
+        bubble.addEventListener('click', (e) => {
+            // If the user dragged more than 5px, don't trigger chat opening
+            if (Math.abs(currentX) > 5 || Math.abs(currentY) > 5) {
+                e.preventDefault();
+                e.stopPropagation();
+                currentX = 0;
+                currentY = 0;
+                return;
+            }
+            // Otherwise, trigger the maximize function
+            this.maximizeChatbot();
+        });}
 
     loadChatHistory() {
-        const savedHistory = localStorage.getItem('chandriasChatHistory');
-        if (savedHistory) {
-            this.chatHistory = JSON.parse(savedHistory);
-            // Replay chat history
-            const messagesContainer = document.getElementById('chatbotMessages');
-            messagesContainer.innerHTML = ''; // Clear default message
-            this.chatHistory.forEach(({ message, sender, timestamp }) => {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `message ${sender}-message`;
-                
-                const messageContent = document.createElement('p');
-                messageContent.textContent = message;
-                
-                const timeSpan = document.createElement('span');
-                timeSpan.className = 'timestamp';
-                timeSpan.textContent = new Date(timestamp).toLocaleTimeString([], { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                });
-                
-                messageDiv.appendChild(messageContent);
-                messageDiv.appendChild(timeSpan);
-                messagesContainer.appendChild(messageDiv);
-            });
+        try {
+            const saved = localStorage.getItem('chandria-chatbot-history');
+            if (saved) {
+                this.chatHistory = JSON.parse(saved);
+            }
+        } catch (error) {
+            console.log('No previous chat history found');
         }
     }
+
+    saveChatHistory() {
+        try {
+            localStorage.setItem('chandria-chatbot-history', JSON.stringify(this.chatHistory));
+        } catch (error) {
+            console.log('Could not save chat history');
+        }
+    }
+
+    // ...existing code...
 }
 
 // Export the chatbot class
