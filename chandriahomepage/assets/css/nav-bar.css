@@ -376,7 +376,7 @@ body.nav-open {
 
 /* Wishlist page active state */
 body.page-wishlist .header-action-btn[href*="wishlist"] {
-  background: white !important;
+  background: rgba(255, 192, 203, 0.3) !important;
   border: 3px solid var(--primary-color) !important;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(255, 133, 177, 0.4) !important;
@@ -388,7 +388,7 @@ body.page-wishlist .header-action-btn[href*="wishlist"] img {
 
 /* Remove hover effect for active wishlist icon */
 body.page-wishlist .header-action-btn[href*="wishlist"]:hover {
-  background: white !important;
+  background: rgba(255, 192, 203, 0.3) !important;
   border: 3px solid var(--primary-color) !important;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(255, 133, 177, 0.4) !important;
@@ -400,7 +400,7 @@ body.page-wishlist .header-action-btn[href*="wishlist"]:hover img {
 
 /* Cart page active state */
 body.page-cart .header-action-btn[href*="cart"] {
-  background: white !important;
+  background: rgba(255, 192, 203, 0.3) !important;
   border: 3px solid var(--primary-color) !important;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(255, 133, 177, 0.4) !important;
@@ -412,7 +412,7 @@ body.page-cart .header-action-btn[href*="cart"] img {
 
 /* Remove hover effect for active cart icon */
 body.page-cart .header-action-btn[href*="cart"]:hover {
-  background: white !important;
+  background: rgba(255, 192, 203, 0.3) !important;
   border: 3px solid var(--primary-color) !important;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(255, 133, 177, 0.4) !important;
@@ -425,7 +425,7 @@ body.page-cart .header-action-btn[href*="cart"]:hover img {
 /* Account page active state */
 body.page-accounts .header-action-btn[onclick*="showAuthModal"],
 body.page-accounts button.header-action-btn[onclick*="showAuthModal"] {
-  background: white !important;
+  background: rgba(255, 192, 203, 0.3) !important;
   border: 3px solid var(--primary-color) !important;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(255, 133, 177, 0.4) !important;
@@ -439,7 +439,7 @@ body.page-accounts button.header-action-btn[onclick*="showAuthModal"] img {
 /* Remove hover effect for active account icon */
 body.page-accounts .header-action-btn[onclick*="showAuthModal"]:hover,
 body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:hover {
-  background: white !important;
+  background: rgba(255, 192, 203, 0.3) !important;
   border: 3px solid var(--primary-color) !important;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(255, 133, 177, 0.4) !important;
@@ -577,7 +577,7 @@ body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:hover img 
 html body.page-wishlist .header-action-btn[href*="wishlist"],
 html body.page-wishlist .header-action-btn[href*="wishlist"]:hover,
 html body.page-wishlist .header-action-btn[href*="wishlist"]:focus {
-  background: white !important;
+  background: rgba(255, 192, 203, 0.3) !important;
   border: 3px solid var(--primary-color) !important;
   border-color: var(--primary-color) !important;
   transform: translateY(-2px) !important;
@@ -593,7 +593,7 @@ html body.page-wishlist .header-action-btn[href*="wishlist"]:focus img {
 html body.page-cart .header-action-btn[href*="cart"],
 html body.page-cart .header-action-btn[href*="cart"]:hover,
 html body.page-cart .header-action-btn[href*="cart"]:focus {
-  background: white !important;
+  background: rgba(255, 192, 203, 0.3) !important;
   border: 3px solid var(--primary-color) !important;
   border-color: var(--primary-color) !important;
   transform: translateY(-2px) !important;
@@ -612,7 +612,7 @@ html body.page-accounts .header-action-btn[onclick*="showAuthModal"]:hover,
 html body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:hover,
 html body.page-accounts .header-action-btn[onclick*="showAuthModal"]:focus,
 html body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:focus {
-  background: white !important;
+  background: rgba(255, 192, 203, 0.3) !important;
   border: 3px solid var(--primary-color) !important;
   border-color: var(--primary-color) !important;
   transform: translateY(-2px) !important;

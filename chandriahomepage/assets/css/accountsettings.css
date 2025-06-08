@@ -56,11 +56,18 @@ body {
     position: relative;
 }
 .header-action-btn img {
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     object-fit: contain;
     filter: brightness(0);
 }
+
+/* Make account icon slightly larger to match nav-bar.css */
+button.header-action-btn img[src*="icon-user"] {
+    width: 24px;
+    height: 24px;
+}
+
 .header-action-btn .count {
     position: absolute;
     top: -0.625rem;
