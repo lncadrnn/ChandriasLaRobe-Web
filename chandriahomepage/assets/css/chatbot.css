@@ -33,7 +33,7 @@
 }
 
 .chatbot-header {
-    background: #fbadb5;
+    background: hsl(346, 100%, 74%);
     padding: 15px;
     border-bottom: 1px solid #e9ecef;
     display: flex;
@@ -105,7 +105,7 @@
 
 .chatbot-controls button:hover {
     background: #e9ecef;
-    color: #fbadb5;
+    color: hsl(346, 100%, 74%);
 }
 
 .chatbot-body {
@@ -141,7 +141,7 @@
 }
 
 .user-message p {
-    background: #ff97a1;
+    background: hsl(346, 100%, 74%);
     color: #fff;
     border-bottom-right-radius: 5px;
 }
@@ -184,11 +184,11 @@
 }
 
 .chatbot-input input:focus {
-    border-color: #ff97a1;
+    border-color: hsl(346, 100%, 74%);
 }
 
 .chatbot-input button {
-    background: #fbadb5;
+    background: hsl(346, 100%, 74%);
     border: none;
     width: 40px;
     height: 40px;
@@ -202,7 +202,7 @@
 }
 
 .chatbot-input button:hover {
-    background: #ff97a1;
+    background: hsl(346, 100%, 74%);
     transform: scale(1.05);
 }
 
@@ -228,7 +228,7 @@
     align-items: center;
     justify-content: center;
     animation: pulse 2s infinite;
-    border: 3px solid #fbadb5;
+    border: 3px solid hsl(346, 100%, 74%);
     /* Add will-change for better performance during dragging */
     will-change: transform;
 }
@@ -309,8 +309,8 @@
 
 .faq-suggestion {
     background: none;
-    border: 1px solid #fbadb5;
-    color: #fbadb5;
+    border: 1px solid hsl(346, 100%, 74%);
+    color: hsl(346, 100%, 74%);
     padding: 6px 12px;
     border-radius: 15px;
     font-size: 12px;
@@ -320,6 +320,6 @@
 }
 
 .faq-suggestion:hover {
-    background: #fbadb5;
+    background: hsl(346, 100%, 74%);
     color: #fff;
 }

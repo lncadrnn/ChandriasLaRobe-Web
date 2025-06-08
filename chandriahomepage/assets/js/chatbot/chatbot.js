@@ -68,7 +68,7 @@ class ChandriasChatbot {    constructor() {
                 <div class="chatbot-header">                <div class="chatbot-header-info">
                         <img src="/chandriahomepage/assets/img/icon-chatbot-img.png" alt="Chatbot Avatar" class="chatbot-avatar">
                         <div class="chatbot-title">
-                            <h3>Chandria's LaRobe</h3>
+                            <h3>Chandria's Chatbot</h3>
                             <p>typically replies within a minute</p>
                         </div>
                     </div>
