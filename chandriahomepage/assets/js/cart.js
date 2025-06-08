@@ -134,9 +134,10 @@ $(document).ready(function () {
             totalItems += quantity;
             grandTotal += total;
 
-            // Table Row
+            // Responsive Cart Item Row (Desktop table + Mobile card layout)
             const row = `
                 <div class="cart-item-row">
+                    <!-- Desktop table layout elements -->
                     <div class="cart-item-product">
                         <img src="${
                             product.frontImageUrl
@@ -163,6 +164,45 @@ $(document).ready(function () {
                             item.productId
                         }" data-size="${item.size}">
                             <i class="fi fi-rs-trash table-trash"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Mobile card layout elements (hidden on desktop) -->
+                    <div class="cart-mobile-info">
+                        <div class="cart-mobile-field size">
+                            <span class="label">Size</span>
+                            <span class="value">${item.size}</span>
+                        </div>
+                        <div class="cart-mobile-field stock">
+                            <span class="label">Stock</span>
+                            <span class="value">${stock}</span>
+                        </div>
+                        <div class="cart-mobile-field price">
+                            <span class="label">Price</span>
+                            <span class="value">₱${price.toLocaleString()}</span>
+                        </div>
+                        <div class="cart-mobile-field total">
+                            <span class="label">Total</span>
+                            <span class="value">₱${total.toLocaleString()}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="cart-mobile-quantity">
+                        <span class="label">Quantity:</span>
+                        <input type="number" class="quantity mobile-quantity"
+                               value="${quantity}" min="1" max="${stock}"
+                               data-id="${item.productId}" data-size="${
+                                   item.size
+                               }"
+                               data-price="${price}" />
+                    </div>
+                    
+                    <div class="cart-mobile-actions">
+                        <button class="delete-btn mobile-delete-btn" data-id="${
+                            item.productId
+                        }" data-size="${item.size}">
+                            <i class="fi fi-rs-trash"></i>
+                            Remove Item
                         </button>
                     </div>
                 </div>
