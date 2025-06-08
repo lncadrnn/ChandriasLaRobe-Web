@@ -146,10 +146,8 @@ $(document).ready(function () {
         $(document).on("change", ".size-selector", handleSizeChange);
         $(document).on("click", ".quantity-btn.plus-btn", handleQuantityIncrease);
         $(document).on("click", ".quantity-btn.minus-btn", handleQuantityDecrease);        // Color indicator tooltip
-        $(document).on("click", ".product-color-indicator", handleColorIndicatorClick);
-
-        // Cart modal (existing modal functionality)
-        $(document).on("click", ".action-btn[aria-label='Add to Rent List']", handleAddToCartClick);
+        $(document).on("click", ".product-color-indicator", handleColorIndicatorClick);        // Cart modal (existing modal functionality)
+        $(document).on("click", ".action-btn[aria-label='Add to Favorites']", handleAddToCartClick);
         $(document).on("click", ".add-to-cart-btn", handleAddToCartClick);
         $("#btn-close").on("click", closeCartModal);
         $("#btn-rent").on("click", handleAddToCart);
@@ -600,11 +598,10 @@ $(document).ready(function () {
                     <img src="${imageUrl}" alt="${product.name || "Product"}" class="product-img default">
                     <img src="${backImageUrl}" alt="${product.name || "Product"}" class="product-img hover">
                 </a>
-                <div class="product-actions">
-                    <a href="#" class="action-btn" aria-label="Quick View" data-product-id="${product.id}">
+                <div class="product-actions">                    <a href="#" class="action-btn" aria-label="Quick View" data-product-id="${product.id}">
                         <i class="fi fi-rs-eye"></i>
                     </a>
-                    <a href="#" class="action-btn" aria-label="Add to Rent List" data-product-id="${product.id}">
+                    <a href="#" class="action-btn" aria-label="Add to Favorites" data-product-id="${product.id}">
                         <i class="fi fi-rs-heart"></i>
                     </a>
                 </div>

@@ -389,7 +389,7 @@ $(document).ready(async function () {
   });
   
   // Add to Favorites button functionality
-  $(document).on('click', '#related-products-container .action-btn[aria-label="Add to Rent List"]', async function(e) {
+  $(document).on('click', '#related-products-container .action-btn[aria-label="Add to Favorites"]', async function(e) {
     e.preventDefault();
     e.stopPropagation();
     
@@ -681,7 +681,7 @@ function createProductHTML(product) {
                 <a href="#" class="action-btn" aria-label="Quick View" data-product-id="${product.id}">
                     <i class="fi fi-rs-eye"></i>
                 </a>
-                <a href="#" class="action-btn" aria-label="Add to Rent List" data-product-id="${product.id}">
+                <a href="#" class="action-btn" aria-label="Add to Favorites" data-product-id="${product.id}">
                     <i class="fi fi-rs-heart"></i>
                 </a>
             </div>
