@@ -278,7 +278,7 @@ input:focus {
 /* Change Password Button */
 .btn-change-password {
     background-color: transparent;
-    color: hsl(346, 100%, 74%);
+    color: hsl(346, 100%, 74%) !important;
     border: none;
     padding: 0;
     font-size: 0.9rem;
@@ -290,7 +290,7 @@ input:focus {
 }
 
 .btn-change-password:hover {
-    text-decoration: underline;
+    text-decoration: underline !important;
 }
 
 /* Password Fields Container */
@@ -541,6 +541,15 @@ input[type="file"] {
 .btn-secondary:hover {
     background-color: hsl(346, 100%, 74%) !important;
     color: white !important;
+}
+
+/* Specific Cancel Button Hover Animation - Override general btn-secondary */
+.btn-secondary.cancel-btn:hover {
+    background: transparent !important;
+    color: hsl(346, 100%, 74%) !important;
+    border: 2px solid hsl(346, 100%, 74%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 15px rgba(255, 133, 177, 0.3) !important;
 }
 
 /* All links with href */

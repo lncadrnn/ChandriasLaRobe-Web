@@ -79,6 +79,9 @@ $(document).ready(function () {
 
                     $("#email").val(userData.email || "");
                     $("#name").val(userData.fullname || "");
+                    
+                    // Store the original name for cancel functionality
+                    initialName = userData.fullname || "";
 
                     // ✅ Load profile image if available
                     if (userData.profileImageUrl) {
@@ -366,6 +369,8 @@ $(document).ready(function () {
             $(".avatar-reset-btn").hide();
             $(this).addClass("disabled");
             await loadUserProfile();
+            // Update initialName after successful save
+            initialName = $("#name").val();
         }
     });
     // --====== START OF INPUT CHECKING FUNCTION ======--
@@ -377,7 +382,7 @@ $(document).ready(function () {
     const $newPassword = $("#new-password");
     const $confirmPassword = $("#confirm-new-password");
 
-    let initialName = $nameInput.val();
+    let initialName = "";
     let nameChanged = false;
     let imageSelected = false;
     let passwordFieldsFilled = false;
@@ -411,6 +416,39 @@ $(document).ready(function () {
     $confirmPassword.on("input", checkForChanges);
 
     // --====== END OF INPUT CHECKING FUNCTION ======--
+
+    // CANCEL BUTTON FUNCTIONALITY - Reset form to original values
+    $(".cancel-btn").on("click", function(e) {
+        e.preventDefault();
+        
+        // Reset name input to original value
+        $nameInput.val(initialName);
+        
+        // Reset password fields if they are visible
+        if ($("#passwordFields").is(":visible")) {
+            $("#password, #new-password, #confirm-new-password").val("");
+            $("#passwordFields").hide();
+            $("#togglePasswordFields").text("Change Password");
+        }
+        
+        // Reset profile image if one was selected but not saved
+        const $fileInput = $("#profile-image-upload");
+        if ($fileInput[0].files.length > 0) {
+            $fileInput.val("");
+            // Reset avatar to original state if needed
+            resetAvatar();
+        }
+        
+        // Reset change detection flags
+        nameChanged = false;
+        imageSelected = false;
+        passwordFieldsFilled = false;
+        
+        // Disable save button since no changes remain
+        $saveBtn.addClass("disabled");
+        
+        notyf.success("Changes cancelled. Form reset to original values.");
+    });
 
     // Expose to window
     window.previewImage = previewImage;
