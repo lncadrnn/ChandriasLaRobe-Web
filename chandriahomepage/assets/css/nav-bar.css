@@ -186,12 +186,12 @@ button.header-action-btn:active {
 
 .header-action-btn.active img,
 .header-action-btn:active img {
-  filter: hue-rotate(315deg) saturate(1.8) brightness(0.7);
+  filter: brightness(0) saturate(100%) invert(66%) sepia(58%) saturate(2958%) hue-rotate(297deg) brightness(98%) contrast(91%);
 }
 
 button.header-action-btn.active img,
 button.header-action-btn:active img {
-  filter: hue-rotate(315deg) saturate(1.8) brightness(0.7);
+  filter: brightness(0) saturate(100%) invert(66%) sepia(58%) saturate(2958%) hue-rotate(297deg) brightness(98%) contrast(91%);
 }
 
 .header-action-btn img {
@@ -397,7 +397,7 @@ body.page-wishlist .header-action-btn[href*="wishlist"] {
 }
 
 body.page-wishlist .header-action-btn[href*="wishlist"] img {
-  filter: hue-rotate(315deg) saturate(1.8) brightness(0.7) !important;
+  filter: brightness(0) saturate(100%) invert(66%) sepia(58%) saturate(2958%) hue-rotate(297deg) brightness(98%) contrast(91%) !important;
 }
 
 /* Remove hover effect for active wishlist icon */
@@ -409,7 +409,7 @@ body.page-wishlist .header-action-btn[href*="wishlist"]:hover {
 }
 
 body.page-wishlist .header-action-btn[href*="wishlist"]:hover img {
-  filter: hue-rotate(315deg) saturate(1.8) brightness(0.7) !important;
+  filter: brightness(0) saturate(100%) invert(66%) sepia(58%) saturate(2958%) hue-rotate(297deg) brightness(98%) contrast(91%) !important;
 }
 
 /* Cart page active state */
@@ -421,7 +421,7 @@ body.page-cart .header-action-btn[href*="cart"] {
 }
 
 body.page-cart .header-action-btn[href*="cart"] img {
-  filter: hue-rotate(315deg) saturate(1.8) brightness(0.7) !important;
+  filter: brightness(0) saturate(100%) invert(66%) sepia(58%) saturate(2958%) hue-rotate(297deg) brightness(98%) contrast(91%) !important;
 }
 
 /* Remove hover effect for active cart icon */
@@ -433,7 +433,7 @@ body.page-cart .header-action-btn[href*="cart"]:hover {
 }
 
 body.page-cart .header-action-btn[href*="cart"]:hover img {
-  filter: hue-rotate(315deg) saturate(1.8) brightness(0.7) !important;
+  filter: brightness(0) saturate(100%) invert(66%) sepia(58%) saturate(2958%) hue-rotate(297deg) brightness(98%) contrast(91%) !important;
 }
 
 /* Account page active state */
@@ -447,7 +447,7 @@ body.page-accounts button.header-action-btn[onclick*="showAuthModal"] {
 
 body.page-accounts .header-action-btn[onclick*="showAuthModal"] img,
 body.page-accounts button.header-action-btn[onclick*="showAuthModal"] img {
-  filter: hue-rotate(315deg) saturate(1.8) brightness(0.7) !important;
+  filter: brightness(0) saturate(100%) invert(66%) sepia(58%) saturate(2958%) hue-rotate(297deg) brightness(98%) contrast(91%) !important;
 }
 
 /* Remove hover effect for active account icon */
@@ -461,7 +461,7 @@ body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:hover {
 
 body.page-accounts .header-action-btn[onclick*="showAuthModal"]:hover img,
 body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:hover img {
-  filter: hue-rotate(315deg) saturate(1.8) brightness(0.7) !important;
+  filter: brightness(0) saturate(100%) invert(66%) sepia(58%) saturate(2958%) hue-rotate(297deg) brightness(98%) contrast(91%) !important;
 }
 
 /*=============== RESPONSIVE DESIGN ===============*/
@@ -601,7 +601,7 @@ html body.page-wishlist .header-action-btn[href*="wishlist"]:focus {
 html body.page-wishlist .header-action-btn[href*="wishlist"] img,
 html body.page-wishlist .header-action-btn[href*="wishlist"]:hover img,
 html body.page-wishlist .header-action-btn[href*="wishlist"]:focus img {
-  filter: hue-rotate(315deg) saturate(1.8) brightness(0.7) !important;
+  filter: brightness(0) saturate(100%) invert(66%) sepia(58%) saturate(2958%) hue-rotate(297deg) brightness(98%) contrast(91%) !important;
 }
 
 html body.page-cart .header-action-btn[href*="cart"],
@@ -617,7 +617,7 @@ html body.page-cart .header-action-btn[href*="cart"]:focus {
 html body.page-cart .header-action-btn[href*="cart"] img,
 html body.page-cart .header-action-btn[href*="cart"]:hover img,
 html body.page-cart .header-action-btn[href*="cart"]:focus img {
-  filter: hue-rotate(315deg) saturate(1.8) brightness(0.7) !important;
+  filter: brightness(0) saturate(100%) invert(66%) sepia(58%) saturate(2958%) hue-rotate(297deg) brightness(98%) contrast(91%) !important;
 }
 
 html body.page-accounts .header-action-btn[onclick*="showAuthModal"],
@@ -639,5 +639,5 @@ html body.page-accounts .header-action-btn[onclick*="showAuthModal"]:hover img,
 html body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:hover img,
 html body.page-accounts .header-action-btn[onclick*="showAuthModal"]:focus img,
 html body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:focus img {
-  filter: hue-rotate(315deg) saturate(1.8) brightness(0.7) !important;
+  filter: brightness(0) saturate(100%) invert(66%) sepia(58%) saturate(2958%) hue-rotate(297deg) brightness(98%) contrast(91%) !important;
 }
