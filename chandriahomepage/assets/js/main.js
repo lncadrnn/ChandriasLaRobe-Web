@@ -10,34 +10,37 @@ window.addEventListener('scroll', () => {
 });
 
 // Mobile hamburger menu functionality
-const hamburgerMenu = document.querySelector('.hamburger-menu');
-const mobileNavMenu = document.querySelector('.mobile-nav-menu');
-const body = document.body;
+// Only initialize if mobile-nav.js hasn't already handled it
+if (!window.mobileNavInitialized) {
+  const hamburgerMenu = document.querySelector('.hamburger-menu');
+  const mobileNavMenu = document.querySelector('.mobile-nav-menu');
+  const body = document.body;
 
-if (hamburgerMenu && mobileNavMenu) {
-  hamburgerMenu.addEventListener('click', () => {
-    hamburgerMenu.classList.toggle('active');
-    mobileNavMenu.classList.toggle('show');
-    body.classList.toggle('nav-open');
-  });
-
-  // Close menu when clicking mobile nav links
-  document.querySelectorAll('.mobile-nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-      hamburgerMenu.classList.remove('active');
-      mobileNavMenu.classList.remove('show');
-      body.classList.remove('nav-open');
+  if (hamburgerMenu && mobileNavMenu) {
+    hamburgerMenu.addEventListener('click', () => {
+      hamburgerMenu.classList.toggle('active');
+      mobileNavMenu.classList.toggle('show');
+      body.classList.toggle('nav-open');
     });
-  });
 
-  // Close menu when clicking outside
-  document.addEventListener('click', (e) => {
-    if (!hamburgerMenu.contains(e.target) && !mobileNavMenu.contains(e.target)) {
-      hamburgerMenu.classList.remove('active');
-      mobileNavMenu.classList.remove('show');
-      body.classList.remove('nav-open');
-    }
-  });
+    // Close menu when clicking mobile nav links
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburgerMenu.classList.remove('active');
+        mobileNavMenu.classList.remove('show');
+        body.classList.remove('nav-open');
+      });
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!hamburgerMenu.contains(e.target) && !mobileNavMenu.contains(e.target)) {
+        hamburgerMenu.classList.remove('active');
+        mobileNavMenu.classList.remove('show');
+        body.classList.remove('nav-open');
+      }
+    });
+  }
 }
 
 /*=============== SMOOTH SCROLLING FOR NAVIGATION ===============*/
