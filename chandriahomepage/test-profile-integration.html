@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Picture Integration Test - Chandria's La Robe</title>
+    
+    <!-- External Dependencies -->
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="./assets/css/nav-bar.css">
+    <link rel="stylesheet" href="./assets/css/styles.css">
+    <link rel="stylesheet" href="./assets/css/accountsettings.css">
+    
+    <style>
+        body {
+            padding-top: 80px;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .demo-section {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .demo-title {
+            color: #ff85b1;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .status-icon {
+            color: #28a745;
+            font-size: 1.2rem;
+        }
+        
+        .mini-avatar-demo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .instructions {
+            background: #e3f2fd;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .instructions h4 {
+            color: #1976d2;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body class="page-accounts">
+    <!--=============== HEADER ===============-->
+    <header class="header">
+        <nav class="nav container">
+            <a href="../index.html" class="nav-logo">
+                <img src="assets/img/logo1.png" alt="" class="nav-logo-img">
+            </a>
+
+            <div class="nav-menu" id="nav-menu">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="../index.html" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="shop.html" class="nav-link">Shop</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="accounts.html" class="nav-link">Accounts</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="header-user-actions">
+                <!-- Mobile Hamburger Menu -->
+                <div class="hamburger-menu" id="hamburger-menu">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </div>
+
+                <a href="wishlist.html" class="header-action-btn">
+                    <img src="assets/img/icon-heart.svg" alt="">
+                    <span class="count">3</span>
+                </a>
+
+                <a href="./cart.html" class="header-action-btn">
+                    <img src="assets/img/icon-cart.svg" alt="">
+                    <span class="count" id="cart-count">5</span>
+                </a>
+
+                <button onclick="window.profileNavService?.handleAccountClick() || showAuthModal()" class="header-action-btn" style="background: none; border: none; cursor: pointer;" id="account-btn">
+                    <img src="assets/img/icon-user.svg" alt="">
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!--=============== MAIN CONTENT ===============-->
+    <main class="demo-container">
+        <div class="demo-section">
+            <h2 class="demo-title">
+                <i class="fas fa-user-circle"></i>
+                Profile Picture Integration Test
+            </h2>
+            <p>This page demonstrates the profile picture functionality across the website.</p>
+        </div>
+
+        <div class="demo-section">
+            <h3 class="demo-title">
+                <i class="fas fa-check-circle status-icon"></i>
+                Navigation Header Profile Picture
+            </h3>
+            <p>Look at the account button in the navigation header above. It should:</p>
+            <ul class="feature-list">
+                <li><i class="fas fa-check status-icon"></i> Show default user icon when not logged in</li>
+                <li><i class="fas fa-check status-icon"></i> Show user's profile picture when logged in and picture uploaded</li>
+                <li><i class="fas fa-check status-icon"></i> Handle authentication routing smartly</li>
+                <li><i class="fas fa-check status-icon"></i> Work responsively across all screen sizes</li>
+            </ul>
+        </div>
+
+        <div class="demo-section">
+            <h3 class="demo-title">
+                <i class="fas fa-check-circle status-icon"></i>
+                Account Page Avatar Display
+            </h3>
+            <p>The accounts page avatar section should:</p>
+            <ul class="feature-list">
+                <li><i class="fas fa-check status-icon"></i> Load user's profile picture automatically when logged in</li>
+                <li><i class="fas fa-check status-icon"></i> Show default avatar when no picture uploaded</li>
+                <li><i class="fas fa-check status-icon"></i> Display reset button when profile picture is loaded</li>
+                <li><i class="fas fa-check status-icon"></i> Handle image loading errors gracefully</li>
+            </ul>
+            
+            <div class="mini-avatar-demo">
+                <div class="avatar-container">
+                    <div class="avatar-placeholder">
+                        <div class="avatar-content">
+                            <i class="fas fa-user"></i>
+                            <span>AVATAR</span>
+                        </div>
+                    </div>
+                </div>
+                <p><strong>Sample Avatar Display</strong> - This shows how the avatar looks in the accounts page</p>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3 class="demo-title">
+                <i class="fas fa-cog"></i>
+                Technical Implementation
+            </h3>
+            <ul class="feature-list">
+                <li><i class="fas fa-check status-icon"></i> <strong>Firebase Integration:</strong> Uses Firebase Auth and Firestore</li>
+                <li><i class="fas fa-check status-icon"></i> <strong>Profile Navigation Service:</strong> Handles header button updates</li>
+                <li><i class="fas fa-check status-icon"></i> <strong>Account Settings Service:</strong> Manages avatar display in accounts page</li>
+                <li><i class="fas fa-check status-icon"></i> <strong>Responsive Design:</strong> Works on mobile, tablet, and desktop</li>
+                <li><i class="fas fa-check status-icon"></i> <strong>Error Handling:</strong> Graceful fallbacks for broken images</li>
+            </ul>
+        </div>
+
+        <div class="instructions">
+            <h4><i class="fas fa-info-circle"></i> Testing Instructions</h4>
+            <p><strong>To test the profile picture functionality:</strong></p>
+            <ol>
+                <li>Navigate to the <a href="accounts.html">Accounts page</a></li>
+                <li>Log in with your account credentials</li>
+                <li>Upload a profile picture using the "Upload Picture" button</li>
+                <li>Navigate to other pages (shop, cart, wishlist) to see the profile picture in the header</li>
+                <li>Return to accounts page to see the larger profile picture display</li>
+            </ol>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="./assets/js/nav-bar.js"></script>
+    <script type="module" src="./assets/js/profile-nav-service.js"></script>
+    <script type="module" src="./assets/js/auth-modal.js"></script>
+</body>
+</html>
