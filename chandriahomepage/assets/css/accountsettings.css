@@ -834,11 +834,6 @@ body.loaded #loader {
   gap: 0.5rem;
 }
 
-.logout-modal-content h3::before {
-  content: '👋';
-  font-size: 1.2rem;
-}
-
 .logout-modal-content p {
   color: #6b7280;
   margin-bottom: 2rem;

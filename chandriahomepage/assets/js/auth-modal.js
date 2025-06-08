@@ -750,7 +750,9 @@ class AuthModal {
 
 // Initialize the auth modal when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    const authModal = new AuthModal();    // Make functions globally accessible
+    const authModal = new AuthModal();
+    
+    // Make functions globally accessible
     window.showAuthModal = () => {
         // Check if user is already logged in
         const userEmail = localStorage.getItem('userEmail');
