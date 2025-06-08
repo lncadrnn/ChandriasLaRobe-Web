@@ -16,7 +16,7 @@ class ProfileNavService {
     constructor() {
         this.currentUser = null;
         this.profileImageUrl = null;
-        this.accountButtonSelector = '#account-btn, button.header-action-btn[onclick*="showAuthModal"], .header-action-btn[onclick*="showAuthModal"], button.header-action-btn[onclick*="handleAccountClick"]';
+        this.accountButtonSelector = '#account-btn, button.header-action-btn[onclick*="showAuthModal"]:not([href]), .header-action-btn[onclick*="showAuthModal"]:not([href]), button.header-action-btn[onclick*="handleAccountClick"]:not([href])';
         this.init();
     }
 
@@ -80,12 +80,13 @@ class ProfileNavService {
                 this.displayDefaultIcon(button);
             }
         });
-    }
-
-    /**
+    }    /**
      * Display user profile image in the account button
      */
     displayProfileImage(button) {
+        // Only modify account buttons, not cart or other buttons
+        if (!this.isAccountButton(button)) return;
+        
         // Clear existing content
         button.innerHTML = '';
         
@@ -116,9 +117,12 @@ class ProfileNavService {
      * Display default user icon
      */
     displayDefaultIcon(button) {
+        // Only modify account buttons, not cart or other buttons
+        if (!this.isAccountButton(button)) return;
+        
         // Clear existing content
         button.innerHTML = '';
-        
+
         // Create default icon element
         const defaultIcon = document.createElement('img');
         defaultIcon.src = 'assets/img/icon-user.svg';
@@ -131,6 +135,30 @@ class ProfileNavService {
 
         button.appendChild(defaultIcon);
         button.classList.remove('has-profile-image');
+    }
+
+    /**
+     * Check if a button is an account button (not cart or other buttons)
+     */
+    isAccountButton(button) {
+        // Check if it's the account button by ID
+        if (button.id === 'account-btn') return true;
+        
+        // Check if it has account-related onclick handlers
+        const onclick = button.getAttribute('onclick') || '';
+        if (onclick.includes('showAuthModal') || onclick.includes('handleAccountClick')) {
+            // Make sure it's not a cart button
+            const href = button.getAttribute('href') || '';
+            if (href.includes('cart.html')) return false;
+            
+            // Check if it contains cart icon
+            const img = button.querySelector('img');
+            if (img && img.src.includes('icon-cart.svg')) return false;
+            
+            return true;
+        }
+        
+        return false;
     }
 
     /**

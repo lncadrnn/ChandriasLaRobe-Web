@@ -103,17 +103,6 @@ select:disabled {
     flex-shrink: 0;
 }
 
-.page-name .text::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 0;
-    width: 80px;
-    height: 3px;
-    background: var(--primary-color);
-    border-radius: 2px;
-}
-
 
 /* === TABLE HEADER === */
 .table-header {
@@ -210,7 +199,9 @@ select:disabled {
     overflow-y: auto;
     overflow-x: auto;
     flex: 1;
-    max-height: calc(100vh - 200px);
+    height: calc(100vh - 250px);
+    min-height: 300px;
+    padding-bottom: 1rem;
 }
 
 #rental-history-table tbody::-webkit-scrollbar {

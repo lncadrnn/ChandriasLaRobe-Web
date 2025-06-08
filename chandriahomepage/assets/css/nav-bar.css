@@ -199,10 +199,35 @@ button.header-action-btn:active img {
   transition: filter 0.3s ease;
 }
 
-/* Make account icon slightly larger */
-button.header-action-btn img[src*="icon-user"] {
-  width: 24px;
-  height: 24px;
+/*=============== NOTIFICATION COUNT BUBBLE ===============*/
+.header-action-btn .count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ff4757;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(255, 71, 87, 0.3);
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.header-action-btn .count:empty {
+  display: none;
+}
+
+.header-action-btn:hover .count {
+  transform: scale(1.1);
+  box-shadow: 0 3px 8px rgba(255, 71, 87, 0.4);
 }
 
 /*=============== PROFILE IMAGE IN NAVIGATION ===============*/
