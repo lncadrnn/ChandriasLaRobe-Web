@@ -340,10 +340,8 @@ button.header-action-btn:active img {
 /* Mobile navigation styles moved to hamburger-mob.css for better organization */
 /* This section is kept for reference but styles are now in dedicated file */
 
-/* Prevent body scroll when mobile menu is open - updated to use new class name */
-body.mobile-nav-open {
-  overflow: hidden;
-}
+/* Allow background scrolling when mobile menu is open */
+/* Removed overflow: hidden to enable scrolling behind hamburger menu */
 
 /*=============== PAGE-SPECIFIC ACTIVE STATES ===============*/
 /* These styles will be applied when on specific pages to show which page is active */
