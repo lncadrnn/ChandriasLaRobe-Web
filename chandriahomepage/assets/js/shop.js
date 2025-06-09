@@ -31,11 +31,9 @@ $(document).ready(function () {
     let filteredProducts = [];
     let currentPage = 1;
     const productsPerPage = 12;
-    let currentActiveTab = 'all';
-    let selectedCategories = [];
+    let currentActiveTab = 'all';    let selectedCategories = [];
     let currentSort = 'default';
     let searchQuery = '';
-    let currentQuickViewProduct = null;
     
     // Initialize shop
     init();
@@ -49,9 +47,13 @@ $(document).ready(function () {
                 updateCartCount(),
                 initializeEventListeners()
             ]);
-            
-            // Initialize with all products
+              // Initialize with all products
             applyFiltersAndSort();
+            
+            // Provide product data to centralized quick view system
+            if (typeof setQuickViewData === 'function') {
+                setQuickViewData(allProducts, allAdditionals);
+            }
             
             // Update cart button status after products are loaded
             setTimeout(() => {
@@ -135,10 +137,7 @@ $(document).ready(function () {
         $(".sort-option").on("click", handleSortSelection);
 
         // Product tabs
-        $(".product-tab").on("click", handleTabSwitch);        // Quick view modal
-        $(document).on("click", ".action-btn[aria-label='Quick View']", handleQuickViewClick);
-        $("#quick-view-close").on("click", closeQuickView);
-        $("#quick-view-view-details").on("click", handleViewDetails);        // Circular cart button functionality
+        $(".product-tab").on("click", handleTabSwitch);        // Quick view functionality now handled by centralized quick-view.js script// Circular cart button functionality
         $(document).on("click", ".circular-cart-btn, .enhanced-cart-btn, .add-to-cart-action-btn", handleCircularCartClick);
         
         // Add to cart action button functionality (new button beside category/title)
@@ -166,13 +165,9 @@ $(document).ready(function () {
             if (!$(e.target).closest(".sort-dropdown").length) {
                 $("#sort-dropdown").removeClass("show");
             }
-        });
-
-        // Close modals when clicking outside
+        });        // Close modals when clicking outside
         $(document).on("click", function(e) {
-            if ($(e.target).hasClass("quick-view-modal-container")) {
-                closeQuickView();
-            }            if ($(e.target).hasClass("cart-modal-container")) {
+            if ($(e.target).hasClass("cart-modal-container")) {
                 closeCartModal();
             }
         });
@@ -597,8 +592,7 @@ $(document).ready(function () {
             <div class="product-banner">                <a href="details.html?id=${product.id}" class="product-images">
                     <img src="${imageUrl}" alt="${product.name || "Product"}" class="product-img default">
                     <img src="${backImageUrl}" alt="${product.name || "Product"}" class="product-img hover">
-                </a>
-                <div class="product-actions">                    <a href="#" class="action-btn" aria-label="Quick View" data-product-id="${product.id}">
+                </a>                <div class="product-actions">                    <a href="#" class="action-btn quick-view-btn-trigger" aria-label="Quick View" data-product-id="${product.id}">
                         <i class="fi fi-rs-eye"></i>
                     </a>
                     <a href="#" class="action-btn" aria-label="Add to Favorites" data-product-id="${product.id}">
@@ -706,136 +700,8 @@ $(document).ready(function () {
                 $("html, body").animate({ scrollTop: $(".products-container").offset().top - 100 }, 500);
             }
         });
-    }
-
-    // Quick View Modal functionality
-    async function handleQuickViewClick(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        const productId = $(this).data("product-id");
-        if (!productId) return;
-        
-        await openQuickView(productId);
-    }    async function openQuickView(productId) {
-        try {
-            const modal = $("#quick-view-modal");
-            const loadingElement = $("#quick-view-loading");
-            const contentElement = $("#quick-view-content");
-            
-            // Show modal with loading state
-            modal.addClass("show");
-            document.body.style.overflow = "hidden";
-            
-            // Show loading spinner and hide content
-            loadingElement.removeClass("hidden").show();
-            contentElement.hide();
-            
-            // Find product in our loaded data
-            let productData = allProducts.find(p => p.id === productId);
-            if (!productData) {
-                productData = allAdditionals.find(p => p.id === productId);
-            }
-            
-            if (!productData) {
-                // Fallback: fetch from Firebase
-                const productDoc = await getDoc(doc(chandriaDB, "products", productId));
-                if (productDoc.exists()) {
-                    productData = { id: productId, ...productDoc.data() };
-                } else {
-                    const additionalDoc = await getDoc(doc(chandriaDB, "additionals", productId));
-                    if (additionalDoc.exists()) {
-                        productData = { id: productId, ...additionalDoc.data(), isAdditional: true };
-                    }
-                }
-            }
-            
-            if (!productData) {
-                throw new Error('Product not found');
-            }
-            
-            currentQuickViewProduct = productData;
-            
-            // Populate modal with product data
-            populateQuickViewModal(productData, productId);
-            
-            // Hide loading spinner and show content
-            setTimeout(() => {
-                loadingElement.hide();
-                contentElement.show();
-            }, 300);
-            
-        } catch (error) {
-            console.error('Error loading product for quick view:', error);
-            notyf.error('Failed to load product details');
-            closeQuickView();
-        }
-    }
-    
-    function populateQuickViewModal(product, productId) {
-        // Update images
-        const mainImg = $("#quick-view-main-img");
-        const frontThumb = $("#quick-view-front-thumb");
-        const backThumb = $("#quick-view-back-thumb");
-        
-        const frontImage = product.frontImageUrl || product.imageUrl || 'assets/img/placeholder.jpg';
-        const backImage = product.backImageUrl || frontImage;
-        
-        mainImg.attr('src', frontImage);
-        frontThumb.attr('src', frontImage);
-        backThumb.attr('src', backImage);
-        
-        // Update product details
-        $("#quick-view-title").text(product.name || 'Untitled Product');
-        $("#quick-view-category").text(product.category || 'Item');
-        $("#quick-view-price").text(product.price ? `₱${product.price}` : '₱0');
-        $("#quick-view-desc").text(product.description || 'No description available for this product.');
-        $("#quick-view-product-code").text(product.code || 'N/A');
-        
-        if ($("#quick-view-color-indicator").length && product.color) {
-            $("#quick-view-color-indicator").css('backgroundColor', product.color);
-        }
-          // Initialize thumbnail functionality
-        initQuickViewThumbnails();
-        
-        // Store product ID for actions
-        $("#quick-view-view-details").data('product-id', productId);
-    }
-
-    function initQuickViewThumbnails() {
-        $(".quick-view-thumbnail").off("click").on("click", function() {
-            const newSrc = $(this).attr('src');
-            $("#quick-view-main-img").attr('src', newSrc);
-            
-            $(".quick-view-thumbnail").removeClass('active');
-            $(this).addClass('active');
-        });
-    }    function closeQuickView() {
-        const modal = $("#quick-view-modal");
-        const loadingElement = $("#quick-view-loading");
-        const contentElement = $("#quick-view-content");
-        
-        // Remove show class to trigger CSS transition
-        modal.removeClass("show");
-        document.body.style.overflow = "";
-        currentQuickViewProduct = null;
-        
-        // After transition completes, reset modal state for next use
-        setTimeout(() => {
-            // Reset modal state
-            if (loadingElement.length) {
-                loadingElement.addClass("hidden").hide();
-            }
-            if (contentElement.length) {
-                contentElement.hide();
-            }
-        }, 300);
-    }function handleViewDetails() {
-        const productId = $(this).data('product-id');
-        if (productId) {
-            window.location.href = `details.html?id=${productId}`;
-        }
-    }
+    }    // Quick View functionality now handled by centralized quick-view.js
+    // Remove duplicate implementation and use centralized system
 
     async function addAdditionalToCart(additionalId) {
         const user = auth.currentUser;
