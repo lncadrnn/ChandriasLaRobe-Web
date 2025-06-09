@@ -284,6 +284,117 @@
     object-fit: contain;
 }
 
+/* Speech bubble dialog for chatbot */
+.chatbot-speech-bubble {
+    position: fixed;
+    bottom: 25px;
+    right: 90px; /* Position to the left of the chatbot bubble */
+    background: #ffffff;
+    color: #333;
+    padding: 12px 16px;
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    font-size: 14px;
+    font-weight: 500;
+    max-width: 250px;
+    min-width: 200px;
+    z-index: 899;
+    opacity: 0;
+    transform: scale(0.8) translateY(10px);
+    transition: all 0.3s ease;
+    border: 2px solid hsl(346, 100%, 74%);
+    line-height: 1.4;
+}
+
+/* Speech bubble tail/arrow pointing to chatbot */
+.chatbot-speech-bubble::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -8px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid #ffffff;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+}
+
+.chatbot-speech-bubble::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -10px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid hsl(346, 100%, 74%);
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    z-index: -1;
+}
+
+/* Show speech bubble with animation */
+.chatbot-speech-bubble.show {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+/* Close button for speech bubble */
+.chatbot-speech-bubble .close-speech {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: hsl(346, 100%, 74%);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.chatbot-speech-bubble .close-speech:hover {
+    background: hsl(346, 80%, 60%);
+    transform: scale(1.1);
+}
+
+/* Mobile responsive adjustments */
+@media screen and (max-width: 480px) {
+    .chatbot-speech-bubble {
+        right: 80px;
+        max-width: 200px;
+        min-width: 180px;
+        font-size: 13px;
+        padding: 10px 14px;
+        bottom: 20px;
+    }
+}
+
+/* Speech bubble positioned on the right side of chatbot */
+.chatbot-speech-bubble.speech-right {
+    right: auto;
+}
+
+.chatbot-speech-bubble.speech-right::after {
+    left: -8px;
+    right: auto;
+    border-left: none;
+    border-right: 8px solid #ffffff;
+}
+
+.chatbot-speech-bubble.speech-right::before {
+    left: -10px;
+    right: auto;
+    border-left: none;
+    border-right: 10px solid hsl(346, 100%, 74%);
+}
+
 .hidden {
     display: none !important;
 }
