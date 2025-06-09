@@ -250,11 +250,10 @@
                                     readonly
                                 />
                                 <button type="button" class="quantity-btn increase" onclick="increaseQuantity()">+</button>
-                            </div>
-                            <button class="btn btn-primary" id="details-add-to-cart">Add to Booking</button>
-                            <!--               <a href="#" class="details-action-btn">
-  <i class="fi fi-rs-heart"></i>
-</a> -->
+                            </div>                            <button class="btn btn-primary" id="details-add-to-cart">Add to Booking</button>
+                            <button class="details-action-btn add-to-favorites-btn" id="details-add-to-favorites" data-product-id="">
+                                <i class="bx bx-heart"></i>
+                            </button>
                         </div>
 
                         <ul class="details-meta">
@@ -445,6 +444,7 @@
         <script src="./assets/js/hamburger-mob.js"></script>
         <script type="module" src="./assets/js/profile-nav-service.js"></script>
         <script type="module" src="./assets/js/auth-modal.js"></script>
+        <script type="module" src="./assets/js/wishlist-firebase.js"></script>
         <script type="module" src="./assets/js/details.js"></script>
         <script src="./assets/js/details-mobile.js"></script>
         <script type="module" src="./assets/js/chatbot/chatbot-init.js"></script>

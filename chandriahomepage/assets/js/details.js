@@ -11,6 +11,9 @@ import {
     arrayUnion
 } from "./sdk/chandrias-sdk.js";
 
+// Import wishlist service
+import wishlistService from "./wishlist-firebase.js";
+
 // Global variables
 let currentQuickViewProduct = null;
 
@@ -61,11 +64,11 @@ $(document).ready(async function () {
     showDetailsLoader();
   }
 
-  try {
-    // Wait for all async operations to complete
+  try {    // Wait for all async operations to complete
     await Promise.all([
       loadProductDetails(productId),
       updateCartCount(),
+      wishlistService.updateWishlistCountUI(), // Add wishlist count update
       loadRelatedProducts(productId)
     ]);
     
@@ -394,16 +397,58 @@ $(document).ready(async function () {
     }
   });
 
-  // NOTE: The event handler for related products' cart buttons has been removed 
-  // since rent buttons have been removed from related products
-
-  // Update cart count on auth state change
-  onAuthStateChanged(auth, async user => {
-    await updateCartCount();
-    await updateAllCartButtonStatus();
+  // Main product favorites button functionality
+  $(document).on('click', '#details-add-to-favorites', async function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const user = auth.currentUser;
+    if (!user) {
+      showAuthModal();
+      return;
+    }
+    
+    const button = $(this);
+    const productId = button.data('product-id');
+    
+    if (!productId) return;
+    
+    // Add loading state with visual feedback
+    button.addClass('loading');
+    button.prop('disabled', true);
+    const originalIcon = button.find('i').attr('class');
+    button.find('i').removeClass().addClass('bx bx-loader-alt bx-spin');
+    
+    try {
+      // Use the wishlist service to toggle the product
+      const isNowInWishlist = await wishlistService.toggleWishlist(productId);
+      
+      // Update button state based on result
+      if (isNowInWishlist) {
+        button.find('i').removeClass().addClass('bx bxs-heart');
+        button.addClass('favorited');
+      } else {
+        button.find('i').removeClass().addClass('bx bx-heart');
+        button.removeClass('favorited');
+      }
+      
+      // Update wishlist count
+      await wishlistService.updateWishlistCountUI();
+      
+    } catch (error) {
+      console.error("Error updating wishlist:", error);
+      // Restore original icon on error
+      button.find('i').removeClass().addClass(originalIcon);
+    } finally {
+      button.removeClass('loading');
+      button.prop('disabled', false);
+      
+      // If there was an error, the icon was already restored above
+      if (!button.find('i').hasClass('bx-heart') && !button.find('i').hasClass('bxs-heart')) {
+        button.find('i').removeClass().addClass(originalIcon);
+      }
+    }
   });
-
-  // Event handlers for related products
   
   // Quick View button functionality
   $(document).on('click', '#related-products-container .action-btn[aria-label="Quick View"]', function(e) {
@@ -416,8 +461,7 @@ $(document).ready(async function () {
       openQuickView(productId);
     }
   });
-  
-  // Add to Favorites button functionality
+    // Add to Favorites button functionality
   $(document).on('click', '#related-products-container .action-btn[aria-label="Add to Favorites"]', async function(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -435,44 +479,42 @@ $(document).ready(async function () {
     
     // Add loading state with visual feedback
     button.addClass('loading');
-    button.find('i').addClass('fa-spin');
+    button.prop('disabled', true);
+    const originalIcon = button.find('i').attr('class');
+    button.find('i').removeClass().addClass('bx bx-loader-alt bx-spin');
     
     try {
-      const userRef = doc(chandriaDB, "userAccounts", user.uid);
-      const userSnap = await getDoc(userRef);
+      // Use the wishlist service to toggle the product
+      const isNowInWishlist = await wishlistService.toggleWishlist(productId);
       
-      if (!userSnap.exists()) {
-        notyf.error("User account not found.");
-        return;
-      }
-      
-      const currentWishlist = userSnap.data().wishlist || [];
-      const isInWishlist = currentWishlist.includes(productId);
-      
-      if (isInWishlist) {
-        // Remove from wishlist
-        const updatedWishlist = currentWishlist.filter(id => id !== productId);
-        await updateDoc(userRef, { wishlist: updatedWishlist });
-          button.find('i').removeClass('bxs-heart').addClass('bx-heart');
-        button.removeClass('favorited');
-        notyf.success("Removed from favorites!");
-        
-      } else {
-        // Add to wishlist
-        await updateDoc(userRef, {
-          wishlist: arrayUnion(productId)
-        });
-          button.find('i').removeClass('bx-heart').addClass('bxs-heart');
+      // Update button state based on result
+      if (isNowInWishlist) {
+        button.find('i').removeClass().addClass('bx bxs-heart');
         button.addClass('favorited');
-        notyf.success("Added to favorites!");
+        // Add product item class for hover effect
+        button.closest('.product-item').addClass('in-wishlist');
+      } else {
+        button.find('i').removeClass().addClass('bx bx-heart');
+        button.removeClass('favorited');
+        // Remove product item class for hover effect
+        button.closest('.product-item').removeClass('in-wishlist');
       }
+      
+      // Update wishlist count
+      await wishlistService.updateWishlistCountUI();
       
     } catch (error) {
       console.error("Error updating wishlist:", error);
-      notyf.error("An error occurred. Please try again.");
+      // Restore original icon on error
+      button.find('i').removeClass().addClass(originalIcon);
     } finally {
       button.removeClass('loading');
-      button.find('i').removeClass('fa-spin');
+      button.prop('disabled', false);
+      
+      // If there was an error, the icon was already restored above
+      if (!button.find('i').hasClass('bx-heart') && !button.find('i').hasClass('bxs-heart')) {
+        button.find('i').removeClass().addClass(originalIcon);
+      }
     }
   });
   
@@ -588,6 +630,55 @@ $(document).ready(async function () {
     }
   }
   
+  // Function to update heart button states based on current wishlist
+  async function updateHeartButtonStates() {
+    const user = auth.currentUser;
+    
+    if (!user) {
+      // If no user, ensure all hearts are empty and remove wishlist classes
+      $('#related-products-container .action-btn[aria-label="Add to Favorites"]').each(function() {
+        $(this).find('i').removeClass('bxs-heart').addClass('bx-heart');
+        $(this).removeClass('favorited');
+        $(this).closest('.product-item').removeClass('in-wishlist');
+      });
+      return;
+    }
+
+    try {
+      const wishlist = await wishlistService.getUserWishlist();
+      
+      // Update each heart button based on wishlist status
+      $('#related-products-container .action-btn[aria-label="Add to Favorites"]').each(function() {
+        const button = $(this);
+        const productId = button.data('product-id');
+        const productItem = button.closest('.product-item');
+        
+        if (!productId) return;
+        
+        // Check if this product is in wishlist
+        const isInWishlist = wishlist.some(item => item.productId === productId);
+        
+        if (isInWishlist) {
+          button.find('i').removeClass('bx-heart').addClass('bxs-heart');
+          button.addClass('favorited');
+          productItem.addClass('in-wishlist');
+        } else {
+          button.find('i').removeClass('bxs-heart').addClass('bx-heart');
+          button.removeClass('favorited');
+          productItem.removeClass('in-wishlist');
+        }
+      });
+    } catch (error) {
+      console.error("Error updating heart button states:", error);
+      // On error, set all to "not favorited" as fallback
+      $('#related-products-container .action-btn[aria-label="Add to Favorites"]').each(function() {
+        $(this).find('i').removeClass('bxs-heart').addClass('bx-heart');
+        $(this).removeClass('favorited');
+        $(this).closest('.product-item').removeClass('in-wishlist');
+      });
+    }
+  }
+  
   // Format category name for display
 function formatCategoryName(category) {
     if (!category) return 'Products';
@@ -671,7 +762,7 @@ async function loadRelatedProducts(category, color, currentProductId) {
                 .slice(0, 4 - relatedProducts.length);
                 
             relatedProducts.push(...randomProducts);
-        }         // Render related products
+        }        // Render related products
         relatedProducts.forEach(product => {
             const productHTML = createProductHTML(product);
             productsContainer.innerHTML += productHTML;
@@ -681,6 +772,11 @@ async function loadRelatedProducts(category, color, currentProductId) {
         if (typeof setQuickViewData === 'function') {
             setQuickViewData(allProducts, []);
         }
+        
+        // Update heart button states after products are loaded
+        setTimeout(() => {
+            updateHeartButtonStates();
+        }, 100);
 
         console.log("Related products loaded:", {
             category: categoryProducts.length,

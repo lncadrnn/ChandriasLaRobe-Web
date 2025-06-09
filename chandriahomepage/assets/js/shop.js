@@ -16,6 +16,9 @@ import {
     arrayUnion
 } from "./sdk/chandrias-sdk.js";
 
+// Import wishlist service
+import wishlistService from "./wishlist-firebase.js";
+
 $(document).ready(function () {
     // NOTYF for notifications
     const notyf = new Notyf({
@@ -45,11 +48,11 @@ $(document).ready(function () {
             } else {
                 showShopLoader();
             }
-            
-            await Promise.all([
+              await Promise.all([
                 loadAllProducts(),
                 loadAllAdditionals(),
                 updateCartCount(),
+                wishlistService.updateWishlistCountUI(), // Add wishlist count update
                 initializeEventListeners()
             ]);
               // Initialize with all products
@@ -59,10 +62,10 @@ $(document).ready(function () {
             if (typeof setQuickViewData === 'function') {
                 setQuickViewData(allProducts, allAdditionals);
             }
-            
-            // Update cart button status after products are loaded
+              // Update cart button status and heart button states after products are loaded
             setTimeout(() => {
                 updateAllCartButtonStatus();
+                updateHeartButtonStates();
             }, 500);
             
         } catch (error) {
@@ -147,9 +150,16 @@ $(document).ready(function () {
         $(".sort-option").on("click", handleSortSelection);
 
         // Product tabs
-        $(".product-tab").on("click", handleTabSwitch);        // Quick view functionality now handled by centralized quick-view.js script// Circular cart button functionality
+        $(".product-tab").on("click", handleTabSwitch);
+
+        // Quick view functionality now handled by centralized quick-view.js script
+
+        // Circular cart button functionality
         $(document).on("click", ".circular-cart-btn, .enhanced-cart-btn, .add-to-cart-action-btn", handleCircularCartClick);
         
+        // Add to favorites functionality
+        $(document).on("click", ".add-to-favorites-btn", handleFavoritesClick);
+
         // Add to cart action button functionality (new button beside category/title)
         // $(document).on("click", ".add-to-cart-action-btn", handleAddToCartClick); // Now handled by handleCircularCartClick// Size and quantity controls
         $(document).on("change", ".size-selector", handleSizeChange);
@@ -604,9 +614,9 @@ $(document).ready(function () {
                     <img src="${backImageUrl}" alt="${product.name || "Product"}" class="product-img hover">
                 </a>                <div class="product-actions">                    <a href="#" class="action-btn quick-view-btn-trigger" aria-label="Quick View" data-product-id="${product.id}">
                         <i class="fi fi-rs-eye"></i>
-                    </a>                    <a href="#" class="action-btn" aria-label="Add to Favorites" data-product-id="${product.id}">
+                    </a>                    <button class="action-btn add-to-favorites-btn" aria-label="Add to Favorites" data-product-id="${product.id}">
                         <i class="bx bx-heart"></i>
-                    </a>
+                    </button>
                 </div>
                 
                 <div class="price-tag">${price}</div>
@@ -1162,10 +1172,68 @@ $(document).ready(function () {
         }
     }
     
+    // Handle favorites button click
+    async function handleFavoritesClick(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const user = auth.currentUser;
+        if (!user) {
+            showAuthModal();
+            return;
+        }
+        
+        const button = $(this);
+        const productId = button.data('product-id');
+        
+        if (!productId) return;
+        
+        // Add loading state with visual feedback
+        button.addClass('loading');
+        button.prop('disabled', true);
+        const originalIcon = button.find('i').attr('class');
+        button.find('i').removeClass().addClass('bx bx-loader-alt bx-spin');
+        
+        try {
+            // Use the wishlist service to toggle the product
+            const isNowInWishlist = await wishlistService.toggleWishlist(productId);
+            
+            // Update button state based on result
+            if (isNowInWishlist) {
+                button.find('i').removeClass().addClass('bx bxs-heart');
+                button.addClass('favorited');
+                // Add product item class for hover effect
+                button.closest('.product-item').addClass('in-wishlist');
+            } else {
+                button.find('i').removeClass().addClass('bx bx-heart');
+                button.removeClass('favorited');
+                // Remove product item class for hover effect
+                button.closest('.product-item').removeClass('in-wishlist');
+            }
+            
+            // Update wishlist count
+            await wishlistService.updateWishlistCountUI();
+            
+        } catch (error) {
+            console.error("Error updating wishlist:", error);
+            // Restore original icon on error
+            button.find('i').removeClass().addClass(originalIcon);
+        } finally {
+            button.removeClass('loading');
+            button.prop('disabled', false);
+            
+            // If there was an error, the icon was already restored above
+            if (!button.find('i').hasClass('bx-heart') && !button.find('i').hasClass('bxs-heart')) {
+                button.find('i').removeClass().addClass(originalIcon);
+            }
+        }
+    }
+    
     // Handle authentication state changes
     onAuthStateChanged(auth, async function (user) {
         await updateCartCount();
         await updateAllCartButtonStatus();
+        await updateHeartButtonStates(); // Add this line
         
         if (user) {
             // User is signed in
@@ -1174,6 +1242,57 @@ $(document).ready(function () {
             // User is signed out
             console.log("User signed out");
         }
-    });    // Mobile hamburger menu functionality is handled by nav-bar.js
+    });
+    
+    // Function to update heart button states based on current wishlist
+    async function updateHeartButtonStates() {
+        const user = auth.currentUser;
+        
+        if (!user) {
+            // If no user, ensure all hearts are empty and remove wishlist classes
+            $('.add-to-favorites-btn').each(function() {
+                $(this).find('i').removeClass('bxs-heart').addClass('bx-heart');
+                $(this).removeClass('favorited');
+                $(this).closest('.product-item').removeClass('in-wishlist');
+            });
+            return;
+        }
+
+        try {
+            const wishlist = await wishlistService.getUserWishlist();
+            
+            // Update each heart button based on wishlist status
+            $('.add-to-favorites-btn').each(function() {
+                const button = $(this);
+                const productId = button.data('product-id');
+                const productItem = button.closest('.product-item');
+                
+                if (!productId) return;
+                
+                // Check if this product is in wishlist
+                const isInWishlist = wishlist.some(item => item.productId === productId);
+                
+                if (isInWishlist) {
+                    button.find('i').removeClass('bx-heart').addClass('bxs-heart');
+                    button.addClass('favorited');
+                    productItem.addClass('in-wishlist');
+                } else {
+                    button.find('i').removeClass('bxs-heart').addClass('bx-heart');
+                    button.removeClass('favorited');
+                    productItem.removeClass('in-wishlist');
+                }
+            });
+        } catch (error) {
+            console.error("Error updating heart button states:", error);
+            // On error, set all to "not favorited" as fallback
+            $('.add-to-favorites-btn').each(function() {
+                $(this).find('i').removeClass('bxs-heart').addClass('bx-heart');
+                $(this).removeClass('favorited');
+                $(this).closest('.product-item').removeClass('in-wishlist');
+            });
+        }
+    }
+
+    // Mobile hamburger menu functionality is handled by nav-bar.js
     // Removed conflicting implementation to ensure consistency across all pages
 });
