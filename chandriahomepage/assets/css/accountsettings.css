@@ -64,9 +64,13 @@ body {
     width: 280px;
     background: var(--gray-50);
     border-right: 1px solid var(--gray-200);
-    position: relative;
-    overflow: hidden;
-    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100vh;
+    z-index: 10;
 }
 
 .account-sidebar::before {
@@ -157,6 +161,7 @@ body {
     position: relative;
     overflow: hidden;
     min-height: 100vh;
+    margin-left: 280px; /* Account for fixed sidebar width */
 }
 
 .content-section {
@@ -1041,6 +1046,7 @@ input:disabled {
     .account-content {
         flex: 1;
         min-height: calc(100vh - 120px);
+        margin-left: 0; /* Remove margin on mobile */
     }
     
     .content-section {

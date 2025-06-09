@@ -45,42 +45,25 @@ class ProfileNavService {
             }
             this.updateNavigationDisplay();
         });
-    }
-
-    /**
+    }    /**
      * Load user profile image from Firestore
+     * DISABLED: Profile pictures are no longer shown in navigation
      */
     async loadUserProfileImage(uid) {
-        try {
-            const userRef = doc(chandriaDB, "userAccounts", uid);
-            const userSnap = await getDoc(userRef);
-            
-            if (userSnap.exists()) {
-                const userData = userSnap.data();
-                this.profileImageUrl = userData.profileImageUrl || null;
-            } else {
-                this.profileImageUrl = null;
-            }
-        } catch (error) {
-            console.error('Error loading user profile image:', error);
-            this.profileImageUrl = null;
-        }
-    }
-
-    /**
+        // Profile picture navigation functionality has been disabled
+        // Always set profileImageUrl to null to ensure default icon is shown
+        this.profileImageUrl = null;
+    }/**
      * Update the navigation account button display
      */
     updateNavigationDisplay() {
         const accountButtons = document.querySelectorAll(this.accountButtonSelector);
         
         accountButtons.forEach(button => {
-            if (this.currentUser && this.profileImageUrl) {
-                this.displayProfileImage(button);
-            } else {
-                this.displayDefaultIcon(button);
-            }
+            // Always display default icon, regardless of profile image availability
+            this.displayDefaultIcon(button);
         });
-    }    /**
+    }/**
      * Check if we're on the accounts page
      */
     isAccountsPage() {
@@ -166,40 +149,26 @@ class ProfileNavService {
         // Create default icon element
         const defaultIcon = document.createElement('img');
         defaultIcon.src = 'assets/img/icon-user.svg';
-        defaultIcon.alt = 'Account';
+        defaultIcon.alt = 'Account';        // Use consistent sizing for all pages - same as other header action buttons (20px icon, 45px button)
+        defaultIcon.style.cssText = `
+            width: 20px;
+            height: 20px;
+            transition: filter 0.3s ease;
+        `;
         
-        if (isAccountsPage) {
-            // Larger icon for accounts page
-            defaultIcon.style.cssText = `
-                width: 48px;
-                height: 48px;
-                transition: filter 0.3s ease;
-                filter: brightness(0) saturate(100%) invert(65%) sepia(53%) saturate(1347%) hue-rotate(309deg) brightness(101%) contrast(102%);
-            `;
-            button.style.cssText = `
-                background: rgba(255, 133, 177, 0.1) !important;
-                border: 3px solid rgba(255, 133, 177, 0.3) !important;
-                padding: 8px !important;
-                cursor: pointer;
-                border-radius: 50%;
-                transition: all 0.3s ease;
-            `;
-        } else {
-            // Standard size for other pages
-            defaultIcon.style.cssText = `
-                width: 24px;
-                height: 24px;
-                transition: filter 0.3s ease;
-            `;
-        }
-
-        button.appendChild(defaultIcon);
+        // Apply consistent header-action-btn styling for all pages
+        button.style.cssText = `
+            background: rgba(255, 133, 177, 0.1) !important;
+            border: 2px solid transparent !important;
+            width: 45px !important;
+            height: 45px !important;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        `;        button.appendChild(defaultIcon);
         button.classList.remove('has-profile-image');
         button.classList.remove('accounts-page-profile');
-        
-        if (isAccountsPage) {
-            button.classList.add('accounts-page-default');
-        }
+        button.classList.remove('accounts-page-default');
     }
 
     /**
@@ -235,16 +204,14 @@ class ProfileNavService {
         accountButtons.forEach(button => {
             this.displayDefaultIcon(button);
         });
-    }
-
-    /**
+    }    /**
      * Refresh profile image (called after profile update)
+     * DISABLED: Profile pictures are no longer shown in navigation
      */
     async refreshProfileImage() {
-        if (this.currentUser) {
-            await this.loadUserProfileImage(this.currentUser.uid);
-            this.updateNavigationDisplay();
-        }
+        // Profile picture navigation functionality has been disabled
+        // Navigation will always show default user icon
+        return;
     }
 
     /**
@@ -302,25 +269,7 @@ const profileNavStyles = `
 
     .header-action-btn.accounts-page-profile:hover .profile-nav-image {
         border-color: rgba(255, 133, 177, 0.7);
-        box-shadow: 0 6px 20px rgba(255, 133, 177, 0.3);
-    }
-
-    /* Special styling for accounts page default icon */
-    .header-action-btn.accounts-page-default {
-        width: 64px !important;
-        height: 64px !important;
-        border-radius: 50% !important;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .header-action-btn.accounts-page-default:hover {
-        background: rgba(255, 133, 177, 0.2) !important;
-        border-color: rgba(255, 133, 177, 0.4) !important;
-        transform: translateY(-2px) scale(1.05);
-        box-shadow: 0 6px 20px rgba(255, 133, 177, 0.2) !important;
-    }
+        box-shadow: 0 6px 20px rgba(255, 133, 177, 0.3);    }
 
     /* Ensure proper sizing on different screen sizes */
     @media screen and (max-width: 768px) {
@@ -333,18 +282,7 @@ const profileNavStyles = `
             width: 40px !important;
             height: 40px !important;
         }
-        
-        .header-action-btn.accounts-page-profile .profile-nav-image {
-            width: 40px !important;
-            height: 40px !important;
-        }
-        
-        .header-action-btn.accounts-page-default {
-            width: 56px !important;
-            height: 56px !important;
-        }
-        
-        .header-action-btn.accounts-page-default img {
+          .header-action-btn.accounts-page-profile .profile-nav-image {
             width: 40px !important;
             height: 40px !important;
         }
@@ -362,16 +300,6 @@ const profileNavStyles = `
         }
         
         .header-action-btn.accounts-page-profile .profile-nav-image {
-            width: 36px !important;
-            height: 36px !important;
-        }
-        
-        .header-action-btn.accounts-page-default {
-            width: 50px !important;
-            height: 50px !important;
-        }
-        
-        .header-action-btn.accounts-page-default img {
             width: 36px !important;
             height: 36px !important;
         }
