@@ -942,13 +942,52 @@ $(document).ready(function () {
             button.prop('disabled', false);
             button.find('.btn-text').show();
             button.find('.spinner').hide();
-        }    }    // Authentication modal functions - Now handled by auth-modal.js module
+        }    }    // Authentication modal functions - Now handled by auth-modal.js module    // Debug function to check current state - TEMPORARY
+    window.debugCartState = async function() {
+        const user = auth.currentUser;
+        console.log("=== CART DEBUG STATE ===");
+        console.log("Current user:", user);
+        
+        if (user) {
+            console.log("User ID:", user.uid);
+            console.log("User email:", user.email);
+            
+            try {
+                const userRef = doc(chandriaDB, "userAccounts", user.uid);
+                const userSnap = await getDoc(userRef);
+                
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    console.log("User document exists");
+                    console.log("Cart items:", userData.added_to_cart || []);
+                    
+                    const cartItems = userData.added_to_cart || [];
+                    const totalItems = cartItems.reduce((total, item) => {
+                        console.log(`Item: ${item.productId}, Quantity: ${item.quantity || 1}`);
+                        return total + (item.quantity || 1);
+                    }, 0);
+                    console.log("Total calculated items:", totalItems);
+                } else {
+                    console.log("User document does not exist in Firebase");
+                }
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
+        } else {
+            console.log("No user is currently authenticated");
+        }
+        console.log("Current cart count displayed:", $("#cart-count").text());
+        console.log("=== END DEBUG ===");
+    };
 
     // Cart count function
     async function updateCartCount() {
         try {
             const user = auth.currentUser;
+            console.log("Shop.js updateCartCount - Current user:", user ? user.uid : "No user");
+            
             if (!user) {
+                console.log("Shop.js updateCartCount - No user authenticated, setting count to 0");
                 $("#cart-count").text("0");
                 return;
             }
@@ -957,12 +996,17 @@ $(document).ready(function () {
             const userSnap = await getDoc(userRef);
             
             if (!userSnap.exists()) {
+                console.log("Shop.js updateCartCount - User document does not exist");
                 $("#cart-count").text("0");
                 return;
             }
             
             const cartItems = userSnap.data().added_to_cart || [];
+            console.log("Shop.js updateCartCount - Cart items:", cartItems);
+            
             const totalItems = cartItems.reduce((total, item) => total + (item.quantity || 1), 0);
+            console.log("Shop.js updateCartCount - Total items calculated:", totalItems);
+            
             $("#cart-count").text(totalItems.toString());
             
         } catch (error) {
@@ -1228,9 +1272,10 @@ $(document).ready(function () {
             }
         }
     }
-    
-    // Handle authentication state changes
+      // Handle authentication state changes
     onAuthStateChanged(auth, async function (user) {
+        console.log("Shop.js onAuthStateChanged - User:", user ? user.uid : "No user");
+        
         await updateCartCount();
         await updateAllCartButtonStatus();
         await updateHeartButtonStates(); // Add this line

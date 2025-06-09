@@ -63,11 +63,11 @@ $(document).ready(async function () {
   } else {
     showDetailsLoader();
   }
-
   try {    // Wait for all async operations to complete
-    await Promise.all([
+    console.log("Details.js - Starting initialization, checking auth state first...");
+    console.log("Details.js - Current user at init:", auth.currentUser ? auth.currentUser.uid : "No user");
+      await Promise.all([
       loadProductDetails(productId),
-      updateCartCount(),
       wishlistService.updateWishlistCountUI(), // Add wishlist count update
       loadRelatedProducts(productId)
     ]);
@@ -564,24 +564,32 @@ $(document).ready(async function () {
     }
   });
 
+
   // Cart count function
   async function updateCartCount() {
     const user = auth.currentUser;
+    console.log("Details.js updateCartCount - Current user:", user ? user.uid : "No user");
 
     if (!user) {
+      console.log("Details.js updateCartCount - No user authenticated, setting count to 0");
       $("#cart-count").text("0");
       return;
     }
 
     try {
       const userRef = doc(chandriaDB, "userAccounts", user.uid);
-      const userSnap = await getDoc(userRef);
-
-      if (userSnap.exists()) {
+      const userSnap = await getDoc(userRef);      if (userSnap.exists()) {
         const data = userSnap.data();
         const cartItems = data.added_to_cart || [];
-        const totalCount = cartItems.reduce((sum, item) => sum + (parseInt(item.quantity, 10) || 0), 0);
-        $("#cart-count").text(totalCount);
+        console.log("Details.js updateCartCount - Cart items:", cartItems);
+        
+        const totalCount = cartItems.reduce((sum, item) => sum + (parseInt(item.quantity, 10) || 1), 0);
+        console.log("Details.js updateCartCount - Total count calculated:", totalCount);
+        
+        $("#cart-count").text(totalCount.toString());
+      } else {
+        console.log("Details.js updateCartCount - User document does not exist");
+        $("#cart-count").text("0");
       }
     } catch (error) {
       console.error("Error fetching cart count: ", error);
@@ -1488,27 +1496,26 @@ window.addEventListener('resize', function() {
   // Initialize quick view listeners
   initQuickViewListeners();
   */
-  
-  // Initial setup complete
-});
+    // Handle authentication state changes - Initialize counters when auth state changes
+  onAuthStateChanged(auth, async function (user) {
+      console.log("Details.js onAuthStateChanged - User:", user ? user.uid : "No user");
+      
+      try {
+          // Update cart and wishlist counters sequentially to match shop.js pattern
+          await updateCartCount();
+          await wishlistService.updateWishlistCountUI();
+          
+          if (user) {
+              // User is signed in
+              console.log("Details.js - User signed in:", user.uid);
+          } else {
+              // User is signed out
+              console.log("Details.js - User signed out");
+          }
+      } catch (error) {
+          console.error("Details.js - Error during auth state change:", error);
+      }
+  });
 
-// Handle authentication state changes - Initialize counters when auth state changes
-onAuthStateChanged(auth, async function (user) {
-    try {
-        // Update cart and wishlist counters regardless of auth state
-        await Promise.all([
-            updateCartCount(),
-            wishlistService.updateWishlistCountUI()
-        ]);
-        
-        if (user) {
-            // User is signed in
-            console.log("User signed in:", user.uid);
-        } else {
-            // User is signed out
-            console.log("User signed out");
-        }
-    } catch (error) {
-        console.error("Error during auth state change:", error);
-    }
+  // Initial setup complete
 });
