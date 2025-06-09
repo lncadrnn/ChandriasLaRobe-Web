@@ -377,12 +377,11 @@ button.header-action-btn:active img {
 }
 
 /*=============== MOBILE NAVIGATION ===============*/
-.mobile-nav-menu {
-  position: fixed;
+.mobile-nav-menu {  position: fixed;
   top: var(--header-height);
   left: -100%;
   width: 100%;
-  height: calc(100vh - var(--header-height));  background: rgba(255, 255, 255, 0.98);  backdrop-filter: blur(20px);
+  height: calc(100vh - var(--header-height) - 3rem);  background: rgba(255, 255, 255, 0.98);  backdrop-filter: blur(20px);
   transition: left 0.3s ease;
   z-index: 19900;
   overflow-y: auto;

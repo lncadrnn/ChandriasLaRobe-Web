@@ -144,8 +144,7 @@ $(document).ready(function () {
                         "We're currently updating our fresh collection. Check back soon for new arrivals!",
                         "Explore All Products"
                     )
-                );
-            } else {
+                );            } else {
                 $freshContainer.html(productsHTML);
             }
         } catch (error) {
@@ -155,10 +154,13 @@ $(document).ready(function () {
                     <p>Unable to load fresh products. Please try again later.</p>
                 </div>
             `);
+        } finally {
+            // Hide spinner when data loading completes
+            if (typeof hideSpinner === 'function') {
+                hideSpinner();
+            }
         }
-    }
-
-    // Function to load hot products (price range based)
+    }    // Function to load hot products (price range based)
     async function loadHotProducts() {
         try {
             const $hotContainer = $("#hot-products-container");
@@ -196,9 +198,7 @@ $(document).ready(function () {
                     )
                 );
                 return;
-            }
-
-            let productsHTML = "";
+            }            let productsHTML = "";
             limitedHotProducts.forEach(productData => {
                 productsHTML += createProductHTML(productData, productData.id);
             });
@@ -211,6 +211,11 @@ $(document).ready(function () {
                     <p>Unable to load hot products. Please try again later.</p>
                 </div>
             `);
+        } finally {
+            // Hide spinner when data loading completes
+            if (typeof hideSpinner === 'function') {
+                hideSpinner();
+            }
         }
     }
 
@@ -268,6 +273,11 @@ $(document).ready(function () {
                     <p>Unable to load popular products. Please try again later.</p>
                 </div>
             `);
+        } finally {
+            // Hide spinner when data loading completes
+            if (typeof hideSpinner === 'function') {
+                hideSpinner();
+            }
         }
     }
 

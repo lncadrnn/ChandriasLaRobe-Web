@@ -25,6 +25,8 @@
         <link rel="stylesheet" href="./assets/css/shop.css" />
         <link rel="stylesheet" href="./assets/css/product-cards.css" />
         <link rel="stylesheet" href="./assets/css/auth-modal.css" />
+        <link rel="stylesheet" href="./assets/css/quick-view.css" />
+        <link rel="stylesheet" href="./assets/css/spinner.css" />
         <link rel="stylesheet" href="./assets/css/chatbot.css" />
 
         <title>Chandria's La Robe</title>
@@ -350,15 +352,30 @@
         .modal-buttons {
           flex-direction: column;
         }
-      }
-    </style>
-        <!-- Full Screen Shop Loader -->
-        <div id="shop-loader" class="shop-loader">
-            <div class="shop-loader-content">
-                <div class="shop-spinner"></div>
-                <p class="shop-loader-text">
-                    Loading Products, Please Wait.
-                </p>
+      }    </style>
+        <!-- Page Loading Spinner -->
+        <div id="page-spinner" class="page-spinner">
+            <div class="spinner-content">
+                <div class="spinner-ring-container">
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                </div>
+                <p class="spinner-text">Loading page, please wait...</p>
+            </div>
+        </div>
+
+        <!-- Shop Loading Spinner -->
+        <div id="shop-loader" class="page-spinner hidden">
+            <div class="spinner-content">
+                <div class="spinner-ring-container">
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                </div>
+                <p class="spinner-text">Loading Products, Please Wait.</p>
             </div>
         </div>
 
@@ -905,128 +922,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!--=============== QUICK VIEW MODAL ===============-->
-        <div id="quick-view-modal" class="quick-view-modal-container">
-            <div class="quick-view-modal">
-                <button class="quick-view-close" id="quick-view-close">
-                    &times;
-                </button>
-                
-                <!-- Loading Spinner -->
-                <div class="quick-view-loading" id="quick-view-loading">
-                    <div class="quick-view-spinner">
-                        <div class="spinner-ring"></div>
-                        <div class="spinner-ring"></div>
-                        <div class="spinner-ring"></div>
-                        <div class="spinner-ring"></div>
-                    </div>                        <p class="loading-text">Loading product details...</p>
-                </div>
-                
-                <div class="quick-view-content" id="quick-view-content" style="display: none;">
-                    <div class="quick-view-images">
-                        <div class="quick-view-main-image">
-                            <img
-                                id="quick-view-main-img"
-                                src=""
-                                alt="Product Image"
-                                class="quick-view-img"
-                            />
-                        </div>
-                        <div class="quick-view-thumbnail-container">
-                            <img
-                                id="quick-view-front-thumb"
-                                src=""
-                                alt="Front View"
-                                class="quick-view-thumbnail active"
-                            />
-                            <img
-                                id="quick-view-back-thumb"
-                                src=""
-                                alt="Back View"
-                                class="quick-view-thumbnail"
-                            />
-                        </div>
-                    </div>
-                    <div class="quick-view-details">
-                        <div class="quick-view-header">
-                            <h2
-                                id="quick-view-title"
-                                class="quick-view-product-title"
-                            >
-                                Product Name
-                            </h2>
-                            <span
-                                id="quick-view-category"
-                                class="quick-view-category"
-                                >Category</span
-                            >
-                        </div>
-                        <div class="quick-view-price">
-                            <span
-                                id="quick-view-price"
-                                class="quick-view-new-price"
-                                >₱0</span
-                            >
-                            <span class="quick-view-period">/ Rent</span>
-                        </div>
-                        <div class="quick-view-description">
-                            <p
-                                id="quick-view-desc"
-                                class="quick-view-desc-text"
-                            >
-                                Product description will appear here...
-                            </p>
-                        </div>
-                        <div class="quick-view-features">
-                            <div class="quick-view-feature">
-                                <i class="fi fi-rs-clothes-hanger"></i>
-                                <span>Free Fitting Service</span>
-                            </div>
-                            <div class="quick-view-feature">
-                                <i class="fi fi-rs-sparkles"></i>
-                                <span>Pre-Cleaned & Sanitized</span>
-                            </div>
-                            <div class="quick-view-feature">
-                                <i class="fi fi-rs-running"></i>
-                                <span>Ready-to-Wear</span>
-                            </div>
-                        </div>
-                        <div class="quick-view-meta">
-                            <div class="quick-view-color">
-                                <span class="quick-view-label">Color:</span>
-                                <div
-                                    id="quick-view-color-indicator"
-                                    class="quick-view-color-circle"
-                                ></div>
-                            </div>
-                            <div class="quick-view-code">
-                                <span class="quick-view-label"
-                                    >Product Code:</span
-                                >
-                                <span
-                                    id="quick-view-product-code"
-                                    class="quick-view-code-text"
-                                    >-</span
-                                >
-                            </div>
-                        </div>                        <div class="quick-view-actions">
-                            <button
-                                id="quick-view-view-details"
-                                class="quick-view-btn quick-view-btn-primary"
-                                style="width: 100%; max-width: 400px;"
-                            >
-                                <i class="fi fi-rs-shopping-bag-add"></i>
-                                <span>View Full Details</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!--=============== SWIPER JS ===============-->
+        </div>        <!--=============== SWIPER JS ===============-->
         <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
         <!-- NOTYF CDN -->
         <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
@@ -1038,7 +934,9 @@
         <script src="./assets/js/nav-bar.js"></script>
         <script type="module" src="./assets/js/profile-nav-service.js"></script>
         <script type="module" src="./assets/js/auth-modal.js"></script>
-        <script type="module" src="./assets/js/shop.js"></script>
+        <script type="module" src="./assets/js/shop.js"></script>        <script src="./assets/js/spinner/spinner-core.js"></script>
+        <script src="./assets/js/spinner/spinner-page.js"></script>
+        <script src="./assets/js/spinner/spinner-utils.js"></script>
         <script type="module">
             import {
                 getAuth,
