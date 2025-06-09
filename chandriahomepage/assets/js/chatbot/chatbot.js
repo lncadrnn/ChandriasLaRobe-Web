@@ -146,11 +146,11 @@ class ChandriasChatbot {    constructor() {
                 document.getElementById('chatbotInput').value = question;
                 this.handleSendMessage();
             }
-        });
-
-        // Show speech bubble after a delay when page loads
+        });        // Show speech bubble after a delay when page loads - only on index.html
         setTimeout(() => {
-            this.showSpeechBubble();
+            if (this.isIndexPage()) {
+                this.showSpeechBubble();
+            }
         }, 2000);
     }
 
@@ -290,9 +290,22 @@ class ChandriasChatbot {    constructor() {
         
         // Save state for persistence across pages
         if (window.ChatbotPersistence) {
-            window.ChatbotPersistence.saveState(false);
+            window.ChatbotPersistence.saveState(false);        }
+    }
+
+    isIndexPage() {
+        // Check if we're on index.html by looking at the current URL
+        const currentPath = window.location.pathname;
+        return currentPath === '/' || 
+               currentPath === '/index.html' || 
+               currentPath.endsWith('/index.html') ||
+               currentPath === '' ||
+               currentPath.includes('index.html');    }showSpeechBubble() {
+        // Only show speech bubble on index.html
+        if (!this.isIndexPage()) {
+            return;
         }
-    }showSpeechBubble() {
+        
         const speechBubble = document.getElementById('chatbotSpeechBubble');
         const bubble = document.getElementById('chatbotBubble');
         
