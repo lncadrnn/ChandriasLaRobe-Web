@@ -37,10 +37,15 @@ $(document).ready(function () {
     
     // Initialize shop
     init();
-    
-    async function init() {
+      async function init() {
         try {
-            showShopLoader();
+            // Show spinner using centralized system
+            if (typeof showSpinner === 'function') {
+                showSpinner('Loading products...', 'page-spinner');
+            } else {
+                showShopLoader();
+            }
+            
             await Promise.all([
                 loadAllProducts(),
                 loadAllAdditionals(),
@@ -60,11 +65,16 @@ $(document).ready(function () {
                 updateAllCartButtonStatus();
             }, 500);
             
-            hideShopLoader();
         } catch (error) {
             console.error("Error initializing shop:", error);
-            hideShopLoader();
             showError("Failed to load shop. Please refresh the page.");
+        } finally {
+            // Always hide spinner after all operations complete
+            if (typeof hideSpinner === 'function') {
+                hideSpinner('page-spinner');
+            } else {
+                hideShopLoader();
+            }
         }
     }
     

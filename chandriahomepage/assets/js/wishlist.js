@@ -34,53 +34,60 @@ $(document).ready(function () {
 
     // Listen for authentication state changes
     onAuthStateChanged(auth, async user => {
-        if (user) {
-            // User logged in - show main content
-            $("#nav-login").hide();
-            localStorage.setItem('userEmail', user.email);
-            
-            // Hide auth required content and show wishlist content
-            $("#wishlist-auth-required").hide();
-            $(".wishlist-header").show();
-            $("#wishlist-table-container").show();
-            
-            // Show the wishlist section
-            $(".wishlist.section-lg.container").addClass("authenticated").show();
-            
-            await updateCartCount();
-            await updateWishlistCount();
-            await displayWishlistItems();
-            
-            // Hide the loader after everything loads
-            hideWishlistLoader();
-        } else {
-            // User not logged in - show auth required content
-            $("#nav-login").show();
-            localStorage.removeItem('userEmail');
-            $("#cart-count").text("0");
-            $("#wishlist-count").text("0");
-            
-            // Hide the wishlist header, table and authenticated content
-            $(".wishlist-header").hide();
-            $("#wishlist-table-container").hide();
-            $("#wishlist-empty-state").hide();
-            
-            // Show the auth required content and keep main section visible
-            $("#wishlist-auth-required").show();
-            $(".wishlist.section-lg.container").show();
-            
-            // Show the authentication modal
-            showAuthModal();
-            
-            // Hide the loader for unauthenticated users
-            hideWishlistLoader();
+        try {
+            if (user) {
+                // User logged in - show main content
+                $("#nav-login").hide();
+                localStorage.setItem('userEmail', user.email);
+                
+                // Hide auth required content and show wishlist content
+                $("#wishlist-auth-required").hide();
+                $(".wishlist-header").show();
+                $("#wishlist-table-container").show();
+                
+                // Show the wishlist section
+                $(".wishlist.section-lg.container").addClass("authenticated").show();
+                
+                // Wait for all data operations to complete
+                await Promise.all([
+                    updateCartCount(),
+                    updateWishlistCount(),
+                    displayWishlistItems()
+                ]);
+                
+            } else {
+                // User not logged in - show auth required content
+                $("#nav-login").show();
+                localStorage.removeItem('userEmail');
+                $("#cart-count").text("0");
+                $("#wishlist-count").text("0");
+                
+                // Hide the wishlist header, table and authenticated content
+                $(".wishlist-header").hide();
+                $("#wishlist-table-container").hide();
+                $("#wishlist-empty-state").hide();
+                
+                // Show the auth required content and keep main section visible
+                $("#wishlist-auth-required").show();
+                $(".wishlist.section-lg.container").show();
+                
+                // Show the authentication modal
+                showAuthModal();
+            }
+        } catch (error) {
+            console.error("Error in auth state change:", error);
+        } finally {
+            // Always hide the spinner after all operations complete (success or error)
+            if (typeof hideSpinner === 'function') {
+                hideSpinner('page-spinner');
+            } else {
+                hideWishlistLoader();
+            }
         }
     });
 
-    // Fallback: Hide loader after maximum 3 seconds regardless of auth state
-    setTimeout(() => {
-        hideWishlistLoader();
-    }, 3000);
+    // Remove fallback timeout since we're now properly coordinating async operations
+    // The spinner will be hidden when all data operations complete
 
     // AUTHENTICATION MODAL FUNCTIONS - Now handled by auth-modal.js module
     function initializeAuthModal() {

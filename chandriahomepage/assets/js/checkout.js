@@ -61,6 +61,13 @@ $(document).ready(function () {
     // AUTH STATE CHANGED FUNCTION
     onAuthStateChanged(auth, async user => {
         try {
+            // Show spinner using centralized system with fallback
+            if (typeof window.showSpinner === 'function') {
+                window.showSpinner();
+            } else {
+                $("#checkout-loader").removeClass("hidden");
+            }
+
             if (user) {
                 // Check if user is an admin
                 const adminDocRef = doc(chandriaDB, "adminAccounts", user.uid);
@@ -73,33 +80,40 @@ $(document).ready(function () {
                     return;
                 }
 
-                // Auto-fill email from Firebase Auth
-                $("#customer-email").val(user.email);
+                // Coordinate all async operations with Promise.all
+                await Promise.all([
+                    (async () => {
+                        // Auto-fill email from Firebase Auth
+                        $("#customer-email").val(user.email);
 
-                // Fetch user data from Firestore
-                const userDoc = await getDoc(
-                    doc(chandriaDB, "userAccounts", user.uid)
-                );
+                        // Fetch user data from Firestore
+                        const userDoc = await getDoc(
+                            doc(chandriaDB, "userAccounts", user.uid)
+                        );
 
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    $("#customer-name").val(userData.fullname || "");
-                    $("#customer-contact").val(userData.contact || "");
-                }
-
-                await loadCartItems(user.uid);
-                await updateCartCount();
-            }
-            
-            // REDIRECT IF NO USER LOGGED-IN
-            if (!user) {
+                        if (userDoc.exists()) {
+                            const userData = userDoc.data();
+                            $("#customer-name").val(userData.fullname || "");
+                            $("#customer-contact").val(userData.contact || "");
+                        }
+                    })(),
+                    loadCartItems(user.uid),
+                    updateCartCount()
+                ]);
+            } else {
+                // REDIRECT IF NO USER LOGGED-IN
                 window.location.href = "../index.html";
             }
             
         } catch (error) {
             console.error("Error loading checkout data:", error);
         } finally {
-            $("#checkout-loader").addClass("hidden");
+            // Hide spinner using centralized system with fallback
+            if (typeof window.hideSpinner === 'function') {
+                window.hideSpinner();
+            } else {
+                $("#checkout-loader").addClass("hidden");
+            }
         }
     });
 

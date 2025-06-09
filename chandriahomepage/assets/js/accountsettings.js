@@ -63,78 +63,100 @@ $(document).ready(function () {
     // LOADS USER PROFILE
     async function loadUserProfile() {
         auth.onAuthStateChanged(async user => {
-            if (user) {
-                updateCartCount();
-                const userRef = doc(chandriaDB, "userAccounts", user.uid);
-                const userSnap = await getDoc(userRef);
+            try {
+                // Show spinner using centralized system with fallback
+                if (typeof window.showSpinner === 'function') {
+                    window.showSpinner('Loading account settings...');
+                } else {
+                    $("#loader").removeClass("hidden");
+                    $("body").removeClass("loaded");
+                }
 
-                // Check if user is an admin
-                const adminDocRef = doc(chandriaDB, "adminAccounts", user.uid);
-                const adminDocSnap = await getDoc(adminDocRef);
+                if (user) {
+                    // Coordinate all async operations with Promise.all
+                    await Promise.all([
+                        updateCartCount(),
+                        (async () => {
+                            const userRef = doc(chandriaDB, "userAccounts", user.uid);
+                            const userSnap = await getDoc(userRef);
 
-                if (adminDocSnap.exists()) {
-                    // If user is admin, sign them out
-                    await signOut(auth);
-                    window.location.href = "../index.html";
+                            // Check if user is an admin
+                            const adminDocRef = doc(chandriaDB, "adminAccounts", user.uid);
+                            const adminDocSnap = await getDoc(adminDocRef);
+
+                            if (adminDocSnap.exists()) {
+                                // If user is admin, sign them out
+                                await signOut(auth);
+                                window.location.href = "../index.html";
+                                return;
+                            }
+
+                            if (userSnap.exists()) {
+                                const userData = userSnap.data();
+
+                                $("#email").val(userData.email || "");
+                                $("#name").val(userData.fullname || "");
+                                
+                                // Store the original name for cancel functionality
+                                initialName = userData.fullname || "";
+
+                                // ✅ Load profile image if available
+                                if (userData.profileImageUrl) {
+                                    const $img = $("<img>", {
+                                        src: userData.profileImageUrl,
+                                        alt: "Profile Picture",
+                                        css: {
+                                            width: "100%",
+                                            height: "100%",
+                                            objectFit: "cover",
+                                            borderRadius: "50%"
+                                        },
+                                        error: function() {
+                                            // Fallback to default avatar if image fails to load
+                                            console.warn("Profile image failed to load, showing default avatar");
+                                            $(".avatar-placeholder").html(`
+                                                <div class="avatar-content">
+                                                    <i class="fas fa-user"></i>
+                                                    <span>AVATAR</span>
+                                                </div>
+                                            `);
+                                            $(".avatar-reset-btn").hide();
+                                        }
+                                    });
+                                    
+                                    $(".avatar-placeholder").empty().append($img);
+                                    $(".avatar-reset-btn").css("display", "flex");
+                                } else {
+                                    // No profile image, show default avatar
+                                    $(".avatar-placeholder").html(`
+                                        <div class="avatar-content">
+                                            <i class="fas fa-user"></i>
+                                            <span>AVATAR</span>
+                                        </div>
+                                    `);
+                                    $(".avatar-reset-btn").hide();
+                                }
+                            } else {
+                                console.warn("No user profile found in Firestore.");
+                            }
+                        })()
+                    ]);
+                } else {
+                    // Not signed in, redirect to homepage
+                    setTimeout(() => {
+                        window.location.href = "../index.html";
+                    }, 2500);
                     return;
                 }
-
-                if (userSnap.exists()) {
-                    const userData = userSnap.data();
-
-                    $("#email").val(userData.email || "");
-                    $("#name").val(userData.fullname || "");
-                    
-                    // Store the original name for cancel functionality
-                    initialName = userData.fullname || "";
-
-                    // ✅ Load profile image if available
-                    if (userData.profileImageUrl) {
-                        const $img = $("<img>", {
-                            src: userData.profileImageUrl,
-                            alt: "Profile Picture",
-                            css: {
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                                borderRadius: "50%"
-                            },
-                            error: function() {
-                                // Fallback to default avatar if image fails to load
-                                console.warn("Profile image failed to load, showing default avatar");
-                                $(".avatar-placeholder").html(`
-                                    <div class="avatar-content">
-                                        <i class="fas fa-user"></i>
-                                        <span>AVATAR</span>
-                                    </div>
-                                `);
-                                $(".avatar-reset-btn").hide();
-                            }
-                        });
-                        
-                        $(".avatar-placeholder").empty().append($img);
-                        $(".avatar-reset-btn").css("display", "flex");
-                    } else {
-                        // No profile image, show default avatar
-                        $(".avatar-placeholder").html(`
-                            <div class="avatar-content">
-                                <i class="fas fa-user"></i>
-                                <span>AVATAR</span>
-                            </div>
-                        `);
-                        $(".avatar-reset-btn").hide();
-                    }
-
-                    $("body").addClass("loaded");
+            } catch (error) {
+                console.error("Error loading user profile:", error);
+            } finally {
+                // Hide spinner using centralized system with fallback
+                if (typeof window.hideSpinner === 'function') {
+                    window.hideSpinner();
                 } else {
-                    console.warn("No user profile found in Firestore.");
                     $("body").addClass("loaded");
                 }
-            } else {
-                // Not signed in, redirect to homepage
-                setTimeout(() => {
-                    window.location.href = "../index.html";
-                }, 2500);
             }
         });
     }

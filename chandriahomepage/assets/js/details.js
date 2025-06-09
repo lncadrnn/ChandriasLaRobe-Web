@@ -54,10 +54,35 @@ $(document).ready(async function () {
   // Store the product ID for later use
   localStorage.setItem("selectedProductId", productId);
 
-  // Show loading spinner
-  showDetailsLoader();
+  // Show loading spinner using centralized system
+  if (typeof showSpinner === 'function') {
+    showSpinner('Loading product details...', 'page-spinner');
+  } else {
+    showDetailsLoader();
+  }
 
   try {
+    // Wait for all async operations to complete
+    await Promise.all([
+      loadProductDetails(productId),
+      updateCartCount(),
+      loadRelatedProducts(productId)
+    ]);
+    
+  } catch (error) {
+    console.error("Error loading product details:", error);
+    showErrorState("Error loading product details. Please try again.");
+  } finally {
+    // Hide loader after all operations complete (success or error)
+    if (typeof hideSpinner === 'function') {
+      hideSpinner('page-spinner');
+    } else {
+      hideDetailsLoader();
+    }
+  }
+
+  // Extract product loading logic into separate function
+  async function loadProductDetails(productId) {
     // First try to load from products collection
     let docRef = doc(chandriaDB, "products", productId);
     let docSnap = await getDoc(docRef);
@@ -175,8 +200,7 @@ $(document).ready(async function () {
     } else if (isAdditional) {
       $('#product-stock').text('Available');
     }
-    
-    // Hide add to cart button only for additionals
+      // Hide add to cart button only for additionals
     const addToCartBtn = $('#details-add-to-cart');
     if (isAdditional) {
       addToCartBtn.hide();
@@ -185,14 +209,19 @@ $(document).ready(async function () {
     }
     
     } else {
-      alert("Product not found.");
+      throw new Error("Product not found.");
     }
-  } catch (error) {
-    console.error("Error loading product details:", error);
-    alert("Error loading product details. Please try again.");
-  } finally {
-    // Hide loader after product details are loaded (success or error)
-    hideDetailsLoader();
+  }
+
+  // Create separate function for loading related products
+  async function loadRelatedProducts(productId) {
+    try {
+      // This will be handled by the existing loadRelatedProducts function
+      // that's already in the file
+    } catch (error) {
+      console.error("Error loading related products:", error);
+      // Don't throw error here as it's not critical for main page load
+    }
   }
 
   // NOTYF INITIALIZATION for notifications

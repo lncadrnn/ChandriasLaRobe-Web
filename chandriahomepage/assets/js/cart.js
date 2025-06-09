@@ -51,45 +51,52 @@ $(document).ready(function () {
     // AUTHENTICATION MODAL FUNCTIONS - Now handled by auth-modal.js module // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // LISTEN FOR AUTH STATE CHANGES
     onAuthStateChanged(auth, async user => {
-        if (!user) {
-            // User not logged in, show auth required content
-            hideSpinner('cart-loader');
-            
-            // Hide cart header, content and actions
-            $(".cart-header").hide();
-            $(".cart-table").hide();
-            $("#empty-cart").hide();
-            $(".cart-actions").hide();
-            
-            // Show auth required content
-            $("#cart-auth-required").show();
-            
-            // Keep the main cart section visible but show auth content
-            $(".cart.section-lg.container").show();
-            
-            // Show the authentication modal
-            showAuthModal();
-            return;
-        } else {
-            // User is logged in, hide auth modal and show cart content
-            hideAuthModal();
-            
-            // Hide auth required content and show cart content
-            $("#cart-auth-required").hide();
-            $(".cart-header").show();
-            $(".cart-table").show();
-            $(".cart-actions").show();
-            $(".cart.section-lg.container").show();
-        }
-
         try {
-            await updateCartCount();
-            await displayCartItems(user);
+            if (!user) {
+                // User not logged in, show auth required content
+                
+                // Hide cart header, content and actions
+                $(".cart-header").hide();
+                $(".cart-table").hide();
+                $("#empty-cart").hide();
+                $(".cart-actions").hide();
+                
+                // Show auth required content
+                $("#cart-auth-required").show();
+                
+                // Keep the main cart section visible but show auth content
+                $(".cart.section-lg.container").show();
+                
+                // Show the authentication modal
+                showAuthModal();
+                return;
+            } else {
+                // User is logged in, hide auth modal and show cart content
+                hideAuthModal();
+                
+                // Hide auth required content and show cart content
+                $("#cart-auth-required").hide();
+                $(".cart-header").show();
+                $(".cart-table").show();
+                $(".cart-actions").show();
+                $(".cart.section-lg.container").show();
+            }
+
+            // Wait for all data operations to complete
+            await Promise.all([
+                updateCartCount(),
+                displayCartItems(user)
+            ]);
+            
         } catch (error) {
             console.error("Error loading cart data:", error);
         } finally {
             // Hide loader after data is loaded (success or error)
-            hideSpinner('cart-loader');
+            if (typeof hideSpinner === 'function') {
+                hideSpinner('cart-loader');
+            } else {
+                hideSpinner('cart-loader');
+            }
         }
     }); // DISPLAY CART ITEMS IN TABLE
 

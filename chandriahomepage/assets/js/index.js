@@ -146,21 +146,16 @@ $(document).ready(function () {
                     )
                 );            } else {
                 $freshContainer.html(productsHTML);
-            }
-        } catch (error) {
+            }        } catch (error) {
             console.error("Error loading fresh products:", error);
             $("#fresh-products-container").html(`
                 <div class="products-error">
                     <p>Unable to load fresh products. Please try again later.</p>
                 </div>
             `);
-        } finally {
-            // Hide spinner when data loading completes
-            if (typeof hideSpinner === 'function') {
-                hideSpinner();
-            }
         }
-    }    // Function to load hot products (price range based)
+        // Note: Spinner hiding is now coordinated centrally
+    }// Function to load hot products (price range based)
     async function loadHotProducts() {
         try {
             const $hotContainer = $("#hot-products-container");
@@ -203,20 +198,15 @@ $(document).ready(function () {
                 productsHTML += createProductHTML(productData, productData.id);
             });
 
-            $hotContainer.html(productsHTML);
-        } catch (error) {
+            $hotContainer.html(productsHTML);        } catch (error) {
             console.error("Error loading hot products:", error);
             $("#hot-products-container").html(`
                 <div class="products-error">
                     <p>Unable to load hot products. Please try again later.</p>
                 </div>
             `);
-        } finally {
-            // Hide spinner when data loading completes
-            if (typeof hideSpinner === 'function') {
-                hideSpinner();
-            }
         }
+        // Note: Spinner hiding is now coordinated centrally
     }
 
     // Function to load popular products (based on category popularity)
@@ -265,20 +255,15 @@ $(document).ready(function () {
                 productsHTML += createProductHTML(productData, productData.id);
             });
 
-            $popularContainer.html(productsHTML);
-        } catch (error) {
+            $popularContainer.html(productsHTML);        } catch (error) {
             console.error("Error loading popular products:", error);
             $("#popular-products-container").html(`
                 <div class="products-error">
                     <p>Unable to load popular products. Please try again later.</p>
                 </div>
             `);
-        } finally {
-            // Hide spinner when data loading completes
-            if (typeof hideSpinner === 'function') {
-                hideSpinner();
-            }
         }
+        // Note: Spinner hiding is now coordinated centrally
     }
 
     // QUICK VIEW FUNCTIONALITY
@@ -566,41 +551,79 @@ $(document).ready(function () {
             console.error("Error fetching cart count: ", error);
             $cartCount.text("0");
         }
-    }
-
-    // HANDLE AUTH STATE
+    }    // HANDLE AUTH STATE
     onAuthStateChanged(auth, async function (user) {
         const $userAccountLink = $("#user-account-link");
 
-        if (user) {
-            // Check if user exists in adminAccounts
-            const adminDocRef = doc(chandriaDB, "adminAccounts", user.uid);
-            const adminDocSnap = await getDoc(adminDocRef);
+        try {
+            if (user) {
+                // Check if user exists in adminAccounts
+                const adminDocRef = doc(chandriaDB, "adminAccounts", user.uid);
+                const adminDocSnap = await getDoc(adminDocRef);
 
-            if (adminDocSnap.exists()) {
-                // If user is admin, sign them out
-                await signOut(auth);
-                return;
+                if (adminDocSnap.exists()) {
+                    // If user is admin, sign them out
+                    await signOut(auth);
+                    return;
+                }
+
+                if ($userAccountLink.length) {
+                    $userAccountLink.attr("href", "chandriahomepage/accounts.html");
+                }
+                localStorage.setItem("userEmail", user.email);
+            } else {
+                if ($userAccountLink.length) {
+                    // Open auth modal instead of redirecting to standalone page
+                    $userAccountLink.attr("href", "#");
+                    $userAccountLink.click(function(e) {
+                        e.preventDefault();
+                        // Trigger auth modal
+                        if (window.authModal) {
+                            window.authModal.openModal();
+                        }
+                    });
+                }
+                localStorage.removeItem("userEmail");
             }
 
-            if ($userAccountLink.length) {
-                $userAccountLink.attr("href", "chandriahomepage/accounts.html");
+            // Wait for all data operations to complete
+            await Promise.all([
+                updateCartCount(),
+                loadFreshProducts(),
+                loadHotProducts(),
+                loadPopularProducts()
+            ]);
+
+        } catch (error) {
+            console.error("Error during initialization:", error);
+        } finally {
+            // Hide page spinner after all operations complete
+            if (typeof hideSpinner === 'function') {
+                hideSpinner('page-spinner');
             }
-            localStorage.setItem("userEmail", user.email);
-            await updateCartCount();        } else {
-            if ($userAccountLink.length) {
-                // Open auth modal instead of redirecting to standalone page
-                $userAccountLink.attr("href", "#");
-                $userAccountLink.click(function(e) {
-                    e.preventDefault();
-                    // Trigger auth modal
-                    if (window.authModal) {
-                        window.authModal.openModal();
-                    }
-                });
-            }
-            localStorage.removeItem("userEmail");
-            await updateCartCount();
         }
     });
+
+    // Initialize product loading immediately (don't wait for auth)
+    initializeProductSections();
+
+    async function initializeProductSections() {
+        try {
+            // Load products that don't require auth immediately
+            await Promise.all([
+                loadFreshProducts(),
+                loadHotProducts(), 
+                loadPopularProducts()
+            ]);
+        } catch (error) {
+            console.error("Error loading initial products:", error);
+        } finally {
+            // Hide spinner if no auth state change occurs quickly
+            setTimeout(() => {
+                if (typeof hideSpinner === 'function') {
+                    hideSpinner('page-spinner');
+                }
+            }, 2000);
+        }
+    }
 });
