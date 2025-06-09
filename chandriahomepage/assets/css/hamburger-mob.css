@@ -13,7 +13,7 @@
   padding: 8px;
   border-radius: 8px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 2px solid transparent;
+  border: 2px solid transparent !important;
   background: none;
   z-index: 1000;
   position: relative;
@@ -114,14 +114,18 @@
 }
 
 
-.mobile-nav-link:focus-visible {
-  outline: 2px solid var(--primary-color, #ff85b1);
-  outline-offset: 2px;
-}
-
 .mobile-nav-link:active {
   transform: translateY(0);
 }
+
+/* ADDED RULE TO PREVENT BORDER/OUTLINE ON HOVER */
+.mobile-nav-link:hover, .mobile-nav-link:focus, .hamburger-menu:hover, 
+.hamburger-menu:focus, .nav-logo:focus, .nav-logo:hover, .header-action-btn:focus, .header-action-btn:hover { 
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+/* END OF ADDED RULE */
 
 /* Active link styling */
 .mobile-nav-link.active-link {
@@ -187,12 +191,6 @@
   .mobile-nav-menu {
     background: white;
     border: 2px solid var(--title-color, #333);
-  }
-  
-  .mobile-nav-link:hover,
-  .mobile-nav-link:focus {
-    background: var(--title-color, #333);
-    color: white;
   }
 }
 
