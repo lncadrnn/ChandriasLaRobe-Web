@@ -32,10 +32,10 @@ class MobileNavigation {
         if (!this.hamburgerMenu || !this.mobileNavMenu) {
             console.warn('Mobile navigation elements not found');
             return;
-        }
-
-        this.attachEventListeners();
+        }        this.attachEventListeners();
         this.setupAccessibility();
+        this.setActiveNavLink(); // Add active link detection
+        this.setupHashChangeListener(); // Listen for hash changes
         this.isInitialized = true;
         
         // Set global flag to prevent other scripts from initializing mobile nav
@@ -96,11 +96,74 @@ class MobileNavigation {
                 e.preventDefault();
                 this.toggleMenu();
             }
-        });
-
-        // Set up mobile menu accessibility
+        });        // Set up mobile menu accessibility
         this.mobileNavMenu.setAttribute('role', 'navigation');
         this.mobileNavMenu.setAttribute('aria-label', 'Mobile navigation');
+    }
+
+    setupHashChangeListener() {
+        // Update active state on hash change (matches desktop navigation behavior)
+        window.addEventListener('hashchange', () => {
+            this.setActiveNavLink();
+        });    }setActiveNavLink() {
+        // Remove active class from all mobile nav links
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+        mobileNavLinks.forEach(link => link.classList.remove('active-link'));
+
+        const currentPath = window.location.pathname;
+        const currentHash = window.location.hash;
+        
+        console.log('Mobile Nav - Current path:', currentPath);
+        console.log('Mobile Nav - Current hash:', currentHash);
+
+        // Check if we're on index.html (main page)
+        const isIndexPage = currentPath.endsWith('index.html') || 
+                           currentPath === '/' || 
+                           currentPath.endsWith('/ChandriasLaRobe-Web/');
+
+        if (isIndexPage) {
+            // ON INDEX.HTML: Active state based on current section (like desktop nav)
+            let activeSection = 'home'; // default
+            
+            if (currentHash) {
+                if (currentHash === '#categories') activeSection = 'categories';
+                else if (currentHash === '#products') activeSection = 'products';
+                else if (currentHash === '#contact') activeSection = 'contact';
+                else if (currentHash === '#home' || currentHash === '#') activeSection = 'home';
+            }
+            
+            // Find and activate the corresponding mobile nav link
+            mobileNavLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (activeSection === 'home' && (href === '#home' || href === 'index.html' || href === '../index.html')) {
+                    link.classList.add('active-link');
+                    console.log('Mobile Nav - Activated Home section');
+                } else if (activeSection === 'categories' && href.includes('#categories')) {
+                    link.classList.add('active-link');
+                    console.log('Mobile Nav - Activated Categories section');
+                } else if (activeSection === 'products' && href.includes('#products')) {
+                    link.classList.add('active-link');
+                    console.log('Mobile Nav - Activated Products section');
+                } else if (activeSection === 'contact' && href.includes('#contact')) {
+                    link.classList.add('active-link');
+                    console.log('Mobile Nav - Activated Contact section');
+                }
+            });
+        } else if (currentPath.includes('shop.html')) {
+            // ON SHOP.HTML: Only "Shop" should be active
+            mobileNavLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href.includes('shop.html')) {
+                    link.classList.add('active-link');
+                    console.log('Mobile Nav - Activated Shop page');
+                }
+            });
+        }
+        // ON CART.HTML, CHECKOUT.HTML, DETAILS.HTML, WISHLIST.HTML, ACCOUNTS.HTML: 
+        // NO active states in hamburger menu (do nothing)
+        else {
+            console.log('Mobile Nav - No active states for this page');
+        }
     }
 
     toggleMenu() {
