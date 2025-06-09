@@ -836,71 +836,7 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/* Loader Styles */
-#loader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, var(--soft-pink) 0%, var(--white) 50%, var(--accent-pink) 100%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
-}
-
-body.loaded #loader {
-    opacity: 0;
-    visibility: hidden;
-}
-
-.spinner-loader {
-    width: 50px;
-    height: 50px;
-    border: 4px solid var(--primary-pink-light);
-    border-top: 4px solid var(--primary-pink);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 1rem;
-}
-
-.spinner-loader-text {
-    color: var(--primary-pink-dark);
-    font-size: 1.1rem;
-    font-weight: 600;
-}
-
-.container-spinner {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.9);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    backdrop-filter: blur(4px);
-}
-
-.container-spinner.d-none {
-    display: none !important;
-}
-
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid var(--primary-pink-light);
-    border-top: 4px solid var(--primary-pink);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 1rem;
-}
+/* Legacy loader styles removed - now using centralized spinner system */
 
 .spinner-text {
     color: var(--primary-pink-dark);

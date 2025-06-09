@@ -53,7 +53,7 @@ $(document).ready(function () {
     onAuthStateChanged(auth, async user => {
         if (!user) {
             // User not logged in, show auth required content
-            $("#cart-loader").addClass("hidden");
+            hideSpinner('cart-loader');
             
             // Hide cart header, content and actions
             $(".cart-header").hide();
@@ -89,7 +89,7 @@ $(document).ready(function () {
             console.error("Error loading cart data:", error);
         } finally {
             // Hide loader after data is loaded (success or error)
-            $("#cart-loader").addClass("hidden");
+            hideSpinner('cart-loader');
         }
     }); // DISPLAY CART ITEMS IN TABLE
 
