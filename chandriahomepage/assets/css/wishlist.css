@@ -1005,3 +1005,28 @@
     transform: translateY(-1px);
     box-shadow: 0 4px 15px rgba(255, 133, 177, 0.3);
 }
+
+/* Make sure Boxicons are properly displayed */
+.wishlist-heart-btn i,
+.wishlist-card-remove i {
+    font-family: 'boxicons' !important;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure heart icons are visible */
+.wishlist-heart-btn i.bx,
+.wishlist-heart-btn i.bxs-heart,
+.wishlist-heart-btn i.bx-heart,
+.wishlist-card-remove i.bx,
+.wishlist-card-remove i.bxs-heart,
+.wishlist-card-remove i.bx-heart {
+    display: inline-block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}

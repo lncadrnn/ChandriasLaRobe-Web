@@ -232,7 +232,7 @@ $(document).ready(function () {
                             <button class="wishlist-heart-btn in-wishlist remove-wishlist-btn" 
                                     data-product-id="${item.productId}" 
                                     title="Remove from wishlist">
-                                <i class="bxs-heart"></i>
+                                <i class="bx bxs-heart"></i>
                             </button>
                         </td>
                     </tr>`;
@@ -259,7 +259,7 @@ $(document).ready(function () {
                                 <button class="wishlist-card-remove in-wishlist remove-wishlist-btn" 
                                         data-product-id="${item.productId}" 
                                         title="Remove from wishlist">
-                                    <i class="bxs-heart"></i>
+                                    <i class="bx bxs-heart"></i>
                                 </button>
                             </div>
                         </div>
@@ -319,8 +319,13 @@ $(document).ready(function () {
         const card = $(this).closest(".wishlist-card");
         const button = $(this);
 
-        // Add removing animation
+        // Add removing animation and change icon
         button.addClass("removing");
+        const heartIcon = button.find("i");
+        const originalClass = heartIcon.attr("class");
+        
+        // Change to loading spinner
+        heartIcon.removeClass().addClass("bx bx-loader-alt bx-spin");
 
         try {
             const userRef = doc(chandriaDB, "userAccounts", user.uid);
@@ -336,6 +341,12 @@ $(document).ready(function () {
                     added_to_wishlist: updatedWishlist
                 });
             }
+
+            // Change icon to empty heart before fade out
+            heartIcon.removeClass().addClass("bx bx-heart");
+            
+            // Wait a moment to show the transition
+            await new Promise(resolve => setTimeout(resolve, 300));
 
             // Remove from UI (both table row and mobile card)
             const fadeOutPromises = [];
@@ -371,7 +382,10 @@ $(document).ready(function () {
         } catch (error) {
             console.error("Error removing from wishlist:", error);
             notyf.error("Failed to remove item from wishlist.");
+            
+            // Restore original state on error
             button.removeClass("removing");
+            heartIcon.removeClass().addClass(originalClass);
         }
     });
 
