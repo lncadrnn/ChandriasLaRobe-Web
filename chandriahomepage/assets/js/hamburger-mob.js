@@ -10,6 +10,7 @@ class MobileNavigation {
         this.body = document.body;
         this.isInitialized = false;
         this.isMenuOpen = false;
+        this.scrollPosition = 0; // Store scroll position
         
         this.init();
     }
@@ -172,9 +173,7 @@ class MobileNavigation {
         } else {
             this.openMenu();
         }
-    }
-
-    openMenu() {
+    }    openMenu() {
         this.hamburgerMenu.classList.add('active');
         this.mobileNavMenu.classList.add('show', 'active');
         this.body.classList.add('mobile-nav-open');
@@ -191,9 +190,7 @@ class MobileNavigation {
 
         // Trap focus in menu
         this.trapFocus();
-    }
-
-    closeMenu() {
+    }    closeMenu() {
         this.hamburgerMenu.classList.remove('active');
         this.mobileNavMenu.classList.remove('show', 'active');
         this.body.classList.remove('mobile-nav-open');

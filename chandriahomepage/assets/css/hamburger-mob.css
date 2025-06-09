@@ -150,13 +150,6 @@
   font-weight: 600;
 }
 
-/*=============== BODY SCROLL LOCK ===============*/
-body.mobile-nav-open {
-  overflow: hidden;
-  position: fixed;
-  width: 100%;
-}
-
 /*=============== RESPONSIVE BEHAVIOR ===============*/
 @media screen and (max-width: 768px) {
   .hamburger-menu {
