@@ -152,9 +152,44 @@
     border-color: hsl(346, 100%, 74%) !important;
 }
 
+/* Hover effect for favorited products - show filled heart when hovering over product */
+.product-item.in-wishlist:hover .add-to-favorites-btn i,
+.product-item.in-wishlist .add-to-favorites-btn:hover i {
+    font-family: 'Flaticon' !important;
+}
+
+.product-item.in-wishlist:hover .add-to-favorites-btn i::before,
+.product-item.in-wishlist .add-to-favorites-btn:hover i::before {
+    content: "\f15e" !important; /* filled heart icon code */
+}
+
+/* Ensure normal heart shows when not favorited */
+.product-item:not(.in-wishlist) .add-to-favorites-btn i::before {
+    content: "\f15d" !important; /* empty heart icon code */
+}
+
+/* Special hover effect for products in wishlist */
+.product-item.in-wishlist:hover .add-to-favorites-btn {
+    background-color: hsl(346, 100%, 74%) !important;
+    color: white !important;
+    border-color: hsl(346, 100%, 74%) !important;
+    transform: scale(1.1) !important;
+    box-shadow: 0 4px 15px rgba(255, 154, 175, 0.4) !important;
+}
+
+/* Pulsing animation for products in wishlist on hover */
+.product-item.in-wishlist:hover .add-to-favorites-btn {
+    animation: heartPulse 0.6s ease-in-out !important;
+}
+
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+}
+
+@keyframes heartPulse {
+    0%, 100% { transform: scale(1.05); }
+    50% { transform: scale(1.15); }
 }
 
 /* ============= PRICE TAG ============= */
@@ -475,11 +510,6 @@
 
 .circular-cart-btn.loading svg {
     animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
 }
 
 .circular-cart-btn::after {

@@ -16,6 +16,9 @@ import {
     arrayUnion
 } from "./sdk/chandrias-sdk.js";
 
+// Import wishlist service
+import wishlistService from "./wishlist-firebase.js";
+
 $(document).ready(function () {
     // NOTYF
     const notyf = new Notyf({
@@ -73,14 +76,13 @@ $(document).ready(function () {
                               }" class="product-img hover">`
                             : ""
                     }
-                </a>                
-                <div class="product-actions">
+                </a>                  <div class="product-actions">
                     <button class="action-btn quick-view-btn" aria-label="Quick View" data-product-id="${productId}">
                         <i class="fi fi-rs-eye"></i>
                     </button>
-                    <a href="#" class="action-btn" aria-label="Add to Favorites">
+                    <button class="action-btn add-to-favorites-btn" aria-label="Add to Favorites" data-product-id="${productId}">
                         <i class="fi fi-rs-heart"></i>
-                    </a>
+                    </button>
                 </div>
                   <div class="price-tag">${price}</div>
                 <div class="product-color-indicator" style="background-color: ${product.color || '#f8f9fa'}" title="${product.colorName || product.color || 'Color'}" data-product-id="${productId}"></div>            </div>
@@ -146,7 +148,9 @@ $(document).ready(function () {
                     )
                 );            } else {
                 $freshContainer.html(productsHTML);
-            }        } catch (error) {
+                // Update heart button states after products are loaded
+                setTimeout(() => updateHeartButtonStates(), 100);
+            }} catch (error) {
             console.error("Error loading fresh products:", error);
             $("#fresh-products-container").html(`
                 <div class="products-error">
@@ -198,7 +202,9 @@ $(document).ready(function () {
                 productsHTML += createProductHTML(productData, productData.id);
             });
 
-            $hotContainer.html(productsHTML);        } catch (error) {
+            $hotContainer.html(productsHTML);
+            // Update heart button states after products are loaded
+            setTimeout(() => updateHeartButtonStates(), 100);        } catch (error) {
             console.error("Error loading hot products:", error);
             $("#hot-products-container").html(`
                 <div class="products-error">
@@ -255,7 +261,9 @@ $(document).ready(function () {
                 productsHTML += createProductHTML(productData, productData.id);
             });
 
-            $popularContainer.html(productsHTML);        } catch (error) {
+            $popularContainer.html(productsHTML);
+            // Update heart button states after products are loaded
+            setTimeout(() => updateHeartButtonStates(), 100);        } catch (error) {
             console.error("Error loading popular products:", error);
             $("#popular-products-container").html(`
                 <div class="products-error">
@@ -496,6 +504,118 @@ $(document).ready(function () {
     // Initialize product card click navigation - DISABLED
     // initProductCardClickNavigation(); // Commented out to prevent product card clicks from redirecting to details.html
 
+    // Initialize favorites functionality
+    initFavoritesListeners();    // FAVORITES FUNCTIONALITY
+    function initFavoritesListeners() {
+        // Event delegation for add to favorites buttons
+        $(document).on('click', '.add-to-favorites-btn', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const user = auth.currentUser;
+            if (!user) {
+                // Show auth modal if user is not logged in
+                if (window.authModal) {
+                    window.authModal.openModal();
+                } else if (typeof showAuthModal === 'function') {
+                    showAuthModal();
+                }
+                return;
+            }
+            
+            const button = $(this);
+            const productId = button.data('product-id');
+            
+            if (!productId) return;
+            
+            // Add loading state with visual feedback
+            button.addClass('loading');
+            button.prop('disabled', true);
+            const originalIcon = button.find('i').attr('class');
+            button.find('i').removeClass().addClass('fi fi-rs-spinner fa-spin');
+            
+            try {
+                // Use the wishlist service to toggle the product
+                const isNowInWishlist = await wishlistService.toggleWishlist(productId);
+                
+                // Update button state based on result
+                if (isNowInWishlist) {
+                    button.find('i').removeClass().addClass('fi fi-rs-heart-filled');
+                    button.addClass('favorited');
+                    // Add product item class for hover effect
+                    button.closest('.product-item').addClass('in-wishlist');
+                } else {
+                    button.find('i').removeClass().addClass('fi fi-rs-heart');
+                    button.removeClass('favorited');
+                    // Remove product item class for hover effect
+                    button.closest('.product-item').removeClass('in-wishlist');
+                }
+                
+                // Update wishlist count
+                await wishlistService.updateWishlistCountUI();
+                
+            } catch (error) {
+                console.error("Error updating wishlist:", error);
+                // Restore original icon on error
+                button.find('i').removeClass().addClass(originalIcon);
+            } finally {
+                button.removeClass('loading');
+                button.prop('disabled', false);
+                // If there was an error, the icon was already restored above
+                if (!button.find('i').hasClass('fi-rs-heart') && !button.find('i').hasClass('fi-rs-heart-filled')) {
+                    button.find('i').removeClass().addClass(originalIcon);
+                }
+            }
+        });
+    }    // Function to update heart button states based on current wishlist
+    async function updateHeartButtonStates() {
+        const user = auth.currentUser;
+        
+        if (!user) {
+            // If no user, ensure all hearts are empty and remove wishlist classes
+            $('.add-to-favorites-btn').each(function() {
+                $(this).find('i').removeClass('fi-rs-heart-filled').addClass('fi-rs-heart');
+                $(this).removeClass('favorited');
+                $(this).closest('.product-item').removeClass('in-wishlist');
+            });
+            return;
+        }
+
+        try {
+            const wishlist = await wishlistService.getUserWishlist();
+            
+            // Update each heart button based on wishlist status
+            $('.add-to-favorites-btn').each(function() {
+                const button = $(this);
+                const productId = button.data('product-id');
+                const productItem = button.closest('.product-item');
+                
+                if (!productId) return;
+                
+                // Check if this product is in wishlist
+                const isInWishlist = wishlist.some(item => item.productId === productId);
+                
+                if (isInWishlist) {
+                    button.find('i').removeClass('fi-rs-heart').addClass('fi-rs-heart-filled');
+                    button.addClass('favorited');
+                    productItem.addClass('in-wishlist');
+                } else {
+                    button.find('i').removeClass('fi-rs-heart-filled').addClass('fi-rs-heart');
+                    button.removeClass('favorited');
+                    productItem.removeClass('in-wishlist');
+                }
+            });
+        } catch (error) {
+            console.error("Error updating heart button states:", error);
+            // On error, set all to "not favorited" as fallback
+            $('.add-to-favorites-btn').each(function() {
+                $(this).find('i').removeClass('fi-rs-heart-filled').addClass('fi-rs-heart');
+                $(this).removeClass('favorited');
+                $(this).closest('.product-item').removeClass('in-wishlist');
+            });
+        }
+    }
+
     // Smooth scrolling for anchor links
     $('a[href^="#"]').on("click", function (e) {
         e.preventDefault();
@@ -584,15 +704,19 @@ $(document).ready(function () {
                     });
                 }
                 localStorage.removeItem("userEmail");
-            }
-
-            // Wait for all data operations to complete
+            }            // Wait for all data operations to complete
             await Promise.all([
                 updateCartCount(),
+                wishlistService.updateWishlistCountUI(),
                 loadFreshProducts(),
                 loadHotProducts(),
                 loadPopularProducts()
             ]);
+
+            // Update heart button states after products are loaded
+            setTimeout(() => {
+                updateHeartButtonStates();
+            }, 500);
 
         } catch (error) {
             console.error("Error during initialization:", error);
