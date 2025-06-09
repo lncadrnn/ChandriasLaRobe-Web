@@ -1270,13 +1270,14 @@ $(document).ready(function () {
             if (!button.find('i').hasClass('bx-heart') && !button.find('i').hasClass('bxs-heart')) {
                 button.find('i').removeClass().addClass(originalIcon);
             }
-        }
-    }
-      // Handle authentication state changes
+        }    }
+    
+    // Handle authentication state changes
     onAuthStateChanged(auth, async function (user) {
         console.log("Shop.js onAuthStateChanged - User:", user ? user.uid : "No user");
         
         await updateCartCount();
+        await wishlistService.updateWishlistCountUI(); // Add wishlist count update
         await updateAllCartButtonStatus();
         await updateHeartButtonStates(); // Add this line
         

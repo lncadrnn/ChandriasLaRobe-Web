@@ -1,4 +1,12 @@
 // Enhanced About & Policy Page JavaScript
+import {
+    onAuthStateChanged,
+    auth,
+    chandriaDB,
+    getDoc,
+    doc
+} from "./sdk/chandrias-sdk.js";
+
 document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize typewriter effects
@@ -114,9 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
         icon.addEventListener('mouseleave', function() {
             this.style.animationPlayState = 'running';
         });
-    });
-
-    // Enhanced accessibility features
+    });    // Enhanced accessibility features
     const focusableElements = document.querySelectorAll('button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])');
     
     focusableElements.forEach(element => {
@@ -129,5 +135,81 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.outline = '';
             this.style.outlineOffset = '';
         });
+    });
+
+    // Cart count function
+    async function updateCartCount() {
+        const user = auth.currentUser;
+
+        if (!user) {
+            $("#cart-count").text("0");
+            return;
+        }
+
+        try {
+            const userRef = doc(chandriaDB, "userAccounts", user.uid);
+            const userSnap = await getDoc(userRef);
+
+            if (userSnap.exists()) {
+                const data = userSnap.data();
+                const cartItems = data.added_to_cart || [];
+                const totalCount = cartItems.reduce(
+                    (sum, item) => sum + (parseInt(item.quantity, 10) || 0),
+                    0
+                );
+                $("#cart-count").text(totalCount);
+            } else {
+                $("#cart-count").text("0");
+            }
+        } catch (error) {
+            console.error("Error fetching cart count:", error);
+            $("#cart-count").text("0");
+        }
+    }
+
+    // Wishlist count function
+    async function updateWishlistCount() {
+        const user = auth.currentUser;
+
+        if (!user) {
+            $("#wishlist-count").text("0");
+            return;
+        }
+
+        try {
+            const userRef = doc(chandriaDB, "userAccounts", user.uid);
+            const userSnap = await getDoc(userRef);
+
+            if (userSnap.exists()) {
+                const data = userSnap.data();
+                const wishlistItems = data.added_to_wishlist || [];
+                $("#wishlist-count").text(wishlistItems.length);
+            } else {
+                $("#wishlist-count").text("0");
+            }
+        } catch (error) {
+            console.error("Error fetching wishlist count:", error);
+            $("#wishlist-count").text("0");
+        }
+    }
+
+    // Handle authentication state changes
+    onAuthStateChanged(auth, async function (user) {
+        console.log("About-policy.js onAuthStateChanged - User:", user ? user.uid : "No user");
+        
+        try {
+            await updateCartCount();
+            await updateWishlistCount();
+            
+            if (user) {
+                // User is signed in
+                console.log("About-policy.js - User signed in:", user.uid);
+            } else {
+                // User is signed out
+                console.log("About-policy.js - User signed out");
+            }
+        } catch (error) {
+            console.error("About-policy.js - Error during auth state change:", error);
+        }
     });
 });
