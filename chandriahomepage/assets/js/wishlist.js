@@ -2,6 +2,7 @@
 import {
     onAuthStateChanged,
     auth,
+    chandriaDB,
     getFirestore,
     collection,
     getDocs,
@@ -29,7 +30,24 @@ $(document).ready(function () {
                 }
             }
         ]
-    });    // Initialize authentication modal functionality
+    });
+
+    // Initialize wishlist service - make sure it's available globally
+    let wishlistService;
+    if (window.wishlistService) {
+        wishlistService = window.wishlistService;
+        console.log("Using existing wishlist service");
+    } else {
+        console.log("Creating fallback wishlist service");
+        // Create a temporary wishlist service if not available
+        wishlistService = {
+            updateWishlistCountUI: async function() {
+                await updateWishlistCount();
+            }
+        };
+    }
+
+    // Initialize authentication modal functionality
     initializeAuthModal();
 
     // Listen for authentication state changes
@@ -123,7 +141,10 @@ $(document).ready(function () {
     // DISPLAY WISHLIST ITEMS
     async function displayWishlistItems() {
         const user = auth.currentUser;
+        console.log("displayWishlistItems called for user:", user ? user.uid : "No user");
+        
         if (!user) {
+            console.log("No authenticated user found");
             showEmptyWishlist();
             return;
         }
@@ -132,18 +153,22 @@ $(document).ready(function () {
         $(".wishlist.section-lg.container").addClass("authenticated").show();
 
         try {
+            console.log("Fetching wishlist for user:", user.uid);
             const userRef = doc(chandriaDB, "userAccounts", user.uid);
             const userSnap = await getDoc(userRef);
 
             if (!userSnap.exists()) {
+                console.log("User document does not exist");
                 showEmptyWishlist();
                 return;
             }
 
             const userData = userSnap.data();
             const wishlistItems = userData.added_to_wishlist || [];
+            console.log("User wishlist items:", wishlistItems);
 
             if (wishlistItems.length === 0) {
+                console.log("Wishlist is empty");
                 showEmptyWishlist();
                 return;
             }
@@ -162,58 +187,71 @@ $(document).ready(function () {
             const wishlistTable = $("#wishlist-body");
             wishlistTable.empty();
 
+            console.log("Processing", wishlistItems.length, "wishlist items");
+
             for (const item of wishlistItems) {
-                const productRef = doc(chandriaDB, "products", item.productId);
-                const productSnap = await getDoc(productRef);
+                try {
+                    console.log("Processing wishlist item:", item.productId);
+                    const productRef = doc(chandriaDB, "products", item.productId);
+                    const productSnap = await getDoc(productRef);
 
-                if (!productSnap.exists()) continue;
+                    if (!productSnap.exists()) {
+                        console.warn("Product not found:", item.productId);
+                        continue;
+                    }
 
-                const product = productSnap.data();
-                
-                // Calculate availability status
-                const totalStock = Object.values(product.size || {}).reduce((a, b) => a + b, 0);
-                let status = "Available";
-                let statusClass = "available";
-                
-                if (totalStock === 0) {
-                    status = "Unavailable";
-                    statusClass = "unavailable";
-                } else if (totalStock <= 5) {
-                    status = "Limited Stock";
-                    statusClass = "limited";
+                    const product = productSnap.data();
+                    console.log("Found product:", product.name);
+                    
+                    // Calculate availability status
+                    const totalStock = Object.values(product.size || {}).reduce((a, b) => a + b, 0);
+                    let status = "Available";
+                    let statusClass = "available";
+                    
+                    if (totalStock === 0) {
+                        status = "Unavailable";
+                        statusClass = "unavailable";
+                    } else if (totalStock <= 5) {
+                        status = "Limited Stock";
+                        statusClass = "limited";
+                    }
+
+                    const row = `
+                    <tr data-product-id="${item.productId}">
+                        <td>
+                            <img src="${product.frontImageUrl}" alt="${product.name}" class="table-img">
+                        </td>
+                        <td>
+                            <h3 class="table-title">${product.name}</h3>
+                            <p class="table-description">${product.description || 'Premium quality dress for your special occasions'}</p>
+                        </td>
+                        <td>
+                            <span class="table-price">₱${parseFloat(product.price).toLocaleString()}</span>
+                        </td>
+                        <td>
+                            <span class="table-status ${statusClass}">${status}</span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm add-to-cart-btn" 
+                                    data-product-id="${item.productId}" 
+                                    ${totalStock === 0 ? 'disabled' : ''}>
+                                Add to Rent List
+                            </button>
+                        </td>
+                        <td>
+                            <i class="fi fi-rs-trash table-trash remove-wishlist-btn" 
+                               data-product-id="${item.productId}" 
+                               title="Remove from wishlist"></i>
+                        </td>
+                    </tr>`;
+
+                    wishlistTable.append(row);
+                } catch (productError) {
+                    console.error("Error processing product:", item.productId, productError);
                 }
-
-                const row = `
-                <tr data-product-id="${item.productId}">
-                    <td>
-                        <img src="${product.frontImageUrl}" alt="${product.name}" class="table-img">
-                    </td>
-                    <td>
-                        <h3 class="table-title">${product.name}</h3>
-                        <p class="table-description">${product.description || 'Premium quality dress for your special occasions'}</p>
-                    </td>
-                    <td>
-                        <span class="table-price">₱${parseFloat(product.price).toLocaleString()}</span>
-                    </td>
-                    <td>
-                        <span class="table-status ${statusClass}">${status}</span>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm add-to-cart-btn" 
-                                data-product-id="${item.productId}" 
-                                ${totalStock === 0 ? 'disabled' : ''}>
-                            Add to Rent List
-                        </button>
-                    </td>
-                    <td>
-                        <i class="fi fi-rs-trash table-trash remove-wishlist-btn" 
-                           data-product-id="${item.productId}" 
-                           title="Remove from wishlist"></i>
-                    </td>
-                </tr>`;
-
-                wishlistTable.append(row);
             }
+
+            console.log("Wishlist display completed successfully");
 
         } catch (error) {
             console.error("Error displaying wishlist items:", error);
@@ -374,13 +412,16 @@ $(document).ready(function () {
     // CART COUNT FUNCTION (same as other pages)
     async function updateCartCount() {
         const user = auth.currentUser;
+        console.log("updateCartCount called - User:", user ? user.uid : "No user");
 
         if (!user) {
+            console.log("No user authenticated, setting cart count to 0");
             $("#cart-count").text("0");
             return;
         }
 
         try {
+            console.log("Fetching cart data for user:", user.uid);
             const userRef = doc(chandriaDB, "userAccounts", user.uid);
             const userSnap = await getDoc(userRef);
 
@@ -388,7 +429,11 @@ $(document).ready(function () {
                 const data = userSnap.data();
                 const cartItems = data.added_to_cart || [];
                 const totalCount = cartItems.reduce((sum, item) => sum + (parseInt(item.quantity, 10) || 0), 0);
+                console.log("Cart count calculated:", totalCount, "from", cartItems.length, "items");
                 $("#cart-count").text(totalCount);
+            } else {
+                console.log("User document not found, setting cart count to 0");
+                $("#cart-count").text("0");
             }
         } catch (error) {
             console.error("Error fetching cart count:", error);
@@ -399,21 +444,26 @@ $(document).ready(function () {
     // WISHLIST COUNT FUNCTION
     async function updateWishlistCount() {
         const user = auth.currentUser;
+        console.log("updateWishlistCount called - User:", user ? user.uid : "No user");
 
         if (!user) {
+            console.log("No user authenticated, setting wishlist count to 0");
             $("#wishlist-count").text("0");
             return;
         }
 
         try {
+            console.log("Fetching wishlist data for user:", user.uid);
             const userRef = doc(chandriaDB, "userAccounts", user.uid);
             const userSnap = await getDoc(userRef);
 
             if (userSnap.exists()) {
                 const data = userSnap.data();
                 const wishlistItems = data.added_to_wishlist || [];
+                console.log("Wishlist count calculated:", wishlistItems.length, "items");
                 $("#wishlist-count").text(wishlistItems.length);
             } else {
+                console.log("User document not found, setting wishlist count to 0");
                 $("#wishlist-count").text("0");
             }
         } catch (error) {
