@@ -644,12 +644,16 @@ async function loadRelatedProducts(category, color, currentProductId) {
                 .slice(0, 4 - relatedProducts.length);
                 
             relatedProducts.push(...randomProducts);
-        }
-         // Render related products
+        }         // Render related products
         relatedProducts.forEach(product => {
             const productHTML = createProductHTML(product);
             productsContainer.innerHTML += productHTML;
         });
+
+        // Set product data for centralized quick view system
+        if (typeof setQuickViewData === 'function') {
+            setQuickViewData(allProducts, []);
+        }
 
         console.log("Related products loaded:", {
             category: categoryProducts.length,
@@ -676,9 +680,8 @@ function createProductHTML(product) {
             <a href="details.html?id=${product.id}" class="product-images">
                 <img src="${imageUrl}" alt="${product.name || "Product"}" class="product-img default">
                 <img src="${backImageUrl}" alt="${product.name || "Product"}" class="product-img hover">
-            </a>
-            <div class="product-actions">
-                <a href="#" class="action-btn" aria-label="Quick View" data-product-id="${product.id}">
+            </a>            <div class="product-actions">
+                <a href="#" class="action-btn quick-view-btn-trigger" aria-label="Quick View" data-product-id="${product.id}">
                     <i class="fi fi-rs-eye"></i>
                 </a>
                 <a href="#" class="action-btn" aria-label="Add to Favorites" data-product-id="${product.id}">
@@ -822,12 +825,16 @@ async function loadRelatedAdditionals(category, color, currentProductId) {
                 
             relatedAdditionals.push(...randomAdditionals);
         }
-        
-        // Render related additionals
+          // Render related additionals
         relatedAdditionals.forEach(additional => {
             const additionalHTML = createAdditionalHTML(additional);
             productsContainer.innerHTML += additionalHTML;
         });
+        
+        // Set additional data for centralized quick view system
+        if (typeof setQuickViewData === 'function') {
+            setQuickViewData([], allAdditionals);
+        }
         
         console.log("Related additionals loaded:", {
             category: categoryAdditionals.length,
@@ -856,13 +863,13 @@ function createAdditionalHTML(additional) {
                     alt="${additional.name}"
                     class="product-img hover"
                 />
-            </a>
-            <!-- Product actions are hidden via CSS -->
+            </a>            <!-- Product actions are hidden via CSS -->
             <div class="product-actions">
                 <a
                     href="#"
-                    class="action-btn"
+                    class="action-btn quick-view-btn-trigger"
                     aria-label="Quick View"
+                    data-product-id="${additional.id}"
                 >
                     <i class="fi fi-rs-eye"></i>
                 </a>
@@ -870,6 +877,7 @@ function createAdditionalHTML(additional) {
                     href="#"
                     class="action-btn"
                     aria-label="Add to Wishlist"
+                    data-product-id="${additional.id}"
                 >
                     <i class="fi fi-rs-heart"></i>
                 </a>
@@ -1112,12 +1120,12 @@ window.addEventListener('resize', function() {
   });
   
   // Initial setup complete
-
   // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
-  // QUICK VIEW MODAL FUNCTIONALITY
+  // QUICK VIEW MODAL FUNCTIONALITY - COMMENTED OUT (Using centralized quick-view.js instead)
   // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
   
   // Function to open quick view modal
+  /*
   async function openQuickView(productId) {
     try {
       const modal = document.getElementById('quick-view-modal');
@@ -1210,7 +1218,7 @@ window.addEventListener('resize', function() {
     if (mainImg) mainImg.src = product.frontImageUrl || 'assets/img/placeholder.jpg';
     if (frontThumb) frontThumb.src = product.frontImageUrl || 'assets/img/placeholder.jpg';
     if (backThumb) backThumb.src = product.backImageUrl || 'assets/img/placeholder.jpg';
-    
+
     // Update product details
     const title = document.getElementById('quick-view-title');
     const category = document.getElementById('quick-view-category');
@@ -1303,6 +1311,7 @@ window.addEventListener('resize', function() {
 
   // Initialize quick view listeners
   initQuickViewListeners();
+  */
   
   // Initial setup complete
 });
