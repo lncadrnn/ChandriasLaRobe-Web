@@ -24,81 +24,13 @@ function initializeNavigation() {
 }
 
 /**
- * Initialize mobile hamburger menu functionality
+ * Mobile menu functionality is now handled by hamburger-mob.js
+ * This function is kept for compatibility but does nothing
  */
 function initializeMobileMenu() {
-    const hamburgerMenu = document.querySelector('.hamburger-menu');
-    const mobileNavMenu = document.querySelector('.mobile-nav-menu');
-    const body = document.body;
-
-    if (!hamburgerMenu || !mobileNavMenu) {
-        console.warn('Navigation elements not found');
-        return;
-    }
-
-    // Toggle mobile menu when hamburger is clicked
-    hamburgerMenu.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        const isActive = hamburgerMenu.classList.contains('active');
-        
-        if (isActive) {
-            closeMobileMenu();
-        } else {
-            openMobileMenu();
-        }
-    });
-
-    // Close menu when clicking mobile nav links
-    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
-    mobileNavLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            closeMobileMenu();
-        });
-    });
-
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!hamburgerMenu.contains(e.target) && !mobileNavMenu.contains(e.target)) {
-            closeMobileMenu();
-        }
-    });
-
-    // Close menu when pressing Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            closeMobileMenu();
-        }
-    });
-
-    // Handle window resize
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 768) {
-            closeMobileMenu();
-        }
-    });
-
-    function openMobileMenu() {
-        hamburgerMenu.classList.add('active');
-        mobileNavMenu.classList.add('show', 'active');
-        body.classList.add('nav-open');
-        
-        // Focus management for accessibility
-        const firstLink = mobileNavMenu.querySelector('.mobile-nav-link');
-        if (firstLink) {
-            setTimeout(() => firstLink.focus(), 100);
-        }
-    }
-
-    function closeMobileMenu() {
-        hamburgerMenu.classList.remove('active');
-        mobileNavMenu.classList.remove('show', 'active');
-        body.classList.remove('nav-open');
-        
-        // Return focus to hamburger menu for accessibility
-        hamburgerMenu.focus();
-    }
+    // Mobile hamburger menu functionality is now handled by hamburger-mob.js
+    // This ensures better separation of concerns and cleaner code
+    console.log('Mobile menu initialization delegated to hamburger-mob.js');
 }
 
 /**
@@ -162,16 +94,9 @@ function initializeSmoothScrolling() {
                 top: Math.max(0, targetPosition),
                 behavior: 'smooth'
             });
-            
-            // Close mobile menu if open
-            const mobileNavMenu = document.querySelector('.mobile-nav-menu');
-            if (mobileNavMenu && mobileNavMenu.classList.contains('show')) {
-                const hamburgerMenu = document.querySelector('.hamburger-menu');
-                if (hamburgerMenu) {
-                    hamburgerMenu.classList.remove('active');
-                }
-                mobileNavMenu.classList.remove('show', 'active');
-                document.body.classList.remove('nav-open');
+              // Close mobile menu if open (delegate to hamburger-mob.js)
+            if (window.MobileNavigation && window.MobileNavigation.isOpen()) {
+                window.MobileNavigation.close();
             }
         });
     });
@@ -358,14 +283,9 @@ window.NavBar = {
     updateWishlistCount,
     updateActiveNavigation,
     closeMobileMenu: () => {
-        const hamburgerMenu = document.querySelector('.hamburger-menu');
-        const mobileNavMenu = document.querySelector('.mobile-nav-menu');
-        const body = document.body;
-        
-        if (hamburgerMenu && mobileNavMenu) {
-            hamburgerMenu.classList.remove('active');
-            mobileNavMenu.classList.remove('show', 'active');
-            body.classList.remove('nav-open');
+        // Delegate to hamburger-mob.js
+        if (window.MobileNavigation) {
+            window.MobileNavigation.close();
         }
     }
 };
