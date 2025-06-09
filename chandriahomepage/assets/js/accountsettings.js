@@ -18,6 +18,7 @@ import {
     validatePassword,
     deleteUser
 } from "./sdk/chandrias-sdk.js";
+import wishlistService from "./wishlist-firebase.js";
 
 $(document).ready(function () {
     // NOTYF
@@ -76,6 +77,7 @@ $(document).ready(function () {
                     // Coordinate all async operations with Promise.all
                     await Promise.all([
                         updateCartCount(),
+                        wishlistService.updateWishlistCountUI(),
                         (async () => {
                             const userRef = doc(chandriaDB, "userAccounts", user.uid);
                             const userSnap = await getDoc(userRef);

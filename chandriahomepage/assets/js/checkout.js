@@ -10,6 +10,7 @@ import {
     doc,
     signOut
 } from "./sdk/chandrias-sdk.js";
+import wishlistService from "./wishlist-firebase.js";
 
 $(document).ready(function () {
     // INITIALIZING NOTYF
@@ -98,7 +99,8 @@ $(document).ready(function () {
                         }
                     })(),
                     loadCartItems(user.uid),
-                    updateCartCount()
+                    updateCartCount(),
+                    wishlistService.updateWishlistCountUI()
                 ]);
             } else {
                 // REDIRECT IF NO USER LOGGED-IN

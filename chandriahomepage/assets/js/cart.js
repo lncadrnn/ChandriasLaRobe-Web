@@ -12,6 +12,7 @@ import {
     doc,
     arrayUnion
 } from "./sdk/chandrias-sdk.js";
+import wishlistService from "./wishlist-firebase.js";
 
 $(document).ready(function () {
     // INTIALIZING NOTYF
@@ -85,6 +86,7 @@ $(document).ready(function () {
             // Wait for all data operations to complete
             await Promise.all([
                 updateCartCount(),
+                wishlistService.updateWishlistCountUI(),
                 displayCartItems(user)
             ]);
             
@@ -508,6 +510,7 @@ $(document).ready(function () {
 
             // Update cart count
             await updateCartCount();
+            await wishlistService.updateWishlistCountUI();
 
             // Hide modal and clear stored item
             hideRemoveModal();
