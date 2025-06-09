@@ -341,9 +341,7 @@ $(document).ready(function () {
             notyf.error('Failed to load product details');
             closeQuickView();
         }
-    }
-
-    // Function to close quick view modal
+    }    // Function to close quick view modal
     function closeQuickView() {
         const modal = document.getElementById('quick-view-modal');
         const loadingElement = document.getElementById('quick-view-loading');
@@ -353,14 +351,16 @@ $(document).ready(function () {
         document.body.style.overflow = '';
         currentQuickViewProduct = null;
         
-        // Reset modal state for next use
-        if (loadingElement) {
-            loadingElement.style.display = 'none';
-            loadingElement.classList.add('hidden');
-        }
-        if (contentElement) {
-            contentElement.style.display = 'none';
-        }
+        // Reset modal state for next use after transition
+        setTimeout(() => {
+            if (loadingElement) {
+                loadingElement.style.display = 'none';
+                loadingElement.classList.add('hidden');
+            }
+            if (contentElement) {
+                contentElement.style.display = 'none';
+            }
+        }, 300);
     }
 
     // Function to populate quick view modal with product data
@@ -417,13 +417,8 @@ $(document).ready(function () {
                 }
             });
         });
-    }
-
-    // Function to initialize quick view action buttons
+    }    // Function to initialize quick view action buttons
     function initQuickViewActions(productId) {
-        // Add to Cart button - DISABLED (button hidden via CSS)
-        // Note: The Book Appointment functionality has been disabled for the index page
-        
         // View Full Details button
         const fullDetailsBtn = document.querySelector('#quick-view-details-btn');
         if (fullDetailsBtn) {
@@ -440,7 +435,7 @@ $(document).ready(function () {
                 }, 300);
             });
         }
-    }    // Initialize quick view event listeners
+    }// Initialize quick view event listeners
     function initQuickViewListeners() {
         // Event delegation for quick view buttons
         $(document).on('click', '.quick-view-btn', function(e) {

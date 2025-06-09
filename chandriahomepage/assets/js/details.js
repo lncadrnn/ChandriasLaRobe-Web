@@ -1175,7 +1175,6 @@ window.addEventListener('resize', function() {
       closeQuickView();
     }
   }
-
   // Function to close quick view modal
   function closeQuickView() {
     const modal = document.getElementById('quick-view-modal');
@@ -1188,15 +1187,17 @@ window.addEventListener('resize', function() {
     document.body.style.overflow = '';
     currentQuickViewProduct = null;
     
-    // Reset modal state for next use
-    if (loadingElement) {
-      loadingElement.classList.remove('show');
-      loadingElement.classList.add('hidden');
-      loadingElement.style.display = 'none';
-    }
-    if (contentElement) {
-      contentElement.style.display = 'none';
-    }
+    // Reset modal state for next use after transition
+    setTimeout(() => {
+      if (loadingElement) {
+        loadingElement.classList.remove('show');
+        loadingElement.classList.add('hidden');
+        loadingElement.style.display = 'none';
+      }
+      if (contentElement) {
+        contentElement.style.display = 'none';
+      }
+    }, 300);
   }
 
   // Function to populate quick view modal with product data

@@ -129,18 +129,10 @@ function initQuickViewModal() {
                                     >-</span
                                 >
                             </div>
-                        </div>
-                        <div class="quick-view-actions">
-                            <button
-                                id="quick-view-add-to-cart"
-                                class="quick-view-btn quick-view-btn-primary"
-                            >
-                                <i class="fi fi-rs-shopping-bag-add"></i>
-                                <span>Book Appointment</span>
-                            </button>
+                        </div>                        <div class="quick-view-actions">
                             <button
                                 id="quick-view-details-btn"
-                                class="quick-view-btn quick-view-btn-secondary"
+                                class="quick-view-btn quick-view-btn-primary quick-view-btn-full"
                             >
                                 <i class="fi fi-rs-eye"></i>
                                 <span>View Full Details</span>
@@ -170,7 +162,7 @@ async function openQuickView(productId) {
         const contentElement = $("#quick-view-content");
         
         // Show modal with loading state
-        modal.addClass("show").show();
+        modal.addClass("show");
         document.body.style.overflow = "hidden";
         
         // Show loading spinner and hide content
@@ -257,25 +249,15 @@ function populateQuickViewModal(product, productId) {
     $("#quick-view-price").text(product.price ? `₱${product.price}` : '₱0');
     $("#quick-view-desc").text(product.description || 'No description available for this product.');
     $("#quick-view-product-code").text(product.code || 'N/A');
-    
-    // Update color indicator
+      // Update color indicator
     if ($("#quick-view-color-indicator").length && product.color) {
         $("#quick-view-color-indicator").css('backgroundColor', product.color);
-    }
-    
-    // Handle "Add to Cart" button for additionals
-    const addToCartBtn = $("#quick-view-add-to-cart");
-    if (product.isAdditional) {
-        addToCartBtn.hide();
-    } else {
-        addToCartBtn.show();
     }
     
     // Initialize thumbnail functionality
     initQuickViewThumbnails();
     
     // Store product ID for actions
-    addToCartBtn.data('product-id', productId);
     $("#quick-view-details-btn").data('product-id', productId);
 }
 
@@ -296,9 +278,25 @@ function initQuickViewThumbnails() {
  * Close quick view modal
  */
 function closeQuickView() {
-    $("#" + QUICK_VIEW_CONFIG.modalId).removeClass("show").hide();
+    const modal = $("#" + QUICK_VIEW_CONFIG.modalId);
+    const loadingElement = $("#quick-view-loading");
+    const contentElement = $("#quick-view-content");
+    
+    // Remove show class to trigger CSS transition
+    modal.removeClass("show");
     document.body.style.overflow = "";
     currentQuickViewProduct = null;
+    
+    // After transition completes, reset modal state for next use
+    setTimeout(() => {
+        // Reset modal state
+        if (loadingElement.length) {
+            loadingElement.addClass("hidden").hide();
+        }
+        if (contentElement.length) {
+            contentElement.hide();
+        }
+    }, QUICK_VIEW_CONFIG.fadeSpeed);
 }
 
 /**
@@ -368,77 +366,14 @@ function setQuickViewData(products = [], additionals = []) {
     allAdditionals = additionals;
 }
 
-/**
- * Add product to cart from quick view
- * @param {string} productId - Product ID to add
- */
-async function addToCartFromQuickView(productId) {
-    try {
-        // Check if user is authenticated
-        if (typeof auth === 'undefined' || !auth.currentUser) {
-            if (typeof showAuthModal === 'function') {
-                showAuthModal();
-            } else {
-                alert('Please sign in to add items to cart');
-            }
-            return;
-        }
-        
-        const button = $("#quick-view-add-to-cart");
-        const originalText = button.html();
-        
-        // Show loading state
-        button.prop('disabled', true).html('<i class="fi fi-rs-spinner btn-spinner"></i> Adding...');
-        
-        // Add to cart logic here (implement based on your existing cart functionality)
-        if (typeof addToCart === 'function') {
-            await addToCart(productId);
-        } else {
-            console.warn('addToCart function not found');
-        }
-        
-        // Restore button state
-        button.prop('disabled', false).html(originalText);
-        
-        // Show success notification
-        if (typeof notyf !== 'undefined') {
-            notyf.success('Item added to cart successfully!');
-        }
-        
-    } catch (error) {
-        console.error('Error adding to cart:', error);
-        
-        // Restore button state
-        const button = $("#quick-view-add-to-cart");
-        button.prop('disabled', false);
-        
-        // Show error notification
-        if (typeof notyf !== 'undefined') {
-            notyf.error('Failed to add item to cart');
-        } else {
-            alert('Failed to add item to cart');
-        }
-    }
-}
-
 // Export functions for global use
 window.openQuickView = openQuickView;
 window.closeQuickView = closeQuickView;
 window.initQuickViewModal = initQuickViewModal;
 window.setQuickViewData = setQuickViewData;
-window.addToCartFromQuickView = addToCartFromQuickView;
 window.currentQuickViewProduct = currentQuickViewProduct;
 
 // Auto-initialize when document is ready
 $(document).ready(function() {
     initQuickViewEventListeners();
-    
-    // Initialize add to cart button functionality
-    $(document).on("click", "#quick-view-add-to-cart", function(e) {
-        e.preventDefault();
-        const productId = $(this).data('product-id');
-        if (productId) {
-            addToCartFromQuickView(productId);
-        }
-    });
 });

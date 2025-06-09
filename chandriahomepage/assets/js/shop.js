@@ -717,16 +717,14 @@ $(document).ready(function () {
         if (!productId) return;
         
         await openQuickView(productId);
-    }
-
-    async function openQuickView(productId) {
+    }    async function openQuickView(productId) {
         try {
             const modal = $("#quick-view-modal");
             const loadingElement = $("#quick-view-loading");
             const contentElement = $("#quick-view-content");
             
             // Show modal with loading state
-            modal.addClass("show").show();
+            modal.addClass("show");
             document.body.style.overflow = "hidden";
             
             // Show loading spinner and hide content
@@ -797,20 +795,10 @@ $(document).ready(function () {
         if ($("#quick-view-color-indicator").length && product.color) {
             $("#quick-view-color-indicator").css('backgroundColor', product.color);
         }
-        
-        // Hide "Add to Rent" button for additionals
-        const addToCartBtn = $("#quick-view-add-to-cart");
-        if (product.isAdditional) {
-            addToCartBtn.hide();
-        } else {
-            addToCartBtn.show();
-        }
-        
-        // Initialize thumbnail functionality
+          // Initialize thumbnail functionality
         initQuickViewThumbnails();
         
         // Store product ID for actions
-        addToCartBtn.data('product-id', productId);
         $("#quick-view-view-details").data('product-id', productId);
     }
 
@@ -822,13 +810,27 @@ $(document).ready(function () {
             $(".quick-view-thumbnail").removeClass('active');
             $(this).addClass('active');
         });
-    }
-
-    function closeQuickView() {
-        $("#quick-view-modal").removeClass("show").hide();
+    }    function closeQuickView() {
+        const modal = $("#quick-view-modal");
+        const loadingElement = $("#quick-view-loading");
+        const contentElement = $("#quick-view-content");
+        
+        // Remove show class to trigger CSS transition
+        modal.removeClass("show");
         document.body.style.overflow = "";
         currentQuickViewProduct = null;
-    }    function handleViewDetails() {
+        
+        // After transition completes, reset modal state for next use
+        setTimeout(() => {
+            // Reset modal state
+            if (loadingElement.length) {
+                loadingElement.addClass("hidden").hide();
+            }
+            if (contentElement.length) {
+                contentElement.hide();
+            }
+        }, 300);
+    }function handleViewDetails() {
         const productId = $(this).data('product-id');
         if (productId) {
             window.location.href = `details.html?id=${productId}`;
