@@ -50,6 +50,8 @@ class ChandriasChatbot {    constructor() {
     }    initialize() {
         if (this.initialized) return;
         
+        console.log('Initializing chatbot...');
+        
         this.createChatbotHTML();
         this.loadChatHistory();
         this.attachEventListeners();
@@ -57,9 +59,11 @@ class ChandriasChatbot {    constructor() {
         // Add drag functionality to the bubble
         setTimeout(() => {
             this.makeChatbotBubbleDraggable();
+            console.log('Chatbot drag functionality initialized');
         }, 100); // Small delay to ensure DOM is ready
         
         this.initialized = true;
+        console.log('Chatbot initialization complete');
     }
 
     createChatbotHTML() {
@@ -266,23 +270,29 @@ class ChandriasChatbot {    constructor() {
         if (window.ChatbotPersistence) {
             window.ChatbotPersistence.saveState(true);
         }
-    }
-
-    maximizeChatbot() {
+    }    maximizeChatbot() {
+        console.log('Maximizing chatbot...');
         const chatbot = document.getElementById('chandriasChatbot');
         const bubble = document.getElementById('chatbotBubble');
         const speechBubble = document.getElementById('chatbotSpeechBubble');
+        
+        if (!chatbot || !bubble) {
+            console.error('Chatbot elements not found');
+            return;
+        }
         
         chatbot.classList.remove('hidden');
         bubble.classList.add('hidden');
         this.hideSpeechBubble(); // Hide speech bubble when opening chat
         this.isMinimized = false;
         
+        console.log('Chatbot maximized successfully');
+        
         // Save state for persistence across pages
         if (window.ChatbotPersistence) {
             window.ChatbotPersistence.saveState(false);
         }
-    }    showSpeechBubble() {
+    }showSpeechBubble() {
         const speechBubble = document.getElementById('chatbotSpeechBubble');
         const bubble = document.getElementById('chatbotBubble');
         
@@ -369,9 +379,7 @@ class ChandriasChatbot {    constructor() {
         // Touch events for mobile
         bubble.addEventListener('touchstart', dragStart, { passive: false });
         document.addEventListener('touchmove', drag, { passive: false });
-        document.addEventListener('touchend', dragEnd);
-
-        function dragStart(e) {
+        document.addEventListener('touchend', dragEnd);        function dragStart(e) {
             e.preventDefault();
             
             // Get initial positions
@@ -386,7 +394,18 @@ class ChandriasChatbot {    constructor() {
 
             isDragging = true;
             bubble.classList.add('dragging');
-        }        function drag(e) {
+            
+            // Add a small delay before considering it a drag on mobile
+            if (e.type.includes('touch')) {
+                setTimeout(() => {
+                    if (isDragging && (Math.abs(currentX) < 3 && Math.abs(currentY) < 3)) {
+                        // If we haven't moved much, it's likely a tap
+                        isDragging = false;
+                        bubble.classList.remove('dragging');
+                    }
+                }, 100);
+            }
+        }function drag(e) {
             if (!isDragging) return;
             e.preventDefault();
 
@@ -498,7 +517,17 @@ class ChandriasChatbot {    constructor() {
             }
             // Otherwise, trigger the maximize function
             this.maximizeChatbot();
-        });        // Add window resize listener to update speech bubble position
+        });
+
+        // Add additional touch event for better mobile support
+        bubble.addEventListener('touchstart', (e) => {
+            // Prevent default touch behavior that might interfere
+            if (e.touches.length === 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Add window resize listener to update speech bubble position
         window.addEventListener('resize', () => {
             chatbotInstance.updateSpeechBubblePosition();
         });

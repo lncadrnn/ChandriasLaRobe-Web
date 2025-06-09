@@ -12,7 +12,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    z-index: 900;
+    z-index: 10001;
     transition: all 0.3s ease;
 }
 
@@ -220,7 +220,7 @@
     border-radius: 50%;
     box-shadow: 0 5px 25px rgba(251, 173, 181, 0.4);
     cursor: pointer;
-    z-index: 900;
+    z-index: 10001;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
@@ -242,7 +242,7 @@
 
 .chatbot-bubble.dragging {
     cursor: grabbing;
-    z-index: 901;
+    z-index: 10002;
     animation: none; /* Disable pulse animation while dragging */
     transition: none; /* Disable transitions while dragging */
 }
@@ -253,6 +253,33 @@
         height: 55px;
         bottom: 15px;
         right: 15px;
+        /* Enhanced mobile touch support */
+        touch-action: none;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        /* Improved mobile interaction */
+        -webkit-tap-highlight-color: transparent;
+        /* Better z-index for mobile */
+        z-index: 10002;
+    }
+    
+    .chatbot-bubble:active {
+        transform: scale(0.95);
+        transition: transform 0.1s ease;
+    }
+    
+    .chandrias-chatbot {
+        width: calc(100% - 20px);
+        height: 70vh;
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        /* Ensure proper touch handling */
+        touch-action: manipulation;
     }
 }
 
@@ -298,7 +325,7 @@
     font-weight: 500;
     max-width: 250px;
     min-width: 200px;
-    z-index: 899;
+    z-index: 10000;
     opacity: 0;
     transform: scale(0.8) translateY(10px);
     transition: all 0.3s ease;

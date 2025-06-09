@@ -12,6 +12,16 @@ export function initializeChatbot() {
         
         // Initialize persistence functionality
         ChatbotPersistence.initializePersistence(chatbotInstance);
+        
+        // Make instance globally available for mobile fixes
+        window.chatbotInstance = chatbotInstance;
+        
+        // Load mobile fix for touch handling
+        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+            import('./chatbot-mobile-fix.js').catch(err => {
+                console.log('Mobile fix not available:', err.message);
+            });
+        }
     }
     return chatbotInstance;
 }

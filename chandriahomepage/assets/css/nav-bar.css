@@ -338,11 +338,9 @@ button.header-action-btn:active img {
   flex-direction: column;
   cursor: pointer;
   padding: 0.5rem;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
-  background: none;
-  z-index: 850;
+  border-radius: 8px;  transition: all 0.3s ease;
+  border: 2px solid transparent;  background: none;
+  z-index: 20000;
   position: relative;
 }
 
@@ -384,10 +382,9 @@ button.header-action-btn:active img {
   top: var(--header-height);
   left: -100%;
   width: 100%;
-  height: calc(100vh - var(--header-height));  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(20px);
+  height: calc(100vh - var(--header-height));  background: rgba(255, 255, 255, 0.98);  backdrop-filter: blur(20px);
   transition: left 0.3s ease;
-  z-index: 849;
+  z-index: 19900;
   overflow-y: auto;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
