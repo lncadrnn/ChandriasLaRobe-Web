@@ -54,17 +54,17 @@
             <li class="nav-item">
               <a href="../index.html#contact" class="nav-link">About</a>
             </li>
-          </ul>
-        </div>
-        
-        <div class="header-user-actions">
-          <!-- Mobile Hamburger Menu -->
-          <div class="hamburger-menu" id="hamburger-menu">
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-          </div>
+          </ul>        </div>
 
+        <!-- Mobile Hamburger Menu -->
+        <div class="hamburger-menu" id="hamburger-menu">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </div>
+
+        <!-- User Actions -->
+        <div class="header-user-actions">
           <a href="wishlist.html" class="header-action-btn">
             <img src="assets/img/icon-heart.svg" alt="">
             <span class="count" id="wishlist-count">0</span>
@@ -75,8 +75,8 @@
             <span class="count" id="cart-count">0</span>
           </a>
 
-          <button onclick="window.profileNavService?.handleAccountClick() || showAuthModal()" class="header-action-btn" style="background: none; border: none; cursor: pointer;" id="account-btn">
-            <img src="assets/img/icon-user.svg" alt="" />
+          <button class="header-action-btn" id="account-btn" onclick="window.profileNavService?.handleAccountClick() || showAuthModal()">
+            <img src="assets/img/icon-user.svg" alt="">
           </button>
         </div>
 
@@ -303,18 +303,23 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     <!--=============== SWIPER JS ===============-->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>    <!--=============== PAGE FOCUS JS ===============-->    <script src="assets/js/spinner/spinner-core.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <!--=============== PAGE SCRIPTS ===============-->
+    <script src="assets/js/spinner/spinner-core.js"></script>
     <script src="assets/js/spinner/spinner-page.js"></script>
     <script src="assets/js/spinner/spinner-utils.js"></script>
+    <script src="assets/js/nav-bar.js"></script>
     <script src="assets/js/hamburger-mob.js"></script>
-    <script src="assets/js/quick-view/quick-view.js"></script>    <script src="assets/js/nav-bar.js"></script>
-    <script type="module" src="assets/js/profile-nav-service.js"></script>
-    <script type="module" src="assets/js/wishlist-firebase.js"></script>
+    <script src="assets/js/quick-view/quick-view.js"></script>
     <script src="assets/js/page-focus.js"></script>
-    <!--=============== WISHLIST JS ===============-->
-    <script type="module" src="assets/js/auth-modal.js"></script>
-    <script type="module" src="assets/js/wishlist.js"></script>    <!--=============== MAIN JS ===============-->
     <script src="assets/js/main.js"></script>
+    
+    <!--=============== MODULE SCRIPTS ===============-->
+    <script type="module" src="assets/js/profile-nav-service.js"></script>
+    <script type="module" src="assets/js/auth-modal.js"></script>
+    <script type="module" src="assets/js/wishlist-firebase.js"></script>
+    <script type="module" src="assets/js/wishlist.js"></script>
     <script type="module" src="assets/js/chatbot/chatbot-init.js"></script>
   </body>
 </html>

@@ -84,11 +84,12 @@
 
 /* Navigation link hover effects */
 .nav-link:hover,
-.nav-link:focus {
+.nav-link:focus, .nav-item:hover,
+.nav-item:focus {
   color: var(--primary-color);
   outline: none;
   box-shadow: none;
-  border: none;
+  border: none !important;
 }
 
 .nav-link:active,
@@ -569,13 +570,6 @@ body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:hover img 
   }
 }
 
-/* Focus visible support for better keyboard navigation */
-.nav-link:focus-visible,
-.header-action-btn:focus-visible,
-.hamburger-menu:focus-visible {
-  outline: 2px solid var(--primary-color);
-  outline-offset: 2px;
-}
 
 /*=============== HIGH SPECIFICITY OVERRIDES ===============*/
 /* These overrides ensure our page-specific active states work correctly 
@@ -586,7 +580,7 @@ html body.page-wishlist .header-action-btn[href*="wishlist"],
 html body.page-wishlist .header-action-btn[href*="wishlist"]:hover,
 html body.page-wishlist .header-action-btn[href*="wishlist"]:focus {
   background: rgba(255, 133, 177, 0.1) !important;
-  border: 2px solid transparent !important;
+  border: none !important;
   border-color: transparent !important;
   transform: none !important;
   box-shadow: none !important;
