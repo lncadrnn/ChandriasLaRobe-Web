@@ -246,7 +246,7 @@ function trapFocusInMobileMenu() {
 /**
  * Utility function to update cart count across all pages
  */
-function updateCartCount(count = 0) {
+function updateCartCountDisplay(count = 0) {
     const cartCountElements = document.querySelectorAll('#cart-count, .cart-count');
     cartCountElements.forEach(element => {
         element.textContent = count;
@@ -263,7 +263,7 @@ function updateCartCount(count = 0) {
 /**
  * Utility function to update wishlist count across all pages
  */
-function updateWishlistCount(count = 0) {
+function updateWishlistCountDisplay(count = 0) {
     const wishlistCountElements = document.querySelectorAll('#wishlist-count, .wishlist-count');
     wishlistCountElements.forEach(element => {
         element.textContent = count;
@@ -279,8 +279,8 @@ function updateWishlistCount(count = 0) {
 
 // Export utility functions for other scripts to use
 window.NavBar = {
-    updateCartCount,
-    updateWishlistCount,
+    updateCartCount: updateCartCountDisplay,
+    updateWishlistCount: updateWishlistCountDisplay,
     updateActiveNavigation,
     closeMobileMenu: () => {
         // Delegate to hamburger-mob.js

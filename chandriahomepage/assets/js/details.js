@@ -1615,14 +1615,15 @@ window.addEventListener('resize', function() {
   }
   // Initialize quick view listeners
   initQuickViewListeners();
-  */
-    // Handle authentication state changes - Initialize counters when auth state changes
+  */    // Handle authentication state changes - Initialize counters when auth state changes
   onAuthStateChanged(auth, async function (user) {
       console.log("Details.js onAuthStateChanged - User:", user ? user.uid : "No user");
         try {
-          // Update cart and wishlist counters sequentially to match shop.js pattern
-          await updateCartCount();
-          await wishlistService.updateWishlistCountUI();
+          // Update cart and wishlist counters in parallel
+          await Promise.all([
+              updateCartCount(),
+              wishlistService.updateWishlistCountUI()
+          ]);
           await updateAllCartButtonStatus();
           
           if (user) {

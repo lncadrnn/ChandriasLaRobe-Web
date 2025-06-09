@@ -980,6 +980,28 @@ $(document).ready(function () {
         console.log("=== END DEBUG ===");
     };
 
+    // Debug function to test cart count updates manually
+    window.testCartCount = async function() {
+        console.log("=== TESTING CART COUNT UPDATE ===");
+        console.log("Current cart count element:", $("#cart-count"));
+        console.log("Current cart count text:", $("#cart-count").text());
+        console.log("Current user:", auth.currentUser);
+        
+        if ($("#cart-count").length === 0) {
+            console.error("Cart count element not found!");
+            return;
+        }
+        
+        // Test basic jQuery functionality
+        $("#cart-count").text("TEST");
+        console.log("Set cart count to TEST, current text:", $("#cart-count").text());
+        
+        // Test actual cart count update
+        await updateCartCount();
+        console.log("After updateCartCount, current text:", $("#cart-count").text());
+        console.log("=== END TEST ===");
+    };
+
     // Cart count function
     async function updateCartCount() {
         try {
@@ -1271,22 +1293,27 @@ $(document).ready(function () {
                 button.find('i').removeClass().addClass(originalIcon);
             }
         }    }
-    
-    // Handle authentication state changes
+      // Handle authentication state changes
     onAuthStateChanged(auth, async function (user) {
         console.log("Shop.js onAuthStateChanged - User:", user ? user.uid : "No user");
         
-        await updateCartCount();
-        await wishlistService.updateWishlistCountUI(); // Add wishlist count update
-        await updateAllCartButtonStatus();
-        await updateHeartButtonStates(); // Add this line
-        
-        if (user) {
-            // User is signed in
-            console.log("User signed in:", user.uid);
-        } else {
-            // User is signed out
-            console.log("User signed out");
+        try {
+            await Promise.all([
+                updateCartCount(),
+                wishlistService.updateWishlistCountUI()
+            ]);
+            await updateAllCartButtonStatus();
+            await updateHeartButtonStates();
+            
+            if (user) {
+                // User is signed in
+                console.log("User signed in:", user.uid);
+            } else {
+                // User is signed out
+                console.log("User signed out");
+            }
+        } catch (error) {
+            console.error("Shop.js - Error updating counts:", error);
         }
     });
     

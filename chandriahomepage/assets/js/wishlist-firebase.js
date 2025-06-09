@@ -10,7 +10,8 @@ import {
 } from "./sdk/chandrias-sdk.js";
 
 // WISHLIST FIREBASE SERVICE CLASS
-class WishlistFirebaseService {    constructor() {
+class WishlistFirebaseService {
+    constructor() {
         this.notyf = new Notyf({
             position: {
                 x: "center",
