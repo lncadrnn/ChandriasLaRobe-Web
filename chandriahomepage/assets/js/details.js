@@ -594,8 +594,7 @@ $(document).ready(async function () {
     } catch (error) {
       console.error("Error fetching cart count: ", error);
       $("#cart-count").text("0");
-    }
-  }
+    }  }
 
   // Function to update all cart button statuses with visual validation
   async function updateAllCartButtonStatus() {
@@ -603,7 +602,7 @@ $(document).ready(async function () {
     
     if (!user) {
       // If no user, set all buttons to "not in cart" state
-      $('.add-to-booking-btn').attr('data-in-cart', 'false');
+      $('.circular-cart-btn, .add-to-cart-action-btn').attr('data-in-cart', 'false');
       return;
     }
 
@@ -613,28 +612,29 @@ $(document).ready(async function () {
       
       if (userSnap.exists()) {
         const cartItems = userSnap.data().added_to_cart || [];
+        const cartProductIds = new Set(cartItems.map(item => item.productId));
         
         // Update each related product button
-        $('.add-to-booking-btn').each(function() {
+        $('.circular-cart-btn, .add-to-cart-action-btn').each(function() {
           const button = $(this);
           const productId = button.data('product-id');
           
           if (!productId) return;
           
           // Check if this product is in cart (any size/quantity)
-          const isInCart = cartItems.some(item => item.productId === productId);
+          const isInCart = cartProductIds.has(productId);
           
           // Set data attribute for CSS styling
           button.attr('data-in-cart', isInCart ? 'true' : 'false');
         });
       } else {
         // User document doesn't exist, set all to "not in cart"
-        $('.add-to-booking-btn').attr('data-in-cart', 'false');
+        $('.circular-cart-btn, .add-to-cart-action-btn').attr('data-in-cart', 'false');
       }
     } catch (error) {
       console.error("Error updating cart button status:", error);
       // On error, set all to "not in cart" as fallback
-      $('.add-to-booking-btn').attr('data-in-cart', 'false');
+      $('.circular-cart-btn, .add-to-cart-action-btn').attr('data-in-cart', 'false');
     }
   }
   
@@ -780,10 +780,10 @@ async function loadRelatedProducts(category, color, currentProductId) {
         if (typeof setQuickViewData === 'function') {
             setQuickViewData(allProducts, []);
         }
-        
-        // Update heart button states after products are loaded
+          // Update heart button states after products are loaded
         setTimeout(() => {
             updateHeartButtonStates();
+            updateAllCartButtonStatus();
         }, 100);
 
         console.log("Related products loaded:", {
@@ -1258,16 +1258,136 @@ window.addEventListener('resize', function() {
       productCard.removeClass("is-loading");
     }, 300);
   });
-  
-  // Redirect to product details for related products cart button
-  $(document).on("click", "#related-products-container .add-to-cart-action-btn", function(e) {
+    // Handle cart button click for related products (both circular and action buttons)
+  $(document).on("click", "#related-products-container .add-to-cart-action-btn, #related-products-container .circular-cart-btn", async function(e) {
     e.preventDefault();
     e.stopPropagation();
     
-    const productId = $(this).data("product-id");
-    if (productId) {
-      // Redirect to details.html with the product ID
-      window.location.href = `details.html?id=${productId}`;
+    // Check if this is the add-to-cart-action-btn (the large button beside product info)
+    if ($(this).hasClass('add-to-cart-action-btn')) {
+      const productId = $(this).data("product-id");
+      if (productId) {
+        // Redirect to details.html with the product ID
+        window.location.href = `details.html?id=${productId}`;
+        return;
+      }
+    }
+    
+    const user = auth.currentUser;
+    if (!user) {
+      showAuthModal();
+      return;
+    }
+    
+    const button = $(this);
+    const productId = button.data("product-id");
+    const isInCart = button.attr("data-in-cart") === "true";
+    
+    if (!productId) return;
+    
+    // Add loading state
+    button.addClass("loading");
+    
+    try {
+      const userRef = doc(chandriaDB, "userAccounts", user.uid);
+      const userSnap = await getDoc(userRef);
+      
+      if (!userSnap.exists()) {
+        notyf.error("User account not found.");
+        return;
+      }
+      
+      const currentCart = userSnap.data().added_to_cart || [];
+      
+      if (isInCart) {
+        // Remove from cart - remove all instances of this product
+        const updatedCart = currentCart.filter(item => item.productId !== productId);
+        await updateDoc(userRef, { added_to_cart: updatedCart });
+        
+        button.attr("data-in-cart", "false");
+        notyf.success("Removed from cart!");
+        
+      } else {
+        // Get product data
+        let productData = relatedProducts.find(p => p.id === productId);
+        
+        if (!productData) {
+          // Fallback: fetch from Firebase
+          const productDoc = await getDoc(doc(chandriaDB, "products", productId));
+          if (!productDoc.exists()) {
+            notyf.error("Product not found.");
+            return;
+          }
+          productData = productDoc.data();
+        }
+        
+        // Get selected size and quantity from the product card
+        const productCard = button.closest('.product-item');
+        let selectedSize = productCard.find('.size-selector').val();
+        let selectedQuantity = parseInt(productCard.find('.quantity-value').text()) || 1;
+        
+        // Check stock for the selected size
+        if (selectedSize && productData.size && productData.size[selectedSize]) {
+          const stock = productData.size[selectedSize];
+          if (stock <= 0) {
+            notyf.error(`Size ${selectedSize} is out of stock.`);
+            return;
+          }
+          
+          // Limit quantity to available stock
+          if (selectedQuantity > stock) {
+            selectedQuantity = stock;
+            notyf.warning(`Quantity limited to available stock: ${stock}`);
+          }
+        }
+        
+        // Fallback to auto-selecting size if not available on the card
+        if (!selectedSize && productData.size) {
+          const availableSizes = Object.entries(productData.size).filter(([size, stock]) => stock > 0);
+          if (availableSizes.length > 0) {
+            selectedSize = availableSizes[0][0];
+          } else {
+            notyf.error("Product is out of stock.");
+            return;
+          }
+        } else if (!selectedSize) {
+          selectedSize = "One Size";
+        }
+        
+        // Check if same product/size combination already exists
+        const existingIndex = currentCart.findIndex(
+          item => item.productId === productId && item.size === selectedSize
+        );
+        
+        if (existingIndex !== -1) {
+          // Update quantity
+          currentCart[existingIndex].quantity = (currentCart[existingIndex].quantity || 1) + selectedQuantity;
+          await updateDoc(userRef, { added_to_cart: currentCart });
+        } else {
+          // Add new item
+          await updateDoc(userRef, {
+            added_to_cart: arrayUnion({
+              productId,
+              size: selectedSize,
+              quantity: selectedQuantity
+            })
+          });
+        }
+          button.attr("data-in-cart", "true");
+        notyf.success(`Added to cart! Size: ${selectedSize}, Qty: ${selectedQuantity}`);
+      }
+      
+      // Update cart count
+      await updateCartCount();
+      
+      // Update all cart button statuses
+      await updateAllCartButtonStatus();
+      
+    } catch (error) {
+      console.error("Error updating cart:", error);
+      notyf.error("An error occurred. Please try again.");
+    } finally {
+      button.removeClass("loading");
     }
   });
   
@@ -1499,11 +1619,11 @@ window.addEventListener('resize', function() {
     // Handle authentication state changes - Initialize counters when auth state changes
   onAuthStateChanged(auth, async function (user) {
       console.log("Details.js onAuthStateChanged - User:", user ? user.uid : "No user");
-      
-      try {
+        try {
           // Update cart and wishlist counters sequentially to match shop.js pattern
           await updateCartCount();
           await wishlistService.updateWishlistCountUI();
+          await updateAllCartButtonStatus();
           
           if (user) {
               // User is signed in
