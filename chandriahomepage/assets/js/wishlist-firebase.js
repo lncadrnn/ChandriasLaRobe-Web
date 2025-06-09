@@ -10,8 +10,7 @@ import {
 } from "./sdk/chandrias-sdk.js";
 
 // WISHLIST FIREBASE SERVICE CLASS
-class WishlistFirebaseService {
-    constructor() {
+class WishlistFirebaseService {    constructor() {
         this.notyf = new Notyf({
             position: {
                 x: "center",
@@ -20,9 +19,17 @@ class WishlistFirebaseService {
             types: [
                 {
                     type: "custom-success",
-                    background: "#ff9a10ff",
+                    background: "#28a745",
                     icon: {
                         className: "notyf__icon--success",
+                        tagName: "i"
+                    }
+                },
+                {
+                    type: "custom-error", 
+                    background: "#dc3545",
+                    icon: {
+                        className: "notyf__icon--error",
                         tagName: "i"
                     }
                 }
@@ -91,9 +98,10 @@ class WishlistFirebaseService {
                     productId: productId,
                     addedAt: new Date()
                 })
+            });            this.notyf.open({
+                type: 'custom-success',
+                message: 'Added to favorites!'
             });
-
-            this.notyf.success("Added to favorites!");
             return true;
 
         } catch (error) {
@@ -130,9 +138,10 @@ class WishlistFirebaseService {
             
             await updateDoc(userRef, {
                 added_to_wishlist: updatedWishlist
+            });            this.notyf.open({
+                type: 'custom-error',
+                message: 'Removed from favorites!'
             });
-
-            this.notyf.success("Removed from favorites!");
             return true;
 
         } catch (error) {
@@ -190,13 +199,12 @@ class WishlistFirebaseService {
     // Update all heart button states on the page
     async updateAllHeartButtonStates() {
         const user = auth.currentUser;
-        
-        if (!user) {
+          if (!user) {
             // If no user, ensure all hearts are empty
             document.querySelectorAll('.add-to-favorites-btn').forEach(button => {
                 const icon = button.querySelector('i');
                 if (icon) {
-                    icon.className = 'fi fi-rs-heart';
+                    icon.className = 'bx bx-heart';
                 }
                 button.classList.remove('favorited');
             });
@@ -215,22 +223,20 @@ class WishlistFirebaseService {
                 // Check if this product is in wishlist
                 const isInWishlist = wishlist.some(item => item.productId === productId);
                 const icon = button.querySelector('i');
-                
-                if (isInWishlist) {
-                    if (icon) icon.className = 'fi fi-rs-heart-filled';
+                  if (isInWishlist) {
+                    if (icon) icon.className = 'bx bxs-heart';
                     button.classList.add('favorited');
                 } else {
-                    if (icon) icon.className = 'fi fi-rs-heart';
+                    if (icon) icon.className = 'bx bx-heart';
                     button.classList.remove('favorited');
                 }
             });
         } catch (error) {
-            console.error("Error updating heart button states:", error);
-            // On error, set all to "not favorited" as fallback
+            console.error("Error updating heart button states:", error);            // On error, set all to "not favorited" as fallback
             document.querySelectorAll('.add-to-favorites-btn').forEach(button => {
                 const icon = button.querySelector('i');
                 if (icon) {
-                    icon.className = 'fi fi-rs-heart';
+                    icon.className = 'bx bx-heart';
                 }
                 button.classList.remove('favorited');
             });

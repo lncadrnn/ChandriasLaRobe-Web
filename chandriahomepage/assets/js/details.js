@@ -453,8 +453,7 @@ $(document).ready(async function () {
         // Remove from wishlist
         const updatedWishlist = currentWishlist.filter(id => id !== productId);
         await updateDoc(userRef, { wishlist: updatedWishlist });
-        
-        button.find('i').removeClass('fi-rs-heart-filled').addClass('fi-rs-heart');
+          button.find('i').removeClass('bxs-heart').addClass('bx-heart');
         button.removeClass('favorited');
         notyf.success("Removed from favorites!");
         
@@ -463,8 +462,7 @@ $(document).ready(async function () {
         await updateDoc(userRef, {
           wishlist: arrayUnion(productId)
         });
-        
-        button.find('i').removeClass('fi-rs-heart').addClass('fi-rs-heart-filled');
+          button.find('i').removeClass('bx-heart').addClass('bxs-heart');
         button.addClass('favorited');
         notyf.success("Added to favorites!");
       }
@@ -712,9 +710,8 @@ function createProductHTML(product) {
             </a>            <div class="product-actions">
                 <a href="#" class="action-btn quick-view-btn-trigger" aria-label="Quick View" data-product-id="${product.id}">
                     <i class="fi fi-rs-eye"></i>
-                </a>
-                <a href="#" class="action-btn" aria-label="Add to Favorites" data-product-id="${product.id}">
-                    <i class="fi fi-rs-heart"></i>
+                </a>                <a href="#" class="action-btn" aria-label="Add to Favorites" data-product-id="${product.id}">
+                    <i class="bx bx-heart"></i>
                 </a>
             </div>
             
@@ -905,10 +902,9 @@ function createAdditionalHTML(additional) {
                 <a
                     href="#"
                     class="action-btn"
-                    aria-label="Add to Wishlist"
-                    data-product-id="${additional.id}"
+                    aria-label="Add to Wishlist"                data-product-id="${additional.id}"
                 >
-                    <i class="fi fi-rs-heart"></i>
+                    <i class="bx bx-heart"></i>
                 </a>
             </div>
         </div>

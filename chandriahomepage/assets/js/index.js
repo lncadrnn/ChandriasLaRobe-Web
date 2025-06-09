@@ -79,9 +79,8 @@ $(document).ready(function () {
                 </a>                  <div class="product-actions">
                     <button class="action-btn quick-view-btn" aria-label="Quick View" data-product-id="${productId}">
                         <i class="fi fi-rs-eye"></i>
-                    </button>
-                    <button class="action-btn add-to-favorites-btn" aria-label="Add to Favorites" data-product-id="${productId}">
-                        <i class="fi fi-rs-heart"></i>
+                    </button>                    <button class="action-btn add-to-favorites-btn" aria-label="Add to Favorites" data-product-id="${productId}">
+                        <i class="bx bx-heart"></i>
                     </button>
                 </div>
                   <div class="price-tag">${price}</div>
@@ -527,25 +526,23 @@ $(document).ready(function () {
             const productId = button.data('product-id');
             
             if (!productId) return;
-            
-            // Add loading state with visual feedback
+              // Add loading state with visual feedback
             button.addClass('loading');
             button.prop('disabled', true);
             const originalIcon = button.find('i').attr('class');
-            button.find('i').removeClass().addClass('fi fi-rs-spinner fa-spin');
+            button.find('i').removeClass().addClass('bx bx-loader-alt bx-spin');
             
             try {
                 // Use the wishlist service to toggle the product
                 const isNowInWishlist = await wishlistService.toggleWishlist(productId);
-                
-                // Update button state based on result
+                  // Update button state based on result
                 if (isNowInWishlist) {
-                    button.find('i').removeClass().addClass('fi fi-rs-heart-filled');
+                    button.find('i').removeClass().addClass('bx bxs-heart');
                     button.addClass('favorited');
                     // Add product item class for hover effect
                     button.closest('.product-item').addClass('in-wishlist');
                 } else {
-                    button.find('i').removeClass().addClass('fi fi-rs-heart');
+                    button.find('i').removeClass().addClass('bx bx-heart');
                     button.removeClass('favorited');
                     // Remove product item class for hover effect
                     button.closest('.product-item').removeClass('in-wishlist');
@@ -560,9 +557,8 @@ $(document).ready(function () {
                 button.find('i').removeClass().addClass(originalIcon);
             } finally {
                 button.removeClass('loading');
-                button.prop('disabled', false);
-                // If there was an error, the icon was already restored above
-                if (!button.find('i').hasClass('fi-rs-heart') && !button.find('i').hasClass('fi-rs-heart-filled')) {
+                button.prop('disabled', false);                // If there was an error, the icon was already restored above
+                if (!button.find('i').hasClass('bx-heart') && !button.find('i').hasClass('bxs-heart')) {
                     button.find('i').removeClass().addClass(originalIcon);
                 }
             }
@@ -570,11 +566,10 @@ $(document).ready(function () {
     }    // Function to update heart button states based on current wishlist
     async function updateHeartButtonStates() {
         const user = auth.currentUser;
-        
-        if (!user) {
+          if (!user) {
             // If no user, ensure all hearts are empty and remove wishlist classes
             $('.add-to-favorites-btn').each(function() {
-                $(this).find('i').removeClass('fi-rs-heart-filled').addClass('fi-rs-heart');
+                $(this).find('i').removeClass('bxs-heart').addClass('bx-heart');
                 $(this).removeClass('favorited');
                 $(this).closest('.product-item').removeClass('in-wishlist');
             });
@@ -591,16 +586,15 @@ $(document).ready(function () {
                 const productItem = button.closest('.product-item');
                 
                 if (!productId) return;
-                
-                // Check if this product is in wishlist
+                  // Check if this product is in wishlist
                 const isInWishlist = wishlist.some(item => item.productId === productId);
                 
                 if (isInWishlist) {
-                    button.find('i').removeClass('fi-rs-heart').addClass('fi-rs-heart-filled');
+                    button.find('i').removeClass('bx-heart').addClass('bxs-heart');
                     button.addClass('favorited');
                     productItem.addClass('in-wishlist');
                 } else {
-                    button.find('i').removeClass('fi-rs-heart-filled').addClass('fi-rs-heart');
+                    button.find('i').removeClass('bxs-heart').addClass('bx-heart');
                     button.removeClass('favorited');
                     productItem.removeClass('in-wishlist');
                 }
@@ -609,7 +603,7 @@ $(document).ready(function () {
             console.error("Error updating heart button states:", error);
             // On error, set all to "not favorited" as fallback
             $('.add-to-favorites-btn').each(function() {
-                $(this).find('i').removeClass('fi-rs-heart-filled').addClass('fi-rs-heart');
+                $(this).find('i').removeClass('bxs-heart').addClass('bx-heart');
                 $(this).removeClass('favorited');
                 $(this).closest('.product-item').removeClass('in-wishlist');
             });

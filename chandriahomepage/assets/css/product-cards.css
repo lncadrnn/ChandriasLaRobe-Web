@@ -152,20 +152,60 @@
     border-color: hsl(346, 100%, 74%) !important;
 }
 
-/* Hover effect for favorited products - show filled heart when hovering over product */
+/* ============= HEART BUTTON STYLING (BOXICONS) ============= */
+
+/* Base heart button styling */
+.add-to-favorites-btn i {
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+/* Enhanced heart button styling for all contexts */
+.action-btn i.bx-heart,
+.action-btn i.bxs-heart {
+    font-size: 16px;
+    transition: all 0.3s ease;
+    color: #666; /* Default gray color */
+}
+
+/* Pink color for favorited hearts in all contexts */
+.action-btn.favorited i.bxs-heart,
+.add-to-favorites-btn.favorited i.bxs-heart {
+    color: #ff69b4 !important; /* Bright pink color */
+}
+
+/* Hover effect for all heart buttons */
+.action-btn:hover i.bx-heart,
+.action-btn:hover i.bxs-heart,
+.add-to-favorites-btn:hover i {
+    color: #ff69b4 !important;
+    transform: scale(1.1);
+}
+
+/* Special styling for favorited button background */
+.action-btn.favorited {
+    background-color: rgba(255, 105, 180, 0.1) !important;
+    border-color: #ff69b4 !important;
+}
+
+/* Loading state styling for Boxicons spinner */
+.action-btn.loading i.bx-spin,
+.add-to-favorites-btn.loading i.bx-spin {
+    animation: spin 1s linear infinite;
+    color: #ff69b4 !important;
+}
+
+/* Pink color for favorited hearts */
+.add-to-favorites-btn.favorited i,
+.add-to-favorites-btn.favorited i.bxs-heart {
+    color: hsl(346, 100%, 74%) !important; /* Pink color */
+}
+
+/* Hover effect for favorited products - enhance pink color */
 .product-item.in-wishlist:hover .add-to-favorites-btn i,
 .product-item.in-wishlist .add-to-favorites-btn:hover i {
-    font-family: 'Flaticon' !important;
-}
-
-.product-item.in-wishlist:hover .add-to-favorites-btn i::before,
-.product-item.in-wishlist .add-to-favorites-btn:hover i::before {
-    content: "\f15e" !important; /* filled heart icon code */
-}
-
-/* Ensure normal heart shows when not favorited */
-.product-item:not(.in-wishlist) .add-to-favorites-btn i::before {
-    content: "\f15d" !important; /* empty heart icon code */
+    color: #ff1493 !important; /* Deeper pink on hover */
+    transform: scale(1.2);
 }
 
 /* Special hover effect for products in wishlist */
@@ -180,6 +220,11 @@
 /* Pulsing animation for products in wishlist on hover */
 .product-item.in-wishlist:hover .add-to-favorites-btn {
     animation: heartPulse 0.6s ease-in-out !important;
+}
+
+/* Loading state for heart button */
+.add-to-favorites-btn.loading i.bx-spin {
+    animation: spin 1s linear infinite;
 }
 
 @keyframes spin {

@@ -604,9 +604,8 @@ $(document).ready(function () {
                     <img src="${backImageUrl}" alt="${product.name || "Product"}" class="product-img hover">
                 </a>                <div class="product-actions">                    <a href="#" class="action-btn quick-view-btn-trigger" aria-label="Quick View" data-product-id="${product.id}">
                         <i class="fi fi-rs-eye"></i>
-                    </a>
-                    <a href="#" class="action-btn" aria-label="Add to Favorites" data-product-id="${product.id}">
-                        <i class="fi fi-rs-heart"></i>
+                    </a>                    <a href="#" class="action-btn" aria-label="Add to Favorites" data-product-id="${product.id}">
+                        <i class="bx bx-heart"></i>
                     </a>
                 </div>
                 
