@@ -20,16 +20,6 @@
   outline: none;
 }
 
-.hamburger-menu:hover {
-  background: rgba(255, 133, 177, 0.1);
-  border-color: rgba(255, 133, 177, 0.3);
-  transform: scale(1.05);
-}
-
-.hamburger-menu:focus-visible {
-  outline: 2px solid var(--primary-color, #ff85b1);
-  outline-offset: 2px;
-}
 
 .hamburger-menu:active {
   transform: scale(0.98);
@@ -46,9 +36,6 @@
   transform-origin: center;
 }
 
-.hamburger-menu:hover .hamburger-line {
-  background: var(--primary-color, #ff85b1);
-}
 
 /* Active state animations */
 .hamburger-menu.active .hamburger-line:nth-child(1) {
@@ -126,13 +113,6 @@
   overflow: hidden;
 }
 
-.mobile-nav-link:hover,
-.mobile-nav-link:focus {
-  color: var(--primary-color, #ff85b1);
-  background: rgba(255, 133, 177, 0.1);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 133, 177, 0.2);
-}
 
 .mobile-nav-link:focus-visible {
   outline: 2px solid var(--primary-color, #ff85b1);
@@ -244,11 +224,6 @@
   color: #333 !important;
 }
 
-.mobile-nav-link:hover,
-.mobile-nav-link:focus {
-  color: var(--primary-color, #ff85b1) !important;
-  background: rgba(255, 133, 177, 0.1) !important;
-}
 
 /*=============== DARK MODE SUPPORT - DISABLED ===============*/
 /* Dark mode is overridden to maintain white background with black text */
@@ -262,9 +237,4 @@
     color: #333 !important;
   }
   
-  .mobile-nav-link:hover,
-  .mobile-nav-link:focus {
-    background: rgba(255, 133, 177, 0.1) !important;
-    color: var(--primary-color, #ff85b1) !important;
-  }
 }
