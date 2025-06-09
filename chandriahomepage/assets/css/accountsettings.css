@@ -65,11 +65,11 @@ body {
     background: var(--gray-50);
     border-right: 1px solid var(--gray-200);
     position: fixed;
-    top: 0;
+    top: 80px; /* Add top margin to position below navigation bar */
     left: 0;
     overflow-y: auto;
     overflow-x: hidden;
-    height: 100vh;
+    height: calc(100vh - 80px); /* Adjust height to account for top margin */
     z-index: 10;
 }
 
@@ -189,7 +189,6 @@ body {
 }
 
 .section-header {
-    margin-bottom: 3rem;
     text-align: center;
 }
 
@@ -1008,7 +1007,9 @@ input:disabled {
     
     .account-sidebar {
         width: 100%;
-        position: static;
+        position: static; /* Remove fixed positioning on mobile */
+        top: auto; /* Reset top positioning on mobile */
+        height: auto; /* Reset height on mobile */
         min-height: auto;
         border-right: none;
         border-bottom: 1px solid var(--gray-200);
