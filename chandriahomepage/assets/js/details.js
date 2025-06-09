@@ -789,26 +789,75 @@ async function loadRelatedProducts(category, color, currentProductId) {
     }
 }
 
-// Function to create HTML for a product (simplified version without size/quantity controls)
+// Function to create HTML for a product (complete version with size/quantity controls matching shop.html format)
 function createProductHTML(product) {
+    // Debug: Log product data to check backImageUrl
+    console.log('Product data:', {
+        id: product.id,
+        name: product.name,
+        frontImageUrl: product.frontImageUrl,
+        backImageUrl: product.backImageUrl
+    });
+    
+    const availableSizes = product.size ? Object.keys(product.size).filter(size => product.size[size] > 0) : [];
     const categoryDisplay = formatCategoryName(product.category) || "Item";
     const price = product.price ? `₱ ${product.price}` : "Price available in-store";
     const imageUrl = product.frontImageUrl || product.imageUrl || "assets/img/placeholder.jpg";
     const backImageUrl = product.backImageUrl || imageUrl;
     const colorHex = product.color || "#f8f9fa";
     
+    // Create size options HTML
+    let sizeOptionsHTML = '';
+    if (availableSizes.length > 0 && !product.isAdditional) {
+        // Create options with stock information
+        const sizeOptions = availableSizes.map(size => {
+            const stock = product.size[size];
+            return `<option value="${size}" data-stock="${stock}">${size} (${stock})</option>`;
+        }).join('');
+        
+        // Get initial stock for first size
+        const initialSize = availableSizes[0];
+        const initialStock = product.size[initialSize];
+        
+        // Determine stock class
+        let stockClass = '';
+        if (initialStock <= 3) stockClass = 'very-low-stock';
+        else if (initialStock <= 5) stockClass = 'low-stock';
+        
+        sizeOptionsHTML = `
+        <div class="product-size-options">
+            <div class="size-selection">
+                <div class="size-selector-container">
+                    <select class="size-selector" data-product-id="${product.id}">
+                        ${sizeOptions}
+                    </select>
+                </div>
+            </div>
+            <div class="quantity-selection">
+                <button class="quantity-btn minus-btn" data-product-id="${product.id}">-</button>
+                <span class="quantity-value" data-product-id="${product.id}">1</span>
+                <button class="quantity-btn plus-btn" data-product-id="${product.id}" ${initialStock <= 1 ? 'disabled' : ''}>+</button>
+            </div>
+        </div>`;
+    }
+    
     return `
     <div class="product-item">
+        <div class="loading-state">
+            <div class="loading-spinner"></div>
+        </div>
         <div class="product-banner">
             <a href="details.html?id=${product.id}" class="product-images">
                 <img src="${imageUrl}" alt="${product.name || "Product"}" class="product-img default">
                 <img src="${backImageUrl}" alt="${product.name || "Product"}" class="product-img hover">
-            </a>            <div class="product-actions">
+            </a>
+            <div class="product-actions">
                 <a href="#" class="action-btn quick-view-btn-trigger" aria-label="Quick View" data-product-id="${product.id}">
                     <i class="fi fi-rs-eye"></i>
-                </a>                <a href="#" class="action-btn" aria-label="Add to Favorites" data-product-id="${product.id}">
-                    <i class="bx bx-heart"></i>
                 </a>
+                <button class="action-btn add-to-favorites-btn" aria-label="Add to Favorites" data-product-id="${product.id}">
+                    <i class="bx bx-heart"></i>
+                </button>
             </div>
             
             <div class="price-tag">${price}</div>
@@ -820,10 +869,17 @@ function createProductHTML(product) {
                     <span class="product-category">${categoryDisplay}</span>
                     <h3 class="product-title">${product.name || "Untitled Product"}</h3>
                 </div>
-                <button class="add-to-booking-btn" data-product-id="${product.id}" title="Add to Booking">
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                </button>
+                ${!product.isAdditional ? `
+                <div class="product-header-buttons">
+                    <button class="add-to-cart-action-btn" data-product-id="${product.id}" data-in-cart="false" title="View Details">
+                        <i class="fi fi-rs-shopping-bag-add"></i>
+                    </button>
+                    <button class="circular-cart-btn" data-product-id="${product.id}" data-in-cart="false" title="Add to Cart">
+                        <i class="fi fi-rs-shopping-cart-add"></i>
+                    </button>
+                </div>` : ''}
             </div>
+            ${sizeOptionsHTML}
         </div>
     </div>
     `;
