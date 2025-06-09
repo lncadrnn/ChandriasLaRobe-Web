@@ -185,7 +185,9 @@ $(document).ready(function () {
             emptyState.hide();
 
             const wishlistTable = $("#wishlist-body");
+            const mobileCards = $("#wishlist-mobile-cards");
             wishlistTable.empty();
+            mobileCards.empty();
 
             console.log("Processing", wishlistItems.length, "wishlist items");
 
@@ -203,19 +205,9 @@ $(document).ready(function () {
                     const product = productSnap.data();
                     console.log("Found product:", product.name);
                     
-                    // Calculate availability status
-                    const totalStock = Object.values(product.size || {}).reduce((a, b) => a + b, 0);
-                    let status = "Available";
-                    let statusClass = "available";
+                    // Get product category
+                    const category = product.category || 'Dress';
                     
-                    if (totalStock === 0) {
-                        status = "Unavailable";
-                        statusClass = "unavailable";
-                    } else if (totalStock <= 5) {
-                        status = "Limited Stock";
-                        statusClass = "limited";
-                    }
-
                     const row = `
                     <tr data-product-id="${item.productId}">
                         <td>
@@ -223,29 +215,58 @@ $(document).ready(function () {
                         </td>
                         <td>
                             <h3 class="table-title">${product.name}</h3>
-                            <p class="table-description">${product.description || 'Premium quality dress for your special occasions'}</p>
                         </td>
                         <td>
                             <span class="table-price">₱${parseFloat(product.price).toLocaleString()}</span>
                         </td>
                         <td>
-                            <span class="table-status ${statusClass}">${status}</span>
+                            <span class="table-category">${category}</span>
                         </td>
                         <td>
-                            <button class="btn btn-sm add-to-cart-btn" 
+                            <a href="details.html?id=${item.productId}" class="view-details-btn">
+                                <i class="fi fi-rs-eye"></i>
+                                View Details
+                            </a>
+                        </td>
+                        <td>
+                            <button class="wishlist-heart-btn in-wishlist remove-wishlist-btn" 
                                     data-product-id="${item.productId}" 
-                                    ${totalStock === 0 ? 'disabled' : ''}>
-                                Add to Rent List
+                                    title="Remove from wishlist">
+                                <i class="bxs-heart"></i>
                             </button>
-                        </td>
-                        <td>
-                            <i class="fi fi-rs-trash table-trash remove-wishlist-btn" 
-                               data-product-id="${item.productId}" 
-                               title="Remove from wishlist"></i>
                         </td>
                     </tr>`;
 
+                    // Also create mobile card for responsive design
+                    const mobileCard = `
+                    <div class="wishlist-card" data-product-id="${item.productId}">
+                        <div class="wishlist-card-header">
+                            <img src="${product.frontImageUrl}" alt="${product.name}" class="wishlist-card-image">
+                            <div class="wishlist-card-info">
+                                <h3 class="wishlist-card-title">${product.name}</h3>
+                                <span class="wishlist-card-price">₱${parseFloat(product.price).toLocaleString()}</span>
+                            </div>
+                        </div>
+                        <div class="wishlist-card-footer">
+                            <div class="wishlist-card-status-row">
+                                <span class="wishlist-card-category">${category}</span>
+                            </div>
+                            <div class="wishlist-card-actions">
+                                <a href="details.html?id=${item.productId}" class="wishlist-card-btn view-details-btn">
+                                    <i class="fi fi-rs-eye"></i>
+                                    View Details
+                                </a>
+                                <button class="wishlist-card-remove in-wishlist remove-wishlist-btn" 
+                                        data-product-id="${item.productId}" 
+                                        title="Remove from wishlist">
+                                    <i class="bxs-heart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+
                     wishlistTable.append(row);
+                    mobileCards.append(mobileCard);
                 } catch (productError) {
                     console.error("Error processing product:", item.productId, productError);
                 }
@@ -260,6 +281,7 @@ $(document).ready(function () {
     }    function showEmptyWishlist() {
         const user = auth.currentUser;
         const wishlistTable = $("#wishlist-body");
+        const mobileCards = $("#wishlist-mobile-cards");
         const tableHeader = $(".table thead");
         const wishlistHeader = $(".wishlist-header");
         const tableContainer = $("#wishlist-table-container");
@@ -277,93 +299,12 @@ $(document).ready(function () {
             wishlistHeader.hide(); // Hide header when wishlist is empty
             tableContainer.hide();
             emptyState.show();
+            
+            // Clear both table and mobile cards
+            wishlistTable.empty();
+            mobileCards.empty();
         }
     }
-
-    // ADD TO CART FROM WISHLIST
-    $(document).on("click", ".add-to-cart-btn", async function() {
-        const user = auth.currentUser;
-        if (!user) {
-            showAuthModal();
-            return;
-        }
-
-        const productId = $(this).data("product-id");
-        const button = $(this);
-
-        // Disable button during processing
-        button.prop("disabled", true).text("Adding...");
-
-        try {
-            // Get product data to find available size
-            const productRef = doc(chandriaDB, "products", productId);
-            const productSnap = await getDoc(productRef);
-            
-            if (!productSnap.exists()) {
-                notyf.error("Product not found.");
-                return;
-            }
-
-            const productData = productSnap.data();
-            const sizes = productData.size || {};
-            
-            // Find the first available size with stock > 0
-            let selectedSize = null;
-            for (const [size, stock] of Object.entries(sizes)) {
-                if (stock > 0) {
-                    selectedSize = size;
-                    break;
-                }
-            }
-
-            if (!selectedSize) {
-                notyf.error("Product is out of stock.");
-                return;
-            }
-
-            // Add to cart
-            const userRef = doc(chandriaDB, "userAccounts", user.uid);
-            const userSnap = await getDoc(userRef);
-            
-            if (!userSnap.exists()) {
-                notyf.error("User account not found.");
-                return;
-            }
-
-            const userData = userSnap.data();
-            const currentCart = userData.added_to_cart || [];
-
-            // Check if item already exists in cart
-            const existingIndex = currentCart.findIndex(
-                item => item.productId === productId && item.size === selectedSize
-            );
-
-            if (existingIndex !== -1) {
-                // Update quantity if already in cart
-                currentCart[existingIndex].quantity += 1;
-                await updateDoc(userRef, { added_to_cart: currentCart });
-                notyf.success(`Updated quantity for ${productData.name} (${selectedSize})`);
-            } else {
-                // Add new item to cart
-                await updateDoc(userRef, {
-                    added_to_cart: arrayUnion({
-                        productId,
-                        size: selectedSize,
-                        quantity: 1
-                    })
-                });
-                notyf.success(`Added ${productData.name} (${selectedSize}) to cart!`);
-            }
-
-            await updateCartCount();
-
-        } catch (error) {
-            console.error("Error adding to cart:", error);
-            notyf.error("Failed to add item to cart.");
-        } finally {
-            button.prop("disabled", false).text("Add to Rent List");
-        }
-    });
 
     // REMOVE FROM WISHLIST
     $(document).on("click", ".remove-wishlist-btn", async function() {
@@ -375,6 +316,11 @@ $(document).ready(function () {
 
         const productId = $(this).data("product-id");
         const row = $(this).closest("tr");
+        const card = $(this).closest(".wishlist-card");
+        const button = $(this);
+
+        // Add removing animation
+        button.addClass("removing");
 
         try {
             const userRef = doc(chandriaDB, "userAccounts", user.uid);
@@ -391,14 +337,33 @@ $(document).ready(function () {
                 });
             }
 
-            // Remove from UI
-            row.fadeOut(300, () => {
-                row.remove();
-                // Check if wishlist is now empty
-                if ($("#wishlist-body tr").length === 0) {
-                    showEmptyWishlist();
-                }
-            });
+            // Remove from UI (both table row and mobile card)
+            const fadeOutPromises = [];
+            
+            if (row.length) {
+                fadeOutPromises.push(new Promise(resolve => {
+                    row.fadeOut(300, () => {
+                        row.remove();
+                        resolve();
+                    });
+                }));
+            }
+            
+            if (card.length) {
+                fadeOutPromises.push(new Promise(resolve => {
+                    card.fadeOut(300, () => {
+                        card.remove();
+                        resolve();
+                    });
+                }));
+            }
+            
+            await Promise.all(fadeOutPromises);
+            
+            // Check if wishlist is now empty
+            if ($("#wishlist-body tr").length === 0 && $("#wishlist-mobile-cards .wishlist-card").length === 0) {
+                showEmptyWishlist();
+            }
 
             await updateWishlistCount();
             notyf.success("Removed from wishlist!");
@@ -406,6 +371,7 @@ $(document).ready(function () {
         } catch (error) {
             console.error("Error removing from wishlist:", error);
             notyf.error("Failed to remove item from wishlist.");
+            button.removeClass("removing");
         }
     });
 

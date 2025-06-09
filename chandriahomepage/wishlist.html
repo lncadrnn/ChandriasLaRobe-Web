@@ -2,10 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-   <!--=============== FLATICON ===============-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />   <!--=============== FLATICON ===============-->
    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css'>
+
+   <!--=============== BOXICONS ===============-->
+   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
    <!--=============== SWIPER CSS ===============-->
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>    <!--=============== CSS ===============-->
@@ -132,23 +133,26 @@
             </div>
           </div>
         </div>
-        
-        <div class="table-container" id="wishlist-table-container">
-          <table class="table">
-            <thead>
+          <div class="table-container" id="wishlist-table-container">
+          <table class="table">            <thead>
               <tr>
                 <th>Image</th>
-                <th>Name</th>
+                <th>Product Details</th>
                 <th>Price</th>
-                <th>Availability Status</th>
+                <th>Category</th>
                 <th>Action</th>
-                <th>Remove</th>
+                <th>Favorite</th>
               </tr>
             </thead>
             <tbody id="wishlist-body">
               <!-- Wishlist items will be populated dynamically -->
             </tbody>
           </table>
+          
+          <!-- Mobile Cards Layout -->
+          <div class="wishlist-mobile-cards" id="wishlist-mobile-cards">
+            <!-- Mobile cards will be populated dynamically -->
+          </div>
         </div>
       </section>
 
