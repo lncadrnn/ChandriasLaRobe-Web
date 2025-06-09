@@ -1485,10 +1485,30 @@ window.addEventListener('resize', function() {
       }
     });
   }
-
   // Initialize quick view listeners
   initQuickViewListeners();
   */
   
   // Initial setup complete
+});
+
+// Handle authentication state changes - Initialize counters when auth state changes
+onAuthStateChanged(auth, async function (user) {
+    try {
+        // Update cart and wishlist counters regardless of auth state
+        await Promise.all([
+            updateCartCount(),
+            wishlistService.updateWishlistCountUI()
+        ]);
+        
+        if (user) {
+            // User is signed in
+            console.log("User signed in:", user.uid);
+        } else {
+            // User is signed out
+            console.log("User signed out");
+        }
+    } catch (error) {
+        console.error("Error during auth state change:", error);
+    }
 });
