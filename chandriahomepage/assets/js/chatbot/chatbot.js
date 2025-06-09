@@ -77,10 +77,9 @@ class ChandriasChatbot {    constructor() {
                         <button class="close-btn" id="closeChatbot">×</button>
                     </div>
                 </div>
-                <div class="chatbot-body">
-                    <div class="chatbot-messages" id="chatbotMessages">
+                <div class="chatbot-body">                <div class="chatbot-messages" id="chatbotMessages">
                         <div class="message bot-message">
-                            <p>👋 Hi! Welcome to Chandria's La Robe. How can I help you today?</p>
+                            <p>Hello! I am Chandria's Personal Chatbot, feel free to ask if you have questions!</p>
                             <span class="timestamp">${this.getTimestamp()}</span>
                         </div>
                     </div>
