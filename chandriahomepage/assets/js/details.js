@@ -677,9 +677,8 @@ $(document).ready(async function () {
 
     try {
       const wishlist = await wishlistService.getUserWishlist();
-      
-      // Update each related products heart button based on wishlist status
-      $('#related-products-container .action-btn[aria-label="Add to Favorites"]').each(function() {
+        // Update each related products heart button based on wishlist status (use both possible selectors)
+      $('#related-products-container .action-btn[aria-label="Add to Favorites"], #related-products-container .add-to-favorites-btn').each(function() {
         const button = $(this);
         const productId = button.data('product-id');
         const productItem = button.closest('.product-item');
@@ -734,9 +733,8 @@ $(document).ready(async function () {
       }
       
     } catch (error) {
-      console.error("Error updating heart button states:", error);
-      // On error, set all to "not favorited" as fallback
-      $('#related-products-container .action-btn[aria-label="Add to Favorites"]').each(function() {
+      console.error("Error updating heart button states:", error);      // On error, set all to "not favorited" as fallback (use both possible selectors)
+      $('#related-products-container .action-btn[aria-label="Add to Favorites"], #related-products-container .add-to-favorites-btn').each(function() {
         $(this).find('i').removeClass('bxs-heart').addClass('bx-heart');
         $(this).removeClass('favorited');
         $(this).closest('.product-item').removeClass('in-wishlist');

@@ -419,13 +419,7 @@
     margin-bottom: 5px;
     font-size: 0.85rem;
   }
-  
-  /* Cart buttons are completely removed from related products */
-  
-  /* Hide product actions in related products */
-  .products-container .product-actions {
-    display: none !important;
-  }
+  /* Related products styling - keep cart buttons hidden but show favorites */
   
   /* Ensure price is centered and full width */
   .products-container .product-price {
@@ -470,12 +464,72 @@
     margin-bottom: 25px;
     padding: 0 15px;
   }
-  
-  /* Ensure product actions are visible on mobile */
+  /* Remove white container background for product actions on mobile */
   .products.container .product-actions {
     display: flex !important;
     opacity: 1 !important;
     visibility: visible !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    gap: 10px !important;
+    z-index: 4 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+  
+  /* Remove white background from all action buttons on mobile */
+  .products.container .action-btn {
+    background-color: transparent !important;
+    color: var(--first-color) !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  
+  /* Quick View button specific styling on mobile */
+  .products.container .action-btn[aria-label="Quick View"] {
+    background-color: transparent !important;
+    color: var(--first-color) !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  
+  /* Hover effects for all action buttons on mobile */
+  .products.container .action-btn:hover {
+    background-color: var(--first-color) !important;
+    color: white !important;
+    transform: scale(1.05) !important;
+  }
+  
+  /* Remove white background from individual action buttons on mobile */
+  .products.container .add-to-favorites-btn {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    background-color: transparent !important;
+    color: var(--first-color) !important;
+    box-shadow: none !important;
+    border: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  /* Favorited state for heart button on mobile */
+  .products.container .add-to-favorites-btn.favorited {
+    background-color: whitesmoke !important;
+    border-color: #ff69b4 !important;
+    border: 1px solid #ff69b4 !important;
+  }
+  
+  .products.container .add-to-favorites-btn.favorited i {
+    color: #ff69b4 !important;
   }
   
   /* Make sure price tags and color indicators are visible */
@@ -646,6 +700,14 @@
 
 /* =============== EXISTING STYLES =============== */
 
+/* =============== DESKTOP RULES =============== */
+/* Hide mobile sticky bar on desktop */
+@media screen and (min-width: 769px) {
+  .mobile-sticky-bar {
+    display: none !important;
+  }
+}
+
 /* =============== MOBILE STICKY ACTION BAR =============== */
 .mobile-sticky-bar {
   position: fixed;
@@ -656,7 +718,7 @@
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.1);
   z-index: 9999;
-  display: block; /* Always show for debugging */
+  display: none; /* Hidden by default - only show on mobile */
   padding: 12px 16px;
   padding-bottom: calc(12px + env(safe-area-inset-bottom)); /* Handle safe area */
   width: 100%;
@@ -804,17 +866,6 @@
   color: #ff69b4 !important;
 }
 
-/* Mobile Favorites Button - Hover Effect */
-.mobile-favorites-btn:hover {
-  border-color: #ff69b4;
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
-}
-
-.mobile-favorites-btn:hover i {
-  color: #ff69b4;
-}
-
 /* Mobile Favorites Button - Loading State */
 .mobile-favorites-btn.loading {
   opacity: 0.7;
@@ -854,5 +905,24 @@
   /* Hide the original details-action section on mobile */
   .details-action {
     display: none !important;
+  }
+}
+
+/* Ensure heart icons are always visible in related products on mobile */
+@media screen and (max-width: 768px) {
+  .products-container .product-favorites {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    z-index: 10 !important;
+  }
+
+  .products-container .product-favorites i {
+    font-size: 1.2rem !important;
+    color: var(--first-color) !important;
+    transition: transform 0.3s ease !important;
   }
 }
