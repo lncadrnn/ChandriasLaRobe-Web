@@ -39,8 +39,51 @@ $(document).ready(function () {
     let searchQuery = '';
     
     // Initialize shop
-    init();
-      async function init() {
+    init();    // Function to wait for counts to be properly loaded
+    async function waitForCountsToLoad() {
+        return new Promise((resolve) => {
+            let attempts = 0;
+            const maxAttempts = 50; // Maximum 5 seconds (50 * 100ms)
+            
+            const checkCounts = () => {
+                attempts++;
+                
+                // Check if cart count and wishlist count elements exist and have been updated
+                const cartCountElement = $("#cart-count");
+                const wishlistCountElement = $("#wishlist-count");
+                
+                const cartCountExists = cartCountElement.length > 0;
+                const wishlistCountExists = wishlistCountElement.length > 0;
+                
+                // Check if counts have been initialized (not loading state)
+                const cartCountLoaded = cartCountExists && cartCountElement.text() !== "";
+                const wishlistCountLoaded = wishlistCountExists && wishlistCountElement.text() !== "";
+                
+                console.log("Shop.js waitForCountsToLoad - Attempt", attempts, {
+                    cartCountExists,
+                    wishlistCountExists,
+                    cartCountLoaded,
+                    wishlistCountLoaded,
+                    cartCount: cartCountElement.text(),
+                    wishlistCount: wishlistCountElement.text()
+                });
+                
+                // If both counts are loaded or we've reached max attempts, resolve
+                if ((cartCountLoaded && wishlistCountLoaded) || attempts >= maxAttempts) {
+                    console.log("Shop.js waitForCountsToLoad - Resolved after", attempts, "attempts");
+                    resolve();
+                } else {
+                    // Check again after 100ms
+                    setTimeout(checkCounts, 100);
+                }
+            };
+            
+            // Start checking immediately
+            checkCounts();
+        });
+    }
+
+    async function init() {
         try {
             // Show spinner using centralized system
             if (typeof showSpinner === 'function') {
@@ -68,15 +111,19 @@ $(document).ready(function () {
                 updateHeartButtonStates();
             }, 500);
             
+            // Wait for counts to be properly loaded before hiding spinner
+            await waitForCountsToLoad();
+            
         } catch (error) {
             console.error("Error initializing shop:", error);
-            showError("Failed to load shop. Please refresh the page.");
-        } finally {
-            // Always hide spinner after all operations complete
+            showError("Failed to load shop. Please refresh the page.");        } finally {
+            // Always hide spinner after all operations complete with 1 second delay
             if (typeof hideSpinner === 'function') {
-                hideSpinner('page-spinner');
+                hideSpinner('page-spinner', 1000); // Add 1 second delay
             } else {
-                hideShopLoader();
+                setTimeout(() => {
+                    hideShopLoader();
+                }, 1000); // Add 1 second delay for fallback
             }
         }
     }
@@ -84,13 +131,11 @@ $(document).ready(function () {
     // Loader functions
     function showShopLoader() {
         $("#shop-loader").removeClass("hidden").show();
-    }
-
-    function hideShopLoader() {
-        // Add small delay to ensure smooth transition
+    }    function hideShopLoader(delay = 100) {
+        // Add configurable delay to ensure smooth transition
         setTimeout(() => {
             $("#shop-loader").addClass("hidden");
-        }, 100);
+        }, delay);
     }
 
     // Load all products from Firebase
@@ -1000,9 +1045,7 @@ $(document).ready(function () {
         await updateCartCount();
         console.log("After updateCartCount, current text:", $("#cart-count").text());
         console.log("=== END TEST ===");
-    };
-
-    // Cart count function
+    };    // Cart count function
     async function updateCartCount() {
         try {
             const user = auth.currentUser;
@@ -1011,7 +1054,7 @@ $(document).ready(function () {
             if (!user) {
                 console.log("Shop.js updateCartCount - No user authenticated, setting count to 0");
                 $("#cart-count").text("0");
-                return;
+                return 0; // Return the count value
             }
             
             const userRef = doc(chandriaDB, "userAccounts", user.uid);
@@ -1020,7 +1063,7 @@ $(document).ready(function () {
             if (!userSnap.exists()) {
                 console.log("Shop.js updateCartCount - User document does not exist");
                 $("#cart-count").text("0");
-                return;
+                return 0; // Return the count value
             }
             
             const cartItems = userSnap.data().added_to_cart || [];
@@ -1030,10 +1073,12 @@ $(document).ready(function () {
             console.log("Shop.js updateCartCount - Total items calculated:", totalItems);
             
             $("#cart-count").text(totalItems.toString());
+            return totalItems; // Return the count value
             
         } catch (error) {
             console.error("Error updating cart count:", error);
             $("#cart-count").text("0");
+            return 0; // Return fallback count
         }
     }
 
@@ -1292,12 +1337,12 @@ $(document).ready(function () {
             if (!button.find('i').hasClass('bx-heart') && !button.find('i').hasClass('bxs-heart')) {
                 button.find('i').removeClass().addClass(originalIcon);
             }
-        }    }
-      // Handle authentication state changes
+        }    }    // Handle authentication state changes
     onAuthStateChanged(auth, async function (user) {
         console.log("Shop.js onAuthStateChanged - User:", user ? user.uid : "No user");
         
         try {
+            // Update counts and button states when auth state changes
             await Promise.all([
                 updateCartCount(),
                 wishlistService.updateWishlistCountUI()
@@ -1311,9 +1356,15 @@ $(document).ready(function () {
             } else {
                 // User is signed out
                 console.log("User signed out");
+                // Ensure counts are set to 0 when user is signed out
+                $("#cart-count").text("0");
+                $("#wishlist-count").text("0");
             }
         } catch (error) {
             console.error("Shop.js - Error updating counts:", error);
+            // Set fallback values on error
+            $("#cart-count").text("0");
+            $("#wishlist-count").text("0");
         }
     });
     
