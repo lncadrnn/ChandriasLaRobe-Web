@@ -3,6 +3,51 @@
    ================================ */
 
 /* ================================
+   REMOVE PINK FOCUS STYLES
+   ================================ */
+/* Remove pink borders from all focus states */
+*:focus,
+button:focus,
+input:focus,
+.header-action-btn:focus,
+.header-action-btn[href*="wishlist"]:focus,
+.header-action-btn[href*="cart"]:focus,
+.header-action-btn[href*="accounts"]:focus,
+.nav-link:focus,
+.quantity:focus,
+.size-selector:focus,
+.action-btn:focus {
+    outline: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Ensure header is sticky like cart.html */
+.header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    border-bottom: 1px solid rgba(255, 133, 177, 0.1) !important;
+    z-index: 850 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 20px rgba(255, 133, 177, 0.1) !important;
+}
+
+.header.scroll-header,
+.header.scrolled {
+    background: rgba(255, 255, 255, 0.98) !important;
+    box-shadow: 0 4px 30px rgba(255, 133, 177, 0.15) !important;
+}
+
+/* Add padding to main content to account for fixed header */
+.main {
+    padding-top: var(--header-height, 4rem) !important;
+}
+
+/* ================================
    MODERN CSS VARIABLES & RESET
    ================================ */
 :root {
