@@ -17,7 +17,9 @@ import {
     setDoc,
     doc,
     updateProfile,
-    getAuth
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup
 } from "./sdk/chandrias-sdk.js";
 
 class AuthModal {
@@ -121,14 +123,20 @@ class AuthModal {
                 e.preventDefault();
                 this.handleSignUp(e);
             });
-        }
-
-        if (forgotFormElement) {
+        }        if (forgotFormElement) {
             forgotFormElement.addEventListener('submit', (e) => {
                 e.preventDefault();
                 this.handleForgotPassword(e);
             });
-        }
+        }        // Social authentication event listeners
+        const googleSignInBtns = document.querySelectorAll('.google-btn');
+
+        googleSignInBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleGoogleSignIn();
+            });
+        });
 
         // ESC key to close modal
         document.addEventListener('keydown', (e) => {
@@ -481,31 +489,66 @@ class AuthModal {
         return message;
     }    async handleGoogleSignIn() {
         try {
-            // Simulate Google OAuth without loading spinner
-            await this.simulateAuthRequest();
+            this.isLoggingIn = true;
+            const provider = new GoogleAuthProvider();
+            
+            // Optional: Add additional scopes
+            provider.addScope('profile');
+            provider.addScope('email');
+            
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+            
+            // Check if user exists in adminAccounts and redirect them
+            const adminDocRef = doc(chandriaDB, "adminAccounts", user.uid);
+            const adminDocSnap = await getDoc(adminDocRef);
+
+            if (adminDocSnap.exists()) {
+                // If user is admin, sign them out
+                await signOut(auth);
+                this.notyf.error("Admin accounts cannot use this portal. Please use the admin login.");
+                this.isLoggingIn = false;
+                return;
+            }
+            
+            // Check if user account exists in userAccounts collection
+            const userDocRef = doc(chandriaDB, "userAccounts", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+            
+            if (!userDocSnap.exists()) {
+                // Create new user account in Firestore
+                const userData = {
+                    uid: user.uid,
+                    email: user.email,
+                    fullname: user.displayName || '',
+                    contact: user.phoneNumber || '',
+                    emailVerified: user.emailVerified,
+                    provider: 'google',
+                    createdAt: new Date().toISOString(),
+                    added_to_cart: [],
+                    added_to_wishlist: []
+                };
+                
+                await setDoc(userDocRef, userData);
+            }
             
             this.notyf.success('Google sign in successful!');
-            setTimeout(() => {
-                this.closeModal();
-            }, 1500);
+            // The auth state listener will handle UI updates and modal closing
 
         } catch (error) {
-            this.notyf.error('Google sign in failed. Please try again.');
-        }
-    }    async handleFacebookSignIn() {
-        try {
-            // Simulate Facebook OAuth without loading spinner
-            await this.simulateAuthRequest();
+            console.error("Google sign in error:", error.code, error.message);
+            this.isLoggingIn = false;
             
-            this.notyf.success('Facebook sign in successful!');
-            setTimeout(() => {
-                this.closeModal();
-            }, 1500);
-
-        } catch (error) {
-            this.notyf.error('Facebook sign in failed. Please try again.');
+            if (error.code === 'auth/popup-closed-by-user') {
+                this.notyf.info('Sign in cancelled by user.');
+            } else if (error.code === 'auth/popup-blocked') {
+                this.notyf.error('Popup blocked. Please allow popups for this site.');        } else {
+                this.notyf.error('Google sign in failed. Please try again.');
+            }
         }
-    }validateSignInForm(email, password) {
+    }
+
+    validateSignInForm(email, password) {
         let isValid = true;
 
         if (!this.validateEmail(email)) {
