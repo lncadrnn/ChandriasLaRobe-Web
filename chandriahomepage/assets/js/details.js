@@ -62,8 +62,7 @@ $(document).ready(async function () {
     showSpinner('Loading product details...', 'page-spinner');
   } else {
     showDetailsLoader();
-  }
-  try {    // Wait for all async operations to complete
+  }  try {    // Wait for all async operations to complete
     console.log("Details.js - Starting initialization, checking auth state first...");
     console.log("Details.js - Current user at init:", auth.currentUser ? auth.currentUser.uid : "No user");
       await Promise.all([
@@ -71,6 +70,11 @@ $(document).ready(async function () {
       wishlistService.updateWishlistCountUI(), // Add wishlist count update
       loadRelatedProducts(productId)
     ]);
+    
+    // Update heart button state after product details are loaded
+    setTimeout(() => {
+      updateHeartButtonStates();
+    }, 100);
     
   } catch (error) {
     console.error("Error loading product details:", error);
@@ -202,13 +206,19 @@ $(document).ready(async function () {
       const totalStock = Object.values(data.size).reduce((a, b) => a + b, 0);      $('#product-stock').text(`${totalStock} in stocks`);
     } else if (isAdditional) {
       $('#product-stock').text('Available');
-    }
-      // Hide add to cart button only for additionals
+    }      // Hide add to cart button only for additionals
     const addToCartBtn = $('#details-add-to-cart');
     if (isAdditional) {
       addToCartBtn.hide();
     } else {
       addToCartBtn.show();
+    }
+    
+    // Set product ID on the main heart button for favorites functionality
+    const heartButton = $('#details-add-to-favorites');
+    if (heartButton.length) {
+      heartButton.attr('data-product-id', productId);
+      console.log("Set heart button product ID:", productId);
     }
     
     } else {
@@ -637,8 +647,7 @@ $(document).ready(async function () {
       $('.circular-cart-btn, .add-to-cart-action-btn').attr('data-in-cart', 'false');
     }
   }
-  
-  // Function to update heart button states based on current wishlist
+    // Function to update heart button states based on current wishlist
   async function updateHeartButtonStates() {
     const user = auth.currentUser;
     
@@ -649,13 +658,20 @@ $(document).ready(async function () {
         $(this).removeClass('favorited');
         $(this).closest('.product-item').removeClass('in-wishlist');
       });
+      
+      // Also update the main details page heart button
+      const mainHeartButton = $('#details-add-to-favorites');
+      if (mainHeartButton.length) {
+        mainHeartButton.find('i').removeClass('bxs-heart').addClass('bx-heart');
+        mainHeartButton.removeClass('favorited');
+      }
       return;
     }
 
     try {
       const wishlist = await wishlistService.getUserWishlist();
       
-      // Update each heart button based on wishlist status
+      // Update each related products heart button based on wishlist status
       $('#related-products-container .action-btn[aria-label="Add to Favorites"]').each(function() {
         const button = $(this);
         const productId = button.data('product-id');
@@ -676,6 +692,24 @@ $(document).ready(async function () {
           productItem.removeClass('in-wishlist');
         }
       });
+      
+      // Update the main details page heart button
+      const mainHeartButton = $('#details-add-to-favorites');
+      if (mainHeartButton.length) {
+        const mainProductId = mainHeartButton.data('product-id');
+        if (mainProductId) {
+          const isMainProductInWishlist = wishlist.some(item => item.productId === mainProductId);
+          
+          if (isMainProductInWishlist) {
+            mainHeartButton.find('i').removeClass('bx-heart').addClass('bxs-heart');
+            mainHeartButton.addClass('favorited');
+          } else {
+            mainHeartButton.find('i').removeClass('bxs-heart').addClass('bx-heart');
+            mainHeartButton.removeClass('favorited');
+          }
+        }
+      }
+      
     } catch (error) {
       console.error("Error updating heart button states:", error);
       // On error, set all to "not favorited" as fallback
@@ -684,6 +718,13 @@ $(document).ready(async function () {
         $(this).removeClass('favorited');
         $(this).closest('.product-item').removeClass('in-wishlist');
       });
+      
+      // Also reset the main details page heart button on error
+      const mainHeartButton = $('#details-add-to-favorites');
+      if (mainHeartButton.length) {
+        mainHeartButton.find('i').removeClass('bxs-heart').addClass('bx-heart');
+        mainHeartButton.removeClass('favorited');
+      }
     }
   }
   
@@ -1625,6 +1666,7 @@ window.addEventListener('resize', function() {
               wishlistService.updateWishlistCountUI()
           ]);
           await updateAllCartButtonStatus();
+          await updateHeartButtonStates(); // Update heart button states when auth state changes
           
           if (user) {
               // User is signed in

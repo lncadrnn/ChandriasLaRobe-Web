@@ -438,11 +438,6 @@ button.add-to-rent-btn:active,
     animation: spin 1s linear infinite !important;
 }
 
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
 /* Price tag styling */
 .products-container .price-tag {
     position: absolute !important;
@@ -683,4 +678,125 @@ button.add-to-rent-btn:active,
     .products-container .add-to-booking-btn i {
         font-size: 16px !important;
     }
+}
+
+/* =============== MAIN DETAILS PAGE HEART BUTTON STYLING =============== */
+
+/* Enhanced styling for main details page heart button to match related products styling */
+.details-action-btn.add-to-favorites-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 45px !important;
+    height: 45px !important;
+    border-radius: 50% !important;
+    background-color: white !important;
+    color: #666 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease !important;
+    border: 2px solid #eee !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    font-size: 16px !important;
+}
+
+.details-action-btn.add-to-favorites-btn:hover {
+    background-color: hsl(346, 100%, 74%) !important; /* Pink on hover */
+    color: white !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 3px 10px rgba(255, 154, 175, 0.3) !important;
+    border-color: transparent !important;
+}
+
+.details-action-btn.add-to-favorites-btn:hover i {
+    color: white !important;
+    transform: scale(1.1);
+}
+
+/* Favorited state for main details page heart button */
+.details-action-btn.add-to-favorites-btn.favorited {
+    background-color: rgba(255, 105, 180, 0.1) !important;
+    color: white !important;
+    border-color: #ff69b4 !important;
+}
+
+.details-action-btn.add-to-favorites-btn.favorited i {
+    color: #ff69b4 !important; /* Pink color for favorited heart */
+}
+
+.details-action-btn.add-to-favorites-btn.favorited:hover {
+    background-color: hsl(346, 100%, 74%) !important;
+    color: white !important;
+    border-color: hsl(346, 100%, 74%) !important;
+    animation: heartPulse 0.6s ease-in-out !important;
+}
+
+.details-action-btn.add-to-favorites-btn.favorited:hover i {
+    color: white !important;
+    transform: scale(1.2);
+}
+
+/* Heart icon styling for main details page button */
+.details-action-btn.add-to-favorites-btn i {
+    font-size: 16px;
+    transition: all 0.3s ease;
+    color: #666; /* Default gray color */
+}
+
+/* Loading state for main details page heart button */
+.details-action-btn.add-to-favorites-btn.loading {
+    pointer-events: none !important;
+    opacity: 0.7 !important;
+}
+
+.details-action-btn.add-to-favorites-btn.loading i {
+    animation: spin 1s linear infinite !important;
+    color: #ff69b4 !important;
+}
+
+/* Heart pulse animation for main details page button */
+@keyframes heartPulse {
+    0%, 100% { transform: scale(1.05); }
+    50% { transform: scale(1.15); }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Active state for main details page heart button */
+.details-action-btn.add-to-favorites-btn:active {
+    transform: scale(0.95) !important;
+}
+
+/* Ensure consistent styling with related products heart buttons */
+.details-action-btn.add-to-favorites-btn i.bx-heart,
+.details-action-btn.add-to-favorites-btn i.bxs-heart {
+    font-size: 16px;
+    transition: all 0.3s ease;
+    color: #666; /* Default gray color */
+}
+
+.details-action-btn.add-to-favorites-btn.favorited i.bxs-heart {
+    color: #ff69b4 !important; /* Bright pink color for favorited */
+}
+
+/* Hover effect for main details page heart button */
+.details-action-btn.add-to-favorites-btn:hover i.bx-heart,
+.details-action-btn.add-to-favorites-btn:hover i.bxs-heart {
+    color: white !important;
+    transform: scale(1.1);
+}
+
+/* Special hover effect when favorited */
+.details-action-btn.add-to-favorites-btn.favorited:hover i.bxs-heart {
+    color: white !important;
+    transform: scale(1.2);
+}
+
+/* Loading state styling for spinner */
+.details-action-btn.add-to-favorites-btn.loading i.bx-spin {
+    animation: spin 1s linear infinite;
+    color: #ff69b4 !important;
 }
