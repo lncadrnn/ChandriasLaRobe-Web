@@ -346,7 +346,7 @@
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin: 1.25rem 0 0.75rem 0; /* Optimized margins for better fit */
+  margin: 0.75rem 0 0.75rem 0; /* Reduced top margin from 1.25rem to 0.75rem */
   flex-shrink: 0; /* Prevent social buttons from shrinking */
 }
 
@@ -713,15 +713,36 @@
     overflow-y: visible; /* Change from auto to visible for consistent behavior */
     min-height: 0; /* Remove minimum height */
   }
+  .auth-divider {
+    margin-bottom: 0; /* Remove bottom margin on mobile */
+  }
   
   .auth-social {
     gap: 1rem;
-    margin: 0;
+    margin: 0.75rem 0;
+    padding: 0 0.5rem;
   }
   
   .auth-social-btn {
-    width: 52px;
-    height: 52px;
+    width: 100%;
+    min-width: 280px;
+    height: 48px;
+    padding: 0 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    gap: 10px;
+  }
+  
+  .auth-social-btn svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  
+  .auth-social-btn span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   
   .auth-header h2 {
