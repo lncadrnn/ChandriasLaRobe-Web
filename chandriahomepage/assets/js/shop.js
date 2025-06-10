@@ -26,9 +26,7 @@ $(document).ready(function () {
             x: "center",
             y: "top"
         }
-    });
-
-    // Global variables
+    });    // Global variables
     let allProducts = [];
     let allAdditionals = [];
     let filteredProducts = [];
@@ -37,9 +35,12 @@ $(document).ready(function () {
     let currentActiveTab = 'all';    let selectedCategories = [];
     let currentSort = 'default';
     let searchQuery = '';
+    let dateFilter = '';
+      // Initialize shop
+    init();
     
-    // Initialize shop
-    init();    // Function to wait for counts to be properly loaded
+    // Initialize date filter with minimum date
+    initializeDateFilter();// Function to wait for counts to be properly loaded
     async function waitForCountsToLoad() {
         return new Promise((resolve) => {
             let attempts = 0;
@@ -181,6 +182,10 @@ $(document).ready(function () {
         // Search functionality
         $("#product-search").on("input", handleSearch);
         $("#clear-search").on("click", clearSearch);
+
+        // Date filter functionality
+        $("#date-filter").on("change", handleDateFilter);
+        $("#clear-date").on("click", clearDateFilter);
 
         // Filter dropdowns
         $("#category-filter-btn").on("click", toggleCategoryDropdown);
@@ -434,13 +439,49 @@ $(document).ready(function () {
         }
         
         applyFiltersAndSort();
-    }
-
-    function clearSearch() {
+    }    function clearSearch() {
         $("#product-search").val("");
         $("#clear-search").hide();
         searchQuery = "";
         applyFiltersAndSort();
+    }
+
+    // Date filter functionality
+    function handleDateFilter(e) {
+        dateFilter = $(this).val();
+        
+        if (dateFilter) {
+            $("#clear-date").show();
+        } else {
+            $("#clear-date").hide();
+        }
+        
+        applyFiltersAndSort();
+    }    function clearDateFilter() {
+        $("#date-filter").val("");
+        $("#clear-date").hide();
+        dateFilter = "";
+        applyFiltersAndSort();
+    }
+
+    // Initialize date filter with restrictions
+    function initializeDateFilter() {
+        const dateInput = $("#date-filter");
+        if (dateInput.length) {
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.attr('min', today);
+            
+            // Show clear button when date is selected
+            dateInput.on('input', function() {
+                const value = $(this).val();
+                if (value) {
+                    $("#clear-date").show();
+                } else {
+                    $("#clear-date").hide();
+                }
+            });
+        }
     }
 
     // Filter dropdown functions
@@ -520,8 +561,7 @@ $(document).ready(function () {
         } else if (currentActiveTab === 'additionals') {
             productsToShow = [...allAdditionals.map(item => ({...item, isAdditional: true}))];
         }
-        
-        // Apply search filter
+          // Apply search filter
         if (searchQuery) {
             productsToShow = productsToShow.filter(product => 
                 (product.name && product.name.toLowerCase().includes(searchQuery)) ||
@@ -529,6 +569,17 @@ $(document).ready(function () {
                 (product.category && product.category.toLowerCase().includes(searchQuery)) ||
                 (product.description && product.description.toLowerCase().includes(searchQuery))
             );
+        }
+        
+        // Apply date filter (static implementation - for future enhancement)
+        if (dateFilter) {
+            // This is a static implementation. In a real application, you would
+            // filter products based on a date field like created_date, added_date, etc.
+            // For now, this is a placeholder that doesn't actually filter
+            console.log(`Date filter applied: ${dateFilter}`);
+            // Example: productsToShow = productsToShow.filter(product => 
+            //     product.created_date && product.created_date.includes(dateFilter)
+            // );
         }
         
         // Apply category filter

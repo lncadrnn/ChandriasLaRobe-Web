@@ -860,6 +860,17 @@ a[href] {
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
+        gap: 1rem;
+    }
+    
+    .search-container {
+        flex: 1;
+        max-width: 350px;
+    }
+    
+    .date-filter-container {
+        flex: 1;
+        max-width: 250px;
     }
 }
 
@@ -918,6 +929,74 @@ a[href] {
 }
 
 .clear-search:hover {
+    color: #ef4444;
+    background-color: #fef2f2;
+}
+
+/* Date Filter Container */
+.date-filter-container {
+    flex: 1;
+    max-width: 300px;
+}
+
+.date-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.date-input {
+    width: 100%;
+    padding: 12px 45px 12px 45px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #f9fafb;
+    transition: all 0.3s ease;
+    outline: none;
+    color: #374151;
+}
+
+.date-input:focus {
+    border-color: hsl(346, 100%, 74%);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px hsla(346, 100%, 74%, 0.1);
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    border-radius: 4px;
+    margin-right: 2px;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.date-input::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+.date-icon {
+    position: absolute;
+    left: 15px;
+    color: #6b7280;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+.clear-date {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    display: none;
+}
+
+.clear-date:hover {
     color: #ef4444;
     background-color: #fef2f2;
 }
@@ -1228,6 +1307,11 @@ a[href] {
 @media screen and (max-width: 480px) {
     .shop-controls {
         padding: 1rem;
+    }
+    
+    .search-container,
+    .date-filter-container {
+        max-width: 100%;
     }
     
     .filter-container {
