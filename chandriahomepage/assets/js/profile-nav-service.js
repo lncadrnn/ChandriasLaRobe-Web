@@ -141,15 +141,20 @@ class ProfileNavService {
         if (!this.isAccountButton(button)) return;
         
         // Clear existing content
-        button.innerHTML = '';
-
-        // Check if we're on the accounts page for special handling
+        button.innerHTML = '';        // Check if we're on the accounts page for special handling
         const isAccountsPage = this.isAccountsPage();
 
         // Create default icon element
         const defaultIcon = document.createElement('img');
-        defaultIcon.src = 'assets/img/icon-user.svg';
-        defaultIcon.alt = 'Account';        // Use consistent sizing for all pages - same as other header action buttons (20px icon, 45px button)
+        
+        // Determine correct path based on current page location
+        const isRootLevel = window.location.pathname === '/' || 
+                           window.location.pathname.endsWith('/index.html') ||
+                           window.location.pathname.endsWith('/ChandriasLaRobe-Web/') ||
+                           !window.location.pathname.includes('/chandriahomepage/');
+        
+        defaultIcon.src = isRootLevel ? 'chandriahomepage/assets/img/icon-user.svg' : 'assets/img/icon-user.svg';
+        defaultIcon.alt = 'Account';// Use consistent sizing for all pages - same as other header action buttons (20px icon, 45px button)
         defaultIcon.style.cssText = `
             width: 20px;
             height: 20px;

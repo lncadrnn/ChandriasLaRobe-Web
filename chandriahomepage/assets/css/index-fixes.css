@@ -1,21 +1,45 @@
 /* Index.html specific fixes */
 
-/* Ensure account button is visible */
-#account-btn {
+/* Ensure account button is visible with high specificity */
+#account-btn,
+button#account-btn,
+.header-action-btn#account-btn,
+button.header-action-btn#account-btn {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    background: none !important;
-    border: none !important;
+    background: rgba(255, 133, 177, 0.1) !important;
+    border: 2px solid transparent !important;
     cursor: pointer !important;
     padding: 8px !important;
-    border-radius: 4px !important;
+    border-radius: 50% !important;
+    width: 45px !important;
+    height: 45px !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
-#account-btn img {
-    width: 24px !important;
-    height: 24px !important;
+#account-btn:hover,
+button#account-btn:hover,
+.header-action-btn#account-btn:hover,
+button.header-action-btn#account-btn:hover {
+    background: rgba(255, 133, 177, 0.2) !important;
+    border-color: rgba(255, 133, 177, 0.4) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 3px 10px rgba(255, 133, 177, 0.15) !important;
+}
+
+#account-btn img,
+button#account-btn img,
+.header-action-btn#account-btn img,
+button.header-action-btn#account-btn img {
+    width: 20px !important;
+    height: 20px !important;
     display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 /* Remove pink focus borders from all elements */
@@ -33,7 +57,7 @@ a:focus,
 .header-action-btn:focus,
 .nav-link:focus {
     outline: none !important;
-    border-color: initial !important;
+    border-color: hsl(346, 100%, 74%) !important;
     box-shadow: none !important;
 }
 
@@ -66,4 +90,31 @@ body {
     body {
         margin-top: 70px !important;
     }
+}
+
+/* Debugging styles for account icon */
+#account-icon {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    max-width: none !important;
+    max-height: none !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+}
+
+/* Force visibility for header-user-actions */
+.header-user-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Force visibility for all action buttons */
+.header-action-btn {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
