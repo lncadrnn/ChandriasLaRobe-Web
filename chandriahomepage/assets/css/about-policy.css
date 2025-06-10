@@ -3,12 +3,14 @@
    ================================ */
 
 /* ================================
-   REMOVE PINK FOCUS STYLES
+   REMOVE PINK FOCUS STYLES GLOBALLY
    ================================ */
-/* Remove pink borders from all focus states */
+/* Override all pink focus styles including auth modal */
 *:focus,
 button:focus,
 input:focus,
+textarea:focus,
+select:focus,
 .header-action-btn:focus,
 .header-action-btn[href*="wishlist"]:focus,
 .header-action-btn[href*="cart"]:focus,
@@ -16,9 +18,16 @@ input:focus,
 .nav-link:focus,
 .quantity:focus,
 .size-selector:focus,
-.action-btn:focus {
+.action-btn:focus,
+.auth-input-group input:focus,
+#signup-form .auth-input-group input:focus,
+#signin-form .auth-input-group input:focus,
+#forgot-form .auth-input-group input:focus,
+.auth-modal input:focus,
+.auth-modal button:focus,
+.auth-modal .password-toggle:focus {
     outline: none !important;
-    border-color: transparent !important;
+    border-color: hsl(346, 100%, 74%) !important;
     box-shadow: none !important;
 }
 
