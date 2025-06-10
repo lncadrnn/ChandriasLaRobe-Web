@@ -31,8 +31,7 @@ $(document).ready(function () {
     let allAdditionals = [];
     let filteredProducts = [];
     let currentPage = 1;
-    const productsPerPage = 12;
-    let currentActiveTab = 'all';    let selectedCategories = [];
+    const productsPerPage = 12;    let currentActiveTab = 'all';
     let currentSort = 'default';
     let searchQuery = '';
     let dateFilter = '';
@@ -181,20 +180,12 @@ $(document).ready(function () {
     function initializeEventListeners() {
         // Search functionality
         $("#product-search").on("input", handleSearch);
-        $("#clear-search").on("click", clearSearch);
-
-        // Date filter functionality
+        $("#clear-search").on("click", clearSearch);        // Date filter functionality
         $("#date-filter").on("change", handleDateFilter);
         $("#clear-date").on("click", clearDateFilter);
 
-        // Filter dropdowns
-        $("#category-filter-btn").on("click", toggleCategoryDropdown);
+        // Sort dropdown
         $("#sort-filter-btn").on("click", toggleSortDropdown);
-
-        // Category filter actions
-        $("#clear-categories").on("click", clearCategoryFilters);
-        $("#apply-categories").on("click", applyCategoryFilters);
-        $(".category-checkbox").on("change", updateCategoryFilterText);
 
         // Sort options
         $(".sort-option").on("click", handleSortSelection);
@@ -225,17 +216,12 @@ $(document).ready(function () {
         $(document).on("click", ".size-link", handleSizeSelection);        // Authentication modal
         $(".auth-close, #auth-modal-cancel").on("click", hideAuthModal);
         // Remove the login button handler since we're using the modal directly
-        // No need to redirect to user_authentication.html anymore
-
-        // Close dropdowns when clicking outside
+        // No need to redirect to user_authentication.html anymore        // Close dropdowns when clicking outside
         $(document).on("click", function(e) {
-            if (!$(e.target).closest(".filter-dropdown").length) {
-                $("#category-dropdown").removeClass("show");
-            }
             if (!$(e.target).closest(".sort-dropdown").length) {
                 $("#sort-dropdown").removeClass("show");
             }
-        });        // Close modals when clicking outside
+        });// Close modals when clicking outside
         $(document).on("click", function(e) {
             if ($(e.target).hasClass("cart-modal-container")) {
                 closeCartModal();
@@ -482,44 +468,9 @@ $(document).ready(function () {
                 }
             });
         }
-    }
-
-    // Filter dropdown functions
-    function toggleCategoryDropdown() {
-        $("#category-dropdown").toggleClass("show");
-        $("#sort-dropdown").removeClass("show");
-    }    function toggleSortDropdown() {
+    }    // Filter dropdown functions
+    function toggleSortDropdown() {
         $("#sort-dropdown").toggleClass("show");
-        $("#category-dropdown").removeClass("show");
-    }
-    
-    function clearCategoryFilters() {
-        $(".category-checkbox").prop("checked", false);
-        selectedCategories = [];
-        updateCategoryFilterText();
-        applyFiltersAndSort(); // Apply filters after clearing
-    }
-
-    function applyCategoryFilters() {
-        $("#category-dropdown").removeClass("show");
-        applyFiltersAndSort();
-    }
-
-    function updateCategoryFilterText() {
-        const checkedBoxes = $(".category-checkbox:checked");
-        const count = checkedBoxes.length;
-        
-        if (count === 0) {
-            $("#category-filter-btn .filter-text").text("All Categories");
-        } else if (count === 1) {
-            $("#category-filter-btn .filter-text").text(checkedBoxes.first().data("category"));
-        } else {
-            $("#category-filter-btn .filter-text").text(`${count} Categories Selected`);
-        }
-        
-        selectedCategories = checkedBoxes.map(function() {
-            return $(this).data("category");
-        }).get();
     }
 
     // Sort functionality
@@ -570,8 +521,7 @@ $(document).ready(function () {
                 (product.description && product.description.toLowerCase().includes(searchQuery))
             );
         }
-        
-        // Apply date filter (static implementation - for future enhancement)
+          // Apply date filter (static implementation - for future enhancement)
         if (dateFilter) {
             // This is a static implementation. In a real application, you would
             // filter products based on a date field like created_date, added_date, etc.
@@ -580,13 +530,6 @@ $(document).ready(function () {
             // Example: productsToShow = productsToShow.filter(product => 
             //     product.created_date && product.created_date.includes(dateFilter)
             // );
-        }
-        
-        // Apply category filter
-        if (selectedCategories.length > 0) {
-            productsToShow = productsToShow.filter(product => 
-                product.category && selectedCategories.includes(product.category)
-            );
         }
         
         // Apply sorting
@@ -645,9 +588,7 @@ $(document).ready(function () {
         
         let productsHTML = "";
         productsToDisplay.forEach(product => {
-            productsHTML += createProductHTML(product);
-        });
-          container.html(productsHTML);
+            productsHTML += createProductHTML(product);        });        container.html(productsHTML);
         
         // Update cart button status after displaying products
         setTimeout(() => {
@@ -1078,10 +1019,7 @@ $(document).ready(function () {
             console.log("No user is currently authenticated");
         }
         console.log("Current cart count displayed:", $("#cart-count").text());
-        console.log("=== END DEBUG ===");
-    };
-
-    // Debug function to test cart count updates manually
+        console.log("=== END DEBUG ===");    };    // Debug function to test cart count updates manually
     window.testCartCount = async function() {
         console.log("=== TESTING CART COUNT UPDATE ===");
         console.log("Current cart count element:", $("#cart-count"));
