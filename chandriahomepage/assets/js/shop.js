@@ -597,9 +597,7 @@ $(document).ready(function () {
         displayProducts();
         updatePagination();
         updateProductCount();
-    }
-
-    // Sort products based on current sort option
+    }    // Sort products based on current sort option
     function sortProducts(products) {
         switch (currentSort) {
             case 'name-asc':
@@ -610,6 +608,13 @@ $(document).ready(function () {
                 return products.sort((a, b) => (parseFloat(a.price) || 0) - (parseFloat(b.price) || 0));
             case 'price-high':
                 return products.sort((a, b) => (parseFloat(b.price) || 0) - (parseFloat(a.price) || 0));
+            case 'newest':
+                return products.sort((a, b) => {
+                    // Convert createdAt to Date objects for proper comparison
+                    const dateA = a.createdAt ? new Date(a.createdAt.seconds ? a.createdAt.seconds * 1000 : a.createdAt) : new Date(0);
+                    const dateB = b.createdAt ? new Date(b.createdAt.seconds ? b.createdAt.seconds * 1000 : b.createdAt) : new Date(0);
+                    return dateB - dateA; // Newest first (descending order)
+                });
             default:
                 return products;
         }

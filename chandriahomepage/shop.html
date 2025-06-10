@@ -464,8 +464,7 @@
                                 <i class="fi fi-rs-cross-small"></i>
                             </button>
                         </div>
-                    </div>
-                      <!-- Date Filter Section -->
+                    </div>                    <!-- Date Filter Section -->
                     <div class="date-filter-container">
                         <div class="date-input-wrapper">
                             <input 
@@ -478,6 +477,106 @@
                             <button type="button" id="clear-date" class="clear-date" style="display: none;" title="Clear date filter">
                                 <i class="fi fi-rs-cross-small"></i>
                             </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Filter and Sort Section -->
+                    <div class="filter-sort-container">
+                        <!-- Category Filter Dropdown -->
+                        <div class="filter-dropdown" id="category-dropdown">
+                            <button type="button" class="filter-btn" id="category-filter-btn">
+                                <i class="fi fi-rs-filter"></i>
+                                <span class="filter-text">All Categories</span>
+                                <i class="fi fi-rs-angle-down filter-arrow"></i>
+                            </button>
+                            <div class="filter-dropdown-menu">
+                                <div class="filter-header">
+                                    <span class="filter-header-title">Filter by Category</span>
+                                    <button type="button" class="clear-filters-btn" id="clear-categories">Clear</button>
+                                </div>
+                                <div class="filter-options">
+                                    <div class="filter-checkbox-option">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" class="category-checkbox" data-category="ball-gowns">
+                                            <span class="checkmark"></span>
+                                            <span class="checkbox-label">Ball Gowns</span>
+                                        </label>
+                                    </div>
+                                    <div class="filter-checkbox-option">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" class="category-checkbox" data-category="long-gowns">
+                                            <span class="checkmark"></span>
+                                            <span class="checkbox-label">Long Gowns</span>
+                                        </label>
+                                    </div>
+                                    <div class="filter-checkbox-option">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" class="category-checkbox" data-category="wedding-gowns">
+                                            <span class="checkmark"></span>
+                                            <span class="checkbox-label">Wedding Gowns</span>
+                                        </label>
+                                    </div>
+                                    <div class="filter-checkbox-option">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" class="category-checkbox" data-category="fairy-gowns">
+                                            <span class="checkmark"></span>
+                                            <span class="checkbox-label">Fairy Gowns</span>
+                                        </label>
+                                    </div>
+                                    <div class="filter-checkbox-option">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" class="category-checkbox" data-category="suits">
+                                            <span class="checkmark"></span>
+                                            <span class="checkbox-label">Suits</span>
+                                        </label>
+                                    </div>
+                                    <div class="filter-checkbox-option">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" class="category-checkbox" data-category="additionals">
+                                            <span class="checkmark"></span>
+                                            <span class="checkbox-label">Accessories</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="filter-actions">
+                                    <button type="button" class="filter-apply-btn" id="apply-categories">Apply Filters</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sort Dropdown -->
+                        <div class="sort-dropdown" id="sort-dropdown">
+                            <button type="button" class="sort-btn" id="sort-filter-btn">
+                                <i class="fi fi-rs-sort"></i>
+                                <span class="sort-text">Sort by: Default</span>
+                                <i class="fi fi-rs-angle-down sort-arrow"></i>
+                            </button>
+                            <div class="sort-dropdown-menu">
+                                <div class="sort-option" data-sort="default">
+                                    <span>Default</span>
+                                    <i class="fi fi-rs-check"></i>
+                                </div>
+                                <div class="sort-option" data-sort="name-asc">
+                                    <span>Name (A-Z)</span>
+                                    <i class="fi fi-rs-check"></i>
+                                </div>
+                                <div class="sort-option" data-sort="name-desc">
+                                    <span>Name (Z-A)</span>
+                                    <i class="fi fi-rs-check"></i>
+                                </div>
+                                <div class="sort-option" data-sort="price-low">
+                                    <span>Price (Low to High)</span>
+                                    <i class="fi fi-rs-check"></i>
+                                </div>
+                                <div class="sort-option" data-sort="price-high">
+                                    <span>Price (High to Low)</span>
+                                    <i class="fi fi-rs-check"></i>
+                                </div>
+                                <div class="sort-option" data-sort="newest">
+                                    <span>Newest First</span>
+                                    <i class="fi fi-rs-check"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
