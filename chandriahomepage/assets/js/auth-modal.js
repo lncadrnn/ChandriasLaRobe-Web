@@ -400,6 +400,7 @@ class AuthModal {
                 fullname,
                 contact,
                 email,
+                role: "user",
                 createdAt: new Date()
             };
 
@@ -515,8 +516,7 @@ class AuthModal {
             const userDocRef = doc(chandriaDB, "userAccounts", user.uid);
             const userDocSnap = await getDoc(userDocRef);
             
-            if (!userDocSnap.exists()) {
-                // Create new user account in Firestore
+            if (!userDocSnap.exists()) {                // Create new user account in Firestore
                 const userData = {
                     uid: user.uid,
                     email: user.email,
@@ -524,6 +524,7 @@ class AuthModal {
                     contact: user.phoneNumber || '',
                     emailVerified: user.emailVerified,
                     provider: 'google',
+                    role: "user",
                     createdAt: new Date().toISOString(),
                     added_to_cart: [],
                     added_to_wishlist: []

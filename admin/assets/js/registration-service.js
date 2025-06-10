@@ -102,6 +102,7 @@ $(document).ready(function () {
                 doc(chandriaDB, "adminAccounts", userCredential.user.uid),
                 {
                     email: email,
+                    role: "admin",
                     createdAt: new Date()
                 }
             );
