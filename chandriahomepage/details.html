@@ -266,15 +266,40 @@
                         </ul>
                     </div>
                 </div>
-            </section>
-
-            <!--=============== PRODUCTS ===============-->
+            </section>            <!--=============== PRODUCTS ===============-->
             <section class="products container section-lg">
                 <h3 class="section-title">Related Products</h3>
 
                 <div class="products-container grid" id="related-products-container">
                     <!-- Related products will be dynamically loaded here -->
                 </div>            </section>
+
+            <!--=============== MOBILE STICKY ACTION BAR ===============-->
+            <div class="mobile-sticky-bar" id="mobile-sticky-bar">
+                <div class="mobile-sticky-content">
+                    <!-- Quantity Controls -->
+                    <div class="mobile-quantity-container">
+                        <button type="button" class="mobile-quantity-btn mobile-decrease" onclick="decreaseQuantity()">−</button>
+                        <input
+                            type="number"
+                            class="mobile-quantity"
+                            min="1"
+                            value="1"
+                            id="mobile-sticky-quantity"
+                            readonly
+                        />
+                        <button type="button" class="mobile-quantity-btn mobile-increase" onclick="increaseQuantity()">+</button>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="mobile-sticky-buttons">
+                        <button class="mobile-btn mobile-btn-primary" id="mobile-add-to-cart">Add to Booking</button>
+                        <button class="mobile-favorites-btn" id="mobile-add-to-favorites" data-product-id="">
+                            <i class="bx bx-heart"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </main>
 
         <!--=============== AUTHENTICATION MODAL ===============-->

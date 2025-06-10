@@ -213,13 +213,15 @@ $(document).ready(async function () {
     } else {
       addToCartBtn.show();
     }
-    
-    // Set product ID on the main heart button for favorites functionality
+      // Set product ID on the main heart button for favorites functionality
     const heartButton = $('#details-add-to-favorites');
     if (heartButton.length) {
       heartButton.attr('data-product-id', productId);
       console.log("Set heart button product ID:", productId);
     }
+    
+    // Set up mobile sticky bar
+    setupMobileStickyBar(productId);
     
     } else {
       throw new Error("Product not found.");
@@ -318,9 +320,8 @@ $(document).ready(async function () {
         notyf.error(`Maximum available stock for this size is ${maxStock}`);
       }
     }
-    
-    // Sync mobile sticky bar quantity if it exists
-    const stickyQuantity = document.querySelector('.mobile-sticky-quantity');
+      // Sync mobile sticky bar quantity if it exists
+    const stickyQuantity = document.querySelector('#mobile-sticky-quantity');
     if (stickyQuantity) {
       stickyQuantity.value = input.val();
     }
@@ -658,12 +659,18 @@ $(document).ready(async function () {
         $(this).removeClass('favorited');
         $(this).closest('.product-item').removeClass('in-wishlist');
       });
-      
-      // Also update the main details page heart button
+        // Also update the main details page heart button
       const mainHeartButton = $('#details-add-to-favorites');
       if (mainHeartButton.length) {
         mainHeartButton.find('i').removeClass('bxs-heart').addClass('bx-heart');
         mainHeartButton.removeClass('favorited');
+      }
+      
+      // Also update the mobile heart button
+      const mobileHeartButton = $('#mobile-add-to-favorites');
+      if (mobileHeartButton.length) {
+        mobileHeartButton.find('i').removeClass('bxs-heart').addClass('bx-heart');
+        mobileHeartButton.removeClass('favorited');
       }
       return;
     }
@@ -699,13 +706,29 @@ $(document).ready(async function () {
         const mainProductId = mainHeartButton.data('product-id');
         if (mainProductId) {
           const isMainProductInWishlist = wishlist.some(item => item.productId === mainProductId);
-          
-          if (isMainProductInWishlist) {
+            if (isMainProductInWishlist) {
             mainHeartButton.find('i').removeClass('bx-heart').addClass('bxs-heart');
             mainHeartButton.addClass('favorited');
           } else {
             mainHeartButton.find('i').removeClass('bxs-heart').addClass('bx-heart');
             mainHeartButton.removeClass('favorited');
+          }
+        }
+      }
+      
+      // Update the mobile heart button with the same state as main button
+      const mobileHeartButton = $('#mobile-add-to-favorites');
+      if (mobileHeartButton.length) {
+        const mobileProductId = mobileHeartButton.data('product-id');
+        if (mobileProductId) {
+          const isMobileProductInWishlist = wishlist.some(item => item.productId === mobileProductId);
+          
+          if (isMobileProductInWishlist) {
+            mobileHeartButton.find('i').removeClass('bx-heart').addClass('bxs-heart');
+            mobileHeartButton.addClass('favorited');
+          } else {
+            mobileHeartButton.find('i').removeClass('bxs-heart').addClass('bx-heart');
+            mobileHeartButton.removeClass('favorited');
           }
         }
       }
@@ -718,12 +741,18 @@ $(document).ready(async function () {
         $(this).removeClass('favorited');
         $(this).closest('.product-item').removeClass('in-wishlist');
       });
-      
-      // Also reset the main details page heart button on error
+        // Also reset the main details page heart button on error
       const mainHeartButton = $('#details-add-to-favorites');
       if (mainHeartButton.length) {
         mainHeartButton.find('i').removeClass('bxs-heart').addClass('bx-heart');
         mainHeartButton.removeClass('favorited');
+      }
+      
+      // Also reset the mobile heart button on error
+      const mobileHeartButton = $('#mobile-add-to-favorites');
+      if (mobileHeartButton.length) {
+        mobileHeartButton.find('i').removeClass('bxs-heart').addClass('bx-heart');
+        mobileHeartButton.removeClass('favorited');
       }
     }
   }
@@ -1137,6 +1166,12 @@ window.increaseQuantity = function() {
             quantityInput.value = currentValue + 1;
             // Trigger change event to sync mobile sticky bar
             quantityInput.dispatchEvent(new Event('change'));
+            
+            // Also sync mobile sticky bar directly
+            const mobileQuantity = document.getElementById('mobile-sticky-quantity');
+            if (mobileQuantity) {
+                mobileQuantity.value = quantityInput.value;
+            }
         } else {
             // Show error notification
             if (typeof notyf !== 'undefined') {
@@ -1154,6 +1189,12 @@ window.decreaseQuantity = function() {
             quantityInput.value = currentValue - 1;
             // Trigger change event to sync mobile sticky bar
             quantityInput.dispatchEvent(new Event('change'));
+            
+            // Also sync mobile sticky bar directly
+            const mobileQuantity = document.getElementById('mobile-sticky-quantity');
+            if (mobileQuantity) {
+                mobileQuantity.value = quantityInput.value;
+            }
         }
     }
 };
@@ -1467,196 +1508,9 @@ window.addEventListener('resize', function() {
   
   // Initial setup complete
   // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
-  // QUICK VIEW MODAL FUNCTIONALITY - COMMENTED OUT (Using centralized quick-view.js instead)
+// QUICK VIEW MODAL FUNCTIONALITY - COMMENTED OUT (Using centralized quick-view.js instead)
   // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
-  
-  // Function to open quick view modal
-  /*
-  async function openQuickView(productId) {
-    try {
-      const modal = document.getElementById('quick-view-modal');
-      const modalContainer = document.getElementById('quick-view-modal');
-      const loadingElement = document.getElementById('quick-view-loading');
-      const contentElement = document.getElementById('quick-view-content');
-      
-      // Show modal with loading state immediately
-      modal.classList.add('show');
-      modalContainer.classList.add('loading');
-      document.body.style.overflow = 'hidden';
-      
-      // Show loading spinner and hide content immediately
-      if (loadingElement) {
-        loadingElement.classList.remove('hidden');
-        loadingElement.classList.add('show');
-        loadingElement.style.display = 'flex';
-      }
-      if (contentElement) {
-        contentElement.style.display = 'none';
-      }
-      
-      // Small delay to ensure spinner is visible before async operation
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Fetch product data
-      const productDoc = await getDoc(doc(chandriaDB, "products", productId));
-      
-      if (!productDoc.exists()) {
-        throw new Error('Product not found');
-      }
-      
-      const productData = productDoc.data();
-      currentQuickViewProduct = { id: productId, ...productData };
-      
-      // Populate modal with product data
-      populateQuickViewModal(productData, productId);
-      
-      // Hide loading spinner and show content after data is loaded
-      setTimeout(() => {
-                if (loadingElement) {
-          loadingElement.classList.remove('show');
-          loadingElement.classList.add('hidden');
-          loadingElement.style.display = 'none';
-        }
-        if (contentElement) {
-          contentElement.style.display = 'grid';
-        }
-        modalContainer.classList.remove('loading');
-      }, 300); // Small delay to ensure smooth transition
-      
-    } catch (error) {
-      console.error('Error loading product for quick view:', error);
-      notyf.error('Failed to load product details');
-      closeQuickView();
-    }
-  }
-  // Function to close quick view modal
-  function closeQuickView() {
-    const modal = document.getElementById('quick-view-modal');
-    const modalContainer = modal;
-    const loadingElement = document.getElementById('quick-view-loading');
-    const contentElement = document.getElementById('quick-view-content');
-    
-    modal.classList.remove('show');
-    modalContainer.classList.remove('loading');
-    document.body.style.overflow = '';
-    currentQuickViewProduct = null;
-    
-    // Reset modal state for next use after transition
-    setTimeout(() => {
-      if (loadingElement) {
-        loadingElement.classList.remove('show');
-        loadingElement.classList.add('hidden');
-        loadingElement.style.display = 'none';
-      }
-      if (contentElement) {
-        contentElement.style.display = 'none';
-      }
-    }, 300);
-  }
-
-  // Function to populate quick view modal with product data
-  function populateQuickViewModal(product, productId) {
-    // Update images
-    const mainImg = document.getElementById('quick-view-main-img');
-    const frontThumb = document.getElementById('quick-view-front-thumb');
-    const backThumb = document.getElementById('quick-view-back-thumb');
-    
-    if (mainImg) mainImg.src = product.frontImageUrl || 'assets/img/placeholder.jpg';
-    if (frontThumb) frontThumb.src = product.frontImageUrl || 'assets/img/placeholder.jpg';
-    if (backThumb) backThumb.src = product.backImageUrl || 'assets/img/placeholder.jpg';
-
-    // Update product details
-    const title = document.getElementById('quick-view-title');
-    const category = document.getElementById('quick-view-category');
-    const price = document.getElementById('quick-view-price');
-    const description = document.getElementById('quick-view-desc');
-    const productCode = document.getElementById('quick-view-product-code');
-    const colorIndicator = document.getElementById('quick-view-color-indicator');
-    
-    if (title) title.textContent = product.name || 'Untitled Product';
-    if (category) category.textContent = product.category || 'Clothing';
-    if (price) price.textContent = product.price ? `₱${product.price}` : '₱0';
-    if (description) description.textContent = product.description || 'No description available for this product.';
-    if (productCode) productCode.textContent = product.code || 'N/A';
-    if (colorIndicator && product.color) {
-      colorIndicator.style.backgroundColor = product.color;
-    }
-    
-    // Initialize thumbnail functionality
-    initQuickViewThumbnails();
-    
-    // Initialize action buttons
-    initQuickViewActions(productId);
-  }
-
-  // Function to initialize thumbnail switching
-  function initQuickViewThumbnails() {
-    const thumbnails = document.querySelectorAll('#quick-view-modal .quick-view-thumbnail');
-    const mainImage = document.getElementById('quick-view-main-img');
-    
-    thumbnails.forEach(thumbnail => {
-      thumbnail.addEventListener('click', () => {
-        // Remove active class from all thumbnails
-        thumbnails.forEach(t => t.classList.remove('active'));
-        
-        // Add active class to clicked thumbnail
-        thumbnail.classList.add('active');
-        
-        // Update main image with thumbnail's src
-        if (mainImage) {
-          mainImage.src = thumbnail.src;
-        }
-      });
-    });
-  }
-
-  // Function to initialize quick view action buttons
-  function initQuickViewActions(productId) {
-    // View Full Details button
-    const fullDetailsBtn = document.querySelector('#quick-view-details-btn');
-    if (fullDetailsBtn) {
-      // Remove any existing event listeners
-      fullDetailsBtn.replaceWith(fullDetailsBtn.cloneNode(true));
-      const newFullDetailsBtn = document.querySelector('#quick-view-details-btn');
-      
-      newFullDetailsBtn.addEventListener('click', () => {
-        // Close quick view modal
-        closeQuickView();
-        
-        // Navigate to product details page
-        window.location.href = `details.html?id=${productId}`;
-      });
-    }
-  }
-
-  // Initialize quick view event listeners
-  function initQuickViewListeners() {
-    // Close modal events
-    const modal = document.getElementById('quick-view-modal');
-    const closeBtn = document.querySelector('#quick-view-modal .quick-view-close');
-    
-    if (closeBtn) {
-      closeBtn.addEventListener('click', closeQuickView);
-    }
-    
-    if (modal) {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          closeQuickView();
-        }
-      });
-    }
-
-    // ESC key to close modal
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal && modal.classList.contains('show')) {
-        closeQuickView();
-      }
-    });
-  }
-  // Initialize quick view listeners
-  initQuickViewListeners();
-  */    // Handle authentication state changes - Initialize counters when auth state changes
+// Handle authentication state changes - Initialize counters when auth state changes
   onAuthStateChanged(auth, async function (user) {
       console.log("Details.js onAuthStateChanged - User:", user ? user.uid : "No user");
         try {
@@ -1682,3 +1536,105 @@ window.addEventListener('resize', function() {
 
   // Initial setup complete
 });
+// Mobile sticky bar quantity sync
+  $(document).on('input change', '#mobile-sticky-quantity', function() {
+    const input = $(this);
+    const value = parseInt(input.val()) || 1;
+    const mainQuantityInput = $('#details-quantity');
+    
+    // Sync with main quantity input
+    mainQuantityInput.val(value);
+    
+    // Trigger change event on main input to validate
+    mainQuantityInput.trigger('change');
+  });
+
+  // Mobile Add to Booking functionality
+  $('#mobile-add-to-cart').on('click', async function(e) {
+    e.preventDefault();
+    // Trigger the main add to cart button
+    $('#details-add-to-cart').trigger('click');
+  });
+
+  // Mobile Add to Favorites functionality
+  $(document).on('click', '#mobile-add-to-favorites', async function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const user = auth.currentUser;
+    if (!user) {
+      showAuthModal();
+      return;
+    }
+    
+    const button = $(this);
+    const productId = button.data('product-id');
+    
+    if (!productId) return;
+    
+    // Add loading state with visual feedback
+    button.addClass('loading');
+    button.prop('disabled', true);
+    const originalIcon = button.find('i').attr('class');
+    button.find('i').removeClass().addClass('bx bx-loader-alt bx-spin');
+    
+    try {
+      // Use the wishlist service to toggle the product
+      const isNowInWishlist = await wishlistService.toggleWishlist(productId);
+      
+      // Update button state based on result
+      if (isNowInWishlist) {
+        button.find('i').removeClass().addClass('bx bxs-heart');
+        button.addClass('favorited');
+      } else {
+        button.find('i').removeClass().addClass('bx bx-heart');
+        button.removeClass('favorited');
+      }
+      
+      // Also update the main favorites button
+      const mainFavButton = $('#details-add-to-favorites');
+      if (mainFavButton.length) {
+        if (isNowInWishlist) {
+          mainFavButton.find('i').removeClass().addClass('bx bxs-heart');
+          mainFavButton.addClass('favorited');
+        } else {
+          mainFavButton.find('i').removeClass().addClass('bx bx-heart');
+          mainFavButton.removeClass('favorited');
+        }
+      }
+      
+      // Update wishlist count
+      await wishlistService.updateWishlistCountUI();
+      
+    } catch (error) {
+      console.error("Error updating wishlist:", error);
+      // Restore original icon on error
+      button.find('i').removeClass().addClass(originalIcon);
+    } finally {
+      button.removeClass('loading');
+      button.prop('disabled', false);
+      
+      // If there was an error, the icon was already restored above
+      if (!button.find('i').hasClass('bx-heart') && !button.find('i').hasClass('bxs-heart')) {
+        button.find('i').removeClass().addClass(originalIcon);
+      }
+    }
+  });
+  
+  // Function to set up mobile sticky bar
+  function setupMobileStickyBar(productId) {
+    // Set product ID on mobile favorites button
+    const mobileFavButton = $('#mobile-add-to-favorites');
+    if (mobileFavButton.length) {
+      mobileFavButton.attr('data-product-id', productId);
+    }
+    
+    // Sync initial quantity values
+    const mainQuantity = $('#details-quantity').val() || 1;
+    const mobileQuantity = $('#mobile-sticky-quantity');
+    if (mobileQuantity.length) {
+      mobileQuantity.val(mainQuantity);
+    }
+    
+    console.log("Mobile sticky bar set up for product:", productId);
+  }

@@ -645,3 +645,214 @@
 }
 
 /* =============== EXISTING STYLES =============== */
+
+/* =============== MOBILE STICKY ACTION BAR =============== */
+.mobile-sticky-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  display: block; /* Always show for debugging */
+  padding: 12px 16px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom)); /* Handle safe area */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.mobile-sticky-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 100%;
+}
+
+/* Mobile Quantity Controls */
+.mobile-quantity-container {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 2px solid var(--first-color);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.mobile-quantity {
+  width: 60px;
+  height: 44px;
+  text-align: center;
+  border: none;
+  background: white;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--title-color);
+  outline: none;
+  appearance: textfield;
+  -moz-appearance: textfield;
+  -webkit-appearance: textfield;
+}
+
+.mobile-quantity::-webkit-outer-spin-button,
+.mobile-quantity::-webkit-inner-spin-button {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.mobile-quantity-btn {
+  width: 40px;
+  height: 44px;
+  background: var(--first-color);
+  border: none;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.mobile-quantity-btn:hover,
+.mobile-quantity-btn:active {
+  background: hsl(346, 100%, 68%);
+  transform: scale(0.95);
+}
+
+.mobile-quantity-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f5f5f5;
+  color: #999;
+  transform: none;
+}
+
+/* Mobile Action Buttons Container */
+.mobile-sticky-buttons {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  align-items: center;
+}
+
+/* Mobile Add to Booking Button */
+.mobile-btn-primary {
+  flex: 1;
+  height: 44px;
+  background: var(--first-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(var(--first-color-rgb), 0.3);
+}
+
+.mobile-btn-primary:hover {
+  background: hsl(346, 100%, 68%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(var(--first-color-rgb), 0.4);
+}
+
+.mobile-btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Mobile Favorites Button */
+.mobile-favorites-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.mobile-favorites-btn i {
+  font-size: 1.3rem;
+  color: #666;
+  transition: all 0.3s ease;
+}
+
+/* Mobile Favorites Button - Active/Favorited State */
+.mobile-favorites-btn.favorited {
+  background: white !important;
+  border-color: #ff69b4;
+  transform: scale(1.05);
+}
+
+.mobile-favorites-btn.favorited i {
+  color: #ff69b4 !important;
+}
+
+/* Mobile Favorites Button - Hover Effect */
+.mobile-favorites-btn:hover {
+  border-color: #ff69b4;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+}
+
+.mobile-favorites-btn:hover i {
+  color: #ff69b4;
+}
+
+/* Mobile Favorites Button - Loading State */
+.mobile-favorites-btn.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.mobile-favorites-btn.loading i {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Show sticky bar only on mobile */
+@media screen and (max-width: 768px) {
+  .mobile-sticky-bar {
+    display: block !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 9999 !important;
+    background: white !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.1) !important;
+    padding: 12px 16px !important;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+  }
+  
+  /* Add bottom padding to main content to prevent overlap */
+  .main {
+    padding-bottom: 80px !important;
+  }
+  
+  /* Hide the original details-action section on mobile */
+  .details-action {
+    display: none !important;
+  }
+}
