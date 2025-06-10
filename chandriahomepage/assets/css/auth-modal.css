@@ -351,7 +351,7 @@
 }
 
 .auth-social-btn {
-  width: 56px;
+  width: 100%;
   height: 56px;
   border: 2px solid #e5e7eb;
   border-radius: 16px;
@@ -361,18 +361,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 12px;
   position: relative;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: inherit;
 }
 
 .google-btn {
-  color: hsl(346, 100%, 74%);
+  color: #374151;
+  border-color: #d1d5db;
 }
 
 .google-btn:hover {
-  border-color: hsl(346, 100%, 74%);
-  background: #fafaff;
+  border-color: #9ca3af;
+  background: #f9fafb;
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(66, 133, 244, 0.2);
+  box-shadow: 0 8px 16px rgba(66, 133, 244, 0.15);
 }
 
 .facebook-btn {
@@ -388,9 +393,10 @@
 
 /* =============== MODERN SVG ICONS =============== */
 .auth-social-btn svg {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .google-btn svg {
