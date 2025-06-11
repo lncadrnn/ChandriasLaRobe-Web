@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chandria's La Robe - Admin Dashboard</title>
+    
+    <!-- Boxicons CSS -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/reusable css/sidebar.css">
+</head>
+<body>
+    <div class="sidebar" id="sidebar">        <div class="sidebar-header">
+            <div class="logo">
+                <img src="assets/img/logonobg.png" alt="Chandria's La Robe" class="logo-img">
+            </div>
+            <button class="toggle-btn" id="toggleBtn">
+                <i class='bx bx-chevron-left'></i>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <ul class="nav-list">
+                <li class="nav-item active">
+                    <a href="index.html" class="nav-link">
+                        <i class='bx bxs-dashboard nav-icon'></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="inventory.html" class="nav-link">
+                        <i class='bx bxs-t-shirt nav-icon'></i>
+                        <span class="nav-text">Inventory</span>
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="calendar.html" class="nav-link">
+                        <i class='bx bxs-calendar nav-icon'></i>
+                        <span class="nav-text">Calendar</span>
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="rental.html" class="nav-link">
+                        <i class='bx bxs-package nav-icon'></i>
+                        <span class="nav-text">Rental</span>
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="rental-history.html" class="nav-link">
+                        <i class='bx bxs-user nav-icon'></i>
+                        <span class="nav-text">Rental History</span>
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="settings.html" class="nav-link">
+                        <i class='bx bxs-cog nav-icon'></i>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class='bx bxs-user'></i>
+                </div>
+                <div class="user-details">
+                    <span class="user-name">Admin</span>
+                    <span class="user-role">Administrator</span>
+                </div>
+            </div>
+            
+            <button class="logout-btn">
+                <i class='bx bx-log-out'></i>
+                <span class="logout-text">Logout</span>
+            </button>
+        </div>
+    </div>
+      <main class="main-content" id="mainContent">
+        <!-- Main content will be added here -->
+    </main>
+    
+    <!-- JavaScript -->
+    <script src="assets/js/sidebar.js"></script>
+</body>
+</html>
