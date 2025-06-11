@@ -14,6 +14,30 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleIcon.className = 'bx bx-chevron-left';
     }
     
+    // =============== INITIALIZE ACTIVE NAV STATE ===============
+    function initializeActiveNav() {
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        navLinks.forEach(link => {
+            const linkHref = link.getAttribute('href');
+            const navItem = link.closest('.nav-item');
+            
+            // Remove active class from all items first
+            navItem.classList.remove('active');
+            
+            // Add active class to current page
+            if (linkHref === currentPage || 
+                (currentPage === '' && linkHref === 'index.html') ||
+                (currentPage === 'index.html' && linkHref === 'index.html')) {
+                navItem.classList.add('active');
+            }
+        });
+    }
+    
+    // Initialize active navigation state
+    initializeActiveNav();
+    
     // Toggle sidebar function
     function toggleSidebar() {
         sidebar.classList.toggle('collapsed');
@@ -52,20 +76,24 @@ document.addEventListener('DOMContentLoaded', function() {
             navItem.classList.add('active');
         }
     }
-    
-    // Handle navigation clicks
+      // Handle navigation clicks
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
-            // For demo purposes, prevent default navigation
-            // In real implementation, remove this if you want actual navigation
             const href = this.getAttribute('href');
-            if (href === '#' || href.includes('.html')) {
+            
+            // Only prevent default for placeholder links
+            if (href === '#') {
                 e.preventDefault();
                 setActiveNav(this);
                 
-                // Update page title and content
+                // Update page title and content for demo links
                 const navText = this.querySelector('.nav-text').textContent;
                 updatePageContent(navText);
+            } else if (href && href.includes('.html')) {
+                // Allow actual navigation to HTML pages
+                // Set active state and let the browser navigate
+                setActiveNav(this);
+                // Don't prevent default - let navigation happen naturally
             }
         });
     });
