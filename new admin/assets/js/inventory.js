@@ -927,7 +927,7 @@ function initializeCropper() {
     currentCropper = new Cropper(image, {
         aspectRatio: 3/4, // Fixed portrait ratio
         viewMode: 1,
-        autoCropArea: 0.8,
+        autoCropArea: 0.6, // Reduced to zoom out more
         responsive: true,
         restore: false,
         guides: true,
@@ -937,8 +937,14 @@ function initializeCropper() {
         cropBoxResizable: true,
         toggleDragModeOnDblclick: false,
         background: false,
+        zoomable: true,
+        scalable: true,
+        minContainerWidth: 300,
+        minContainerHeight: 200,
         ready: function() {
             console.log('Cropper initialized successfully');
+            // Zoom out slightly to ensure the image fits well
+            currentCropper.zoomTo(0.8);
         }
     });
 }

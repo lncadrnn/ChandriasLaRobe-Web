@@ -725,13 +725,17 @@
 
 /* Cropper modal specific content styling */
 .cropper-modal-content {
-    max-width: 800px;
+    max-width: 700px;
     width: 90%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .cropper-container {
     width: 100%;
-    height: 500px;
+    height: 400px;
+    max-height: calc(90vh - 160px);
     background: #f8f9fa;
     border-radius: var(--border-radius);
     overflow: hidden;
@@ -743,9 +747,10 @@
 }
 
 .cropper-container img {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 95%;
+    max-height: 95%;
     display: block;
+    object-fit: contain;
 }
 
 /* Cropper.js overrides for clean display */
@@ -771,6 +776,42 @@
 
 #imageCropperModal .modal-backdrop {
     background: rgba(0, 0, 0, 0.7);
+}
+
+#imageCropperModal .modal-body {
+    padding: 15px;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-height: 600px) {
+    .cropper-container {
+        height: 300px;
+        max-height: calc(90vh - 120px);
+    }
+    
+    .cropper-modal-content {
+        max-height: 95vh;
+    }
+    
+    #imageCropperModal .modal-body {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cropper-modal-content {
+        width: 95%;
+        max-width: 95%;
+    }
+    
+    .cropper-container {
+        height: 350px;
+    }
 }
 
 /* Enhanced Image Preview Styles for Modal Display */
