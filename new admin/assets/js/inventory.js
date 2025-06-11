@@ -595,20 +595,48 @@ function saveProduct() {
     }    // Use Firebase to save product if available
     if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
         // Use Firebase to save
+        console.log('🔄 Attempting to save product to Firebase...');
         saveProductToFirebase(productData).then(result => {
             if (result) {
                 // Close modal and refresh data
                 closeModal(document.getElementById('addProductModal'));
                 resetProductForm();
-                console.log('Product saved to Firebase successfully');
+                console.log('✅ Product saved to Firebase successfully');
+                if (window.notyf) {
+                    window.notyf.success('Product saved to Firebase successfully');
+                }
             }
         }).catch(error => {
-            console.error('Failed to save to Firebase:', error);
-            alert('Failed to save product to Firebase. Please try again.');
+            console.error('❌ Failed to save to Firebase:', error);
+            
+            // Provide detailed error information
+            let errorMessage = 'Failed to save product to Firebase';
+            if (error.message) {
+                errorMessage += `: ${error.message}`;
+            }
+            
+            if (window.notyf) {
+                window.notyf.error(errorMessage);
+            } else {
+                alert(errorMessage + '. Please try again.');
+            }
+            
+            // Suggest troubleshooting steps
+            console.log('💡 Troubleshooting tips:');
+            console.log('1. Check internet connection');
+            console.log('2. Verify Firebase credentials');
+            console.log('3. Run window.testFirebaseConnection() in console');
         });
     } else {
+        // Provide diagnostic information
+        if (!window.InventoryFetcher) {
+            console.warn('⚠️ InventoryFetcher not available - Firebase service not loaded');
+        } else if (!window.InventoryFetcher.getConnectionStatus()) {
+            console.warn('⚠️ Firebase not connected - using local storage fallback');
+        }
+        
         // Fallback to local storage
-        console.log('Saving product locally:', productData);
+        console.log('💾 Saving product locally:', productData);
         
         const newProduct = {
             id: Date.now().toString(),
@@ -625,8 +653,11 @@ function saveProduct() {
         // Close modal
         closeModal(document.getElementById('addProductModal'));
         resetProductForm();
-        
-        alert('Product saved locally!');
+          if (window.notyf) {
+            window.notyf.warning('Product saved locally. Firebase connection may be unavailable.');
+        } else {
+            alert('Product saved locally. Firebase connection may be unavailable.');
+        }
     }
 }
 

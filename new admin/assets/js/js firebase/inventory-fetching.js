@@ -591,9 +591,10 @@ const inventoryFetcher = new InventoryFetcher();
 // Auto-initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', async () => {
     try {
+        console.log('🔄 Auto-initializing inventory fetcher...');
         await inventoryFetcher.initialize();
     } catch (error) {
-        console.error('Failed to auto-initialize inventory fetcher:', error);
+        console.error('❌ Failed to auto-initialize inventory fetcher:', error);
     }
 });
 
@@ -602,4 +603,4 @@ window.InventoryFetcher = inventoryFetcher;
 
 // Export for module usage
 export default inventoryFetcher;
-export { InventoryFetcher };
+export { InventoryFetcher as InventoryFetcherClass, inventoryFetcher as InventoryFetcher };

@@ -564,13 +564,27 @@
     
     <!-- Firebase SDK -->
     <script type="module" src="assets/js/js firebase/chandrias-sdk.js"></script>
+      <!-- Inventory Fetching Service -->
+    <script type="module" src="assets/js/js firebase/inventory-fetching.js"></script>
     
-    <!-- Inventory Fetching Service -->
-    <script type="module" src="assets/js/js firebase/inventory-fetching.js"></script>    <script type="module">
-        import InventoryFetcher from './assets/js/js firebase/inventory-fetching.js';
+    <script type="module">
+        // Import the InventoryFetcher class and make it globally available
+        import { InventoryFetcher } from './assets/js/js firebase/inventory-fetching.js';
         
         // Make InventoryFetcher available globally
-        window.InventoryFetcher = InventoryFetcher;// Initialize Notyf for notifications with auto-removal
+        window.InventoryFetcher = InventoryFetcher;
+        
+        // Initialize Firebase connection status checker
+        window.checkFirebaseStatus = async function() {
+            try {
+                const isConnected = await window.checkFirebaseConnection();
+                console.log('🔗 Firebase connection status:', isConnected ? 'Connected' : 'Disconnected');
+                return isConnected;
+            } catch (error) {
+                console.error('❌ Firebase connection check failed:', error);
+                return false;
+            }
+        };// Initialize Notyf for notifications with auto-removal
         const notyf = new Notyf({
             duration: 3000, // 3 seconds display time
             position: { x: 'center', y: 'top' },
@@ -703,54 +717,105 @@
         };
         
         // Run cleanup every 5 seconds to ensure no notifications get stuck
-        setInterval(cleanupNotifications, 5000);        // Initialize Firebase services when DOM is ready
+        setInterval(cleanupNotifications, 5000);        // Enhanced initialization with better error diagnostics
         document.addEventListener('DOMContentLoaded', async function() {
             try {
-                console.log('Initializing Firebase inventory services...');
+                console.log('🚀 Initializing Firebase inventory services...');
+                console.log('📱 User Agent:', navigator.userAgent);
+                console.log('🌐 Origin:', window.location.origin);
                 
-                // Test Firebase connection and initialize services
-                const initResult = await InventoryFetcher.initialize();
+                // Wait a moment for modules to load
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Check if InventoryFetcher is available
+                if (!window.InventoryFetcher) {
+                    console.error('❌ InventoryFetcher not available');
+                    notyf.error('Firebase service not loaded properly');
+                    return;
+                }
+                
+                console.log('✅ InventoryFetcher loaded successfully');
+                
+                // Test Firebase connection first
+                console.log('🔗 Testing Firebase connection...');
+                const isConnected = await window.checkFirebaseStatus();
+                console.log(`📡 Firebase connection result: ${isConnected}`);
+                
+                if (!isConnected) {
+                    console.warn('⚠️ Firebase connection failed - using offline mode');
+                    notyf.warning('Working in offline mode - Firebase unavailable');
+                    
+                    // Log detailed connection info
+                    console.log('🔍 Connection details:');
+                    console.log('- chandriaDB available:', !!window.chandriaDB);
+                    console.log('- checkFirebaseConnection available:', !!window.checkFirebaseConnection);
+                    
+                    return;
+                }
+                
+                console.log('✅ Firebase connection successful');
+                
+                // Initialize the inventory fetcher
+                console.log('🔄 Initializing InventoryFetcher...');
+                const initResult = await window.InventoryFetcher.initialize();
+                console.log('📊 InventoryFetcher init result:', initResult);
                 
                 if (initResult.success) {
-                    console.log('Firebase services ready:', initResult.message);
+                    console.log('✅ Firebase services ready:', initResult.message);
                       // Get initial statistics
-                    const stats = await InventoryFetcher.getInventoryStats();
+                    const stats = await window.InventoryFetcher.getInventoryStats();
                     if (stats) {
-                        console.log('Products in database:', stats.totalProducts);
-                        console.log('Additionals in database:', stats.totalAdditionals);
+                        console.log('📊 Products in database:', stats.totalProducts);
+                        console.log('📊 Additionals in database:', stats.totalAdditionals);
                         
                         // notyf.success(`Connected to Firebase (${stats.totalProducts} products, ${stats.totalAdditionals} additionals found)`);
                     } else {
+                        console.log('📊 No stats available');
                         // notyf.success('Connected to Firebase');
                     }
                     
                     // Load initial data from Firebase
+                    console.log('📦 Loading initial data...');
                     await loadInventoryFromFirebase();
                 } else {
-                    console.error('Failed to initialize Firebase services');
-                    notyf.error('Failed to connect to Firebase');
+                    console.error('❌ Failed to initialize Firebase services:', initResult.message);
+                    notyf.error(`Firebase initialization failed: ${initResult.message}`);
                 }
                 
             } catch (error) {
-                console.error('Error initializing Firebase:', error);
-                notyf.error('Firebase connection failed');
+                console.error('❌ Error initializing Firebase:', error);
+                console.log('🔍 Error details:', {
+                    name: error.name,
+                    message: error.message,
+                    stack: error.stack
+                });
+                notyf.error(`Firebase connection failed: ${error.message}`);
                 
                 // Don't show additional alerts, let user use offline mode
                 setTimeout(() => {
                     if (!window.InventoryFetcher || !window.InventoryFetcher.getConnectionStatus()) {
-                        console.warn('Firebase connection still not available, using offline mode');
+                        console.warn('⚠️ Firebase connection still not available, using offline mode');
                     }
-                }, 5000);
+                }, 2000);
             }
-        });        // Function to load inventory data from Firebase
+        });// Function to load inventory data from Firebase
         async function loadInventoryFromFirebase() {
             try {
-                console.log('Loading inventory data from Firebase...');
+                console.log('📦 Loading inventory data from Firebase...');
+                
+                // Check if InventoryFetcher is available and connected
+                if (!window.InventoryFetcher) {
+                    throw new Error('InventoryFetcher not available');
+                }
+                
+                if (!window.InventoryFetcher.getConnectionStatus()) {
+                    throw new Error('Firebase not connected');
+                }
                 
                 // Fetch products and additionals from Firebase using the new fetching service
                 const [products, additionals] = await Promise.all([
-                    InventoryFetcher.fetchProducts(),
-                    InventoryFetcher.fetchAdditionals()
+                    window.InventoryFetcher.fetchProducts(),
+                    window.InventoryFetcher.fetchAdditionals()
                 ]);
                 
                 // Update global variables with Firebase data
@@ -758,8 +823,8 @@
                     window.updateInventoryData(products, additionals);
                 } else {
                     // Fallback: directly update if function doesn't exist
-                    console.log('Loaded products:', products);
-                    console.log('Loaded additionals:', additionals);
+                    console.log('📊 Loaded products:', products.length);
+                    console.log('📊 Loaded additionals:', additionals.length);
                     
                     // Try to update the UI directly if possible
                     if (typeof window.sampleProducts !== 'undefined') {
@@ -783,17 +848,118 @@
                 
                 // Show product count notification only
                 if (products.length > 0 || additionals.length > 0) {
-                    notyf.success(`Loaded ${products.length} products and ${additionals.length} additionals`);
+                    notyf.success(`📦 Loaded ${products.length} products and ${additionals.length} additionals`);
+                } else {
+                    notyf.info('📦 No products found in database');
                 }
                 
             } catch (error) {
-                console.error('Error loading inventory from Firebase:', error);
-                notyf.error('Failed to load inventory data');
+                console.error('❌ Error loading inventory from Firebase:', error);
+                notyf.error(`Failed to load inventory data: ${error.message}`);
             }
         }
         
         // Make the load function available globally
         window.loadInventoryFromFirebase = loadInventoryFromFirebase;
+        
+        // Debug function to test Firebase connection
+        window.testFirebaseConnection = async function() {
+            try {
+                console.log('🧪 Testing Firebase connection...');
+                
+                // Test basic connection
+                const isConnected = await window.checkFirebaseStatus();
+                console.log(`📡 Basic connection test: ${isConnected ? 'PASS' : 'FAIL'}`);
+                
+                if (!isConnected) {
+                    console.error('❌ Firebase connection failed - check network and credentials');
+                    return false;
+                }
+                
+                // Test InventoryFetcher
+                if (!window.InventoryFetcher) {
+                    console.error('❌ InventoryFetcher not available');
+                    return false;
+                }
+                
+                console.log(`📡 InventoryFetcher available: PASS`);
+                console.log(`📡 InventoryFetcher connected: ${window.InventoryFetcher.getConnectionStatus() ? 'PASS' : 'FAIL'}`);
+                
+                // Test basic data fetch
+                try {
+                    const products = await window.InventoryFetcher.fetchProducts();
+                    console.log(`📡 Product fetch test: PASS (${products.length} products)`);
+                } catch (error) {
+                    console.error('❌ Product fetch test: FAIL', error);
+                    return false;
+                }
+                
+                console.log('✅ All Firebase tests passed!');
+                return true;
+                
+            } catch (error) {
+                console.error('❌ Firebase test failed:', error);
+                return false;
+            }
+        };
+        
+        // Debug function to manually test product saving
+        window.testProductSave = async function() {
+            const testProduct = {
+                name: 'Test Product',
+                category: 'ball-gown',
+                sizes: { 'S': 1, 'M': 1 },
+                sleeves: 'sleeveless',
+                color: 'Red',
+                colorHex: '#FF0000',
+                rentalPrice: 100,
+                status: 'available',
+                description: 'Test product for debugging'
+            };
+            
+            try {
+                console.log('🧪 Testing product save...');
+                const savedProduct = await window.InventoryFetcher.addProduct(testProduct);
+                console.log('✅ Product save test: PASS', savedProduct);
+                return savedProduct;
+            } catch (error) {
+                console.error('❌ Product save test: FAIL', error);
+                throw error;
+            }
+        };
+
+        // Debug function to test Cloudinary connection
+window.testCloudinaryConnection = async function() {
+    try {
+        console.log('☁️ Testing Cloudinary connection...');
+        
+        // Perform a simple upload test with a small placeholder image
+        const testImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA\n\
+        AAAFCAYAAACNbyblAAAAHElEQVR42mJ8//8/w38GIAXDIBKE0jDgAAAABJRU5ErkJggg==';
+        
+        // Upload to Cloudinary
+        const result = await window.cloudinaryUpload(testImage, 'test/connection', 'Test upload for connection check');
+        
+        console.log('☁️ Cloudinary upload test result:', result);
+        
+        if (result && result.secure_url) {
+            notyf.success('☁️ Cloudinary connection test successful!');
+        } else {
+            notyf.error('❌ Cloudinary connection test failed');
+        }
+    } catch (error) {
+        console.error('❌ Cloudinary connection test error:', error);
+        notyf.error(`❌ Cloudinary connection test error: ${error.message}`);
+    }
+};        // Debug Panel (temporary for troubleshooting)
+            <div style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; border-radius: 5px; z-index: 9999; font-size: 12px;">
+                <div style="margin-bottom: 5px;">🔧 Debug Panel</div>
+                <button onclick="window.testFirebaseConnection()" style="margin: 2px; padding: 4px 8px; font-size: 11px;">Test Firebase</button>
+                <button onclick="window.testProductSave()" style="margin: 2px; padding: 4px 8px; font-size: 11px;">Test Save</button>
+                <button onclick="window.testCloudinaryConnection()" style="margin: 2px; padding: 4px 8px; font-size: 11px;">Test Cloudinary</button>
+            </div>
+
+            <!-- ...existing main content... -->
     </script>
   
 </body>
