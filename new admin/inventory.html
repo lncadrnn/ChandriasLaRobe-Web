@@ -713,16 +713,15 @@
                 
                 if (initResult.success) {
                     console.log('Firebase services ready:', initResult.message);
-                    
-                    // Get initial statistics
+                      // Get initial statistics
                     const stats = await InventoryFetcher.getInventoryStats();
                     if (stats) {
                         console.log('Products in database:', stats.totalProducts);
                         console.log('Additionals in database:', stats.totalAdditionals);
                         
-                        notyf.success(`Connected to Firebase (${stats.totalProducts} products, ${stats.totalAdditionals} additionals found)`);
+                        // notyf.success(`Connected to Firebase (${stats.totalProducts} products, ${stats.totalAdditionals} additionals found)`);
                     } else {
-                        notyf.success('Connected to Firebase');
+                        // notyf.success('Connected to Firebase');
                     }
                     
                     // Load initial data from Firebase

@@ -1744,11 +1744,10 @@ async function refreshInventoryDataFromFirebase() {
             // Refresh UI
             loadProducts();
             loadAdditionals();
-            
-            console.log(`Refreshed: ${inventoryData.products.length} products, ${inventoryData.additionals.length} additionals`);
+              console.log(`Refreshed: ${inventoryData.products.length} products, ${inventoryData.additionals.length} additionals`);
             
             if (window.notyf) {
-                window.notyf.success(`Inventory refreshed: ${inventoryData.totalCount} items`);
+                // window.notyf.success(`Inventory refreshed: ${inventoryData.totalCount} items`);
             }
             
             return inventoryData;
