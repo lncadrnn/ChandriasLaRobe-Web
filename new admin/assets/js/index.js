@@ -180,7 +180,7 @@ function renderAppointmentsTable(appointments) {
     if (appointments.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="6" class="empty-state">
+                <td colspan="3" class="empty-state">
                     <i class='bx bx-calendar'></i>
                     <h3>No recent appointments</h3>
                     <p>Recent appointment activity will appear here</p>
@@ -189,37 +189,34 @@ function renderAppointmentsTable(appointments) {
         `;
         return;
     }
-    
-    tbody.innerHTML = appointments.map(appointment => `
-        <tr>
-            <td class="col-customer">
-                <div class="customer-info">
-                    <div class="customer-avatar">
-                        ${appointment.customer.name.charAt(0)}
+      tbody.innerHTML = appointments.map(appointment => {
+        const formattedDate = formatAppointmentDate(appointment.date);
+        const bookingDescription = `has booked an appointment for fitting on ${formattedDate} at ${appointment.time}`;
+        
+        return `
+            <tr>
+                <td class="col-customer-appointments">
+                    <div class="customer-info">
+                        <div class="customer-avatar">
+                            ${appointment.customer.name.charAt(0)}
+                        </div>
+                        <div class="customer-details">
+                            <div class="customer-name">${appointment.customer.name}</div>
+                            <div class="customer-email">${appointment.customer.email}</div>
+                        </div>
                     </div>
-                    <div class="customer-details">
-                        <div class="customer-name">${appointment.customer.name}</div>
-                        <div class="customer-email">${appointment.customer.email}</div>
-                    </div>
-                </div>
-            </td>
-            <td class="col-item">
-                <div class="item-text">${appointment.service}</div>
-            </td>
-            <td class="col-date">
-                <div class="date-text">${formatDate(appointment.date)}</div>
-            </td>
-            <td class="col-date">
-                <div class="date-text">${appointment.time}</div>
-            </td>
-            <td class="col-status">
-                <span class="status-badge ${appointment.status}">${appointment.status}</span>
-            </td>
-            <td class="col-amount">
-                <div class="contact-text">${appointment.contact}</div>
-            </td>
-        </tr>
-    `).join('');
+                </td>
+                <td class="col-booking-description">
+                    <div class="booking-description">${bookingDescription}</div>
+                </td>
+                <td class="col-details">
+                    <button class="details-btn" onclick="viewAppointmentDetails('${appointment.customer.name}', '${appointment.date}')">
+                        View Details
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
 }
 
 function formatDate(dateString) {
@@ -228,8 +225,20 @@ function formatDate(dateString) {
     return date.toLocaleDateString('en-US', options);
 }
 
-// Function to handle details button click
+function formatAppointmentDate(dateString) {
+    const date = new Date(dateString);
+    const options = { month: 'long', day: 'numeric', year: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+}
+
+// Function to handle rental details button click
 function viewDetails(transactionCode) {
     alert(`Viewing details for transaction: ${transactionCode}`);
+    // This can be replaced with actual modal or navigation logic
+}
+
+// Function to handle appointment details button click
+function viewAppointmentDetails(customerName, appointmentDate) {
+    alert(`Viewing appointment details for ${customerName} on ${formatAppointmentDate(appointmentDate)}`);
     // This can be replaced with actual modal or navigation logic
 }

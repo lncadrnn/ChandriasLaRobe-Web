@@ -192,6 +192,25 @@
     min-width: 130px;
 }
 
+/* =============== APPOINTMENTS TABLE SPECIFIC COLUMNS =============== */
+.col-customer-appointments {
+    text-align: left;
+    width: 30%;
+    min-width: 200px;
+}
+
+.col-booking-description {
+    text-align: left;
+    width: 50%;
+    min-width: 300px;
+}
+
+.booking-description {
+    font-weight: 400;
+    color: var(--text-dark);
+    line-height: 1.4;
+}
+
 /* =============== CONTENT COMPONENTS =============== */
 .customer-info {
     display: flex;
