@@ -90,6 +90,12 @@
     margin: 0;
 }
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .add-product-btn,
 .add-additional-btn {
     display: flex;
@@ -1575,6 +1581,8 @@
     border-radius: 8px !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    /* Enhanced fade animations */
+    transition: all 0.4s ease-in-out !important;
 }
 
 .notyf__wrapper {
@@ -1584,12 +1592,14 @@
 .notyf__icon {
     margin-right: 12px !important;
     font-size: 18px !important;
+    color: #ffffff !important;
 }
 
 .notyf__message {
     font-size: 14px !important;
     font-weight: 500 !important;
     line-height: 1.4 !important;
+    color: #ffffff !important;
 }
 
 /* Ensure notifications don't interfere with page content */
@@ -1597,20 +1607,121 @@
     margin-top: 20px !important;
 }
 
-/* Custom animation for smoother appearance */
+/* Custom animations for slide-in and fade-out */
 .notyf__toast {
     animation: notyf-slide-in 0.3s ease-out !important;
 }
 
+/* Fade-out animation when dismissing */
+.notyf__toast--disappear {
+    animation: notyf-fade-out 0.4s ease-in forwards !important;
+}
+
+/* Custom notification types styling */
+.notyf-success-custom {
+    background: #10b981 !important;
+    border-left: 4px solid #059669 !important;
+}
+
+.notyf-error-custom {
+    background: #ef4444 !important;
+    border-left: 4px solid #dc2626 !important;
+}
+
+.notyf-info-custom {
+    background: #3b82f6 !important;
+    border-left: 4px solid #2563eb !important;
+}
+
+.notyf-warning-custom {
+    background: #f59e0b !important;
+    border-left: 4px solid #d97706 !important;
+}
+
+.notyf-firebase-custom {
+    background: #8b5cf6 !important;
+    border-left: 4px solid #7c3aed !important;
+}
+
+/* Enhanced slide-in animation */
 @keyframes notyf-slide-in {
     0% {
         transform: translateY(-100%);
         opacity: 0;
+        max-height: 0;
+    }
+    50% {
+        opacity: 0.8;
     }
     100% {
         transform: translateY(0);
         opacity: 1;
+        max-height: 100px;
     }
+}
+
+/* Smooth fade-out animation with complete removal */
+@keyframes notyf-fade-out {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        max-height: 100px;
+        margin-bottom: 10px;
+        padding: 15px 20px;
+    }
+    50% {
+        transform: translateY(-10px) scale(0.98);
+        opacity: 0.5;
+        max-height: 80px;
+    }
+    100% {
+        transform: translateY(-50px) scale(0.9);
+        opacity: 0;
+        max-height: 0;
+        margin: 0;
+        padding: 0;
+        height: 0;
+        overflow: hidden;
+    }
+}
+
+/* Ensure notifications are completely removed after animation */
+.notyf__toast--disappear {
+    animation: notyf-fade-out 0.4s ease-in forwards !important;
+    pointer-events: none !important;
+}
+
+/* Cleanup state for forced removal */
+.notyf__toast--cleanup {
+    opacity: 0 !important;
+    transform: translateY(-50px) scale(0.9) !important;
+    max-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    transition: all 0.3s ease-out !important;
+}
+
+/* Override default Notyf ripple and dismissal animations */
+.notyf__ripple {
+    display: none !important; /* Disable ripple effect */
+}
+
+/* Enhanced dismissible button */
+.notyf__dismiss {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 50% !important;
+    transition: background 0.2s ease !important;
+}
+
+.notyf__dismiss:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Ensure proper stacking and spacing */
+.notyf__toast + .notyf__toast {
+    margin-top: 10px !important;
 }
 
 /* ===== ERROR & CONFIRM MODALS ===== */
