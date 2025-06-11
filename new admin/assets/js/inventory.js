@@ -700,9 +700,8 @@ function loadProducts() {
                         <div class="image-placeholder">
                             <i class='bx bxs-t-shirt'></i>
                             <span class="placeholder-text">Product Image</span>
-                        </div>
-                    `}
-                    <div class="status-badge ${product.status}">${getStatusText(product.status)}</div>
+                        </div>                    `}
+                    <!-- <div class="status-badge ${product.status}">${getStatusText(product.status)}</div> -->
                     <div class="color-indicator" style="background-color: ${product.colorHex || product.color}" title="${product.color}" onclick="openColorPicker('product', '${product.id}', '${product.colorHex || product.color}')">
                     </div>
                 </div>
@@ -754,9 +753,8 @@ function loadAdditionals() {
                         <div class="image-placeholder">
                             <i class='bx bxs-diamond'></i>
                             <span class="placeholder-text">Additional Image</span>
-                        </div>
-                    `}
-                    <div class="status-badge ${additional.status}">${getStatusText(additional.status)}</div>
+                        </div>                    `}
+                    <!-- <div class="status-badge ${additional.status}">${getStatusText(additional.status)}</div> -->
                     <div class="color-indicator" style="background-color: ${additional.colorHex || additional.color}" title="${additional.color}" onclick="openColorPicker('additional', ${additional.id}, '${additional.colorHex || additional.color}')">
                     </div>
                 </div>

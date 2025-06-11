@@ -6,10 +6,10 @@
  * This implementation is for development/testing purposes only.
  */
 const cloudinaryConfig = {
-    cloudName: 'dq3ppjkpe', // Replace with your Cloudinary cloud name
-    apiKey: '953695138133449', // Replace with your Cloudinary API key
-    uploadPreset: 'chandrias-inventory', // Replace with your upload preset
-    apiSecret: '9vWGOUYipmrq2ecCato2G9MTA7Q' // API secret for image deletion (keep secure!)
+    cloudName: 'dbtomr3fm', // Using working cloud name from old admin
+    apiKey: '814782524531725', // Using working API key from old admin
+    uploadPreset: 'UPLOAD_IMG', // Using working upload preset from old admin
+    apiSecret: '9vWGOUYipmrq2ecCato2G9MTA7Q' // API secret for image deletion - same as old admin
 };
 
 // Cloudinary Upload URL
@@ -18,22 +18,38 @@ const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${cloudinaryConfi
 // Upload image to Cloudinary
 async function uploadImageToCloudinary(file, folder = 'inventory') {
     try {
+        console.log('🚀 Starting Cloudinary upload...');
+        console.log('📁 Upload config:', {
+            cloudName: cloudinaryConfig.cloudName,
+            uploadPreset: cloudinaryConfig.uploadPreset,
+            folder: folder,
+            fileSize: file.size,
+            fileType: file.type
+        });
+
         const formData = new FormData();
         formData.append('file', file);
         formData.append('upload_preset', cloudinaryConfig.uploadPreset);
         formData.append('folder', folder);
         formData.append('resource_type', 'image');
 
+        console.log('📤 Making request to:', CLOUDINARY_UPLOAD_URL);
+
         const response = await fetch(CLOUDINARY_UPLOAD_URL, {
             method: 'POST',
             body: formData
         });
 
+        console.log('📥 Response status:', response.status, response.statusText);
+
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorText = await response.text();
+            console.error('❌ Cloudinary error response:', errorText);
+            throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
         }
 
         const result = await response.json();
+        console.log('✅ Cloudinary upload successful:', result);
         
         return {
             success: true,
@@ -43,7 +59,7 @@ async function uploadImageToCloudinary(file, folder = 'inventory') {
             height: result.height
         };
     } catch (error) {
-        console.error('Error uploading to Cloudinary:', error);
+        console.error('❌ Error uploading to Cloudinary:', error);
         return {
             success: false,
             error: error.message
@@ -132,3 +148,45 @@ async function deleteImageFromCloudinary(publicId) {
 window.uploadImageToCloudinary = uploadImageToCloudinary;
 window.deleteImageFromCloudinary = deleteImageFromCloudinary;
 window.cloudinaryConfig = cloudinaryConfig;
+
+// Test function to validate Cloudinary configuration
+window.testCloudinaryConnection = async function() {
+    try {
+        console.log('🧪 Testing Cloudinary connection...');
+        
+        // Create a simple test image (1x1 pixel PNG)
+        const canvas = document.createElement('canvas');
+        canvas.width = 1;
+        canvas.height = 1;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FF0000';
+        ctx.fillRect(0, 0, 1, 1);
+        
+        return new Promise((resolve) => {
+            canvas.toBlob(async (blob) => {
+                const testFile = new File([blob], 'test.png', { type: 'image/png' });
+                const result = await uploadImageToCloudinary(testFile, 'test');
+                
+                if (result.success) {
+                    console.log('✅ Cloudinary connection test successful!');
+                    console.log('📍 Test image URL:', result.url);
+                    resolve(true);
+                } else {
+                    console.error('❌ Cloudinary connection test failed:', result.error);
+                    resolve(false);
+                }
+            }, 'image/png');
+        });
+    } catch (error) {
+        console.error('❌ Cloudinary test error:', error);
+        return false;
+    }
+};
+
+// Log configuration status
+console.log('🔧 Cloudinary Configuration Loaded:', {
+    cloudName: cloudinaryConfig.cloudName,
+    uploadPreset: cloudinaryConfig.uploadPreset,
+    hasApiKey: !!cloudinaryConfig.apiKey,
+    hasApiSecret: !!cloudinaryConfig.apiSecret
+});
