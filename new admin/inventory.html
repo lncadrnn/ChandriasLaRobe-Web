@@ -85,14 +85,14 @@
                 <span class="logout-text">Logout</span>
             </button>
         </div>
-    </div>
-
-    <main class="main-content" id="mainContent">        <div class="page-header">
+    </div>    <main class="main-content" id="mainContent">
+        <div class="page-header">
             <div class="header-left">
                 <h1 class="page-title">Inventory Management</h1>
+                <p class="page-subtitle">Manage Chandria's La Robe's inventory and product items</p>
                 <div class="datetime-display" id="currentDateTime">Loading...</div>
             </div>
-        </div>        <!-- Inventory Tab Navigation -->
+        </div><!-- Inventory Tab Navigation -->
         <div class="tab-navigation">
             <button class="tab-btn active" data-tab="products" id="productsTab">
                 <i class='bx bxs-t-shirt'></i>
@@ -155,8 +155,7 @@
                     <i class='bx bx-x'></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <form id="addProductForm">
+            <div class="modal-body">                <form id="addProductForm">
                     <div class="form-row">
                         <div class="form-group">
                             <label for="productName">Product Name</label>
@@ -176,28 +175,42 @@
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="productSize">Size</label>
-                            <select id="productSize" required>
-                                <option value="">Select Size</option>
-                                <option value="XS">XS</option>
-                                <option value="S">S</option>
-                                <option value="M">M</option>
-                                <option value="L">L</option>
-                                <option value="XL">XL</option>
-                                <option value="XXL">XXL</option>
-                            </select>
+                            <label for="productSizes">Available Sizes</label>
+                            <div class="size-checkboxes">
+                                <label class="checkbox-label"><input type="checkbox" value="XS"> XS</label>
+                                <label class="checkbox-label"><input type="checkbox" value="S"> S</label>
+                                <label class="checkbox-label"><input type="checkbox" value="M"> M</label>
+                                <label class="checkbox-label"><input type="checkbox" value="L"> L</label>
+                                <label class="checkbox-label"><input type="checkbox" value="XL"> XL</label>
+                                <label class="checkbox-label"><input type="checkbox" value="XXL"> XXL</label>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label for="productColor">Color</label>
-                            <input type="text" id="productColor" required>
+                            <label for="productSleeves">Sleeves</label>
+                            <select id="productSleeves" required>
+                                <option value="">Select Sleeve Type</option>
+                                <option value="Sleeveless">Sleeveless</option>
+                                <option value="Short sleeves">Short sleeves</option>
+                                <option value="3/4 sleeves">3/4 sleeves</option>
+                                <option value="Long sleeves">Long sleeves</option>
+                                <option value="Off-shoulder">Off-shoulder</option>
+                                <option value="Cap sleeves">Cap sleeves</option>
+                            </select>
                         </div>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
+                            <label for="productColor">Color</label>
+                            <input type="text" id="productColor" required>
+                        </div>
+                        <div class="form-group">
                             <label for="productRentalPrice">Rental Price (₱)</label>
                             <input type="number" id="productRentalPrice" step="0.01" required>
                         </div>
+                    </div>
+                    
+                    <div class="form-row">
                         <div class="form-group">
                             <label for="productStatus">Status</label>
                             <select id="productStatus" required>
@@ -205,16 +218,15 @@
                                 <option value="maintenance">Maintenance</option>
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="productImage">Image Upload</label>
+                            <input type="file" id="productImage" accept="image/*">
+                        </div>
                     </div>
                     
                     <div class="form-group">
                         <label for="productDescription">Description</label>
                         <textarea id="productDescription" rows="3"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="productImage">Image Upload</label>
-                        <input type="file" id="productImage" accept="image/*">
                     </div>
                 </form>
             </div>
