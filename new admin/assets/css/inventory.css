@@ -1376,3 +1376,101 @@
         justify-content: center;
     }
 }
+
+/* =============== CLOUDINARY UPLOAD PROGRESS STYLES =============== */
+
+/* Upload Progress Indicator */
+.upload-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius);
+    z-index: 10;
+    backdrop-filter: blur(2px);
+}
+
+.upload-progress.error {
+    background: rgba(220, 38, 38, 0.95);
+    color: white;
+}
+
+.upload-progress.success {
+    background: rgba(34, 197, 94, 0.95);
+    color: white;
+}
+
+.progress-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    padding: 10px 15px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.progress-content i {
+    font-size: 18px;
+}
+
+.upload-progress.error .progress-content {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.upload-progress.success .progress-content {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Spinning animation for loader */
+.bx-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Upload zone enhancements */
+.image-drop-zone {
+    position: relative;
+    overflow: hidden;
+}
+
+.image-drop-zone .upload-progress {
+    border-radius: inherit;
+}
+
+/* Responsive adjustments for upload progress */
+@media (max-width: 768px) {
+    .progress-content {
+        font-size: 12px;
+        padding: 8px 12px;
+        gap: 8px;
+    }
+    
+    .progress-content i {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .progress-content {
+        font-size: 11px;
+        padding: 6px 10px;
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .progress-content i {
+        font-size: 20px;
+    }
+}
