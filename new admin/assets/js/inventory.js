@@ -558,17 +558,17 @@ function closeModal(modal) {
 // Save Functions
 function saveProduct() {
     const form = document.getElementById('addProductForm');
-      // Get selected sizes with stock quantities
+    // Get selected sizes with stock quantities
     const sizeCheckboxes = form.querySelectorAll('.size-checkboxes input[type="checkbox"]:checked');
     const sizesWithStock = {};
-    
     sizeCheckboxes.forEach(checkbox => {
         const size = checkbox.value;
         const label = checkbox.closest('.checkbox-label');
         const stockInput = label.querySelector('.stock-input');
         const stock = parseInt(stockInput.value) || 0;
         sizesWithStock[size] = stock;
-    });    // Get form values
+    });
+    // Get form values
     const productData = {
         name: document.getElementById('productName').value,
         category: document.getElementById('productCategory').value,
@@ -578,9 +578,7 @@ function saveProduct() {
         colorHex: getColorHex(),
         rentalPrice: document.getElementById('productRentalPrice').value,
         status: 'available', // Default status
-        description: document.getElementById('productDescription').value,
-        frontImage: document.getElementById('frontImageInput').files[0],
-        backImage: document.getElementById('backImageInput').files[0]
+        description: document.getElementById('productDescription').value
     };
 
     // Validate required fields
@@ -592,7 +590,26 @@ function saveProduct() {
             alert('Please fill in all required fields and select at least one size');
         }
         return;
-    }    // Use Firebase to save product if available
+    }
+
+    // Validate Cloudinary image upload
+    if (!frontImageData || !frontImageData.url || !frontImageData.publicId ||
+        !backImageData || !backImageData.url || !backImageData.publicId) {
+        if (window.showErrorModal) {
+            window.showErrorModal('Please upload and crop both front and back images before saving.');
+        } else {
+            alert('Please upload and crop both front and back images before saving.');
+        }
+        return;
+    }
+
+    // Attach Cloudinary URLs and IDs
+    productData.frontImageUrl = frontImageData.url;
+    productData.backImageUrl = backImageData.url;
+    productData.frontImagePublicId = frontImageData.publicId;
+    productData.backImagePublicId = backImageData.publicId;
+
+    // Use Firebase to save product if available
     if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
         // Use Firebase to save
         console.log('🔄 Attempting to save product to Firebase...');
@@ -608,19 +625,16 @@ function saveProduct() {
             }
         }).catch(error => {
             console.error('❌ Failed to save to Firebase:', error);
-            
             // Provide detailed error information
             let errorMessage = 'Failed to save product to Firebase';
             if (error.message) {
                 errorMessage += `: ${error.message}`;
             }
-            
             if (window.notyf) {
                 window.notyf.error(errorMessage);
             } else {
                 alert(errorMessage + '. Please try again.');
             }
-            
             // Suggest troubleshooting steps
             console.log('💡 Troubleshooting tips:');
             console.log('1. Check internet connection');
@@ -634,26 +648,21 @@ function saveProduct() {
         } else if (!window.InventoryFetcher.getConnectionStatus()) {
             console.warn('⚠️ Firebase not connected - using local storage fallback');
         }
-        
         // Fallback to local storage
         console.log('💾 Saving product locally:', productData);
-        
         const newProduct = {
             id: Date.now().toString(),
             ...productData,
             createdAt: new Date().toISOString()
         };
-        
         // Add to sample products array
         sampleProducts.unshift(newProduct);
-        
         // Refresh UI
         loadProducts();
-        
         // Close modal
         closeModal(document.getElementById('addProductModal'));
         resetProductForm();
-          if (window.notyf) {
+        if (window.notyf) {
             window.notyf.warning('Product saved locally. Firebase connection may be unavailable.');
         } else {
             alert('Product saved locally. Firebase connection may be unavailable.');
@@ -1432,13 +1441,12 @@ async function applyCrop() {
                 // Fallback: save locally
                 const localData = canvas.toDataURL('image/jpeg', 0.9);
                 if (currentImageType === 'front') {
-                    frontImageData = { localData, url: null };
+                    frontImageData = { localData, url: null, publicId: null };
                     updateImagePreview('front', localData);
                 } else {
-                    backImageData = { localData, url: null };
+                    backImageData = { localData, url: null, publicId: null };
                     updateImagePreview('back', localData);
                 }
-                
                 closeCropperModal();
             }
         }, 'image/jpeg', 0.9);
