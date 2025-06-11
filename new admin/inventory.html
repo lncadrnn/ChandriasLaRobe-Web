@@ -187,6 +187,7 @@
                                 </div>
                             </div>
                             
+
                             <!-- Back Image Upload -->
                             <div class="image-upload-item">
                                 <label>Back View</label>
@@ -552,13 +553,11 @@
     
     <!-- Notyf JS for notifications -->
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-    
-    <!-- Custom JavaScript -->
+      <!-- Custom JavaScript -->
     <script src="assets/js/sidebar.js"></script>
     <script src="assets/js/inventory.js"></script>
     
     <!-- Cloudinary Configuration -->
-    <script src="assets/js/config/cloudinary-config.js"></script>
     <script src="assets/js/js firebase/cloudinary-config.js"></script>
     
     <!-- Cloudinary Upload Service -->
@@ -568,7 +567,7 @@
     <script type="module" src="assets/js/js firebase/inventory-firebase.js"></script>
     
     <!-- Comprehensive Inventory Service -->
-    <script src="assets/js/js firebase/inventory-service.js"></script><!-- Initialize Firebase Inventory -->
+    <script type="module" src="assets/js/js firebase/inventory-service.js"></script>
     <script type="module">
         import FirebaseInventory from './assets/js/js firebase/inventory-firebase.js';
         
@@ -774,5 +773,6 @@
         // Make the load function available globally
         window.loadInventoryFromFirebase = loadInventoryFromFirebase;
     </script>
+  
 </body>
 </html>

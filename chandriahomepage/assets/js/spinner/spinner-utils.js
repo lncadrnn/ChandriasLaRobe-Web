@@ -70,10 +70,12 @@ function initPageSpinner() {
     if (pageSpinner.length > 0) {
         showSpinner();
         
+        // TEMPORARILY COMMENTED OUT
         // Hide spinner when page is fully loaded
-        $(window).on('load', function() {
-            hideSpinner(null, 300); // Small delay for better UX
-        });
+        // $(window).on('load', function() {
+        //     hideSpinner(null, 300); // Small delay for better UX
+        // });
+        
     }
     
     // Handle navigation loading

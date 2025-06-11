@@ -1934,15 +1934,6 @@
     align-self: flex-start;
 }
 
-.card_color {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid white;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
-    align-self: flex-start;
-}
-
 .product-actions, .product-actions {
     display: flex;
     gap: 0.5rem;
