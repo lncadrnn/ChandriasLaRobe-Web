@@ -3,11 +3,8 @@
     <head>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-        <title>Chandria's La Robe - Web System</title>
-        <!-- EXTERNAL CSS -->
-        <link rel="stylesheet" href="./assets/css/calendar.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />        <title>Chandria's La Robe - Web System</title>        <!-- EXTERNAL CSS -->
+        <link rel="stylesheet" href="./assets/css/new-calendar.css" />
         <link rel="stylesheet" href="./assets/css/sidebar.css" />
         <link
             rel="stylesheet"
@@ -18,9 +15,7 @@
             href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
             rel="stylesheet"
         />
-    </head>
-
-    <body>
+    </head>    <body>
         <nav class="sidebar close">
             <header>
                 <div class="image-text">
@@ -50,7 +45,6 @@
                                 <i class="bx bxs-t-shirt icon"></i>
                                 <span class="text nav-text">Inventory</span>
                             </a>
-                            <!-- <i class='bx bxs-chevron-down'></i> -->
                         </li>
 
                         <li class="nav-link active">
@@ -70,9 +64,7 @@
                         <li class="nav-link">
                             <a href="./customer-logs.html">
                                 <i class="bx bxs-user icon"></i>
-                                <span class="text nav-text"
-                                    >Rental History</span
-                                >
+                                <span class="text nav-text">Rental History</span>
                             </a>
                         </li>
 
@@ -82,13 +74,6 @@
                                 <span class="text nav-text">Settings</span>
                             </a>
                         </li>
-
-                        <!-- <li class="nav-link">
-                        <a href="#">
-                            <i class='bx bxs-wallet icon'></i>
-                            <span class="text nav-text">Transaction</span>
-                        </a>
-                    </li> -->
                     </ul>
                 </div>
 
@@ -96,234 +81,146 @@
             </div>
         </nav>
 
-        <section class="page-name">
-            <div class="text">Calendar</div>
+        <section class="home">
+            <div class="calendar-wrapper">                <!-- Calendar Header -->
+                <div class="calendar-header">
+                    <h1>Calendar</h1>
+                </div>
 
-            <div class="calendar-container">
-                <div class="calendar-layout">
-                    <div class="calendar-main">
-                        <div class="calendar-header">
-                            <div class="calendar-controls">
-                                <button id="prevMonth">
-                                    <i class="bx bx-chevron-left"></i>
-                                </button>
-                                <div class="month-year-select">
-                                    <select id="monthSelect"></select>
-                                    <select id="yearSelect"></select>
+                <!-- Calendar Main Content -->
+                <div class="calendar-content">
+                    <!-- Left Panel - Calendar -->
+                    <div class="calendar-panel">                        <!-- Calendar Navigation -->
+                        <div class="calendar-nav">                            <!-- Month Navigation Group -->
+                            <div class="month-navigation">
+                                <button id="prevMonth"><i class="fa fa-chevron-left"></i></button>
+                                <div class="month-year">
+                                    <div class="month-selector">
+                                        <span id="currentMonth" class="clickable">June</span>
+                                        <div id="monthDropdown" class="dropdown-menu">
+                                            <div class="dropdown-item" data-month="0">January</div>
+                                            <div class="dropdown-item" data-month="1">February</div>
+                                            <div class="dropdown-item" data-month="2">March</div>
+                                            <div class="dropdown-item" data-month="3">April</div>
+                                            <div class="dropdown-item" data-month="4">May</div>
+                                            <div class="dropdown-item" data-month="5">June</div>
+                                            <div class="dropdown-item" data-month="6">July</div>
+                                            <div class="dropdown-item" data-month="7">August</div>
+                                            <div class="dropdown-item" data-month="8">September</div>
+                                            <div class="dropdown-item" data-month="9">October</div>
+                                            <div class="dropdown-item" data-month="10">November</div>
+                                            <div class="dropdown-item" data-month="11">December</div>
+                                        </div>
+                                    </div>
+                                    <div class="year-selector">
+                                        <span id="currentYear" class="clickable">2025</span>
+                                        <div id="yearDropdown" class="dropdown-menu year-dropdown">
+                                            <!-- Years will be dynamically generated -->
+                                        </div>
+                                    </div>
                                 </div>
-                                <button id="nextMonth">
-                                    <i class="bx bx-chevron-right"></i>
-                                </button>
+                                <button id="nextMonth"><i class="fa fa-chevron-right"></i></button>
                             </div>
+                            
+                            <!-- View Toggle Buttons -->
+                            <div class="view-toggle">
+                                <button class="view-btn active" data-view="month">Month</button>
+                                <button class="view-btn" data-view="week">Week</button>
+                                <button class="view-btn" data-view="day">Day</button>
+                            </div>
+                        </div>
+
+                        <!-- Calendar Grid -->
+                        <div class="calendar-grid">
+                            <!-- Weekday Headers -->
+                            <div class="weekdays">
+                                <div class="weekday">Monday</div>
+                                <div class="weekday">Tuesday</div>
+                                <div class="weekday">Wednesday</div>
+                                <div class="weekday">Thursday</div>
+                                <div class="weekday">Friday</div>
+                                <div class="weekday">Saturday</div>
+                                <div class="weekday">Sunday</div>
+                            </div>
+                            <!-- Calendar Days -->
+                            <div class="calendar-days" id="calendarDays">
+                                <!-- Days will be dynamically generated -->
+                            </div>
+                        </div>
+                    </div>                    <!-- Right Panel -->
+                    <div class="right-panel">
+                        <!-- Search Section -->
+                        <div class="search-section">
                             <div class="search-container">
-                                <input
-                                    type="text"
-                                    id="searchTransactionCode"
-                                    placeholder="Search transaction code..."
-                                />
-                                <i class="bx bx-search search-icon"></i>
+                                <input type="text" id="searchInput" placeholder="Search events...">
+                                <i class="fa fa-search search-icon"></i>
                             </div>
                         </div>
-                        <div class="weekdays">
-                            <div>MON</div>
-                            <div>TUE</div>
-                            <div>WED</div>
-                            <div>THU</div>
-                            <div>FRI</div>
-                            <div>SAT</div>
-                            <div>SUN</div>
-                        </div>
-                        <div class="calendar-grid" id="calendarGrid"></div>
-                    </div>
-                    <div class="event-sidebar">
-                        <h3>Create Event</h3>
-                        <div class="event-form">
-                            <div class="form-group">
-                                <label>Transaction Code</label>
-                                <input
-                                    type="text"
-                                    id="eventTitle"
-                                    placeholder="Enter Transaction Code"
-                                />
-                            </div>
-
-                            <div class="form-group">
-                                <label>Rental Type</label>
-                                <select id="eventType">
-                                    <option value="">Select rental type</option>
-                                    <option value="fixed">Fixed Rental</option>
-                                    <option value="open">Open Rental</option>
-                                </select>
-                                <small
-                                    class="type-description"
-                                    style="
-                                        color: #666;
-                                        font-size: 11px;
-                                        margin-top: 4px;
-                                    "
-                                >
-                                    Fixed Rental: Event Date only<br />
-                                    Open Rental: Start Date and End Date
-                                </small>
-                            </div>
-
-                            <!-- Open Rental Date Fields -->
-                            <div
-                                class="form-group open-rental-dates"
-                                style="display: none"
-                            >
-                                <label>Start Date</label>
-                                <input
-                                    type="date"
-                                    id="eventStartDate"
-                                    placeholder="YYYY-MM-DD"
-                                />
-                            </div>
-                            <div
-                                class="form-group open-rental-dates"
-                                style="display: none"
-                            >
-                                <label>End Date</label>
-                                <input
-                                    type="date"
-                                    id="eventEndDate"
-                                    placeholder="YYYY-MM-DD"
-                                />
-                            </div>
-
-                            <!-- Fixed Rental Date Field -->
-                            <div
-                                class="form-group fixed-rental-date"
-                                style="display: none"
-                            >
-                                <label>Event Date</label>
-                                <input
-                                    type="date"
-                                    id="eventFixedDate"
-                                    placeholder="YYYY-MM-DD"
-                                />
-                            </div>
-
-                            <div class="form-group">
-                                <label>Event Color</label>
-                                <input
-                                    type="color"
-                                    id="eventColor"
-                                    value="#ff9a9e"
-                                />
-                            </div>
-
-                            <div class="form-group">
-                                <label>Description</label>
-                                <textarea
-                                    id="eventDescription"
-                                    placeholder="Enter description"
-                                ></textarea>
-                            </div>
-                            <div class="form-actions">
-                                <button class="save-btn" id="saveEvent">
-                                    Save Event
-                                </button>
-                                <button class="delete-btn" id="clearEvents">
-                                    Clear All
-                                </button>
+                        
+                        <!-- Status Legend -->
+                        <div class="status-legend">
+                            <h3>Status Legend</h3>
+                            <div class="legend-items">
+                                <div class="legend-item">
+                                    <div class="legend-color ongoing-fixed"></div>
+                                    <span>Ongoing (Fixed Rental)</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color ongoing-open"></div>
+                                    <span>Ongoing (Open Rental)</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color upcoming"></div>
+                                    <span>Upcoming</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color completed"></div>
+                                    <span>Completed</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color late"></div>
+                                    <span>Late</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+
+                        <!-- Notes Section -->
+                        <div class="notes-section">
+                            <h3>Notes</h3>
+                            <div class="notes-area">
+                                <textarea id="notesTextarea" placeholder="Add your notes here..."></textarea>
+                                <div class="note-triangle"></div>
+                            </div>
+                        </div></div>
                 </div>
             </div>
-            <!-- Delete Confirmation Modal -->
-            <div id="deleteModal" class="modal" style="display: none">
+
+            <!-- Event Details Modal -->
+            <div id="eventModal" class="event-modal" style="display: none;">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h3>Confirm Deletion</h3>
+                        <h3>Event Details</h3>
                         <span class="close-modal">&times;</span>
                     </div>
-                    <div class="modal-body">
-                        <p>Are you sure you want to delete this event?</p>
-                        <div class="event-details-modal">
-                            <div>
-                                <strong>Transaction Code:</strong>
-                                <span id="modalEventTitle"></span>
-                            </div>
-                            <div>
-                                <strong>Rental Type:</strong>
-                                <span id="modalEventType"></span>
-                            </div>
-                            <div>
-                                <strong>Date Range:</strong>
-                                <span id="modalEventDates"></span>
-                            </div>
-                            <div
-                                id="modalEventDescription"
-                                style="margin-top: 8px"
-                            ></div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn-cancel" id="cancelDelete">
-                            Cancel
-                        </button>
-                        <button class="btn-delete" id="confirmDelete">
-                            Delete Event
-                        </button>
+                    <div class="modal-body" id="eventModalBody">
+                        <!-- Event details will be populated here -->
                     </div>
                 </div>
-            </div>
-
-            <!-- Clear All Confirmation Modal -->
-            <div id="clearAllModal" class="modal" style="display: none">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>Clear Month Events</h3>
-                        <span class="close-modal">&times;</span>
-                    </div>
-                    <div class="modal-body">
-                        <p>
-                            Are you sure you want to delete
-                            <strong>ALL</strong> events from the current month?
-                        </p>
-                        <div
-                            class="event-details-modal"
-                            style="
-                                background: #fff3cd;
-                                border-left-color: #ffc107;
-                            "
-                        >
-                            <div style="color: #856404">
-                                <i
-                                    class="bx bx-warning"
-                                    style="margin-right: 8px"
-                                ></i>
-                                <strong>Warning:</strong> This action cannot be
-                                undone. All events for this month will be permanently removed
-                                from the calendar.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn-cancel" id="cancelClearAll">
-                            Cancel
-                        </button>
-                        <button class="btn-delete" id="confirmClearAll">
-                            Clear Month Events
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
+            </div>        </section>
+        
         <!-- Firebase Scripts -->
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-        <script type="module" src="./firebase-config.js"></script>
+        <script src="./firebase-config.js"></script>
+        
         <!-- JQUERY CDN -->
         <script
             src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
             crossorigin="anonymous"
         ></script>
-        <!-- EXTERNAL SCRIPT -->
-        <script type="module" src="./assets/js/calendar-service.js"></script>
-        <script type="module" src="./assets/js/calendar-subscript.js"></script>
+        
+        <!-- NEW CALENDAR SCRIPT -->
+        <script src="./assets/js/new-calendar.js"></script>
     </body>
 </html>
