@@ -899,13 +899,18 @@ function openImageCropper(type) {
     const cropperModal = document.getElementById('imageCropperModal');
     const cropperImage = document.getElementById('cropperImage');
     
-    cropperImage.src = imageData;
+    // Show modal first
     cropperModal.classList.add('active');
     
-    // Initialize cropper (you would need to include Cropper.js library)
-    setTimeout(() => {
-        initializeCropper();
-    }, 100);
+    // Wait for image to load before initializing cropper
+    cropperImage.onload = function() {
+        setTimeout(() => {
+            initializeCropper();
+        }, 200);
+    };
+    
+    // Set image source
+    cropperImage.src = imageData;
 }
 
 // Initialize cropper (with Cropper.js library)
@@ -916,7 +921,12 @@ function initializeCropper() {
     if (currentCropper) {
         currentCropper.destroy();
     }
-      // Initialize new cropper with portrait aspect ratio (3:4)
+    
+    // Check if image is loaded
+    console.log('Initializing cropper with image:', image.src);
+    console.log('Image dimensions:', image.naturalWidth, 'x', image.naturalHeight);
+    
+    // Initialize new cropper with portrait aspect ratio (3:4)
     currentCropper = new Cropper(image, {
         aspectRatio: 3/4, // Portrait ratio instead of square
         viewMode: 1,
@@ -928,7 +938,10 @@ function initializeCropper() {
         highlight: false,
         cropBoxMovable: true,
         cropBoxResizable: true,
-        toggleDragModeOnDblclick: false,
+                toggleDragModeOnDblclick: false,
+        ready: function() {
+            console.log('Cropper is ready');
+        }
     });
       // Setup aspect ratio buttons
     const ratioButtons = document.querySelectorAll('.ratio-btn');
