@@ -558,17 +558,14 @@
                 </p>
             </div>
         </div>
-    </footer>    <!-------------------------------- JS --------------------------------->
+    </footer>
+
+    <!-------------------------------- JS --------------------------------->
     <!--=============== JQUERY ===============-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <!--=============== NOTYF NOTIFICATIONS ===============-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-    
-    <!-------------------------------- SPINNER JS --------------------------------->
-    <script src="assets/js/spinner/spinner-core.js"></script>
-    <script src="assets/js/spinner/spinner-page.js"></script>
-    <script src="assets/js/spinner/spinner-utils.js"></script>
     
     <script src="assets/js/nav-bar.js"></script>
     <script src="assets/js/hamburger-mob.js"></script>
@@ -578,5 +575,33 @@
     <script type="module" src="assets/js/wishlist-firebase.js"></script>
       <script type="module" src="assets/js/about-policy.js"></script>
     <script type="module" src="./assets/js/chatbot/chatbot-init.js"></script>
+    
+    <!-------------------------------- PAGE SPINNER SCRIPT --------------------------------->
+    <script>
+        // Hide spinner when page is fully loaded
+        window.addEventListener('load', function() {
+            const spinner = document.getElementById('page-spinner');
+            if (spinner) {
+                setTimeout(() => {
+                    spinner.classList.add('hidden');
+                    // Remove spinner from DOM after animation completes
+                    setTimeout(() => {
+                        spinner.style.display = 'none';
+                    }, 300);
+                }, 500); // Show spinner for at least 500ms for better UX
+            }
+        });
+
+        // Also hide spinner if page takes too long to load (fallback)
+        setTimeout(() => {
+            const spinner = document.getElementById('page-spinner');
+            if (spinner && !spinner.classList.contains('hidden')) {
+                spinner.classList.add('hidden');
+                setTimeout(() => {
+                    spinner.style.display = 'none';
+                }, 300);
+            }
+        }, 5000); // Maximum 5 seconds
+    </script>
 </body>
 </html>
