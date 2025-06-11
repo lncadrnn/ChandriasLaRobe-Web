@@ -1,12 +1,5 @@
 // Cloudinary Upload Service for Inventory Management
-
-// Cloudinary Configuration
-const CLOUDINARY_CONFIG = {
-    cloudName: 'dcush2pqt',
-    uploadPreset: 'inventory_preset', // You'll need to create this preset in Cloudinary
-    apiKey: '739938547572917', // Your Cloudinary API key
-    folder: 'inventory/products'
-};
+// Configuration is loaded from: assets/js/config/cloudinary-config.js
 
 // Global variables for upload tracking
 let uploadInProgress = false;
@@ -21,6 +14,12 @@ let uploadQueue = [];
  */
 async function uploadImageToCloudinary(imageData, type, productName = 'product') {
     try {
+        // Validate configuration before upload
+        const configValidation = validateCloudinaryConfig();
+        if (!configValidation.isValid) {
+            throw new Error(`Configuration error: ${configValidation.message}`);
+        }
+        
         // Show upload progress
         showUploadProgress(type, 'Uploading...');
         
@@ -40,21 +39,28 @@ async function uploadImageToCloudinary(imageData, type, productName = 'product')
         formData.append('cloud_name', CLOUDINARY_CONFIG.cloudName);
         formData.append('folder', `${CLOUDINARY_CONFIG.folder}/${type}`);
         formData.append('public_id', filename);
-        formData.append('resource_type', 'image');
-        formData.append('format', 'jpg');
-        formData.append('quality', 'auto:good');
+        formData.append('resource_type', CLOUDINARY_CONFIG.settings.resourceType);
+        formData.append('format', CLOUDINARY_CONFIG.settings.format);
+        formData.append('quality', CLOUDINARY_CONFIG.settings.quality);
         
-        // Upload to Cloudinary
-        const uploadResponse = await fetch(
-            `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`,
-            {
-                method: 'POST',
-                body: formData
+        // Upload to Cloudinary using the utility function
+        const uploadResponse = await fetch(getCloudinaryUploadUrl(), {
+            method: 'POST',
+            body: formData
+        });
+          if (!uploadResponse.ok) {
+            // Get detailed error information
+            let errorMessage = `Upload failed: ${uploadResponse.statusText}`;
+            try {
+                const errorData = await uploadResponse.json();
+                if (errorData.error && errorData.error.message) {
+                    errorMessage = `Upload failed: ${errorData.error.message}`;
+                }
+                console.error('Cloudinary Error Details:', errorData);
+            } catch (e) {
+                console.error('Could not parse error response');
             }
-        );
-        
-        if (!uploadResponse.ok) {
-            throw new Error(`Upload failed: ${uploadResponse.statusText}`);
+            throw new Error(errorMessage);
         }
         
         const result = await uploadResponse.json();
@@ -74,8 +80,22 @@ async function uploadImageToCloudinary(imageData, type, productName = 'product')
         
     } catch (error) {
         console.error(`Failed to upload ${type} image to Cloudinary:`, error);
-        showUploadProgress(type, 'Upload failed!', true);
-        setTimeout(() => hideUploadProgress(type), 3000);
+        
+        // Enhanced error messaging for common issues
+        let userMessage = 'Upload failed!';
+        if (error.message.includes('Unauthorized')) {
+            userMessage = 'Upload failed: Check Cloudinary setup';
+            console.error('SOLUTION: Ensure your upload preset is set to "Unsigned" in Cloudinary dashboard');
+        } else if (error.message.includes('Invalid upload preset')) {
+            userMessage = 'Upload failed: Invalid preset';
+            console.error('SOLUTION: Create an upload preset named "inventory_preset" in Cloudinary dashboard');
+        } else if (error.message.includes('Resource not found')) {
+            userMessage = 'Upload failed: Check cloud name';
+            console.error('SOLUTION: Verify your Cloudinary cloud name in the configuration');
+        }
+        
+        showUploadProgress(type, userMessage, true);
+        setTimeout(() => hideUploadProgress(type), 5000);
         throw error;
     }
 }
@@ -437,6 +457,103 @@ function generateProductImageHTML(product) {
 document.addEventListener('DOMContentLoaded', function() {
     // Add a small delay to ensure other scripts are loaded first
     setTimeout(initializeCloudinaryUpload, 1000);
+});
+
+// Debug and Testing Functions
+
+/**
+ * Test Cloudinary configuration and connection
+ * Call this function from browser console: testCloudinaryConfig()
+ */
+async function testCloudinaryConfig() {
+    console.log('🔧 Testing Cloudinary Configuration...');
+    
+    // Test 1: Configuration validation
+    const configValidation = validateCloudinaryConfig();
+    console.log('📋 Configuration Validation:', configValidation);
+    
+    if (!configValidation.isValid) {
+        console.error('❌ Configuration is invalid. Please fix the errors above.');
+        return false;
+    }
+    
+    // Test 2: Check if cloud exists
+    try {
+        console.log('🌐 Testing cloud connectivity...');
+        const testUrl = `https://res.cloudinary.com/${CLOUDINARY_CONFIG.cloudName}/image/upload/sample.jpg`;
+        const response = await fetch(testUrl, { method: 'HEAD' });
+        
+        if (response.ok) {
+            console.log('✅ Cloud name is valid and accessible');
+        } else {
+            console.error('❌ Cloud name appears to be invalid');
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Network error testing cloud:', error);
+        return false;
+    }
+    
+    // Test 3: Upload preset validation (this will help identify the unauthorized issue)
+    try {
+        console.log('🔑 Testing upload preset...');
+        const formData = new FormData();
+        formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+        formData.append('file', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==');
+        
+        const uploadResponse = await fetch(getCloudinaryUploadUrl(), {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (uploadResponse.ok) {
+            console.log('✅ Upload preset is valid and configured correctly');
+            const result = await uploadResponse.json();
+            console.log('📤 Test upload successful:', result.public_id);
+            
+            // Clean up test image
+            console.log('🧹 Test completed successfully. You can now upload images.');
+            return true;
+        } else {
+            const errorData = await uploadResponse.json();
+            console.error('❌ Upload preset test failed:', errorData);
+            
+            if (uploadResponse.status === 401) {
+                console.error('🔐 AUTHORIZATION ERROR: Your upload preset is likely set to "Signed" mode.');
+                console.error('📝 SOLUTION: Change your upload preset to "Unsigned" mode in Cloudinary dashboard.');
+                console.error('🔗 Go to: Settings → Upload → Upload presets → Edit "inventory_preset"');
+            }
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Error testing upload preset:', error);
+        return false;
+    }
+}
+
+/**
+ * Show current configuration (without sensitive data)
+ */
+function showCloudinaryConfig() {
+    console.log('📊 Current Cloudinary Configuration:');
+    console.log('Cloud Name:', CLOUDINARY_CONFIG.cloudName);
+    console.log('Upload Preset:', CLOUDINARY_CONFIG.uploadPreset);
+    console.log('Folder:', CLOUDINARY_CONFIG.folder);
+    console.log('Upload URL:', getCloudinaryUploadUrl());
+    console.log('\n💡 To test configuration, run: testCloudinaryConfig()');
+}
+
+// Make test functions available globally for console debugging
+window.testCloudinaryConfig = testCloudinaryConfig;
+window.showCloudinaryConfig = showCloudinaryConfig;
+
+// Auto-run configuration check on load
+document.addEventListener('DOMContentLoaded', function() {
+    const configValidation = validateCloudinaryConfig();
+    if (!configValidation.isValid) {
+        console.warn('⚠️ Cloudinary configuration issues detected:', configValidation.message);
+        console.log('💡 Run testCloudinaryConfig() in console for detailed diagnostics');
+    }
 });
 
 // Export functions for use in other modules

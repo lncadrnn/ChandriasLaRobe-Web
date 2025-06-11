@@ -482,41 +482,27 @@ $(document).ready(function () {
             showErrorModal("There was an error uploading the product.");
         }
 
-        spinner.addClass("d-none");
-    });
-
-    // BASE 64 SIGNATURE
-    async function generateSignature(publicId, timestamp, apiSecret) {
-        const dataToSign = `public_id=${publicId}&timestamp=${timestamp}${apiSecret}`;
-        const encoder = new TextEncoder();
-        const data = encoder.encode(dataToSign);
-
-        const hashBuffer = await crypto.subtle.digest("SHA-1", data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-    }
+        spinner.addClass("d-none");    });
 
     // DELETE REQUEST FUNCTION
+    // WARNING: This function uses API secret in client-side code - security risk!
+    // TODO: Move this to a backend service for production use
     async function deleteImageFromCloudinary(publicId) {
-        const apiKey = "814782524531725";
-        const apiSecret = "9vWGOUYipmrq2ecCato2G9MTA7Q"; // exposed, unsafe
-        const cloudName = "dbtomr3fm";
         const timestamp = Math.floor(Date.now() / 1000);
 
-        const signature = await generateSignature(
+        const signature = await generateLegacySignature(
             publicId,
             timestamp,
-            apiSecret
+            LEGACY_CLOUDINARY_CONFIG.apiSecret
         );
 
         const formData = new FormData();
         formData.append("public_id", publicId);
-        formData.append("api_key", apiKey);
+        formData.append("api_key", LEGACY_CLOUDINARY_CONFIG.apiKey);
         formData.append("timestamp", timestamp);
         formData.append("signature", signature);
 
-        const response = await fetch(
-            `https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`,
+        const response = await fetch(getLegacyCloudinaryDeleteUrl(),
             {
                 method: "POST",
                 body: formData

@@ -1612,3 +1612,258 @@
         opacity: 1;
     }
 }
+
+/* ===== ERROR & CONFIRM MODALS ===== */
+#error-modal, #confirm-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#error-modal.show, #confirm-modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#error-modal .modal-content, #confirm-modal .modal-content {
+    background-color: white;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+#error-modal .modal-header, #confirm-modal .modal-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#error-modal .modal-header h3, #confirm-modal .modal-header h3 {
+    margin: 0;
+    color: #111827;
+    font-size: 1.1rem;
+}
+
+#error-modal .close, #confirm-modal .close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#error-modal .close:hover, #confirm-modal .close:hover {
+    color: #374151;
+}
+
+#error-modal .modal-body, #confirm-modal .modal-body {
+    padding: 1.5rem;
+}
+
+#error-modal .modal-footer, #confirm-modal .modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+#error-modal .btn-primary, #confirm-modal .btn-primary,
+#error-modal .btn-secondary, #confirm-modal .btn-secondary {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+#error-modal .btn-primary, #confirm-modal .btn-primary {
+    background-color: #3b82f6;
+    color: white;
+}
+
+#error-modal .btn-primary:hover, #confirm-modal .btn-primary:hover {
+    background-color: #2563eb;
+}
+
+#error-modal .btn-secondary, #confirm-modal .btn-secondary {
+    background-color: #6b7280;
+    color: white;
+}
+
+#error-modal .btn-secondary:hover, #confirm-modal .btn-secondary:hover {
+    background-color: #4b5563;
+}
+
+/* ===== LOADING SPINNER ===== */
+.container-spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+}
+
+.spinner-overlay {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f4f6;
+    border-top: 4px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+.spinner-text {
+    color: #374151;
+    font-size: 0.9rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.d-none {
+    display: none !important;
+}
+
+/* ===== MODAL ANIMATIONS ===== */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== LEGACY SUPPORT ===== */
+.card_article {
+    /* Support for old admin card styling */
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card_article:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card_data {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.card_img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.card_title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+}
+
+.card_size, .card_sleeve, .card_info {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+.card_category {
+    display: inline-block;
+    background-color: #e5e7eb;
+    color: #374151;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    align-self: flex-start;
+}
+
+.card_color {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+    align-self: flex-start;
+}
+
+.product-actions, .product-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.action-btn {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit-btn, .edit-add-btn {
+    background-color: #3b82f6;
+}
+
+.edit-btn:hover, .edit-add-btn:hover {
+    background-color: #2563eb;
+}
+
+.delete-btn, .delete-add-btn {
+    background-color: #ef4444;
+}
+
+.delete-btn:hover, .delete-add-btn:hover {
+    background-color: #dc2626;
+}

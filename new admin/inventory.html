@@ -502,7 +502,51 @@
                 </button>
             </div>
         </div>
-    </div>    <!-- JavaScript -->
+    </div>    <!-- Error Modal -->
+    <div id="error-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Error</h3>
+                <span class="error-close close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="error-modal-message">An error occurred.</p>
+            </div>
+            <div class="modal-footer">
+                <button id="error-modal-ok" class="btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Action</h3>
+                <span class="confirm-close close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-modal-message">Are you sure?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="confirm-modal-cancel" class="btn-secondary">Cancel</button>
+                <button id="confirm-modal-ok" class="btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="container-spinner d-none" id="spinner">
+        <div class="spinner-overlay">
+            <div class="spinner"></div>
+            <div class="spinner-text" id="spinner-text">Loading...</div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
     <!-- Cropper.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     
@@ -513,11 +557,18 @@
     <script src="assets/js/sidebar.js"></script>
     <script src="assets/js/inventory.js"></script>
     
+    <!-- Cloudinary Configuration -->
+    <script src="assets/js/config/cloudinary-config.js"></script>
+    <script src="assets/js/js firebase/cloudinary-config.js"></script>
+    
     <!-- Cloudinary Upload Service -->
     <script src="assets/js/js firebase/inventory-cloud.js"></script>
     
     <!-- Firebase Inventory Service -->
-    <script type="module" src="assets/js/js firebase/inventory-firebase.js"></script>      <!-- Initialize Firebase Inventory -->
+    <script type="module" src="assets/js/js firebase/inventory-firebase.js"></script>
+    
+    <!-- Comprehensive Inventory Service -->
+    <script src="assets/js/js firebase/inventory-service.js"></script><!-- Initialize Firebase Inventory -->
     <script type="module">
         import FirebaseInventory from './assets/js/js firebase/inventory-firebase.js';
         

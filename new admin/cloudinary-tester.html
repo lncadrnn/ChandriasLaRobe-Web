@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudinary Configuration Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+            color: #856404;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .config-display {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .log {
+            background-color: #343a40;
+            color: #ffffff;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Cloudinary Configuration Tester</h1>
+        
+        <div class="test-section">
+            <h3>Current Configuration</h3>
+            <div id="configDisplay" class="config-display">Loading configuration...</div>
+            <button onclick="displayConfig()">Refresh Config</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>Configuration Tests</h3>
+            <button onclick="runAllTests()">Run All Tests</button>
+            <button onclick="testUploadPreset()">Test Upload Preset Only</button>
+            <button onclick="clearLog()">Clear Log</button>
+            <div id="logOutput" class="log"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Quick Fixes</h3>
+            <div class="warning">
+                <h4>Common Issues & Solutions:</h4>
+                <ul>
+                    <li><strong>Unauthorized Error:</strong> Upload preset must be set to "Unsigned" mode</li>
+                    <li><strong>Invalid Preset:</strong> Create preset named "inventory_preset" in Cloudinary</li>
+                    <li><strong>Resource Not Found:</strong> Check your cloud name</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load configuration -->
+    <script src="assets/js/config/cloudinary-config.js"></script>
+    
+    <script>
+        let logElement;
+        
+        function log(message, type = 'info') {
+            if (!logElement) {
+                logElement = document.getElementById('logOutput');
+            }
+            
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'warning' ? '⚠️' : 'ℹ️';
+            logElement.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        function clearLog() {
+            document.getElementById('logOutput').textContent = '';
+        }
+        
+        function displayConfig() {
+            const configDisplay = document.getElementById('configDisplay');
+            const validation = validateCloudinaryConfig();
+            
+            configDisplay.innerHTML = `
+Cloud Name: ${CLOUDINARY_CONFIG.cloudName}
+Upload Preset: ${CLOUDINARY_CONFIG.uploadPreset}
+Folder: ${CLOUDINARY_CONFIG.folder}
+Upload URL: ${getCloudinaryUploadUrl()}
+
+Validation: ${validation.isValid ? '✅ Valid' : '❌ Invalid'}
+${validation.errors.length > 0 ? 'Errors: ' + validation.errors.join(', ') : ''}
+            `;
+        }
+        
+        async function testUploadPreset() {
+            log('Testing upload preset...', 'info');
+            
+            try {
+                const formData = new FormData();
+                formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+                // Tiny 1x1 transparent PNG for testing
+                formData.append('file', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==');
+                
+                const response = await fetch(getCloudinaryUploadUrl(), {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    log(`Upload test successful! Image ID: ${result.public_id}`, 'success');
+                    log('Your configuration is working correctly!', 'success');
+                } else {
+                    const errorData = await response.json();
+                    log(`Upload test failed: ${response.status} ${response.statusText}`, 'error');
+                    log(`Error details: ${JSON.stringify(errorData, null, 2)}`, 'error');
+                    
+                    if (response.status === 401) {
+                        log('SOLUTION: Change upload preset to "Unsigned" in Cloudinary dashboard', 'warning');
+                    }
+                }
+            } catch (error) {
+                log(`Network error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function runAllTests() {
+            clearLog();
+            log('Starting comprehensive Cloudinary tests...', 'info');
+            
+            // Test 1: Configuration
+            const validation = validateCloudinaryConfig();
+            if (validation.isValid) {
+                log('Configuration validation passed', 'success');
+            } else {
+                log(`Configuration validation failed: ${validation.message}`, 'error');
+                return;
+            }
+            
+            // Test 2: Cloud connectivity
+            try {
+                log('Testing cloud connectivity...', 'info');
+                const testUrl = `https://res.cloudinary.com/${CLOUDINARY_CONFIG.cloudName}/image/upload/sample.jpg`;
+                const response = await fetch(testUrl, { method: 'HEAD' });
+                
+                if (response.ok) {
+                    log('Cloud connectivity test passed', 'success');
+                } else {
+                    log('Cloud connectivity test failed - invalid cloud name?', 'error');
+                    return;
+                }
+            } catch (error) {
+                log(`Cloud connectivity error: ${error.message}`, 'error');
+                return;
+            }
+            
+            // Test 3: Upload preset
+            await testUploadPreset();
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            displayConfig();
+            log('Cloudinary Configuration Tester loaded', 'info');
+            log('Click "Run All Tests" to start diagnostics', 'info');
+        });
+    </script>
+</body>
+</html>

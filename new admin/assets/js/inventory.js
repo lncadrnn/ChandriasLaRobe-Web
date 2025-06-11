@@ -548,34 +548,61 @@ function saveProduct() {
         const stockInput = label.querySelector('.stock-input');
         const stock = parseInt(stockInput.value) || 0;
         sizesWithStock[size] = stock;
-    });
-      // Get form values
+    });    // Get form values
     const productData = {
         name: document.getElementById('productName').value,
         category: document.getElementById('productCategory').value,
         sizes: sizesWithStock,
         sleeves: document.getElementById('productSleeves').value,
         color: document.getElementById('productColor').value,
+        colorHex: getColorHex(),
         rentalPrice: document.getElementById('productRentalPrice').value,
-        status: document.getElementById('productStatus').value,
+        status: 'available', // Default status
         description: document.getElementById('productDescription').value,
-        image: document.getElementById('productImage').files[0]
-    };    // Validate required fields
+        frontImage: document.getElementById('frontImageInput').files[0],
+        backImage: document.getElementById('backImageInput').files[0]
+    };
+
+    // Validate required fields
     if (!productData.name || !productData.category || Object.keys(sizesWithStock).length === 0 || 
         !productData.sleeves || !productData.color || !productData.rentalPrice) {
-        alert('Please fill in all required fields and select at least one size');
+        if (window.showErrorModal) {
+            window.showErrorModal('Please fill in all required fields and select at least one size');
+        } else {
+            alert('Please fill in all required fields and select at least one size');
+        }
         return;
     }
 
-    // Here you would typically send data to backend
-    console.log('Saving product:', productData);
-    
-    // For now, just show success message and close modal
-    alert('Product saved successfully!');
-    closeModal(document.getElementById('addProductModal'));
-    
-    // Refresh the products list
-    loadProducts();
+    // Use the comprehensive service to add product
+    if (window.addProductFromForm) {
+        window.addProductFromForm(productData).then(result => {
+            if (result.success) {
+                // Close modal and refresh data
+                closeModal(document.getElementById('addProductModal'));
+                resetProductForm();
+                
+                // Reload products list
+                if (window.loadProducts) {
+                    window.loadProducts();
+                } else {
+                    loadProducts();
+                }
+            }
+        });
+    } else {
+        // Fallback to local function
+        console.log('Saving product:', productData);
+        alert('Product saved successfully!');
+        closeModal(document.getElementById('addProductModal'));
+        loadProducts();
+    }
+}
+
+function getColorHex() {
+    const colorSelect = document.getElementById('productColor');
+    const selectedOption = colorSelect.options[colorSelect.selectedIndex];
+    return selectedOption ? selectedOption.getAttribute('data-hex') : '#000000';
 }
 
 function saveAdditional() {
@@ -624,42 +651,41 @@ function loadProducts() {
             </div>
         `;
         return;
-    }      productsList.innerHTML = sampleProducts.map(product => `
-        <div class="product-item" data-id="${product.id}">
-            <div class="product-image">
-                ${product.frontImageUrl ? `
-                    <img src="${product.frontImageUrl}" alt="${product.name}" loading="lazy" 
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="image-placeholder" style="display: none;">
-                        <i class='bx bxs-t-shirt'></i>
-                        <span class="placeholder-text">Image Error</span>
+    }    productsList.innerHTML = sampleProducts.map(product => `
+        <div class="product-item card_article" data-id="${product.id}">
+            <div class="card_data">
+                ${product.color ? `
+                    <span class="card_color" style="background-color: ${product.color || product.colorHex}" data-color="${product.color || product.colorHex}"></span>
+                ` : ''}
+                <div class="product-image">
+                    ${product.frontImageUrl ? `
+                        <img src="${product.frontImageUrl}" alt="${product.name}" class="card_img" loading="lazy" 
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class='bx bxs-t-shirt'></i>
+                            <span class="placeholder-text">Image Error</span>
+                        </div>
+                    ` : `
+                        <div class="image-placeholder">
+                            <i class='bx bxs-t-shirt'></i>
+                            <span class="placeholder-text">Product Image</span>
+                        </div>
+                    `}
+                    <div class="status-badge ${product.status}">${getStatusText(product.status)}</div>
+                    <div class="color-indicator" style="background-color: ${product.colorHex || product.color}" title="${product.color}" onclick="openColorPicker('product', '${product.id}', '${product.colorHex || product.color}')">
                     </div>
-                ` : `
-                    <div class="image-placeholder">
-                        <i class='bx bxs-t-shirt'></i>
-                        <span class="placeholder-text">Product Image</span>
-                    </div>
-                `}
-                <div class="status-badge ${product.status}">${getStatusText(product.status)}</div>
-                <div class="color-indicator" style="background-color: ${product.colorHex}" title="${product.color}" onclick="openColorPicker('product', '${product.id}', '${product.colorHex}')">
-                    <input type="color" class="color-picker hidden" value="${product.colorHex}" onchange="updateItemColor('product', '${product.id}', this.value)">
                 </div>
-            </div>            <div class="product-content">
-                <h3 class="product-title">${product.name}</h3>
-                <div class="product-details">                    <div class="detail-row">
-                        <span class="label">Size(s):</span>
-                        <span class="value">${formatSizesDisplay(product.sizes)}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Sleeves:</span>
-                        <span class="value">${product.sleeves || 'N/A'}</span>
-                    </div>
+                <h2 class="card_title product-title">${product.name}</h2>
+                <p class="card_size">Available Size: ${formatSizesDisplay(product.sizes || product.size)}</p>
+                <p class="card_sleeve">Sleeve: ${product.sleeves || product.sleeve || 'N/A'}</p>
+                <span class="card_category">${product.code || getCategoryText(product.category)}</span>
+                <div class="product-details">
                     <div class="detail-row">
                         <span class="label">Category:</span>
                         <span class="value">${getCategoryText(product.category)}</span>
                     </div>
                 </div>
-                <div class="product-price">₱${product.rentalPrice ? product.rentalPrice.toLocaleString() : '0'}</div>
+                <div class="product-price">₱${product.rentalPrice ? product.rentalPrice.toLocaleString() : (product.price ? product.price.toLocaleString() : '0')}</div>
                 <div class="product-actions">
                     <button class="action-btn edit-btn" onclick="editProduct('${product.id}')">
                         <i class='bx bx-edit'></i>
@@ -687,20 +713,28 @@ function loadAdditionals() {
             </div>
         `;
         return;
-    }
-      additionalsList.innerHTML = sampleAdditionals.map(additional => `
-        <div class="additional-item" data-id="${additional.id}">
-            <div class="additional-image">
-                <div class="image-placeholder">
-                    <i class='bx bxs-diamond'></i>
-                    <span class="placeholder-text">Additional Image</span>
+    }    additionalsList.innerHTML = sampleAdditionals.map(additional => `
+        <div class="additional-item card_article" data-id="${additional.id}">
+            <div class="card_data">
+                <div class="additional-image">
+                    ${additional.imageUrl ? `
+                        <img src="${additional.imageUrl}" alt="${additional.name}" class="card_img" loading="lazy">
+                    ` : `
+                        <div class="image-placeholder">
+                            <i class='bx bxs-diamond'></i>
+                            <span class="placeholder-text">Additional Image</span>
+                        </div>
+                    `}
+                    <div class="status-badge ${additional.status}">${getStatusText(additional.status)}</div>
+                    <div class="color-indicator" style="background-color: ${additional.colorHex || additional.color}" title="${additional.color}" onclick="openColorPicker('additional', ${additional.id}, '${additional.colorHex || additional.color}')">
+                    </div>
                 </div>
-                <div class="status-badge ${additional.status}">${getStatusText(additional.status)}</div>
-                <div class="color-indicator" style="background-color: ${additional.colorHex}" title="${additional.color}" onclick="openColorPicker('additional', ${additional.id}, '${additional.colorHex}')">
-                    <input type="color" class="color-picker hidden" value="${additional.colorHex}" onchange="updateItemColor('additional', ${additional.id}, this.value)">
-                </div>
-            </div>            <div class="additional-content">
-                <h3 class="additional-title">${additional.name}</h3>
+                <h2 class="card_title additional-title">${additional.name}</h2>
+                <p class="card_info">Price: ₱${additional.rentalPrice ? additional.rentalPrice.toLocaleString() : (additional.price ? additional.price.toLocaleString() : '0')}</p>
+                <p class="card_info">
+                    ${additional.inclusions && additional.inclusions.length ? "With Inclusion" : "Without Inclusion"}
+                </p>
+                <span class="card_category">${additional.code || getTypeText(additional.type)}</span>
                 <div class="additional-details">
                     <div class="detail-row">
                         <span class="label">Type:</span>
@@ -711,13 +745,12 @@ function loadAdditionals() {
                         <span class="value">${additional.size}</span>
                     </div>
                 </div>
-                <div class="additional-price">₱${additional.rentalPrice.toLocaleString()}</div>
-                <div class="additional-actions">
-                    <button class="action-btn edit-btn" onclick="editAdditional(${additional.id})">
+                <div class="additional-actions product-actions">
+                    <button class="action-btn edit-btn edit-add-btn" onclick="editAdditional(${additional.id})">
                         <i class='bx bx-edit'></i>
                         Edit
                     </button>
-                    <button class="action-btn delete-btn" onclick="deleteAdditional(${additional.id})">
+                    <button class="action-btn delete-btn delete-add-btn" onclick="deleteAdditional(${additional.id})">
                         <i class='bx bx-trash'></i>
                         Delete
                     </button>
@@ -992,20 +1025,12 @@ function editProduct(id) {
 }
 
 function deleteProduct(id) {
-    if (confirm('Are you sure you want to delete this product?')) {
-        if (isFirebaseConnected) {
-            // Use Firebase delete function
-            deleteProductFromFirebase(id).catch(error => {
-                console.error('Failed to delete product from Firebase:', error);
-                // Fallback to local delete
-                const index = sampleProducts.findIndex(p => p.id === id);
-                if (index > -1) {
-                    sampleProducts.splice(index, 1);
-                    loadProducts();
-                }
-            });
-        } else {
-            // Fallback to local delete
+    if (window.deleteProductById) {
+        // Use the comprehensive service
+        window.deleteProductById(id);
+    } else {
+        // Fallback to local delete
+        if (confirm('Are you sure you want to delete this product?')) {
             const index = sampleProducts.findIndex(p => p.id === id);
             if (index > -1) {
                 sampleProducts.splice(index, 1);
@@ -1021,20 +1046,12 @@ function editAdditional(id) {
 }
 
 function deleteAdditional(id) {
-    if (confirm('Are you sure you want to delete this additional?')) {
-        if (isFirebaseConnected) {
-            // Use Firebase delete function
-            deleteAdditionalFromFirebase(id).catch(error => {
-                console.error('Failed to delete additional from Firebase:', error);
-                // Fallback to local delete
-                const index = sampleAdditionals.findIndex(a => a.id === id);
-                if (index > -1) {
-                    sampleAdditionals.splice(index, 1);
-                    loadAdditionals();
-                }
-            });
-        } else {
-            // Fallback to local delete
+    if (window.deleteAdditionalById) {
+        // Use the comprehensive service
+        window.deleteAdditionalById(id);
+    } else {
+        // Fallback to local delete
+        if (confirm('Are you sure you want to delete this additional?')) {
             const index = sampleAdditionals.findIndex(a => a.id === id);
             if (index > -1) {
                 sampleAdditionals.splice(index, 1);
@@ -1554,8 +1571,7 @@ async function addProductToInventory(productData) {
             ...productData,
             dateAdded: new Date().toISOString()
         };
-        
-        sampleProducts.push(newProduct);
+          sampleProducts.push(newProduct);
         loadProducts();
         
         alert('Product saved locally. Firebase connection may be unavailable.');
