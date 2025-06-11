@@ -230,24 +230,14 @@ async function saveProductToFirebase(productData) {
         
         console.log('Saving product to Firebase:', productData);
         
-        // Prepare product data with Cloudinary URLs
-        const processedProductData = {
-            ...productData,
-            frontImageUrl: frontImageData?.url || null,
-            backImageUrl: backImageData?.url || null,
-            frontImagePublicId: frontImageData?.publicId || null,
-            backImagePublicId: backImageData?.publicId || null,
-            // Remove local image data before saving to Firebase
-            frontImage: undefined,
-            backImage: undefined
-        };
-        
-        // Always remove any raw File objects before saving
-    delete productData.frontImage;
-    delete productData.backImage;
+        // Validate that Cloudinary images are present
+        if (!productData.frontImageUrl || !productData.frontImageId || 
+            !productData.backImageUrl || !productData.backImageId) {
+            throw new Error('Missing Cloudinary image data. Please upload and crop both images before saving.');
+        }
         
         // Use the new addProduct method from InventoryFetcher
-        const savedProduct = await window.InventoryFetcher.addProduct(processedProductData);
+        const savedProduct = await window.InventoryFetcher.addProduct(productData);
         
         // Add to local array for immediate UI update
         sampleProducts.unshift(savedProduct);
@@ -256,17 +246,13 @@ async function saveProductToFirebase(productData) {
         loadProducts();
         
         console.log('Product saved to Firebase successfully');
-        if (window.notyf) {
-            window.notyf.success('Product saved to Firebase');
-        }
+        showFirebaseStatus('Product saved to Firebase', 'success');
         
         return savedProduct;
         
     } catch (error) {
         console.error('Error saving product to Firebase:', error);
-        if (window.notyf) {
-            window.notyf.error('Failed to save product to Firebase');
-        }
+        showFirebaseStatus('Failed to save product to Firebase', 'error');
         throw error;
     }
 }
@@ -287,18 +273,18 @@ async function deleteProductFromFirebase(productId) {
         if (productData) {
             const deletePromises = [];
             
-            if (productData.frontImagePublicId) {
-                console.log('Deleting front image from Cloudinary:', productData.frontImagePublicId);
+            if (productData.frontImageId) {
+                console.log('Deleting front image from Cloudinary:', productData.frontImageId);
                 deletePromises.push(
-                    window.deleteImageFromCloudinary(productData.frontImagePublicId)
+                    window.deleteImageFromCloudinary(productData.frontImageId)
                         .catch(error => console.warn('Failed to delete front image from Cloudinary:', error))
                 );
             }
             
-            if (productData.backImagePublicId) {
-                console.log('Deleting back image from Cloudinary:', productData.backImagePublicId);
+            if (productData.backImageId) {
+                console.log('Deleting back image from Cloudinary:', productData.backImageId);
                 deletePromises.push(
-                    window.deleteImageFromCloudinary(productData.backImagePublicId)
+                    window.deleteImageFromCloudinary(productData.backImageId)
                         .catch(error => console.warn('Failed to delete back image from Cloudinary:', error))
                 );
             }
@@ -372,12 +358,11 @@ async function deleteAdditionalFromFirebase(additionalId) {
         
         // Step 1: Get additional data to find image ID
         const additionalData = await window.InventoryFetcher.fetchAdditionalById(additionalId);
-        
-        // Step 2: Delete image from Cloudinary if it exists
-        if (additionalData && additionalData.imagePublicId) {
-            console.log('Deleting additional image from Cloudinary:', additionalData.imagePublicId);
+          // Step 2: Delete image from Cloudinary if it exists
+        if (additionalData && additionalData.imageId) {
+            console.log('Deleting additional image from Cloudinary:', additionalData.imageId);
             try {
-                await window.deleteImageFromCloudinary(additionalData.imagePublicId);
+                await window.deleteImageFromCloudinary(additionalData.imageId);
             } catch (error) {
                 console.warn('Failed to delete additional image from Cloudinary:', error);
             }
@@ -561,42 +546,7 @@ function closeModal(modal) {
 
 // Save Functions
 function saveProduct() {
-    const form = document.getElementById('addProductForm');
-    // Get selected sizes with stock quantities
-    const sizeCheckboxes = form.querySelectorAll('.size-checkboxes input[type="checkbox"]:checked');
-    const sizesWithStock = {};
-    sizeCheckboxes.forEach(checkbox => {
-        const size = checkbox.value;
-        const label = checkbox.closest('.checkbox-label');
-        const stockInput = label.querySelector('.stock-input');
-        const stock = parseInt(stockInput.value) || 0;
-        sizesWithStock[size] = stock;
-    });
-    // Get form values
-    const productData = {
-        name: document.getElementById('productName').value,
-        category: document.getElementById('productCategory').value,
-        sizes: sizesWithStock,
-        sleeves: document.getElementById('productSleeves').value,
-        color: document.getElementById('productColor').value,
-        colorHex: getColorHex(),
-        rentalPrice: document.getElementById('productRentalPrice').value,
-        status: 'available', // Default status
-        description: document.getElementById('productDescription').value
-    };
-
-    // Validate required fields
-    if (!productData.name || !productData.category || Object.keys(sizesWithStock).length === 0 || 
-        !productData.sleeves || !productData.color || !productData.rentalPrice) {
-        if (window.showErrorModal) {
-            window.showErrorModal('Please fill in all required fields and select at least one size');
-        } else {
-            alert('Please fill in all required fields and select at least one size');
-        }
-        return;
-    }
-
-    // Validate Cloudinary image upload
+    // Validate Cloudinary image upload first
     if (!frontImageData || !frontImageData.url || !frontImageData.publicId ||
         !backImageData || !backImageData.url || !backImageData.publicId) {
         if (window.showErrorModal) {
@@ -607,15 +557,31 @@ function saveProduct() {
         return;
     }
 
-    // Attach Cloudinary URLs and IDs
-    productData.frontImageUrl = frontImageData.url;
-    productData.backImageUrl = backImageData.url;
-    productData.frontImagePublicId = frontImageData.publicId;
-    productData.backImagePublicId = backImageData.publicId;
+    const form = document.getElementById('addProductForm');
+    // Get selected sizes with stock quantities
+    const sizeCheckboxes = form.querySelectorAll('.size-checkboxes input[type="checkbox"]:checked');
+    
+    if (sizeCheckboxes.length === 0) {
+        if (window.showErrorModal) {
+            window.showErrorModal('Please select at least one size');
+        } else {
+            alert('Please select at least one size');
+        }
+        return;
+    }
 
-    // Always remove any raw File objects before saving
-    delete productData.frontImage;
-    delete productData.backImage;
+    // Collect form data (now matches old admin structure)
+    const productData = collectFormData();
+
+    // Validate required fields
+    if (!productData.name || !productData.category || !productData.sleeve || !productData.price) {
+        if (window.showErrorModal) {
+            window.showErrorModal('Please fill in all required fields');
+        } else {
+            alert('Please fill in all required fields');
+        }
+        return;
+    }
 
     // Use Firebase to save product if available
     if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
@@ -643,11 +609,6 @@ function saveProduct() {
             } else {
                 alert(errorMessage + '. Please try again.');
             }
-            // Suggest troubleshooting steps
-            console.log('💡 Troubleshooting tips:');
-            console.log('1. Check internet connection');
-            console.log('2. Verify Firebase credentials');
-            console.log('3. Run window.testFirebaseConnection() in console');
         });
     } else {
         // Provide diagnostic information
@@ -660,8 +621,7 @@ function saveProduct() {
         console.log('💾 Saving product locally:', productData);
         const newProduct = {
             id: Date.now().toString(),
-            ...productData,
-            createdAt: new Date().toISOString()
+            ...productData
         };
         // Add to sample products array
         sampleProducts.unshift(newProduct);
@@ -1663,7 +1623,8 @@ function handleFormSubmission() {
 }
 
 // Collect form data
-function collectFormData() {    const getSelectedSizes = () => {
+function collectFormData() {
+    const getSelectedSizes = () => {
         const checkboxes = document.querySelectorAll('#addProductForm input[type="checkbox"]:checked');
         const sizesWithStock = {};
         
@@ -1684,20 +1645,31 @@ function collectFormData() {    const getSelectedSizes = () => {
         return selectedOption ? selectedOption.getAttribute('data-hex') : '#000000';
     };
     
-    return {
+    // Build product data matching the old admin structure exactly
+    const productData = {
         name: document.getElementById('productName').value.trim(),
         category: document.getElementById('productCategory').value,
-        productCode: document.getElementById('productCode').value,
-        color: document.getElementById('productColor').value,
-        colorHex: getColorHex(),
-        rentalPrice: parseFloat(document.getElementById('productRentalPrice').value),
+        code: document.getElementById('productCode').value,
+        price: parseFloat(document.getElementById('productRentalPrice').value),
+        size: getSelectedSizes(), // Match old admin field name
+        color: getColorHex(),
+        sleeve: document.getElementById('productSleeves').value, // Match old admin field name
         description: document.getElementById('productDescription').value.trim(),
-        sizes: getSelectedSizes(),
-        sleeves: document.getElementById('productSleeves').value,
-        status: 'available', // Default status
-        frontImage: frontImageData,
-        backImage: backImageData
+        createdAt: new Date()
     };
+    
+    // Add Cloudinary URLs and IDs only if images are uploaded
+    if (frontImageData && frontImageData.url && frontImageData.publicId) {
+        productData.frontImageUrl = frontImageData.url;
+        productData.frontImageId = frontImageData.publicId;
+    }
+    
+    if (backImageData && backImageData.url && backImageData.publicId) {
+        productData.backImageUrl = backImageData.url;
+        productData.backImageId = backImageData.publicId;
+    }
+    
+    return productData;
 }
 
 // Add product to inventory
