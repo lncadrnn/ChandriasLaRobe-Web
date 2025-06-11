@@ -242,6 +242,10 @@ async function saveProductToFirebase(productData) {
             backImage: undefined
         };
         
+        // Always remove any raw File objects before saving
+    delete productData.frontImage;
+    delete productData.backImage;
+        
         // Use the new addProduct method from InventoryFetcher
         const savedProduct = await window.InventoryFetcher.addProduct(processedProductData);
         
@@ -609,6 +613,10 @@ function saveProduct() {
     productData.frontImagePublicId = frontImageData.publicId;
     productData.backImagePublicId = backImageData.publicId;
 
+    // Always remove any raw File objects before saving
+    delete productData.frontImage;
+    delete productData.backImage;
+
     // Use Firebase to save product if available
     if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
         // Use Firebase to save
@@ -779,10 +787,6 @@ function loadAdditionals() {
             <div class="empty-message">
                 <i class='bx bx-diamond'></i>
                 <h3>No additionals added yet</h3>
-                <p>Click "Add Additional" to start managing your accessories</p>
-            </div>
-        `;
-        return;
     }    additionalsList.innerHTML = sampleAdditionals.map(additional => `
         <div class="additional-item card_article" data-id="${additional.id}">
             <div class="card_data">
