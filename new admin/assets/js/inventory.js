@@ -3,13 +3,51 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeInventory();
 });
 
+// Toggle stock input visibility based on size checkbox selection
+function toggleStockInput(checkbox) {
+    const label = checkbox.closest('.checkbox-label');
+    const stockInput = label.querySelector('.stock-input');
+    
+    if (checkbox.checked) {
+        stockInput.style.display = 'block';
+        stockInput.focus();
+        // Set default stock value if empty
+        if (!stockInput.value) {
+            stockInput.value = 1;
+        }
+    } else {
+        stockInput.style.display = 'none';
+        stockInput.value = '';
+    }
+}
+
+// Format sizes display for product cards
+function formatSizesDisplay(sizes) {
+    if (!sizes) return 'N/A';
+    
+    // Handle new object format {size: stock}
+    if (typeof sizes === 'object' && !Array.isArray(sizes)) {
+        return Object.entries(sizes)
+            .map(([size, stock]) => `${size} (${stock})`)
+            .join(', ');
+    }
+    
+    // Handle legacy array format
+    if (Array.isArray(sizes)) {
+        return sizes.join(', ');
+    }
+    
+    // Handle string format
+    return sizes.toString();
+}
+
 // Sample data
 const sampleProducts = [
     {
         id: 1,
         name: "Elegant Wedding Gown",
         category: "wedding-gown",
-        sizes: ["S", "M", "L"],
+        sizes: { "S": 2, "M": 3, "L": 1 },
         sleeves: "Off Shoulder",
         color: "Ivory",
         colorHex: "#F8F6F0",
@@ -22,7 +60,7 @@ const sampleProducts = [
         id: 2,
         name: "Classic Long Gown",
         category: "long-gown",
-        sizes: ["M", "L", "XL"],
+        sizes: { "M": 1, "L": 2, "XL": 1 },
         sleeves: "Long Sleeves",
         color: "Navy Blue",
         colorHex: "#2C3E50",
@@ -35,7 +73,7 @@ const sampleProducts = [
         id: 3,
         name: "Enchanted Fairy Gown",
         category: "fairy-gown",
-        sizes: ["XS", "S", "M"],
+        sizes: { "XS": 1, "S": 2, "M": 2 },
         sleeves: "3/4 Sleeves",
         color: "Lavender",
         colorHex: "#E6E6FA",
@@ -48,7 +86,7 @@ const sampleProducts = [
         id: 4,
         name: "Formal Men's Suit",
         category: "suit",
-        sizes: ["L", "XL"],
+        sizes: { "L": 1, "XL": 1 },
         sleeves: "Long Sleeves",
         color: "Charcoal Gray",
         colorHex: "#36454F",
@@ -61,7 +99,7 @@ const sampleProducts = [
         id: 5,
         name: "Princess Ball Gown",
         category: "ball-gown",
-        sizes: ["S", "M"],
+        sizes: { "S": 1, "M": 1 },
         sleeves: "Short Sleeves",
         color: "Champagne",
         colorHex: "#F7E7CE",
@@ -140,6 +178,222 @@ let currentCropper = null;
 let currentImageType = null;
 let frontImageData = null;
 let backImageData = null;
+
+// Firebase integration variables
+let firebaseProducts = [];
+let firebaseAdditionals = [];
+let isFirebaseConnected = false;
+
+/**
+ * Firebase Integration Functions
+ */
+
+// Update inventory data from Firebase
+window.updateInventoryData = function(products, additionals) {
+    try {
+        console.log('Updating inventory data from Firebase...');
+        console.log('Products received:', products.length);
+        console.log('Additionals received:', additionals.length);
+        
+        // Update global variables
+        firebaseProducts = products || [];
+        firebaseAdditionals = additionals || [];
+        isFirebaseConnected = true;
+        
+        // Replace sample data with Firebase data
+        sampleProducts.length = 0; // Clear existing data
+        sampleAdditionals.length = 0; // Clear existing data
+        
+        // Add Firebase data to sample arrays for compatibility
+        sampleProducts.push(...firebaseProducts);
+        sampleAdditionals.push(...firebaseAdditionals);
+          // Refresh the UI        loadProducts();
+        loadAdditionals();
+        
+        console.log('Inventory data updated successfully from Firebase');
+        
+    } catch (error) {
+        console.error('Error updating inventory data:', error);
+    }
+};
+
+// Show Firebase connection status
+function showFirebaseStatus(message, type = 'info') {
+    const statusElement = document.getElementById('firebaseStatus');
+    if (statusElement) {
+        statusElement.textContent = message;
+        statusElement.className = `firebase-status ${type}`;
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            statusElement.textContent = '';
+            statusElement.className = 'firebase-status';
+        }, 5000);
+    } else {
+        // Create status element if it doesn't exist
+        const status = document.createElement('div');
+        status.id = 'firebaseStatus';
+        status.className = `firebase-status ${type}`;
+        status.textContent = message;
+        status.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 10000;
+            transition: all 0.3s ease;
+        `;
+        
+        // Set colors based on type
+        if (type === 'success') {
+            status.style.backgroundColor = '#d4edda';
+            status.style.color = '#155724';
+            status.style.border = '1px solid #c3e6cb';
+        } else if (type === 'error') {
+            status.style.backgroundColor = '#f8d7da';
+            status.style.color = '#721c24';
+            status.style.border = '1px solid #f5c6cb';
+        } else {
+            status.style.backgroundColor = '#d1ecf1';
+            status.style.color = '#0c5460';
+            status.style.border = '1px solid #bee5eb';
+        }
+        
+        document.body.appendChild(status);
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            if (status.parentNode) {
+                status.parentNode.removeChild(status);
+            }
+        }, 5000);
+    }
+}
+
+// Enhanced save product function to use Firebase
+async function saveProductToFirebase(productData) {
+    try {
+        if (!window.FirebaseInventory) {
+            throw new Error('Firebase service not available');
+        }
+        
+        console.log('Saving product to Firebase:', productData);
+        
+        // Add product to Firebase
+        const savedProduct = await window.FirebaseInventory.addProduct(productData);
+        
+        // Add to local array for immediate UI update
+        sampleProducts.unshift(savedProduct);
+          // Refresh UI        loadProducts();
+        
+        console.log('Product saved to Firebase successfully');
+        
+        return savedProduct;
+        
+    } catch (error) {
+        console.error('Error saving product to Firebase:', error);
+        throw error;
+    }
+}
+
+// Enhanced delete product function to use Firebase
+async function deleteProductFromFirebase(productId) {
+    try {
+        if (!window.FirebaseInventory) {
+            throw new Error('Firebase service not available');
+        }
+        
+        console.log('Deleting product from Firebase:', productId);
+        
+        // Delete from Firebase
+        await window.FirebaseInventory.deleteProduct(productId);
+        
+        // Remove from local array
+        const index = sampleProducts.findIndex(p => p.id === productId);
+        if (index > -1) {
+            sampleProducts.splice(index, 1);
+        }
+        
+        // Refresh UI
+        loadProducts();
+        
+        console.log('Product deleted from Firebase successfully');
+        showFirebaseStatus('Product deleted from Firebase', 'success');
+        
+        return true;
+        
+    } catch (error) {
+        console.error('Error deleting product from Firebase:', error);
+        showFirebaseStatus('Failed to delete product from Firebase', 'error');
+        throw error;
+    }
+}
+
+// Enhanced save additional function to use Firebase
+async function saveAdditionalToFirebase(additionalData) {
+    try {
+        if (!window.FirebaseInventory) {
+            throw new Error('Firebase service not available');
+        }
+        
+        console.log('Saving additional to Firebase:', additionalData);
+        
+        // Add additional to Firebase
+        const savedAdditional = await window.FirebaseInventory.addAdditional(additionalData);
+        
+        // Add to local array for immediate UI update
+        sampleAdditionals.unshift(savedAdditional);
+        
+        // Refresh UI
+        loadAdditionals();
+        
+        console.log('Additional saved to Firebase successfully');
+        showFirebaseStatus('Additional saved to Firebase', 'success');
+        
+        return savedAdditional;
+        
+    } catch (error) {
+        console.error('Error saving additional to Firebase:', error);
+        showFirebaseStatus('Failed to save additional to Firebase', 'error');
+        throw error;
+    }
+}
+
+// Enhanced delete additional function to use Firebase
+async function deleteAdditionalFromFirebase(additionalId) {
+    try {
+        if (!window.FirebaseInventory) {
+            throw new Error('Firebase service not available');
+        }
+        
+        console.log('Deleting additional from Firebase:', additionalId);
+        
+        // Delete from Firebase
+        await window.FirebaseInventory.deleteAdditional(additionalId);
+        
+        // Remove from local array
+        const index = sampleAdditionals.findIndex(a => a.id === additionalId);
+        if (index > -1) {
+            sampleAdditionals.splice(index, 1);
+        }
+        
+        // Refresh UI
+        loadAdditionals();
+        
+        console.log('Additional deleted from Firebase successfully');
+        showFirebaseStatus('Additional deleted from Firebase', 'success');
+        
+        return true;
+        
+    } catch (error) {
+        console.error('Error deleting additional from Firebase:', error);
+        showFirebaseStatus('Failed to delete additional from Firebase', 'error');
+        throw error;
+    }
+}
 
 function initializeInventory() {
     setupTabs();
@@ -284,26 +538,30 @@ function closeModal(modal) {
 // Save Functions
 function saveProduct() {
     const form = document.getElementById('addProductForm');
-    
-    // Get selected sizes
+      // Get selected sizes with stock quantities
     const sizeCheckboxes = form.querySelectorAll('.size-checkboxes input[type="checkbox"]:checked');
-    const selectedSizes = Array.from(sizeCheckboxes).map(cb => cb.value);
+    const sizesWithStock = {};
     
-    // Get form values
+    sizeCheckboxes.forEach(checkbox => {
+        const size = checkbox.value;
+        const label = checkbox.closest('.checkbox-label');
+        const stockInput = label.querySelector('.stock-input');
+        const stock = parseInt(stockInput.value) || 0;
+        sizesWithStock[size] = stock;
+    });
+      // Get form values
     const productData = {
         name: document.getElementById('productName').value,
         category: document.getElementById('productCategory').value,
-        sizes: selectedSizes,
+        sizes: sizesWithStock,
         sleeves: document.getElementById('productSleeves').value,
         color: document.getElementById('productColor').value,
         rentalPrice: document.getElementById('productRentalPrice').value,
         status: document.getElementById('productStatus').value,
         description: document.getElementById('productDescription').value,
         image: document.getElementById('productImage').files[0]
-    };
-
-    // Validate required fields
-    if (!productData.name || !productData.category || selectedSizes.length === 0 || 
+    };    // Validate required fields
+    if (!productData.name || !productData.category || Object.keys(sizesWithStock).length === 0 || 
         !productData.sleeves || !productData.color || !productData.rentalPrice) {
         alert('Please fill in all required fields and select at least one size');
         return;
@@ -366,41 +624,48 @@ function loadProducts() {
             </div>
         `;
         return;
-    }
-      productsList.innerHTML = sampleProducts.map(product => `
+    }      productsList.innerHTML = sampleProducts.map(product => `
         <div class="product-item" data-id="${product.id}">
             <div class="product-image">
-                <div class="image-placeholder">
-                    <i class='bx bxs-t-shirt'></i>
-                    <span class="placeholder-text">Product Image</span>
-                </div>
+                ${product.frontImageUrl ? `
+                    <img src="${product.frontImageUrl}" alt="${product.name}" loading="lazy" 
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="image-placeholder" style="display: none;">
+                        <i class='bx bxs-t-shirt'></i>
+                        <span class="placeholder-text">Image Error</span>
+                    </div>
+                ` : `
+                    <div class="image-placeholder">
+                        <i class='bx bxs-t-shirt'></i>
+                        <span class="placeholder-text">Product Image</span>
+                    </div>
+                `}
                 <div class="status-badge ${product.status}">${getStatusText(product.status)}</div>
-                <div class="color-indicator" style="background-color: ${product.colorHex}" title="${product.color}" onclick="openColorPicker('product', ${product.id}, '${product.colorHex}')">
-                    <input type="color" class="color-picker hidden" value="${product.colorHex}" onchange="updateItemColor('product', ${product.id}, this.value)">
+                <div class="color-indicator" style="background-color: ${product.colorHex}" title="${product.color}" onclick="openColorPicker('product', '${product.id}', '${product.colorHex}')">
+                    <input type="color" class="color-picker hidden" value="${product.colorHex}" onchange="updateItemColor('product', '${product.id}', this.value)">
                 </div>
             </div>            <div class="product-content">
                 <h3 class="product-title">${product.name}</h3>
-                <div class="product-details">
-                    <div class="detail-row">
+                <div class="product-details">                    <div class="detail-row">
                         <span class="label">Size(s):</span>
-                        <span class="value">${product.sizes.join(', ')}</span>
+                        <span class="value">${formatSizesDisplay(product.sizes)}</span>
                     </div>
                     <div class="detail-row">
                         <span class="label">Sleeves:</span>
-                        <span class="value">${product.sleeves}</span>
+                        <span class="value">${product.sleeves || 'N/A'}</span>
                     </div>
                     <div class="detail-row">
                         <span class="label">Category:</span>
                         <span class="value">${getCategoryText(product.category)}</span>
                     </div>
                 </div>
-                <div class="product-price">₱${product.rentalPrice.toLocaleString()}</div>
+                <div class="product-price">₱${product.rentalPrice ? product.rentalPrice.toLocaleString() : '0'}</div>
                 <div class="product-actions">
-                    <button class="action-btn edit-btn" onclick="editProduct(${product.id})">
+                    <button class="action-btn edit-btn" onclick="editProduct('${product.id}')">
                         <i class='bx bx-edit'></i>
                         Edit
                     </button>
-                    <button class="action-btn delete-btn" onclick="deleteProduct(${product.id})">
+                    <button class="action-btn delete-btn" onclick="deleteProduct('${product.id}')">
                         <i class='bx bx-trash'></i>
                         Delete
                     </button>
@@ -728,10 +993,24 @@ function editProduct(id) {
 
 function deleteProduct(id) {
     if (confirm('Are you sure you want to delete this product?')) {
-        const index = sampleProducts.findIndex(p => p.id === id);
-        if (index > -1) {
-            sampleProducts.splice(index, 1);
-            loadProducts();
+        if (isFirebaseConnected) {
+            // Use Firebase delete function
+            deleteProductFromFirebase(id).catch(error => {
+                console.error('Failed to delete product from Firebase:', error);
+                // Fallback to local delete
+                const index = sampleProducts.findIndex(p => p.id === id);
+                if (index > -1) {
+                    sampleProducts.splice(index, 1);
+                    loadProducts();
+                }
+            });
+        } else {
+            // Fallback to local delete
+            const index = sampleProducts.findIndex(p => p.id === id);
+            if (index > -1) {
+                sampleProducts.splice(index, 1);
+                loadProducts();
+            }
         }
     }
 }
@@ -743,10 +1022,24 @@ function editAdditional(id) {
 
 function deleteAdditional(id) {
     if (confirm('Are you sure you want to delete this additional?')) {
-        const index = sampleAdditionals.findIndex(a => a.id === id);
-        if (index > -1) {
-            sampleAdditionals.splice(index, 1);
-            loadAdditionals();
+        if (isFirebaseConnected) {
+            // Use Firebase delete function
+            deleteAdditionalFromFirebase(id).catch(error => {
+                console.error('Failed to delete additional from Firebase:', error);
+                // Fallback to local delete
+                const index = sampleAdditionals.findIndex(a => a.id === id);
+                if (index > -1) {
+                    sampleAdditionals.splice(index, 1);
+                    loadAdditionals();
+                }
+            });
+        } else {
+            // Fallback to local delete
+            const index = sampleAdditionals.findIndex(a => a.id === id);
+            if (index > -1) {
+                sampleAdditionals.splice(index, 1);
+                loadAdditionals();
+            }
         }
     }
 }
@@ -1184,22 +1477,27 @@ function handleFormSubmission() {
     
     // Collect form data
     const formData = collectFormData();
-    
-    // Add product to inventory
+      // Add product to inventory
     addProductToInventory(formData);
     
     // Close modal
     closeAddProductModal();
-    
-    // Show success message
-    showSuccessMessage('Product added successfully!');
 }
 
 // Collect form data
-function collectFormData() {
-    const getSelectedSizes = () => {
+function collectFormData() {    const getSelectedSizes = () => {
         const checkboxes = document.querySelectorAll('#addProductForm input[type="checkbox"]:checked');
-        return Array.from(checkboxes).map(cb => cb.value);
+        const sizesWithStock = {};
+        
+        checkboxes.forEach(checkbox => {
+            const size = checkbox.value;
+            const label = checkbox.closest('.checkbox-label');
+            const stockInput = label.querySelector('.stock-input');
+            const stock = parseInt(stockInput.value) || 0;
+            sizesWithStock[size] = stock;
+        });
+        
+        return sizesWithStock;
     };
     
     const getColorHex = () => {
@@ -1225,24 +1523,43 @@ function collectFormData() {
 }
 
 // Add product to inventory
-function addProductToInventory(productData) {
-    const newProduct = {
-        id: Date.now(),
-        ...productData,
-        dateAdded: new Date().toISOString()
-    };
-    
-    // Add to sample products array
-    sampleProducts.push(newProduct);
-    
-    // Refresh the products list
-    loadProducts();
-}
-
-// Show success message
-function showSuccessMessage(message) {
-    // Simple alert for now - you could implement a toast notification
-    alert(message);
+async function addProductToInventory(productData) {
+    try {
+        if (isFirebaseConnected && window.FirebaseInventory) {
+            // Use Firebase to save product
+            const savedProduct = await saveProductToFirebase(productData);
+            console.log('Product added to Firebase successfully:', savedProduct);
+        } else {
+            // Fallback to local storage
+            const newProduct = {
+                id: Date.now(),
+                ...productData,
+                dateAdded: new Date().toISOString()
+            };
+            
+            // Add to sample products array
+            sampleProducts.push(newProduct);
+            
+            // Refresh the products list
+            loadProducts();
+            
+            console.log('Product added locally:', newProduct);
+        }
+    } catch (error) {
+        console.error('Error adding product to inventory:', error);
+        
+        // Fallback to local storage if Firebase fails
+        const newProduct = {
+            id: Date.now(),
+            ...productData,
+            dateAdded: new Date().toISOString()
+        };
+        
+        sampleProducts.push(newProduct);
+        loadProducts();
+        
+        alert('Product saved locally. Firebase connection may be unavailable.');
+    }
 }
 
 // Color name to hex conversion (enhanced)

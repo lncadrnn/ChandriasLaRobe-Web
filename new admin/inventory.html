@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Chandria's La Robe - Inventory Management</title>
-    
-    <!-- Boxicons CSS -->
+      <!-- Boxicons CSS -->
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     
     <!-- Cropper.js CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
+    
+    <!-- Notyf CSS for notifications -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/reusable css/sidebar.css">
@@ -87,8 +89,8 @@
                 <span class="logout-text">Logout</span>
             </button>
         </div>
-    </div>    <main class="main-content" id="mainContent">
-        <div class="page-header">            <div class="header-left">
+    </div>    <main class="main-content" id="mainContent">        <div class="page-header">
+            <div class="header-left">
                 <h1 class="page-title">Inventory Management</h1>
                 <p class="page-subtitle">Manage Chandria's La Robe's inventory and product items</p>
             </div>
@@ -291,36 +293,53 @@
                     <div class="form-section">
                         <h4><i class='bx bx-cog'></i> Additional Details</h4>
                         
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="productSizes">Available Sizes</label>
+                        <div class="form-row">                            <div class="form-group">
+                                <label for="productSizes">Available Sizes & Stock</label>
                                 <div class="size-checkboxes">
                                     <label class="checkbox-label">
-                                        <input type="checkbox" value="XS"> 
-                                        <span>XS</span>
+                                        <div class="size-row">
+                                            <input type="checkbox" value="XS" onchange="toggleStockInput(this)"> 
+                                            <span>XS</span>
+                                        </div>
+                                        <input type="number" class="stock-input" data-size="XS" placeholder="Stock" min="0" style="display: none;">
                                     </label>
                                     <label class="checkbox-label">
-                                        <input type="checkbox" value="S"> 
-                                        <span>S</span>
+                                        <div class="size-row">
+                                            <input type="checkbox" value="S" onchange="toggleStockInput(this)"> 
+                                            <span>S</span>
+                                        </div>
+                                        <input type="number" class="stock-input" data-size="S" placeholder="Stock" min="0" style="display: none;">
                                     </label>
                                     <label class="checkbox-label">
-                                        <input type="checkbox" value="M"> 
-                                        <span>M</span>
+                                        <div class="size-row">
+                                            <input type="checkbox" value="M" onchange="toggleStockInput(this)"> 
+                                            <span>M</span>
+                                        </div>
+                                        <input type="number" class="stock-input" data-size="M" placeholder="Stock" min="0" style="display: none;">
                                     </label>
                                     <label class="checkbox-label">
-                                        <input type="checkbox" value="L"> 
-                                        <span>L</span>
+                                        <div class="size-row">
+                                            <input type="checkbox" value="L" onchange="toggleStockInput(this)"> 
+                                            <span>L</span>
+                                        </div>
+                                        <input type="number" class="stock-input" data-size="L" placeholder="Stock" min="0" style="display: none;">
                                     </label>
                                     <label class="checkbox-label">
-                                        <input type="checkbox" value="XL"> 
-                                        <span>XL</span>
+                                        <div class="size-row">
+                                            <input type="checkbox" value="XL" onchange="toggleStockInput(this)"> 
+                                            <span>XL</span>
+                                        </div>
+                                        <input type="number" class="stock-input" data-size="XL" placeholder="Stock" min="0" style="display: none;">
                                     </label>
                                     <label class="checkbox-label">
-                                        <input type="checkbox" value="XXL"> 
-                                        <span>XXL</span>
+                                        <div class="size-row">
+                                            <input type="checkbox" value="XXL" onchange="toggleStockInput(this)"> 
+                                            <span>XXL</span>
+                                        </div>
+                                        <input type="number" class="stock-input" data-size="XXL" placeholder="Stock" min="0" style="display: none;">
                                     </label>
                                 </div>
-                            </div>                            <div class="form-group">
+                            </div><div class="form-group">
                                 <label for="productSleeves">Sleeve Style</label>
                                 <select id="productSleeves">
                                     <option value="">Select Sleeve Style</option>
@@ -486,11 +505,119 @@
     </div>    <!-- JavaScript -->
     <!-- Cropper.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
-      <!-- Custom JavaScript -->
+    
+    <!-- Notyf JS for notifications -->
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+    
+    <!-- Custom JavaScript -->
     <script src="assets/js/sidebar.js"></script>
     <script src="assets/js/inventory.js"></script>
     
     <!-- Cloudinary Upload Service -->
     <script src="assets/js/js firebase/inventory-cloud.js"></script>
+    
+    <!-- Firebase Inventory Service -->
+    <script type="module" src="assets/js/js firebase/inventory-firebase.js"></script>      <!-- Initialize Firebase Inventory -->
+    <script type="module">
+        import FirebaseInventory from './assets/js/js firebase/inventory-firebase.js';
+        
+        // Make Firebase service available globally
+        window.FirebaseInventory = FirebaseInventory;
+          // Initialize Notyf for notifications
+        const notyf = new Notyf({
+            duration: 4000,
+            position: { x: 'center', y: 'top' }, // Changed to top center
+            dismissible: true,
+            types: [
+                {
+                    type: 'info',
+                    background: 'linear-gradient(135deg, #74b9ff, #0984e3)',
+                    icon: {
+                        className: 'bx bx-info-circle',
+                        tagName: 'i',
+                        text: ''
+                    }
+                },
+                {
+                    type: 'firebase',
+                    background: 'linear-gradient(135deg, #fd79a8, #e84393)',
+                    icon: {
+                        className: 'bx bx-data',
+                        tagName: 'i',
+                        text: ''
+                    }
+                }
+            ]
+        });
+        
+        // Make Notyf available globally
+        window.notyf = notyf;
+          // Initialize Firebase services when DOM is ready
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                console.log('Initializing Firebase inventory services...');
+                
+                // Test Firebase connection and initialize services
+                const initResult = await FirebaseInventory.initializeFirebaseServices();
+                
+                if (initResult.success) {
+                    console.log('Firebase services ready:', initResult.message);
+                    console.log('Products in database:', initResult.productsCount);
+                    
+                    notyf.success(`Connected to Firebase (${initResult.productsCount} products found)`);
+                    
+                    // Load initial data from Firebase
+                    await loadInventoryFromFirebase();
+                } else {
+                    console.error('Failed to initialize Firebase services');
+                    notyf.error('Failed to connect to Firebase');
+                }
+                
+            } catch (error) {
+                console.error('Error initializing Firebase:', error);
+                notyf.error('Firebase connection failed');
+                
+                // Don't show additional alerts, let user use offline mode
+                setTimeout(() => {
+                    if (!window.isFirebaseConnected) {
+                        console.warn('Firebase connection still not available, using offline mode');
+                    }
+                }, 5000);
+            }
+        });
+          // Function to load inventory data from Firebase
+        async function loadInventoryFromFirebase() {
+            try {
+                console.log('Loading inventory data from Firebase...');
+                
+                // Fetch products and additionals from Firebase
+                const [products, additionals] = await Promise.all([
+                    FirebaseInventory.fetchProducts(),
+                    FirebaseInventory.fetchAdditionals()
+                ]);
+                
+                // Update global variables with Firebase data
+                if (typeof window.updateInventoryData === 'function') {
+                    window.updateInventoryData(products, additionals);
+                } else {
+                    // Fallback: directly update if function doesn't exist
+                    console.log('Loaded products:', products);
+                    console.log('Loaded additionals:', additionals);
+                }
+                
+                // Show product count notification only
+                if (products.length > 0 || additionals.length > 0) {
+                    notyf.success(`Loaded ${products.length} products and ${additionals.length} additionals`);
+                }
+                
+            } catch (error) {
+                console.error('Error loading inventory from Firebase:', error);
+                notyf.error('Failed to load inventory data');
+            }
+        }
+        
+        // Make the load function available globally
+        window.loadInventoryFromFirebase = loadInventoryFromFirebase;
+    </script>
 </body>
 </html>

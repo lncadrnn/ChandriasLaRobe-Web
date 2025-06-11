@@ -1,11 +1,24 @@
 /* =============== INVENTORY SPECIFIC STYLES =============== */
 
-/* Page Header */
-.page-subtitle {
-    font-size: 14px;
-    color: var(--text-light);
-    margin: 2px 0 10px 0;
-    font-weight: 400;
+/* Page Header - Use styles from sidebar.css for consistency */
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px; /* Match sidebar.css */
+    padding: 0 0 20px 0; /* Match sidebar.css */
+    border-bottom: 1px solid #e9ecef; /* Match sidebar.css */
+}
+
+.header-left {
+    flex: 1;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
 /* Tab Navigation */
@@ -438,6 +451,49 @@
 .view-btn:hover:not(.active) {
     color: var(--primary-color);
     background: rgba(255, 182, 193, 0.1);
+}
+
+/* Firebase Status Indicator */
+.firebase-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    min-width: 150px;
+}
+
+.firebase-status.info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.firebase-status.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.firebase-status.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.firebase-status i {
+    font-size: 16px;
+}
+
+.firebase-status.success i {
+    color: #28a745;
+}
+
+.firebase-status.error i {
+    color: #dc3545;
 }
 
 /* Header Right */
@@ -1108,6 +1164,7 @@
 .checkbox-label {
     display: flex;
     align-items: center;
+    flex-direction: column;
     gap: 6px;
     font-size: 14px;
     color: var(--text-dark);
@@ -1117,6 +1174,13 @@
     border-radius: var(--border-radius);
     transition: var(--transition);
     background: var(--white);
+    min-width: 80px;
+}
+
+.checkbox-label .size-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .checkbox-label:hover {
@@ -1134,8 +1198,30 @@
 .checkbox-label:has(input:checked) {
     border-color: var(--primary-color);
     background: rgba(255, 182, 193, 0.1);
-    color: var(--primary-color);
-    font-weight: 600;
+}
+
+.stock-input {
+    width: 60px;
+    padding: 4px 6px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 4px;
+    transition: var(--transition);
+}
+
+.stock-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(255, 182, 193, 0.2);
+}
+
+/* Color Options */
+.color-options {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 /* Enhanced Modal Footer */
@@ -1472,5 +1558,57 @@
     
     .progress-content i {
         font-size: 20px;
+    }
+}
+
+/* =============== NOTYF NOTIFICATIONS STYLING =============== */
+
+/* Override Notyf default styles for better top center positioning */
+.notyf {
+    z-index: 10000;
+}
+
+.notyf__toast {
+    margin: 0 auto 10px auto !important;
+    max-width: 400px !important;
+    min-width: 300px !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+.notyf__wrapper {
+    padding: 15px 20px !important;
+}
+
+.notyf__icon {
+    margin-right: 12px !important;
+    font-size: 18px !important;
+}
+
+.notyf__message {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+}
+
+/* Ensure notifications don't interfere with page content */
+.notyf__toast--top {
+    margin-top: 20px !important;
+}
+
+/* Custom animation for smoother appearance */
+.notyf__toast {
+    animation: notyf-slide-in 0.3s ease-out !important;
+}
+
+@keyframes notyf-slide-in {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
     }
 }

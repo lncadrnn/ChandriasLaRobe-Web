@@ -334,7 +334,7 @@ body {
     transition: var(--transition);
     min-height: 100vh;
     background: #f8f9fa;
-    padding: 30px;
+    padding: 15px 30px 30px 30px; /* Reduced top padding from 30px to 15px */
 }
 
 .sidebar.collapsed ~ .main-content {
@@ -343,7 +343,7 @@ body {
 
 /* =============== PAGE HEADER =============== */
 .page-header {
-    margin-bottom: 30px;
+    margin-bottom: 25px; /* Reduced from 30px to 25px */
     padding: 0 0 20px 0;
     border-bottom: 1px solid #e9ecef;
 }
