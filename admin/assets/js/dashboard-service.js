@@ -1,23 +1,5 @@
 import { firebaseConfig } from '../../firebase-config.js';
 
-// #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
-// DASHBOARD LOADER FUNCTIONS
-function showDashboardLoader() {
-    const dashboardLoader = document.getElementById('dashboard-loader');
-    if (dashboardLoader) {
-        dashboardLoader.classList.remove('hidden');
-        dashboardLoader.style.display = 'flex';
-    }
-}
-
-function hideDashboardLoader() {
-    const dashboardLoader = document.getElementById('dashboard-loader');
-    if (dashboardLoader) {
-        dashboardLoader.classList.add('hidden');
-        dashboardLoader.style.display = 'none';
-    }
-}
-
 document.addEventListener("DOMContentLoaded", () => {
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
@@ -573,20 +555,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const items = document.querySelectorAll('#appointments-list li');
             items.forEach(item => item.style.display = '');
         });
-    }
-
-    // Initial render with loader
+    }    // Initial render
     async function initializeDashboard() {
         try {
-            showDashboardLoader();
             await Promise.all([
                 loadRentals(),
                 renderAppointments()
             ]);
         } catch (error) {
             console.error("Error initializing dashboard:", error);
-        } finally {
-            hideDashboardLoader();
         }
     }
 
