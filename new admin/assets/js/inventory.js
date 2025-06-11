@@ -851,12 +851,8 @@ function handleImageFile(file, placeholder, preview, type) {
         alert('Please select a valid image file');
         return;
     }
-    
-    const reader = new FileReader();
+      const reader = new FileReader();
     reader.onload = (e) => {
-        const img = preview.querySelector('img');
-        img.src = e.target.result;
-        
         // Store image data
         if (type === 'front') {
             frontImageData = e.target.result;
@@ -864,9 +860,10 @@ function handleImageFile(file, placeholder, preview, type) {
             backImageData = e.target.result;
         }
         
-        // Show preview, hide placeholder
-        placeholder.style.display = 'none';
-        preview.style.display = 'block';
+        // Automatically open crop modal when image is uploaded
+        setTimeout(() => {
+            openImageCropper(type);
+        }, 100);
     };
     reader.readAsDataURL(file);
 }
@@ -919,10 +916,9 @@ function initializeCropper() {
     if (currentCropper) {
         currentCropper.destroy();
     }
-    
-    // Initialize new cropper
+      // Initialize new cropper with portrait aspect ratio (3:4)
     currentCropper = new Cropper(image, {
-        aspectRatio: NaN,
+        aspectRatio: 3/4, // Portrait ratio instead of square
         viewMode: 1,
         autoCropArea: 0.8,
         responsive: true,
@@ -934,8 +930,7 @@ function initializeCropper() {
         cropBoxResizable: true,
         toggleDragModeOnDblclick: false,
     });
-    
-    // Setup aspect ratio buttons
+      // Setup aspect ratio buttons
     const ratioButtons = document.querySelectorAll('.ratio-btn');
     ratioButtons.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -952,6 +947,13 @@ function initializeCropper() {
             }
         });
     });
+    
+    // Set the portrait ratio button as active by default
+    const portraitBtn = document.querySelector('.ratio-btn[data-ratio="0.75"]');
+    if (portraitBtn) {
+        ratioButtons.forEach(b => b.classList.remove('active'));
+        portraitBtn.classList.add('active');
+    }
 }
 
 // Cropper control functions
@@ -978,24 +980,34 @@ function resetCropper() {
 }
 
 // Apply crop
-function applyCrop() {
-    if (currentCropper && currentImageType) {
+function applyCrop() {    if (currentCropper && currentImageType) {
         const canvas = currentCropper.getCroppedCanvas({
-            width: 800,
-            height: 800,
+            width: 600,  // Width for portrait orientation
+            height: 800, // Height for portrait orientation (3:4 ratio)
             imageSmoothingEnabled: true,
             imageSmoothingQuality: 'high',
         });
+          const croppedData = canvas.toDataURL('image/jpeg', 0.9);
         
-        const croppedData = canvas.toDataURL('image/jpeg', 0.9);
-        
-        // Update the image data
+        // Update the image data and show preview
         if (currentImageType === 'front') {
             frontImageData = croppedData;
-            document.getElementById('frontImage').src = croppedData;
+            const frontImage = document.getElementById('frontImage');
+            const frontPreview = document.getElementById('frontPreview');
+            const frontPlaceholder = document.getElementById('frontPlaceholder');
+            
+            frontImage.src = croppedData;
+            frontPlaceholder.style.display = 'none';
+            frontPreview.style.display = 'block';
         } else {
             backImageData = croppedData;
-            document.getElementById('backImage').src = croppedData;
+            const backImage = document.getElementById('backImage');
+            const backPreview = document.getElementById('backPreview');
+            const backPlaceholder = document.getElementById('backPlaceholder');
+            
+            backImage.src = croppedData;
+            backPlaceholder.style.display = 'none';
+            backPreview.style.display = 'block';
         }
         
         closeCropper();
