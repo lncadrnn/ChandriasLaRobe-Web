@@ -70,7 +70,6 @@
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-    border: 2px solid var(--border-color);
 }
 
 .search-filter-section {
@@ -97,7 +96,7 @@
 .search-box input {
     width: 100%;
     padding: 10px 15px 10px 40px;
-    border: 2px solid var(--primary-color);
+    border: none;
     border-radius: var(--border-radius);
     font-size: 14px;
     background: var(--white);
@@ -107,7 +106,6 @@
 
 .search-box input:focus {
     outline: none;
-    border-color: hsl(346, 100%, 64%);
     box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.3), 0 2px 8px rgba(255, 182, 193, 0.4);
 }
 
@@ -118,7 +116,7 @@
 
 .filter-select {
     padding: 10px 15px;
-    border: 2px solid var(--primary-color);
+    border: none;
     border-radius: var(--border-radius);
     font-size: 14px;
     background: var(--white);
@@ -131,7 +129,6 @@
 
 .filter-select:focus {
     outline: none;
-    border-color: hsl(346, 100%, 64%);
     box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.3), 0 2px 8px rgba(255, 182, 193, 0.4);
 }
 
@@ -141,14 +138,13 @@
     background: var(--light-gray);
     padding: 3px;
     border-radius: var(--border-radius);
-    border: 2px solid var(--primary-color);
     box-shadow: 0 2px 4px rgba(255, 182, 193, 0.2);
 }
 
 .view-btn {
     padding: 8px 12px;
     background: transparent;
-    border: 1px solid transparent;
+    border: none;
     border-radius: 6px;
     color: var(--text-light);
     cursor: pointer;
@@ -160,7 +156,6 @@
     background: var(--white);
     color: var(--primary-color);
     box-shadow: 0 2px 4px rgba(255, 182, 193, 0.3);
-    border-color: var(--primary-color);
 }
 
 .view-btn:hover:not(.active) {
@@ -212,7 +207,6 @@
 
 .inventory-item {
     background: var(--white);
-    border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     overflow: hidden;
     transition: var(--transition);
