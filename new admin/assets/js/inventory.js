@@ -55,58 +55,6 @@ const sampleProducts = [
         status: "available",
         description: "Beautiful off-shoulder wedding gown with intricate lace details and cathedral train.",
         image: "placeholder-wedding-gown.jpg"
-    },
-    {
-        id: 2,
-        name: "Classic Long Gown",
-        category: "long-gown",
-        sizes: { "M": 1, "L": 2, "XL": 1 },
-        sleeves: "Long Sleeves",
-        color: "Navy Blue",
-        colorHex: "#2C3E50",
-        rentalPrice: 8000,
-        status: "rented",
-        description: "Sophisticated long gown perfect for formal events and galas.",
-        image: "placeholder-long-gown.jpg"
-    },
-    {
-        id: 3,
-        name: "Enchanted Fairy Gown",
-        category: "fairy-gown",
-        sizes: { "XS": 1, "S": 2, "M": 2 },
-        sleeves: "3/4 Sleeves",
-        color: "Lavender",
-        colorHex: "#E6E6FA",
-        rentalPrice: 5000,
-        status: "available",
-        description: "Magical fairy gown with flowing layers and ethereal detailing.",
-        image: "placeholder-fairy.jpg"
-    },
-    {
-        id: 4,
-        name: "Formal Men's Suit",
-        category: "suit",
-        sizes: { "L": 1, "XL": 1 },
-        sleeves: "Long Sleeves",
-        color: "Charcoal Gray",
-        colorHex: "#36454F",
-        rentalPrice: 6000,
-        status: "maintenance",
-        description: "Professional three-piece suit perfect for weddings and formal occasions.",
-        image: "placeholder-suit.jpg"
-    },
-    {
-        id: 5,
-        name: "Princess Ball Gown",
-        category: "ball-gown",
-        sizes: { "S": 1, "M": 1 },
-        sleeves: "Short Sleeves",
-        color: "Champagne",
-        colorHex: "#F7E7CE",
-        rentalPrice: 18000,
-        status: "available",
-        description: "Stunning ball gown with voluminous skirt and elegant bodice.",
-        image: "placeholder-ball-gown.jpg"
     }
 ];
 
@@ -1603,3 +1551,110 @@ function colorNameToHex(colorName) {
     
     return colorMap[colorName.toLowerCase()] || null;
 }
+
+/**
+ * FIREBASE FETCHING INTEGRATION
+ * Functions to work with the new inventory-fetching.js service
+ */
+
+// Refresh data using the new fetching service
+async function refreshInventoryDataFromFirebase() {
+    try {
+        if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
+            console.log('Refreshing inventory data via new fetching service...');
+            
+            const inventoryData = await window.InventoryFetcher.refreshInventoryData();
+            
+            // Update local arrays
+            firebaseProducts = inventoryData.products || [];
+            firebaseAdditionals = inventoryData.additionals || [];
+            
+            // Replace sample data with Firebase data
+            sampleProducts.length = 0;
+            sampleAdditionals.length = 0;
+            sampleProducts.push(...firebaseProducts);
+            sampleAdditionals.push(...firebaseAdditionals);
+            
+            // Refresh UI
+            loadProducts();
+            loadAdditionals();
+            
+            console.log(`Refreshed: ${inventoryData.products.length} products, ${inventoryData.additionals.length} additionals`);
+            
+            if (window.notyf) {
+                window.notyf.success(`Inventory refreshed: ${inventoryData.totalCount} items`);
+            }
+            
+            return inventoryData;
+            
+        } else {
+            console.warn('New fetching service not available, using fallback...');
+            return await loadInventoryFromFirebase();
+        }
+        
+    } catch (error) {
+        console.error('Error refreshing inventory data:', error);
+        if (window.notyf) {
+            window.notyf.error('Failed to refresh inventory data');
+        }
+        throw error;
+    }
+}
+
+// Get inventory statistics
+async function getInventoryStatistics() {
+    try {
+        if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
+            const stats = await window.InventoryFetcher.getInventoryStats();
+            console.log('Inventory statistics:', stats);
+            return stats;
+        } else {
+            // Fallback to local calculation
+            const stats = {
+                totalProducts: sampleProducts.length,
+                totalAdditionals: sampleAdditionals.length,
+                totalItems: sampleProducts.length + sampleAdditionals.length
+            };
+            return stats;
+        }
+    } catch (error) {
+        console.error('Error getting inventory statistics:', error);
+        return null;
+    }
+}
+
+// Search products by name using the new fetching service
+async function searchProductsByName(searchTerm) {
+    try {
+        if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
+            const results = await window.InventoryFetcher.searchProductsByName(searchTerm);
+            console.log(`Search results for "${searchTerm}":`, results.length, 'products found');
+            return results;
+        } else {
+            // Fallback to local search
+            const results = sampleProducts.filter(product => 
+                product.name && product.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            return results;
+        }
+    } catch (error) {
+        console.error('Error searching products:', error);
+        return [];
+    }
+}
+
+// Check Firebase connection status
+function checkFirebaseConnection() {
+    if (window.InventoryFetcher) {
+        return window.InventoryFetcher.getConnectionStatus();
+    }
+    return window.isFirebaseConnected || false;
+}
+
+// Make functions available globally
+window.refreshInventoryDataFromFirebase = refreshInventoryDataFromFirebase;
+window.getInventoryStatistics = getInventoryStatistics;
+window.searchProductsByName = searchProductsByName;
+window.checkFirebaseConnection = checkFirebaseConnection;
+
+//# sourceMappingURL=inventory-management.js.map
