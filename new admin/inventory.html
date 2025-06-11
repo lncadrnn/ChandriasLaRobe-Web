@@ -556,23 +556,21 @@
       <!-- Custom JavaScript -->
     <script src="assets/js/sidebar.js"></script>
     <script src="assets/js/inventory.js"></script>
-    
-    <!-- Cloudinary Configuration -->
+      <!-- Cloudinary Configuration -->
     <script src="assets/js/js firebase/cloudinary-config.js"></script>
     
     <!-- Cloudinary Upload Service -->
     <script src="assets/js/js firebase/inventory-cloud.js"></script>
     
-    <!-- Firebase Inventory Service -->
-    <script type="module" src="assets/js/js firebase/inventory-firebase.js"></script>
+    <!-- Firebase SDK -->
+    <script type="module" src="assets/js/js firebase/chandrias-sdk.js"></script>
     
-    <!-- Comprehensive Inventory Service -->
-    <script type="module" src="assets/js/js firebase/inventory-service.js"></script>
-    <script type="module">
-        import FirebaseInventory from './assets/js/js firebase/inventory-firebase.js';
+    <!-- Inventory Fetching Service -->
+    <script type="module" src="assets/js/js firebase/inventory-fetching.js"></script>    <script type="module">
+        import InventoryFetcher from './assets/js/js firebase/inventory-fetching.js';
         
-        // Make Firebase service available globally
-        window.FirebaseInventory = FirebaseInventory;        // Initialize Notyf for notifications with auto-removal
+        // Make InventoryFetcher available globally
+        window.InventoryFetcher = InventoryFetcher;// Initialize Notyf for notifications with auto-removal
         const notyf = new Notyf({
             duration: 3000, // 3 seconds display time
             position: { x: 'center', y: 'top' },
@@ -705,20 +703,27 @@
         };
         
         // Run cleanup every 5 seconds to ensure no notifications get stuck
-        setInterval(cleanupNotifications, 5000);
-          // Initialize Firebase services when DOM is ready
+        setInterval(cleanupNotifications, 5000);        // Initialize Firebase services when DOM is ready
         document.addEventListener('DOMContentLoaded', async function() {
             try {
                 console.log('Initializing Firebase inventory services...');
                 
                 // Test Firebase connection and initialize services
-                const initResult = await FirebaseInventory.initializeFirebaseServices();
+                const initResult = await InventoryFetcher.initialize();
                 
                 if (initResult.success) {
                     console.log('Firebase services ready:', initResult.message);
-                    console.log('Products in database:', initResult.productsCount);
                     
-                    notyf.success(`Connected to Firebase (${initResult.productsCount} products found)`);
+                    // Get initial statistics
+                    const stats = await InventoryFetcher.getInventoryStats();
+                    if (stats) {
+                        console.log('Products in database:', stats.totalProducts);
+                        console.log('Additionals in database:', stats.totalAdditionals);
+                        
+                        notyf.success(`Connected to Firebase (${stats.totalProducts} products, ${stats.totalAdditionals} additionals found)`);
+                    } else {
+                        notyf.success('Connected to Firebase');
+                    }
                     
                     // Load initial data from Firebase
                     await loadInventoryFromFirebase();
@@ -733,21 +738,20 @@
                 
                 // Don't show additional alerts, let user use offline mode
                 setTimeout(() => {
-                    if (!window.isFirebaseConnected) {
+                    if (!window.InventoryFetcher || !window.InventoryFetcher.getConnectionStatus()) {
                         console.warn('Firebase connection still not available, using offline mode');
                     }
                 }, 5000);
             }
-        });
-          // Function to load inventory data from Firebase
+        });        // Function to load inventory data from Firebase
         async function loadInventoryFromFirebase() {
             try {
                 console.log('Loading inventory data from Firebase...');
                 
-                // Fetch products and additionals from Firebase
+                // Fetch products and additionals from Firebase using the new fetching service
                 const [products, additionals] = await Promise.all([
-                    FirebaseInventory.fetchProducts(),
-                    FirebaseInventory.fetchAdditionals()
+                    InventoryFetcher.fetchProducts(),
+                    InventoryFetcher.fetchAdditionals()
                 ]);
                 
                 // Update global variables with Firebase data
@@ -757,6 +761,25 @@
                     // Fallback: directly update if function doesn't exist
                     console.log('Loaded products:', products);
                     console.log('Loaded additionals:', additionals);
+                    
+                    // Try to update the UI directly if possible
+                    if (typeof window.sampleProducts !== 'undefined') {
+                        window.sampleProducts.length = 0;
+                        window.sampleProducts.push(...products);
+                    }
+                    
+                    if (typeof window.sampleAdditionals !== 'undefined') {
+                        window.sampleAdditionals.length = 0;
+                        window.sampleAdditionals.push(...additionals);
+                    }
+                    
+                    // Try to refresh UI
+                    if (typeof window.loadProducts === 'function') {
+                        window.loadProducts();
+                    }
+                    if (typeof window.loadAdditionals === 'function') {
+                        window.loadAdditionals();
+                    }
                 }
                 
                 // Show product count notification only

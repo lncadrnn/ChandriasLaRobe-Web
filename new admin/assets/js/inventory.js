@@ -224,25 +224,29 @@ function showFirebaseStatus(message, type = 'info') {
 // Enhanced save product function to use Firebase
 async function saveProductToFirebase(productData) {
     try {
-        if (!window.FirebaseInventory) {
+        if (!window.InventoryFetcher) {
             throw new Error('Firebase service not available');
         }
         
         console.log('Saving product to Firebase:', productData);
         
-        // Add product to Firebase
-        const savedProduct = await window.FirebaseInventory.addProduct(productData);
+        // Use the new addProduct method from InventoryFetcher
+        const savedProduct = await window.InventoryFetcher.addProduct(productData);
         
         // Add to local array for immediate UI update
         sampleProducts.unshift(savedProduct);
-          // Refresh UI        loadProducts();
+        
+        // Refresh UI
+        loadProducts();
         
         console.log('Product saved to Firebase successfully');
+        showFirebaseStatus('Product saved to Firebase', 'success');
         
         return savedProduct;
         
     } catch (error) {
         console.error('Error saving product to Firebase:', error);
+        showFirebaseStatus('Failed to save product to Firebase', 'error');
         throw error;
     }
 }
@@ -250,14 +254,14 @@ async function saveProductToFirebase(productData) {
 // Enhanced delete product function to use Firebase
 async function deleteProductFromFirebase(productId) {
     try {
-        if (!window.FirebaseInventory) {
+        if (!window.InventoryFetcher) {
             throw new Error('Firebase service not available');
         }
         
         console.log('Deleting product from Firebase:', productId);
         
-        // Delete from Firebase
-        await window.FirebaseInventory.deleteProduct(productId);
+        // Use the new deleteProduct method from InventoryFetcher
+        await window.InventoryFetcher.deleteProduct(productId);
         
         // Remove from local array
         const index = sampleProducts.findIndex(p => p.id === productId);
@@ -283,14 +287,14 @@ async function deleteProductFromFirebase(productId) {
 // Enhanced save additional function to use Firebase
 async function saveAdditionalToFirebase(additionalData) {
     try {
-        if (!window.FirebaseInventory) {
+        if (!window.InventoryFetcher) {
             throw new Error('Firebase service not available');
         }
         
         console.log('Saving additional to Firebase:', additionalData);
         
-        // Add additional to Firebase
-        const savedAdditional = await window.FirebaseInventory.addAdditional(additionalData);
+        // Use the new addAdditional method from InventoryFetcher
+        const savedAdditional = await window.InventoryFetcher.addAdditional(additionalData);
         
         // Add to local array for immediate UI update
         sampleAdditionals.unshift(savedAdditional);
@@ -313,14 +317,14 @@ async function saveAdditionalToFirebase(additionalData) {
 // Enhanced delete additional function to use Firebase
 async function deleteAdditionalFromFirebase(additionalId) {
     try {
-        if (!window.FirebaseInventory) {
+        if (!window.InventoryFetcher) {
             throw new Error('Firebase service not available');
         }
         
         console.log('Deleting additional from Firebase:', additionalId);
         
-        // Delete from Firebase
-        await window.FirebaseInventory.deleteAdditional(additionalId);
+        // Use the new deleteAdditional method from InventoryFetcher
+        await window.InventoryFetcher.deleteAdditional(additionalId);
         
         // Remove from local array
         const index = sampleAdditionals.findIndex(a => a.id === additionalId);
@@ -973,12 +977,20 @@ function editProduct(id) {
 }
 
 function deleteProduct(id) {
-    if (window.deleteProductById) {
-        // Use the comprehensive service
-        window.deleteProductById(id);
-    } else {
-        // Fallback to local delete
-        if (confirm('Are you sure you want to delete this product?')) {
+    if (confirm('Are you sure you want to delete this product?')) {
+        if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
+            // Use Firebase to delete
+            deleteProductFromFirebase(id).catch(error => {
+                console.error('Failed to delete from Firebase:', error);
+                // Fallback to local delete
+                const index = sampleProducts.findIndex(p => p.id === id);
+                if (index > -1) {
+                    sampleProducts.splice(index, 1);
+                    loadProducts();
+                }
+            });
+        } else {
+            // Local delete fallback
             const index = sampleProducts.findIndex(p => p.id === id);
             if (index > -1) {
                 sampleProducts.splice(index, 1);
@@ -994,12 +1006,20 @@ function editAdditional(id) {
 }
 
 function deleteAdditional(id) {
-    if (window.deleteAdditionalById) {
-        // Use the comprehensive service
-        window.deleteAdditionalById(id);
-    } else {
-        // Fallback to local delete
-        if (confirm('Are you sure you want to delete this additional?')) {
+    if (confirm('Are you sure you want to delete this additional?')) {
+        if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
+            // Use Firebase to delete
+            deleteAdditionalFromFirebase(id).catch(error => {
+                console.error('Failed to delete from Firebase:', error);
+                // Fallback to local delete
+                const index = sampleAdditionals.findIndex(a => a.id === id);
+                if (index > -1) {
+                    sampleAdditionals.splice(index, 1);
+                    loadAdditionals();
+                }
+            });
+        } else {
+            // Local delete fallback
             const index = sampleAdditionals.findIndex(a => a.id === id);
             if (index > -1) {
                 sampleAdditionals.splice(index, 1);
@@ -1490,7 +1510,7 @@ function collectFormData() {    const getSelectedSizes = () => {
 // Add product to inventory
 async function addProductToInventory(productData) {
     try {
-        if (isFirebaseConnected && window.FirebaseInventory) {
+        if (isFirebaseConnected && window.InventoryFetcher) {
             // Use Firebase to save product
             const savedProduct = await saveProductToFirebase(productData);
             console.log('Product added to Firebase successfully:', savedProduct);
