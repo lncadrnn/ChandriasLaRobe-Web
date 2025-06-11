@@ -787,7 +787,13 @@ function loadAdditionals() {
             <div class="empty-message">
                 <i class='bx bx-diamond'></i>
                 <h3>No additionals added yet</h3>
-    }    additionalsList.innerHTML = sampleAdditionals.map(additional => `
+                <p>Click "Add Additional" to start managing your accessories</p>
+            </div>
+        `;
+        return;
+    }
+    
+    additionalsList.innerHTML = sampleAdditionals.map(additional => `
         <div class="additional-item card_article" data-id="${additional.id}">
             <div class="card_data">
                 <div class="additional-image">
