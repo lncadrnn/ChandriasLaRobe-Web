@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chandria's La Robe - Inventory Management</title>
+    
+    <!-- Boxicons CSS -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/reusable css/sidebar.css">
+    <link rel="stylesheet" href="assets/css/inventory.css">
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <img src="assets/img/logonobg.png" alt="Chandria's La Robe" class="logo-img">
+            </div>
+            <button class="toggle-btn" id="toggleBtn">
+                <i class='bx bx-chevron-left'></i>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <i class='bx bxs-dashboard nav-icon'></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                
+                <li class="nav-item active">
+                    <a href="inventory.html" class="nav-link">
+                        <i class='bx bxs-t-shirt nav-icon'></i>
+                        <span class="nav-text">Inventory</span>
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="calendar.html" class="nav-link">
+                        <i class='bx bxs-calendar nav-icon'></i>
+                        <span class="nav-text">Calendar</span>
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="rental.html" class="nav-link">
+                        <i class='bx bxs-package nav-icon'></i>
+                        <span class="nav-text">Rental</span>
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="rental-history.html" class="nav-link">
+                        <i class='bx bxs-user nav-icon'></i>
+                        <span class="nav-text">Rental History</span>
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="settings.html" class="nav-link">
+                        <i class='bx bxs-cog nav-icon'></i>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class='bx bxs-user'></i>
+                </div>
+                <div class="user-details">
+                    <span class="user-name">Admin</span>
+                    <span class="user-role">Administrator</span>
+                </div>
+            </div>
+            
+            <button class="logout-btn">
+                <i class='bx bx-log-out'></i>
+                <span class="logout-text">Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <main class="main-content" id="mainContent">        <div class="page-header">
+            <div class="header-left">
+                <h1 class="page-title">Inventory Management</h1>
+                <div class="datetime-display" id="currentDateTime">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Inventory Stats Cards -->
+        <div class="inventory-stats">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class='bx bxs-t-shirt'></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Total Items</h3>
+                    <div class="stat-number" id="totalItems">0</div>
+                    <div class="stat-subtitle">In inventory</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class='bx bxs-check-circle'></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Available</h3>
+                    <div class="stat-number" id="availableItems">0</div>
+                    <div class="stat-subtitle">Ready to rent</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class='bx bxs-package'></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Rented Out</h3>
+                    <div class="stat-number" id="rentedItems">0</div>
+                    <div class="stat-subtitle">Currently rented</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class='bx bxs-wrench'></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Maintenance</h3>
+                    <div class="stat-number" id="maintenanceItems">0</div>
+                    <div class="stat-subtitle">Under repair</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Controls -->
+        <div class="inventory-controls">
+            <div class="search-filter-section">
+                <div class="search-box">
+                    <i class='bx bx-search'></i>
+                    <input type="text" id="searchInput" placeholder="Search items...">
+                </div>
+                
+                <div class="filter-section">
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="">All Categories</option>
+                        <option value="wedding-gown">Wedding Gowns</option>
+                        <option value="long-gown">Long Gowns</option>
+                        <option value="suits">Suits</option>
+                        <option value="accessories">Accessories</option>
+                    </select>
+                    
+                    <select id="statusFilter" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="available">Available</option>
+                        <option value="rented">Rented</option>
+                        <option value="maintenance">Maintenance</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="view-toggle">
+                <button class="view-btn active" data-view="grid" id="gridViewBtn">
+                    <i class='bx bx-grid-alt'></i>
+                </button>
+                <button class="view-btn" data-view="list" id="listViewBtn">
+                    <i class='bx bx-list-ul'></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Inventory Grid -->
+        <div class="inventory-container">
+            <div class="inventory-grid" id="inventoryGrid">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <i class='bx bx-package'></i>
+            <h3>No items found</h3>
+            <p>Try adjusting your search or filter criteria</p>
+        </div>
+    </main>
+
+    <!-- Add Item Modal -->
+    <div class="modal" id="addItemModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class='bx bx-plus'></i>
+                    Add New Item
+                </h3>
+                <button class="close-modal" id="closeAddModal">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addItemForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="itemName">Item Name</label>
+                            <input type="text" id="itemName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="itemCategory">Category</label>
+                            <select id="itemCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="wedding-gown">Wedding Gown</option>
+                                <option value="long-gown">Long Gown</option>
+                                <option value="suits">Suits</option>
+                                <option value="accessories">Accessories</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="itemSize">Size</label>
+                            <select id="itemSize" required>
+                                <option value="">Select Size</option>
+                                <option value="XS">XS</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                                <option value="XXL">XXL</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="itemColor">Color</label>
+                            <input type="text" id="itemColor" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="rentalPrice">Rental Price (₱)</label>
+                            <input type="number" id="rentalPrice" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="itemStatus">Status</label>
+                            <select id="itemStatus" required>
+                                <option value="available">Available</option>
+                                <option value="maintenance">Maintenance</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="itemDescription">Description</label>
+                        <textarea id="itemDescription" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="itemImage">Image Upload</label>
+                        <input type="file" id="itemImage" accept="image/*">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelAddBtn">Cancel</button>
+                <button class="btn-primary" id="saveItemBtn">Save Item</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Item Details Modal -->
+    <div class="modal" id="itemDetailsModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class='bx bx-info-circle'></i>
+                    Item Details
+                </h3>
+                <button class="close-modal" id="closeDetailsModal">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="modal-body" id="itemDetailsContent">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="editItemBtn">
+                    <i class='bx bx-edit'></i>
+                    Edit Item
+                </button>
+                <button class="btn-danger" id="deleteItemBtn">
+                    <i class='bx bx-trash'></i>
+                    Delete Item
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="assets/js/sidebar.js"></script>
+    <script src="assets/js/inventory.js"></script>
+</body>
+</html>

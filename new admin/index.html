@@ -82,23 +82,21 @@
                 <span class="logout-text">Logout</span>
             </button>
         </div>
-    </div>    <main class="main-content" id="mainContent">
-        <div class="page-header">
+    </div>    <main class="main-content" id="mainContent">        <div class="page-header">
             <div class="header-left">
                 <h1 class="page-title">Dashboard</h1>
                 <div class="datetime-display" id="currentDateTime">Loading...</div>
             </div>
         </div>
           <!-- Dashboard Cards -->
-        <div class="dashboard-cards">
-            <div class="card">
+        <div class="dashboard-cards">            <div class="card" onclick="window.location.href='inventory.html'" style="cursor: pointer;" title="Click to manage inventory">
                 <div class="card-icon">
                     <i class='bx bxs-package'></i>
                 </div>
                 <div class="card-content">
                     <h3>Total Rentals</h3>
                     <div class="card-number" id="totalRentals">0</div>
-                    <div class="card-subtitle">All time rentals</div>
+                    <div class="card-subtitle">All time rentals • Click to manage</div>
                 </div>
             </div>
             
