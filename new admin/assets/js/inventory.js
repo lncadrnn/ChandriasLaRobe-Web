@@ -353,12 +353,24 @@ function initializeInventory() {
     updateDateTime();
     setInterval(updateDateTime, 1000);
     
-    // Load sample data
+    // Load data (sample data first, then Firebase will replace it)
     loadProducts();
     loadAdditionals();
     
     // Initialize enhanced modal functionality
     initializeEnhancedModal();
+    
+    // Try to refresh data from Firebase if connected
+    setTimeout(async () => {
+        if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
+            try {
+                console.log('🔄 Auto-refreshing data from Firebase...');
+                await refreshInventoryDataFromFirebase();
+            } catch (error) {
+                console.error('Failed to auto-refresh from Firebase:', error);
+            }
+        }
+    }, 2000); // Wait 2 seconds after page load
 }
 
 // Initialize enhanced modal functionality
@@ -524,30 +536,41 @@ function saveProduct() {
             alert('Please fill in all required fields and select at least one size');
         }
         return;
-    }
-
-    // Use the comprehensive service to add product
-    if (window.addProductFromForm) {
-        window.addProductFromForm(productData).then(result => {
-            if (result.success) {
+    }    // Use Firebase to save product if available
+    if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
+        // Use Firebase to save
+        saveProductToFirebase(productData).then(result => {
+            if (result) {
                 // Close modal and refresh data
                 closeModal(document.getElementById('addProductModal'));
                 resetProductForm();
-                
-                // Reload products list
-                if (window.loadProducts) {
-                    window.loadProducts();
-                } else {
-                    loadProducts();
-                }
+                console.log('Product saved to Firebase successfully');
             }
+        }).catch(error => {
+            console.error('Failed to save to Firebase:', error);
+            alert('Failed to save product to Firebase. Please try again.');
         });
     } else {
-        // Fallback to local function
-        console.log('Saving product:', productData);
-        alert('Product saved successfully!');
-        closeModal(document.getElementById('addProductModal'));
+        // Fallback to local storage
+        console.log('Saving product locally:', productData);
+        
+        const newProduct = {
+            id: Date.now().toString(),
+            ...productData,
+            createdAt: new Date().toISOString()
+        };
+        
+        // Add to sample products array
+        sampleProducts.unshift(newProduct);
+        
+        // Refresh UI
         loadProducts();
+        
+        // Close modal
+        closeModal(document.getElementById('addProductModal'));
+        resetProductForm();
+        
+        alert('Product saved locally!');
     }
 }
 
@@ -1621,55 +1644,56 @@ async function refreshInventoryDataFromFirebase() {
     }
 }
 
-// Get inventory statistics
-async function getInventoryStatistics() {
+// Manual refresh function to fetch fresh data from Firebase
+async function refreshInventoryData() {
     try {
-        if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
-            const stats = await window.InventoryFetcher.getInventoryStats();
-            console.log('Inventory statistics:', stats);
-            return stats;
-        } else {
-            // Fallback to local calculation
-            const stats = {
-                totalProducts: sampleProducts.length,
-                totalAdditionals: sampleAdditionals.length,
-                totalItems: sampleProducts.length + sampleAdditionals.length
-            };
-            return stats;
+        if (!window.InventoryFetcher) {
+            console.warn('InventoryFetcher not available');
+            if (window.notyf) {
+                window.notyf.warning('Firebase service not available');
+            }
+            return;
         }
+
+        if (!window.InventoryFetcher.getConnectionStatus()) {
+            console.warn('Firebase not connected');
+            if (window.notyf) {
+                window.notyf.warning('Firebase not connected');
+            }
+            return;
+        }
+
+        console.log('🔄 Manually refreshing inventory data from Firebase...');
+        
+        if (window.notyf) {
+            window.notyf.info('Refreshing data from Firebase...');
+        }
+
+        // Fetch fresh data from Firebase
+        const [products, additionals] = await Promise.all([
+            window.InventoryFetcher.fetchProducts(),
+            window.InventoryFetcher.fetchAdditionals()
+        ]);
+
+        // Update the inventory data
+        window.updateInventoryData(products, additionals);
+
+        if (window.notyf) {
+            window.notyf.success(`Refreshed: ${products.length} products, ${additionals.length} additionals`);
+        }
+
+        console.log(`✅ Manual refresh complete: ${products.length} products, ${additionals.length} additionals`);
+
     } catch (error) {
-        console.error('Error getting inventory statistics:', error);
-        return null;
+        console.error('❌ Error during manual refresh:', error);
+        if (window.notyf) {
+            window.notyf.error('Failed to refresh data from Firebase');
+        }
     }
 }
 
-// Search products by name using the new fetching service
-async function searchProductsByName(searchTerm) {
-    try {
-        if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
-            const results = await window.InventoryFetcher.searchProductsByName(searchTerm);
-            console.log(`Search results for "${searchTerm}":`, results.length, 'products found');
-            return results;
-        } else {
-            // Fallback to local search
-            const results = sampleProducts.filter(product => 
-                product.name && product.name.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-            return results;
-        }
-    } catch (error) {
-        console.error('Error searching products:', error);
-        return [];
-    }
-}
-
-// Check Firebase connection status
-function checkFirebaseConnection() {
-    if (window.InventoryFetcher) {
-        return window.InventoryFetcher.getConnectionStatus();
-    }
-    return window.isFirebaseConnected || false;
-}
+// Make refresh function available globally
+window.refreshInventoryData = refreshInventoryData;
 
 // Make functions available globally
 window.refreshInventoryDataFromFirebase = refreshInventoryDataFromFirebase;
