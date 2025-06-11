@@ -334,10 +334,36 @@ body {
     transition: var(--transition);
     min-height: 100vh;
     background: #f8f9fa;
+    padding: 30px;
 }
 
 .sidebar.collapsed ~ .main-content {
     margin-left: var(--sidebar-collapsed-width);
+}
+
+/* =============== PAGE HEADER =============== */
+.page-header {
+    margin-bottom: 30px;
+    padding: 0 0 20px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--primary-color), #e91e63);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    font-weight: 400;
+    margin: 0;
 }
 
 /* =============== MAIN HEADER =============== */

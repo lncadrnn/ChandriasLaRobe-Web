@@ -368,12 +368,41 @@ function formatNumber(num) {
         return (num / 1000000).toFixed(1) + 'M';
     }
     if (num >= 1000) {
-        return (num / 1000).toFixed(1) + 'K';
+    return (num / 1000).toFixed(1) + 'K';
     }
     return num.toString();
 }
+
+// =============== DATE/TIME FUNCTIONALITY ===============
+function updateDateTime() {
+    const now = new Date();
+    const options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+    };
+    
+    const formattedDateTime = now.toLocaleDateString('en-US', options);
+    const dateTimeElement = document.getElementById('currentDateTime');
+    
+    if (dateTimeElement) {
+        dateTimeElement.textContent = formattedDateTime;
+    }
+}
+
+// Initialize date/time
+updateDateTime();
+
+// Update every second
+setInterval(updateDateTime, 1000);
 
 // Export functions for global use
 window.showToast = showToast;
 window.formatNumber = formatNumber;
 window.animateElement = animateElement;
+window.updateDateTime = updateDateTime;
