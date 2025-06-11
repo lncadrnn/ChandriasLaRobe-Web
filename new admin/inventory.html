@@ -92,142 +92,92 @@
                 <h1 class="page-title">Inventory Management</h1>
                 <div class="datetime-display" id="currentDateTime">Loading...</div>
             </div>
+        </div>        <!-- Inventory Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-btn active" data-tab="products" id="productsTab">
+                <i class='bx bxs-t-shirt'></i>
+                Products
+            </button>
+            <button class="tab-btn" data-tab="additionals" id="additionalsTab">
+                <i class='bx bxs-diamond'></i>
+                Additionals (Accessories)
+            </button>
         </div>
 
-        <!-- Inventory Stats Cards -->
-        <div class="inventory-stats">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class='bx bxs-t-shirt'></i>
-                </div>
-                <div class="stat-content">
-                    <h3>Total Items</h3>
-                    <div class="stat-number" id="totalItems">0</div>
-                    <div class="stat-subtitle">In inventory</div>
-                </div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class='bx bxs-check-circle'></i>
-                </div>
-                <div class="stat-content">
-                    <h3>Available</h3>
-                    <div class="stat-number" id="availableItems">0</div>
-                    <div class="stat-subtitle">Ready to rent</div>
-                </div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class='bx bxs-package'></i>
-                </div>
-                <div class="stat-content">
-                    <h3>Rented Out</h3>
-                    <div class="stat-number" id="rentedItems">0</div>
-                    <div class="stat-subtitle">Currently rented</div>
-                </div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class='bx bxs-wrench'></i>
-                </div>
-                <div class="stat-content">
-                    <h3>Maintenance</h3>
-                    <div class="stat-number" id="maintenanceItems">0</div>
-                    <div class="stat-subtitle">Under repair</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Inventory Controls -->
-        <div class="inventory-controls">
-            <div class="search-filter-section">
-                <div class="search-box">
-                    <i class='bx bx-search'></i>
-                    <input type="text" id="searchInput" placeholder="Search items...">
-                </div>
-                
-                <div class="filter-section">
-                    <select id="categoryFilter" class="filter-select">
-                        <option value="">All Categories</option>
-                        <option value="wedding-gown">Wedding Gowns</option>
-                        <option value="long-gown">Long Gowns</option>
-                        <option value="suits">Suits</option>
-                        <option value="accessories">Accessories</option>
-                    </select>
-                    
-                    <select id="statusFilter" class="filter-select">
-                        <option value="">All Status</option>
-                        <option value="available">Available</option>
-                        <option value="rented">Rented</option>
-                        <option value="maintenance">Maintenance</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="view-toggle">
-                <button class="view-btn active" data-view="grid" id="gridViewBtn">
-                    <i class='bx bx-grid-alt'></i>
-                </button>
-                <button class="view-btn" data-view="list" id="listViewBtn">
-                    <i class='bx bx-list-ul'></i>
+        <!-- Tab Content -->
+        <div class="tab-content active" id="productsContent">
+            <div class="inventory-header">
+                <h2>Products Inventory</h2>
+                <button class="add-product-btn" id="addProductBtn">
+                    <i class='bx bx-plus'></i>
+                    Add Product
                 </button>
             </div>
-        </div>
-
-        <!-- Inventory Grid -->
-        <div class="inventory-container">
-            <div class="inventory-grid" id="inventoryGrid">
-                <!-- Dynamic content will be loaded here -->
+            
+            <!-- Products will be listed here -->
+            <div class="inventory-list" id="productsList">
+                <div class="empty-message">
+                    <i class='bx bx-package'></i>
+                    <h3>No products added yet</h3>
+                    <p>Click "Add Product" to start managing your inventory</p>
+                </div>
             </div>
         </div>
 
-        <!-- Empty State -->
-        <div class="empty-state" id="emptyState" style="display: none;">
-            <i class='bx bx-package'></i>
-            <h3>No items found</h3>
-            <p>Try adjusting your search or filter criteria</p>
+        <div class="tab-content" id="additionalsContent">
+            <div class="inventory-header">
+                <h2>Additionals Inventory</h2>
+                <button class="add-additional-btn" id="addAdditionalBtn">
+                    <i class='bx bx-plus'></i>
+                    Add Additional
+                </button>
+            </div>
+            
+            <!-- Additionals will be listed here -->
+            <div class="inventory-list" id="additionalsList">
+                <div class="empty-message">
+                    <i class='bx bx-diamond'></i>
+                    <h3>No additionals added yet</h3>
+                    <p>Click "Add Additional" to start managing your accessories</p>
+                </div>
+            </div>
         </div>
-    </main>
-
-    <!-- Add Item Modal -->
-    <div class="modal" id="addItemModal">
+    </main>    <!-- Add Product Modal -->
+    <div class="modal" id="addProductModal">
         <div class="modal-backdrop"></div>
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">
                     <i class='bx bx-plus'></i>
-                    Add New Item
+                    Add New Product
                 </h3>
-                <button class="close-modal" id="closeAddModal">
+                <button class="close-modal" id="closeAddProductModal">
                     <i class='bx bx-x'></i>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="addItemForm">
+                <form id="addProductForm">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="itemName">Item Name</label>
-                            <input type="text" id="itemName" required>
+                            <label for="productName">Product Name</label>
+                            <input type="text" id="productName" required>
                         </div>
                         <div class="form-group">
-                            <label for="itemCategory">Category</label>
-                            <select id="itemCategory" required>
+                            <label for="productCategory">Category</label>
+                            <select id="productCategory" required>
                                 <option value="">Select Category</option>
                                 <option value="wedding-gown">Wedding Gown</option>
                                 <option value="long-gown">Long Gown</option>
                                 <option value="suits">Suits</option>
-                                <option value="accessories">Accessories</option>
+                                <option value="cocktail-dress">Cocktail Dress</option>
                             </select>
                         </div>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="itemSize">Size</label>
-                            <select id="itemSize" required>
+                            <label for="productSize">Size</label>
+                            <select id="productSize" required>
                                 <option value="">Select Size</option>
                                 <option value="XS">XS</option>
                                 <option value="S">S</option>
@@ -238,19 +188,19 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="itemColor">Color</label>
-                            <input type="text" id="itemColor" required>
+                            <label for="productColor">Color</label>
+                            <input type="text" id="productColor" required>
                         </div>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="rentalPrice">Rental Price (₱)</label>
-                            <input type="number" id="rentalPrice" step="0.01" required>
+                            <label for="productRentalPrice">Rental Price (₱)</label>
+                            <input type="number" id="productRentalPrice" step="0.01" required>
                         </div>
                         <div class="form-group">
-                            <label for="itemStatus">Status</label>
-                            <select id="itemStatus" required>
+                            <label for="productStatus">Status</label>
+                            <select id="productStatus" required>
                                 <option value="available">Available</option>
                                 <option value="maintenance">Maintenance</option>
                             </select>
@@ -258,19 +208,96 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="itemDescription">Description</label>
-                        <textarea id="itemDescription" rows="3"></textarea>
+                        <label for="productDescription">Description</label>
+                        <textarea id="productDescription" rows="3"></textarea>
                     </div>
                     
                     <div class="form-group">
-                        <label for="itemImage">Image Upload</label>
-                        <input type="file" id="itemImage" accept="image/*">
+                        <label for="productImage">Image Upload</label>
+                        <input type="file" id="productImage" accept="image/*">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" id="cancelAddBtn">Cancel</button>
-                <button class="btn-primary" id="saveItemBtn">Save Item</button>
+                <button class="btn-secondary" id="cancelAddProductBtn">Cancel</button>
+                <button class="btn-primary" id="saveProductBtn">Save Product</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Additional Modal -->
+    <div class="modal" id="addAdditionalModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class='bx bx-plus'></i>
+                    Add New Additional
+                </h3>
+                <button class="close-modal" id="closeAddAdditionalModal">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addAdditionalForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="additionalName">Additional Name</label>
+                            <input type="text" id="additionalName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="additionalType">Type</label>
+                            <select id="additionalType" required>
+                                <option value="">Select Type</option>
+                                <option value="jewelry">Jewelry</option>
+                                <option value="shoes">Shoes</option>
+                                <option value="bags">Bags</option>
+                                <option value="veils">Veils</option>
+                                <option value="headpieces">Headpieces</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="additionalSize">Size (if applicable)</label>
+                            <input type="text" id="additionalSize" placeholder="e.g., 7.5, One Size, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label for="additionalColor">Color</label>
+                            <input type="text" id="additionalColor" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="additionalRentalPrice">Rental Price (₱)</label>
+                            <input type="number" id="additionalRentalPrice" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="additionalStatus">Status</label>
+                            <select id="additionalStatus" required>
+                                <option value="available">Available</option>
+                                <option value="maintenance">Maintenance</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="additionalDescription">Description</label>
+                        <textarea id="additionalDescription" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="additionalImage">Image Upload</label>
+                        <input type="file" id="additionalImage" accept="image/*">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelAddAdditionalBtn">Cancel</button>
+                <button class="btn-primary" id="saveAdditionalBtn">Save Additional</button>
             </div>
         </div>
     </div>
@@ -302,10 +329,8 @@
                 </button>
             </div>
         </div>
-    </div>
-
-    <!-- JavaScript -->
+    </div>    <!-- JavaScript -->
     <script src="assets/js/sidebar.js"></script>
-    <script src="assets/js/inventory.js"></script>
+    <script src="assets/js/inventory-new.js"></script>
 </body>
 </html>
