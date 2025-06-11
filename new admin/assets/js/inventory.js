@@ -1,136 +1,392 @@
 // Inventory Management JavaScript
 document.addEventListener('DOMContentLoaded', function() {
-    loadInventoryStats();
-    loadInventoryItems();
-    initializeEventListeners();
+    initializeInventory();
 });
 
-// Sample inventory data
-let inventoryData = [
+// Sample data
+const sampleProducts = [
     {
         id: 1,
-        name: "Classic White Wedding Gown",
+        name: "Elegant Wedding Gown",
         category: "wedding-gown",
-        size: "M",
-        color: "White",
-        price: 15000,
+        sizes: ["S", "M", "L"],
+        sleeves: "Off-shoulder",
+        color: "Ivory",
+        colorHex: "#F8F6F0",
+        rentalPrice: 15000,
         status: "available",
-        description: "Elegant A-line wedding gown with lace details and cathedral train.",
-        image: null,
-        dateAdded: "2024-01-15"
+        description: "Beautiful off-shoulder wedding gown with intricate lace details and cathedral train.",
+        image: "placeholder-wedding-gown.jpg"
     },
     {
         id: 2,
-        name: "Navy Blue Evening Dress",
+        name: "Classic Long Gown",
         category: "long-gown",
-        size: "S",
+        sizes: ["M", "L", "XL"],
+        sleeves: "Long sleeves",
         color: "Navy Blue",
-        price: 8000,
+        colorHex: "#2C3E50",
+        rentalPrice: 8000,
         status: "rented",
-        description: "Sophisticated floor-length evening gown perfect for formal events.",
-        image: null,
-        dateAdded: "2024-01-20"
+        description: "Sophisticated long gown perfect for formal events and galas.",
+        image: "placeholder-long-gown.jpg"
     },
     {
         id: 3,
-        name: "Black Tuxedo",
-        category: "suits",
-        size: "L",
+        name: "Modern Cocktail Dress",
+        category: "cocktail-dress",
+        sizes: ["XS", "S", "M"],
+        sleeves: "Sleeveless",
         color: "Black",
-        price: 5000,
+        colorHex: "#2C2C2C",
+        rentalPrice: 5000,
         status: "available",
-        description: "Classic black tuxedo with satin lapels and bow tie.",
-        image: null,
-        dateAdded: "2024-01-25"
+        description: "Chic cocktail dress with modern silhouette and elegant detailing.",
+        image: "placeholder-cocktail.jpg"
     },
     {
         id: 4,
-        name: "Pearl Necklace Set",
-        category: "accessories",
-        size: "One Size",
-        color: "White",
-        price: 2000,
+        name: "Formal Men's Suit",
+        category: "suits",
+        sizes: ["L", "XL"],
+        sleeves: "Long sleeves",
+        color: "Charcoal Gray",
+        colorHex: "#36454F",
+        rentalPrice: 6000,
         status: "maintenance",
-        description: "Elegant pearl necklace and earrings set.",
-        image: null,
-        dateAdded: "2024-02-01"
+        description: "Professional three-piece suit perfect for weddings and formal occasions.",
+        image: "placeholder-suit.jpg"
     },
     {
         id: 5,
-        name: "Red Cocktail Dress",
-        category: "long-gown",
-        size: "M",
-        color: "Red",
-        price: 6500,
+        name: "Romantic Wedding Dress",
+        category: "wedding-gown",
+        sizes: ["S", "M"],
+        sleeves: "3/4 sleeves",
+        color: "Champagne",
+        colorHex: "#F7E7CE",
+        rentalPrice: 18000,
         status: "available",
-        description: "Stunning red cocktail dress with sequin details.",
-        image: null,
-        dateAdded: "2024-02-05"
+        description: "Romantic wedding dress with delicate lace and flowing train.",
+        image: "placeholder-wedding-gown.jpg"
     }
 ];
 
-let filteredData = [...inventoryData];
-let currentView = 'grid';
+const sampleAdditionals = [
+    {
+        id: 1,
+        name: "Pearl Necklace Set",
+        type: "jewelry",
+        size: "One Size",
+        color: "White",
+        colorHex: "#FFFFFF",
+        rentalPrice: 2000,
+        status: "available",
+        description: "Elegant pearl necklace and earring set.",
+        image: "placeholder-jewelry.jpg"
+    },
+    {
+        id: 2,
+        name: "Bridal Heels",
+        type: "shoes",
+        size: "7",
+        color: "Nude",
+        colorHex: "#E8C5A0",
+        rentalPrice: 1500,
+        status: "available",
+        description: "Comfortable bridal heels with satin finish.",
+        image: "placeholder-shoes.jpg"
+    },
+    {
+        id: 3,
+        name: "Cathedral Veil",
+        type: "veils",
+        size: "One Size",
+        color: "Ivory",
+        colorHex: "#F8F6F0",
+        rentalPrice: 3000,
+        status: "rented",
+        description: "Long cathedral veil with delicate lace trim.",
+        image: "placeholder-veil.jpg"
+    },
+    {
+        id: 4,
+        name: "Crystal Tiara",
+        type: "headpieces",
+        size: "One Size",
+        color: "Silver",
+        colorHex: "#C0C0C0",
+        rentalPrice: 2500,
+        status: "available",
+        description: "Sparkling crystal tiara for the perfect bridal look.",
+        image: "placeholder-tiara.jpg"
+    },
+    {
+        id: 5,
+        name: "Evening Clutch",
+        type: "bags",
+        size: "Small",
+        color: "Gold",
+        colorHex: "#FFD700",
+        rentalPrice: 800,
+        status: "available",
+        description: "Elegant beaded evening clutch bag.",
+        image: "placeholder-bag.jpg"
+    }
+];
 
-function loadInventoryStats() {
-    const stats = {
-        totalItems: inventoryData.length,
-        availableItems: inventoryData.filter(item => item.status === 'available').length,
-        rentedItems: inventoryData.filter(item => item.status === 'rented').length,
-        maintenanceItems: inventoryData.filter(item => item.status === 'maintenance').length
-    };
+function initializeInventory() {
+    setupTabs();
+    setupModals();
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
     
-    document.getElementById('totalItems').textContent = stats.totalItems;
-    document.getElementById('availableItems').textContent = stats.availableItems;
-    document.getElementById('rentedItems').textContent = stats.rentedItems;
-    document.getElementById('maintenanceItems').textContent = stats.maintenanceItems;
+    // Load sample data
+    loadProducts();
+    loadAdditionals();
 }
 
-function loadInventoryItems() {
-    const inventoryGrid = document.getElementById('inventoryGrid');
-    const emptyState = document.getElementById('emptyState');
+// Tab Management
+function setupTabs() {
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const targetTab = button.getAttribute('data-tab');
+            
+            // Remove active class from all tabs and contents
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked tab and corresponding content
+            button.classList.add('active');
+            document.getElementById(targetTab + 'Content').classList.add('active');
+        });
+    });
+}
+
+// Modal Management
+function setupModals() {
+    // Add Product Modal
+    const addProductBtn = document.getElementById('addProductBtn');
+    const addProductModal = document.getElementById('addProductModal');
+    const closeAddProductModal = document.getElementById('closeAddProductModal');
+    const cancelAddProductBtn = document.getElementById('cancelAddProductBtn');
     
-    if (filteredData.length === 0) {
-        inventoryGrid.style.display = 'none';
-        emptyState.style.display = 'block';
+    // Add Additional Modal
+    const addAdditionalBtn = document.getElementById('addAdditionalBtn');
+    const addAdditionalModal = document.getElementById('addAdditionalModal');
+    const closeAddAdditionalModal = document.getElementById('closeAddAdditionalModal');
+    const cancelAddAdditionalBtn = document.getElementById('cancelAddAdditionalBtn');
+
+    // Product Modal Events
+    if (addProductBtn) {
+        addProductBtn.addEventListener('click', () => {
+            openModal(addProductModal);
+        });
+    }
+
+    if (closeAddProductModal) {
+        closeAddProductModal.addEventListener('click', () => {
+            closeModal(addProductModal);
+        });
+    }
+
+    if (cancelAddProductBtn) {
+        cancelAddProductBtn.addEventListener('click', () => {
+            closeModal(addProductModal);
+        });
+    }
+
+    // Additional Modal Events
+    if (addAdditionalBtn) {
+        addAdditionalBtn.addEventListener('click', () => {
+            openModal(addAdditionalModal);
+        });
+    }
+
+    if (closeAddAdditionalModal) {
+        closeAddAdditionalModal.addEventListener('click', () => {
+            closeModal(addAdditionalModal);
+        });
+    }
+
+    if (cancelAddAdditionalBtn) {
+        cancelAddAdditionalBtn.addEventListener('click', () => {
+            closeModal(addAdditionalModal);
+        });
+    }
+
+    // Form Submissions
+    const saveProductBtn = document.getElementById('saveProductBtn');
+    const saveAdditionalBtn = document.getElementById('saveAdditionalBtn');
+
+    if (saveProductBtn) {
+        saveProductBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            saveProduct();
+        });
+    }
+
+    if (saveAdditionalBtn) {
+        saveAdditionalBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            saveAdditional();
+        });
+    }
+
+    // Close modal when clicking backdrop
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+        backdrop.addEventListener('click', (e) => {
+            const modal = e.target.closest('.modal');
+            closeModal(modal);
+        });
+    });
+}
+
+// Modal Functions
+function openModal(modal) {
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeModal(modal) {
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        // Reset form if exists
+        const form = modal.querySelector('form');
+        if (form) {
+            form.reset();
+        }
+    }
+}
+
+// Save Functions
+function saveProduct() {
+    const form = document.getElementById('addProductForm');
+    
+    // Get selected sizes
+    const sizeCheckboxes = form.querySelectorAll('.size-checkboxes input[type="checkbox"]:checked');
+    const selectedSizes = Array.from(sizeCheckboxes).map(cb => cb.value);
+    
+    // Get form values
+    const productData = {
+        name: document.getElementById('productName').value,
+        category: document.getElementById('productCategory').value,
+        sizes: selectedSizes,
+        sleeves: document.getElementById('productSleeves').value,
+        color: document.getElementById('productColor').value,
+        rentalPrice: document.getElementById('productRentalPrice').value,
+        status: document.getElementById('productStatus').value,
+        description: document.getElementById('productDescription').value,
+        image: document.getElementById('productImage').files[0]
+    };
+
+    // Validate required fields
+    if (!productData.name || !productData.category || selectedSizes.length === 0 || 
+        !productData.sleeves || !productData.color || !productData.rentalPrice) {
+        alert('Please fill in all required fields and select at least one size');
         return;
     }
+
+    // Here you would typically send data to backend
+    console.log('Saving product:', productData);
     
-    inventoryGrid.style.display = 'grid';
-    emptyState.style.display = 'none';
+    // For now, just show success message and close modal
+    alert('Product saved successfully!');
+    closeModal(document.getElementById('addProductModal'));
     
-    inventoryGrid.innerHTML = filteredData.map(item => `
-        <div class="inventory-item" onclick="viewItemDetails(${item.id})">
-            <div class="item-image">
-                ${item.image ? 
-                    `<img src="${item.image}" alt="${item.name}">` : 
-                    `<i class='bx bxs-t-shirt'></i>`
-                }
-                <span class="item-status-badge ${item.status}">${item.status}</span>
+    // Refresh the products list
+    loadProducts();
+}
+
+function saveAdditional() {
+    const form = document.getElementById('addAdditionalForm');
+    
+    // Get form values
+    const additionalData = {
+        name: document.getElementById('additionalName').value,
+        type: document.getElementById('additionalType').value,
+        size: document.getElementById('additionalSize').value,
+        color: document.getElementById('additionalColor').value,
+        rentalPrice: document.getElementById('additionalRentalPrice').value,
+        status: document.getElementById('additionalStatus').value,
+        description: document.getElementById('additionalDescription').value,
+        image: document.getElementById('additionalImage').files[0]
+    };
+
+    // Validate required fields
+    if (!additionalData.name || !additionalData.type || 
+        !additionalData.color || !additionalData.rentalPrice) {
+        alert('Please fill in all required fields');
+        return;
+    }
+
+    // Here you would typically send data to backend
+    console.log('Saving additional:', additionalData);
+    
+    // For now, just show success message and close modal
+    alert('Additional saved successfully!');
+    closeModal(document.getElementById('addAdditionalModal'));
+    
+    // Refresh the additionals list
+    loadAdditionals();
+}
+
+// Load Functions
+function loadProducts() {
+    const productsList = document.getElementById('productsList');
+    
+    if (sampleProducts.length === 0) {
+        productsList.innerHTML = `
+            <div class="empty-message">
+                <i class='bx bx-package'></i>
+                <h3>No products added yet</h3>
+                <p>Click "Add Product" to start managing your inventory</p>
             </div>
-            <div class="item-content">
-                <h3 class="item-title">${item.name}</h3>
-                <div class="item-details">
-                    <div class="item-detail">
+        `;
+        return;
+    }
+      productsList.innerHTML = sampleProducts.map(product => `
+        <div class="product-item" data-id="${product.id}">
+            <div class="product-image">
+                <div class="image-placeholder">
+                    <i class='bx bxs-t-shirt'></i>
+                    <span class="placeholder-text">Product Image</span>
+                </div>
+                <div class="status-badge ${product.status}">${getStatusText(product.status)}</div>
+                <div class="color-indicator" style="background-color: ${product.colorHex}" title="${product.color}" onclick="openColorPicker('product', ${product.id}, '${product.colorHex}')">
+                    <input type="color" class="color-picker hidden" value="${product.colorHex}" onchange="updateItemColor('product', ${product.id}, this.value)">
+                </div>
+            </div>            <div class="product-content">
+                <h3 class="product-title">${product.name}</h3>
+                <div class="product-details">
+                    <div class="detail-row">
+                        <span class="label">Size(s):</span>
+                        <span class="value">${product.sizes.join(', ')}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Sleeves:</span>
+                        <span class="value">${product.sleeves}</span>
+                    </div>
+                    <div class="detail-row">
                         <span class="label">Category:</span>
-                        <span class="value">${formatCategory(item.category)}</span>
-                    </div>
-                    <div class="item-detail">
-                        <span class="label">Size:</span>
-                        <span class="value">${item.size}</span>
-                    </div>
-                    <div class="item-detail">
-                        <span class="label">Color:</span>
-                        <span class="value">${item.color}</span>
+                        <span class="value">${getCategoryText(product.category)}</span>
                     </div>
                 </div>
-                <div class="item-price">₱${item.price.toLocaleString()}</div>
-                <div class="item-actions">
-                    <button class="action-btn" onclick="event.stopPropagation(); editItem(${item.id})">
-                        <i class='bx bx-edit'></i> Edit
+                <div class="product-price">₱${product.rentalPrice.toLocaleString()}</div>
+                <div class="product-actions">
+                    <button class="action-btn edit-btn" onclick="editProduct(${product.id})">
+                        <i class='bx bx-edit'></i>
+                        Edit
                     </button>
-                    <button class="action-btn" onclick="event.stopPropagation(); deleteItem(${item.id})">
-                        <i class='bx bx-trash'></i> Delete
+                    <button class="action-btn delete-btn" onclick="deleteProduct(${product.id})">
+                        <i class='bx bx-trash'></i>
+                        Delete
                     </button>
                 </div>
             </div>
@@ -138,386 +394,365 @@ function loadInventoryItems() {
     `).join('');
 }
 
-function formatCategory(category) {
-    const categoryMap = {
-        'wedding-gown': 'Wedding Gown',
-        'long-gown': 'Long Gown',
-        'suits': 'Suits',
-        'accessories': 'Accessories'
-    };
-    return categoryMap[category] || category;
-}
-
-function initializeEventListeners() {
-    // Search functionality
-    const searchInput = document.getElementById('searchInput');
-    searchInput.addEventListener('input', handleSearch);
+function loadAdditionals() {
+    const additionalsList = document.getElementById('additionalsList');
     
-    // Filter functionality
-    const categoryFilter = document.getElementById('categoryFilter');
-    const statusFilter = document.getElementById('statusFilter');
-    categoryFilter.addEventListener('change', handleFilter);
-    statusFilter.addEventListener('change', handleFilter);
-    
-    // View toggle
-    const gridViewBtn = document.getElementById('gridViewBtn');
-    const listViewBtn = document.getElementById('listViewBtn');
-    gridViewBtn.addEventListener('click', () => toggleView('grid'));
-    listViewBtn.addEventListener('click', () => toggleView('list'));
-    
-    // Add item modal
-    const addItemBtn = document.getElementById('addItemBtn');
-    const addItemModal = document.getElementById('addItemModal');
-    const closeAddModal = document.getElementById('closeAddModal');
-    const cancelAddBtn = document.getElementById('cancelAddBtn');
-    const saveItemBtn = document.getElementById('saveItemBtn');
-    
-    addItemBtn.addEventListener('click', openAddItemModal);
-    closeAddModal.addEventListener('click', closeAddItemModal);
-    cancelAddBtn.addEventListener('click', closeAddItemModal);
-    saveItemBtn.addEventListener('click', saveNewItem);
-    
-    // Item details modal
-    const itemDetailsModal = document.getElementById('itemDetailsModal');
-    const closeDetailsModal = document.getElementById('closeDetailsModal');
-    closeDetailsModal.addEventListener('click', closeItemDetailsModal);
-    
-    // Modal backdrop clicks
-    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
-        backdrop.addEventListener('click', (e) => {
-            if (e.target === backdrop) {
-                closeAllModals();
-            }
-        });
-    });
-    
-    // Escape key to close modals
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            closeAllModals();
-        }
-    });
-}
-
-function handleSearch() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    applyFilters();
-}
-
-function handleFilter() {
-    applyFilters();
-}
-
-function applyFilters() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const categoryFilter = document.getElementById('categoryFilter').value;
-    const statusFilter = document.getElementById('statusFilter').value;
-    
-    filteredData = inventoryData.filter(item => {
-        const matchesSearch = item.name.toLowerCase().includes(searchTerm) ||
-                            item.color.toLowerCase().includes(searchTerm) ||
-                            item.description.toLowerCase().includes(searchTerm);
-        
-        const matchesCategory = !categoryFilter || item.category === categoryFilter;
-        const matchesStatus = !statusFilter || item.status === statusFilter;
-        
-        return matchesSearch && matchesCategory && matchesStatus;
-    });
-    
-    loadInventoryItems();
-}
-
-function toggleView(view) {
-    currentView = view;
-    const gridBtn = document.getElementById('gridViewBtn');
-    const listBtn = document.getElementById('listViewBtn');
-    const inventoryGrid = document.getElementById('inventoryGrid');
-    
-    if (view === 'grid') {
-        gridBtn.classList.add('active');
-        listBtn.classList.remove('active');
-        inventoryGrid.className = 'inventory-grid';
-    } else {
-        listBtn.classList.add('active');
-        gridBtn.classList.remove('active');
-        inventoryGrid.className = 'inventory-list';
-    }
-    
-    loadInventoryItems();
-}
-
-function openAddItemModal() {
-    const modal = document.getElementById('addItemModal');
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeAddItemModal() {
-    const modal = document.getElementById('addItemModal');
-    modal.classList.remove('active');
-    document.body.style.overflow = 'auto';
-    
-    // Reset form
-    document.getElementById('addItemForm').reset();
-}
-
-function closeItemDetailsModal() {
-    const modal = document.getElementById('itemDetailsModal');
-    modal.classList.remove('active');
-    document.body.style.overflow = 'auto';
-}
-
-function closeAllModals() {
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.classList.remove('active');
-    });
-    document.body.style.overflow = 'auto';
-}
-
-function saveNewItem() {
-    const form = document.getElementById('addItemForm');
-    const formData = new FormData(form);
-    
-    // Basic validation
-    const name = document.getElementById('itemName').value.trim();
-    const category = document.getElementById('itemCategory').value;
-    const size = document.getElementById('itemSize').value;
-    const color = document.getElementById('itemColor').value.trim();
-    const price = parseFloat(document.getElementById('rentalPrice').value);
-    const status = document.getElementById('itemStatus').value;
-    const description = document.getElementById('itemDescription').value.trim();
-    
-    if (!name || !category || !size || !color || !price || !status) {
-        alert('Please fill in all required fields.');
+    if (sampleAdditionals.length === 0) {
+        additionalsList.innerHTML = `
+            <div class="empty-message">
+                <i class='bx bx-diamond'></i>
+                <h3>No additionals added yet</h3>
+                <p>Click "Add Additional" to start managing your accessories</p>
+            </div>
+        `;
         return;
     }
-    
-    // Create new item
-    const newItem = {
-        id: Date.now(), // Simple ID generation
-        name,
-        category,
-        size,
-        color,
-        price,
-        status,
-        description,
-        image: null, // Handle image upload separately if needed
-        dateAdded: new Date().toISOString().split('T')[0]
-    };
-    
-    // Add to inventory
-    inventoryData.push(newItem);
-    filteredData = [...inventoryData];
-    
-    // Refresh displays
-    loadInventoryStats();
-    loadInventoryItems();
-    
-    // Close modal
-    closeAddItemModal();
-    
-    // Show success message
-    showToast('Item added successfully!', 'success');
+      additionalsList.innerHTML = sampleAdditionals.map(additional => `
+        <div class="additional-item" data-id="${additional.id}">
+            <div class="additional-image">
+                <div class="image-placeholder">
+                    <i class='bx bxs-diamond'></i>
+                    <span class="placeholder-text">Additional Image</span>
+                </div>
+                <div class="status-badge ${additional.status}">${getStatusText(additional.status)}</div>
+                <div class="color-indicator" style="background-color: ${additional.colorHex}" title="${additional.color}" onclick="openColorPicker('additional', ${additional.id}, '${additional.colorHex}')">
+                    <input type="color" class="color-picker hidden" value="${additional.colorHex}" onchange="updateItemColor('additional', ${additional.id}, this.value)">
+                </div>
+            </div>            <div class="additional-content">
+                <h3 class="additional-title">${additional.name}</h3>
+                <div class="additional-details">
+                    <div class="detail-row">
+                        <span class="label">Type:</span>
+                        <span class="value">${getTypeText(additional.type)}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Size:</span>
+                        <span class="value">${additional.size}</span>
+                    </div>
+                </div>
+                <div class="additional-price">₱${additional.rentalPrice.toLocaleString()}</div>
+                <div class="additional-actions">
+                    <button class="action-btn edit-btn" onclick="editAdditional(${additional.id})">
+                        <i class='bx bx-edit'></i>
+                        Edit
+                    </button>
+                    <button class="action-btn delete-btn" onclick="deleteAdditional(${additional.id})">
+                        <i class='bx bx-trash'></i>
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
 }
 
-function viewItemDetails(itemId) {
-    const item = inventoryData.find(i => i.id === itemId);
-    if (!item) return;
+// Helper functions
+function getStatusText(status) {
+    switch(status) {
+        case 'available': return 'Available';
+        case 'rented': return 'Rented';
+        case 'maintenance': return 'Maintenance';
+        default: return status;
+    }
+}
+
+function getCategoryText(category) {
+    switch(category) {
+        case 'wedding-gown': return 'Wedding Gown';
+        case 'long-gown': return 'Long Gown';
+        case 'cocktail-dress': return 'Cocktail Dress';
+        case 'suits': return 'Suits';
+        default: return category;
+    }
+}
+
+function getTypeText(type) {
+    switch(type) {
+        case 'jewelry': return 'Jewelry';
+        case 'shoes': return 'Shoes';
+        case 'bags': return 'Bags';
+        case 'veils': return 'Veils';
+        case 'headpieces': return 'Headpieces';
+        case 'other': return 'Other';
+        default: return type;
+    }
+}
+
+// Color Picker Functions
+function openColorPicker(type, id, currentColor) {
+    const item = type === 'product' ? sampleProducts.find(p => p.id === id) : sampleAdditionals.find(a => a.id === id);
     
-    const modal = document.getElementById('itemDetailsModal');
-    const content = document.getElementById('itemDetailsContent');
-    
-    content.innerHTML = `
-        <div class="item-details-content">
-            <div class="item-image-large">
-                ${item.image ? 
-                    `<img src="${item.image}" alt="${item.name}">` : 
-                    `<i class='bx bxs-t-shirt'></i>`
-                }
+    // Create a more sophisticated color picker interface
+    const colorPickerModal = document.createElement('div');
+    colorPickerModal.className = 'color-picker-modal';
+    colorPickerModal.innerHTML = `
+        <div class="color-picker-backdrop" onclick="closeColorPickerModal()"></div>
+        <div class="color-picker-content">
+            <div class="color-picker-header">
+                <h3>Choose Color for ${item.name}</h3>
+                <button class="close-color-picker" onclick="closeColorPickerModal()">
+                    <i class='bx bx-x'></i>
+                </button>
             </div>
-            <div class="item-info">
-                <h3>${item.name}</h3>
-                <div class="detail-grid">
-                    <div class="detail-item">
-                        <strong>Category:</strong> ${formatCategory(item.category)}
-                    </div>
-                    <div class="detail-item">
-                        <strong>Size:</strong> ${item.size}
-                    </div>
-                    <div class="detail-item">
-                        <strong>Color:</strong> ${item.color}
-                    </div>
-                    <div class="detail-item">
-                        <strong>Status:</strong> 
-                        <span class="status-badge ${item.status}">${item.status}</span>
-                    </div>
-                    <div class="detail-item">
-                        <strong>Rental Price:</strong> ₱${item.price.toLocaleString()}
-                    </div>
-                    <div class="detail-item">
-                        <strong>Date Added:</strong> ${formatDate(item.dateAdded)}
+            <div class="color-picker-body">
+                <div class="color-input-section">
+                    <label for="colorInput">Custom Color:</label>
+                    <input type="color" id="colorInput" value="${currentColor}" />
+                </div>
+                <div class="preset-colors">
+                    <h4>Preset Colors:</h4>
+                    <div class="color-grid">
+                        ${getPresetColors().map(color => `
+                            <div class="preset-color" 
+                                 style="background-color: ${color.hex}" 
+                                 title="${color.name}"
+                                 onclick="selectPresetColor('${color.hex}', '${type}', ${id})">
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
-                <div class="description-section">
-                    <strong>Description:</strong>
-                    <p>${item.description || 'No description available.'}</p>
+                <div class="color-preview">
+                    <div class="preview-circle" style="background-color: ${currentColor}"></div>
+                    <span class="color-name">${hexToColorName(currentColor)}</span>
+                    <span class="color-hex">${currentColor}</span>
                 </div>
+            </div>
+            <div class="color-picker-footer">
+                <button class="cancel-btn" onclick="closeColorPickerModal()">Cancel</button>
+                <button class="apply-btn" onclick="applySelectedColor('${type}', ${id})">Apply</button>
             </div>
         </div>
     `;
     
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    document.body.appendChild(colorPickerModal);
     
-    // Set up action buttons
-    const editBtn = document.getElementById('editItemBtn');
-    const deleteBtn = document.getElementById('deleteItemBtn');
+    // Add event listener for color input changes
+    const colorInput = document.getElementById('colorInput');
+    colorInput.addEventListener('input', function() {
+        updateColorPreview(this.value);
+    });
     
-    editBtn.onclick = () => editItem(itemId);
-    deleteBtn.onclick = () => deleteItem(itemId);
+    // Store the current selection
+    window.selectedColor = currentColor;
 }
 
-function editItem(itemId) {
-    // For now, just show an alert. You can implement a full edit modal later
-    alert(`Edit functionality for item ${itemId} would be implemented here.`);
-    closeAllModals();
+function getPresetColors() {
+    return [
+        { name: 'White', hex: '#FFFFFF' },
+        { name: 'Black', hex: '#000000' },
+        { name: 'Red', hex: '#FF0000' },
+        { name: 'Navy Blue', hex: '#2C3E50' },
+        { name: 'Pink', hex: '#FFC0CB' },
+        { name: 'Purple', hex: '#800080' },
+        { name: 'Gold', hex: '#FFD700' },
+        { name: 'Silver', hex: '#C0C0C0' },
+        { name: 'Ivory', hex: '#F8F6F0' },
+        { name: 'Champagne', hex: '#F7E7CE' },
+        { name: 'Nude', hex: '#E8C5A0' },
+        { name: 'Charcoal Gray', hex: '#36454F' },
+        { name: 'Emerald', hex: '#50C878' },
+        { name: 'Royal Blue', hex: '#4169E1' },
+        { name: 'Burgundy', hex: '#800020' },
+        { name: 'Rose Gold', hex: '#E8B4A0' }
+    ];
 }
 
-function deleteItem(itemId) {
-    if (confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
-        inventoryData = inventoryData.filter(item => item.id !== itemId);
-        filteredData = [...inventoryData];
-        
-        loadInventoryStats();
-        loadInventoryItems();
-        closeAllModals();
-        
-        showToast('Item deleted successfully!', 'success');
+function selectPresetColor(colorHex, type, id) {
+    window.selectedColor = colorHex;
+    document.getElementById('colorInput').value = colorHex;
+    updateColorPreview(colorHex);
+}
+
+function updateColorPreview(colorHex) {
+    const previewCircle = document.querySelector('.preview-circle');
+    const colorName = document.querySelector('.color-name');
+    const colorHexSpan = document.querySelector('.color-hex');
+    
+    if (previewCircle) previewCircle.style.backgroundColor = colorHex;
+    if (colorName) colorName.textContent = hexToColorName(colorHex);
+    if (colorHexSpan) colorHexSpan.textContent = colorHex;
+    
+    window.selectedColor = colorHex;
+}
+
+function applySelectedColor(type, id) {
+    if (window.selectedColor) {
+        updateItemColor(type, id, window.selectedColor);
+    }
+    closeColorPickerModal();
+}
+
+function closeColorPickerModal() {
+    const modal = document.querySelector('.color-picker-modal');
+    if (modal) {
+        document.body.removeChild(modal);
+    }
+    delete window.selectedColor;
+}
+
+function updateItemColor(type, id, newColorHex) {
+    if (type === 'product') {
+        const productIndex = sampleProducts.findIndex(p => p.id === id);
+        if (productIndex > -1) {
+            sampleProducts[productIndex].colorHex = newColorHex;
+            sampleProducts[productIndex].color = hexToColorName(newColorHex);
+            loadProducts();
+        }
+    } else {
+        const additionalIndex = sampleAdditionals.findIndex(a => a.id === id);
+        if (additionalIndex > -1) {
+            sampleAdditionals[additionalIndex].colorHex = newColorHex;
+            sampleAdditionals[additionalIndex].color = hexToColorName(newColorHex);
+            loadAdditionals();
+        }
     }
 }
 
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString('en-US', options);
-}
-
-function showToast(message, type = 'info') {
-    // Simple toast notification
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.textContent = message;
-    toast.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
-        color: white;
-        padding: 12px 20px;
-        border-radius: 6px;
-        z-index: 10000;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        transform: translateX(100%);
-        transition: transform 0.3s ease;
-    `;
+function hexToColorName(hex) {
+    // Comprehensive color name mapping
+    const colorMap = {
+        '#FFFFFF': 'White',
+        '#000000': 'Black',
+        '#FF0000': 'Red',
+        '#00FF00': 'Green',
+        '#0000FF': 'Blue',
+        '#FFFF00': 'Yellow',
+        '#FF00FF': 'Magenta',
+        '#00FFFF': 'Cyan',
+        '#FFC0CB': 'Pink',
+        '#800080': 'Purple',
+        '#FFA500': 'Orange',
+        '#A52A2A': 'Brown',
+        '#808080': 'Gray',
+        '#C0C0C0': 'Silver',
+        '#FFD700': 'Gold',
+        '#2C3E50': 'Navy Blue',
+        '#F8F6F0': 'Ivory',
+        '#F7E7CE': 'Champagne',
+        '#E8C5A0': 'Nude',
+        '#36454F': 'Charcoal Gray',
+        '#50C878': 'Emerald',
+        '#4169E1': 'Royal Blue',
+        '#800020': 'Burgundy',
+        '#E8B4A0': 'Rose Gold',
+        '#2C2C2C': 'Charcoal',
+        '#FF69B4': 'Hot Pink',
+        '#DC143C': 'Crimson',
+        '#8B4513': 'Saddle Brown',
+        '#FF6347': 'Tomato',
+        '#40E0D0': 'Turquoise',
+        '#EE82EE': 'Violet',
+        '#F0E68C': 'Khaki',
+        '#DDA0DD': 'Plum',
+        '#98FB98': 'Pale Green',
+        '#F5DEB3': 'Wheat',
+        '#CD853F': 'Peru',
+        '#D2691E': 'Chocolate',
+        '#B22222': 'Fire Brick',
+        '#228B22': 'Forest Green',
+        '#4682B4': 'Steel Blue',
+        '#D2B48C': 'Tan',
+        '#BC8F8F': 'Rosy Brown',
+        '#F4A460': 'Sandy Brown',
+        '#9ACD32': 'Yellow Green',
+        '#00CED1': 'Dark Turquoise',
+        '#FF1493': 'Deep Pink',
+        '#1E90FF': 'Dodger Blue',
+        '#B0C4DE': 'Light Steel Blue',
+        '#FFFFE0': 'Light Yellow',
+        '#F0FFFF': 'Azure',
+        '#F5F5F5': 'White Smoke',
+        '#FFFAF0': 'Floral White',
+        '#FDF5E6': 'Old Lace'
+    };
     
-    document.body.appendChild(toast);
+    // Convert hex to uppercase for comparison
+    const upperHex = hex.toUpperCase();
     
-    // Animate in
-    setTimeout(() => {
-        toast.style.transform = 'translateX(0)';
-    }, 100);
+    // Check for exact matches first
+    if (colorMap[upperHex]) {
+        return colorMap[upperHex];
+    }
     
-    // Remove after 3 seconds
-    setTimeout(() => {
-        toast.style.transform = 'translateX(100%)';
-        setTimeout(() => {
-            document.body.removeChild(toast);
-        }, 300);
-    }, 3000);
+    // If no exact match, find the closest color
+    let closestColor = 'Custom';
+    let minDistance = Infinity;
+    
+    for (const [colorHex, colorName] of Object.entries(colorMap)) {
+        const distance = calculateColorDistance(upperHex, colorHex);
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestColor = colorName;
+        }
+    }
+    
+    // If the closest color is very close, use it, otherwise show as custom
+    return minDistance < 50 ? closestColor : `Custom (${hex})`;
 }
 
-// Add some CSS for item details modal content
-const additionalStyles = `
-<style>
-.item-details-content {
-    display: flex;
-    gap: 20px;
-    flex-direction: column;
+// Helper function to calculate color distance
+function calculateColorDistance(hex1, hex2) {
+    const r1 = parseInt(hex1.substr(1, 2), 16);
+    const g1 = parseInt(hex1.substr(3, 2), 16);
+    const b1 = parseInt(hex1.substr(5, 2), 16);
+    
+    const r2 = parseInt(hex2.substr(1, 2), 16);
+    const g2 = parseInt(hex2.substr(3, 2), 16);
+    const b2 = parseInt(hex2.substr(5, 2), 16);
+    
+    return Math.sqrt(Math.pow(r2 - r1, 2) + Math.pow(g2 - g1, 2) + Math.pow(b2 - b1, 2));
 }
 
-.item-image-large {
-    width: 100%;
-    height: 200px;
-    background: var(--light-gray);
-    border-radius: var(--border-radius);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 64px;
-    color: var(--text-light);
+// Action functions (placeholders)
+function editProduct(id) {
+    const product = sampleProducts.find(p => p.id === id);
+    alert(`Editing product: ${product.name}`);
 }
 
-.item-image-large img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: var(--border-radius);
-}
-
-.detail-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin: 15px 0;
-}
-
-.detail-item {
-    font-size: 14px;
-}
-
-.description-section {
-    margin-top: 20px;
-}
-
-.description-section p {
-    margin-top: 8px;
-    color: var(--text-light);
-    line-height: 1.5;
-}
-
-.status-badge {
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-}
-
-.status-badge.available {
-    background: #d4edda;
-    color: #155724;
-}
-
-.status-badge.rented {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.status-badge.maintenance {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-@media (max-width: 768px) {
-    .detail-grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
+function deleteProduct(id) {
+    if (confirm('Are you sure you want to delete this product?')) {
+        const index = sampleProducts.findIndex(p => p.id === id);
+        if (index > -1) {
+            sampleProducts.splice(index, 1);
+            loadProducts();
+        }
     }
 }
-</style>
-`;
 
-// Inject additional styles
-document.head.insertAdjacentHTML('beforeend', additionalStyles);
+function editAdditional(id) {
+    const additional = sampleAdditionals.find(a => a.id === id);
+    alert(`Editing additional: ${additional.name}`);
+}
+
+function deleteAdditional(id) {
+    if (confirm('Are you sure you want to delete this additional?')) {
+        const index = sampleAdditionals.findIndex(a => a.id === id);
+        if (index > -1) {
+            sampleAdditionals.splice(index, 1);
+            loadAdditionals();
+        }
+    }
+}
+
+// Date and Time Update Function
+function updateDateTime() {
+    const now = new Date();
+    const options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+    };
+    
+    const formattedDateTime = now.toLocaleDateString('en-US', options)
+        .replace(' at ', ' at ');
+    
+    const dateTimeElement = document.getElementById('currentDateTime');
+    if (dateTimeElement) {
+        dateTimeElement.textContent = formattedDateTime;
+    }
+}
