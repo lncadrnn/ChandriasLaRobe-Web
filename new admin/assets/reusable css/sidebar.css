@@ -371,12 +371,16 @@ body {
     background: var(--white);
     padding: 20px 30px;
     box-shadow: var(--shadow);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     position: sticky;
     top: 0;
     z-index: 100;
+}
+
+.page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
 }
 
 .header-left {
@@ -392,16 +396,24 @@ body {
     margin: 0;
 }
 
-.page-subtitle {
+.datetime-display {
     font-size: 14px;
     color: var(--text-light);
+    font-weight: 400;
     margin: 0;
 }
 
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+/* Responsive Design */
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .datetime-display {
+        font-size: 12px;
+    }
 }
 
 .search-box {

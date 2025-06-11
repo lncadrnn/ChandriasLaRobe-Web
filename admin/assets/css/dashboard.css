@@ -91,6 +91,47 @@ html {
     }
 }
 
+@media (max-width: 768px) {
+    .main-header {
+        padding: 1rem;
+    }
+    
+    .datetime-display {
+        display: none;
+    }
+    
+    .header-right {
+        gap: 0.5rem;
+    }
+    
+    .view-analytics-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+    
+    .view-analytics-btn span {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .current-date {
+        font-size: 0.8rem;
+    }
+    
+    .current-time {
+        font-size: 0.75rem;
+    }
+    
+    .datetime-display {
+        display: flex;
+    }
+    
+    .view-analytics-btn {
+        display: none;
+    }
+}
+
 .main-header {
     display: flex;
     align-items: center;
@@ -129,6 +170,27 @@ html {
     display: flex;
     align-items: center;
     gap: 1rem;
+}
+
+/* Date Time Display */
+.datetime-display {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+}
+
+.current-date {
+    color: var(--text-color-dark);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.current-time {
+    color: var(--text-color);
+    font-size: 0.8rem;
+    font-weight: 400;
+    font-family: 'Monaco', 'Consolas', monospace;
 }
 
 /* View Analytics Button */

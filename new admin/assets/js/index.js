@@ -3,25 +3,35 @@ document.addEventListener('DOMContentLoaded', function() {
     updateDateTime();
     loadDashboardData();
     
-    // Update time every minute
-    setInterval(updateDateTime, 60000);
+    // Update time every second
+    setInterval(updateDateTime, 1000);
 });
 
 function updateDateTime() {
     const now = new Date();
-    const options = {
+    
+    // Format date (e.g., "Wednesday, June 11, 2025")
+    const dateOptions = {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+        day: 'numeric'
     };
     
-    const dateTimeString = now.toLocaleDateString('en-US', options);
+    // Format time (e.g., "10:39:45 AM")
+    const timeOptions = {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+    };
+    
+    const formattedDate = now.toLocaleDateString('en-US', dateOptions);
+    const formattedTime = now.toLocaleTimeString('en-US', timeOptions);
+    
     const dateTimeElement = document.getElementById('currentDateTime');
     if (dateTimeElement) {
-        dateTimeElement.textContent = dateTimeString;
+        dateTimeElement.textContent = `${formattedDate} at ${formattedTime}`;
     }
 }
 
