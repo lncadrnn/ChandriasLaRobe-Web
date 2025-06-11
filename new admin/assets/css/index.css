@@ -175,6 +175,16 @@
     white-space: nowrap;
 }
 
+/* Center align details column headers specifically */
+.clean-table thead th.col-details {
+    text-align: center;
+}
+
+/* Center align status column headers specifically */
+.clean-table thead th.col-status {
+    text-align: center;
+}
+
 .clean-table tbody td {
     padding: 16px 20px;
     border-bottom: 1px solid #f1f3f4;
@@ -215,10 +225,20 @@
     min-width: 100px;
 }
 
+.col-status td,
+.clean-table tbody .col-status {
+    text-align: center;
+}
+
 .col-details {
     text-align: center;
     width: 25%;
     min-width: 150px;
+}
+
+.col-details td,
+.clean-table tbody .col-details {
+    text-align: center;
 }
 
 .col-item {
@@ -250,6 +270,14 @@
     text-align: left;
     width: 50%;
     min-width: 300px;
+}
+
+/* Details column for appointments table */
+.col-customer-appointments ~ .col-details,
+.col-booking-description ~ .col-details {
+    text-align: center;
+    width: 20%;
+    min-width: 120px;
 }
 
 .booking-description {
@@ -311,6 +339,7 @@
     letter-spacing: 0.5px;
     min-width: 80px;
     text-align: center;
+    margin: 0 auto;
 }
 
 .status-badge.active { background: #d4edda; color: #155724; }
@@ -351,11 +380,21 @@
     font-weight: 500;
     cursor: pointer;
     transition: var(--transition);
+    display: inline-block;
+    margin: 0 auto;
+    min-width: 80px;
+    text-align: center;
 }
 
 .details-btn:hover {
     background: hsl(346, 85%, 68%);
     transform: translateY(-1px);
+}
+
+/* Ensure buttons in details columns are centered */
+.col-details .details-btn {
+    display: block;
+    margin: 0 auto;
 }
 
 .item-text {
