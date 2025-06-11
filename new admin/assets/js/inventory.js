@@ -230,8 +230,20 @@ async function saveProductToFirebase(productData) {
         
         console.log('Saving product to Firebase:', productData);
         
+        // Prepare product data with Cloudinary URLs
+        const processedProductData = {
+            ...productData,
+            frontImageUrl: frontImageData?.url || null,
+            backImageUrl: backImageData?.url || null,
+            frontImagePublicId: frontImageData?.publicId || null,
+            backImagePublicId: backImageData?.publicId || null,
+            // Remove local image data before saving to Firebase
+            frontImage: undefined,
+            backImage: undefined
+        };
+        
         // Use the new addProduct method from InventoryFetcher
-        const savedProduct = await window.InventoryFetcher.addProduct(productData);
+        const savedProduct = await window.InventoryFetcher.addProduct(processedProductData);
         
         // Add to local array for immediate UI update
         sampleProducts.unshift(savedProduct);
@@ -240,18 +252,22 @@ async function saveProductToFirebase(productData) {
         loadProducts();
         
         console.log('Product saved to Firebase successfully');
-        showFirebaseStatus('Product saved to Firebase', 'success');
+        if (window.notyf) {
+            window.notyf.success('Product saved to Firebase');
+        }
         
         return savedProduct;
         
     } catch (error) {
         console.error('Error saving product to Firebase:', error);
-        showFirebaseStatus('Failed to save product to Firebase', 'error');
+        if (window.notyf) {
+            window.notyf.error('Failed to save product to Firebase');
+        }
         throw error;
     }
 }
 
-// Enhanced delete product function to use Firebase
+// Enhanced delete product function to use Firebase with Cloudinary cleanup
 async function deleteProductFromFirebase(productId) {
     try {
         if (!window.InventoryFetcher) {
@@ -260,20 +276,47 @@ async function deleteProductFromFirebase(productId) {
         
         console.log('Deleting product from Firebase:', productId);
         
-        // Use the new deleteProduct method from InventoryFetcher
+        // Step 1: Get product data to find image IDs
+        const productData = await window.InventoryFetcher.fetchProductById(productId);
+        
+        // Step 2: Delete images from Cloudinary if they exist
+        if (productData) {
+            const deletePromises = [];
+            
+            if (productData.frontImagePublicId) {
+                console.log('Deleting front image from Cloudinary:', productData.frontImagePublicId);
+                deletePromises.push(
+                    window.deleteImageFromCloudinary(productData.frontImagePublicId)
+                        .catch(error => console.warn('Failed to delete front image from Cloudinary:', error))
+                );
+            }
+            
+            if (productData.backImagePublicId) {
+                console.log('Deleting back image from Cloudinary:', productData.backImagePublicId);
+                deletePromises.push(
+                    window.deleteImageFromCloudinary(productData.backImagePublicId)
+                        .catch(error => console.warn('Failed to delete back image from Cloudinary:', error))
+                );
+            }
+            
+            // Wait for image deletions (but don't fail if they error)
+            await Promise.allSettled(deletePromises);
+        }
+        
+        // Step 3: Delete product from Firebase
         await window.InventoryFetcher.deleteProduct(productId);
         
-        // Remove from local array
+        // Step 4: Remove from local array
         const index = sampleProducts.findIndex(p => p.id === productId);
         if (index > -1) {
             sampleProducts.splice(index, 1);
         }
         
-        // Refresh UI
+        // Step 5: Refresh UI
         loadProducts();
         
-        console.log('Product deleted from Firebase successfully');
-        showFirebaseStatus('Product deleted from Firebase', 'success');
+        console.log('Product and associated images deleted successfully');
+        showFirebaseStatus('Product deleted from Firebase and Cloudinary', 'success');
         
         return true;
         
@@ -314,7 +357,7 @@ async function saveAdditionalToFirebase(additionalData) {
     }
 }
 
-// Enhanced delete additional function to use Firebase
+// Enhanced delete additional function to use Firebase with Cloudinary cleanup
 async function deleteAdditionalFromFirebase(additionalId) {
     try {
         if (!window.InventoryFetcher) {
@@ -323,20 +366,33 @@ async function deleteAdditionalFromFirebase(additionalId) {
         
         console.log('Deleting additional from Firebase:', additionalId);
         
-        // Use the new deleteAdditional method from InventoryFetcher
+        // Step 1: Get additional data to find image ID
+        const additionalData = await window.InventoryFetcher.fetchAdditionalById(additionalId);
+        
+        // Step 2: Delete image from Cloudinary if it exists
+        if (additionalData && additionalData.imagePublicId) {
+            console.log('Deleting additional image from Cloudinary:', additionalData.imagePublicId);
+            try {
+                await window.deleteImageFromCloudinary(additionalData.imagePublicId);
+            } catch (error) {
+                console.warn('Failed to delete additional image from Cloudinary:', error);
+            }
+        }
+        
+        // Step 3: Delete additional from Firebase
         await window.InventoryFetcher.deleteAdditional(additionalId);
         
-        // Remove from local array
+        // Step 4: Remove from local array
         const index = sampleAdditionals.findIndex(a => a.id === additionalId);
         if (index > -1) {
             sampleAdditionals.splice(index, 1);
         }
         
-        // Refresh UI
+        // Step 5: Refresh UI
         loadAdditionals();
         
-        console.log('Additional deleted from Firebase successfully');
-        showFirebaseStatus('Additional deleted from Firebase', 'success');
+        console.log('Additional and associated image deleted successfully');
+        showFirebaseStatus('Additional deleted from Firebase and Cloudinary', 'success');
         
         return true;
         
@@ -1143,15 +1199,26 @@ function setupImageUpload(zone, input, placeholder, preview, type) {
 function handleImageFile(file, placeholder, preview, type) {
     // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
-        alert('File size must be less than 5MB');
+        if (window.notyf) {
+            window.notyf.error('File size must be less than 5MB');
+        } else {
+            alert('File size must be less than 5MB');
+        }
         return;
     }
     
     // Validate file type
     if (!file.type.startsWith('image/')) {
-        alert('Please select a valid image file');
+        if (window.notyf) {
+            window.notyf.error('Please select a valid image file');
+        } else {
+            alert('Please select a valid image file');
+        }
         return;
     }
+    
+    // Show loading state
+    showImageUploadProgress(type, 'Preparing image...');
       const reader = new FileReader();
     reader.onload = (e) => {
         // Store image data
@@ -1264,14 +1331,20 @@ function closeCropperModal() {
     currentImageType = null;
 }
 
-// Apply crop and save result
-function applyCrop() {
+// Apply crop and save result with Cloudinary upload
+async function applyCrop() {
     if (!currentCropper || !currentImageType) {
-        alert('No image to crop');
+        if (window.notyf) {
+            window.notyf.error('No image to crop');
+        } else {
+            alert('No image to crop');
+        }
         return;
     }
     
     try {
+        showImageUploadProgress(currentImageType, 'Cropping image...');
+        
         // Get cropped canvas with fixed dimensions for portrait (3:4 ratio)
         const canvas = currentCropper.getCroppedCanvas({
             width: 400,   // Fixed width
@@ -1280,25 +1353,75 @@ function applyCrop() {
             imageSmoothingQuality: 'high',
         });
         
-        const croppedData = canvas.toDataURL('image/jpeg', 0.9);
-        
-        // Update the image data
-        if (currentImageType === 'front') {
-            frontImageData = croppedData;
-            updateImagePreview('front', croppedData);
-        } else {
-            backImageData = croppedData;
-            updateImagePreview('back', croppedData);
-        }
-        
-        // Close modal
-        closeCropperModal();
-        
-        console.log('Image cropped successfully');
+        // Convert canvas to blob for Cloudinary upload
+        canvas.toBlob(async (blob) => {
+            try {
+                showImageUploadProgress(currentImageType, 'Uploading to Cloudinary...');
+                
+                // Upload to Cloudinary
+                const uploadResult = await uploadImageToCloudinary(blob, 'inventory/products');
+                
+                if (uploadResult.success) {
+                    // Store Cloudinary URL instead of base64 data
+                    const imageData = {
+                        url: uploadResult.url,
+                        publicId: uploadResult.public_id,
+                        localData: canvas.toDataURL('image/jpeg', 0.9) // Keep for preview
+                    };
+                    
+                    // Update the image data
+                    if (currentImageType === 'front') {
+                        frontImageData = imageData;
+                        updateImagePreview('front', imageData.localData);
+                    } else {
+                        backImageData = imageData;
+                        updateImagePreview('back', imageData.localData);
+                    }
+                    
+                    hideImageUploadProgress(currentImageType);
+                    
+                    if (window.notyf) {
+                        window.notyf.success('Image uploaded to Cloudinary successfully');
+                    }
+                    
+                    console.log('Image uploaded to Cloudinary:', uploadResult.url);
+                } else {
+                    throw new Error(uploadResult.error || 'Upload failed');
+                }
+                
+                // Close modal
+                closeCropperModal();
+                
+            } catch (uploadError) {
+                console.error('Cloudinary upload error:', uploadError);
+                hideImageUploadProgress(currentImageType);
+                
+                if (window.notyf) {
+                    window.notyf.error('Failed to upload image to Cloudinary, saving locally');
+                }
+                
+                // Fallback: save locally
+                const localData = canvas.toDataURL('image/jpeg', 0.9);
+                if (currentImageType === 'front') {
+                    frontImageData = { localData, url: null };
+                    updateImagePreview('front', localData);
+                } else {
+                    backImageData = { localData, url: null };
+                    updateImagePreview('back', localData);
+                }
+                
+                closeCropperModal();
+            }
+        }, 'image/jpeg', 0.9);
         
     } catch (error) {
         console.error('Error cropping image:', error);
-        alert('Error cropping image. Please try again.');
+        hideImageUploadProgress(currentImageType);
+        if (window.notyf) {
+            window.notyf.error('Error cropping image. Please try again.');
+        } else {
+            alert('Error cropping image. Please try again.');
+        }
     }
 }
 
@@ -1700,5 +1823,38 @@ window.refreshInventoryDataFromFirebase = refreshInventoryDataFromFirebase;
 window.getInventoryStatistics = getInventoryStatistics;
 window.searchProductsByName = searchProductsByName;
 window.checkFirebaseConnection = checkFirebaseConnection;
+
+// Show image upload progress
+function showImageUploadProgress(type, message) {
+    const zone = document.getElementById(`${type}ImageZone`);
+    if (zone) {
+        const progressDiv = zone.querySelector('.upload-progress') || document.createElement('div');
+        progressDiv.className = 'upload-progress';
+        progressDiv.innerHTML = `
+            <div class="progress-content">
+                <div class="spinner"></div>
+                <span class="progress-text">${message}</span>
+            </div>
+        `;
+        
+        if (!zone.querySelector('.upload-progress')) {
+            zone.appendChild(progressDiv);
+        }
+        
+        zone.classList.add('uploading');
+    }
+}
+
+// Hide image upload progress
+function hideImageUploadProgress(type) {
+    const zone = document.getElementById(`${type}ImageZone`);
+    if (zone) {
+        const progressDiv = zone.querySelector('.upload-progress');
+        if (progressDiv) {
+            progressDiv.remove();
+        }
+        zone.classList.remove('uploading');
+    }
+}
 
 //# sourceMappingURL=inventory-management.js.map
