@@ -108,6 +108,53 @@
 /* =============== CLEAN TABLE STYLES =============== */
 .table-container {
     overflow-x: auto;
+    position: relative;
+}
+
+.table-container .clean-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+/* Table body scroll container for 4-row limit */
+.table-container .clean-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.table-container .clean-table tbody {
+    display: block;
+    max-height: 320px; /* Approximately 4 rows × 80px per row */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.table-container .clean-table thead,
+.table-container .clean-table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+/* Custom scrollbar for table body */
+.table-container .clean-table tbody::-webkit-scrollbar {
+    width: 6px;
+}
+
+.table-container .clean-table tbody::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.table-container .clean-table tbody::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.table-container .clean-table tbody::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
 }
 
 .clean-table {

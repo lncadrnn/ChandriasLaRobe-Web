@@ -112,14 +112,21 @@ function loadRecentAppointments() {
             time: '10:00 AM',
             status: 'pending',
             contact: '+63 915 678 9012'
-        },
-        {
+        },        {
             customer: { name: 'Valentina Ramos', email: 'val.ramos@email.com' },
             service: 'Final Fitting',
             date: '2024-01-19',
             time: '1:00 PM',
             status: 'confirmed',
             contact: '+63 918 345 6789'
+        },
+        {
+            customer: { name: 'Cristina Flores', email: 'cristina.flores@email.com' },
+            service: 'Fitting Session',
+            date: '2024-01-20',
+            time: '11:30 AM',
+            status: 'pending',
+            contact: '+63 920 123 4567'
         }
     ];
     
