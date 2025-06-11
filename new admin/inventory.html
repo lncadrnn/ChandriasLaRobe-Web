@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chandria's La Robe - Inventory Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Chandria's La Robe - Inventory Management</title>
     
     <!-- Boxicons CSS -->
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    
+    <!-- Cropper.js CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/reusable css/sidebar.css">
@@ -153,84 +155,258 @@
                     <i class='bx bx-x'></i>
                 </button>
             </div>
-            <div class="modal-body">                <form id="addProductForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="productName">Product Name</label>
-                            <input type="text" id="productName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="productCategory">Category</label>
-                            <select id="productCategory" required>
-                                <option value="">Select Category</option>
-                                <option value="wedding-gown">Wedding Gown</option>
-                                <option value="long-gown">Long Gown</option>
-                                <option value="suits">Suits</option>
-                                <option value="cocktail-dress">Cocktail Dress</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="productSizes">Available Sizes</label>
-                            <div class="size-checkboxes">
-                                <label class="checkbox-label"><input type="checkbox" value="XS"> XS</label>
-                                <label class="checkbox-label"><input type="checkbox" value="S"> S</label>
-                                <label class="checkbox-label"><input type="checkbox" value="M"> M</label>
-                                <label class="checkbox-label"><input type="checkbox" value="L"> L</label>
-                                <label class="checkbox-label"><input type="checkbox" value="XL"> XL</label>
-                                <label class="checkbox-label"><input type="checkbox" value="XXL"> XXL</label>
+            <div class="modal-body">
+                <form id="addProductForm">
+                    <!-- Image Upload Section -->
+                    <div class="image-upload-section">
+                        <h4><i class='bx bx-image'></i> Product Images</h4>
+                        <div class="image-upload-container">
+                            <!-- Front Image Upload -->
+                            <div class="image-upload-item">
+                                <label>Front View</label>
+                                <div class="image-drop-zone" id="frontImageZone">
+                                    <div class="upload-placeholder" id="frontPlaceholder">
+                                        <i class='bx bx-cloud-upload'></i>
+                                        <p>Click or drag to upload front image</p>
+                                        <small>JPG, PNG, WebP (Max 5MB)</small>
+                                    </div>
+                                    <div class="image-preview" id="frontPreview" style="display: none;">
+                                        <img id="frontImage" src="" alt="Front view">
+                                        <div class="image-actions">
+                                            <button type="button" class="crop-btn" onclick="openImageCropper('front')">
+                                                <i class='bx bx-crop'></i> Crop
+                                            </button>
+                                            <button type="button" class="remove-btn" onclick="removeImage('front')">
+                                                <i class='bx bx-trash'></i> Remove
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="frontImageInput" accept="image/*" hidden>
+                                </div>
+                            </div>
+                            
+                            <!-- Back Image Upload -->
+                            <div class="image-upload-item">
+                                <label>Back View</label>
+                                <div class="image-drop-zone" id="backImageZone">
+                                    <div class="upload-placeholder" id="backPlaceholder">
+                                        <i class='bx bx-cloud-upload'></i>
+                                        <p>Click or drag to upload back image</p>
+                                        <small>JPG, PNG, WebP (Max 5MB)</small>
+                                    </div>
+                                    <div class="image-preview" id="backPreview" style="display: none;">
+                                        <img id="backImage" src="" alt="Back view">
+                                        <div class="image-actions">
+                                            <button type="button" class="crop-btn" onclick="openImageCropper('back')">
+                                                <i class='bx bx-crop'></i> Crop
+                                            </button>
+                                            <button type="button" class="remove-btn" onclick="removeImage('back')">
+                                                <i class='bx bx-trash'></i> Remove
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="backImageInput" accept="image/*" hidden>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="productSleeves">Sleeves</label>
-                            <select id="productSleeves" required>
-                                <option value="">Select Sleeve Type</option>
-                                <option value="Sleeveless">Sleeveless</option>
-                                <option value="Short sleeves">Short sleeves</option>
-                                <option value="3/4 sleeves">3/4 sleeves</option>
-                                <option value="Long sleeves">Long sleeves</option>
-                                <option value="Off-shoulder">Off-shoulder</option>
-                                <option value="Cap sleeves">Cap sleeves</option>
-                            </select>
+                    </div>
+                    
+                    <!-- Product Information -->
+                    <div class="form-section">
+                        <h4><i class='bx bx-info-circle'></i> Product Information</h4>
+                          <div class="form-row">
+                            <div class="form-group">
+                                <label for="productName">Product Name *</label>
+                                <input type="text" id="productName" placeholder="Enter product name" required>
+                            </div>                            <div class="form-group">
+                                <label for="productCode">Product Code *</label>
+                                <input type="text" id="productCode" placeholder="Auto-generated" readonly>
+                                <small class="help-text">This will be auto-generated based on category and color</small>
+                            </div>
+                        </div>
+                          <div class="form-row">
+                            <div class="form-group">
+                                <label for="productCategory">Category *</label>
+                                <select id="productCategory" required>
+                                    <option value="">Select Category</option>
+                                    <option value="ball-gown">Ball Gown</option>
+                                    <option value="long-gown">Long Gown</option>
+                                    <option value="fairy-gown">Fairy Gown</option>
+                                    <option value="wedding-gown">Wedding Gown</option>
+                                    <option value="suit">Suit</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="productColor">Color *</label>
+                                <select id="productColor" required>
+                                    <option value="">Select Color</option>
+                                    <!-- Primary Colors -->
+                                    <optgroup label="Primary Colors">
+                                        <option value="Red" data-hex="#FF0000">Red</option>
+                                        <option value="Blue" data-hex="#0000FF">Blue</option>
+                                        <option value="Yellow" data-hex="#FFFF00">Yellow</option>
+                                    </optgroup>
+                                    <!-- Secondary Colors -->
+                                    <optgroup label="Secondary Colors">
+                                        <option value="Orange" data-hex="#FFA500">Orange</option>
+                                        <option value="Green" data-hex="#008000">Green</option>
+                                        <option value="Purple" data-hex="#800080">Purple</option>
+                                        <option value="Pink" data-hex="#FFC0CB">Pink</option>
+                                    </optgroup>
+                                    <!-- Neutral Colors -->
+                                    <optgroup label="Neutral Colors">
+                                        <option value="White" data-hex="#FFFFFF">White</option>
+                                        <option value="Black" data-hex="#000000">Black</option>
+                                        <option value="Gray" data-hex="#808080">Gray</option>
+                                        <option value="Brown" data-hex="#A52A2A">Brown</option>
+                                        <option value="Beige" data-hex="#F5F5DC">Beige</option>
+                                        <option value="Cream" data-hex="#FFFDD0">Cream</option>
+                                    </optgroup>
+                                    <!-- Fashion Colors -->
+                                    <optgroup label="Fashion Colors">
+                                        <option value="Navy Blue" data-hex="#2C3E50">Navy Blue</option>
+                                        <option value="Ivory" data-hex="#F8F6F0">Ivory</option>
+                                        <option value="Champagne" data-hex="#F7E7CE">Champagne</option>
+                                        <option value="Nude" data-hex="#E8C5A0">Nude</option>
+                                        <option value="Rose Gold" data-hex="#E8B4A0">Rose Gold</option>
+                                        <option value="Silver" data-hex="#C0C0C0">Silver</option>
+                                        <option value="Gold" data-hex="#FFD700">Gold</option>
+                                        <option value="Burgundy" data-hex="#800020">Burgundy</option>
+                                        <option value="Emerald" data-hex="#50C878">Emerald</option>
+                                        <option value="Royal Blue" data-hex="#4169E1">Royal Blue</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="productRentalPrice">Rental Price (₱) *</label>
+                                <input type="number" id="productRentalPrice" step="0.01" placeholder="0.00" required>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="productColor">Color</label>
-                            <input type="text" id="productColor" required>
+                    <!-- Additional Details -->
+                    <div class="form-section">
+                        <h4><i class='bx bx-cog'></i> Additional Details</h4>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="productSizes">Available Sizes</label>
+                                <div class="size-checkboxes">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" value="XS"> 
+                                        <span>XS</span>
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" value="S"> 
+                                        <span>S</span>
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" value="M"> 
+                                        <span>M</span>
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" value="L"> 
+                                        <span>L</span>
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" value="XL"> 
+                                        <span>XL</span>
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" value="XXL"> 
+                                        <span>XXL</span>
+                                    </label>
+                                </div>
+                            </div>                            <div class="form-group">
+                                <label for="productSleeves">Sleeve Style</label>
+                                <select id="productSleeves">
+                                    <option value="">Select Sleeve Style</option>
+                                    <option value="Off Shoulder">Off Shoulder</option>
+                                    <option value="Long Sleeves">Long Sleeves</option>
+                                    <option value="3/4 Sleeves">3/4 Sleeves</option>
+                                    <option value="Short Sleeves">Short Sleeves</option>
+                                </select>
+                            </div>
                         </div>
+                        
+                        <!-- Product Description at bottom -->
                         <div class="form-group">
-                            <label for="productRentalPrice">Rental Price (₱)</label>
-                            <input type="number" id="productRentalPrice" step="0.01" required>
+                            <label for="productDescription">Description</label>
+                            <textarea id="productDescription" rows="4" placeholder="Enter product description..."></textarea>
                         </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="productStatus">Status</label>
-                            <select id="productStatus" required>
-                                <option value="available">Available</option>
-                                <option value="maintenance">Maintenance</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="productImage">Image Upload</label>
-                            <input type="file" id="productImage" accept="image/*">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="productDescription">Description</label>
-                        <textarea id="productDescription" rows="3"></textarea>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" id="cancelAddProductBtn">Cancel</button>
-                <button class="btn-primary" id="saveProductBtn">Save Product</button>
+                <button type="button" class="btn-secondary" id="cancelAddProductBtn">
+                    <i class='bx bx-x'></i> Cancel
+                </button>
+                <button type="button" class="btn-primary" id="saveProductBtn">
+                    <i class='bx bx-save'></i> Save Product
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Cropper Modal -->
+    <div class="modal" id="imageCropperModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content cropper-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class='bx bx-crop'></i>
+                    Crop Image
+                </h3>
+                <button class="close-modal" id="closeCropperModal">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="cropper-container">
+                    <div class="cropper-wrapper">
+                        <img id="cropperImage" src="" alt="Image to crop">
+                    </div>
+                    <div class="cropper-controls">
+                        <div class="aspect-ratio-controls">
+                            <label>Aspect Ratio:</label>
+                            <div class="ratio-buttons">
+                                <button type="button" class="ratio-btn active" data-ratio="free">Free</button>
+                                <button type="button" class="ratio-btn" data-ratio="1">1:1</button>
+                                <button type="button" class="ratio-btn" data-ratio="1.33">4:3</button>
+                                <button type="button" class="ratio-btn" data-ratio="1.5">3:2</button>
+                                <button type="button" class="ratio-btn" data-ratio="1.78">16:9</button>
+                            </div>
+                        </div>
+                        <div class="crop-actions">
+                            <button type="button" class="crop-action-btn" onclick="rotateCropper(-90)">
+                                <i class='bx bx-rotate-left'></i> Rotate Left
+                            </button>
+                            <button type="button" class="crop-action-btn" onclick="rotateCropper(90)">
+                                <i class='bx bx-rotate-right'></i> Rotate Right
+                            </button>
+                            <button type="button" class="crop-action-btn" onclick="flipCropper('horizontal')">
+                                <i class='bx bx-reflect-horizontal'></i> Flip H
+                            </button>
+                            <button type="button" class="crop-action-btn" onclick="flipCropper('vertical')">
+                                <i class='bx bx-reflect-vertical'></i> Flip V
+                            </button>
+                            <button type="button" class="crop-action-btn" onclick="resetCropper()">
+                                <i class='bx bx-reset'></i> Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeCropper()">
+                    <i class='bx bx-x'></i> Cancel
+                </button>
+                <button type="button" class="btn-primary" onclick="applyCrop()">
+                    <i class='bx bx-check'></i> Apply Crop
+                </button>
             </div>
         </div>
     </div>
@@ -340,6 +516,10 @@
             </div>
         </div>
     </div>    <!-- JavaScript -->
+    <!-- Cropper.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    
+    <!-- Custom JavaScript -->
     <script src="assets/js/sidebar.js"></script>
     <script src="assets/js/inventory.js"></script>
 </body>

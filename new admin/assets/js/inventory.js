@@ -10,7 +10,7 @@ const sampleProducts = [
         name: "Elegant Wedding Gown",
         category: "wedding-gown",
         sizes: ["S", "M", "L"],
-        sleeves: "Off-shoulder",
+        sleeves: "Off Shoulder",
         color: "Ivory",
         colorHex: "#F8F6F0",
         rentalPrice: 15000,
@@ -23,7 +23,7 @@ const sampleProducts = [
         name: "Classic Long Gown",
         category: "long-gown",
         sizes: ["M", "L", "XL"],
-        sleeves: "Long sleeves",
+        sleeves: "Long Sleeves",
         color: "Navy Blue",
         colorHex: "#2C3E50",
         rentalPrice: 8000,
@@ -33,23 +33,23 @@ const sampleProducts = [
     },
     {
         id: 3,
-        name: "Modern Cocktail Dress",
-        category: "cocktail-dress",
+        name: "Enchanted Fairy Gown",
+        category: "fairy-gown",
         sizes: ["XS", "S", "M"],
-        sleeves: "Sleeveless",
-        color: "Black",
-        colorHex: "#2C2C2C",
+        sleeves: "3/4 Sleeves",
+        color: "Lavender",
+        colorHex: "#E6E6FA",
         rentalPrice: 5000,
         status: "available",
-        description: "Chic cocktail dress with modern silhouette and elegant detailing.",
-        image: "placeholder-cocktail.jpg"
+        description: "Magical fairy gown with flowing layers and ethereal detailing.",
+        image: "placeholder-fairy.jpg"
     },
     {
         id: 4,
         name: "Formal Men's Suit",
-        category: "suits",
+        category: "suit",
         sizes: ["L", "XL"],
-        sleeves: "Long sleeves",
+        sleeves: "Long Sleeves",
         color: "Charcoal Gray",
         colorHex: "#36454F",
         rentalPrice: 6000,
@@ -59,16 +59,16 @@ const sampleProducts = [
     },
     {
         id: 5,
-        name: "Romantic Wedding Dress",
-        category: "wedding-gown",
+        name: "Princess Ball Gown",
+        category: "ball-gown",
         sizes: ["S", "M"],
-        sleeves: "3/4 sleeves",
+        sleeves: "Short Sleeves",
         color: "Champagne",
         colorHex: "#F7E7CE",
         rentalPrice: 18000,
         status: "available",
-        description: "Romantic wedding dress with delicate lace and flowing train.",
-        image: "placeholder-wedding-gown.jpg"
+        description: "Stunning ball gown with voluminous skirt and elegant bodice.",
+        image: "placeholder-ball-gown.jpg"
     }
 ];
 
@@ -135,6 +135,12 @@ const sampleAdditionals = [
     }
 ];
 
+// Global variables for image cropping
+let currentCropper = null;
+let currentImageType = null;
+let frontImageData = null;
+let backImageData = null;
+
 function initializeInventory() {
     setupTabs();
     setupModals();
@@ -144,6 +150,16 @@ function initializeInventory() {
     // Load sample data
     loadProducts();
     loadAdditionals();
+    
+    // Initialize enhanced modal functionality
+    initializeEnhancedModal();
+}
+
+// Initialize enhanced modal functionality
+function initializeEnhancedModal() {
+    initializeImageUpload();
+    initializeFormHandlers();
+    initializeModalEvents();
 }
 
 // Tab Management
@@ -458,10 +474,11 @@ function getStatusText(status) {
 
 function getCategoryText(category) {
     switch(category) {
-        case 'wedding-gown': return 'Wedding Gown';
+        case 'ball-gown': return 'Ball Gown';
         case 'long-gown': return 'Long Gown';
-        case 'cocktail-dress': return 'Cocktail Dress';
-        case 'suits': return 'Suits';
+        case 'fairy-gown': return 'Fairy Gown';
+        case 'wedding-gown': return 'Wedding Gown';
+        case 'suit': return 'Suit';
         default: return category;
     }
 }
@@ -755,4 +772,503 @@ function updateDateTime() {
     if (dateTimeElement) {
         dateTimeElement.textContent = formattedDateTime;
     }
+}
+
+// Enhanced Modal Functionality
+
+// Initialize image upload functionality
+function initializeImageUpload() {
+    // Front image upload
+    const frontZone = document.getElementById('frontImageZone');
+    const frontInput = document.getElementById('frontImageInput');
+    const frontPlaceholder = document.getElementById('frontPlaceholder');
+    const frontPreview = document.getElementById('frontPreview');
+    
+    // Back image upload
+    const backZone = document.getElementById('backImageZone');
+    const backInput = document.getElementById('backImageInput');
+    const backPlaceholder = document.getElementById('backPlaceholder');
+    const backPreview = document.getElementById('backPreview');
+    
+    // Setup front image upload
+    setupImageUpload(frontZone, frontInput, frontPlaceholder, frontPreview, 'front');
+    
+    // Setup back image upload
+    setupImageUpload(backZone, backInput, backPlaceholder, backPreview, 'back');
+}
+
+// Setup individual image upload zone
+function setupImageUpload(zone, input, placeholder, preview, type) {
+    // Click to upload
+    zone.addEventListener('click', (e) => {
+        if (e.target.closest('.image-actions')) return;
+        input.click();
+    });
+    
+    // File input change
+    input.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            handleImageFile(file, placeholder, preview, type);
+        }
+    });
+    
+    // Drag and drop
+    zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        zone.classList.add('dragover');
+    });
+    
+    zone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        zone.classList.remove('dragover');
+    });
+    
+    zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const file = files[0];
+            if (file.type.startsWith('image/')) {
+                handleImageFile(file, placeholder, preview, type);
+            }
+        }
+    });
+}
+
+// Handle image file upload
+function handleImageFile(file, placeholder, preview, type) {
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+        alert('File size must be less than 5MB');
+        return;
+    }
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const img = preview.querySelector('img');
+        img.src = e.target.result;
+        
+        // Store image data
+        if (type === 'front') {
+            frontImageData = e.target.result;
+        } else {
+            backImageData = e.target.result;
+        }
+        
+        // Show preview, hide placeholder
+        placeholder.style.display = 'none';
+        preview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+}
+
+// Remove image
+function removeImage(type) {
+    const placeholder = document.getElementById(`${type}Placeholder`);
+    const preview = document.getElementById(`${type}Preview`);
+    const input = document.getElementById(`${type}ImageInput`);
+    
+    // Clear data
+    if (type === 'front') {
+        frontImageData = null;
+    } else {
+        backImageData = null;
+    }
+    
+    // Reset input
+    input.value = '';
+    
+    // Show placeholder, hide preview
+    placeholder.style.display = 'flex';
+    preview.style.display = 'none';
+}
+
+// Open image cropper
+function openImageCropper(type) {
+    currentImageType = type;
+    const imageData = type === 'front' ? frontImageData : backImageData;
+    
+    if (!imageData) return;
+    
+    const cropperModal = document.getElementById('imageCropperModal');
+    const cropperImage = document.getElementById('cropperImage');
+    
+    cropperImage.src = imageData;
+    cropperModal.classList.add('active');
+    
+    // Initialize cropper (you would need to include Cropper.js library)
+    setTimeout(() => {
+        initializeCropper();
+    }, 100);
+}
+
+// Initialize cropper (with Cropper.js library)
+function initializeCropper() {
+    const image = document.getElementById('cropperImage');
+    
+    // Destroy existing cropper
+    if (currentCropper) {
+        currentCropper.destroy();
+    }
+    
+    // Initialize new cropper
+    currentCropper = new Cropper(image, {
+        aspectRatio: NaN,
+        viewMode: 1,
+        autoCropArea: 0.8,
+        responsive: true,
+        restore: false,
+        guides: true,
+        center: true,
+        highlight: false,
+        cropBoxMovable: true,
+        cropBoxResizable: true,
+        toggleDragModeOnDblclick: false,
+    });
+    
+    // Setup aspect ratio buttons
+    const ratioButtons = document.querySelectorAll('.ratio-btn');
+    ratioButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            ratioButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const ratio = btn.getAttribute('data-ratio');
+            if (currentCropper) {
+                if (ratio === 'free') {
+                    currentCropper.setAspectRatio(NaN);
+                } else {
+                    currentCropper.setAspectRatio(parseFloat(ratio));
+                }
+            }
+        });
+    });
+}
+
+// Cropper control functions
+function rotateCropper(angle) {
+    if (currentCropper) {
+        currentCropper.rotate(angle);
+    }
+}
+
+function flipCropper(direction) {
+    if (currentCropper) {
+        if (direction === 'horizontal') {
+            currentCropper.scaleX(-currentCropper.getData().scaleX || -1);
+        } else {
+            currentCropper.scaleY(-currentCropper.getData().scaleY || -1);
+        }
+    }
+}
+
+function resetCropper() {
+    if (currentCropper) {
+        currentCropper.reset();
+    }
+}
+
+// Apply crop
+function applyCrop() {
+    if (currentCropper && currentImageType) {
+        const canvas = currentCropper.getCroppedCanvas({
+            width: 800,
+            height: 800,
+            imageSmoothingEnabled: true,
+            imageSmoothingQuality: 'high',
+        });
+        
+        const croppedData = canvas.toDataURL('image/jpeg', 0.9);
+        
+        // Update the image data
+        if (currentImageType === 'front') {
+            frontImageData = croppedData;
+            document.getElementById('frontImage').src = croppedData;
+        } else {
+            backImageData = croppedData;
+            document.getElementById('backImage').src = croppedData;
+        }
+        
+        closeCropper();
+    }
+}
+
+// Close cropper
+function closeCropper() {
+    const cropperModal = document.getElementById('imageCropperModal');
+    cropperModal.classList.remove('active');
+    
+    if (currentCropper) {
+        currentCropper.destroy();
+        currentCropper = null;
+    }
+    
+    currentImageType = null;
+}
+
+// Initialize form handlers
+function initializeFormHandlers() {
+    // Color dropdown change handler
+    const colorSelect = document.getElementById('productColor');
+    
+    if (colorSelect) {
+        colorSelect.addEventListener('change', () => {
+            generateProductCode();
+        });
+    }
+    
+    // Category change handler
+    const categorySelect = document.getElementById('productCategory');
+    if (categorySelect) {
+        categorySelect.addEventListener('change', generateProductCode);
+    }
+    
+    // Form submission
+    const saveBtn = document.getElementById('saveProductBtn');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', handleFormSubmission);
+    }
+}
+
+// Generate product code automatically
+function generateProductCode() {
+    const category = document.getElementById('productCategory').value;
+    const colorSelect = document.getElementById('productColor');
+    const color = colorSelect.value;
+    
+    if (!category || !color) return;
+      const categoryCodes = {
+        'ball-gown': 'BG',
+        'long-gown': 'LG',
+        'fairy-gown': 'FG',
+        'wedding-gown': 'WG',
+        'suit': 'ST'
+    };
+    
+    const colorCodes = {
+        'Red': 'RD',
+        'Blue': 'BL', 
+        'Yellow': 'YL',
+        'Orange': 'OR',
+        'Green': 'GR',
+        'Purple': 'PR',
+        'Pink': 'PK',
+        'White': 'WH',
+        'Black': 'BK',
+        'Gray': 'GY',
+        'Brown': 'BR',
+        'Beige': 'BG',
+        'Cream': 'CR',
+        'Navy Blue': 'NB',
+        'Ivory': 'IV',
+        'Champagne': 'CH',
+        'Nude': 'ND',
+        'Rose Gold': 'RG',
+        'Silver': 'SV',
+        'Gold': 'GD',
+        'Burgundy': 'BU',
+        'Emerald': 'EM',
+        'Royal Blue': 'RB'
+    };
+    
+    const categoryCode = categoryCodes[category] || 'XX';
+    const colorCode = colorCodes[color] || color.substring(0, 2).toUpperCase();
+    const timestamp = Date.now().toString().slice(-4);
+    
+    const productCode = `${categoryCode}-${colorCode}-${timestamp}`;
+    document.getElementById('productCode').value = productCode;
+}
+
+// Initialize modal events
+function initializeModalEvents() {
+    const addProductBtn = document.getElementById('addProductBtn');
+    const addProductModal = document.getElementById('addProductModal');
+    const closeBtn = document.getElementById('closeAddProductModal');
+    const cancelBtn = document.getElementById('cancelAddProductBtn');
+    const closeCropperBtn = document.getElementById('closeCropperModal');
+    
+    // Open modal
+    if (addProductBtn) {
+        addProductBtn.addEventListener('click', () => {
+            openAddProductModal();
+        });
+    }
+    
+    // Close modal events
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeAddProductModal);
+    }
+    
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', closeAddProductModal);
+    }
+    
+    if (closeCropperBtn) {
+        closeCropperBtn.addEventListener('click', closeCropper);
+    }
+    
+    // Close on backdrop click
+    if (addProductModal) {
+        addProductModal.addEventListener('click', (e) => {
+            if (e.target === addProductModal || e.target.classList.contains('modal-backdrop')) {
+                closeAddProductModal();
+            }
+        });
+    }
+}
+
+// Open add product modal
+function openAddProductModal() {
+    const modal = document.getElementById('addProductModal');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    // Reset form
+    resetProductForm();
+}
+
+// Close add product modal
+function closeAddProductModal() {
+    const modal = document.getElementById('addProductModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+    
+    // Reset form
+    resetProductForm();
+}
+
+// Reset product form
+function resetProductForm() {
+    const form = document.getElementById('addProductForm');
+    if (form) {
+        form.reset();
+    }
+    
+    // Reset images
+    removeImage('front');
+    removeImage('back');
+    
+    // Reset product code
+    document.getElementById('productCode').value = '';
+}
+
+// Handle form submission
+function handleFormSubmission() {
+    const form = document.getElementById('addProductForm');
+    
+    // Validate required fields
+    const requiredFields = ['productName', 'productCategory', 'productColor', 'productRentalPrice'];
+    let isValid = true;
+    
+    requiredFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (!field.value.trim()) {
+            field.style.borderColor = '#dc2626';
+            isValid = false;
+        } else {
+            field.style.borderColor = '';
+        }
+    });
+    
+    if (!isValid) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    // Collect form data
+    const formData = collectFormData();
+    
+    // Add product to inventory
+    addProductToInventory(formData);
+    
+    // Close modal
+    closeAddProductModal();
+    
+    // Show success message
+    showSuccessMessage('Product added successfully!');
+}
+
+// Collect form data
+function collectFormData() {
+    const getSelectedSizes = () => {
+        const checkboxes = document.querySelectorAll('#addProductForm input[type="checkbox"]:checked');
+        return Array.from(checkboxes).map(cb => cb.value);
+    };
+    
+    const getColorHex = () => {
+        const colorSelect = document.getElementById('productColor');
+        const selectedOption = colorSelect.options[colorSelect.selectedIndex];
+        return selectedOption ? selectedOption.getAttribute('data-hex') : '#000000';
+    };
+    
+    return {
+        name: document.getElementById('productName').value.trim(),
+        category: document.getElementById('productCategory').value,
+        productCode: document.getElementById('productCode').value,
+        color: document.getElementById('productColor').value,
+        colorHex: getColorHex(),
+        rentalPrice: parseFloat(document.getElementById('productRentalPrice').value),
+        description: document.getElementById('productDescription').value.trim(),
+        sizes: getSelectedSizes(),
+        sleeves: document.getElementById('productSleeves').value,
+        status: 'available', // Default status
+        frontImage: frontImageData,
+        backImage: backImageData
+    };
+}
+
+// Add product to inventory
+function addProductToInventory(productData) {
+    const newProduct = {
+        id: Date.now(),
+        ...productData,
+        dateAdded: new Date().toISOString()
+    };
+    
+    // Add to sample products array
+    sampleProducts.push(newProduct);
+    
+    // Refresh the products list
+    loadProducts();
+}
+
+// Show success message
+function showSuccessMessage(message) {
+    // Simple alert for now - you could implement a toast notification
+    alert(message);
+}
+
+// Color name to hex conversion (enhanced)
+function colorNameToHex(colorName) {
+    const colorMap = {
+        'white': '#FFFFFF',
+        'black': '#000000',
+        'red': '#FF0000',
+        'blue': '#0000FF',
+        'navy blue': '#2C3E50',
+        'pink': '#FFC0CB',
+        'purple': '#800080',
+        'green': '#008000',
+        'yellow': '#FFFF00',
+        'orange': '#FFA500',
+        'brown': '#A52A2A',
+        'gray': '#808080',
+        'grey': '#808080',
+        'silver': '#C0C0C0',
+        'gold': '#FFD700',
+        'ivory': '#F8F6F0',
+        'champagne': '#F7E7CE',
+        'nude': '#E8C5A0'
+    };
+    
+    return colorMap[colorName.toLowerCase()] || null;
 }
