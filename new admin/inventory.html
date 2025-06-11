@@ -348,59 +348,28 @@
                     <i class='bx bx-save'></i> Save Product
                 </button>
             </div>
-        </div>
-    </div>
+        </div>    </div>
 
     <!-- Image Cropper Modal -->
     <div class="modal" id="imageCropperModal">
         <div class="modal-backdrop"></div>
-        <div class="modal-content cropper-modal">
+        <div class="modal-content cropper-modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">
                     <i class='bx bx-crop'></i>
-                    Crop Image
+                    Crop Image (Portrait)
                 </h3>
-                <button class="close-modal" id="closeCropperModal">
+                <button class="close-modal" onclick="closeCropperModal()">
                     <i class='bx bx-x'></i>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="cropper-container">
-                    <div class="cropper-wrapper">
-                        <img id="cropperImage" src="" alt="Image to crop">
-                    </div>
-                    <div class="cropper-controls">                        <div class="aspect-ratio-controls">
-                            <label>Aspect Ratio:</label>
-                            <div class="ratio-buttons">
-                                <button type="button" class="ratio-btn active" data-ratio="0.75">3:4 (Portrait)</button>
-                                <button type="button" class="ratio-btn" data-ratio="1">1:1 (Square)</button>
-                                <button type="button" class="ratio-btn" data-ratio="1.33">4:3</button>
-                                <button type="button" class="ratio-btn" data-ratio="1.5">3:2</button>
-                                <button type="button" class="ratio-btn" data-ratio="free">Free</button>
-                            </div>
-                        </div>
-                        <div class="crop-actions">
-                            <button type="button" class="crop-action-btn" onclick="rotateCropper(-90)">
-                                <i class='bx bx-rotate-left'></i> Rotate Left
-                            </button>
-                            <button type="button" class="crop-action-btn" onclick="rotateCropper(90)">
-                                <i class='bx bx-rotate-right'></i> Rotate Right
-                            </button>
-                            <button type="button" class="crop-action-btn" onclick="flipCropper('horizontal')">
-                                <i class='bx bx-reflect-horizontal'></i> Flip H
-                            </button>
-                            <button type="button" class="crop-action-btn" onclick="flipCropper('vertical')">
-                                <i class='bx bx-reflect-vertical'></i> Flip V
-                            </button>
-                            <button type="button" class="crop-action-btn" onclick="resetCropper()">
-                                <i class='bx bx-reset'></i> Reset
-                            </button>
-                        </div>
-                    </div>
+                    <img id="cropperImage" src="" alt="Image to crop">
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-secondary" onclick="closeCropper()">
+                <button type="button" class="btn-secondary" onclick="closeCropperModal()">
                     <i class='bx bx-x'></i> Cancel
                 </button>
                 <button type="button" class="btn-primary" onclick="applyCrop()">

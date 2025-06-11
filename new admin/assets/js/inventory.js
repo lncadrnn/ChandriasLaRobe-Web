@@ -894,26 +894,27 @@ function openImageCropper(type) {
     currentImageType = type;
     const imageData = type === 'front' ? frontImageData : backImageData;
     
-    if (!imageData) return;
+    if (!imageData) {
+        alert('Please upload an image first');
+        return;
+    }
     
     const cropperModal = document.getElementById('imageCropperModal');
     const cropperImage = document.getElementById('cropperImage');
     
-    // Show modal first
-    cropperModal.classList.add('active');
-    
-    // Wait for image to load before initializing cropper
-    cropperImage.onload = function() {
-        setTimeout(() => {
-            initializeCropper();
-        }, 200);
-    };
-    
     // Set image source
     cropperImage.src = imageData;
+    
+    // Show modal
+    cropperModal.classList.add('active');
+    
+    // Initialize cropper after image loads
+    cropperImage.onload = function() {
+        initializeCropper();
+    };
 }
 
-// Initialize cropper (with Cropper.js library)
+// Initialize cropper with portrait aspect ratio
 function initializeCropper() {
     const image = document.getElementById('cropperImage');
     
@@ -922,13 +923,9 @@ function initializeCropper() {
         currentCropper.destroy();
     }
     
-    // Check if image is loaded
-    console.log('Initializing cropper with image:', image.src);
-    console.log('Image dimensions:', image.naturalWidth, 'x', image.naturalHeight);
-    
-    // Initialize new cropper with portrait aspect ratio (3:4)
+    // Initialize new cropper with fixed portrait aspect ratio (3:4)
     currentCropper = new Cropper(image, {
-        aspectRatio: 3/4, // Portrait ratio instead of square
+        aspectRatio: 3/4, // Fixed portrait ratio
         viewMode: 1,
         autoCropArea: 0.8,
         responsive: true,
@@ -938,106 +935,76 @@ function initializeCropper() {
         highlight: false,
         cropBoxMovable: true,
         cropBoxResizable: true,
-                toggleDragModeOnDblclick: false,
+        toggleDragModeOnDblclick: false,
+        background: false,
         ready: function() {
-            console.log('Cropper is ready');
+            console.log('Cropper initialized successfully');
         }
     });
-      // Setup aspect ratio buttons
-    const ratioButtons = document.querySelectorAll('.ratio-btn');
-    ratioButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            ratioButtons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            const ratio = btn.getAttribute('data-ratio');
-            if (currentCropper) {
-                if (ratio === 'free') {
-                    currentCropper.setAspectRatio(NaN);
-                } else {
-                    currentCropper.setAspectRatio(parseFloat(ratio));
-                }
-            }
-        });
-    });
-    
-    // Set the portrait ratio button as active by default
-    const portraitBtn = document.querySelector('.ratio-btn[data-ratio="0.75"]');
-    if (portraitBtn) {
-        ratioButtons.forEach(b => b.classList.remove('active'));
-        portraitBtn.classList.add('active');
-    }
 }
 
-// Cropper control functions
-function rotateCropper(angle) {
-    if (currentCropper) {
-        currentCropper.rotate(angle);
-    }
-}
-
-function flipCropper(direction) {
-    if (currentCropper) {
-        if (direction === 'horizontal') {
-            currentCropper.scaleX(-currentCropper.getData().scaleX || -1);
-        } else {
-            currentCropper.scaleY(-currentCropper.getData().scaleY || -1);
-        }
-    }
-}
-
-function resetCropper() {
-    if (currentCropper) {
-        currentCropper.reset();
-    }
-}
-
-// Apply crop
-function applyCrop() {    if (currentCropper && currentImageType) {
-        const canvas = currentCropper.getCroppedCanvas({
-            width: 600,  // Width for portrait orientation
-            height: 800, // Height for portrait orientation (3:4 ratio)
-            imageSmoothingEnabled: true,
-            imageSmoothingQuality: 'high',
-        });
-          const croppedData = canvas.toDataURL('image/jpeg', 0.9);
-        
-        // Update the image data and show preview
-        if (currentImageType === 'front') {
-            frontImageData = croppedData;
-            const frontImage = document.getElementById('frontImage');
-            const frontPreview = document.getElementById('frontPreview');
-            const frontPlaceholder = document.getElementById('frontPlaceholder');
-            
-            frontImage.src = croppedData;
-            frontPlaceholder.style.display = 'none';
-            frontPreview.style.display = 'block';
-        } else {
-            backImageData = croppedData;
-            const backImage = document.getElementById('backImage');
-            const backPreview = document.getElementById('backPreview');
-            const backPlaceholder = document.getElementById('backPlaceholder');
-            
-            backImage.src = croppedData;
-            backPlaceholder.style.display = 'none';
-            backPreview.style.display = 'block';
-        }
-        
-        closeCropper();
-    }
-}
-
-// Close cropper
-function closeCropper() {
+// Close cropper modal
+function closeCropperModal() {
     const cropperModal = document.getElementById('imageCropperModal');
     cropperModal.classList.remove('active');
     
+    // Destroy cropper
     if (currentCropper) {
         currentCropper.destroy();
         currentCropper = null;
     }
     
     currentImageType = null;
+}
+
+// Apply crop and save result
+function applyCrop() {
+    if (!currentCropper || !currentImageType) {
+        alert('No image to crop');
+        return;
+    }
+    
+    try {
+        // Get cropped canvas with fixed dimensions for portrait (3:4 ratio)
+        const canvas = currentCropper.getCroppedCanvas({
+            width: 400,   // Fixed width
+            height: 533,  // Fixed height (3:4 ratio: 400 * 4/3 = 533)
+            imageSmoothingEnabled: true,
+            imageSmoothingQuality: 'high',
+        });
+        
+        const croppedData = canvas.toDataURL('image/jpeg', 0.9);
+        
+        // Update the image data
+        if (currentImageType === 'front') {
+            frontImageData = croppedData;
+            updateImagePreview('front', croppedData);
+        } else {
+            backImageData = croppedData;
+            updateImagePreview('back', croppedData);
+        }
+        
+        // Close modal
+        closeCropperModal();
+        
+        console.log('Image cropped successfully');
+        
+    } catch (error) {
+        console.error('Error cropping image:', error);
+        alert('Error cropping image. Please try again.');
+    }
+}
+
+// Update image preview after cropping
+function updateImagePreview(type, imageData) {
+    const placeholder = document.getElementById(`${type}Placeholder`);
+    const preview = document.getElementById(`${type}Preview`);
+    const img = document.getElementById(`${type}Image`);
+      if (placeholder && preview && img) {
+        // Hide placeholder and show preview
+        placeholder.style.display = 'none';
+        preview.style.display = 'block';        img.src = imageData;
+    }
 }
 
 // Initialize form handlers
