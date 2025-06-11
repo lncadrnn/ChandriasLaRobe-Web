@@ -6,10 +6,9 @@
     <title>Chandria's La Robe - Admin Dashboard</title>
     
     <!-- Boxicons CSS -->
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    
-    <!-- Custom CSS -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">    <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/reusable css/sidebar.css">
+    <link rel="stylesheet" href="assets/css/index.css">
 </head>
 <body>
     <div class="sidebar" id="sidebar">        <div class="sidebar-header">
@@ -88,10 +87,102 @@
             <h1 class="page-title">Dashboard</h1>
             <p class="page-subtitle" id="currentDateTime">Loading...</p>
         </div>
-        <!-- Main content will be added here -->
-    </main>
-    
-    <!-- JavaScript -->
+          <!-- Dashboard Cards -->
+        <div class="dashboard-cards">
+            <div class="card">
+                <div class="card-icon">
+                    <i class='bx bxs-package'></i>
+                </div>
+                <div class="card-content">
+                    <h3>Total Rentals</h3>
+                    <div class="card-number" id="totalRentals">0</div>
+                    <div class="card-subtitle">All time rentals</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">
+                    <i class='bx bxs-calendar-check'></i>
+                </div>
+                <div class="card-content">
+                    <h3>Active Rentals</h3>
+                    <div class="card-number" id="activeRentals">0</div>
+                    <div class="card-subtitle">Currently rented</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">
+                    <i class='bx bxs-calendar'></i>
+                </div>
+                <div class="card-content">
+                    <h3>Appointments</h3>
+                    <div class="card-number" id="totalAppointments">0</div>
+                    <div class="card-subtitle">This month</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">
+                    <i class='bx bxs-dollar-circle'></i>
+                </div>
+                <div class="card-content">
+                    <h3>Revenue</h3>
+                    <div class="card-number" id="totalRevenue">₱0</div>
+                    <div class="card-subtitle">This month</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Content -->
+        <div class="dashboard-grid">
+            <div class="recent-section">
+                <div class="section-header">
+                    <h2>Recent Rentals</h2>
+                    <a href="rental-history.html" class="view-all-btn">View All</a>
+                </div>
+                <div class="table-container">                    <table class="clean-table">
+                        <thead>
+                            <tr>
+                                <th class="col-customer">Rentee Name</th>
+                                <th class="col-transaction">Transaction Code</th>
+                                <th class="col-balance">Remaining Bal.</th>
+                                <th class="col-status">Status</th>
+                                <th class="col-details">Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentRentalsBody">
+                            <!-- Dynamic content will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="recent-section">
+                <div class="section-header">
+                    <h2>Recent Appointments</h2>
+                    <a href="calendar.html" class="view-all-btn">View All</a>
+                </div>
+                <div class="table-container">                    <table class="clean-table">
+                        <thead>
+                            <tr>
+                                <th class="col-customer">Customer</th>
+                                <th class="col-item">Service</th>
+                                <th class="col-date">Date</th>
+                                <th class="col-date">Time</th>
+                                <th class="col-status">Status</th>
+                                <th class="col-amount">Contact</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentAppointmentsBody">
+                            <!-- Dynamic content will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>    <!-- JavaScript -->
     <script src="assets/js/sidebar.js"></script>
+    <script src="assets/js/index.js"></script>
 </body>
 </html>
