@@ -1173,10 +1173,8 @@ $(document).ready(function () {
     $("#client-contact").on("input", function () {
         // Replace any non-numeric character with an empty string
         this.value = this.value.replace(/[^0-9]/g, "");
-    });
-
-    // --- Payment Type Logic ---
-    const $paymentType = $("#payment-type");
+    });    // --- Payment Type Logic ---
+    const $paymentType = $("#payment-status");
     const $totalPayment = $("#total-payment");
     const $remainingBalance = $("#remaining-balance");
     const $rentalFeeInput = $("#client-rental-fee");
@@ -1268,249 +1266,125 @@ $(document).ready(function () {
         }
     });
 
-    // --- Restrict Event Date ---
-    const $rentalType = $("#rental-type");
-    const $fixedEventDateInput = $("#fixed-event-date");
-    const $fixedEventDateWrapper = $("#fixed-event-date-wrapper"); 
-    const $fixedDetailsRow = $("#fixed-details-row"); 
-    
-    const $eventStartDate = $("#event-start-date");
-    const $eventEndDate = $("#event-end-date");
-    const $openRentalDatesWrapper = $("#open-rental-dates-wrapper");
+    // --- Payment Method and Status Logic ---
+    const $paymentMethod = $("#payment-method");
+    const $cashPaymentFields = $("#cash-payment-fields");
+    const $digitalPaymentFields = $("#digital-payment-fields");
+    const $cashReceived = $("#cash-received");
+    const $changeDisplay = $("#change-display");
+    const $referenceNo = $("#reference-no");
 
-    // Helper function to get 'YYYY-MM-DD' string from a local Date object
-    function getLocalDateString(date) {
-        const year = date.getFullYear();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // getMonth is 0-indexed
-        const day = date.getDate().toString().padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
+    // Payment method change handler
+    $paymentMethod.on("change", function() {
+        const method = $(this).val();
+        
+        if (method === "Cash") {
+            $cashPaymentFields.show();
+            $digitalPaymentFields.hide();
+            $referenceNo.val("CASH").prop("readonly", true);
+        } else if (method === "Gcash" || method === "Maya" || method === "GoTyme") {
+            $cashPaymentFields.hide();
+            $digitalPaymentFields.show();
+            $referenceNo.val("").prop("readonly", false);
+        } else {
+            $cashPaymentFields.hide();
+            $digitalPaymentFields.hide();
+            $referenceNo.val("").prop("readonly", false);
+        }
+    });
 
-    // Function to set the event end date's MINIMUM based on the selected start date (for Open Rental)
-    function updateEventEndDateMin() {
-        if ($rentalType.val() === "Open Rental") {
-            const startDateVal = $eventStartDate.val();
-            if (startDateVal) {
-                const parts = startDateVal.split('-');
-                const year = parseInt(parts[0], 10);
-                const month = parseInt(parts[1], 10) - 1; 
-                const day = parseInt(parts[2], 10);
-                const startDate = new Date(year, month, day); 
+    // Cash received calculation for change
+    $cashReceived.on("input", function() {
+        const received = parseFloat($(this).val()) || 0;
+        const totalPayment = parseFloat($totalPayment.val()) || 0;
+        const change = Math.max(received - totalPayment, 0);
+        $changeDisplay.text(`₱${change.toLocaleString()}`);
+    });
 
-                const nextDayOfStartDate = new Date(startDate);
-                nextDayOfStartDate.setDate(startDate.getDate() + 1);
+    // Update change when total payment changes
+    $totalPayment.on("input", function() {
+        if ($paymentMethod.val() === "Cash") {
+            const received = parseFloat($cashReceived.val()) || 0;
+            const totalPayment = parseFloat($(this).val()) || 0;
+            const change = Math.max(received - totalPayment, 0);
+            $changeDisplay.text(`₱${change.toLocaleString()}`);
+        }
+    });
+
+    // --- Customer Form Validation and Submission Logic ---
+    // Common validation rules
+    const commonValidationRules = {
+        required: true,
+        trim: true
+    };
+
+    // Specific rules for different fields
+    const specificFieldRules = {
+        "client-full-name": {
+            ...commonValidationRules,
+            minLength: 3
+        },
+        "client-contact": {
+            ...commonValidationRules,
+            // Custom validation function for contact number
+            validate: function(value) {
+                const regex = /^[0-9]{10}$/;
+                return regex.test(value) || "Contact number must be 10 digits.";
+            }
+        },
+        "fixed-event-date": {
+            ...commonValidationRules,
+            // Custom validation function for event date
+            validate: function(value) {
+                // Check if the date is at least 2 days from now
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const minDate = new Date(today);
+                minDate.setDate(today.getDate() + 2);
                 
-                const nextDayOfStartDateStr = getLocalDateString(nextDayOfStartDate);
-                $eventEndDate.attr("min", nextDayOfStartDateStr);
-
-                if ($eventEndDate.val() && new Date($eventEndDate.val()) < nextDayOfStartDate) {
-                    $eventEndDate.val("");
-                }
-            } else {
-                $eventEndDate.removeAttr("min").val("");
+                const selectedDate = new Date(value);
+                return selectedDate >= minDate || "Event date must be at least 2 days from today.";
+            }
+        },
+        "client-rental-fee": {
+            ...commonValidationRules,
+            // Ensure this field is a number and greater than 0
+            validate: function(value) {
+                const numericValue = parseFloat(value.replace(/[^\d.-]/g, ""));
+                return (
+                    !isNaN(numericValue) && numericValue > 0 ||
+                    "Rental fee must be a positive number."
+                );
             }
         }
-    }
-    
-    function toggleDateFields() {
-        const rentalType = $rentalType.val();
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const minBookableDate = new Date(today);
-        minBookableDate.setDate(today.getDate() + 2);
-        const minBookableDateStr = getLocalDateString(minBookableDate);
+    };
 
-        // Ensure the row containing rental fee (and potentially fixed event date) is visible.
-        // The rental fee itself should always be visible.
-        $fixedDetailsRow.show(); 
-        
-        // Default state for specific date inputs/wrappers:
-        // Hide the "Fixed Event Date" wrapper initially.
-        $fixedEventDateWrapper.hide(); 
-        $fixedEventDateInput.removeAttr("required").val("").removeAttr("min");
-        
-        // Hide the "Open Rental" dates wrapper initially.
-        $openRentalDatesWrapper.hide();
-        $eventStartDate.removeAttr("required").val("").removeAttr("min");
-        $eventEndDate.removeAttr("required").val("").removeAttr("min");
+    // Apply validation rules to the form fields
+    Object.keys(specificFieldRules).forEach(fieldId => {
+        const rules = specificFieldRules[fieldId];
 
-        if (rentalType === "Fixed Rental") {
-            // Show the "Fixed Event Date" wrapper (it's in $fixedDetailsRow with rental fee).
-            $fixedEventDateWrapper.show(); 
-            $fixedEventDateInput.attr("required", "required").attr("min", minBookableDateStr);
-            // $openRentalDatesWrapper remains hidden.
+        $(`#${fieldId}`).on("input change", function() {
+            const $this = $(this);
+            const value = $this.val();
 
-            if ($fixedEventDateInput.val()) {
-                const currentDateVal = $fixedEventDateInput.val();
-                const currentParts = currentDateVal.split('-');
-                const currentDateLocal = new Date(parseInt(currentParts[0]), parseInt(currentParts[1]) - 1, parseInt(currentParts[2]));
-                if (currentDateLocal < minBookableDate) {
-                    $fixedEventDateInput.val(""); 
+            // Trim whitespace if rule is set
+            let trimmedValue = rules.trim ? value.trim() : value;
+
+            // Run custom validation if provided
+            if (rules.validate) {
+                const validationResult = rules.validate(trimmedValue);
+                if (validationResult !== true) {
+                    // Show error message
+                    notyf.error(validationResult);
+                    $this.addClass("invalid");
+                    return;
                 }
             }
-        } else if (rentalType === "Open Rental") {
-            // $fixedEventDateWrapper remains hidden (so only rental fee shows in $fixedDetailsRow).
-            
-            // Show the "Open Rental" dates.
-            $openRentalDatesWrapper.show();
-            $eventStartDate.attr("required", "required").attr("min", minBookableDateStr);
-            $eventEndDate.attr("required", "required");
-            
-            // Disable end date initially if no start date is selected
-            if (!$eventStartDate.val()) {
-                $eventEndDate.prop("disabled", true);
-            } else {
-                $eventEndDate.prop("disabled", false);
-            }
-            
-            if ($eventStartDate.val()) {
-                const currentStartDateVal = $eventStartDate.val();
-                const currentStartParts = currentStartDateVal.split('-');
-                const currentStartDateLocal = new Date(parseInt(currentStartParts[0]), parseInt(currentStartParts[1]) - 1, parseInt(currentStartParts[2]));
-                if (currentStartDateLocal < minBookableDate) {
-                    $eventStartDate.val(""); 
-                    // Disable end date if start date is cleared
-                    $eventEndDate.prop("disabled", true);
-                }
-            }
-            updateEventEndDateMin();
-        } else { // No rental type selected (initial state)
-            // $fixedEventDateWrapper remains hidden.
-            // $openRentalDatesWrapper remains hidden.
-            // $fixedDetailsRow is shown, so rental fee is visible.
-        }
-    }
 
-    // Initialize and attach listeners
-    if ($fixedEventDateInput.length && $eventStartDate.length && $eventEndDate.length) {
-        $eventStartDate.on("change", function() {
-            // Enable/disable end date based on start date selection
-            if ($rentalType.val() === "Open Rental") {
-                if ($eventStartDate.val()) {
-                    $eventEndDate.prop("disabled", false);
-                } else {
-                    $eventEndDate.prop("disabled", true).val("");
-                }
-            }
-            updateEventEndDateMin();
+            $this.removeClass("invalid");
         });
-        $rentalType.on("change", toggleDateFields);
-        toggleDateFields(); // Initial call
-    }
+    });
 
-    // Prevent manual entry of invalid dates on form submission
-    if ($customerForm.length) {
-        $customerForm.on("submit", function (e) {
-            const rentalTypeSelected = $rentalType.val();
-            
-            const todayForSubmit = new Date();
-            todayForSubmit.setHours(0, 0, 0, 0);
-            const minBookableDateOnSubmit = new Date(todayForSubmit);
-            minBookableDateOnSubmit.setDate(todayForSubmit.getDate() + 2);
-
-            if (rentalTypeSelected === "Fixed Rental") {                const fixedDateVal = $fixedEventDateInput.val();
-                if (!fixedDateVal) { 
-                    notyf.error("Event Date is required for Fixed Rental.");
-                    e.preventDefault();
-                    $fixedEventDateInput.focus();
-                    return;
-                }
-                const dateParts = fixedDateVal.split('-');
-                const dateLocal = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
-                if (dateLocal < minBookableDateOnSubmit) {
-                    e.preventDefault();
-                    notyf.error("Event Date must be at least 2 days after today.");
-                    $fixedEventDateInput.focus();
-                    return;
-                }
-            } else if (rentalTypeSelected === "Open Rental") {                const startDateVal = $eventStartDate.val();
-                if (!startDateVal) { 
-                    notyf.error("Event start date is required for Open Rental.");
-                    e.preventDefault();
-                    $eventStartDate.focus();
-                    return;
-                }
-                const startParts = startDateVal.split('-');
-                const startDateLocal = new Date(parseInt(startParts[0]), parseInt(startParts[1]) - 1, parseInt(startParts[2]));
-                if (startDateLocal < minBookableDateOnSubmit) {
-                    e.preventDefault();
-                    notyf.error("Event start date must be at least 2 days after today.");
-                    $eventStartDate.focus();
-                    return;
-                }
-
-                const endDateVal = $eventEndDate.val();
-                if (!endDateVal) { 
-                     notyf.error("Event end date is required for Open Rental.");
-                     e.preventDefault();
-                     $eventEndDate.focus();
-                     return;
-                }
-                const endParts = endDateVal.split('-');
-                const endDateLocal = new Date(parseInt(endParts[0]), parseInt(endParts[1]) - 1, parseInt(endParts[2]));
-                const expectedMinEndDate = new Date(startDateLocal);
-                expectedMinEndDate.setDate(startDateLocal.getDate() + 1);
-                if (endDateLocal < expectedMinEndDate) {
-                     e.preventDefault();
-                     notyf.error("Event end date must be at least one day after the event start date.");
-                     $eventEndDate.focus();
-                     return;
-                }
-            }
-        });
-    }
-
-    // TRANSACTION CODE GENERATOR FUNCTION
-    async function generateTransactionCode() {
-        try {
-            const now = new Date();
-            const mmddyy = now
-                .toLocaleDateString("en-US", {
-                    month: "2-digit",
-                    day: "2-digit",
-                    year: "2-digit"
-                })
-                .replace(/\//g, ""); // Format: MMDDYY
-
-            const prefix = "TRNS-" + mmddyy + "-";
-            const rentalsRef = collection(chandriaDB, "transaction");
-
-            const q = query(
-                rentalsRef,
-                where("transactionCode", ">=", prefix + "000"),
-                where("transactionCode", "<=", prefix + "999")
-            );
-
-            const snapshot = await getDocs(q);
-            let maxSeq = 0;
-
-            snapshot.forEach(doc => {
-                const code = doc.data().transactionCode;
-                const match = code.match(/-(\d{3})$/);
-                if (match) {
-                    const num = parseInt(match[1], 10);
-                    if (num > maxSeq) maxSeq = num;
-                }
-            });
-
-            const newSeq = (maxSeq + 1).toString().padStart(3, "0");
-            return prefix + newSeq;
-        } catch (error) {
-            console.error("Error generating transaction code:", error);
-
-            // Optional: Notify the user via alert or UI element
-            alert(
-                "Failed to generate transaction code. Please try again later."
-            );
-
-            // Optional: Return a fallback code with 'ERR'
-            const fallbackCode =
-                "TRNS-ERROR-" + Date.now().toString().slice(-3);
-            return fallbackCode;
-        }
-    }
-    
-    // --====== START OF SUBMITTING DATA TO FIREBASE ======--
     // FORM (CUSTOMER INFO) SUBMIT FUNCTION
     $("#customer-form").on("submit", async function (e) {
         e.preventDefault();
@@ -1637,10 +1511,9 @@ $(document).ready(function () {
                     parseInt(
                         $("#client-rental-fee").val().replace(/[^\d]/g, ""),
                         10
-                    ) || 0,
-                rentalType: $("#rental-type").val(),
+                    ) || 0,                rentalType: $("#rental-type").val(),
                 paymentMethod: $("#payment-method").val(),
-                paymentType: $("#payment-type").val(),
+                paymentType: $("#payment-status").val(),
                 totalPayment: parseFloat($("#total-payment").val()) || 0,
                 remainingBalance:
                     parseFloat($("#remaining-balance").val()) || 0,
