@@ -53,6 +53,24 @@ function highlightActiveNavigation() {
     const currentPage = window.location.pathname.split('/').pop() || 'dashboard.html';
     const navLinks = document.querySelectorAll('.nav-link, .custom-nav-link');
     
+    // First, preserve any existing active classes that are correctly set
+    let hasExistingActive = false;
+    navLinks.forEach(link => {
+        if (link.classList.contains('active')) {
+            const anchor = link.querySelector('a');
+            if (anchor && anchor.getAttribute('href') === '#') {
+                // This is likely the correct active page with href="#"
+                hasExistingActive = true;
+            }
+        }
+    });
+    
+    // If there's already a correctly set active class with href="#", don't override it
+    if (hasExistingActive) {
+        return;
+    }
+    
+    // Otherwise, set active class based on href matching current page
     navLinks.forEach(link => {
         const anchor = link.querySelector('a');
         if (anchor) {
