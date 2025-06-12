@@ -2073,21 +2073,13 @@ $(document).ready(function () {
         
         updateOrderSummary();
     }
-    
-    // Update order summary
+      // Update order summary
     function updateOrderSummary() {
-        const subtotal = [
+        const total = [
             ...cart.products.map(p => p.price * (p.quantity || 1)),
             ...cart.accessories.map(a => a.price)
         ].reduce((sum, val) => sum + val, 0);
         
-        const discount = 0;
-        const tax = subtotal * 0.12;
-        const total = subtotal - discount + tax;
-        
-        $("#cart-subtotal").text(`₱${subtotal.toLocaleString()}`);
-        $("#cart-discount").text(`-₱${discount.toLocaleString()}`);
-        $("#cart-tax").text(`₱${tax.toLocaleString()}`);
         $("#cart-total-amount").text(`₱${total.toLocaleString()}`);
     }
     
