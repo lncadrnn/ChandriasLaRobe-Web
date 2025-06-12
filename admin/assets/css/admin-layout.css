@@ -132,25 +132,25 @@ body {
 .sidebar header .toggle {
     position: absolute;
     top: 50%;
-    right: -25px;
+    right: -20px;
     transform: translateY(-50%) rotate(180deg);
-    height: 25px;
-    width: 25px;
+    height: 22px;
+    width: 22px;
     background: var(--primary-color);
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
     color: var(--white);
-    font-size: 18px;
+    font-size: 16px;
     cursor: pointer;
     transition: var(--tran-03);
     box-shadow: var(--shadow);
+    z-index: 101;
 }
 
 .sidebar.close header .toggle {
-    transform: translateY(-50%);
-    right: -25px;
+    transform: translateY(-50%) rotate(0deg);
 }
 
 /* Sidebar Menu */
@@ -409,7 +409,6 @@ body {
 .page-content {
     max-width: 100%;
     overflow-x: auto;
-    padding-top: 12px;
 }
 
 /* =============== COMMON BUTTON STYLES =============== */
@@ -577,10 +576,7 @@ body {
     .main-header {
         padding: 20px 25px;
     }
-    
-    .page-content {
-        padding: 25px;
-    }
+
 }
 
 @media (max-width: 768px) {
@@ -604,10 +600,6 @@ body {
     
     .page-subtitle {
         font-size: 13px;
-    }
-    
-    .page-content {
-        padding: 20px;
     }
     
     .btn {
