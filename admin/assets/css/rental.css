@@ -1060,6 +1060,31 @@
     overflow: auto;
     border-radius: 8px;
     border: 1px solid #e0e0e0;
+    max-height: calc(100vh - 300px); /* Ensure scrolling when content overflows */
+}
+
+/* Custom scrollbar for table container */
+.table-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #ff1493;
+}
+
+.table-container::-webkit-scrollbar-corner {
+    background: #f1f1f1;
 }
 
 .products-table {
