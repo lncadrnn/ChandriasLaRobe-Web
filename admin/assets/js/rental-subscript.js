@@ -18,13 +18,20 @@ $(document).ready(function () {
     window.rentalSubscriptInitialized = true;
     
     console.log('Initializing rental subscript...');
-    
-    // NOTYF
+      // NOTYF
     const notyf = new Notyf({
         position: {
             x: "center",
             y: "top"
-        }
+        },
+        types: [
+            {
+                type: 'error',
+                background: '#ff4757',
+                duration: 4000,
+                dismissible: true
+            }
+        ]
     });
     
     const $body = $("body"),
@@ -749,31 +756,10 @@ $(document).ready(function () {
     const isAppointmentFlow = checkAppointmentFlow();
     if (isAppointmentFlow) {
         console.log('Page loaded from appointment flow - data pre-populated');
-    }
-
-    // --- Error Modal Logic (jQuery version) ---
-    const $errorModal = $("#error-modal");
-    const $errorModalMsg = $("#error-modal-message");
-    const $errorModalOk = $("#error-modal-ok");
-    const $errorModalClose = $(".error-close");
-
+    }    // --- Error Notification Logic (Using Notyf) ---
     function showErrorModal(message) {
-        if ($errorModal.length && $errorModalMsg.length) {
-            $errorModalMsg.text(message);
-            $errorModal.show();
-        }
+        notyf.error(message);
     }
-
-    // Close modal on OK or X button click
-    $errorModalOk.on("click", () => $errorModal.hide());
-    $errorModalClose.on("click", () => $errorModal.hide());
-
-    // Close modal if clicking outside of it
-    $(window).on("click", function (e) {
-        if ($(e.target).is($errorModal)) {
-            $errorModal.hide();
-        }
-    });
 
     // --- Product & Accessory Search Functionality (jQuery version) ---
     const $searchInput = $('.pos-search-bar input[type="text"]');
@@ -1890,8 +1876,7 @@ $(document).ready(function () {
                 row.hide();
             }
         });
-    });
-      // Handle size button clicks for products
+    });      // Handle size button clicks for products - direct add to cart
     $(document).on('click', '.size-button[data-product-id]', function(e) {
         e.stopPropagation(); // Prevent row click
         
@@ -1902,7 +1887,27 @@ $(document).ready(function () {
         const size = $(this).data('size');
         const stock = $(this).data('stock');
         
-        showProductSizeModal(productId, productName, productCode, productPrice, size, stock);
+        // Check if this product-size combination already exists in cart
+        const exists = cart.products.some(
+            p => p.id === productId && p.size === size
+        );
+        
+        if (exists) {
+            notyf.error(`"${productName}" (${size}) is already in the cart.`);
+        } else {
+            // Add product directly to cart with quantity 1
+            cart.products.push({
+                id: productId,
+                name: productName,
+                code: productCode,
+                price: productPrice,
+                size: size,
+                quantity: 1
+            });
+            
+            updateNewCartDisplay();
+            notyf.success(`Added "${productName}" (${size}) to cart!`);
+        }
     });
 
     // Handle size button clicks for additionals
@@ -1938,41 +1943,7 @@ $(document).ready(function () {
             
             // You can add additional details modal here if needed
             console.log(`Additional details: ${additionalName} (${additionalCode})`);
-        }
-    });
-    
-    // Show product size modal with quantity selection
-    function showProductSizeModal(productId, productName, productCode, productPrice, selectedSize, stock) {
-        $("#modal-product-name").text(productName);
-        $("#modal-product-code").text(productCode);
-        $("#modal-product-price").text(`₱${productPrice.toLocaleString()}`);
-        
-        $("#proceed-btn").data({
-            'id': productId,
-            'name': productName,
-            'code': productCode,
-            'price': productPrice,
-            'size': selectedSize,
-            'stock': stock
-        });
-        
-        // Create quantity selection form
-        $("#product-size-form").html(`
-            <div class="size-quantity-selection">
-                <div class="selected-size">
-                    <h4>Selected Size: ${selectedSize}</h4>
-                    <p>Available Stock: ${stock}</p>
-                </div>
-                <div class="quantity-input-group">
-                    <label for="product-quantity">Quantity:</label>
-                    <input type="number" id="product-quantity" min="1" max="${stock}" value="1" />
-                </div>
-            </div>
-        `);
-        
-        $("#proceed-btn").removeClass("disabled");
-        $("#product-size-modal").show();
-    }
+        }    });
       // Add additional to cart
     function addAdditionalToCart(id, name, code, price) {
         const productCount = cart.products.length;
@@ -2122,39 +2093,5 @@ $(document).ready(function () {
         cart.accessories = [];
         updateNewCartDisplay();
     });
-    
-    // Update the proceed button click handler for new modal
-    $("#proceed-btn").on("click", function () {
-        if ($(this).hasClass("disabled")) return;
-        
-        const data = $(this).data();
-        const quantity = parseInt($("#product-quantity").val()) || 1;
-        
-        if (!quantity || quantity < 1) {
-            showErrorModal("Please enter a valid quantity.");
-            return;
-        }
-        
-        const exists = cart.products.some(
-            p => p.id === data.id && p.size === data.size
-        );
-        
-        if (exists) {
-            showErrorModal(`"${data.name}" (${data.size}) is already in the cart.`);
-        } else {
-            cart.products.push({
-                id: data.id,
-                name: data.name,
-                code: data.code,
-                price: data.price,
-                size: data.size,
-                quantity: quantity
-            });
-            
-            updateNewCartDisplay();
-            $("#product-size-modal").hide();
-        }
-    });
-    
-    // ===== END TABLE-BASED INTERFACE UI FUNCTIONS =====
+      // ===== END TABLE-BASED INTERFACE UI FUNCTIONS =====
 });
