@@ -1,8 +1,6 @@
-import { firebaseConfig } from '../../firebase-config.js';
-
 document.addEventListener("DOMContentLoaded", () => {
     // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(window.firebaseConfig);
     const db = firebase.firestore();
 
     // Sidebar toggle logic
@@ -18,15 +16,48 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.setItem("admin-sidebar-closed", isClosed);
         });
     }    // Rentals data - now fetched from Firebase
-    let rentals = [];    const statusClass = {
+    let rentals = [];
+
+    const statusClass = {
         'Upcoming': 'pending',
         'Pending': 'ongoing', 
         'Completed': 'delivered',
         'Overdue': 'declined'
-    };// Fetch transactions from Firebase
+    };
+
+    // Update current date and time display
+    function updateDateTime() {
+        const now = new Date();
+        const options = { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        };
+        const dateTimeString = now.toLocaleDateString('en-US', options);
+        const currentDateTimeElement = document.getElementById('currentDateTime');
+        if (currentDateTimeElement) {
+            currentDateTimeElement.textContent = dateTimeString;
+        }
+    }
+
+    // Update time every minute
+    updateDateTime();
+    setInterval(updateDateTime, 60000);
+
+    // Fetch transactions from Firebase
     async function fetchTransactions() {
         try {
             console.log("Fetching transactions from Firebase...");
+            
+            // Check if Firebase is available
+            if (!db) {
+                throw new Error("Firebase database not initialized");
+            }
+            
             const snapshot = await db.collection("transaction")
                 .orderBy("timestamp", "desc")
                 .limit(20)
@@ -39,18 +70,32 @@ document.addEventListener("DOMContentLoaded", () => {
                 const currentDate = new Date();
                 const eventStartDate = data.eventStartDate ? new Date(data.eventStartDate) : null;
                 const eventEndDate = data.eventEndDate ? new Date(data.eventEndDate) : null;
-                  // Calculate rental status based on dates
+                
+                // Calculate rental status based on dates
                 let rentalStatus = 'Upcoming';
-                if (eventStartDate && eventEndDate) {
-                    if (currentDate < eventStartDate) {
-                        rentalStatus = 'Upcoming';
-                    } else if (currentDate >= eventStartDate && currentDate <= eventEndDate) {
-                        rentalStatus = 'Ongoing';
-                    } else if (currentDate > eventEndDate) {
-                        rentalStatus = 'Completed';
+                if (eventStartDate) {
+                    if (eventEndDate) {
+                        // Open rental with end date
+                        if (currentDate < eventStartDate) {
+                            rentalStatus = 'Upcoming';
+                        } else if (currentDate >= eventStartDate && currentDate <= eventEndDate) {
+                            rentalStatus = 'Ongoing';
+                        } else if (currentDate > eventEndDate) {
+                            rentalStatus = 'Completed';
+                        }
+                    } else {
+                        // Fixed rental (single day)
+                        if (currentDate < eventStartDate) {
+                            rentalStatus = 'Upcoming';
+                        } else if (currentDate.toDateString() === eventStartDate.toDateString()) {
+                            rentalStatus = 'Ongoing';
+                        } else if (currentDate > eventStartDate) {
+                            rentalStatus = 'Completed';
+                        }
                     }
                 }
-                  // Calculate payment status
+                
+                // Calculate payment status
                 const totalPayment = parseFloat(data.totalPayment) || 0;
                 const remainingBalance = parseFloat(data.remainingBalance) || 0;
                 const paymentStatus = remainingBalance > 0 ? `Bal: ₱${remainingBalance.toLocaleString()}` : 'Fully Paid';
@@ -64,14 +109,27 @@ document.addEventListener("DOMContentLoaded", () => {
                     details: 'View',
                     ...data
                 };
-            });
-        } catch (error) {
+            });        } catch (error) {
             console.error("Error fetching transactions:", error);
             return [];
         }
-    }    function renderRentals(filteredRentals = rentals) {
+    }
+
+    function renderRentals(filteredRentals = rentals) {
         const tbody = document.getElementById('rentals-table-body');
         if (!tbody) return;
+        
+        // Show loading state while processing
+        if (filteredRentals === 'loading') {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center; color: #999; padding: 20px;">
+                        <i class="bx bx-loader-alt bx-spin"></i> Loading rentals...
+                    </td>
+                </tr>
+            `;
+            return;
+        }
         
         tbody.innerHTML = '';
         
@@ -371,18 +429,46 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error("Error showing rental details:", error);
         }
-    }// Load and render rentals
+    }    // Load and render rentals
     async function loadRentals() {
         console.log("Loading rentals...");
-        rentals = await fetchTransactions();
-        console.log("Loaded", rentals.length, "rentals");
-        renderRentals();
-    }
-
-    // Update dashboard cards with real data
+        
+        // Show loading state
+        renderRentals('loading');
+        
+        try {
+            rentals = await fetchTransactions();
+            console.log("Loaded", rentals.length, "rentals");
+            renderRentals();
+        } catch (error) {
+            console.error("Error loading rentals:", error);
+            // Show error state
+            const tbody = document.getElementById('rentals-table-body');
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #e74c3c; padding: 20px;">
+                            Error loading rental data. Please refresh the page.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+    }    // Update dashboard cards with real data
     async function updateDashboardCards() {
         try {
-            // Update Active Rentals count
+            // Show loading state for cards
+            document.getElementById('active-rentals-count').innerHTML = '<i class="bx bx-loader-alt bx-spin"></i>';
+            document.getElementById('active-appointments-count').innerHTML = '<i class="bx bx-loader-alt bx-spin"></i>';
+            document.getElementById('total-products-count').innerHTML = '<i class="bx bx-loader-alt bx-spin"></i>';
+
+            // Ensure rentals data is loaded first
+            if (!rentals || rentals.length === 0) {
+                console.log("Loading rentals for dashboard cards...");
+                rentals = await fetchTransactions();
+            }
+
+            // Update Active Rentals count (Ongoing and Upcoming transactions)
             const activeRentalsCount = rentals.filter(rental => 
                 rental.status === 'Ongoing' || rental.status === 'Upcoming'
             ).length;
@@ -398,6 +484,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const totalProductsCount = productsSnapshot.size;
             document.getElementById('total-products-count').textContent = totalProductsCount;
 
+            console.log(`✅ Dashboard Cards Updated:`);
+            console.log(`📦 Active Rentals: ${activeRentalsCount}`);
+            console.log(`📅 Active Appointments: ${activeAppointmentsCount}`);
+            console.log(`👔 Total Products: ${totalProductsCount}`);
+
         } catch (error) {
             console.error("Error updating dashboard cards:", error);
             // Set default values if there's an error
@@ -405,11 +496,14 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('active-appointments-count').textContent = '0';
             document.getElementById('total-products-count').textContent = '0';
         }
-    }
-
-    // Appointments Functions
+    }    // Appointments Functions
     async function fetchAppointments() {
         try {
+            // Check if Firebase is available
+            if (!db) {
+                throw new Error("Firebase database not initialized");
+            }
+            
             const snapshot = await db.collection("appointments")
                 .orderBy("createdAt", "desc")
                 .limit(10)
@@ -423,14 +517,24 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error fetching appointments:", error);
             return [];
         }
-    }    async function renderAppointments() {
+    }async function renderAppointments() {
         const ul = document.getElementById('appointments-list');
         if (!ul) return;
         
-        ul.innerHTML = '';
+        // Show loading state
+        ul.innerHTML = `
+            <li class="appointment-item">
+                <div class="appointment-text" style="text-align: center; color: #999; padding: 20px;">
+                    <i class="bx bx-loader-alt bx-spin"></i> Loading appointments...
+                </div>
+            </li>
+        `;
         
         try {
             const appointments = await fetchAppointments();
+            
+            // Clear loading state
+            ul.innerHTML = '';
             
             if (!appointments || appointments.length === 0) {
                 ul.innerHTML = `
@@ -472,7 +576,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ul.innerHTML = `
                 <li class="appointment-item">
                     <div class="appointment-text" style="text-align: center; color: #e74c3c;">
-                        Error loading appointments
+                        Error loading appointments. Please refresh the page.
                     </div>
                 </li>
             `;
@@ -640,14 +744,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }    // Initial render
     async function initializeDashboard() {
         try {
-            await Promise.all([
-                loadRentals(),
-                renderAppointments()
-            ]);
-            // Update dashboard cards after loading data
+            console.log("🚀 Initializing Dashboard...");
+            
+            // Load rentals and appointments data
+            await loadRentals();
+            await renderAppointments();
+            
+            // Update dashboard cards with the fetched data
             await updateDashboardCards();
+            
+            console.log("✅ Dashboard initialization completed successfully");
         } catch (error) {
-            console.error("Error initializing dashboard:", error);
+            console.error("❌ Error initializing dashboard:", error);
         }
     }
 

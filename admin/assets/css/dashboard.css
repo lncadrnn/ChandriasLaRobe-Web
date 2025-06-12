@@ -151,7 +151,7 @@
     border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    max-height: 480px; /* Reduced table height */
+    max-height: 450px; /* Reduced table height */
     margin-bottom: 0; /* Small bottom margin */
 }
 
