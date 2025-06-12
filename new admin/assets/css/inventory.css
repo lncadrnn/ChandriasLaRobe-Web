@@ -1969,3 +1969,189 @@
 .delete-btn:hover, .delete-add-btn:hover {
     background-color: #dc2626;
 }
+
+/* =============== CUSTOM CONFIRMATION MODAL =============== */
+
+.delete-confirmation-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.delete-confirmation-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.delete-confirmation-modal .modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+}
+
+.delete-confirmation-modal .modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    max-width: 450px;
+    width: 90%;
+    transition: transform 0.3s ease;
+    overflow: hidden;
+}
+
+.delete-confirmation-modal.active .modal-content {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.delete-confirmation-modal .modal-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 25px 30px 20px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.delete-confirmation-modal .warning-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.delete-confirmation-modal .warning-icon i {
+    font-size: 24px;
+    color: #dc2626;
+}
+
+.delete-confirmation-modal .modal-header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.delete-confirmation-modal .modal-body {
+    padding: 20px 30px;
+}
+
+.delete-confirmation-modal .confirmation-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 10px 0;
+    line-height: 1.5;
+}
+
+.delete-confirmation-modal .confirmation-subtitle {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.delete-confirmation-modal .modal-footer {
+    display: flex;
+    gap: 12px;
+    padding: 20px 30px 30px;
+    justify-content: flex-end;
+}
+
+.delete-confirmation-modal .btn-cancel,
+.delete-confirmation-modal .btn-delete {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 100px;
+    justify-content: center;
+}
+
+.delete-confirmation-modal .btn-cancel {
+    background: #f8fafc;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+}
+
+.delete-confirmation-modal .btn-cancel:hover {
+    background: #f1f5f9;
+    color: #475569;
+    border-color: #cbd5e1;
+}
+
+.delete-confirmation-modal .btn-delete {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.delete-confirmation-modal .btn-delete:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.delete-confirmation-modal .btn-delete:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+/* Mobile responsiveness for confirmation modal */
+@media (max-width: 768px) {
+    .delete-confirmation-modal .modal-content {
+        max-width: 350px;
+        margin: 20px;
+    }
+    
+    .delete-confirmation-modal .modal-header,
+    .delete-confirmation-modal .modal-body,
+    .delete-confirmation-modal .modal-footer {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    .delete-confirmation-modal .modal-header h3 {
+        font-size: 18px;
+    }
+    
+    .delete-confirmation-modal .confirmation-title {
+        font-size: 15px;
+    }
+    
+    .delete-confirmation-modal .confirmation-subtitle {
+        font-size: 13px;
+    }
+    
+    .delete-confirmation-modal .modal-footer {
+        flex-direction: column-reverse;
+    }
+    
+    .delete-confirmation-modal .btn-cancel,
+    .delete-confirmation-modal .btn-delete {
+        width: 100%;
+        justify-content: center;
+    }
+}

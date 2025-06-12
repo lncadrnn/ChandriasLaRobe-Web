@@ -600,10 +600,9 @@ function saveProduct() {
             if (result) {
                 // Close modal and refresh data
                 closeModal(document.getElementById('addProductModal'));
-                resetProductForm();
-                console.log('✅ Product saved to Firebase successfully');
+                resetProductForm();                console.log('✅ Product saved to Firebase successfully');
                 if (window.notyf) {
-                    window.notyf.success('Product saved to Firebase successfully');
+                    window.notyf.success('Product added successfully');
                 }
             }
         }).catch(error => {
@@ -638,9 +637,8 @@ function saveProduct() {
         loadProducts();
         // Close modal
         closeModal(document.getElementById('addProductModal'));
-        resetProductForm();
-        if (window.notyf) {
-            window.notyf.warning('Product saved locally. Firebase connection may be unavailable.');
+        resetProductForm();        if (window.notyf) {
+            window.notyf.success('Product added successfully');
         } else {
             alert('Product saved locally. Firebase connection may be unavailable.');
         }
@@ -1073,27 +1071,54 @@ function editProduct(id) {
 }
 
 function deleteProduct(id) {
-    if (confirm('Are you sure you want to delete this product?')) {
-        if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
-            // Use Firebase to delete
-            deleteProductFromFirebase(id).catch(error => {
-                console.error('Failed to delete from Firebase:', error);
-                // Fallback to local delete
+    const product = sampleProducts.find(p => p.id === id);
+    if (!product) {
+        if (window.notyf) {
+            window.notyf.error('Product not found');
+        }
+        return;
+    }
+
+    // Show custom confirmation dialog
+    showDeleteConfirmationModal(
+        `Are you sure you want to delete "${product.name}"?`, 
+        'This action cannot be undone. The product will be permanently removed from your inventory.',
+        () => {
+            // User confirmed deletion
+            if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
+                // Use Firebase to delete
+                deleteProductFromFirebase(id).then(() => {
+                    // Success - show notification
+                    if (window.notyf) {
+                        window.notyf.success('Product deleted successfully');
+                    }
+                    // Refresh the products list
+                    loadProducts();
+                }).catch(error => {
+                    console.error('Failed to delete from Firebase:', error);
+                    // Fallback to local delete
+                    const index = sampleProducts.findIndex(p => p.id === id);
+                    if (index > -1) {
+                        sampleProducts.splice(index, 1);
+                        loadProducts();
+                        if (window.notyf) {
+                            window.notyf.success('Product deleted successfully (local fallback)');
+                        }
+                    }
+                });
+            } else {
+                // Local delete fallback
                 const index = sampleProducts.findIndex(p => p.id === id);
                 if (index > -1) {
                     sampleProducts.splice(index, 1);
                     loadProducts();
+                    if (window.notyf) {
+                        window.notyf.success('Product deleted successfully');
+                    }
                 }
-            });
-        } else {
-            // Local delete fallback
-            const index = sampleProducts.findIndex(p => p.id === id);
-            if (index > -1) {
-                sampleProducts.splice(index, 1);
-                loadProducts();
             }
         }
-    }
+    );
 }
 
 function editAdditional(id) {
@@ -1102,27 +1127,54 @@ function editAdditional(id) {
 }
 
 function deleteAdditional(id) {
-    if (confirm('Are you sure you want to delete this additional?')) {
-        if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
-            // Use Firebase to delete
-            deleteAdditionalFromFirebase(id).catch(error => {
-                console.error('Failed to delete from Firebase:', error);
-                // Fallback to local delete
+    const additional = sampleAdditionals.find(a => a.id === id);
+    if (!additional) {
+        if (window.notyf) {
+            window.notyf.error('Additional not found');
+        }
+        return;
+    }
+
+    // Show custom confirmation dialog
+    showDeleteConfirmationModal(
+        `Are you sure you want to delete "${additional.name}"?`, 
+        'This action cannot be undone. The additional item will be permanently removed from your inventory.',
+        () => {
+            // User confirmed deletion
+            if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
+                // Use Firebase to delete
+                deleteAdditionalFromFirebase(id).then(() => {
+                    // Success - show notification
+                    if (window.notyf) {
+                        window.notyf.success('Additional deleted successfully');
+                    }
+                    // Refresh the additionals list
+                    loadAdditionals();
+                }).catch(error => {
+                    console.error('Failed to delete from Firebase:', error);
+                    // Fallback to local delete
+                    const index = sampleAdditionals.findIndex(a => a.id === id);
+                    if (index > -1) {
+                        sampleAdditionals.splice(index, 1);
+                        loadAdditionals();
+                        if (window.notyf) {
+                            window.notyf.success('Additional deleted successfully (local fallback)');
+                        }
+                    }
+                });
+            } else {
+                // Local delete fallback
                 const index = sampleAdditionals.findIndex(a => a.id === id);
                 if (index > -1) {
                     sampleAdditionals.splice(index, 1);
                     loadAdditionals();
+                    if (window.notyf) {
+                        window.notyf.success('Additional deleted successfully');
+                    }
                 }
-            });
-        } else {
-            // Local delete fallback
-            const index = sampleAdditionals.findIndex(a => a.id === id);
-            if (index > -1) {
-                sampleAdditionals.splice(index, 1);
-                loadAdditionals();
             }
         }
-    }
+    );
 }
 
 // Date and Time Update Function
@@ -1469,9 +1521,8 @@ async function applyCrop() {
                     }
                     
                     hideImageUploadProgress(currentImageType);
-                    
-                    if (window.notyf) {
-                        window.notyf.success('Image uploaded to Cloudinary successfully');
+                      if (window.notyf) {
+                        window.notyf.success('Image uploaded successfully');
                     }
                     
                     console.log('Image uploaded to Cloudinary:', uploadResult.url);
@@ -1768,6 +1819,14 @@ async function addProductToInventory(productData) {
             // Use Firebase to save product
             const savedProduct = await saveProductToFirebase(productData);
             console.log('Product added to Firebase successfully:', savedProduct);
+            
+            // Show success notification
+            if (window.notyf) {
+                window.notyf.success('Product added successfully');
+            }
+            
+            // Refresh the products list
+            loadProducts();
         } else {
             // Fallback to local storage
             const newProduct = {
@@ -1782,6 +1841,11 @@ async function addProductToInventory(productData) {
             // Refresh the products list
             loadProducts();
             
+            // Show success notification
+            if (window.notyf) {
+                window.notyf.success('Product added successfully');
+            }
+            
             console.log('Product added locally:', newProduct);
         }
     } catch (error) {
@@ -1793,10 +1857,16 @@ async function addProductToInventory(productData) {
             ...productData,
             dateAdded: new Date().toISOString()
         };
-          sampleProducts.push(newProduct);
+          
+        sampleProducts.push(newProduct);
         loadProducts();
         
-        alert('Product saved locally. Firebase connection may be unavailable.');
+        // Show success notification even for fallback
+        if (window.notyf) {
+            window.notyf.success('Product added successfully');
+        } else {
+            alert('Product saved locally. Firebase connection may be unavailable.');
+        }
     }
 }
 
@@ -1966,5 +2036,101 @@ function hideImageUploadProgress(type) {
         zone.classList.remove('uploading');
     }
 }
+
+// =============== CUSTOM CONFIRMATION MODAL ===============
+
+/**
+ * Show custom confirmation modal for delete operations
+ * @param {string} title - Main confirmation message
+ * @param {string} subtitle - Additional warning message
+ * @param {function} onConfirm - Callback function when user confirms
+ */
+function showDeleteConfirmationModal(title, subtitle, onConfirm) {
+    // Create modal HTML
+    const modalHTML = `
+        <div class="delete-confirmation-modal" id="deleteConfirmationModal">
+            <div class="modal-backdrop" onclick="closeDeleteConfirmationModal()"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="warning-icon">
+                        <i class='bx bx-error-circle'></i>
+                    </div>
+                    <h3>Confirm Deletion</h3>
+                </div>
+                <div class="modal-body">
+                    <p class="confirmation-title">${title}</p>
+                    <p class="confirmation-subtitle">${subtitle}</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-cancel" onclick="closeDeleteConfirmationModal()">
+                        <i class='bx bx-x'></i>
+                        Cancel
+                    </button>
+                    <button class="btn-delete" onclick="confirmDelete()">
+                        <i class='bx bx-trash'></i>
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Remove existing modal if any
+    const existingModal = document.getElementById('deleteConfirmationModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+
+    // Add modal to body
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    // Store the callback function globally for the confirm button
+    window.currentDeleteCallback = onConfirm;
+
+    // Show modal with animation
+    const modal = document.getElementById('deleteConfirmationModal');
+    setTimeout(() => {
+        modal.classList.add('active');
+    }, 10);
+
+    // Add escape key listener
+    const escapeListener = (e) => {
+        if (e.key === 'Escape') {
+            closeDeleteConfirmationModal();
+            document.removeEventListener('keydown', escapeListener);
+        }
+    };
+    document.addEventListener('keydown', escapeListener);
+}
+
+/**
+ * Close the confirmation modal
+ */
+function closeDeleteConfirmationModal() {
+    const modal = document.getElementById('deleteConfirmationModal');
+    if (modal) {
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.remove();
+            // Clean up the global callback
+            delete window.currentDeleteCallback;
+        }, 300);
+    }
+}
+
+/**
+ * Handle delete confirmation
+ */
+function confirmDelete() {
+    if (window.currentDeleteCallback && typeof window.currentDeleteCallback === 'function') {
+        window.currentDeleteCallback();
+    }
+    closeDeleteConfirmationModal();
+}
+
+// Make functions globally available
+window.showDeleteConfirmationModal = showDeleteConfirmationModal;
+window.closeDeleteConfirmationModal = closeDeleteConfirmationModal;
+window.confirmDelete = confirmDelete;
 
 //# sourceMappingURL=inventory-management.js.map
