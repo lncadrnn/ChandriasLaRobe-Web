@@ -1,657 +1,81 @@
-/* Settings specific styles - base styles moved to admin-layout.css */
+/* Settings specific styles - uses unified admin layout from admin-layout.css */
 
-/* ====== Sidebar ====== */
+/* Settings-specific placeholder styles are already in admin-layout.css */
 
-.custom-sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 250px;
-    height: 100%;
-    padding: 10px 14px;
-    background: var(--sidebar-color);
-    transition: var(--tran-05);
-    z-index: 100;
+/* Additional settings-specific styles can be added here as needed */
+
+/* Future account settings page styling */
+.account-settings-form {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    padding: 30px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
 }
 
-.custom-sidebar.close {
-    width: 88px;
-}
-
-/* ====== Reusable CSS ====== */
-
-.custom-sidebar .custom-text {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text-color);
-    transition: var(--tran-03);
-    white-space: nowrap;
-    opacity: 1;
-}
-
-.custom-sidebar.close .custom-text {
-    opacity: 0;
-}
-
-.custom-sidebar .custom-image {
-    min-width: 60px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-
-.custom-sidebar li {
-    height: 50px !important;
-    margin-top: 6px !important;
-    list-style: none !important;
-    display: flex !important;
-    align-items: center !important;
-}
-
-.custom-sidebar li .custom-icon {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-width: 60px !important;
-    font-size: 18px !important;
-}
-
-.custom-sidebar li .custom-icon,
-.custom-sidebar li .custom-text {
-    color: var(--text-color) !important;
-    transition: var(--tran-02) !important;
-}
-
-.custom-sidebar header {
-    position: relative !important;
-}
-
-.custom-sidebar .custom-image-text img {
-    width: 40px;
-    border-radius: 6px;
-}
-
-.custom-sidebar header .custom-image-text {
-    display: flex;
-    align-items: center;
-}
-
-header .custom-image-text .custom-header-text {
-    display: flex;
-    flex-direction: column;
-}
-
-.custom-header-text .custom-name {
-    font-weight: 600;
-    font-size: 15px;
-}
-
-.custom-header-text .custom-profession {
-    margin-top: -2px;
-    font-size: 13px;
-}
-
-.custom-sidebar header .custom-toggle {
-    position: absolute;
-    top: 50%;
-    right: -25px;
-    transform: translateY(-50%) rotate(180deg);
-    height: 20px;
-    width: 20px;
-    background: var(--primary-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    color: var(--toggle-color);
+.account-settings-form h3 {
+    color: var(--text-dark);
     font-size: 20px;
-    cursor: pointer;
-    transition: var(--tran-03);
-}
-
-.custom-sidebar.close header .custom-toggle {
-    transform: translateY(-50%);
-}
-
-.custom-sidebar .custom-menu {
-    margin-top: 17px;
-}
-
-.custom-sidebar .custom-search-box {
-    background: var(--primary-color-light);
-    border-radius: 6px;
-    transition: var(--tran-05);
-}
-
-.custom-search-box input {
-    height: 100%;
-    width: 100%;
-    font-size: 16px;
-    font-weight: 500;
-    background: var(--primary-color-light);
-    outline: none;
-    border: none;
-    border-radius: 6px;
-    transition: var(--tran-05);
-    color: var(--text-color);
-}
-
-.custom-sidebar li a {
-    height: 100% !important;
-    width: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    text-decoration: none !important;
-    border-radius: 6px !important;
-    transition: var(--tran-04) !important;
-}
-
-.custom-sidebar li a:hover {
-    background: var(--secondary-color) !important;
-}
-
-.custom-sidebar li a:hover .custom-icon,
-.custom-sidebar li a:hover .custom-text {
-    color: var(--secondary-text-color) !important;
-}
-
-.custom-menu-links .custom-nav-link.active a {
-    background-color: var(--secondary-color) !important;
-}
-
-.custom-menu ul {
-  padding-left: 0 !important;
-}
-
-.custom-menu-links .custom-nav-link.active a .custom-icon,
-.custom-menu-links .custom-nav-link.active a .custom-text {
-    color: var(--secondary-text-color) !important;
-}
-
-.custom-sidebar .custom-menu-bar {
-    height: calc(100% - 50px);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.custom-menu-bar .custom-mode {
-    background: var(--primary-color-light);
-    position: relative;
-    border-radius: 6px;
-    transition: var(--tran-05);
-}
-
-.custom-menu-bar .custom-mode .custom-moon-sun {
-    height: 50px;
-    width: 60px;
-    display: flex;
-    align-items: center;
-}
-
-.custom-menu-bar .custom-mode i {
-    position: absolute;
-    transition: var(--tran-03);
-}
-
-.custom-menu-bar .custom-mode i.custom-sun {
-    opacity: 0;
-}
-
-.custom-menu-bar .custom-mode .custom-toggle-switch {
-    position: absolute;
-    right: 0px;
-    height: 100%;
-    min-width: 60px;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    border-radius: 6px;
-    background: var(--primary-color-light);
-    transition: var(--tran-05);
-}
-
-.custom-toggle-switch .custom-switch {
-    position: relative;
-    height: 22px;
-    width: 44px;
-    border-radius: 25px;
-    background: var(--toggle-color);
-}
-
-.custom-switch::before {
-    content: "";
-    position: absolute;
-    height: 15px;
-    width: 15px;
-    border-radius: 50%;
-    top: 50%;
-    left: 5px;
-    transform: translateY(-50%);
-    background: var(--sidebar-color);
-    cursor: pointer;
-    transition: var(--tran-03);
-}
-
-.custom-page-name {
-    position: relative;
-    left: 250px;
-    min-height: 100vh;
-    width: calc(100% - 250px);
-    background: var(--body-color);
-    transition: var(--tran-05);
-    padding: 0;
-    overflow-y: auto;
-}
-
-.custom-page-name .custom-text {
-    font-size: 30px;
-    font-weight: 700;
-    color: var(--secondary-text-color);
-    margin: 0;
-    padding: 1.5rem 2rem;
-    background: var(--body-color);
-    border-bottom: 1px solid #e0e0e0;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-.custom-sidebar .custom-image-text .custom-image img {
-    width: 70%;
-    height: 20%;        /* or whatever size you want */      /* maintain aspect ratio */
-    border-radius: 8px;  /* optional: rounded corners */  /* optional: cover the entire area */
-    object-position: center; /* optional: center the image */
-    margin-top: 10%;
-}
-
-.custom-sidebar.close .custom-image-text .custom-image img {
-    width: 100%;
-}
-
-.custom-bottom-content {
-    margin-bottom: 10%; /* try adjusting the number */
-}
-
-.custom-sidebar.close .custom-bottom-content {
-    margin-bottom: 0;
-}
-
-.custom-sidebar.close ~ .custom-page-name {
-    left: 88px;
-    width: calc(100% - 88px);
-}
-
-.settings-container {
-    position: relative;
-    left: 250px;
-    height: 100vh;
-    width: calc(100% - 250px);
-    background: var(--body-color);
-    /* transition: var(--tran-05) !important; */ /* Removed transition */
-}
-
-.settings-container .text {
-    font-size: 30px;
-    font-weight: 700;
-    color: var(--secondary-text-color);
-    margin: 8px 40px;
-    /* transition: var(--tran-05); */ /* Removed transition */
-}
-
-.settings-container .settings-content .setting-option .icon,
-.settings-container .settings-content .setting-option .text {
-    color: var(--text-color);
-    /* transition: var(--tran-03); */ /* Removed transition */
-}
-
-.settings-container .settings-content .setting-option a:hover .icon,
-.settings-container .settings-content .setting-option a:hover .text {
-    color: var(--secondary-text-color);
-    /* transition: var(--tran-02) !important; */ /* Removed transition */
-}
-
-/* ====== Account Settings Layout ====== */
-.account-settings-page {
-    display: flex;
-    justify-content: center;
-    padding: 1rem 2rem 2rem 2rem;
-    background-color: var(--body-color);
-    min-height: calc(100vh - 100px);
-    overflow-y: auto;
-}
-
-.account-settings-container {
-    background-color: var(--sidebar-color);
-    max-width: 1200px;
-    width: 100%;
-    padding: 3rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-}
-
-.account-settings-main-title {
-    color: var(--secondary-text-color);
-    font-size: 2rem;
-    margin-bottom: 2rem;
-    text-align: center;
     font-weight: 600;
-}
-
-.account-settings-content-wrapper {
-    display: flex;
-    gap: 5rem;
-    justify-content: space-between;
-    align-items: flex-start;
-}
-
-.account-form-column {
-    flex: 1;
-    max-width: 65%;
-}
-
-.account-avatar-column {
-    flex: 1;
-    max-width: 35%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border-color);
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
-    position: relative;
+    margin-bottom: 20px;
 }
 
 .form-group label {
-    font-size: 1.1rem;
     display: block;
-    margin-bottom: 0.8rem;
     font-weight: 500;
-    color: var(--text-color);
+    color: var(--text-dark);
+    margin-bottom: 8px;
+    font-size: 14px;
 }
 
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="password"] {
+.form-group input,
+.form-group select,
+.form-group textarea {
     width: 100%;
-    padding: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-sizing: border-box;
-    font-size: 1rem;
-    background-color: var(--primary-color-light);
-    color: var(--text-color);
-    transition: all 0.3s ease;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    color: var(--text-dark);
+    background: var(--white);
+    transition: var(--transition);
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(232, 62, 140, 0.1);
-    transform: translateY(-1px);
-}
-
-/* Avatar styling */
-.avatar-container {
-    position: relative;
-    display: inline-block;
-    margin-bottom: 1.5rem;
-}
-
-.avatar-placeholder {
-    width: 180px;
-    height: 180px;
-    background-color: var(--primary-color-light);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    border: 4px solid var(--primary-color);
-    transition: all 0.3s ease;
-}
-
-.avatar-placeholder:hover {
-    box-shadow: 0 8px 25px rgba(232, 62, 140, 0.2);
-}
-
-.avatar-reset-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background-color: rgba(255, 77, 77, 0.9);
-    color: white;
-    border: 3px solid white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-}
-
-.avatar-reset-btn:hover {
-    background-color: #ff3333;
-    transform: scale(1.1);
-}
-
-.avatar-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: var(--primary-color);
-}
-
-.avatar-content i {
-    font-size: 3rem;
-    margin-bottom: 0.5rem;
-}
-
-.avatar-content span {
-    font-size: 1.1rem;
-    font-weight: 600;
-}
-
-.btn-upload {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 0.8rem 2rem;
-    border-radius: 50px;
-    font-size: 1rem;
-    cursor: pointer;
-    text-align: center;
-    border: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    display: inline-block;
-    margin-top: 0.8rem;
-    text-decoration: none;
-    box-shadow: 0 4px 15px rgba(232, 62, 140, 0.2);
-}
-
-.btn-upload:hover {
-    background-color: hsl(346, 98%, 69%);
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(232, 62, 140, 0.3);
-}
-
-.btn-change-password {
-    background-color: var(--secondary-color);
-    color: var(--secondary-text-color);
-    padding: 0.8rem 2rem;
-    border-radius: 50px;
-    font-size: 1rem;
-    cursor: pointer;
-    border: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.btn-change-password:hover {
-    background-color: var(--primary-color);
-    color: white;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(232, 62, 140, 0.2);
 }
 
 .form-actions {
     display: flex;
-    gap: 1.5rem;
-    margin-top: 3rem;
-}
-
-.btn {
-    padding: 0.8rem 2rem;
-    font-size: 1rem;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-}
-
-.btn-cancel {
-    background-color: #f0f0f0;
-    color: #333;
-    border: 1px solid #ddd;
-}
-
-.btn-cancel:hover {
-    background-color: #e0e0e0;
-}
-
-.btn-save {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-.btn-save:hover {
-    background-color: hsl(346, 98%, 69%);
-}
-
-.btn-logout {
-    background-color: #ff4757;
-    color: white;
-    width: 100%;
-}
-
-.btn-logout:hover {
-    background-color: #ff3742;
-}
-
-/* Custom Modal Styling */
-.custom-modal {
-    display: none;
-    position: fixed;
-    z-index: 2000;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.3);
-    align-items: center;
-    justify-content: center;
+    gap: 15px;
+    justify-content: flex-end;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
 }
 
 /* Responsive Design */
-@media (max-width: 1200px) {
-    .account-settings-container {
-        max-width: 1000px;
-        padding: 2.5rem;
-    }
-    
-    .account-settings-content-wrapper {
-        gap: 3rem;
-    }
-}
-
-@media (max-width: 992px) {
-    .account-settings-container {
-        max-width: 800px;
-        padding: 2rem;
-    }
-    
-    .account-settings-content-wrapper {
-        gap: 2rem;
-    }
-    
-    .custom-page-name {
-        left: 88px;
-        width: calc(100% - 88px);
-    }
-    
-    .custom-sidebar {
-        width: 88px;
-    }
-}
-
 @media (max-width: 768px) {
-    .account-settings-page {
-        padding: 1rem;
-    }
-    
-    .account-settings-container {
-        padding: 1.5rem;
-    }
-    
-    .account-settings-content-wrapper {
-        flex-direction: column;
-        gap: 2rem;
-    }
-    
-    .account-form-column,
-    .account-avatar-column {
-        max-width: 100%;
-    }
-    
-    .custom-page-name {
-        left: 0;
-        width: 100%;
-    }
-    
-    .custom-sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-    }
-    
-    .custom-sidebar.open {
-        transform: translateX(0);
-    }
-}
-
-@media (max-width: 480px) {
-    .account-settings-main-title {
-        font-size: 1.5rem;
-        margin-bottom: 2rem;
+    .account-settings-form {
+        padding: 20px;
     }
     
     .form-actions {
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 10px;
     }
     
     .btn {
         width: 100%;
-    }
-    
-    .account-settings-content-wrapper {
-        gap: 1.5rem;
     }
 }
