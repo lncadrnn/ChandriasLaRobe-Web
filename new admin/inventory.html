@@ -373,9 +373,7 @@
                     <i class='bx bx-save'></i> Save Product
                 </button>
             </div>
-        </div>    </div>
-
-    <!-- Image Cropper Modal -->
+        </div>    </div>    <!-- Image Cropper Modal -->
     <div class="modal" id="imageCropperModal">
         <div class="modal-backdrop"></div>
         <div class="modal-content cropper-modal-content">
@@ -404,7 +402,34 @@
         </div>
     </div>
 
-    <!-- Add Additional Modal -->
+    <!-- Additional Image Cropper Modal (Square) -->
+    <div class="modal" id="additionalImageCropperModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content cropper-modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class='bx bx-crop'></i>
+                    Crop Additional Image (Square)
+                </h3>
+                <button class="close-modal" onclick="closeAdditionalCropperModal()">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="cropper-container">
+                    <img id="additionalCropperImage" src="" alt="Additional image to crop">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeAdditionalCropperModal()">
+                    <i class='bx bx-x'></i> Cancel
+                </button>
+                <button type="button" class="btn-primary" onclick="applyAdditionalCrop()">
+                    <i class='bx bx-check'></i> Apply Crop
+                </button>
+            </div>
+        </div>
+    </div><!-- Add Additional Modal -->
     <div class="modal" id="addAdditionalModal">
         <div class="modal-backdrop"></div>
         <div class="modal-content">
@@ -419,64 +444,94 @@
             </div>
             <div class="modal-body">
                 <form id="addAdditionalForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="additionalName">Additional Name</label>
-                            <input type="text" id="additionalName" required>
+                    <!-- Image Upload Section -->
+                    <div class="image-upload-section">
+                        <h4><i class='bx bx-image'></i> Additional Image</h4>
+                        <div class="image-upload-container">
+                            <div class="image-upload-item">
+                                <label>Product Image</label>
+                                <div class="image-drop-zone" id="additionalImageZone">
+                                    <div class="upload-placeholder" id="additionalPlaceholder">
+                                        <i class='bx bx-cloud-upload'></i>
+                                        <p>Click or drag to upload image</p>
+                                        <small>JPG, PNG, WebP (Max 5MB)</small>
+                                    </div>
+                                    <div class="image-preview" id="additionalPreview" style="display: none;">
+                                        <img id="additionalImage" src="" alt="Additional view">
+                                        <div class="image-actions">
+                                            <button type="button" class="crop-btn" onclick="openAdditionalImageCropper()">
+                                                <i class='bx bx-crop'></i> Crop
+                                            </button>
+                                            <button type="button" class="remove-btn" onclick="removeAdditionalImage()">
+                                                <i class='bx bx-trash'></i> Remove
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="additionalImageInput" accept="image/*" hidden>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="additionalType">Type</label>
-                            <select id="additionalType" required>
-                                <option value="">Select Type</option>
-                                <option value="jewelry">Jewelry</option>
-                                <option value="shoes">Shoes</option>
-                                <option value="bags">Bags</option>
-                                <option value="veils">Veils</option>
-                                <option value="headpieces">Headpieces</option>
-                                <option value="other">Other</option>
-                            </select>
+                    </div>
+                      <!-- Product Information -->
+                    <div class="form-section">
+                        <h4><i class='bx bx-info-circle'></i> Additional Information</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="additionalName">Product Name *</label>
+                                <input type="text" id="additionalName" placeholder="Enter additional name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="additionalCode">Additional Code *</label>
+                                <input type="text" id="additionalCode" placeholder="Auto-generated" readonly>
+                                <small class="help-text">This will be auto-generated</small>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="additionalRentalPrice">Rental Price (₱) *</label>
+                                <input type="number" id="additionalRentalPrice" step="0.01" placeholder="0.00" required>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="form-row">
+                    <!-- Inclusion Section -->
+                    <div class="form-section">
+                        <h4><i class='bx bx-diamond'></i> Inclusions</h4>
                         <div class="form-group">
-                            <label for="additionalSize">Size (if applicable)</label>
-                            <input type="text" id="additionalSize" placeholder="e.g., 7.5, One Size, etc.">
+                            <label class="checkbox-label inclusion-checkbox">
+                                <input type="checkbox" id="withInclusionsCheckbox">
+                                <span>With Inclusions?</span>
+                            </label>
                         </div>
-                        <div class="form-group">
-                            <label for="additionalColor">Color</label>
-                            <input type="text" id="additionalColor" required>
+                        
+                        <!-- Inclusions Container -->
+                        <div id="inclusionsContainer" style="display: none;">
+                            <div class="inclusions-header">
+                                <h5>Inclusion Items:</h5>
+                                <div class="inclusion-actions">
+                                    <button type="button" class="btn-secondary btn-sm" id="addInclusionBtn">
+                                        <i class='bx bx-plus'></i> Add More
+                                    </button>
+                                    <button type="button" class="btn-danger btn-sm" id="removeInclusionBtn">
+                                        <i class='bx bx-trash'></i> Remove
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="inclusionsList" class="inclusions-list">
+                                <!-- Dynamic inclusion items will be added here -->
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="additionalRentalPrice">Rental Price (₱)</label>
-                            <input type="number" id="additionalRentalPrice" step="0.01" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="additionalStatus">Status</label>
-                            <select id="additionalStatus" required>
-                                <option value="available">Available</option>
-                                <option value="maintenance">Maintenance</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="additionalDescription">Description</label>
-                        <textarea id="additionalDescription" rows="3"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="additionalImage">Image Upload</label>
-                        <input type="file" id="additionalImage" accept="image/*">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" id="cancelAddAdditionalBtn">Cancel</button>
-                <button class="btn-primary" id="saveAdditionalBtn">Save Additional</button>
+                <button type="button" class="btn-secondary" id="cancelAddAdditionalBtn">
+                    <i class='bx bx-x'></i> Cancel
+                </button>
+                <button type="button" class="btn-primary" id="saveAdditionalBtn">
+                    <i class='bx bx-save'></i> Save Additional
+                </button>
             </div>
         </div>
     </div>
@@ -804,9 +859,11 @@
     
     <!-- Firebase SDK -->
     <script type="module" src="assets/js/js firebase/chandrias-sdk.js"></script>
-    
-    <!-- Inventory Fetching Service -->
+      <!-- Inventory Fetching Service -->
     <script type="module" src="assets/js/js firebase/inventory-fetching.js"></script>
+    
+    <!-- Inventory Additional Service -->
+    <script type="module" src="assets/js/js firebase/inventory-additional.js"></script>
   
 </body>
 </html>
