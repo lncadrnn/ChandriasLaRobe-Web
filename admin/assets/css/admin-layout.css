@@ -70,7 +70,7 @@ body {
     padding: 10px 14px;
     background: var(--sidebar-color);
     transition: var(--tran-05);
-    z-index: 100;
+    z-index: 1000;
     box-shadow: var(--shadow);
 }
 
@@ -142,11 +142,10 @@ body {
     justify-content: center;
     border-radius: 50%;
     color: var(--white);
-    font-size: 16px;
-    cursor: pointer;
+    font-size: 16px;    cursor: pointer;
     transition: var(--tran-03);
     box-shadow: var(--shadow);
-    z-index: 101;
+    z-index: 1001;
 }
 
 .sidebar.close header .toggle {
@@ -318,15 +317,19 @@ body {
 
 /* =============== PAGE HEADER SYSTEM =============== */
 .page-header {
+    position: sticky;
+    top: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 25px 30px;
-    background: var(--white);
+    background: var(--body-color);
     border-bottom: 1px solid var(--border-color);
-    box-shadow: var(--shadow);
     margin-bottom: 0;
     min-height: var(--header-height);
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .header-left {
@@ -346,7 +349,7 @@ body {
 .page-title {
     font-size: 28px;
     font-weight: 700;
-    color: #000000 !important; /* Black color as requested */
+    color: var(--primary-color) !important; /* Pink color */
     margin: 0;
     line-height: 1.2;
 }
@@ -361,15 +364,20 @@ body {
 
 /* Legacy support for existing header styles */
 .main-header {
+    position: sticky;
+    top: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 25px 30px;
-    background: var(--white);
+    background: var(--body-color);
     border-bottom: 1px solid var(--border-color);
     box-shadow: var(--shadow);
     margin-bottom: 0;
     min-height: var(--header-height);
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .main-header .header-left {
@@ -388,7 +396,7 @@ body {
 .main-header h1 {
     font-size: 28px;
     font-weight: 700;
-    color: #000000 !important; /* Black color as requested */
+    color: var(--primary-color) !important; /* Pink color */
     margin: 0;
     line-height: 1.2;
 }
@@ -560,42 +568,6 @@ body {
 /* Mobile styles are now in admin-layout-mob.css */
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* =============== CURSOR POINTER STYLES =============== */
 button,
 .toggle,
@@ -666,4 +638,22 @@ a[href] {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--secondary-text-color);
+}
+
+/* =============== STICKY HEADER SCROLL EFFECTS =============== */
+.page-header.scrolled,
+.main-header.scrolled {
+    background: rgba(228, 233, 247, 0.98);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(233, 236, 239, 0.8);
+}
+
+/* Smooth scrolling behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Ensure content doesn't jump when header becomes sticky */
+.page-content {
+    position: relative;
 }

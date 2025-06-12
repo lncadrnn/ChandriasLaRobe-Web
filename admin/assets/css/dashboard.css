@@ -19,35 +19,7 @@
     gap: 24px;
 }
 
-/* =============== DASHBOARD HEADER =============== */
-.dashboard-header {
-    background: linear-gradient(135deg, var(--primary-color) 0%, #ff6b9d 100%);
-    color: white;
-    padding: 24px;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-}
 
-.header-left {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.page-title {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0;
-}
-
-.dashboard-datetime {
-    opacity: 0.9;
-}
-
-.current-date {
-    font-size: 1rem;
-    font-weight: 400;
-}
 
 /* =============== DASHBOARD CARDS =============== */
 .dashboard-cards-row {
@@ -657,14 +629,6 @@ tr:hover {
     .dashboard-layout {
         padding: 12px;
         gap: 12px;
-    }
-    
-    .dashboard-header {
-        padding: 20px;
-    }
-    
-    .page-title {
-        font-size: 1.5rem;
     }
     
     .dashboard-card {
