@@ -6,14 +6,30 @@
       <!-- Boxicons CSS -->
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
       <!-- Cropper.js CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
-      <!-- Custom CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/reusable/spinner/spinner.css">
     <link rel="stylesheet" href="assets/reusable/sidebar/sidebar.css">
     <link rel="stylesheet" href="assets/reusable/notyf/notyf.css">
     <link rel="stylesheet" href="assets/css/inventory.css">
 </head>
 <body>
-    <div class="sidebar" id="sidebar">
+    <!-- Loading Overlay for Inventory Operations -->
+    <div id="inventoryLoadingOverlay" class="inventory-loading-overlay">
+        <div class="inventory-loading-content">
+            <div class="inventory-spinner"></div>
+            <div class="inventory-loading-text">Processing...</div>
+            <div class="inventory-loading-subtitle">Please wait</div>
+        </div>
+    </div>
+
+    <!-- Auto-refresh Indicator -->
+    <div id="autoRefreshIndicator" class="auto-refresh-indicator">
+        <i class='bx bx-refresh'></i>
+        <span>Auto-refreshing...</span>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
                 <img src="assets/img/logonobg.png" alt="Chandria's La Robe" class="logo-img">
@@ -773,6 +789,9 @@
     </div>
 
     <!-- JavaScript -->
+    <!-- Page Loader (must be first) -->
+    <script src="assets/reusable/spinner/spinner.js"></script>
+    
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     

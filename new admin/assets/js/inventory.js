@@ -135,6 +135,149 @@ let firebaseAdditionals = [];
 let isFirebaseConnected = false;
 
 /**
+ * Enhanced Loading and Auto-Refresh System
+ */
+
+// Loading overlay functions
+function showInventoryLoading(message = 'Processing...', subtitle = 'Please wait') {
+    const overlay = document.getElementById('inventoryLoadingOverlay');
+    const text = overlay.querySelector('.inventory-loading-text');
+    const subtitleEl = overlay.querySelector('.inventory-loading-subtitle');
+    
+    text.textContent = message;
+    subtitleEl.textContent = subtitle;
+    
+    // Reset states
+    overlay.classList.remove('success', 'error');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    console.log(`🔄 Loading: ${message}`);
+}
+
+function hideInventoryLoading(delay = 500) {
+    setTimeout(() => {
+        const overlay = document.getElementById('inventoryLoadingOverlay');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }, delay);
+}
+
+function showInventorySuccess(message = 'Success!', subtitle = 'Operation completed', duration = 1500) {
+    const overlay = document.getElementById('inventoryLoadingOverlay');
+    const text = overlay.querySelector('.inventory-loading-text');
+    const subtitleEl = overlay.querySelector('.inventory-loading-subtitle');
+    
+    text.textContent = message;
+    subtitleEl.textContent = subtitle;
+    overlay.classList.add('success');
+    
+    console.log(`✅ Success: ${message}`);
+    
+    setTimeout(() => {
+        hideInventoryLoading(200);
+    }, duration);
+}
+
+function showInventoryError(message = 'Error occurred', subtitle = 'Please try again', duration = 2000) {
+    const overlay = document.getElementById('inventoryLoadingOverlay');
+    const text = overlay.querySelector('.inventory-loading-text');
+    const subtitleEl = overlay.querySelector('.inventory-loading-subtitle');
+    
+    text.textContent = message;
+    subtitleEl.textContent = subtitle;
+    overlay.classList.add('error');
+    
+    console.error(`❌ Error: ${message}`);
+    
+    setTimeout(() => {
+        hideInventoryLoading(200);
+    }, duration);
+}
+
+// Auto-refresh indicator functions
+function showAutoRefreshIndicator(message = 'Auto-refreshing...') {
+    const indicator = document.getElementById('autoRefreshIndicator');
+    const span = indicator.querySelector('span');
+    span.textContent = message;
+    indicator.classList.add('show');
+}
+
+function hideAutoRefreshIndicator(delay = 1000) {
+    setTimeout(() => {
+        const indicator = document.getElementById('autoRefreshIndicator');
+        indicator.classList.remove('show');
+    }, delay);
+}
+
+// Enhanced auto-refresh with visual feedback
+async function autoRefreshInventory(operation = 'update') {
+    try {
+        // Show auto-refresh indicator
+        showAutoRefreshIndicator(`Refreshing after ${operation}...`);
+        
+        // Add refreshing class to inventory lists
+        const productsList = document.getElementById('productsList');
+        const additionalsList = document.getElementById('additionalsList');
+        
+        if (productsList) productsList.classList.add('refreshing');
+        if (additionalsList) additionalsList.classList.add('refreshing');
+        
+        // Wait a moment for visual feedback
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Refresh data from Firebase if available
+        if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
+            console.log('🔄 Auto-refreshing from Firebase...');
+            
+            const [products, additionals] = await Promise.all([
+                window.InventoryFetcher.fetchProducts(),
+                window.InventoryFetcher.fetchAdditionals()
+            ]);
+            
+            // Update global arrays
+            sampleProducts.length = 0;
+            sampleAdditionals.length = 0;
+            sampleProducts.push(...products);
+            sampleAdditionals.push(...additionals);
+            
+            console.log(`📊 Auto-refresh: ${products.length} products, ${additionals.length} additionals`);
+        }
+        
+        // Refresh UI
+        loadProducts();
+        loadAdditionals();
+        
+        // Remove refreshing classes
+        setTimeout(() => {
+            if (productsList) productsList.classList.remove('refreshing');
+            if (additionalsList) additionalsList.classList.remove('refreshing');
+        }, 500);
+        
+        // Hide auto-refresh indicator
+        hideAutoRefreshIndicator(800);
+        
+        console.log('✅ Auto-refresh completed successfully');
+        
+    } catch (error) {
+        console.error('❌ Auto-refresh failed:', error);
+        
+        // Remove refreshing classes on error
+        const productsList = document.getElementById('productsList');
+        const additionalsList = document.getElementById('additionalsList');
+        if (productsList) productsList.classList.remove('refreshing');
+        if (additionalsList) additionalsList.classList.remove('refreshing');
+        
+        hideAutoRefreshIndicator(500);
+        
+        // Show error notification
+        if (window.notyf) {
+            window.notyf.error('Auto-refresh failed. Data may not be current.');
+        }
+    }
+}
+
+/**
  * Firebase Integration Functions
  */
 
@@ -539,19 +682,27 @@ function saveProduct() {
         return;
     }
 
+    // Show loading spinner
+    showInventoryLoading('Saving Product...', 'Please wait while we save your product');
+
     // Use Firebase to save product if available
     if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
         // Use Firebase to save
         console.log('🔄 Attempting to save product to Firebase...');
         saveProductToFirebase(productData).then(result => {
             if (result) {
+                // Show success message
+                showInventorySuccess('Product Saved!', 'Product has been added successfully');
+                
                 // Close modal and refresh data
-                closeModal(document.getElementById('addProductModal'));
-                resetProductForm();
-                console.log('✅ Product saved successfully');
-                if (window.notyf) {
-                    window.notyf.success('Product added successfully');
-                }
+                setTimeout(() => {
+                    closeModal(document.getElementById('addProductModal'));
+                    resetProductForm();
+                    console.log('✅ Product saved successfully');
+                    
+                    // Auto-refresh inventory after successful save
+                    autoRefreshInventory('add');
+                }, 1500);
             }
         }).catch(error => {
             console.error('❌ Failed to save to Firebase:', error);
@@ -560,11 +711,7 @@ function saveProduct() {
             if (error.message) {
                 errorMessage += `: ${error.message}`;
             }
-            if (window.notyf) {
-                window.notyf.error(errorMessage);
-            } else {
-                alert(errorMessage + '. Please try again.');
-            }
+            showInventoryError('Save Failed', errorMessage);
         });
     } else {
         // Provide diagnostic information
@@ -581,15 +728,19 @@ function saveProduct() {
         };
         // Add to sample products array
         sampleProducts.unshift(newProduct);
-        // Refresh UI
-        loadProducts();
-        // Close modal
-        closeModal(document.getElementById('addProductModal'));
-        resetProductForm();        if (window.notyf) {
-            window.notyf.success('Product added successfully');
-        } else {
-            alert('Product saved locally. Firebase connection may be unavailable.');
-        }
+        
+        // Show success message
+        showInventorySuccess('Product Saved!', 'Product has been added locally');
+        
+        // Close modal and refresh UI after delay
+        setTimeout(() => {
+            loadProducts();
+            closeModal(document.getElementById('addProductModal'));
+            resetProductForm();
+            
+            // Auto-refresh inventory after successful save
+            autoRefreshInventory('add');
+        }, 1500);
     }
 }
 
@@ -617,18 +768,64 @@ function saveAdditional() {
     // Validate required fields
     if (!additionalData.name || !additionalData.type || 
         !additionalData.color || !additionalData.rentalPrice) {
-        alert('Please fill in all required fields');
+        if (window.showErrorModal) {
+            window.showErrorModal('Please fill in all required fields');
+        } else {
+            alert('Please fill in all required fields');
+        }
         return;
     }
 
-    // Here you would typically send data to backend
-    console.log('Saving additional:', additionalData);
-    
-    // For now, just show success message and close modal
-    alert('Additional saved successfully!');
-    closeModal(document.getElementById('addAdditionalModal'));
-      // Refresh the additionals list
-    loadAdditionals();
+    // Show loading spinner
+    showInventoryLoading('Saving Additional...', 'Please wait while we save your additional item');
+
+    // Use Firebase to save additional if available
+    if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
+        console.log('🔄 Attempting to save additional to Firebase...');
+        saveAdditionalToFirebase(additionalData).then(result => {
+            if (result) {
+                // Show success message
+                showInventorySuccess('Additional Saved!', 'Additional item has been added successfully');
+                
+                // Close modal and refresh after delay
+                setTimeout(() => {
+                    closeModal(document.getElementById('addAdditionalModal'));
+                    
+                    // Auto-refresh inventory after successful save
+                    autoRefreshInventory('add');
+                }, 1500);
+            }
+        }).catch(error => {
+            console.error('❌ Failed to save additional to Firebase:', error);
+            let errorMessage = 'Failed to save additional to Firebase';
+            if (error.message) {
+                errorMessage += `: ${error.message}`;
+            }
+            showInventoryError('Save Failed', errorMessage);
+        });
+    } else {
+        // Fallback to local storage
+        console.log('💾 Saving additional locally:', additionalData);
+        const newAdditional = {
+            id: Date.now().toString(),
+            ...additionalData,
+            dateAdded: new Date().toISOString()
+        };
+        
+        // Add to sample additionals array
+        sampleAdditionals.push(newAdditional);
+        
+        // Show success message
+        showInventorySuccess('Additional Saved!', 'Additional item has been added locally');
+        
+        // Close modal and refresh UI after delay
+        setTimeout(() => {
+            closeModal(document.getElementById('addAdditionalModal'));
+            
+            // Auto-refresh inventory after successful save
+            autoRefreshInventory('add');
+        }, 1500);
+    }
 }
 
 // Update Product Function
@@ -668,18 +865,26 @@ function updateProduct() {
         return;
     }
 
+    // Show loading spinner
+    showInventoryLoading('Updating Product...', 'Please wait while we update your product');
+
     // Use Firebase to update product if available
     if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
         console.log('🔄 Attempting to update product in Firebase...');
         updateProductInFirebase(productId, productData).then(result => {
             if (result) {
-                // Close modal and refresh data
-                closeModal(document.getElementById('editProductModal'));
-                resetEditProductForm();
-                console.log('✅ Product updated successfully');
-                if (window.notyf) {
-                    window.notyf.success('Product updated successfully');
-                }
+                // Show success message
+                showInventorySuccess('Product Updated!', 'Product has been updated successfully');
+                
+                // Close modal and refresh data after delay
+                setTimeout(() => {
+                    closeModal(document.getElementById('editProductModal'));
+                    resetEditProductForm();
+                    console.log('✅ Product updated successfully');
+                    
+                    // Auto-refresh inventory after successful update
+                    autoRefreshInventory('update');
+                }, 1500);
             }
         }).catch(error => {
             console.error('❌ Failed to update in Firebase:', error);
@@ -687,11 +892,7 @@ function updateProduct() {
             if (error.message) {
                 errorMessage += `: ${error.message}`;
             }
-            if (window.notyf) {
-                window.notyf.error(errorMessage);
-            } else {
-                alert(errorMessage + '. Please try again.');
-            }
+            showInventoryError('Update Failed', errorMessage);
         });
     } else {
         // Fallback to local storage
@@ -704,17 +905,20 @@ function updateProduct() {
                 ...productData,
                 id: productId // Ensure ID is preserved
             };
-            // Refresh UI
-            loadProducts();
-            // Close modal
-            closeModal(document.getElementById('editProductModal'));
-            resetEditProductForm();
             
-            if (window.notyf) {
-                window.notyf.success('Product updated successfully');
-            } else {
-                alert('Product updated locally. Firebase connection may be unavailable.');
-            }
+            // Show success message
+            showInventorySuccess('Product Updated!', 'Product has been updated locally');
+            
+            // Close modal and refresh UI after delay
+            setTimeout(() => {
+                loadProducts();
+                closeModal(document.getElementById('editProductModal'));
+                resetEditProductForm();
+                
+                // Auto-refresh inventory after successful update
+                autoRefreshInventory('update');
+            }, 1500);        } else {
+            showInventoryError('Update Failed', 'Product not found in local storage');
         }
     }
 }
@@ -1336,28 +1540,35 @@ function deleteProduct(id) {
     // Show custom confirmation dialog
     showDeleteConfirmationModal(
         `Are you sure you want to delete "${product.name}"?`, 
-        'This action cannot be undone. The product will be permanently removed from your inventory.',
-        () => {
+        'This action cannot be undone. The product will be permanently removed from your inventory.',        () => {
             // User confirmed deletion
+            // Show loading spinner
+            showInventoryLoading('Deleting Product...', 'Please wait while we remove the product');
+            
             if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
                 // Use Firebase to delete
                 deleteProductFromFirebase(id).then(() => {
-                    // Success - show notification
-                    if (window.notyf) {
-                        window.notyf.success('Product deleted successfully');
-                    }
-                    // Refresh the products list
-                    loadProducts();
+                    // Show success message
+                    showInventorySuccess('Product Deleted!', 'Product has been removed successfully');
+                    
+                    // Auto-refresh inventory after successful delete
+                    setTimeout(() => {
+                        autoRefreshInventory('delete');
+                    }, 1500);
                 }).catch(error => {
                     console.error('Failed to delete from Firebase:', error);
                     // Fallback to local delete
                     const index = sampleProducts.findIndex(p => p.id === id);
                     if (index > -1) {
                         sampleProducts.splice(index, 1);
-                        loadProducts();
-                        if (window.notyf) {
-                            window.notyf.success('Product deleted successfully (local fallback)');
-                        }
+                        showInventorySuccess('Product Deleted!', 'Product removed locally (Firebase unavailable)');
+                        
+                        // Auto-refresh inventory after fallback delete
+                        setTimeout(() => {
+                            autoRefreshInventory('delete');
+                        }, 1500);
+                    } else {
+                        showInventoryError('Delete Failed', 'Product not found in local storage');
                     }
                 });
             } else {
@@ -1365,10 +1576,14 @@ function deleteProduct(id) {
                 const index = sampleProducts.findIndex(p => p.id === id);
                 if (index > -1) {
                     sampleProducts.splice(index, 1);
-                    loadProducts();
-                    if (window.notyf) {
-                        window.notyf.success('Product deleted successfully');
-                    }
+                    showInventorySuccess('Product Deleted!', 'Product has been removed locally');
+                    
+                    // Auto-refresh inventory after local delete
+                    setTimeout(() => {
+                        autoRefreshInventory('delete');
+                    }, 1500);
+                } else {
+                    showInventoryError('Delete Failed', 'Product not found');
                 }
             }
         }
@@ -1392,28 +1607,35 @@ function deleteAdditional(id) {
     // Show custom confirmation dialog
     showDeleteConfirmationModal(
         `Are you sure you want to delete "${additional.name}"?`, 
-        'This action cannot be undone. The additional item will be permanently removed from your inventory.',
-        () => {
+        'This action cannot be undone. The additional item will be permanently removed from your inventory.',        () => {
             // User confirmed deletion
+            // Show loading spinner
+            showInventoryLoading('Deleting Additional...', 'Please wait while we remove the additional item');
+            
             if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
                 // Use Firebase to delete
                 deleteAdditionalFromFirebase(id).then(() => {
-                    // Success - show notification
-                    if (window.notyf) {
-                        window.notyf.success('Additional deleted successfully');
-                    }
-                    // Refresh the additionals list
-                    loadAdditionals();
+                    // Show success message
+                    showInventorySuccess('Additional Deleted!', 'Additional item has been removed successfully');
+                    
+                    // Auto-refresh inventory after successful delete
+                    setTimeout(() => {
+                        autoRefreshInventory('delete');
+                    }, 1500);
                 }).catch(error => {
                     console.error('Failed to delete from Firebase:', error);
                     // Fallback to local delete
                     const index = sampleAdditionals.findIndex(a => a.id === id);
                     if (index > -1) {
                         sampleAdditionals.splice(index, 1);
-                        loadAdditionals();
-                        if (window.notyf) {
-                            window.notyf.success('Additional deleted successfully (local fallback)');
-                        }
+                        showInventorySuccess('Additional Deleted!', 'Additional removed locally (Firebase unavailable)');
+                        
+                        // Auto-refresh inventory after fallback delete
+                        setTimeout(() => {
+                            autoRefreshInventory('delete');
+                        }, 1500);
+                    } else {
+                        showInventoryError('Delete Failed', 'Additional not found in local storage');
                     }
                 });
             } else {
@@ -1421,10 +1643,14 @@ function deleteAdditional(id) {
                 const index = sampleAdditionals.findIndex(a => a.id === id);
                 if (index > -1) {
                     sampleAdditionals.splice(index, 1);
-                    loadAdditionals();
-                    if (window.notyf) {
-                        window.notyf.success('Additional deleted successfully');
-                    }
+                    showInventorySuccess('Additional Deleted!', 'Additional item has been removed locally');
+                    
+                    // Auto-refresh inventory after local delete
+                    setTimeout(() => {
+                        autoRefreshInventory('delete');
+                    }, 1500);
+                } else {
+                    showInventoryError('Delete Failed', 'Additional not found');
                 }
             }
         }
