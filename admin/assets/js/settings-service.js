@@ -1,8 +1,4 @@
-import {
-    auth,
-    onAuthStateChanged,
-    signOut
-} from "./sdk/chandrias-sdk.js";
+import { auth, onAuthStateChanged, signOut } from "./sdk/chandrias-sdk.js";
 
 $(document).ready(function () {
     // Initialize Notyf for notifications
@@ -20,7 +16,7 @@ $(document).ready(function () {
     //         // User is signed in
     //         const userEmail = user.email;
     //         $("#email").val(userEmail); // Update the email input field
-            
+
     //         // Extract name from email (part before @) or use displayName if available
     //         const userName = user.displayName || userEmail.split('@')[0];
     //         $("#name").val(userName);
@@ -30,8 +26,8 @@ $(document).ready(function () {
     //     }
     // });
 
-    // Password fields toggle
-    $("#togglePasswordFields").on("click", function() {
+    // SHOW PASSWORD FIELD
+    $("#togglePasswordFields").on("click", function () {
         const passwordFields = $("#passwordFields");
         if (passwordFields.is(":visible")) {
             passwordFields.hide();
@@ -42,64 +38,54 @@ $(document).ready(function () {
         }
     });
 
-    // LOGOUT FUNCTION with modal
+    // --====== START OF LOGOUT FUNCTION ======--
     const logoutModal = $("#logout-modal");
-    
+
     $("#signOut-btn").on("click", function () {
-        logoutModal.css("display", "flex");
-    });    $("#logout-yes").on("click", function () {
-        // Close the modal first
-        logoutModal.css("display", "none");
-        
-        // Show loading message
-        notyf.open({
-            type: "info",
-            message: "Signing out...",
-            duration: 2000
-        });
-        
-        signOut(auth)
-            .then(() => {
-                // Clear any stored admin data
-                localStorage.removeItem('userEmail');
-                localStorage.removeItem('adminEmail');
-                sessionStorage.clear();
-                
-                // Show success message
-                notyf.success("Successfully signed out! Redirecting to main website...");
-                
-                // Redirect after a short delay to show the message
-                setTimeout(() => {
-                    window.location.href = "../index.html";
-                }, 1500);
-            })
-            .catch(error => {
-                console.error("Error signing out:", error);
-                
-                // Clear stored data even if signOut fails
-                localStorage.removeItem('userEmail');
-                localStorage.removeItem('adminEmail');
-                sessionStorage.clear();
-                
-                // Show error message but still redirect
-                notyf.error("Sign out completed with some issues. Redirecting...");
-                
-                setTimeout(() => {
-                    window.location.href = "../index.html";
-                }, 1500);
-            });
-    });$("#logout-no").on("click", function () {
-        logoutModal.css("display", "none");
+        logoutModal.addClass("show");
     });
 
-    // Close modal when clicking outside
-    logoutModal.on("click", function(e) {
-        if (e.target === this) {
-            logoutModal.css("display", "none");
+    $("#logout-yes").on("click", async function () {
+        const $btn = $(this);
+        $btn.attr("disabled", true).text("Signing Out...");
+
+        const user = auth.currentUser;
+        if (!user) {
+            notyf.error("No user is currently signed in.");
+            $btn.removeAttr("disabled").text("Sign Out");
+            logoutModal.removeClass("show");
+            return;
+        }
+
+        try {
+            await signOut(auth);
+            notyf.success("You have been successfully signed out.");
+            logoutModal.removeClass("show");
+            setTimeout(() => {
+                window.location.href = "../index.html";
+            }, 1800);
+        } catch (error) {
+            console.error("Sign-out failed:", error);
+            notyf.error("Failed to sign out. Try again.");
+            $btn.removeAttr("disabled").text("Sign Out");
+            logoutModal.removeClass("show");
         }
     });
 
-    // SIDEBAR FUNCTIONALITY
+    // CLICKED NO, HIDE MODAL
+    $("#logout-no").on("click", function () {
+        logoutModal.removeClass("show");
+    });
+
+    // Close modal when clicking outside
+    logoutModal.on("click", function (e) {
+        if (e.target === this) {
+            logoutModal.removeClass("show");
+        }
+    });
+    // --====== END OF LOGOUT FUNCTION ======--
+
+    // --====== SIDEBAR FUNCTIONALITY ======--
     $(document).ready(function () {
         const $body = $("body"),
             $sidebar = $body.find(".custom-sidebar"),
