@@ -148,7 +148,7 @@
 }
 
 .table-header {
-    padding: 24px;
+    padding: 15px;
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
@@ -181,7 +181,8 @@
     position: relative;
     display: flex;
     align-items: center;
-    background: var(--body-color);
+    background: white;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 8px 12px;
     min-width: 250px;
@@ -246,7 +247,8 @@ table {
 }
 
 thead {
-    background: var(--body-color);
+    background: white;
+    border-bottom: 1px solid var(--border-color);
 }
 
 th {
@@ -336,7 +338,8 @@ tr:hover {
     position: relative;
     display: flex;
     align-items: center;
-    background: var(--body-color);
+    background: white;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 8px 12px;
 }
