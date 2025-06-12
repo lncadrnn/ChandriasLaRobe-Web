@@ -141,17 +141,17 @@ $(document).ready(function () {
                             class="card_color"
                             style="background-color: ${data.color}"
                             data-color="${data.color}"
-                        ></span>
-                        <img
+                        ></span>                        <img
                             src="${data.frontImageUrl}"
                             alt="image"
                             class="card_img"
                             id="product-img"
                         />
                         <h2 class="card_title">${data.name}</h2> 
-                        <p class="card_size">Available Size: ${Object.keys(
-                            data.size
-                        ).join(", ")}</p>                     
+                        <p class="card_price">₱${parseFloat(data.price).toLocaleString()}</p>
+                        <p class="card_size">Available Size: ${Object.entries(data.size)
+                            .map(([size, stock]) => `${size}(${stock})`)
+                            .join(", ")}</p>                     
                         <p class="card_sleeve">Sleeve: ${data.sleeve}</p>
                         <span class="card_category">${data.category}</span>
                         <div class="product-actions">
