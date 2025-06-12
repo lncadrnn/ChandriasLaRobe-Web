@@ -708,6 +708,11 @@
     display: none;
 }
 
+/* Image Cropper Modal - Higher z-index to appear above other modals */
+#imageCropperModal {
+    z-index: 1500;
+}
+
 .modal.active {
     display: flex;
     align-items: center;
@@ -730,6 +735,7 @@
     opacity: 1 !important;
     filter: none !important;
     backdrop-filter: none !important;
+    z-index: 1501;
 }
 
 .modal-content {
@@ -839,6 +845,7 @@
 
 #imageCropperModal .modal-backdrop {
     background: rgba(0, 0, 0, 0.7);
+    z-index: 1500;
 }
 
 #imageCropperModal .modal-body {

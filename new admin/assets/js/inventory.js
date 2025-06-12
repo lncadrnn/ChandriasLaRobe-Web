@@ -738,6 +738,9 @@ function collectEditFormData() {
     const selectedOption = colorSelect.options[colorSelect.selectedIndex];
     const colorHex = selectedOption ? selectedOption.getAttribute('data-hex') : '#000000';
 
+    // Get existing product data to preserve image URLs if no new images are uploaded
+    const existingProduct = sampleProducts.find(p => p.id === window.currentEditingProductId);
+
     return {
         name: document.getElementById('editProductName').value.trim(),
         category: document.getElementById('editProductCategory').value,
@@ -749,10 +752,11 @@ function collectEditFormData() {
         sleeves: document.getElementById('editProductSleeves').value,
         sizes: sizes,
         description: document.getElementById('editProductDescription').value.trim(),
-        frontImageUrl: editFrontImageData ? editFrontImageData.url : null,
-        frontImageId: editFrontImageData ? editFrontImageData.publicId : null,
-        backImageUrl: editBackImageData ? editBackImageData.url : null,
-        backImageId: editBackImageData ? editBackImageData.publicId : null,
+        // Preserve existing image URLs and IDs if no new images are uploaded
+        frontImageUrl: editFrontImageData ? editFrontImageData.url : (existingProduct ? existingProduct.frontImageUrl : null),
+        frontImageId: editFrontImageData ? editFrontImageData.publicId : (existingProduct ? existingProduct.frontImageId : null),
+        backImageUrl: editBackImageData ? editBackImageData.url : (existingProduct ? existingProduct.backImageUrl : null),
+        backImageId: editBackImageData ? editBackImageData.publicId : (existingProduct ? existingProduct.backImageId : null),
         status: 'available' // Default status
     };
 }
