@@ -5,6 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />        <title>Chandria's La Robe - Calendar</title>        <!-- EXTERNAL CSS -->
         <link rel="stylesheet" href="./assets/css/admin-layout.css" />
+        <link rel="stylesheet" href="./assets/css/admin-layout-mob.css" />
         <link rel="stylesheet" href="./assets/css/new-calendar.css" />
         <link
             rel="stylesheet"
@@ -215,8 +216,33 @@
                     </div>                </div>
             </div>
                 </div>
-            </div>
-        </main>
+            </div>        </main>        <!-- Mobile Bottom Navigation (hidden on desktop) -->
+        <nav class="mobile-bottom-nav">
+            <a href="./dashboard.html" class="mobile-nav-item">
+                <i class="bx bxs-dashboard icon"></i>
+                <span class="text">Dashboard</span>
+            </a>
+            <a href="./inventory.html" class="mobile-nav-item">
+                <i class="bx bxs-t-shirt icon"></i>
+                <span class="text">Inventory</span>
+            </a>
+            <a href="./calendar.html" class="mobile-nav-item active">
+                <i class="bx bxs-calendar icon"></i>
+                <span class="text">Calendar</span>
+            </a>
+            <a href="./rental.html" class="mobile-nav-item">
+                <i class="bx bxs-package icon"></i>
+                <span class="text">Rental</span>
+            </a>
+            <a href="./customer-logs.html" class="mobile-nav-item">
+                <i class="bx bxs-user icon"></i>
+                <span class="text">Logs</span>
+            </a>
+            <a href="./settings.html" class="mobile-nav-item">
+                <i class="bx bxs-cog icon"></i>
+                <span class="text">Settings</span>
+            </a>
+        </nav>
         
         <!-- Firebase Scripts -->
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -228,9 +254,9 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
             crossorigin="anonymous"
         ></script>
-        
-        <!-- Admin Layout JS -->
+          <!-- Admin Layout JS -->
         <script src="./assets/js/admin-layout.js"></script>
+        <script src="./assets/js/admin-layout-mob.js"></script>
         
         <!-- NEW CALENDAR SCRIPT -->
         <script src="./assets/js/new-calendar.js"></script>

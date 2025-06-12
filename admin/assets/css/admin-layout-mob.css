@@ -1,0 +1,252 @@
+/* ===============================================
+   MOBILE ADMIN LAYOUT CSS
+   This file contains mobile-specific styles for admin pages
+   =============================================== */
+
+/* =============== MOBILE NAVIGATION STYLES =============== */
+
+/* Hide mobile navigation by default (desktop) */
+.mobile-bottom-nav {
+    display: none;
+}
+
+/* =============== TABLET RESPONSIVENESS =============== */
+@media (max-width: 1024px) {
+    .main-content,
+    .page-name,
+    .custom-page-name {
+        margin-left: var(--sidebar-width-closed);
+    }
+    
+    .sidebar {
+        width: var(--sidebar-width-closed);
+    }
+    
+    .sidebar .text,
+    .sidebar .custom-text {
+        opacity: 0;
+    }
+    
+    .page-header,
+    .main-header {
+        padding: 20px 25px;
+    }
+}
+
+/* =============== MOBILE RESPONSIVENESS =============== */
+@media (max-width: 768px) {
+    /* Hide desktop sidebar completely */
+    .sidebar {
+        display: none !important;
+    }
+    
+    /* Show mobile bottom navigation */
+    .mobile-bottom-nav {
+        display: flex !important;
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        height: 70px !important;
+        background: var(--sidebar-color) !important;
+        border-top: 1px solid var(--border-color);
+        box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.15);
+        z-index: 9999 !important;
+        justify-content: space-around;
+        align-items: center;
+        padding: 0 8px;
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        margin: 0 !important;
+        transform: translateZ(0); /* Force hardware acceleration */
+        will-change: transform; /* Optimize for animations */
+    }
+    
+    /* Ensure body doesn't interfere with fixed positioning */
+    body {
+        position: relative;
+        overflow-x: hidden;
+    }
+    
+    /* Adjust main content for mobile */
+    .main-content,
+    .page-name,
+    .custom-page-name {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding-bottom: 85px !important; /* Extra space for bottom navigation */
+        min-height: calc(100vh - 85px);
+    }
+    
+    /* Mobile navigation items */
+    .mobile-nav-item {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: var(--text-color);
+        padding: 8px 6px;
+        border-radius: var(--border-radius);
+        transition: var(--tran-03);
+        min-width: 50px;
+        text-align: center;
+        flex: 1;
+        max-width: 60px;
+    }
+    
+    .mobile-nav-item.active {
+        background: var(--secondary-color);
+        color: var(--secondary-text-color);
+    }
+    
+    .mobile-nav-item:hover {
+        background: var(--secondary-color);
+        color: var(--secondary-text-color);
+    }
+    
+    .mobile-nav-item .icon {
+        font-size: 20px;
+        margin-bottom: 4px;
+        display: block;
+    }
+    
+    .mobile-nav-item .text {
+        font-size: 10px;
+        font-weight: 500;
+        white-space: nowrap;
+        display: block;
+    }
+    
+    /* Header adjustments for mobile */
+    .page-header,
+    .main-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 20px;
+    }
+    
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .page-title,
+    .main-header h1 {
+        font-size: 24px;
+    }
+    
+    .page-subtitle {
+        font-size: 13px;
+    }
+    
+    .btn {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+}
+
+/* =============== SMALL MOBILE ADJUSTMENTS =============== */
+@media (max-width: 480px) {
+    .mobile-bottom-nav {
+        height: 65px !important;
+        padding: 0 4px;
+    }
+    
+    .mobile-nav-item {
+        padding: 6px 4px;
+        min-width: 45px;
+        max-width: 55px;
+    }
+    
+    .mobile-nav-item .icon {
+        font-size: 18px;
+        margin-bottom: 3px;
+    }
+    
+    .mobile-nav-item .text {
+        font-size: 9px;
+    }
+    
+    .main-content,
+    .page-name,
+    .custom-page-name {
+        padding-bottom: 80px !important;
+    }
+    
+    .page-header,
+    .main-header {
+        padding: 15px;
+    }
+    
+    .page-title,
+    .main-header h1 {
+        font-size: 20px;
+    }
+    
+    .page-content {
+        padding: 15px;
+    }
+    
+    .search-box {
+        padding: 8px 12px;
+    }
+}
+
+/* =============== MOBILE NAVIGATION SPECIFIC FIXES =============== */
+
+/* Ensure navigation stays on top of all content */
+.mobile-bottom-nav {
+    pointer-events: auto !important;
+}
+
+/* Prevent any interference from page content */
+@media (max-width: 768px) {
+    main,
+    .main-content,
+    .page-content,
+    .content-wrapper {
+        margin-bottom: 0 !important;
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Ensure no element can overlap the navigation */
+    * {
+        position: relative;
+        z-index: auto;
+    }
+    
+    .mobile-bottom-nav {
+        position: fixed !important;
+        z-index: 9999 !important;
+    }
+}
+
+/* =============== SCROLL BEHAVIOR FIXES =============== */
+@media (max-width: 768px) {
+    /* Ensure smooth scrolling doesn't affect navigation */
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    /* Prevent body scroll issues */
+    body {
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Add safe area for devices with notches */
+    .mobile-bottom-nav {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        height: calc(70px + env(safe-area-inset-bottom, 0px));
+    }
+    
+    @media (max-width: 480px) {
+        .mobile-bottom-nav {
+            height: calc(65px + env(safe-area-inset-bottom, 0px));
+        }
+    }
+}

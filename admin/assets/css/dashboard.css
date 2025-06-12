@@ -95,14 +95,8 @@ body {
         padding: 0.5rem 1rem;
         font-size: 0.8rem;
     }
-    
-    .view-analytics-btn span {
-        display: none;
-    }
-    
-    .dashboard-layout {
-        padding: 15px 20px;
-    }
+
+
 }
 
 @media (max-width: 600px) {
