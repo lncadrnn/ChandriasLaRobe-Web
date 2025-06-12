@@ -655,7 +655,6 @@ header .custom-image-text .custom-header-text {
     position: relative;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     background: #ffffff !important;
-    border: 2px solid var(--primary-color);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     justify-self: center;
 }
@@ -1813,9 +1812,6 @@ select:disabled {
         color: #9ca3af;
     }
     
-    .tab-btn {
-        color: #d1d5db;
-    }
     
     .tab-btn:hover {
         background: linear-gradient(135deg, rgba(255, 105, 180, 0.2), rgba(255, 182, 193, 0.2));
