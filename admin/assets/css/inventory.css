@@ -655,7 +655,7 @@ header .custom-image-text .custom-header-text {
     position: relative;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     background: #ffffff !important;
-    border: 1px solid #e5e7eb;
+    border: 2px solid var(--primary-color);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     justify-self: center;
 }
@@ -680,6 +680,11 @@ header .custom-image-text .custom-header-text {
     transform: translateY(-12px) scale(1.02);
     box-shadow: 0 25px 40px rgba(0, 0, 0, 0.15);
     border-color: var(--primary-color);
+}
+
+.card_article:hover .product-actions {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .card_article.loading {
@@ -794,21 +799,15 @@ header .custom-image-text .custom-header-text {
     font-weight: 500;
     color: #4b5563;
     margin: 0.5rem 0;
-    padding: 0.375rem 0.75rem;
-    background: white;
-    border-radius: 6px;
-    border: 1px solid #e5e7eb;
     line-height: 1.4;
 }
 
 .card_size {
-    background: white;
-    border: 1px solid #e5e7eb;
+    color: #4b5563;
 }
 
 .card_sleeve {
-    background: white;
-    border: 1px solid #e5e7eb;
+    color: #4b5563;
 }
 
 .card_button {
@@ -890,43 +889,6 @@ header .custom-image-text .custom-header-text {
     position: absolute;
     top: 0;
     left: 0;
-}
-
-.product-actions {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    opacity: 0;
-    transition: all 0.3s ease;
-}
-
-.action-btn {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: white;
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: var(--shadow-light);
-    position: relative;
-    z-index: 10;
-}
-
-.action-btn:hover {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
-    color: white;
-    transform: scale(1.1);
-    box-shadow: var(--shadow-medium);
 }
 .action-btn::before,
 .action-btn::after {
@@ -1115,7 +1077,7 @@ header .custom-image-text .custom-header-text {
 .tab-btn {
     flex: 1;
     background: transparent;
-    color: #333333;
+    color: #000000;
     font-weight: 500;
     border: none;
     font-size: 0.9rem;
@@ -1887,19 +1849,6 @@ select:disabled {
     content: '✨';
     margin-right: 0.5rem;
     font-size: 0.75rem;
-}
-
-/* Enhanced Size and Sleeve Info with Icons */
-.card_size::before {
-    content: '📏';
-    margin-right: 0.5rem;
-    font-size: 0.8rem;
-}
-
-.card_sleeve::before {
-    content: '👔';
-    margin-right: 0.5rem;
-    font-size: 0.8rem;
 }
 
 /* Loading State Animation */
