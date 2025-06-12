@@ -297,8 +297,7 @@
                         <i class="bx bx-x"></i>
                     </span>
                 </div>                <div class="modal-body">
-                    <form id="customer-form" autocomplete="off">
-                        <!-- Order Summary -->
+                    <form id="customer-form" autocomplete="off">                        <!-- Order Summary -->
                         <div class="form-section">
                             <h4>Order Summary</h4>
                             <div class="form-row">
@@ -311,7 +310,11 @@
                                     <textarea id="client-additional-code" readonly rows="2" placeholder="No additional items"></textarea>
                                 </div>
                             </div>
-                        </div>                        <!-- Customer Information -->
+                            <div class="order-total-row">
+                                <span>Total:</span>
+                                <span id="client-rental-fee-display">₱0.00</span>
+                            </div>
+                        </div><!-- Customer Information -->
                         <div class="form-section">
                             <h4>Customer Information</h4>
                             <div class="form-row">
@@ -340,18 +343,9 @@
                                     <input type="text" id="client-address" required />
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Rental Details -->
+                        </div>                        <!-- Rental Details -->
                         <div class="form-section">
                             <h4>Rental Details</h4>
-                            <div class="form-row">
-                                <div class="form-group" id="rental-fee-wrapper">
-                                    <label for="client-rental-fee">Rental Fee</label>
-                                    <input type="text" id="client-rental-fee" readonly />
-                                </div>
-                                <div class="form-group"></div>
-                            </div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="rental-type">Rental Type</label>
