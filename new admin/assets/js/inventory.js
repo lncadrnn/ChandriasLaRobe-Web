@@ -179,14 +179,8 @@ async function saveProductToFirebase(productData) {
             !productData.backImageUrl || !productData.backImageId) {
             throw new Error('Missing Cloudinary image data. Please upload and crop both images before saving.');
         }
-        
-        // Use the new addProduct method from InventoryFetcher
+          // Use the new addProduct method from InventoryFetcher
         const savedProduct = await window.InventoryFetcher.addProduct(productData);
-        
-        // Add to local array for immediate UI update
-        sampleProducts.unshift(savedProduct);
-          // Refresh UI
-        loadProducts();
         
         console.log('Product saved to Firebase successfully');
         
@@ -426,18 +420,10 @@ function setupModals() {
         cancelAddAdditionalBtn.addEventListener('click', () => {
             closeModal(addAdditionalModal);
         });
-    }
-
-    // Form Submissions
-    const saveProductBtn = document.getElementById('saveProductBtn');
+    }    // Form Submissions
     const saveAdditionalBtn = document.getElementById('saveAdditionalBtn');
 
-    if (saveProductBtn) {
-        saveProductBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            saveProduct();
-        });
-    }
+    // Note: saveProductBtn event listener is handled in setupProductForm()
 
     if (saveAdditionalBtn) {
         saveAdditionalBtn.addEventListener('click', (e) => {
@@ -1746,11 +1732,13 @@ function collectFormData() {
 
 // Add product to inventory
 async function addProductToInventory(productData) {
-    try {
-        if (isFirebaseConnected && window.InventoryFetcher) {
+    try {        if (isFirebaseConnected && window.InventoryFetcher) {
             // Use Firebase to save product
             const savedProduct = await saveProductToFirebase(productData);
             console.log('Product added to Firebase successfully:', savedProduct);
+            
+            // Add to local array for immediate UI update
+            sampleProducts.unshift(savedProduct);
             
             // Show success notification
             if (window.notyf) {
