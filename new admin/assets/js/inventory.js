@@ -1119,16 +1119,6 @@ function loadAdditionals() {
                     ${additional.inclusions && additional.inclusions.length ? "With Inclusion" : "Without Inclusion"}
                 </p>
                 <span class="card_category">${additional.code || getTypeText(additional.type)}</span>
-                <div class="additional-details">
-                    <div class="detail-row">
-                        <span class="label">Type:</span>
-                        <span class="value">${getTypeText(additional.type)}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Size:</span>
-                        <span class="value">${additional.size}</span>
-                    </div>
-                </div>
                 <div class="additional-actions product-actions">
                     <button class="action-btn edit-btn edit-add-btn" onclick="editAdditional(${additional.id})">
                         <i class='bx bx-edit'></i>
@@ -1592,7 +1582,188 @@ function deleteProduct(id) {
 
 function editAdditional(id) {
     const additional = sampleAdditionals.find(a => a.id === id);
-    alert(`Editing additional: ${additional.name}`);
+    if (!additional) {
+        if (window.notyf) {
+            window.notyf.error('Additional not found');
+        }
+        return;
+    }
+
+    // Populate the edit form with current additional data
+    populateEditAdditionalForm(additional);
+    
+    // Store the additional ID for later use
+    window.currentEditingAdditionalId = id;
+    
+    // Open the edit modal
+    const editModal = document.getElementById('editAdditionalModal');
+    openModal(editModal);
+}
+
+// Function to populate the edit form with additional data
+function populateEditAdditionalForm(additional) {
+    // Basic information
+    document.getElementById('editAdditionalName').value = additional.name || '';
+    document.getElementById('editAdditionalCode').value = additional.code || '';
+    document.getElementById('editAdditionalType').value = additional.type || '';
+    document.getElementById('editAdditionalColor').value = additional.color || '';
+    document.getElementById('editAdditionalRentalPrice').value = additional.rentalPrice || additional.price || '';
+    document.getElementById('editAdditionalDescription').value = additional.description || '';
+
+    // Handle image
+    populateEditAdditionalImage(additional);
+}
+
+// Function to populate image in edit form
+function populateEditAdditionalImage(additional) {
+    // Clear any existing image data
+    window.editAdditionalImageData = null;
+
+    // Reset image preview
+    const editImagePreview = document.getElementById('editAdditionalImagePreview');
+    const editImagePlaceholder = document.getElementById('editAdditionalImagePlaceholder');
+
+    // Hide preview and show placeholder by default
+    editImagePreview.style.display = 'none';
+    editImagePlaceholder.style.display = 'flex';
+
+    // If additional has image, show it
+    if (additional.imageUrl) {
+        const editImage = document.getElementById('editAdditionalImage');
+        editImage.src = additional.imageUrl;
+        editImagePlaceholder.style.display = 'none';
+        editImagePreview.style.display = 'block';
+        
+        // Store the existing image data
+        window.editAdditionalImageData = {
+            url: additional.imageUrl,
+            publicId: additional.imageId
+        };
+    }
+}
+
+function deleteProduct(id) {
+    const product = sampleProducts.find(p => p.id === id);
+    if (!product) {
+        if (window.notyf) {
+            window.notyf.error('Product not found');
+        }
+        return;
+    }
+
+    // Show custom confirmation dialog
+    showDeleteConfirmationModal(
+        `Are you sure you want to delete "${product.name}"?`, 
+        'This action cannot be undone. The product will be permanently removed from your inventory.',        () => {
+            // User confirmed deletion
+            // Show loading spinner
+            showInventoryLoading('Deleting Product...', 'Please wait while we remove the product');
+            
+            if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
+                // Use Firebase to delete
+                deleteProductFromFirebase(id).then(() => {
+                    // Show success message
+                    showInventorySuccess('Product Deleted!', 'Product has been removed successfully');
+                    
+                    // Auto-refresh inventory after successful delete
+                    setTimeout(() => {
+                        autoRefreshInventory('delete');
+                    }, 1500);
+                }).catch(error => {
+                    console.error('Failed to delete from Firebase:', error);
+                    // Fallback to local delete
+                    const index = sampleProducts.findIndex(p => p.id === id);
+                    if (index > -1) {
+                        sampleProducts.splice(index, 1);
+                        showInventorySuccess('Product Deleted!', 'Product removed locally (Firebase unavailable)');
+                        
+                        // Auto-refresh inventory after fallback delete
+                        setTimeout(() => {
+                            autoRefreshInventory('delete');
+                        }, 1500);
+                    } else {
+                        showInventoryError('Delete Failed', 'Product not found in local storage');
+                    }
+                });
+            } else {
+                // Local delete fallback
+                const index = sampleProducts.findIndex(p => p.id === id);
+                if (index > -1) {
+                    sampleProducts.splice(index, 1);
+                    showInventorySuccess('Product Deleted!', 'Product has been removed locally');
+                    
+                    // Auto-refresh inventory after local delete
+                    setTimeout(() => {
+                        autoRefreshInventory('delete');
+                    }, 1500);
+                } else {
+                    showInventoryError('Delete Failed', 'Product not found');
+                }
+            }
+        }
+    );
+}
+
+function editAdditional(id) {
+    const additional = sampleAdditionals.find(a => a.id === id);
+    if (!additional) {
+        if (window.notyf) {
+            window.notyf.error('Additional not found');
+        }
+        return;
+    }
+
+    // Populate the edit form with current additional data
+    populateEditAdditionalForm(additional);
+    
+    // Store the additional ID for later use
+    window.currentEditingAdditionalId = id;
+    
+    // Open the edit modal
+    const editModal = document.getElementById('editAdditionalModal');
+    openModal(editModal);
+}
+
+// Function to populate the edit form with additional data
+function populateEditAdditionalForm(additional) {
+    // Basic information
+    document.getElementById('editAdditionalName').value = additional.name || '';
+    document.getElementById('editAdditionalCode').value = additional.code || '';
+    document.getElementById('editAdditionalType').value = additional.type || '';
+    document.getElementById('editAdditionalColor').value = additional.color || '';
+    document.getElementById('editAdditionalRentalPrice').value = additional.rentalPrice || additional.price || '';
+    document.getElementById('editAdditionalDescription').value = additional.description || '';
+
+    // Handle image
+    populateEditAdditionalImage(additional);
+}
+
+// Function to populate image in edit form
+function populateEditAdditionalImage(additional) {
+    // Clear any existing image data
+    window.editAdditionalImageData = null;
+
+    // Reset image preview
+    const editImagePreview = document.getElementById('editAdditionalImagePreview');
+    const editImagePlaceholder = document.getElementById('editAdditionalImagePlaceholder');
+
+    // Hide preview and show placeholder by default
+    editImagePreview.style.display = 'none';
+    editImagePlaceholder.style.display = 'flex';
+
+    // If additional has image, show it
+    if (additional.imageUrl) {
+        const editImage = document.getElementById('editAdditionalImage');
+        editImage.src = additional.imageUrl;
+        editImagePlaceholder.style.display = 'none';
+        editImagePreview.style.display = 'block';
+        
+        // Store the existing image data
+        window.editAdditionalImageData = {
+            url: additional.imageUrl,
+            publicId: additional.imageId
+        };
+    }
 }
 
 function deleteAdditional(id) {
