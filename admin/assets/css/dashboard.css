@@ -18,6 +18,8 @@
     flex-direction: column;
     gap: 24px;
     max-width: 100%;
+    overflow-x: hidden; /* Prevent horizontal overflow */
+    box-sizing: border-box;
 }
 
 
@@ -27,7 +29,10 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
-    max-width: 900px; /* Optimized width for three cards to align with table */
+    margin-bottom: 24px;
+    max-width: 900px;
+    width: 100%; /* Ensure it respects container width */
+    box-sizing: border-box; /* Include padding/margin in width calculation */
 }
 
 .dashboard-card {
@@ -82,15 +87,15 @@
 }
 
 .active-rentals .card-icon {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--primary-color);
 }
 
 .active-appointments .card-icon {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: var(--primary-color);
 }
 
 .total-products .card-icon {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: var(--primary-color);
 }
 
 .card-title {
@@ -563,20 +568,22 @@ tr:hover {
 @media screen and (max-width: 900px) {
     .dashboard-cards-row {
         grid-template-columns: repeat(2, 1fr);
-        max-width: 600px;
+        max-width: 100%;
+        gap: 16px;
     }
 }
 
 @media screen and (max-width: 768px) {
     .dashboard-layout {
-        padding: 16px;
+        padding: 12px;
         gap: 16px;
     }
     
     .dashboard-cards-row {
         grid-template-columns: 1fr;
-        gap: 16px;
-        max-width: none; /* Remove width restriction on mobile */
+        gap: 14px;
+        max-width: 100%;
+        margin-bottom: 20px;
     }
     
     .dashboard-card {
@@ -637,12 +644,18 @@ tr:hover {
 
 @media screen and (max-width: 480px) {
     .dashboard-layout {
-        padding: 12px;
+        padding: 8px;
         gap: 12px;
+    }
+    
+    .dashboard-cards-row {
+        gap: 12px;
+        margin-bottom: 16px;
     }
     
     .dashboard-card {
         padding: 16px;
+        margin: 0; /* Ensure no extra margins */
     }
     
     .card-icon {
