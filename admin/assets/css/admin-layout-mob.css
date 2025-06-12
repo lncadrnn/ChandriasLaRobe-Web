@@ -120,17 +120,17 @@
     }    /* Header adjustments for mobile */
     .page-header,
     .main-header {
-        position: sticky;
-        top: 0;
+        /* position: sticky; */
+        /* top: 0; */
         flex-direction: column;
         align-items: flex-start;
         gap: 15px;
         padding: 20px;
-        z-index: 100;
+        /* z-index: 100; */
         background: var(--body-color);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        box-shadow: var(--shadow);
+        /* backdrop-filter: blur(10px); */
+        /* -webkit-backdrop-filter: blur(10px); */
+        /* box-shadow: var(--shadow); */
     }
     
     .header-right {
@@ -181,14 +181,14 @@
         padding-bottom: 80px !important;
     }    .page-header,
     .main-header {
-        position: sticky;
-        top: 0;
+        /* position: sticky; */
+        /* top: 0; */
         padding: 15px;
-        z-index: 100;
+        /* z-index: 100; */
         background: var(--body-color);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        box-shadow: var(--shadow);
+        /* backdrop-filter: blur(10px); */
+        /* -webkit-backdrop-filter: blur(10px); */
+        /* box-shadow: var(--shadow); */
     }
     
     .page-title,
@@ -262,6 +262,7 @@
 }
 
 /* =============== MOBILE STICKY HEADER EFFECTS =============== */
+/*
 @media (max-width: 768px) {
     .page-header.scrolled,
     .main-header.scrolled {
@@ -271,15 +272,16 @@
         -webkit-backdrop-filter: blur(15px);
     }
     
-    /* Ensure smooth scrolling on mobile */
+    Ensure smooth scrolling on mobile
     html {
         scroll-behavior: smooth;
         -webkit-overflow-scrolling: touch;
     }
     
-    /* Additional mobile optimizations */
+    Additional mobile optimizations
     .page-header,
     .main-header {
         transition: all 0.3s ease;
     }
 }
+*/

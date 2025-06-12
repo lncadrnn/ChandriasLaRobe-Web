@@ -317,19 +317,20 @@ body {
 
 /* =============== PAGE HEADER SYSTEM =============== */
 .page-header {
-    position: sticky;
-    top: 0;
+    /* position: sticky; */
+    /* top: 0; */
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 25px 30px;
     background: var(--body-color);
     border-bottom: 1px solid var(--border-color);
+    /* box-shadow: var(--shadow); */
     margin-bottom: 0;
     min-height: var(--header-height);
-    z-index: 100;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    /* z-index: 100; */
+    /* backdrop-filter: blur(10px); */
+    /* -webkit-backdrop-filter: blur(10px); */
 }
 
 .header-left {
@@ -364,20 +365,20 @@ body {
 
 /* Legacy support for existing header styles */
 .main-header {
-    position: sticky;
-    top: 0;
+    /* position: sticky; */
+    /* top: 0; */
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 25px 30px;
     background: var(--body-color);
     border-bottom: 1px solid var(--border-color);
-    box-shadow: var(--shadow);
+    /* box-shadow: var(--shadow); */
     margin-bottom: 0;
     min-height: var(--header-height);
-    z-index: 100;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    /* z-index: 100; */
+    /* backdrop-filter: blur(10px); */
+    /* -webkit-backdrop-filter: blur(10px); */
 }
 
 .main-header .header-left {
@@ -641,12 +642,12 @@ a[href] {
 }
 
 /* =============== STICKY HEADER SCROLL EFFECTS =============== */
-.page-header.scrolled,
+/* .page-header.scrolled,
 .main-header.scrolled {
     background: rgba(228, 233, 247, 0.98);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     border-bottom: 1px solid rgba(233, 236, 239, 0.8);
-}
+} */
 
 /* Smooth scrolling behavior */
 html {
