@@ -165,62 +165,6 @@ window.updateInventoryData = function(products, additionals) {
     }
 };
 
-// Show Firebase connection status
-function showFirebaseStatus(message, type = 'info') {
-    const statusElement = document.getElementById('firebaseStatus');
-    if (statusElement) {
-        statusElement.textContent = message;
-        statusElement.className = `firebase-status ${type}`;
-        
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-            statusElement.textContent = '';
-            statusElement.className = 'firebase-status';
-        }, 5000);
-    } else {
-        // Create status element if it doesn't exist
-        const status = document.createElement('div');
-        status.id = 'firebaseStatus';
-        status.className = `firebase-status ${type}`;
-        status.textContent = message;
-        status.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px 15px;
-            border-radius: 5px;
-            font-size: 14px;
-            font-weight: 500;
-            z-index: 10000;
-            transition: all 0.3s ease;
-        `;
-        
-        // Set colors based on type
-        if (type === 'success') {
-            status.style.backgroundColor = '#d4edda';
-            status.style.color = '#155724';
-            status.style.border = '1px solid #c3e6cb';
-        } else if (type === 'error') {
-            status.style.backgroundColor = '#f8d7da';
-            status.style.color = '#721c24';
-            status.style.border = '1px solid #f5c6cb';
-        } else {
-            status.style.backgroundColor = '#d1ecf1';
-            status.style.color = '#0c5460';
-            status.style.border = '1px solid #bee5eb';
-        }
-        
-        document.body.appendChild(status);
-        
-        // Auto-remove after 5 seconds
-        setTimeout(() => {
-            if (status.parentNode) {
-                status.parentNode.removeChild(status);
-            }
-        }, 5000);
-    }
-}
-
 // Enhanced save product function to use Firebase
 async function saveProductToFirebase(productData) {
     try {
@@ -241,18 +185,14 @@ async function saveProductToFirebase(productData) {
         
         // Add to local array for immediate UI update
         sampleProducts.unshift(savedProduct);
-        
-        // Refresh UI
+          // Refresh UI
         loadProducts();
         
         console.log('Product saved to Firebase successfully');
-        showFirebaseStatus('Product saved to Firebase', 'success');
         
         return savedProduct;
-        
-    } catch (error) {
+          } catch (error) {
         console.error('Error saving product to Firebase:', error);
-        showFirebaseStatus('Failed to save product to Firebase', 'error');
         throw error;
     }
 }
@@ -301,18 +241,15 @@ async function deleteProductFromFirebase(productId) {
         if (index > -1) {
             sampleProducts.splice(index, 1);
         }
-        
-        // Step 5: Refresh UI
+          // Step 5: Refresh UI
         loadProducts();
         
         console.log('Product and associated images deleted successfully');
-        showFirebaseStatus('Product deleted from Firebase and Cloudinary', 'success');
         
         return true;
         
     } catch (error) {
         console.error('Error deleting product from Firebase:', error);
-        showFirebaseStatus('Failed to delete product from Firebase', 'error');
         throw error;
     }
 }
@@ -331,18 +268,15 @@ async function saveAdditionalToFirebase(additionalData) {
         
         // Add to local array for immediate UI update
         sampleAdditionals.unshift(savedAdditional);
-        
-        // Refresh UI
+          // Refresh UI
         loadAdditionals();
         
         console.log('Additional saved to Firebase successfully');
-        showFirebaseStatus('Additional saved to Firebase', 'success');
         
         return savedAdditional;
         
     } catch (error) {
         console.error('Error saving additional to Firebase:', error);
-        showFirebaseStatus('Failed to save additional to Firebase', 'error');
         throw error;
     }
 }
@@ -377,17 +311,14 @@ async function deleteAdditionalFromFirebase(additionalId) {
             sampleAdditionals.splice(index, 1);
         }
         
-        // Step 5: Refresh UI
-        loadAdditionals();
+        // Step 5: Refresh UI        loadAdditionals();
         
         console.log('Additional and associated image deleted successfully');
-        showFirebaseStatus('Additional deleted from Firebase and Cloudinary', 'success');
         
         return true;
         
     } catch (error) {
         console.error('Error deleting additional from Firebase:', error);
-        showFirebaseStatus('Failed to delete additional from Firebase', 'error');
         throw error;
     }
 }
@@ -600,7 +531,8 @@ function saveProduct() {
             if (result) {
                 // Close modal and refresh data
                 closeModal(document.getElementById('addProductModal'));
-                resetProductForm();                console.log('✅ Product saved to Firebase successfully');
+                resetProductForm();
+                console.log('✅ Product saved successfully');
                 if (window.notyf) {
                     window.notyf.success('Product added successfully');
                 }

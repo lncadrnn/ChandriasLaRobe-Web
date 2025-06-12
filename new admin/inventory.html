@@ -587,11 +587,9 @@
                 console.log('🌐 Origin:', window.location.origin);
                 
                 // Wait a moment for modules to load
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                  // Check if InventoryFetcher is available
+                await new Promise(resolve => setTimeout(resolve, 1000));                // Check if InventoryFetcher is available
                 if (!window.InventoryFetcher) {
                     console.error('❌ InventoryFetcher not available');
-                    window.notyf?.error('Firebase service not loaded properly');
                     return;
                 }
                 
@@ -601,10 +599,8 @@
                 console.log('🔗 Testing Firebase connection...');
                 const isConnected = await window.checkFirebaseStatus();
                 console.log(`📡 Firebase connection result: ${isConnected}`);
-                
-                if (!isConnected) {
+                  if (!isConnected) {
                     console.warn('⚠️ Firebase connection failed - using offline mode');
-                    window.notyf?.warning('Working in offline mode - Firebase unavailable');
                     
                     // Log detailed connection info
                     console.log('🔍 Connection details:');
@@ -639,16 +635,13 @@
                     console.log('📦 Loading initial data...');
                     await loadInventoryFromFirebase();                } else {
                     console.error('❌ Failed to initialize Firebase services:', initResult.message);
-                    window.notyf?.error(`Firebase initialization failed: ${initResult.message}`);
                 }
                 
             } catch (error) {
-                console.error('❌ Error initializing Firebase:', error);
-                console.log('🔍 Error details:', {
+                console.error('❌ Error initializing Firebase:', error);                console.log('🔍 Error details:', {
                     name: error.name,
                     message: error.message,                    stack: error.stack
                 });
-                window.notyf?.error(`Firebase connection failed: ${error.message}`);
                 
                 // Don't show additional alerts, let user use offline mode
                 setTimeout(() => {
@@ -702,18 +695,13 @@
                     }
                     if (typeof window.loadAdditionals === 'function') {
                         window.loadAdditionals();
-                    }
-                }
-                  // Show product count notification only
-                if (products.length > 0 || additionals.length > 0) {
-                    window.notyf.success(`📦 Loaded ${products.length} products and ${additionals.length} additionals`);
-                } else {
-                    window.notyf.info('📦 No products found in database');
-                }
+                    }                }
+                
+                // Log successful loading to console only
+                console.log(`📦 Successfully loaded ${products.length} products and ${additionals.length} additionals`);
                 
             } catch (error) {
                 console.error('❌ Error loading inventory from Firebase:', error);
-                window.notyf.error(`Failed to load inventory data: ${error.message}`);
             }
         }
           // Make the load function available globally
