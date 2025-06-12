@@ -144,8 +144,7 @@ $(document).ready(function () {
                         ₱${total.toLocaleString()}
                         <i class='bx bx-trash cart-remove' title="Remove All"></i>
                     </span>
-                `);
-                  $div.find(".cart-remove").on("click", function () {
+                `);                  $div.find(".cart-remove").on("click", function () {
                     // Remove the product
                     cart.products = cart.products.filter(p => p.name !== name);
                     
@@ -155,7 +154,6 @@ $(document).ready(function () {
                     if (remainingProductCount === 0) {
                         // If no products left, remove all additionals
                         cart.accessories = [];
-                        notyf.error("All additionals removed as no products remain in Rental List.");
                     } else {
                         // Check if we need to remove excess additionals due to product limit
                         // Group additionals by name and count them
@@ -2086,8 +2084,7 @@ $(document).ready(function () {
         const productIndex = $(this).data('product-index');
         const accessoryIdx = $(this).data('accessory-idx');
         
-        if (productIndex !== undefined) {
-            // Remove individual product-size entry by index
+        if (productIndex !== undefined) {            // Remove individual product-size entry by index
             if (productIndex >= 0 && productIndex < cart.products.length) {
                 const removedProduct = cart.products.splice(productIndex, 1)[0];
                 
@@ -2097,7 +2094,6 @@ $(document).ready(function () {
                 if (remainingProductCount === 0) {
                     // If no products left, remove all additionals
                     cart.accessories = [];
-                    notyf.error("All additionals removed as no products remain in Rental List.");
                 } else {
                     // Check if we need to remove excess additionals due to product limit
                     // Group additionals by name and count them
