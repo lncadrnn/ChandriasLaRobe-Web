@@ -1,335 +1,69 @@
-/* Dashboard-specific styles - base styles moved to admin-layout.css */
+/* ===============================================
+   DASHBOARD SPECIFIC STYLES
+   Modern, responsive dashboard design with cards,
+   tables, appointments, and modals
+   =============================================== */
 
-/* Dashboard Body Background */
-body {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+/* =============== DASHBOARD LAYOUT =============== */
+.dashboard-layout {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 24px;
+    padding: 24px;
+    min-height: calc(100vh - var(--header-height));
 }
 
-/* Dashboard Header Customization */
-.dashboard-header {
-    background: transparent !important;
-    border-bottom: none !important;
-    box-shadow: none !important;
-    padding: 30px 30px 20px 30px;
-}
-
-.dashboard-header .page-title {
-    color: #2c3e50 !important;
-    font-size: 32px;
-    font-weight: 700;
-    margin-bottom: 5px;
-}
-
-.dashboard-datetime {
-    display: block;
-    margin-top: 0;
-}
-
-.dashboard-datetime .current-date,
-.dashboard-datetime #currentDateTime {
-    color: #5a6c7d;
-    font-size: 14px;
-    font-weight: 400;
-    margin: 0;
-}
-
-/* ...existing code... */
-
-.main-content {
-    margin-left: 250px;
-    width: calc(100% - 250px);
-    transition: var(--tran-04);
-    padding: 0;
-    height: 100vh;
-    overflow: hidden;
-    box-sizing: border-box;
-    background: transparent;
-}
-
-.sidebar.close ~ .main-content {
-    margin-left: 88px;
-    width: calc(100% - 88px);
-    transition: var(--tran-04);
-}
-
-@media (max-width: 900px) {
-    .main-content {
-        margin-left: 88px;
-        width: calc(100% - 88px);
-        transition: margin-left 0.4s var(--tran-04), width 0.4s var(--tran-04);
-    }
-    .sidebar {
-        width: 88px;
-    }
-    .sidebar.close ~ .main-content {
-        margin-left: 0;
-        width: 100%;
-        transition: margin-left 0.4s var(--tran-04), width 0.4s var(--tran-04);
-    }
-}
-
-@media (max-width: 768px) {
-    .dashboard-header {
-        padding: 20px 20px 15px 20px;
-    }
-    
-    .dashboard-header .page-title {
-        font-size: 28px;
-    }
-    
-    .dashboard-datetime {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-    
-    .dashboard-datetime .current-date,
-    .dashboard-datetime .current-time {
-        font-size: 14px;
-    }
-    
-    .header-right {
-        gap: 0.5rem;
-    }
-      .view-analytics-btn {
-        padding: 0.5rem 1rem;
-        font-size: 0.8rem;
-    }
-
-
-}
-
-@media (max-width: 600px) {
-    .current-date {
-        font-size: 0.8rem;
-    }
-    
-    .current-time {
-        font-size: 0.75rem;
-    }
-    
-    .datetime-display {
-        display: flex;
-    }
-    
-    .view-analytics-btn {
-        display: none;
-    }
-}
-
-.main-header {
+.dashboard-main {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem 2rem 0 2rem;
-    margin-bottom: 0;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* =============== DASHBOARD HEADER =============== */
+.dashboard-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #ff6b9d 100%);
+    color: white;
+    padding: 24px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
 }
 
 .header-left {
     display: flex;
     flex-direction: column;
-    gap: 0.125rem;
+    gap: 8px;
 }
 
-.header-subtitle {
-    color: var(--text-color);
-    font-size: 0.875rem;
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
     margin: 0;
-    font-weight: 400;
 }
 
-.brand {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-size: 1.75rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    text-shadow: none;
-    margin: 0;
-    line-height: 1.2;
-}
-
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-/* Date Time Display */
-.datetime-display {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.25rem;
+.dashboard-datetime {
+    opacity: 0.9;
 }
 
 .current-date {
-    color: var(--text-color-dark);
-    font-size: 0.875rem;
-    font-weight: 500;
-}
-
-.current-time {
-    color: var(--text-color);
-    font-size: 0.8rem;
+    font-size: 1rem;
     font-weight: 400;
-    font-family: 'Monaco', 'Consolas', monospace;
 }
 
-/* View Analytics Button */
-.view-analytics-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.25rem;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
-    color: white;
-    border: none;
-    border-radius: var(--border-radius);
-    font-weight: 600;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: var(--tran-02);
-    box-shadow: var(--shadow-medium);
-    position: relative;
-    overflow: hidden;
-}
-
-.view-analytics-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-large);
-}
-
-.view-analytics-btn:active {
-    transform: translateY(0);
-}
-
-.view-analytics-btn i {
-    font-size: 1.1rem;
-}
-
-.view-analytics-btn span {
-    font-weight: 600;
-    letter-spacing: 0.01em;
-}
-
-.view-analytics-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: var(--tran-03);
-}
-
-.view-analytics-btn:hover::before {
-    left: 100%;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    background: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-light);
-    border: 1px solid var(--border-color);
-    transition: var(--tran-02);
-}
-
-.user-info:hover {
-    box-shadow: var(--shadow-medium);
-    transform: translateY(-1px);
-}
-
-.user-details {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-.user-name {
-    color: var(--text-color-dark);
-    font-weight: 600;
-    font-size: 0.875rem;
-    line-height: 1.2;
-}
-
-.user-info .role {
-    color: var(--text-color);
-    font-size: 0.75rem;
-    font-weight: 500;
-}
-
-.user-avatar {
-    font-size: 2rem;
-    color: var(--primary-color);
-    transition: var(--tran-02);
-}
-
-.user-info:hover .user-avatar {
-    color: var(--primary-color-dark);
-}
-
-.dashboard-layout {
-    display: flex;
-    gap: 1.5rem;
-    padding: 20px 30px;
-    background: transparent;
-    min-height: calc(100vh - 144px);
-    align-items: flex-start;
-}
-
-.dashboard-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    transition: var(--tran-04);
-    min-width: 0;
-    margin-right: 0;
-}
-
-/* Smooth transitions for dashboard main based on sidebar state */
-.sidebar.close ~ .main-content .dashboard-main,
-.sidebar:not(.close) ~ .main-content .dashboard-main {
-    transition: var(--tran-04);
-}
-
+/* =============== DASHBOARD CARDS =============== */
 .dashboard-cards-row {
-    display: flex;
-    gap: 1.2rem;
-    margin: 0;
-    padding: 0;
-    transition: var(--tran-04);
-    flex-wrap: nowrap;
-    overflow: hidden;
-    width: 100%;
-    justify-content: space-between;
-}
-
-/* Align cards to span full width of Recent Rentals container */
-.sidebar:not(.close) ~ .main-content .dashboard-cards-row,
-.sidebar.close ~ .main-content .dashboard-cards-row {
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
 }
 
 .dashboard-card {
-    background: linear-gradient(135deg, white, #fefefe);
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-light);
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    transition: var(--transition);
     border: 1px solid var(--border-color);
-    height: 140px;
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: var(--tran-03);
     position: relative;
     overflow: hidden;
 }
@@ -340,16 +74,15 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), #ff6b9d);
     opacity: 0;
-    transition: var(--tran-03);
+    transition: var(--transition);
 }
 
 .dashboard-card:hover {
-    box-shadow: var(--shadow-medium);
-    transform: translateY(-2px);
-    border-color: var(--primary-color-light);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
 }
 
 .dashboard-card:hover::before {
@@ -359,148 +92,111 @@ body {
 .card-header {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
+    gap: 12px;
+    margin-bottom: 16px;
 }
 
 .card-icon {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, var(--primary-color-light), rgba(255, 154, 175, 0.2));
-    border-radius: var(--border-radius);
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+    font-size: 1.5rem;
+    color: white;
 }
 
-.card-icon i {
-    font-size: 1.25rem;
-    color: var(--primary-color);
+.active-rentals .card-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.active-appointments .card-icon {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.total-products .card-icon {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 
 .card-title {
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--text-color);
-    margin: 0;
+    color: var(--text-light);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    line-height: 1.2;
 }
 
 .card-content {
-    flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    gap: 8px;
 }
 
 .card-main {
     font-size: 2rem;
     font-weight: 700;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1;
-    margin-bottom: 0.5rem;
+    color: var(--text-dark);
     display: flex;
     align-items: baseline;
-    gap: 0.5rem;
+    gap: 8px;
 }
 
 .card-main span {
     font-size: 0.875rem;
-    color: var(--text-color);
-    font-weight: 500;
-    opacity: 0.8;
+    font-weight: 400;
+    color: var(--text-light);
 }
 
 .card-sub {
-    color: var(--text-color);
-    font-size: 0.75rem;
-    margin: 0;
+    font-size: 0.875rem;
+    color: var(--text-light);
     display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    opacity: 0.7;
+    align-items: baseline;
+    gap: 4px;
 }
 
 .card-sub span {
-    font-weight: 600;
-    opacity: 1;
-    color: var(--primary-color);
+    font-weight: 500;
 }
 
-/* Dashboard card sizing - responsive to sidebar state */
-.sidebar:not(.close) ~ .main-content .dashboard-card {
-    flex: 0 0 200px;
-    min-width: 200px;
-    max-width: 200px;
-    width: 200px;
-}
-
-/* When sidebar is closed - allow cards to expand equally */
-.sidebar.close ~ .main-content .dashboard-card {
-    flex: 1;
-    min-width: 200px;
-    max-width: 250px;
-}
-
-.dashboard-content {
-    display: flex;
-    gap: 1.5rem;
-}
-
-/* Recent Rentals section */
+/* =============== DASHBOARD TABLE =============== */
 .dashboard-table {
     background: white;
-    border-radius: var(--border-radius-lg);
-    padding: 1.5rem;
-    box-shadow: var(--shadow-light);
-    border: 1px solid var(--border-color);
-    height: calc(100vh - 320px);
-    display: flex;
-    flex-direction: column;
-    position: relative;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     overflow: hidden;
-    transition: var(--tran-04);
+    border: 1px solid var(--border-color);
 }
 
 .table-header {
-    position: sticky;
-    top: 0;
-    background: white;
-    z-index: 10;
-    padding-bottom: 1.5rem;
-    margin-bottom: 0;
+    padding: 24px;
     border-bottom: 1px solid var(--border-color);
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    gap: 1rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
 }
 
 .table-title h3 {
     font-size: 1.25rem;
     font-weight: 600;
-    color: var(--text-color-dark);
-    margin: 0 0 0.25rem 0;
-    line-height: 1.2;
+    color: var(--text-dark);
+    margin-bottom: 4px;
 }
 
 .table-title p {
     font-size: 0.875rem;
-    color: var(--text-color);
+    color: var(--text-light);
     margin: 0;
-    line-height: 1.4;
 }
 
 .table-actions {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
 .table-search {
@@ -508,1422 +204,612 @@ body {
     display: flex;
     align-items: center;
     background: var(--body-color);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 0 0.75rem;
-    gap: 0.5rem;
-    transition: var(--tran-02);
+    border-radius: 8px;
+    padding: 8px 12px;
     min-width: 250px;
 }
 
-.table-search:focus-within {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px var(--primary-color-light);
-}
-
 .table-search i {
-    color: var(--text-color);
+    color: var(--text-light);
     font-size: 1rem;
 }
 
 .table-search input {
-    background: transparent;
     border: none;
     outline: none;
-    padding: 0.75rem 0;
+    background: transparent;
+    padding: 4px 8px;
     font-size: 0.875rem;
-    color: var(--text-color-dark);
     flex: 1;
+    color: var(--text-dark);
 }
 
 .table-search input::placeholder {
-    color: var(--text-color);
+    color: var(--text-light);
 }
 
 .table-search .clear-icon {
     cursor: pointer;
-    opacity: 0.6;
-    transition: var(--tran-02);
+    opacity: 0;
+    transition: var(--transition);
 }
 
-.table-search .clear-icon:hover {
+.table-search:focus-within .clear-icon {
     opacity: 1;
-    color: var(--primary-color);
 }
 
 .view-all-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
     background: var(--primary-color);
     color: white;
     border: none;
-    border-radius: var(--border-radius);
+    padding: 10px 16px;
+    border-radius: 8px;
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
-    transition: var(--tran-02);
-    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition);
 }
 
 .view-all-btn:hover {
-    background: var(--primary-color-dark);
+    background: #ff4d7a;
     transform: translateY(-1px);
-    box-shadow: var(--shadow-medium);
-}
-
-.view-all-btn i {
-    font-size: 1rem;
-    transition: var(--tran-02);
-}
-
-.view-all-btn:hover i {
-    transform: translateX(2px);
 }
 
 .table-content {
-    overflow-y: auto;
-    flex: 1;
-    margin: 0 -1.5rem;
-    padding: 0 1.5rem;
+    overflow-x: auto;
 }
 
-.dashboard-table table {
+table {
     width: 100%;
     border-collapse: collapse;
 }
 
-/* Ensure table header stays fixed */
-.dashboard-table thead th {
-    position: sticky;
-    top: 0;
-    background: white;
-    z-index: 5;
+thead {
+    background: var(--body-color);
 }
 
-.dashboard-table th {
+th {
+    padding: 16px 24px;
     text-align: left;
-    color: var(--text-color);
+    font-size: 0.75rem;
     font-weight: 600;
-    font-size: 12px;
+    color: var(--text-light);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border-bottom: 2px solid var(--border-color);
-    padding: 1rem 0;
 }
 
-.dashboard-table td {
-    padding: 1rem 0;
-    font-size: 14px;
-    color: var(--text-color-dark);
+td {
+    padding: 16px 24px;
     border-bottom: 1px solid var(--border-color);
+    font-size: 0.875rem;
+    color: var(--text-dark);
+    vertical-align: middle;
+}
+
+tr:hover {
+    background: rgba(255, 107, 157, 0.02);
+}
+
+/* Status badges */
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.dashboard-table td.pending { 
-    color: #f59e0b;
-    font-weight: 500;
+.status-active {
+    background: rgba(40, 167, 69, 0.1);
+    color: var(--success-color);
 }
 
-.dashboard-table td.ongoing {
-    color: #2196F3;
-    font-weight: 500;
+.status-pending {
+    background: rgba(255, 193, 7, 0.1);
+    color: var(--warning-color);
 }
 
-.dashboard-table td.declined { 
-    color: #ef4444;
-    font-weight: 500;
+.status-overdue {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger-color);
 }
 
-.dashboard-table td.delivered { 
-    color: #10b981;
-    font-weight: 500;
+.status-completed {
+    background: rgba(23, 162, 184, 0.1);
+    color: var(--info-color);
 }
 
-.dashboard-table td:last-child {
-    text-align: right;
-}
-
-.dashboard-table td:last-child a {
-    color: var(--secondary-text-color);
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.dashboard-table tr:last-child td {
-    border-bottom: none;
-    padding-bottom: 0;
-}
-
-.dashboard-table table tr:hover {
-    background: rgba(0, 0, 0, 0.01);
-}
-
-/* Column Widths */
-.dashboard-table th:first-child,
-.dashboard-table td:first-child {
-    padding-left: 0;
-    padding-right: 1.5rem;
-    width: 20%;
-}
-
-.dashboard-table th:nth-child(2),
-.dashboard-table td:nth-child(2) {
-    width: 20%;
-    text-align: center;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-}
-
-.dashboard-table th:nth-child(3),
-.dashboard-table td:nth-child(3) {
-    width: 20%;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-}
-
-.dashboard-table th:nth-child(4),
-.dashboard-table td:nth-child(4) {
-    width: 20%;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-}
-
-.dashboard-table th:last-child,
-.dashboard-table td:last-child {
-    padding-right: 0;
-    padding-left: 1.5rem;
-    width: 20%;
-    text-align: center;
-}
-
-/* Custom Scrollbar for table content */
-.table-content::-webkit-scrollbar {
-    width: 6px;
-}
-
-.table-content::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.table-content::-webkit-scrollbar-thumb {
-    background: #eee;
-    border-radius: 6px;
-}
-
-.table-content::-webkit-scrollbar-thumb:hover {
-    background: #ddd;
-}
-
-/* Recent Appointments section */
+/* =============== DASHBOARD APPOINTMENTS =============== */
 .dashboard-appointments {
-    flex: 0 0 400px;
     background: white;
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-light);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    height: fit-content;
     border: 1px solid var(--border-color);
-    padding: 1.5rem;
-    height: calc(100vh - 160px);
+    max-height: calc(100vh - 140px);
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    max-width: 400px;
-    min-width: 400px;
-    width: 400px;
-    margin-left: 0;
 }
 
 .appointments-header {
-    padding-bottom: 1.5rem;
+    padding: 24px;
     border-bottom: 1px solid var(--border-color);
-    margin-bottom: 1.5rem;
 }
 
 .appointments-title h3 {
     font-size: 1.25rem;
     font-weight: 600;
-    color: var(--text-color-dark);
-    margin: 0 0 0.25rem 0;
-    line-height: 1.2;
+    color: var(--text-dark);
+    margin-bottom: 4px;
 }
 
 .appointments-title p {
     font-size: 0.875rem;
-    color: var(--text-color);
+    color: var(--text-light);
     margin: 0;
-    line-height: 1.4;
-}
-
-.appointments-actions {
-    margin-top: 1rem;
 }
 
 .appointments-search {
+    margin-top: 16px;
+    position: relative;
     display: flex;
     align-items: center;
     background: var(--body-color);
-    border-radius: var(--border-radius);
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border-color);
-    transition: var(--tran-02);
-    gap: 0.5rem;
-}
-
-.appointments-search:focus-within {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px var(--primary-color-light);
+    border-radius: 8px;
+    padding: 8px 12px;
 }
 
 .appointments-search i {
-    color: var(--text-color);
+    color: var(--text-light);
     font-size: 1rem;
 }
 
 .appointments-search input {
     border: none;
-    background: transparent;
     outline: none;
-    flex: 1;
+    background: transparent;
+    padding: 4px 8px;
     font-size: 0.875rem;
-    color: var(--text-color-dark);
-    padding: 0;
+    flex: 1;
+    color: var(--text-dark);
 }
 
 .appointments-search input::placeholder {
-    color: var(--text-color);
-}
-
-.appointments-search .clear-search {
-    cursor: pointer;
-    opacity: 0.6;
-    transition: var(--tran-02);
-}
-
-.appointments-search .clear-search:hover {
-    opacity: 1;
-    color: var(--primary-color);
+    color: var(--text-light);
 }
 
 .appointments-content {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    overflow-y: auto;
+    padding: 16px 0;
 }
 
 .appointments-list {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
+    list-style: none;
     padding: 0;
     margin: 0;
-    width: 100%;
-    box-sizing: border-box;
 }
 
-.appointments-list li {
-    width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-    overflow-x: hidden;
-    padding: 1rem 0;
+.appointment-item {
+    padding: 16px 24px;
     border-bottom: 1px solid var(--border-color);
-    transition: var(--tran-02);
-    border-radius: var(--border-radius);
-    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: var(--transition);
 }
 
-.appointments-list li:hover {
-    background-color: var(--primary-color-light);
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+.appointment-item:hover {
+    background: rgba(255, 107, 157, 0.02);
 }
 
-.appointments-list li:last-child {
+.appointment-item:last-child {
     border-bottom: none;
 }
 
-.appointments-list::-webkit-scrollbar {
-    width: 6px;
-}
-
-.appointments-list::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.appointments-list::-webkit-scrollbar-thumb {
-    background: #eee;
-    border-radius: 6px;
-}
-
-.appointments-list::-webkit-scrollbar-thumb:hover {
-    background: #ddd;
-}
-
-.appointment-info {
-    flex: 1;
-}
-
-.appointment-title {
+.appointment-header {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--text-color);
-    font-size: 0.8rem;
-    line-height: 1.4;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
 }
 
-.appointment-title b {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    max-width: 180px;
-}
-
-.appointment-desc {
-    color: var(--text-color);
-    font-size: 0.8rem;
+.appointment-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-dark);
 }
 
 .appointment-time {
-    color: var(--text-color);
-    font-size: 0.7rem;
-    opacity: 0.7;
-    white-space: nowrap;
-}
-
-.appointment-view {
-    color: var(--secondary-text-color);
-    text-decoration: none;
     font-size: 0.75rem;
+    color: var(--text-light);
     font-weight: 500;
-    white-space: nowrap;
-    margin-left: 1rem;
 }
 
-/* Improved scrollbar */
-.appointments-list::-webkit-scrollbar {
-    width: 6px;
+.appointment-details {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    line-height: 1.4;
 }
 
-.appointments-list::-webkit-scrollbar-track {
-    background: transparent;
+.appointment-status {
+    margin-top: 8px;
 }
 
-.appointments-list::-webkit-scrollbar-thumb {
-    background: #eee;
-    border-radius: 6px;
-}
-
-.appointments-list::-webkit-scrollbar-thumb:hover {
-    background: #ddd;
-}
-
-/* Modal styles */
+/* =============== MODALS =============== */
 .modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(8px);
-    display: flex;
-    justify-content: center;
+    z-index: 9999;
+    display: none;
     align-items: center;
-    z-index: 1000;
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
 }
 
 .modal-content {
     background: white;
-    padding: 2rem;
-    border-radius: var(--border-radius-lg);
-    width: 100%;
-    max-width: 600px;
-    min-width: 400px;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: var(--shadow-large);
-    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
     position: relative;
-    animation: modalSlideIn 0.3s ease;
-}
-
-@keyframes modalSlideIn {
-    from {
-        transform: translateY(-20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-/* Modern Rental Modal Styles */
-#rental-modal .modal-content {
-    max-width: 800px;
-    width: 85%;
-    max-height: 80vh;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
     overflow: hidden;
-    background: var(--sidebar-color);
-    border-radius: 16px;
-    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
-    border: 1px solid var(--border-color);
-    animation: modalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.rental-modal-content {
     display: flex;
     flex-direction: column;
-    height: 100%;
 }
 
-.rental-modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem 2rem;
-    border-bottom: 1px solid var(--border-color);
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
-    color: white;
-    border-radius: 16px 16px 0 0;
-}
-
-.rental-modal-header .modal-title {
-    margin: 0;
+.modal-title {
     font-size: 1.25rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: white;
-}
-
-.rental-modal-header .modal-title i {
-    font-size: 1.1rem;
-    opacity: 0.9;
-}
-
-.rental-modal-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 2rem;
-}
-
-.close-rental-modal {
-    background: rgba(255, 255, 255, 0.2);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 1.1rem;
     font-weight: 600;
-}
-
-.close-rental-modal:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.5);
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95) translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-.modal-content h3 {
-    margin-bottom: 1.5rem;
-    color: var(--text-color-dark);
-    font-weight: 700;
-    font-size: 1.5rem;
-    text-align: center;
-}
-
-.close-modal,
-.close-rental-modal {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: var(--text-color);
-    background: var(--body-color);
-    border: none;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
+    color: var(--text-dark);
     display: flex;
     align-items: center;
-    justify-content: center;
-    transition: var(--tran-02);
+    gap: 12px;
 }
 
-.close-modal:hover,
-.close-rental-modal:hover {
-    background: var(--primary-color-light);
+.modal-title i {
     color: var(--primary-color);
 }
 
-.modal.visible {
-    visibility: visible;
-    opacity: 1;
-}
-
-.hidden {
-    display: none;
-}
-
-/* ===== APPOINTMENT MODAL STYLES ===== */
-#appointment-modal .modal-content.appointment-modal-content {
-    background: white !important;
-    border-radius: var(--border-radius-lg) !important;
-    box-shadow: var(--shadow-large);
-    max-width: 800px !important;
-    width: 85% !important;
-    max-height: 80vh !important;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 0; /* Override general modal-content padding */
-}
-
+/* Appointment Modal */
 .appointment-modal-header {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark) 100%);
-    color: white;
-    padding: 1.5rem 2rem;
+    padding: 24px;
+    border-bottom: 1px solid var(--border-color);
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
-}
-
-.appointment-modal-header .modal-title {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 600;
-    display: flex;
     align-items: center;
-    gap: 0.75rem;
-    color: white;
-}
-
-.appointment-modal-header .modal-title i {
-    font-size: 1.2rem;
-    opacity: 0.9;
-}
-
-.appointment-modal-header .close-modal {
-    background: rgba(255, 255, 255, 0.2);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    color: white;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: var(--tran-02);
-    font-size: 1.1rem;
-    font-weight: 600;
-}
-
-.appointment-modal-header .close-modal:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.5);
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .appointment-modal-body {
-    padding: 2rem;
-    overflow-y: auto;
+    padding: 24px;
     flex: 1;
-}
-
-.appointment-modal-grid {
-    display: grid;
-    grid-template-columns: 1fr 1.2fr;
-    gap: 2rem;
-    align-items: flex-start;
-}
-
-.appointment-customer-info {
-    background: var(--body-color);
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
-    border: 1px solid var(--border-color);
-}
-
-.appointment-customer-info h4 {
-    margin: 0 0 1rem 0;
-    color: var(--text-color-dark);
-    font-size: 1rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.appointment-info-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.appointment-info-item:last-child {
-    border-bottom: none;
-}
-
-.appointment-info-label {
-    font-weight: 500;
-    color: var(--text-color);
-    font-size: 0.875rem;
-}
-
-.appointment-info-value {
-    font-weight: 600;
-    color: var(--text-color-dark);
-    font-size: 0.875rem;
-    text-align: right;
-    max-width: 60%;
-    word-break: break-word;
-}
-
-.appointment-products-section {
-    background: white;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--border-color);
-    overflow: hidden;
-}
-
-.appointment-products-header {
-    background: var(--body-color);
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.appointment-products-header h4 {
-    margin: 0;
-    color: var(--text-color-dark);
-    font-size: 1rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.appointment-products-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.appointment-products-table th {
-    background: var(--body-color);
-    padding: 0.75rem 1rem;
-    text-align: left;
-    font-weight: 600;
-    color: var(--text-color-dark);
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.appointment-products-table td {
-    padding: 1rem;
-    border-bottom: 1px solid var(--border-color);
-    font-size: 0.875rem;
-}
-
-.appointment-products-table tbody tr:hover {
-    background: var(--body-color);
-    transition: var(--tran-02);
-}
-
-.appointment-product-img {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--border-color);
-}
-
-.appointment-product-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.appointment-product-name {
-    font-weight: 600;
-    color: var(--text-color-dark);
-    font-size: 0.875rem;
-}
-
-.appointment-product-details {
-    font-size: 0.75rem;
-    color: var(--text-color);
-}
-
-.appointment-product-price {
-    font-weight: 600;
-    color: var(--text-color-dark);
-    text-align: right;
-}
-
-.appointment-total-section {
-    background: linear-gradient(135deg, var(--primary-color-light) 0%, rgba(255, 255, 255, 0.8) 100%);
-    padding: 1rem 1.5rem;
-    border-top: 1px solid var(--border-color);
-}
-
-.appointment-total-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: var(--text-color-dark);
+    overflow-y: auto;
 }
 
 .appointment-modal-actions {
-    padding: 1.5rem 2rem;
-    background: var(--body-color);
+    padding: 24px;
     border-top: 1px solid var(--border-color);
     display: flex;
     justify-content: flex-end;
 }
 
-.appointment-modal-actions .btn {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark) 100%);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: var(--border-radius);
-    font-weight: 600;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: var(--tran-02);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.appointment-modal-actions .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-}
-
-.appointment-modal-actions .btn i {
-    font-size: 0.9rem;
-}
-
-.modal-title {
-    text-align: center;
-    font-size: 1.7rem;
-    font-family: var(--second-font, inherit);
-    font-weight: 700;
-    margin-top: 0.5rem;
-}
-.modal-actions {
-    margin-top: 2rem;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-}
-
-.proceed-transaction {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
-    color: white;
-    border: none;
-    border-radius: var(--border-radius);
-    padding: 0.75rem 1.5rem;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-width: 160px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: var(--shadow-light);
-}
-
-.proceed-transaction:hover {
-    background: linear-gradient(135deg, var(--primary-color-dark), var(--primary-color));
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-medium);
-}
-
-/* Modern Rental Modal Grid and Content */
-.rental-modal-grid {
-    display: grid;
-    grid-template-columns: 1fr 1.8fr;
-    gap: 2rem;
-    align-items: flex-start;
-}
-
-.rental-modal-form {
-    background: var(--sidebar-color);
-    border-radius: 12px;
-    padding: 1.5rem;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.rental-modal-form > div {
-    padding: 1rem;
-    margin-bottom: 0.75rem;
-    background: var(--body-color);
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    font-size: 14px;
-    color: var(--text-color-dark);
-    transition: all 0.2s ease;
+/* Rental Modal */
+.rental-modal-header {
+    padding: 24px;
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.rental-modal-form > div:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+.rental-modal-body {
+    padding: 24px;
+    flex: 1;
+    overflow-y: auto;
 }
 
-.rental-modal-form > div b {
-    color: var(--primary-color);
-    font-weight: 600;
-    min-width: 120px;
+.close-modal,
+.close-rental-modal {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-light);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: var(--transition);
 }
 
-.rental-modal-table {
-    background: var(--sidebar-color);
-    border-radius: 12px;
-    padding: 1.5rem;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+.close-modal:hover,
+.close-rental-modal:hover {
+    background: var(--border-color);
+    color: var(--text-dark);
 }
 
-.rental-modal-table h4 {
-    margin: 0 0 1.5rem 0;
-    color: var(--text-color-dark);
-    font-weight: 700;
-    font-size: 1.1rem;
+.btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 2px solid var(--primary-color-light);
+    gap: 8px;
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.rental-modal-table h4:before {
-    content: '📦';
+.btn:hover {
+    background: #ff4d7a;
+    transform: translateY(-1px);
+}
+
+.btn i {
     font-size: 1rem;
 }
 
-.rental-modal-table h4[style*="margin-top"] {
-    margin-top: 2rem !important;
-}
-
-.rental-modal-table h4[style*="margin-top"]:before {
-    content: '🎭';
-}
-
-.rental-modal-table table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 1rem;
-    background: var(--body-color);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-.rental-modal-table th,
-.rental-modal-table td {
-    padding: 1rem 0.75rem;
-    text-align: left;
-    font-size: 14px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.rental-modal-table th {
-    font-weight: 600;
-    color: var(--text-color-dark);
-    background: linear-gradient(135deg, var(--primary-color-light), var(--primary-color-light));
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.rental-modal-table tbody tr {
-    transition: all 0.2s ease;
-}
-
-.rental-modal-table tbody tr:hover {
-    background: var(--primary-color-light);
-    transform: translateY(-1px);
-}
-
-.rental-modal-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-/* Modern Payment Summary */
-.payment-summary {
-    margin-top: 2rem !important;
-    padding: 1.5rem !important;
-    background: linear-gradient(135deg, var(--primary-color-light), rgba(255, 255, 255, 0.8)) !important;
-    border-radius: 12px !important;
-    border: 1px solid var(--primary-color) !important;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
-    position: relative;
-    overflow: hidden;
-}
-
-.payment-summary::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-color), var(--primary-color-dark));
-}
-
-.payment-summary > div {
-    display: flex !important;
-    justify-content: space-between !important;
-    margin-bottom: 12px !important;
-    padding: 0.75rem 1rem;
-    background: var(--sidebar-color);
-    border-radius: 8px;
-    align-items: center;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.payment-summary > div:last-child {
-    margin-bottom: 0 !important;
-    font-size: 16px;
-    font-weight: 700;
-    background: var(--body-color);
-    border: 2px solid var(--border-color);
-}
-
-/* Modern Action Button */
-.rental-modal-actions {
-    margin-top: 2rem;
-    text-align: center;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border-color);
-}
-
-.rental-modal-actions button {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark)) !important;
-    color: white !important;
-    border: none !important;
-    padding: 1rem 2rem !important;
-    border-radius: 12px !important;
-    cursor: pointer !important;
-    font-size: 16px !important;
-    font-weight: 600 !important;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
-    position: relative;
-    overflow: hidden;
-}
-
-.rental-modal-actions button:hover {
-    transform: translateY(-3px) !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
-}
-
-.rental-modal-actions button:active {
-    transform: translateY(-1px) !important;
-}
-
-/* Enhanced Product Display */
-.modal-product-img {
-    width: 60px !important;
-    height: 60px !important;
-    object-fit: cover !important;
-    border-radius: 8px !important;
-    background: var(--body-color) !important;
-    border: 2px solid var(--border-color) !important;
-    transition: all 0.2s ease !important;
-}
-
-.modal-product-img:hover {
-    transform: scale(1.05) !important;
-    border-color: var(--primary-color) !important;
-}
-
-.modal-product-name {
-    font-weight: 600 !important;
-    color: var(--text-color-dark) !important;
-    font-size: 14px !important;
-    margin-bottom: 4px;
-}
-
-.modal-product-code {
-    font-size: 12px !important;
-    color: var(--primary-color) !important;
-    font-weight: 500 !important;
-    margin-bottom: 2px;
-}
-
-.modal-product-size {
-    font-size: 13px !important;
-    color: var(--text-color) !important;
-}
-
-.modal-product-price {
-    font-weight: 600 !important;
-    color: var(--text-color-dark) !important;
-    text-align: right !important;
-    font-size: 15px !important;
-}
-
-/* Status classes for rental table */
-.ongoing {
-    color: #2196F3;
-    font-weight: 600;
-}
-
-.overdue {
-    color: #f44336;
-    font-weight: 600;
-}
-
-/*=============== CURSOR POINTER STYLES ===============*/
-/* All buttons and interactive elements */
-button,
-.btn,
-.card,
-.stat-card,
-.chart-container,
-.dashboard-btn,
-.filter-btn,
-.action-btn,
-input[type="submit"],
-input[type="button"] {
-  cursor: pointer;
-}
-
-/* All links with href */
-a[href] {
-  cursor: pointer;
-}
-
-/* Dashboard specific interactive elements */
-.dashboard-nav,
-.stats-grid,
-.chart-legend,
-.data-table td,
-.data-table th {
-  cursor: pointer;
-}
-
-@media (max-width: 1000px) {
-    .appointment-modal-flex {
-        min-width: 0;
-        max-width: 98vw;
-    }
-    .appointment-modal-grid {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
-    .appointment-modal-table {
-        padding: 0.7rem;
-    }
-}
-
-@media (max-width: 1200px) {
+/* =============== RESPONSIVE DESIGN =============== */
+@media screen and (max-width: 1200px) {
     .dashboard-layout {
-        flex-direction: column;
-        height: auto;
-        overflow: visible;
-        gap: 1.5rem;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 20px;
+    }
+    
+    .dashboard-appointments {
+        max-height: none;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .dashboard-layout {
+        padding: 16px;
+        gap: 16px;
     }
     
     .dashboard-cards-row {
-        flex-wrap: wrap;
-        justify-content: flex-start;
-    }
-    
-    .dashboard-card {
-        min-width: calc(50% - 0.6rem); /* 2 cards per row with gap consideration */
-        flex: 0 0 calc(50% - 0.6rem);
-        max-width: calc(50% - 0.6rem);
-    }
-    
-    .dashboard-main {
-        overflow: visible;
-        flex: 1;
-    }
-    
-    .dashboard-table, 
-    .dashboard-appointments {
-        width: 100%;
-        height: auto;
-        min-height: 320px;
-    }
-
-    .dashboard-appointments {
-        flex: 1;
-        max-width: 100%;
-        min-width: 0;
-        width: 100%;
-        margin-left: 0;
-    }
-}
-
-@media (max-width: 768px) {
-    .dashboard-card {
-        min-width: 100%; /* Full width on mobile */
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-    
-    .dashboard-layout {
-        padding: 0.7rem;
-        gap: 0.7rem;
-    }    /* Mobile responsive styles for modern rental modal */
-    #rental-modal .modal-content {
-        width: 95%;
-        max-width: 95%;
-        max-height: 90vh;
-        margin: 1rem auto;
-    }
-    /* Mobile responsive styles for appointment modal */
-    #appointment-modal .modal-content.appointment-modal-content {
-        width: 90%;
-        max-width: 600px;
-        max-height: 85vh;
-        margin: 1rem auto;
-    }
-    
-    .rental-modal-header {
-        padding: 1rem 1.5rem;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-    
-    .rental-modal-header .modal-title {
-        font-size: 1.1rem;
-    }
-    
-    .rental-modal-body {
-        padding: 1.5rem;
-    }
-    
-    .rental-modal-grid {
         grid-template-columns: 1fr;
-        gap: 1.5rem;
+        gap: 16px;
     }
     
-    .rental-modal-form > div {
-        padding: 0.75rem;
+    .dashboard-card {
+        padding: 20px;
+    }
+    
+    .card-main {
+        font-size: 1.75rem;
+    }
+    
+    .table-header {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 0.25rem;
+        align-items: stretch;
+        gap: 16px;
     }
     
-    .rental-modal-form > div b {
+    .table-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .table-search {
         min-width: auto;
-        color: var(--primary-color);
     }
     
-    .rental-modal-table {
-        padding: 1rem;
+    .table-content {
+        overflow-x: scroll;
     }
     
-    .rental-modal-table h4 {
-        font-size: 1rem;
-        margin-bottom: 1rem;
+    th,
+    td {
+        padding: 12px 16px;
+        min-width: 120px;
     }
     
-    .rental-modal-table th,
-    .rental-modal-table td {
-        padding: 0.75rem 0.5rem;
-        font-size: 13px;
+    .modal-content {
+        margin: 10px;
+        max-width: none;
+        width: calc(100% - 20px);
     }
     
-    .modal-product-img {
-        width: 50px !important;
-        height: 50px !important;
-    }
-    
-    .payment-summary > div {
-        padding: 0.5rem 0.75rem !important;
-        font-size: 13px !important;
-    }
-    
-    .payment-summary > div:last-child {
-        font-size: 14px !important;
-    }
-    
-    .rental-modal-actions button {
-        padding: 0.875rem 1.5rem !important;
-        font-size: 14px !important;
-    }
-}
-
-@media (max-width: 480px) {
-    #rental-modal .modal-content {
-        width: 100%;
-        max-width: 100%;
-        height: 100vh;
-        max-height: 100vh;
-        margin: 0;
-        border-radius: 0;
-    }
-    
-    .rental-modal-header {
-        padding: 1rem;
-    }
-    
-    .rental-modal-header .modal-title {
-        font-size: 1rem;
-    }
-    
+    .appointment-modal-header,
+    .appointment-modal-body,
+    .appointment-modal-actions,
+    .rental-modal-header,
     .rental-modal-body {
-        padding: 1rem;
+        padding: 20px;
     }
     
-    .rental-modal-grid {
-        gap: 1rem;
+    .appointments-header {
+        padding: 20px;
     }
     
-    .rental-modal-table {
-        padding: 0.75rem;
-    }
-    
-    .rental-modal-table th:first-child,
-    .rental-modal-table td:first-child {
-        display: none;
-    }
-    
-    .rental-modal-table th,
-    .rental-modal-table td {
-        padding: 0.5rem 0.25rem;
-        font-size: 12px;
-    }
-    
-    .modal-product-img {
-        width: 40px !important;
-        height: 40px !important;
-    }
-    
-    .modal-product-name {
-        font-size: 13px !important;
-    }
-    
-    .modal-product-code,
-    .modal-product-size {
-        font-size: 11px !important;
-    }
-    
-    .modal-product-price {
-        font-size: 13px !important;
-    }
-    
-    .payment-summary {
-        padding: 1rem !important;
-    }
-    
-    .payment-summary > div {
-        padding: 0.5rem !important;
-        font-size: 12px !important;
-    }
-    
-    .payment-summary > div:last-child {
-        font-size: 13px !important;
-    }
-    
-    .rental-modal-actions {
-        padding-top: 1rem;
-    }
-    
-    .rental-modal-actions button {
-        width: 100%;
-        padding: 1rem !important;
-        font-size: 14px !important;
+    .appointment-item {
+        padding: 16px 20px;
     }
 }
 
-/* Ultra-small screen styles for appointment modal */
-    #appointment-modal .modal-content.appointment-modal-content {
-        width: 95%;
-        max-width: 500px;
-        max-height: 90vh;
-        margin: 0.5rem auto;
-        border-radius: var(--border-radius);
+@media screen and (max-width: 480px) {
+    .dashboard-layout {
+        padding: 12px;
+        gap: 12px;
     }
     
-    .appointment-modal-header {
-        padding: 1rem;
+    .dashboard-header {
+        padding: 20px;
     }
     
-    .appointment-modal-header .modal-title {
-        font-size: 1rem;
+    .page-title {
+        font-size: 1.5rem;
     }
     
-    .appointment-modal-body {
-        padding: 1rem;
+    .dashboard-card {
+        padding: 16px;
     }
     
-    .appointment-modal-grid {
-        gap: 1rem;
+    .card-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
     }
     
-    .appointment-customer-info {
-        padding: 1rem;
+    .card-main {
+        font-size: 1.5rem;
     }
     
-    .appointment-products-header {
-        padding: 0.75rem 1rem;
+    th,
+    td {
+        padding: 8px 12px;
+        font-size: 0.75rem;
     }
     
-    .appointment-products-table th,
-    .appointment-products-table td {
-        padding: 0.5rem 0.25rem;
-        font-size: 12px;
+    .table-header {
+        padding: 16px;
     }
     
-    .appointment-product-img {
-        width: 35px;
-        height: 35px;
+    .appointments-header {
+        padding: 16px;
     }
     
-    .appointment-modal-actions {
-        padding: 1rem;
+    .appointment-item {
+        padding: 12px 16px;
     }
+}
+
+/* =============== ANIMATIONS =============== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.dashboard-card {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.dashboard-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.dashboard-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.dashboard-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.appointment-item {
+    animation: slideIn 0.4s ease-out;
+}
+
+/* =============== SCROLLBAR STYLING =============== */
+.appointments-content::-webkit-scrollbar,
+.table-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.appointments-content::-webkit-scrollbar-track,
+.table-content::-webkit-scrollbar-track {
+    background: var(--body-color);
+}
+
+.appointments-content::-webkit-scrollbar-thumb,
+.table-content::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+.appointments-content::-webkit-scrollbar-thumb:hover,
+.table-content::-webkit-scrollbar-thumb:hover {
+    background: #ff4d7a;
+}
+
+/* =============== LOADING STATES =============== */
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: var(--text-light);
+}
+
+.loading-spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border-color);
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 12px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* =============== EMPTY STATES =============== */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-light);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.empty-state h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+}
+
+.empty-state p {
+    font-size: 0.875rem;
+    margin: 0;
+}
