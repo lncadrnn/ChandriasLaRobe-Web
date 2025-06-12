@@ -1,0 +1,26 @@
+/* Spinner overlay styles */
+.spinner-overlay {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(2px);
+}
+
+/* Size checkbox layout fix */
+.size-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stock-input {
+    width: 80px;
+    padding: 4px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 12px;
+}

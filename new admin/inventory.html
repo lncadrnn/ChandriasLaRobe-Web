@@ -2,26 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Chandria's La Robe - Inventory Management</title>
-      <!-- Boxicons CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chandria's La Robe - Inventory Management</title>
+    <!-- Boxicons CSS -->
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-      <!-- Cropper.js CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">    <!-- Custom CSS -->
+    <!-- Cropper.js CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/reusable/spinner/spinner.css">
     <link rel="stylesheet" href="assets/reusable/sidebar/sidebar.css">
     <link rel="stylesheet" href="assets/reusable/notyf/notyf.css">
     <link rel="stylesheet" href="assets/css/inventory.css">
 </head>
 <body>
-    <!-- Loading Overlay for Inventory Operations -->
-    <div id="inventoryLoadingOverlay" class="inventory-loading-overlay">
-        <div class="inventory-loading-content">
-            <div class="inventory-spinner"></div>
-            <div class="inventory-loading-text">Processing...</div>
-            <div class="inventory-loading-subtitle">Please wait</div>
-        </div>
-    </div>
-
     <!-- Auto-refresh Indicator -->
     <div id="autoRefreshIndicator" class="auto-refresh-indicator">
         <i class='bx bx-refresh'></i>
@@ -796,11 +789,14 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
     <!-- Cropper.js Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>    <!-- Custom JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    
+    <!-- Custom JavaScript -->
     <script src="assets/reusable/sidebar/sidebar.js"></script>
     <script src="assets/reusable/notyf/notyf.js"></script>
     <script src="assets/js/inventory.js"></script>
-      <!-- Cloudinary Configuration -->
+    
+    <!-- Cloudinary Configuration -->
     <script src="assets/js/js firebase/cloudinary-config.js"></script>
     
     <!-- Cloudinary Upload Service -->
@@ -808,166 +804,9 @@
     
     <!-- Firebase SDK -->
     <script type="module" src="assets/js/js firebase/chandrias-sdk.js"></script>
-      <!-- Inventory Fetching Service -->
-    <script type="module" src="assets/js/js firebase/inventory-fetching.js"></script>
     
-    <script type="module">
-        // Import the InventoryFetcher class and make it globally available
-        import { InventoryFetcher } from './assets/js/js firebase/inventory-fetching.js';
-        
-        // Make InventoryFetcher available globally
-        window.InventoryFetcher = InventoryFetcher;
-        
-        // Initialize Firebase connection status checker
-        window.checkFirebaseStatus = async function() {
-            try {
-                const isConnected = await window.checkFirebaseConnection();
-                console.log('🔗 Firebase connection status:', isConnected ? 'Connected' : 'Disconnected');
-                return isConnected;
-            } catch (error) {
-                console.error('❌ Firebase connection check failed:', error);
-                return false;
-            }        };        // Simple notification system is initialized in inventory.js
-        // No additional configuration needed here        // Enhanced initialization with better error diagnostics
-        document.addEventListener('DOMContentLoaded', async function() {
-            try {
-                console.log('🚀 Initializing Firebase inventory services...');
-                console.log('📱 User Agent:', navigator.userAgent);
-                console.log('🌐 Origin:', window.location.origin);
-                
-                // Show loading spinner at the start
-                const inventoryOverlay = document.getElementById('inventoryLoadingOverlay');
-                const generalSpinner = document.getElementById('spinner');
-                
-                if (inventoryOverlay) {
-                    inventoryOverlay.style.display = 'flex';
-                }
-                
-                if (generalSpinner) {
-                    generalSpinner.classList.remove('d-none');
-                }
-                
-                // Wait a moment for modules to load
-                await new Promise(resolve => setTimeout(resolve, 1000));// Check if InventoryFetcher is available
-                if (!window.InventoryFetcher) {
-                    console.error('❌ InventoryFetcher not available');
-                    return;
-                }
-                
-                console.log('✅ InventoryFetcher loaded successfully');
-                
-                // Test Firebase connection first
-                console.log('🔗 Testing Firebase connection...');
-                const isConnected = await window.checkFirebaseStatus();
-                console.log(`📡 Firebase connection result: ${isConnected}`);                  if (!isConnected) {
-                    console.warn('⚠️ Firebase connection failed - using offline mode');
-                    
-                    // Log detailed connection info
-                    console.log('🔍 Connection details:');
-                    console.log('- chandriaDB available:', !!window.chandriaDB);
-                    console.log('- checkFirebaseConnection available:', !!window.checkFirebaseConnection);
-                    
-                    return;
-                }
-                
-                console.log('✅ Firebase connection successful');
-                
-                // Initialize the inventory fetcher
-                console.log('🔄 Initializing InventoryFetcher...');
-                const initResult = await window.InventoryFetcher.initialize();
-                console.log('📊 InventoryFetcher init result:', initResult);
-                
-                if (initResult.success) {
-                    console.log('✅ Firebase services ready:', initResult.message);
-                      // Get initial statistics
-                    const stats = await window.InventoryFetcher.getInventoryStats();
-                    if (stats) {
-                        console.log('📊 Products in database:', stats.totalProducts);
-                        console.log('📊 Additionals in database:', stats.totalAdditionals);
-                        
-                        // notyf.success(`Connected to Firebase (${stats.totalProducts} products, ${stats.totalAdditionals} additionals found)`);
-                    } else {
-                        console.log('📊 No stats available');
-                        // notyf.success('Connected to Firebase');
-                    }
-                      // Load initial data from Firebase
-                    console.log('📦 Loading initial data...');
-                    await loadInventoryFromFirebase();                } else {
-                    console.error('❌ Failed to initialize Firebase services:', initResult.message);
-                }
-                
-            } catch (error) {
-                console.error('❌ Error initializing Firebase:', error);                console.log('🔍 Error details:', {
-                    name: error.name,
-                    message: error.message,                    stack: error.stack
-                });
-                
-                // Don't show additional alerts, let user use offline mode
-                setTimeout(() => {
-                    if (!window.InventoryFetcher || !window.InventoryFetcher.getConnectionStatus()) {
-                        console.warn('⚠️ Firebase connection still not available, using offline mode');
-                    }
-                }, 2000);
-                
-                // Hide spinner only if there's an error and no data will be loaded
-                hideLoadingSpinners();
-            }
-        });        // Function to load inventory data from Firebase
-        async function loadInventoryFromFirebase() {
-            try {
-                console.log('📦 Loading inventory data from Firebase...');
-                
-                // Check if InventoryFetcher is available and connected
-                if (!window.InventoryFetcher) {
-                    throw new Error('InventoryFetcher not available');
-                }
-                
-                if (!window.InventoryFetcher.getConnectionStatus()) {
-                    throw new Error('Firebase not connected');
-                }
-                
-                // Fetch products and additionals from Firebase using the new fetching service
-                const [products, additionals] = await Promise.all([
-                    window.InventoryFetcher.fetchProducts(),
-                    window.InventoryFetcher.fetchAdditionals()
-                ]);
-                
-                // Update global variables with Firebase data
-                if (typeof window.updateInventoryData === 'function') {
-                    window.updateInventoryData(products, additionals);
-                } else {
-                    // Fallback: directly update if function doesn't exist
-                    console.log('📊 Loaded products:', products.length);
-                    console.log('📊 Loaded additionals:', additionals.length);
-                    
-                    // Try to update the UI directly if possible
-                    if (typeof window.sampleProducts !== 'undefined') {
-                        window.sampleProducts.length = 0;
-                        window.sampleProducts.push(...products);
-                    }
-                    
-                    if (typeof window.sampleAdditionals !== 'undefined') {
-                        window.sampleAdditionals.length = 0;
-                        window.sampleAdditionals.push(...additionals);
-                    }
-                    
-                    // Try to refresh UI
-                    if (typeof window.loadProducts === 'function') {
-                        window.loadProducts();
-                    }
-                    if (typeof window.loadAdditionals === 'function') {
-                        window.loadAdditionals();
-                    }                }
-                
-                // Log successful loading to console only
-                console.log(`📦 Successfully loaded ${products.length} products and ${additionals.length} additionals`);
-                
-            } catch (error) {
-                console.error('❌ Error loading inventory from Firebase:', error);
-            }
-        }
-          // Make the load function available globally
-        window.loadInventoryFromFirebase = loadInventoryFromFirebase;    </script>
+    <!-- Inventory Fetching Service -->
+    <script type="module" src="assets/js/js firebase/inventory-fetching.js"></script>
   
 </body>
 </html>
