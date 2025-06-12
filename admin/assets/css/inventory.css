@@ -546,23 +546,18 @@ header .custom-image-text .custom-header-text {
 /*<-------------------------Search------------------------>*/
 .search-and-button {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    flex-direction: row;
-    gap: 1rem;
-    margin-left: 10px;
-    width: 100%;
-    margin-left: 2.5%;
-    padding: 0;
-    background: transparent;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    margin-right: 0;
-    margin-left: 0;
-    padding-right: 2.5rem;
-    padding-left: 2.5%;
+    gap: 1.5rem;
+    padding: 1.5rem 2.5rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.8));
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    margin: 1.5rem 2.5% 2rem 2.5%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
 }
 
 .button-container {
