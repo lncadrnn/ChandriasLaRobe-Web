@@ -294,7 +294,7 @@
                                 <label for="productSizes">Available Sizes & Stock</label>
                                 <div class="size-checkboxes">
                                     <label class="checkbox-label">
-                                        <div class="size-row">
+                                        <div class="size-row
                                             <input type="checkbox" value="XS" onchange="toggleStockInput(this)"> 
                                             <span>XS</span>
                                         </div>
@@ -496,10 +496,242 @@
                 <button class="btn-danger" id="deleteItemBtn">
                     <i class='bx bx-trash'></i>
                     Delete Item
+                </button>            </div>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div class="modal" id="editProductModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class='bx bx-edit'></i>
+                    Edit Product
+                </h3>
+                <button class="close-modal" id="closeEditProductModal">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editProductForm">
+                    <!-- Image Upload Section -->
+                    <div class="image-upload-section">
+                        <h4><i class='bx bx-image'></i> Product Images</h4>
+                        <div class="image-upload-container">
+                            <!-- Front Image Upload -->
+                            <div class="image-upload-item">
+                                <label>Front View</label>
+                                <div class="image-drop-zone" id="editFrontImageZone">
+                                    <div class="upload-placeholder" id="editFrontPlaceholder">
+                                        <i class='bx bx-cloud-upload'></i>
+                                        <p>Click or drag to upload front image</p>
+                                        <small>JPG, PNG, WebP (Max 5MB)</small>
+                                    </div>
+                                    <div class="image-preview" id="editFrontPreview" style="display: none;">
+                                        <img id="editFrontImage" src="" alt="Front view">
+                                        <div class="image-actions">
+                                            <button type="button" class="crop-btn" onclick="openImageCropper('editFront')">
+                                                <i class='bx bx-crop'></i> Crop
+                                            </button>
+                                            <button type="button" class="remove-btn" onclick="removeImage('editFront')">
+                                                <i class='bx bx-trash'></i> Remove
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="editFrontImageInput" accept="image/*" hidden>
+                                </div>
+                            </div>
+                            
+                            <!-- Back Image Upload -->
+                            <div class="image-upload-item">
+                                <label>Back View</label>
+                                <div class="image-drop-zone" id="editBackImageZone">
+                                    <div class="upload-placeholder" id="editBackPlaceholder">
+                                        <i class='bx bx-cloud-upload'></i>
+                                        <p>Click or drag to upload back image</p>
+                                        <small>JPG, PNG, WebP (Max 5MB)</small>
+                                    </div>
+                                    <div class="image-preview" id="editBackPreview" style="display: none;">
+                                        <img id="editBackImage" src="" alt="Back view">
+                                        <div class="image-actions">
+                                            <button type="button" class="crop-btn" onclick="openImageCropper('editBack')">
+                                                <i class='bx bx-crop'></i> Crop
+                                            </button>
+                                            <button type="button" class="remove-btn" onclick="removeImage('editBack')">
+                                                <i class='bx bx-trash'></i> Remove
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="editBackImageInput" accept="image/*" hidden>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product Information -->
+                    <div class="form-section">
+                        <h4><i class='bx bx-info-circle'></i> Product Information</h4>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editProductName">Product Name *</label>
+                                <input type="text" id="editProductName" placeholder="Enter product name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editProductCode">Product Code *</label>
+                                <input type="text" id="editProductCode" placeholder="Auto-generated" readonly>
+                                <small class="help-text">This will be auto-generated based on category and color</small>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editProductCategory">Category *</label>
+                                <select id="editProductCategory" required>
+                                    <option value="">Select Category</option>
+                                    <option value="ball-gown">Ball Gown</option>
+                                    <option value="long-gown">Long Gown</option>
+                                    <option value="fairy-gown">Fairy Gown</option>
+                                    <option value="wedding-gown">Wedding Gown</option>
+                                    <option value="suit">Suit</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="editProductColor">Color *</label>
+                                <select id="editProductColor" required>
+                                    <option value="">Select Color</option>
+                                    <!-- Primary Colors -->
+                                    <optgroup label="Primary Colors">
+                                        <option value="Red" data-hex="#FF0000">Red</option>
+                                        <option value="Blue" data-hex="#0000FF">Blue</option>
+                                        <option value="Yellow" data-hex="#FFFF00">Yellow</option>
+                                    </optgroup>
+                                    <!-- Secondary Colors -->
+                                    <optgroup label="Secondary Colors">
+                                        <option value="Orange" data-hex="#FFA500">Orange</option>
+                                        <option value="Green" data-hex="#008000">Green</option>
+                                        <option value="Purple" data-hex="#800080">Purple</option>
+                                        <option value="Pink" data-hex="#FFC0CB">Pink</option>
+                                    </optgroup>
+                                    <!-- Neutral Colors -->
+                                    <optgroup label="Neutral Colors">
+                                        <option value="White" data-hex="#FFFFFF">White</option>
+                                        <option value="Black" data-hex="#000000">Black</option>
+                                        <option value="Gray" data-hex="#808080">Gray</option>
+                                        <option value="Brown" data-hex="#A52A2A">Brown</option>
+                                        <option value="Beige" data-hex="#F5F5DC">Beige</option>
+                                        <option value="Cream" data-hex="#FFFDD0">Cream</option>
+                                    </optgroup>
+                                    <!-- Fashion Colors -->
+                                    <optgroup label="Fashion Colors">
+                                        <option value="Navy Blue" data-hex="#2C3E50">Navy Blue</option>
+                                        <option value="Ivory" data-hex="#F8F6F0">Ivory</option>
+                                        <option value="Champagne" data-hex="#F7E7CE">Champagne</option>
+                                        <option value="Nude" data-hex="#E8C5A0">Nude</option>
+                                        <option value="Rose Gold" data-hex="#E8B4A0">Rose Gold</option>
+                                        <option value="Silver" data-hex="#C0C0C0">Silver</option>
+                                        <option value="Gold" data-hex="#FFD700">Gold</option>
+                                        <option value="Burgundy" data-hex="#800020">Burgundy</option>
+                                        <option value="Emerald" data-hex="#50C878">Emerald</option>
+                                        <option value="Royal Blue" data-hex="#4169E1">Royal Blue</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editProductRentalPrice">Rental Price (₱) *</label>
+                                <input type="number" id="editProductRentalPrice" step="0.01" placeholder="0.00" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Details -->
+                    <div class="form-section">
+                        <h4><i class='bx bx-cog'></i> Additional Details</h4>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editProductSizes">Available Sizes & Stock</label>
+                                <div class="size-checkboxes" id="editSizeCheckboxes">
+                                    <label class="checkbox-label">
+                                        <div class="size-row">
+                                            <input type="checkbox" value="XS" onchange="toggleStockInput(this)"> 
+                                            <span>XS</span>
+                                        </div>
+                                        <input type="number" class="stock-input" data-size="XS" placeholder="Stock" min="0" style="display: none;">
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <div class="size-row">
+                                            <input type="checkbox" value="S" onchange="toggleStockInput(this)"> 
+                                            <span>S</span>
+                                        </div>
+                                        <input type="number" class="stock-input" data-size="S" placeholder="Stock" min="0" style="display: none;">
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <div class="size-row">
+                                            <input type="checkbox" value="M" onchange="toggleStockInput(this)"> 
+                                            <span>M</span>
+                                        </div>
+                                        <input type="number" class="stock-input" data-size="M" placeholder="Stock" min="0" style="display: none;">
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <div class="size-row">
+                                            <input type="checkbox" value="L" onchange="toggleStockInput(this)"> 
+                                            <span>L</span>
+                                        </div>
+                                        <input type="number" class="stock-input" data-size="L" placeholder="Stock" min="0" style="display: none;">
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <div class="size-row">
+                                            <input type="checkbox" value="XL" onchange="toggleStockInput(this)"> 
+                                            <span>XL</span>
+                                        </div>
+                                        <input type="number" class="stock-input" data-size="XL" placeholder="Stock" min="0" style="display: none;">
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <div class="size-row">
+                                            <input type="checkbox" value="XXL" onchange="toggleStockInput(this)"> 
+                                            <span>XXL</span>
+                                        </div>
+                                        <input type="number" class="stock-input" data-size="XXL" placeholder="Stock" min="0" style="display: none;">
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="editProductSleeves">Sleeve Style</label>
+                                <select id="editProductSleeves">
+                                    <option value="">Select Sleeve Style</option>
+                                    <option value="Off Shoulder">Off Shoulder</option>
+                                    <option value="Long Sleeves">Long Sleeves</option>
+                                    <option value="3/4 Sleeves">3/4 Sleeves</option>
+                                    <option value="Short Sleeves">Short Sleeves</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Product Description at bottom -->
+                        <div class="form-group">
+                            <label for="editProductDescription">Description</label>
+                            <textarea id="editProductDescription" rows="4" placeholder="Enter product description..."></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="cancelEditProductBtn">
+                    <i class='bx bx-x'></i> Cancel
+                </button>
+                <button type="button" class="btn-primary" id="updateProductBtn">
+                    <i class='bx bx-save'></i> Update Product
                 </button>
             </div>
         </div>
-    </div>    <!-- Error Modal -->
+    </div>
+
+    <!-- Error Modal -->
     <div id="error-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">

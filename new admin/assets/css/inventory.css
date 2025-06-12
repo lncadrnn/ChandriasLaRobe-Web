@@ -978,10 +978,11 @@
     min-height: 200px;
     border: 2px dashed var(--border-color);
     border-radius: var(--border-radius);
-    background: var(--white);
     transition: var(--transition);
     cursor: pointer;
     overflow: hidden;
+    background: rgba(255, 182, 193, 0.02);
+
 }
 
 .image-drop-zone:hover {

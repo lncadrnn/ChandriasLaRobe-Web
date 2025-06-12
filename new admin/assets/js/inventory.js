@@ -126,6 +126,8 @@ let currentCropper = null;
 let currentImageType = null;
 let frontImageData = null;
 let backImageData = null;
+let editFrontImageData = null;
+let editBackImageData = null;
 
 // Firebase integration variables
 let firebaseProducts = [];
@@ -384,6 +386,11 @@ function setupModals() {
     const closeAddAdditionalModal = document.getElementById('closeAddAdditionalModal');
     const cancelAddAdditionalBtn = document.getElementById('cancelAddAdditionalBtn');
 
+    // Edit Product Modal
+    const editProductModal = document.getElementById('editProductModal');
+    const closeEditProductModal = document.getElementById('closeEditProductModal');
+    const cancelEditProductBtn = document.getElementById('cancelEditProductBtn');
+
     // Product Modal Events
     if (addProductBtn) {
         addProductBtn.addEventListener('click', () => {
@@ -400,6 +407,19 @@ function setupModals() {
     if (cancelAddProductBtn) {
         cancelAddProductBtn.addEventListener('click', () => {
             closeModal(addProductModal);
+        });
+    }
+
+    // Edit Product Modal Events
+    if (closeEditProductModal) {
+        closeEditProductModal.addEventListener('click', () => {
+            closeModal(editProductModal);
+        });
+    }
+
+    if (cancelEditProductBtn) {
+        cancelEditProductBtn.addEventListener('click', () => {
+            closeModal(editProductModal);
         });
     }
 
@@ -420,8 +440,11 @@ function setupModals() {
         cancelAddAdditionalBtn.addEventListener('click', () => {
             closeModal(addAdditionalModal);
         });
-    }    // Form Submissions
+    }
+
+    // Form Submissions
     const saveAdditionalBtn = document.getElementById('saveAdditionalBtn');
+    const updateProductBtn = document.getElementById('updateProductBtn');
 
     // Note: saveProductBtn event listener is handled in setupProductForm()
 
@@ -429,6 +452,13 @@ function setupModals() {
         saveAdditionalBtn.addEventListener('click', (e) => {
             e.preventDefault();
             saveAdditional();
+        });
+    }
+
+    if (updateProductBtn) {
+        updateProductBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            updateProduct();
         });
     }
 
@@ -597,9 +627,191 @@ function saveAdditional() {
     // For now, just show success message and close modal
     alert('Additional saved successfully!');
     closeModal(document.getElementById('addAdditionalModal'));
-    
-    // Refresh the additionals list
+      // Refresh the additionals list
     loadAdditionals();
+}
+
+// Update Product Function
+function updateProduct() {
+    const productId = window.currentEditingProductId;
+    if (!productId) {
+        if (window.showErrorModal) {
+            window.showErrorModal('No product selected for editing');
+        } else {
+            alert('No product selected for editing');
+        }
+        return;
+    }
+
+    const form = document.getElementById('editProductForm');
+    const productData = collectEditFormData();
+
+    // Validate required fields
+    if (!productData.name || !productData.category || !productData.sleeve || !productData.price) {
+        if (window.showErrorModal) {
+            window.showErrorModal('Please fill in all required fields');
+        } else {
+            alert('Please fill in all required fields');
+        }
+        return;
+    }
+
+    // Get selected sizes with stock quantities
+    const sizeCheckboxes = form.querySelectorAll('.size-checkboxes input[type="checkbox"]:checked');
+    
+    if (sizeCheckboxes.length === 0) {
+        if (window.showErrorModal) {
+            window.showErrorModal('Please select at least one size');
+        } else {
+            alert('Please select at least one size');
+        }
+        return;
+    }
+
+    // Use Firebase to update product if available
+    if (window.InventoryFetcher && window.InventoryFetcher.getConnectionStatus()) {
+        console.log('🔄 Attempting to update product in Firebase...');
+        updateProductInFirebase(productId, productData).then(result => {
+            if (result) {
+                // Close modal and refresh data
+                closeModal(document.getElementById('editProductModal'));
+                resetEditProductForm();
+                console.log('✅ Product updated successfully');
+                if (window.notyf) {
+                    window.notyf.success('Product updated successfully');
+                }
+            }
+        }).catch(error => {
+            console.error('❌ Failed to update in Firebase:', error);
+            let errorMessage = 'Failed to update product in Firebase';
+            if (error.message) {
+                errorMessage += `: ${error.message}`;
+            }
+            if (window.notyf) {
+                window.notyf.error(errorMessage);
+            } else {
+                alert(errorMessage + '. Please try again.');
+            }
+        });
+    } else {
+        // Fallback to local storage
+        console.log('💾 Updating product locally:', productData);
+        const productIndex = sampleProducts.findIndex(p => p.id === productId);
+        if (productIndex > -1) {
+            // Update the product with new data while preserving ID
+            sampleProducts[productIndex] = {
+                ...sampleProducts[productIndex],
+                ...productData,
+                id: productId // Ensure ID is preserved
+            };
+            // Refresh UI
+            loadProducts();
+            // Close modal
+            closeModal(document.getElementById('editProductModal'));
+            resetEditProductForm();
+            
+            if (window.notyf) {
+                window.notyf.success('Product updated successfully');
+            } else {
+                alert('Product updated locally. Firebase connection may be unavailable.');
+            }
+        }
+    }
+}
+
+// Function to collect data from edit form
+function collectEditFormData() {
+    const form = document.getElementById('editProductForm');
+    const sizeCheckboxes = form.querySelectorAll('.size-checkboxes input[type="checkbox"]:checked');
+    
+    // Collect sizes with stock quantities
+    const sizes = {};
+    sizeCheckboxes.forEach(checkbox => {
+        const size = checkbox.value;
+        const stockInput = checkbox.closest('.checkbox-label').querySelector('.stock-input');
+        const stock = parseInt(stockInput.value) || 1;
+        sizes[size] = stock;
+    });
+
+    // Get color hex value
+    const colorSelect = document.getElementById('editProductColor');
+    const selectedOption = colorSelect.options[colorSelect.selectedIndex];
+    const colorHex = selectedOption ? selectedOption.getAttribute('data-hex') : '#000000';
+
+    return {
+        name: document.getElementById('editProductName').value.trim(),
+        category: document.getElementById('editProductCategory').value,
+        color: document.getElementById('editProductColor').value,
+        colorHex: colorHex,
+        price: parseFloat(document.getElementById('editProductRentalPrice').value) || 0,
+        rentalPrice: parseFloat(document.getElementById('editProductRentalPrice').value) || 0,
+        sleeve: document.getElementById('editProductSleeves').value,
+        sleeves: document.getElementById('editProductSleeves').value,
+        sizes: sizes,
+        description: document.getElementById('editProductDescription').value.trim(),
+        frontImageUrl: editFrontImageData ? editFrontImageData.url : null,
+        frontImageId: editFrontImageData ? editFrontImageData.publicId : null,
+        backImageUrl: editBackImageData ? editBackImageData.url : null,
+        backImageId: editBackImageData ? editBackImageData.publicId : null,
+        status: 'available' // Default status
+    };
+}
+
+// Enhanced update product function to use Firebase
+async function updateProductInFirebase(productId, productData) {
+    try {
+        if (!window.InventoryFetcher) {
+            throw new Error('Firebase service not available');
+        }
+        
+        console.log('Updating product in Firebase:', productId, productData);
+        
+        // Use the updateProduct method from InventoryFetcher
+        const updatedProduct = await window.InventoryFetcher.updateProduct(productId, productData);
+        
+        // Update local array
+        const index = sampleProducts.findIndex(p => p.id === productId);
+        if (index > -1) {
+            sampleProducts[index] = updatedProduct;
+        }
+        
+        // Refresh UI
+        loadProducts();
+        
+        console.log('Product updated in Firebase successfully');
+        
+        return updatedProduct;
+        
+    } catch (error) {
+        console.error('Error updating product in Firebase:', error);
+        throw error;
+    }
+}
+
+// Function to reset edit product form
+function resetEditProductForm() {
+    const form = document.getElementById('editProductForm');
+    if (form) {
+        form.reset();
+    }
+    
+    // Clear image data
+    editFrontImageData = null;
+    editBackImageData = null;
+    
+    // Reset image previews
+    const editFrontPreview = document.getElementById('editFrontPreview');
+    const editBackPreview = document.getElementById('editBackPreview');
+    const editFrontPlaceholder = document.getElementById('editFrontPlaceholder');
+    const editBackPlaceholder = document.getElementById('editBackPlaceholder');
+    
+    if (editFrontPreview) editFrontPreview.style.display = 'none';
+    if (editBackPreview) editBackPreview.style.display = 'none';
+    if (editFrontPlaceholder) editFrontPlaceholder.style.display = 'flex';
+    if (editBackPlaceholder) editBackPlaceholder.style.display = 'flex';
+    
+    // Clear current editing ID
+    delete window.currentEditingProductId;
 }
 
 // Load Functions
@@ -982,10 +1194,130 @@ function calculateColorDistance(hex1, hex2) {
     return Math.sqrt(Math.pow(r2 - r1, 2) + Math.pow(g2 - g1, 2) + Math.pow(b2 - b1, 2));
 }
 
-// Action functions (placeholders)
+// Action functions
 function editProduct(id) {
     const product = sampleProducts.find(p => p.id === id);
-    alert(`Editing product: ${product.name}`);
+    if (!product) {
+        if (window.notyf) {
+            window.notyf.error('Product not found');
+        }
+        return;
+    }
+
+    // Populate the edit form with current product data
+    populateEditProductForm(product);
+    
+    // Store the product ID for later use
+    window.currentEditingProductId = id;
+    
+    // Open the edit modal
+    const editModal = document.getElementById('editProductModal');
+    openModal(editModal);
+}
+
+// Function to populate the edit form with product data
+function populateEditProductForm(product) {
+    // Basic information
+    document.getElementById('editProductName').value = product.name || '';
+    document.getElementById('editProductCode').value = product.code || '';
+    document.getElementById('editProductCategory').value = product.category || '';
+    document.getElementById('editProductColor').value = product.color || '';
+    document.getElementById('editProductRentalPrice').value = product.rentalPrice || product.price || '';
+    document.getElementById('editProductSleeves').value = product.sleeves || product.sleeve || '';
+    document.getElementById('editProductDescription').value = product.description || '';
+
+    // Handle sizes and stock
+    populateEditSizes(product.sizes || product.size);
+    
+    // Handle images
+    populateEditImages(product);
+}
+
+// Function to populate sizes in edit form
+function populateEditSizes(sizes) {
+    const editSizeCheckboxes = document.getElementById('editSizeCheckboxes');
+    const checkboxes = editSizeCheckboxes.querySelectorAll('input[type="checkbox"]');
+    const stockInputs = editSizeCheckboxes.querySelectorAll('.stock-input');
+
+    // Reset all checkboxes and stock inputs
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+        const stockInput = checkbox.closest('.checkbox-label').querySelector('.stock-input');
+        stockInput.style.display = 'none';
+        stockInput.value = '';
+    });
+
+    // Handle different size formats
+    if (typeof sizes === 'object' && !Array.isArray(sizes)) {
+        // Handle object format {size: stock}
+        Object.entries(sizes).forEach(([size, stock]) => {
+            const checkbox = Array.from(checkboxes).find(cb => cb.value === size);
+            if (checkbox) {
+                checkbox.checked = true;
+                const stockInput = checkbox.closest('.checkbox-label').querySelector('.stock-input');
+                stockInput.style.display = 'block';
+                stockInput.value = stock;
+            }
+        });
+    } else if (Array.isArray(sizes)) {
+        // Handle array format
+        sizes.forEach(size => {
+            const checkbox = Array.from(checkboxes).find(cb => cb.value === size);
+            if (checkbox) {
+                checkbox.checked = true;
+                const stockInput = checkbox.closest('.checkbox-label').querySelector('.stock-input');
+                stockInput.style.display = 'block';
+                stockInput.value = 1; // Default stock
+            }
+        });
+    }
+}
+
+// Function to populate images in edit form
+function populateEditImages(product) {
+    // Clear any existing image data
+    window.editFrontImageData = null;
+    window.editBackImageData = null;
+
+    // Reset image previews
+    const editFrontPreview = document.getElementById('editFrontPreview');
+    const editBackPreview = document.getElementById('editBackPreview');
+    const editFrontPlaceholder = document.getElementById('editFrontPlaceholder');
+    const editBackPlaceholder = document.getElementById('editBackPlaceholder');
+
+    // Hide previews and show placeholders by default
+    editFrontPreview.style.display = 'none';
+    editBackPreview.style.display = 'none';
+    editFrontPlaceholder.style.display = 'flex';
+    editBackPlaceholder.style.display = 'flex';
+
+    // If product has front image, show it
+    if (product.frontImageUrl) {
+        const editFrontImage = document.getElementById('editFrontImage');
+        editFrontImage.src = product.frontImageUrl;
+        editFrontPlaceholder.style.display = 'none';
+        editFrontPreview.style.display = 'block';
+        
+        // Store the existing image data
+        window.editFrontImageData = {
+            url: product.frontImageUrl,
+            publicId: product.frontImageId
+        };
+    }
+
+    // If product has back image, show it
+    if (product.backImageUrl) {
+        const editBackImage = document.getElementById('editBackImage');
+        editBackImage.src = product.backImageUrl;
+        editBackPlaceholder.style.display = 'none';
+        editBackPreview.style.display = 'block';
+        
+        // Store the existing image data
+        window.editBackImageData = {
+            url: product.backImageUrl,
+            publicId: product.backImageId
+        };
+    }
 }
 
 function deleteProduct(id) {
@@ -1124,17 +1456,29 @@ function updateDateTime() {
 function initializeImageUpload() {
     console.log('🔧 Initializing image upload functionality...');
     
-    // Front image upload
+    // Front image upload (Add form)
     const frontZone = document.getElementById('frontImageZone');
     const frontInput = document.getElementById('frontImageInput');
     const frontPlaceholder = document.getElementById('frontPlaceholder');
     const frontPreview = document.getElementById('frontPreview');
     
-    // Back image upload
+    // Back image upload (Add form)
     const backZone = document.getElementById('backImageZone');
     const backInput = document.getElementById('backImageInput');
     const backPlaceholder = document.getElementById('backPlaceholder');
     const backPreview = document.getElementById('backPreview');
+
+    // Edit Front image upload (Edit form)
+    const editFrontZone = document.getElementById('editFrontImageZone');
+    const editFrontInput = document.getElementById('editFrontImageInput');
+    const editFrontPlaceholder = document.getElementById('editFrontPlaceholder');
+    const editFrontPreview = document.getElementById('editFrontPreview');
+    
+    // Edit Back image upload (Edit form)
+    const editBackZone = document.getElementById('editBackImageZone');
+    const editBackInput = document.getElementById('editBackImageInput');
+    const editBackPlaceholder = document.getElementById('editBackPlaceholder');
+    const editBackPreview = document.getElementById('editBackPreview');
     
     // Check if all elements exist
     console.log('🔍 Element check:', {
@@ -1145,19 +1489,34 @@ function initializeImageUpload() {
         backZone: !!backZone,
         backInput: !!backInput,
         backPlaceholder: !!backPlaceholder,
-        backPreview: !!backPreview
+        backPreview: !!backPreview,
+        editFrontZone: !!editFrontZone,
+        editFrontInput: !!editFrontInput,
+        editFrontPlaceholder: !!editFrontPlaceholder,
+        editFrontPreview: !!editFrontPreview,
+        editBackZone: !!editBackZone,
+        editBackInput: !!editBackInput,
+        editBackPlaceholder: !!editBackPlaceholder,
+        editBackPreview: !!editBackPreview
     });
     
     if (!frontZone || !frontInput || !backZone || !backInput) {
-        console.error('❌ Missing required image upload elements');
+        console.error('❌ Missing required image upload elements for add form');
         return;
     }
     
-    // Setup front image upload
+    // Setup add form image uploads
     setupImageUpload(frontZone, frontInput, frontPlaceholder, frontPreview, 'front');
-    
-    // Setup back image upload
     setupImageUpload(backZone, backInput, backPlaceholder, backPreview, 'back');
+    
+    // Setup edit form image uploads if elements exist
+    if (editFrontZone && editFrontInput && editBackZone && editBackInput) {
+        setupImageUpload(editFrontZone, editFrontInput, editFrontPlaceholder, editFrontPreview, 'editFront');
+        setupImageUpload(editBackZone, editBackInput, editBackPlaceholder, editBackPreview, 'editBack');
+        console.log('✅ Edit form image upload functionality initialized');
+    } else {
+        console.warn('⚠️ Edit form image upload elements not found, skipping edit form setup');
+    }
     
     console.log('✅ Image upload functionality initialized successfully');
 }
@@ -1253,14 +1612,19 @@ function handleImageFile(file, placeholder, preview, type) {
     const reader = new FileReader();
     reader.onload = (e) => {
         console.log(`📖 ${type} file read successfully`);
-        
-        // Store image data
+          // Store image data
         if (type === 'front') {
             frontImageData = e.target.result;
             console.log('📥 Front image data stored');
-        } else {
+        } else if (type === 'back') {
             backImageData = e.target.result;
             console.log('📥 Back image data stored');
+        } else if (type === 'editFront') {
+            editFrontImageData = { url: e.target.result };
+            console.log('📥 Edit front image data stored');
+        } else if (type === 'editBack') {
+            editBackImageData = { url: e.target.result };
+            console.log('📥 Edit back image data stored');
         }
         
         // Hide loading progress
@@ -1290,19 +1654,29 @@ function removeImage(type) {
     const preview = document.getElementById(`${type}Preview`);
     const input = document.getElementById(`${type}ImageInput`);
     
-    // Clear data
+    // Clear data based on type
     if (type === 'front') {
         frontImageData = null;
-    } else {
+    } else if (type === 'back') {
         backImageData = null;
+    } else if (type === 'editFront') {
+        editFrontImageData = null;
+    } else if (type === 'editBack') {
+        editBackImageData = null;
     }
     
     // Reset input
-    input.value = '';
+    if (input) {
+        input.value = '';
+    }
     
     // Show placeholder, hide preview
-    placeholder.style.display = 'flex';
-    preview.style.display = 'none';
+    if (placeholder) {
+        placeholder.style.display = 'flex';
+    }
+    if (preview) {
+        preview.style.display = 'none';
+    }
 }
 
 // Open image cropper
@@ -1310,7 +1684,17 @@ function openImageCropper(type) {
     console.log(`✂️ Opening cropper for ${type} image...`);
     
     currentImageType = type;
-    const imageData = type === 'front' ? frontImageData : backImageData;
+    let imageData;
+    
+    if (type === 'front') {
+        imageData = frontImageData;
+    } else if (type === 'back') {
+        imageData = backImageData;
+    } else if (type === 'editFront') {
+        imageData = editFrontImageData ? editFrontImageData.url : null;
+    } else if (type === 'editBack') {
+        imageData = editBackImageData ? editBackImageData.url : null;
+    }
     
     if (!imageData) {
         console.error(`❌ No ${type} image data available for cropping`);
@@ -1426,16 +1810,23 @@ async function applyCrop() {
                         publicId: uploadResult.public_id,  // Make sure this matches the property used in saveProduct
                         localData: canvas.toDataURL('image/jpeg', 0.9) // Keep for preview
                     };
-                    
-                    // Update the image data
+                      // Update the image data
                     if (currentImageType === 'front') {
                         frontImageData = imageData;
                         updateImagePreview('front', imageData.localData);
                         console.log('✅ Front image data updated:', frontImageData);
-                    } else {
+                    } else if (currentImageType === 'back') {
                         backImageData = imageData;
                         updateImagePreview('back', imageData.localData);
                         console.log('✅ Back image data updated:', backImageData);
+                    } else if (currentImageType === 'editFront') {
+                        editFrontImageData = imageData;
+                        updateImagePreview('editFront', imageData.localData);
+                        console.log('✅ Edit front image data updated:', editFrontImageData);
+                    } else if (currentImageType === 'editBack') {
+                        editBackImageData = imageData;
+                        updateImagePreview('editBack', imageData.localData);
+                        console.log('✅ Edit back image data updated:', editBackImageData);
                     }
                     
                     hideImageUploadProgress(currentImageType);
@@ -1465,15 +1856,22 @@ async function applyCrop() {
                     url: null, 
                     publicId: null 
                 };
-                
-                if (currentImageType === 'front') {
+                  if (currentImageType === 'front') {
                     frontImageData = fallbackImageData;
                     updateImagePreview('front', localData);
                     console.log('⚠️ Front image saved locally (fallback):', frontImageData);
-                } else {
+                } else if (currentImageType === 'back') {
                     backImageData = fallbackImageData;
                     updateImagePreview('back', localData);
                     console.log('⚠️ Back image saved locally (fallback):', backImageData);
+                } else if (currentImageType === 'editFront') {
+                    editFrontImageData = fallbackImageData;
+                    updateImagePreview('editFront', localData);
+                    console.log('⚠️ Edit front image saved locally (fallback):', editFrontImageData);
+                } else if (currentImageType === 'editBack') {
+                    editBackImageData = fallbackImageData;
+                    updateImagePreview('editBack', localData);
+                    console.log('⚠️ Edit back image saved locally (fallback):', editBackImageData);
                 }
                 closeCropperModal();
             }
