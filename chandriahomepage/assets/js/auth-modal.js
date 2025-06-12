@@ -151,18 +151,18 @@ class AuthModal {
         // Listen for authentication state changes
         onAuthStateChanged(auth, async (user) => {
             if (user && this.isLoggingIn) {
-                // Check if user exists in adminAccounts and redirect them
+                // Check if user exists in adminAccounts
                 const adminDocRef = doc(chandriaDB, "adminAccounts", user.uid);
                 const adminDocSnap = await getDoc(adminDocRef);
 
                 if (adminDocSnap.exists()) {
-                    // If user is admin, sign them out
-                    await signOut(auth);
+                    // User is admin - admin login has already been handled in handleSignIn/handleGoogleSignIn
+                    // Just reset the flag, don't sign out or update UI here
                     this.isLoggingIn = false;
                     return;
                 }
 
-                // Update UI for authenticated user
+                // Update UI for regular authenticated user
                 this.updateUIForAuthenticatedUser(user);
                 this.closeModal();
                 this.isLoggingIn = false;
@@ -306,16 +306,28 @@ class AuthModal {
         this.showLoading(event.target);
 
         try {
+            // Check if email exists in adminAccounts collection first
+            const adminEmailQuery = await getDocs(
+                query(
+                    collection(chandriaDB, "adminAccounts"),
+                    where("email", "==", email)
+                )
+            );
+
             // Check if email exists in userAccounts collection
-            const emailQuery = await getDocs(
+            const userEmailQuery = await getDocs(
                 query(
                     collection(chandriaDB, "userAccounts"),
                     where("email", "==", email)
                 )
             );
 
-            // If email does not exist, show error and return
-            if (emailQuery.empty) {
+            // Determine account type
+            let isAdmin = !adminEmailQuery.empty;
+            let isUser = !userEmailQuery.empty;
+
+            // If email doesn't exist in either collection, show error
+            if (!isAdmin && !isUser) {
                 this.notyf.error("Email is not registered. Please sign up first.");
                 this.isLoggingIn = false;
                 this.hideLoading(event.target);
@@ -325,9 +337,9 @@ class AuthModal {
             // Sign in with Firebase Authentication
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
-            // Check if verified
+            // Check if verified (only for non-admin users)
             const user = userCredential.user;
-            if (!user.emailVerified) {
+            if (!user.emailVerified && !isAdmin) {
                 // Sign out the unverified user
                 await signOut(auth);
                 this.notyf.error("Please verify your email before logging in.");
@@ -336,10 +348,32 @@ class AuthModal {
                 return;
             }
 
-            // Success
-            this.notyf.success("Login successful! Welcome back.");
-            
-            // The auth state listener will handle UI updates and modal closing
+            // Handle redirect based on account type
+            if (isAdmin) {
+                this.notyf.success("Admin login successful! Redirecting to admin panel...");
+                
+                // Close modal and redirect to admin panel
+                this.closeModal();
+                
+                setTimeout(() => {
+                    // Determine the correct path to admin panel based on current location
+                    const currentPath = window.location.pathname;
+                    let adminPath = '/admin/dashboard.html';
+                    
+                    // If we're in the chandriahomepage folder, adjust path
+                    if (currentPath.includes('chandriahomepage')) {
+                        adminPath = '../admin/dashboard.html';
+                    }
+                    
+                    window.location.href = adminPath;
+                }, 1500);
+                
+            } else {
+                // Regular user login
+                this.notyf.success("Login successful! Welcome back.");
+                
+                // The auth state listener will handle UI updates and modal closing for users
+            }
             
         } catch (error) {
             console.error("Login error:", error.code, error.message);
@@ -354,7 +388,7 @@ class AuthModal {
             this.isLoggingIn = false;
             this.hideLoading(event.target);
         }
-    }    async handleSignUp(event) {
+    }async handleSignUp(event) {
         const formData = new FormData(event.target);
         const fullname = formData.get('fullname');
         const email = formData.get('email');
@@ -461,14 +495,21 @@ class AuthModal {
         } finally {
             this.hideLoading(event.target);
         }
-    }
-
-    async emailExistsInFirestore(email) {
+    }    async emailExistsInFirestore(email) {
+        // Check both userAccounts and adminAccounts collections
         const usersRef = collection(chandriaDB, "userAccounts");
-        const snapshot = await getDocs(usersRef);
-        const exists = snapshot.docs.some(doc => doc.data().email === email);
-        return exists;
-    }    formatErrorMessage(errorCode) {
+        const adminsRef = collection(chandriaDB, "adminAccounts");
+        
+        const [usersSnapshot, adminsSnapshot] = await Promise.all([
+            getDocs(usersRef),
+            getDocs(adminsRef)
+        ]);
+        
+        const userExists = usersSnapshot.docs.some(doc => doc.data().email === email);
+        const adminExists = adminsSnapshot.docs.some(doc => doc.data().email === email);
+        
+        return userExists || adminExists;
+    }formatErrorMessage(errorCode) {
         let message = "";
 
         if (errorCode === "auth/invalid-email" || errorCode === "auth/missing-email") {
@@ -500,15 +541,30 @@ class AuthModal {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
             
-            // Check if user exists in adminAccounts and redirect them
+            // Check if user exists in adminAccounts collection
             const adminDocRef = doc(chandriaDB, "adminAccounts", user.uid);
             const adminDocSnap = await getDoc(adminDocRef);
 
             if (adminDocSnap.exists()) {
-                // If user is admin, sign them out
-                await signOut(auth);
-                this.notyf.error("Admin accounts cannot use this portal. Please use the admin login.");
-                this.isLoggingIn = false;
+                // Admin user - handle admin login
+                this.notyf.success("Admin Google sign-in successful! Redirecting to admin panel...");
+                
+                // Close modal and redirect to admin panel
+                this.closeModal();
+                
+                setTimeout(() => {
+                    // Determine the correct path to admin panel based on current location
+                    const currentPath = window.location.pathname;
+                    let adminPath = '/admin/dashboard.html';
+                    
+                    // If we're in the chandriahomepage folder, adjust path
+                    if (currentPath.includes('chandriahomepage')) {
+                        adminPath = '../admin/dashboard.html';
+                    }
+                    
+                    window.location.href = adminPath;
+                }, 1500);
+                
                 return;
             }
             
@@ -516,7 +572,7 @@ class AuthModal {
             const userDocRef = doc(chandriaDB, "userAccounts", user.uid);
             const userDocSnap = await getDoc(userDocRef);
             
-            if (!userDocSnap.exists()) {                // Create new user account in Firestore
+            if (!userDocSnap.exists()) {// Create new user account in Firestore
                 const userData = {
                     uid: user.uid,
                     email: user.email,

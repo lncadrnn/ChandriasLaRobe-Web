@@ -36,6 +36,15 @@ window.resetAvatar = function() {
 };
 
 $(document).ready(function () {
+    // Initialize Notyf for notifications
+    const notyf = new Notyf({
+        position: {
+            x: "center",
+            y: "top"
+        },
+        duration: 3000
+    });
+
     // COMMENTED OUT: Check if the user is logged in and display the email
     // onAuthStateChanged(auth, user => {
     //     if (user) {
@@ -69,26 +78,55 @@ $(document).ready(function () {
     
     $("#signOut-btn").on("click", function () {
         logoutModal.css("display", "flex");
-    });
-
-    $("#logout-yes").on("click", function () {
+    });    $("#logout-yes").on("click", function () {
+        // Close the modal first
+        logoutModal.css("display", "none");
+        
+        // Show loading message
+        notyf.open({
+            type: "info",
+            message: "Signing out...",
+            duration: 2000
+        });
+        
         signOut(auth)
             .then(() => {
-                window.location.href = "authentication.html";
+                // Clear any stored admin data
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('adminEmail');
+                sessionStorage.clear();
+                
+                // Show success message
+                notyf.success("Successfully signed out! Redirecting to main website...");
+                
+                // Redirect after a short delay to show the message
+                setTimeout(() => {
+                    window.location.href = "../index.html";
+                }, 1500);
             })
             .catch(error => {
                 console.error("Error signing out:", error);
+                
+                // Clear stored data even if signOut fails
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('adminEmail');
+                sessionStorage.clear();
+                
+                // Show error message but still redirect
+                notyf.error("Sign out completed with some issues. Redirecting...");
+                
+                setTimeout(() => {
+                    window.location.href = "../index.html";
+                }, 1500);
             });
-    });
-
-    $("#logout-no").on("click", function () {
-        logoutModal.hide();
+    });$("#logout-no").on("click", function () {
+        logoutModal.css("display", "none");
     });
 
     // Close modal when clicking outside
     logoutModal.on("click", function(e) {
         if (e.target === this) {
-            logoutModal.hide();
+            logoutModal.css("display", "none");
         }
     });
 

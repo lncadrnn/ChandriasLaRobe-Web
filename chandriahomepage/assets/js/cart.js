@@ -31,18 +31,15 @@ $(document).ready(function () {
                 }
             }
         ]
-    });
-
-    onAuthStateChanged(auth, async user => {
+    });    onAuthStateChanged(auth, async user => {
         if (user) {
             // Check if user exists in adminAccounts
             const adminDocRef = doc(chandriaDB, "adminAccounts", user.uid);
             const adminDocSnap = await getDoc(adminDocRef);
 
             if (adminDocSnap.exists()) {
-                // If user is admin, sign them out
-                await signOut(auth);
-                window.location.href = "../index.html";
+                // If user is admin, redirect to admin panel
+                window.location.href = "../admin/dashboard.html";
                 return;
             }
         }

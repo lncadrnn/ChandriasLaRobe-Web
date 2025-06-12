@@ -676,8 +676,8 @@ $(document).ready(function () {
                 const adminDocSnap = await getDoc(adminDocRef);
 
                 if (adminDocSnap.exists()) {
-                    // If user is admin, sign them out
-                    await signOut(auth);
+                    // If user is admin, redirect to admin panel
+                    window.location.href = "/admin/dashboard.html";
                     return;
                 }
 
@@ -698,7 +698,7 @@ $(document).ready(function () {
                     });
                 }
                 localStorage.removeItem("userEmail");
-            }            // Wait for all data operations to complete
+            }// Wait for all data operations to complete
             await Promise.all([
                 updateCartCount(),
                 wishlistService.updateWishlistCountUI(),
