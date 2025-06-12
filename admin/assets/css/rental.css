@@ -535,6 +535,10 @@
   border-radius: 3px;
 }
 
+#accessory-form::-webkit-scrollbar-thumb:hover {
+  background: #ff1493;
+}
+
 #accessory-form label:first-of-type {
   background-color: var(--primary-light);
   border: 1px solid var(--primary-color);
@@ -1159,8 +1163,9 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    height: fit-content;
+    height: calc(100vh - 140px);
     max-height: calc(100vh - 140px);
+    min-height: 500px;
 }
 
 .order-header {
@@ -1226,14 +1231,15 @@
     flex: 1;
     display: flex;
     flex-direction: column;
+    min-height: 0; /* Important for flex scrolling */
 }
 
 .order-items {
     flex: 1;
-    max-height: 300px;
     overflow-y: auto;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     padding-right: 0.5rem;
+    min-height: 0; /* Important for flex scrolling */
 }
 
 .empty-cart {
@@ -1309,8 +1315,10 @@
 }
 
 .order-summary {
+    flex-shrink: 0; /* Prevent shrinking */
     padding-top: 1rem;
     margin-bottom: 0.5rem;
+    border-top: 1px solid #f0f0f0;
 }
 
 .summary-row {
@@ -1331,6 +1339,7 @@
 }
 
 .proceed-btn {
+    flex-shrink: 0; /* Prevent shrinking */
     width: 100%;
     background: var(--primary-color);
     color: white;
@@ -1347,19 +1356,26 @@
     transition: all 0.3s ease;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin-top: auto; /* Push to bottom */
 }
 
-.proceed-btn:hover {
+/* Custom scrollbar for order items */
+.order-items::-webkit-scrollbar {
+    width: 6px;
+}
+
+.order-items::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.order-items::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+.order-items::-webkit-scrollbar-thumb:hover {
     background: #ff1493;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
-}
-
-.proceed-btn:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
 }
 
 /* Table column width adjustments */
