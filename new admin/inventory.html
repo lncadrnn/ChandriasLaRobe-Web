@@ -828,17 +828,27 @@
                 console.error('❌ Firebase connection check failed:', error);
                 return false;
             }        };        // Simple notification system is initialized in inventory.js
-        // No additional configuration needed here
-
-        // Enhanced initialization with better error diagnostics
+        // No additional configuration needed here        // Enhanced initialization with better error diagnostics
         document.addEventListener('DOMContentLoaded', async function() {
             try {
                 console.log('🚀 Initializing Firebase inventory services...');
                 console.log('📱 User Agent:', navigator.userAgent);
                 console.log('🌐 Origin:', window.location.origin);
                 
+                // Show loading spinner at the start
+                const inventoryOverlay = document.getElementById('inventoryLoadingOverlay');
+                const generalSpinner = document.getElementById('spinner');
+                
+                if (inventoryOverlay) {
+                    inventoryOverlay.style.display = 'flex';
+                }
+                
+                if (generalSpinner) {
+                    generalSpinner.classList.remove('d-none');
+                }
+                
                 // Wait a moment for modules to load
-                await new Promise(resolve => setTimeout(resolve, 1000));                // Check if InventoryFetcher is available
+                await new Promise(resolve => setTimeout(resolve, 1000));// Check if InventoryFetcher is available
                 if (!window.InventoryFetcher) {
                     console.error('❌ InventoryFetcher not available');
                     return;
@@ -849,8 +859,7 @@
                 // Test Firebase connection first
                 console.log('🔗 Testing Firebase connection...');
                 const isConnected = await window.checkFirebaseStatus();
-                console.log(`📡 Firebase connection result: ${isConnected}`);
-                  if (!isConnected) {
+                console.log(`📡 Firebase connection result: ${isConnected}`);                  if (!isConnected) {
                     console.warn('⚠️ Firebase connection failed - using offline mode');
                     
                     // Log detailed connection info
@@ -881,8 +890,7 @@
                         console.log('📊 No stats available');
                         // notyf.success('Connected to Firebase');
                     }
-                    
-                    // Load initial data from Firebase
+                      // Load initial data from Firebase
                     console.log('📦 Loading initial data...');
                     await loadInventoryFromFirebase();                } else {
                     console.error('❌ Failed to initialize Firebase services:', initResult.message);
@@ -900,8 +908,11 @@
                         console.warn('⚠️ Firebase connection still not available, using offline mode');
                     }
                 }, 2000);
+                
+                // Hide spinner only if there's an error and no data will be loaded
+                hideLoadingSpinners();
             }
-        });// Function to load inventory data from Firebase
+        });        // Function to load inventory data from Firebase
         async function loadInventoryFromFirebase() {
             try {
                 console.log('📦 Loading inventory data from Firebase...');
