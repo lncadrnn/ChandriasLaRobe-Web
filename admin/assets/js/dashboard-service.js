@@ -69,22 +69,56 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error fetching transactions:", error);
             return [];
         }
-    }
-
-    function renderRentals(filteredRentals = rentals) {
+    }    function renderRentals(filteredRentals = rentals) {
         const tbody = document.getElementById('rentals-table-body');
+        if (!tbody) return;
+        
         tbody.innerHTML = '';
+        
+        if (!filteredRentals || filteredRentals.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center; color: #999; padding: 20px;">
+                        No rental data available
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
         filteredRentals.forEach(rental => {
             const tr = document.createElement('tr');
+            
+            // Map status to proper CSS classes for the existing UI
+            let statusClass = '';
+            switch(rental.status.toLowerCase()) {
+                case 'upcoming':
+                    statusClass = 'status-pending';
+                    break;
+                case 'ongoing':
+                    statusClass = 'status-active';
+                    break;
+                case 'completed':
+                    statusClass = 'status-completed';
+                    break;
+                case 'overdue':
+                    statusClass = 'status-overdue';
+                    break;
+                default:
+                    statusClass = 'status-pending';
+            }
+            
             tr.innerHTML = `
                 <td>${rental.name}</td>
                 <td>${rental.code}</td>
                 <td>${rental.payment}</td>
-                <td class="${statusClass[rental.status] || ''}">${rental.status}</td>
-                <td><a href="#" class="rental-view" data-id="${rental.id}">${rental.details}</a></td>
+                <td><span class="status-badge ${statusClass}">${rental.status}</span></td>
+                <td><button class="btn-details rental-view" data-id="${rental.id}">View</button></td>
             `;
             tbody.appendChild(tr);
-        });        // Add click event listeners for rental details
+        });
+
+        // Add click event listeners for rental details
         document.querySelectorAll('.rental-view').forEach(link => {
             link.addEventListener('click', async (e) => {
                 e.preventDefault();
@@ -361,32 +395,45 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error fetching appointments:", error);
             return [];
         }
-    }
-
-    async function renderAppointments() {
+    }    async function renderAppointments() {
         const ul = document.getElementById('appointments-list');
+        if (!ul) return;
+        
         ul.innerHTML = '';
         
         try {
             const appointments = await fetchAppointments();
             
+            if (!appointments || appointments.length === 0) {
+                ul.innerHTML = `
+                    <li class="appointment-item">
+                        <div class="appointment-text" style="text-align: center; color: #999;">
+                            No appointments available
+                        </div>
+                    </li>
+                `;
+                return;
+            }
+            
             appointments.forEach(app => {
-                const createdDate = app.createdAt?.toDate() || new Date();
-                const formattedDate = createdDate.toLocaleString();
+                const checkoutDate = app.checkoutDate || 'N/A';
+                const checkoutTime = app.checkoutTime || 'N/A';
+                const customerName = app.customerName || 'Unknown Customer';
                 
                 const li = document.createElement('li');
+                li.className = 'appointment-item';
                 li.innerHTML = `
-                    <div class="appointment-title"><b>${app.customerName || 'Unknown'}</b></div>
-                    <div class="appointment-desc"> has booked an appointment on ${app.checkoutDate || 'N/A'}</div>
-                    <span class="appointment-time">${formattedDate}</span>
-                    <a class="appointment-view" href="#" data-id="${app.id}">View</a>
+                    <div class="appointment-text">
+                        <strong>${customerName}</strong> has booked an appointment on <strong>${checkoutDate}</strong> at <strong>${checkoutTime}</strong>. 
+                        <button class="appointment-view-details" data-id="${app.id}">View Details</button>
+                    </div>
                 `;
                 ul.appendChild(li);
             });
 
             // Add view event listeners
-            document.querySelectorAll('.appointment-view').forEach(link => {
-                link.addEventListener('click', async (e) => {
+            document.querySelectorAll('.appointment-view-details').forEach(button => {
+                button.addEventListener('click', async (e) => {
                     e.preventDefault();
                     const id = e.target.getAttribute('data-id');
                     showAppointmentDetails(id);
@@ -394,6 +441,13 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         } catch (error) {
             console.error("Error rendering appointments:", error);
+            ul.innerHTML = `
+                <li class="appointment-item">
+                    <div class="appointment-text" style="text-align: center; color: #e74c3c;">
+                        Error loading appointments
+                    </div>
+                </li>
+            `;
         }
     }
 
