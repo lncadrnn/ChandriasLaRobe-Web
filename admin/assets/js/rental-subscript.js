@@ -2027,5 +2027,35 @@ $(document).ready(function () {
         cart.accessories = [];
         updateNewCartDisplay();
     });
-      // ===== END TABLE-BASED INTERFACE UI FUNCTIONS =====
+
+    // ===== RENTAL TYPE DATE FIELD TOGGLE LOGIC =====
+    const $rentalType = $("#rental-type");
+    const $openRentalDatesWrapper = $("#open-rental-dates-wrapper");
+    const $fixedDetailsRow = $("#fixed-details-row");
+    const $eventStartDate = $("#event-start-date");
+    const $eventEndDate = $("#event-end-date");
+    const $fixedEventDate = $("#fixed-event-date");
+
+    // Rental type change handler
+    $rentalType.on("change", function() {
+        const selectedType = $(this).val();
+        
+        // Hide all date field groups first
+        $openRentalDatesWrapper.hide();
+        $fixedDetailsRow.hide();
+        
+        // Clear all date values when switching rental types
+        $eventStartDate.val('');
+        $eventEndDate.val('');
+        $fixedEventDate.val('');
+        
+        // Show appropriate date fields based on rental type
+        if (selectedType === "Open Rental") {
+            $openRentalDatesWrapper.show();
+        } else if (selectedType === "Fixed Rental") {
+            $fixedDetailsRow.show();
+        }
+    });
+
+    // ===== END TABLE-BASED INTERFACE UI FUNCTIONS =====
 });
