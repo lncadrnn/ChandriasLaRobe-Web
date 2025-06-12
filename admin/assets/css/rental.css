@@ -1837,3 +1837,36 @@
 .payment-field-hidden {
     display: none !important;
 }
+
+/* Date input restrictions - disable past dates visually */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+}
+
+/* Style for date inputs with restrictions */
+.date-restricted {
+    position: relative;
+}
+
+.date-restricted::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Disable specific dates in webkit browsers */
+input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+    background: transparent;
+}
+
+/* Custom validation styling */
+input[type="date"].invalid-date {
+    border-color: #ff4757 !important;
+    background-color: #fff5f5;
+}

@@ -1157,13 +1157,20 @@ $(document).ready(function () {
                 const cartTotal = $cartTotalAmount.text() || "";
                 $rentalFeeField.val(cartTotal);
                 $("#client-rental-fee-display").text(cartTotal);
-            }
-
-            // Optionally update other modal fields if needed
+            }            // Optionally update other modal fields if needed
             if (typeof updateCustomerModalFields === "function") {
                 updateCustomerModalFields();
-            }
-
+            }            // Initialize date restrictions when modal opens
+            setFixedRentalDateRestrictions();
+            
+            // Also set up Open Rental date restrictions in case it's selected
+            const today = new Date();
+            const minStartDate = new Date(today);
+            minStartDate.setDate(today.getDate() + 2);
+            const minDateString = minStartDate.toISOString().split('T')[0];
+            $("#event-start-date").attr('min', minDateString);
+            console.log('Modal opened - applied date restrictions');
+            
             // Show the customer modal
             $customerModal.show();
         });
@@ -1388,6 +1395,35 @@ $(document).ready(function () {
     // FORM (CUSTOMER INFO) SUBMIT FUNCTION
     $("#customer-form").on("submit", async function (e) {
         e.preventDefault();
+
+        // VALIDATE DATE RESTRICTIONS BEFORE SUBMISSION
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const minAllowedDate = new Date(today);
+        minAllowedDate.setDate(today.getDate() + 2);
+        
+        const rentalType = $("#rental-type").val();
+        let dateToValidate = null;
+        let dateFieldName = "";
+        
+        if (rentalType === "Open Rental") {
+            const startDate = $("#event-start-date").val();
+            if (startDate) {
+                dateToValidate = new Date(startDate);
+                dateFieldName = "Start date";
+            }
+        } else if (rentalType === "Fixed Rental") {
+            const eventDate = $("#fixed-event-date").val();
+            if (eventDate) {
+                dateToValidate = new Date(eventDate);
+                dateFieldName = "Event date";
+            }
+        }
+        
+        if (dateToValidate && dateToValidate < minAllowedDate) {
+            notyf.error(`${dateFieldName} must be at least ${minAllowedDate.toLocaleDateString()}. Please select a valid date.`);
+            return false;
+        }
 
         // SPINNER VARIABLES
         const spinnerText = $("#spinner-text");
@@ -2055,9 +2091,7 @@ $(document).ready(function () {
         } else if (selectedType === "Fixed Rental") {
             $fixedDetailsRow.show();
         }
-    });
-
-    // Date validation for Open Rental fields
+    });    // Date validation for Open Rental fields
     function setDateRestrictions() {
         const today = new Date();
         const minStartDate = new Date(today);
@@ -2068,7 +2102,79 @@ $(document).ready(function () {
         
         // Set minimum date for start date (current date + 2 days)
         const minDateString = minStartDate.toISOString().split('T')[0];
-        $startDate.attr('min', minDateString);
+        console.log('Today:', today.toDateString());
+        console.log('Minimum start date:', minStartDate.toDateString());
+        console.log('Setting min date string for start date:', minDateString);
+        
+        // Force set the min attribute and add visual class
+        $startDate.attr('min', minDateString).addClass('date-restricted');
+        console.log('Applied min attribute:', $startDate.attr('min'));
+        
+        // Aggressive validation - block ALL attempts to set invalid dates
+        function validateAndBlockInvalidDate($input, fieldName) {
+            const originalValue = $input.val();
+            
+            // Multiple event listeners to catch all possible ways of setting a date
+            $input.off('.dateValidation').on('change.dateValidation input.dateValidation keyup.dateValidation blur.dateValidation', function(e) {
+                const value = $(this).val();
+                if (!value) return;
+                
+                const selectedDate = new Date(value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const minAllowedDate = new Date(today);
+                minAllowedDate.setDate(today.getDate() + 2);
+                
+                if (selectedDate < minAllowedDate) {
+                    // Immediately clear the invalid value
+                    $(this).val('');
+                    $(this).addClass('invalid-date');
+                    
+                    // Show error message
+                    notyf.error(`${fieldName} must be at least ${minAllowedDate.toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    })}. Please select a valid date.`);
+                    
+                    // Prevent the invalid date from being processed
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                } else {
+                    $(this).removeClass('invalid-date');
+                }
+            });
+            
+            // Additional protection against programmatic changes
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'value') {
+                        const value = $input.val();
+                        if (value) {
+                            const selectedDate = new Date(value);
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            const minAllowedDate = new Date(today);
+                            minAllowedDate.setDate(today.getDate() + 2);
+                            
+                            if (selectedDate < minAllowedDate) {
+                                $input.val('');
+                                $input.addClass('invalid-date');
+                                notyf.error(`${fieldName} cannot be before ${minAllowedDate.toLocaleDateString()}`);
+                            }
+                        }
+                    }
+                });
+            });
+            
+            if ($input[0]) {
+                observer.observe($input[0], { attributes: true, attributeFilter: ['value'] });
+            }
+        }
+        
+        // Apply validation to start date
+        validateAndBlockInvalidDate($startDate, 'Start date');
         
         // Initially disable end date
         $endDate.prop('disabled', true);
@@ -2139,23 +2245,63 @@ $(document).ready(function () {
             $fixedDetailsRow.show();
         }
     });
-    // ===== END TABLE-BASED INTERFACE UI FUNCTIONS =====
-
-    // Set date restrictions for Fixed Rental event date
+    // ===== END TABLE-BASED INTERFACE UI FUNCTIONS =====    // Set date restrictions for Fixed Rental event date
     function setFixedRentalDateRestrictions() {
         const today = new Date();
         const minEventDate = new Date(today);
         minEventDate.setDate(today.getDate() + 2); // Minimum is current date + 2 days
         
         const minDateString = minEventDate.toISOString().split('T')[0];
-        $('#fixed-event-date').attr('min', minDateString);
+        console.log('Today:', today.toDateString());
+        console.log('Minimum event date:', minEventDate.toDateString());
+        console.log('Setting min date string for fixed event date:', minDateString);
+        
+        const $fixedDate = $('#fixed-event-date');
+        $fixedDate.attr('min', minDateString).addClass('date-restricted');
+        console.log('Applied min attribute to fixed date:', $fixedDate.attr('min'));
+        
+        // Apply the same aggressive validation to fixed date
+        function validateAndBlockInvalidDate($input, fieldName) {
+            // Multiple event listeners to catch all possible ways of setting a date
+            $input.off('.dateValidation').on('change.dateValidation input.dateValidation keyup.dateValidation blur.dateValidation', function(e) {
+                const value = $(this).val();
+                if (!value) return;
+                
+                const selectedDate = new Date(value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const minAllowedDate = new Date(today);
+                minAllowedDate.setDate(today.getDate() + 2);
+                
+                if (selectedDate < minAllowedDate) {
+                    // Immediately clear the invalid value
+                    $(this).val('');
+                    $(this).addClass('invalid-date');
+                    
+                    // Show error message
+                    notyf.error(`${fieldName} must be at least ${minAllowedDate.toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    })}. Please select a valid date.`);
+                    
+                    // Prevent the invalid date from being processed
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                } else {
+                    $(this).removeClass('invalid-date');
+                }
+            });
+        }
+        
+        validateAndBlockInvalidDate($fixedDate, 'Event date');
     }
 
-    // Initialize date restrictions when modal opens
-    $(document).on('shown.bs.modal', '#customer-modal', function() {
-        setFixedRentalDateRestrictions();
-    });
-
-    // Also set restrictions when document is ready
+    // Debug: Log current date for testing
+    console.log('Current date for testing:', new Date().toISOString().split('T')[0]);
+    console.log('Current date + 2 days:', new Date(new Date().setDate(new Date().getDate() + 2)).toISOString().split('T')[0]);    // Also set restrictions when document is ready
     setFixedRentalDateRestrictions();
+    
+    console.log('Rental subscript initialization complete');
 });
