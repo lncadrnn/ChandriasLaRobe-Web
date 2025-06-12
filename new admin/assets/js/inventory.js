@@ -2005,10 +2005,9 @@ function showDeleteConfirmationModal(title, subtitle, onConfirm) {
     document.body.insertAdjacentHTML('beforeend', modalHTML);
 
     // Store the callback function globally for the confirm button
-    window.currentDeleteCallback = onConfirm;
-
-    // Show modal with animation
+    window.currentDeleteCallback = onConfirm;    // Show modal with animation
     const modal = document.getElementById('deleteConfirmationModal');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
     setTimeout(() => {
         modal.classList.add('active');
     }, 10);
@@ -2030,6 +2029,7 @@ function closeDeleteConfirmationModal() {
     const modal = document.getElementById('deleteConfirmationModal');
     if (modal) {
         modal.classList.remove('active');
+        document.body.style.overflow = ''; // Restore background scrolling
         setTimeout(() => {
             modal.remove();
             // Clean up the global callback
