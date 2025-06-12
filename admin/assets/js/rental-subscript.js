@@ -1136,10 +1136,10 @@ $(document).ready(function () {
         const additionalSummary = additionalArr
             .map(item => `${item.code} x${item.quantity}`)
             .join(", ");
-        $("#client-additional-code").val(additionalSummary);
-
-        // Set rental fee from Rental List total
-        $("#client-rental-fee").val($("#cart-total-amount").text() || "");
+        $("#client-additional-code").val(additionalSummary);        // Set rental fee from Rental List total
+        const cartTotal = $("#cart-total-amount").text() || "";
+        $("#client-rental-fee").val(cartTotal);
+        $("#client-rental-fee-display").text(cartTotal);
     }
 
     // FUNCTION FOR CART PROCEED BUTTON
@@ -1152,11 +1152,11 @@ $(document).ready(function () {
                     "Please add at least one product to the Rental List before proceeding."
                 );
                 return;
-            }
-
-            // Set rental fee field with total amount (if exists)
+            }            // Set rental fee field with total amount (if exists)
             if ($rentalFeeField.length && $cartTotalAmount.length) {
-                $rentalFeeField.val($cartTotalAmount.text() || "");
+                const cartTotal = $cartTotalAmount.text() || "";
+                $rentalFeeField.val(cartTotal);
+                $("#client-rental-fee-display").text(cartTotal);
             }
 
             // Optionally update other modal fields if needed
@@ -2068,16 +2068,28 @@ $(document).ready(function () {
         }
         
         updateOrderSummary();
-    }
-      // Update order summary
+    }      // Update order summary
     function updateOrderSummary() {
         const total = [
             ...cart.products.map(p => p.price * (p.quantity || 1)),
             ...cart.accessories.map(a => a.price)
         ].reduce((sum, val) => sum + val, 0);
         
-        $("#cart-total-amount").text(`₱${total.toLocaleString()}`);
-    }    // Handle remove item buttons
+        const formattedTotal = `₱${total.toLocaleString()}`;
+        $("#cart-total-amount").text(formattedTotal);
+        
+        // Also update modal display if it exists
+        const $modalDisplay = $("#client-rental-fee-display");
+        if ($modalDisplay.length) {
+            $modalDisplay.text(formattedTotal);
+        }
+        
+        // Update hidden field as well
+        const $hiddenField = $("#client-rental-fee");
+        if ($hiddenField.length) {
+            $hiddenField.val(formattedTotal);
+        }
+    }// Handle remove item buttons
     $(document).on('click', '.remove-item-btn', function() {
         const productIndex = $(this).data('product-index');
         const accessoryIdx = $(this).data('accessory-idx');
