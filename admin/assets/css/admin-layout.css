@@ -323,6 +323,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 25px 30px;
+    padding-bottom: 0;
     background: var(--body-color);
     border-bottom: 1px solid var(--border-color);
     /* box-shadow: var(--shadow); */
