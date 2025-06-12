@@ -311,9 +311,7 @@
                                     <textarea id="client-additional-code" readonly rows="2" placeholder="No additional items"></textarea>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Customer Information -->
+                        </div>                        <!-- Customer Information -->
                         <div class="form-section">
                             <h4>Customer Information</h4>
                             <div class="form-row">
@@ -328,24 +326,16 @@
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="rental-type">Rental Type</label>
-                                    <select id="rental-type" required>
-                                        <option value="">Select Type</option>
-                                        <option value="Open Rental">Open Rental</option>
-                                        <option value="Fixed Rental">Fixed Rental</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
                                     <label for="client-region">Region</label>
                                     <select id="client-region" required></select>
                                 </div>
-                            </div>
-                            <div class="form-row">
                                 <div class="form-group">
                                     <label for="client-city">City</label>
                                     <select id="client-city" required></select>
                                 </div>
-                                <div class="form-group">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group" style="grid-column: 1 / -1;">
                                     <label for="client-address">Address</label>
                                     <input type="text" id="client-address" required />
                                 </div>
@@ -356,6 +346,21 @@
                         <div class="form-section">
                             <h4>Rental Details</h4>
                             <div class="form-row">
+                                <div class="form-group" id="rental-fee-wrapper">
+                                    <label for="client-rental-fee">Rental Fee</label>
+                                    <input type="text" id="client-rental-fee" readonly />
+                                </div>
+                                <div class="form-group"></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="rental-type">Rental Type</label>
+                                    <select id="rental-type" required>
+                                        <option value="">Select Type</option>
+                                        <option value="Open Rental">Open Rental</option>
+                                        <option value="Fixed Rental">Fixed Rental</option>
+                                    </select>
+                                </div>
                                 <div class="form-group">
                                     <label for="event-type">Event Type</label>
                                     <select id="event-type" required>
@@ -367,10 +372,6 @@
                                         <option value="Other Indoor Events">Other Indoor Events</option>
                                         <option value="Other Outdoor Events">Other Outdoor Events</option>
                                     </select>
-                                </div>
-                                <div class="form-group" id="rental-fee-wrapper">
-                                    <label for="client-rental-fee">Rental Fee</label>
-                                    <input type="text" id="client-rental-fee" readonly />
                                 </div>
                             </div>
                             
