@@ -46,9 +46,9 @@ function updateDateTime() {
         day: 'numeric'
     };
     
-    // Format time (e.g., "2:30 PM")
+    // Format time (e.g., "1:00:00 PM")
     const timeOptions = {
-        hour: '2-digit',
+        hour: 'numeric',
         minute: '2-digit',
         second: '2-digit',
         hour12: true
@@ -57,15 +57,13 @@ function updateDateTime() {
     const formattedDate = now.toLocaleDateString('en-US', dateOptions);
     const formattedTime = now.toLocaleTimeString('en-US', timeOptions);
     
-    // Update the display
-    const dateElement = document.getElementById('currentDate');
-    const timeElement = document.getElementById('currentTime');
+    // Combine date and time with "at" connector
+    const combinedDateTime = `${formattedDate} at ${formattedTime}`;
     
-    if (dateElement) {
-        dateElement.textContent = formattedDate;
-    }
+    // Update the single datetime display
+    const dateTimeElement = document.getElementById('currentDateTime');
     
-    if (timeElement) {
-        timeElement.textContent = formattedTime;
+    if (dateTimeElement) {
+        dateTimeElement.textContent = combinedDateTime;
     }
 }

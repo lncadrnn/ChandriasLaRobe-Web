@@ -1,5 +1,40 @@
 /* Dashboard-specific styles - base styles moved to admin-layout.css */
 
+/* Dashboard Body Background */
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* Dashboard Header Customization */
+.dashboard-header {
+    background: transparent !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    padding: 30px 30px 20px 30px;
+}
+
+.dashboard-header .page-title {
+    color: #2c3e50 !important;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.dashboard-datetime {
+    display: block;
+    margin-top: 0;
+}
+
+.dashboard-datetime .current-date,
+.dashboard-datetime #currentDateTime {
+    color: #5a6c7d;
+    font-size: 14px;
+    font-weight: 400;
+    margin: 0;
+}
+
+/* ...existing code... */
+
 .main-content {
     margin-left: 250px;
     width: calc(100% - 250px);
@@ -8,6 +43,7 @@
     height: 100vh;
     overflow: hidden;
     box-sizing: border-box;
+    background: transparent;
 }
 
 .sidebar.close ~ .main-content {
@@ -33,25 +69,39 @@
 }
 
 @media (max-width: 768px) {
-    .main-header {
-        padding: 1rem;
+    .dashboard-header {
+        padding: 20px 20px 15px 20px;
     }
     
-    .datetime-display {
-        display: none;
+    .dashboard-header .page-title {
+        font-size: 28px;
+    }
+    
+    .dashboard-datetime {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .dashboard-datetime .current-date,
+    .dashboard-datetime .current-time {
+        font-size: 14px;
     }
     
     .header-right {
         gap: 0.5rem;
     }
-    
-    .view-analytics-btn {
+      .view-analytics-btn {
         padding: 0.5rem 1rem;
         font-size: 0.8rem;
     }
     
     .view-analytics-btn span {
         display: none;
+    }
+    
+    .dashboard-layout {
+        padding: 15px 20px;
     }
 }
 
@@ -235,7 +285,8 @@
 .dashboard-layout {
     display: flex;
     gap: 1.5rem;
-    padding: 0.5rem 1.5rem 1.2rem 1.5rem;
+    padding: 20px 30px;
+    background: transparent;
     min-height: calc(100vh - 144px);
     align-items: flex-start;
 }
