@@ -484,9 +484,7 @@ $(document).ready(function () {
             $("#proceed-btn").addClass("disabled");
         }
     });
-    // --====== END OF EVENT LISTENERS FOR PRODUCT SIZES ======--
-
-    // ACCESSORIES CLICK FUNCTION
+    // --====== END OF EVENT LISTENERS FOR PRODUCT SIZES ======--    // ACCESSORIES CLICK FUNCTION
     $(document).on("click", ".additional-card", function () {
         const $card = $(this);
         const id = $card.data("id"); // Firestore document ID
@@ -496,14 +494,21 @@ $(document).ready(function () {
             $card.find(".pos-price").text().replace(/[^\d]/g, "")
         );
 
+        const productCount = cart.products.length;
+        
+        // Check if there are any products in the cart first
+        if (productCount === 0) {
+            showErrorModal("You must add at least one product before adding additional items.");
+            return;
+        }
+
         const countOfThis = cart.accessories.filter(
             item => item.name === name
         ).length;
-        const productCount = cart.products.length;
 
         if (countOfThis >= productCount) {
             showErrorModal(
-                `You can only add as many '${name}' as products selected.`
+                `You can only add as many '${name}' as products selected. You currently have ${productCount} product(s) and ${countOfThis} '${name}' item(s).`
             );
             return;
         }
@@ -1968,14 +1973,21 @@ $(document).ready(function () {
         $("#proceed-btn").removeClass("disabled");
         $("#product-size-modal").show();
     }
-    
-    // Add additional to cart
+      // Add additional to cart
     function addAdditionalToCart(id, name, code, price) {
-        const countOfThis = cart.accessories.filter(item => item.name === name).length;
         const productCount = cart.products.length;
         
-        if (countOfThis >= productCount && productCount > 0) {
-            showErrorModal(`You can only add as many '${name}' as products selected.`);
+        // Check if there are any products in the cart first
+        if (productCount === 0) {
+            showErrorModal("You must add at least one product before adding additional items.");
+            return;
+        }
+        
+        const countOfThis = cart.accessories.filter(item => item.name === name).length;
+        
+        // Check if we already have this additional item (limit one per product)
+        if (countOfThis >= productCount) {
+            showErrorModal(`You can only add as many '${name}' as products selected. You currently have ${productCount} product(s) and ${countOfThis} '${name}' item(s).`);
             return;
         }
         
