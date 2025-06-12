@@ -8,6 +8,9 @@
         <link rel="stylesheet" href="/admin/assets/css/admin-layout-mob.css" />
         <link rel="stylesheet" href="/admin/assets/css/settings.css" />
 
+        <!-- Notyf for notifications -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+
         <link
             href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
             rel="stylesheet"
@@ -96,61 +99,37 @@
             <section class="settings-content">
                 <div class="account-settings-form">
                     <h3><i class="fas fa-user-cog"></i> Profile Settings</h3>
-                    
-                    <div class="settings-grid">
-                        <div class="settings-form-column">
-                            <div class="form-group">
-                                <label for="email">Email Address</label>
-                                <input type="email" id="email" class="disabled" disabled />
-                            </div>
-
-                            <div class="form-group">
-                                <label for="name">Display Name</label>
-                                <input type="text" id="name" placeholder="Enter your display name" />
-                            </div>
-
-                            <div class="form-group">
-                                <button type="button" class="btn-change-password" id="togglePasswordFields">
-                                    <i class="fas fa-key"></i> Change Password
-                                </button>
-                            </div>
-
-                            <div id="passwordFields" style="display: none;">
-                                <div class="form-group">
-                                    <label for="password">Current Password</label>
-                                    <input type="password" id="password" placeholder="Enter current password" />
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="new-password">New Password</label>
-                                    <input type="password" id="new-password" placeholder="Enter new password" />
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="confirm-new-password">Confirm New Password</label>
-                                    <input type="password" id="confirm-new-password" placeholder="Confirm new password" />
-                                </div>
-                            </div>
+                      <div class="settings-form-container">
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" class="disabled" disabled />
                         </div>
-                        
-                        <div class="settings-avatar-column">
-                            <div class="avatar-container">
-                                <div class="avatar-placeholder">
-                                    <div class="avatar-content">
-                                        <i class="fas fa-user"></i>
-                                        <span>AVATAR</span>
-                                    </div>
-                                </div>
-                                <button type="button" class="avatar-reset-btn" onclick="resetAvatar()" style="display: none;">
-                                    <i class="fas fa-times"></i>
-                                </button>
+
+                        <div class="form-group">
+                            <label for="name">Display Name</label>
+                            <input type="text" id="name" placeholder="Enter your display name" />
+                        </div>
+
+                        <div class="form-group">
+                            <button type="button" class="btn-change-password" id="togglePasswordFields">
+                                <i class="fas fa-key"></i> Change Password
+                            </button>
+                        </div>
+
+                        <div id="passwordFields" style="display: none;">
+                            <div class="form-group">
+                                <label for="password">Current Password</label>
+                                <input type="password" id="password" placeholder="Enter current password" />
                             </div>
-                            
-                            <div class="avatar-upload">
-                                <input type="file" id="profile-image-upload" accept="image/*" onchange="previewImage(event)" style="display: none;" />
-                                <button type="button" class="btn-upload" onclick="document.getElementById('profile-image-upload').click()">
-                                    <i class="fas fa-camera"></i> Upload Avatar
-                                </button>
+
+                            <div class="form-group">
+                                <label for="new-password">New Password</label>
+                                <input type="password" id="new-password" placeholder="Enter new password" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirm-new-password">Confirm New Password</label>
+                                <input type="password" id="confirm-new-password" placeholder="Confirm new password" />
                             </div>
                         </div>
                     </div>
@@ -229,9 +208,16 @@
             </a>
 
 
-        </nav>        <!-- EXTERNAL SCRIPT -->
+        </nav>        
+        
+        <!-- jQuery for compatibility with settings-service.js -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <!-- Notyf for notifications -->
+        <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+          <!-- EXTERNAL SCRIPT -->
         <script src="./assets/js/admin-layout.js"></script>
         <script src="./assets/js/admin-layout-mob.js"></script>
+        <script type="module" src="./assets/js/admin-auth-state.js"></script>
         <script type="module" src="./assets/js/settings-service.js"></script>
 
     </body>

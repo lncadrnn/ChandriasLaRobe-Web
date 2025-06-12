@@ -1,16 +1,233 @@
 /* Settings specific styles - uses unified admin layout from admin-layout.css */
 
-/* Settings-specific placeholder styles are already in admin-layout.css */
+/* Override page header padding for settings page */
 
-/* Additional settings-specific styles can be added here as needed */
+/* Settings Content Layout */
+.settings-content {
+    padding: 0;
+    max-width: none;
+    margin: 0 20px;
+}
 
-/* Future account settings page styling */
+/* Add moderate padding to form content */
+.settings-form-container {
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+/* Password Fields Container */
+#passwordFields {
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    margin-top: 15px;
+    border-left: 4px solid var(--primary-color);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Change Password Button */
+.btn-change-password {
+    background: transparent;
+    color: var(--primary-color);
+    border: none;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-change-password:hover {
+    color: var(--primary-color-dark);
+    text-decoration: underline;
+}
+
+/* Admin Actions Section */
+.admin-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.action-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #fefefe;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+}
+
+.action-item:hover {
+    background: #fafafa;
+    border-color: #d1d5db;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.action-info h4 {
+    color: var(--text-dark);
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+}
+
+.action-info p {
+    color: var(--text-light);
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Logout Modal Styles */
+.logout-modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 15500;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.logout-modal-container.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.logout-modal-box {
+    width: 400px;
+    max-width: 90vw;
+    background: linear-gradient(145deg, #ffffff, #f8f9fa);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transform: scale(0.9) translateY(20px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.logout-modal-container.show .logout-modal-box {
+    transform: scale(1) translateY(0);
+}
+
+.logout-modal-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), #e91e63);
+    border-radius: 20px 20px 0 0;
+}
+
+.logout-modal-content {
+    text-align: center;
+    width: 100%;
+}
+
+.logout-modal-content h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: var(--text-dark);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.logout-modal-content p {
+    color: var(--text-light);
+    margin-bottom: 30px;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+.btn-group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-cancel {
+    padding: 12px 24px;
+    border: 2px solid var(--primary-color);
+    border-radius: 10px;
+    background: white;
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 100px;
+}
+
+.btn-cancel:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(232, 62, 140, 0.3);
+}
+
+.btn-submit {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    background: #ef4444;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-submit:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+/* Additional account settings form styles */
 .account-settings-form {
     background: var(--white);
-    border-radius: var(--border-radius);
-    padding: 30px;
-    box-shadow: var(--shadow);
-    margin-bottom: 20px;
+    border-radius: 20px;
+    padding: 30px 0;
+    box-shadow: none;
+    margin-bottom: 0;
+    margin-top: 20px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .account-settings-form h3 {
@@ -20,6 +237,11 @@
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-left: 40px;
+    padding-right: 40px;
 }
 
 .form-group {
@@ -55,6 +277,12 @@
     box-shadow: 0 0 0 3px rgba(232, 62, 140, 0.1);
 }
 
+.form-group input.disabled {
+    background: #f9fafb;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
 .form-actions {
     display: flex;
     gap: 15px;
@@ -62,12 +290,99 @@
     margin-top: 30px;
     padding-top: 20px;
     border-top: 1px solid var(--border-color);
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+/* Button Styles */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    justify-content: center;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 0 2px 8px rgba(232, 62, 140, 0.3);
+}
+
+.btn-primary:hover:not(.disabled) {
+    background: var(--primary-color-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(232, 62, 140, 0.4);
+}
+
+.btn-primary.disabled {
+    background: #d1d5db;
+    color: #9ca3af;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--text-dark);
+    border: 2px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+    transform: translateY(-1px);
+    color: var(--text-dark);
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .settings-content {
+        margin: 0 10px;
+    }
+    
+    .settings-form-container {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    .account-settings-form h3 {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    .form-actions {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    .admin-actions {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
     .account-settings-form {
-        padding: 20px;
+        padding: 20px 0;
     }
     
     .form-actions {
@@ -76,6 +391,27 @@
     }
     
     .btn {
+        width: 100%;
+    }
+    
+    .action-item {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .logout-modal-box {
+        padding: 20px;
+        margin: 20px;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn-cancel,
+    .btn-submit {
         width: 100%;
     }
 }

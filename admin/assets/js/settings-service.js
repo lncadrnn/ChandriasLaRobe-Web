@@ -4,37 +4,6 @@ import {
     signOut
 } from "./sdk/chandrias-sdk.js";
 
-// Global functions for avatar functionality
-window.previewImage = function(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const avatarPlaceholder = document.querySelector('.avatar-placeholder');
-            const resetBtn = document.querySelector('.avatar-reset-btn');
-            
-            avatarPlaceholder.innerHTML = `<img src="${e.target.result}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">`;
-            resetBtn.style.display = 'flex';
-        };
-        reader.readAsDataURL(file);
-    }
-};
-
-window.resetAvatar = function() {
-    const avatarPlaceholder = document.querySelector('.avatar-placeholder');
-    const resetBtn = document.querySelector('.avatar-reset-btn');
-    const fileInput = document.getElementById('profile-image-upload');
-    
-    avatarPlaceholder.innerHTML = `
-        <div class="avatar-content">
-            <i class="fas fa-user"></i>
-            <span>AVATAR</span>
-        </div>
-    `;
-    resetBtn.style.display = 'none';
-    fileInput.value = '';
-};
-
 $(document).ready(function () {
     // Initialize Notyf for notifications
     const notyf = new Notyf({
