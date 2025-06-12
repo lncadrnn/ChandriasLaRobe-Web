@@ -1163,13 +1163,18 @@ $(document).ready(function () {
             }            // Initialize date restrictions when modal opens
             setFixedRentalDateRestrictions();
             
+            // Initially disable all date fields until rental type is selected
+            $('#event-start-date').prop('disabled', true);
+            $('#event-end-date').prop('disabled', true);
+            $('#fixed-event-date').prop('disabled', true);
+            
             // Also set up Open Rental date restrictions in case it's selected
             const today = new Date();
             const minStartDate = new Date(today);
-            minStartDate.setDate(today.getDate() + 2);
-            const minDateString = minStartDate.toISOString().split('T')[0];
-            $("#event-start-date").attr('min', minDateString);
-            console.log('Modal opened - applied date restrictions');
+            minStartDate.setDate(today.getDate() + 2); // Open Rental: current date + 2 days
+            const minStartDateString = minStartDate.toISOString().split('T')[0];
+            $("#event-start-date").attr('min', minStartDateString);
+            console.log('Modal opened - applied date restrictions (Open: +2 days, Fixed: +3 days) and disabled date fields');
             
             // Show the customer modal
             $customerModal.show();
@@ -1394,33 +1399,34 @@ $(document).ready(function () {
 
     // FORM (CUSTOMER INFO) SUBMIT FUNCTION
     $("#customer-form").on("submit", async function (e) {
-        e.preventDefault();
-
-        // VALIDATE DATE RESTRICTIONS BEFORE SUBMISSION
+        e.preventDefault();        // VALIDATE DATE RESTRICTIONS BEFORE SUBMISSION
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const minAllowedDate = new Date(today);
-        minAllowedDate.setDate(today.getDate() + 2);
         
         const rentalType = $("#rental-type").val();
         let dateToValidate = null;
         let dateFieldName = "";
+        let minAllowedDate = null;
         
         if (rentalType === "Open Rental") {
             const startDate = $("#event-start-date").val();
             if (startDate) {
                 dateToValidate = new Date(startDate);
                 dateFieldName = "Start date";
+                minAllowedDate = new Date(today);
+                minAllowedDate.setDate(today.getDate() + 2); // Open Rental: +2 days
             }
         } else if (rentalType === "Fixed Rental") {
             const eventDate = $("#fixed-event-date").val();
             if (eventDate) {
                 dateToValidate = new Date(eventDate);
                 dateFieldName = "Event date";
+                minAllowedDate = new Date(today);
+                minAllowedDate.setDate(today.getDate() + 3); // Fixed Rental: +3 days
             }
         }
         
-        if (dateToValidate && dateToValidate < minAllowedDate) {
+        if (dateToValidate && minAllowedDate && dateToValidate < minAllowedDate) {
             notyf.error(`${dateFieldName} must be at least ${minAllowedDate.toLocaleDateString()}. Please select a valid date.`);
             return false;
         }
@@ -2215,45 +2221,58 @@ $(document).ready(function () {
                 notyf.error('End date must be after the start date');
             }
         });
-    }
-
-    // Rental type change handler with date field toggle logic
+    }    // Rental type change handler with date field toggle logic
     $(document).on('change', '#rental-type', function() {
         const rentalType = $(this).val();
         const $openDatesWrapper = $('#open-rental-dates-wrapper');
         const $fixedDetailsRow = $('#fixed-details-row');
+        const $startDate = $('#event-start-date');
+        const $endDate = $('#event-end-date');
+        const $fixedDate = $('#fixed-event-date');
         
         // Clear all date values when switching rental types
-        $('#event-start-date').val('');
-        $('#event-end-date').val('');
-        $('#fixed-event-date').val('');
+        $startDate.val('');
+        $endDate.val('');
+        $fixedDate.val('');
         
         if (rentalType === 'Open Rental') {
             $openDatesWrapper.show();
             $fixedDetailsRow.hide();
+            // Enable Open Rental date fields
+            $startDate.prop('disabled', false);
+            $endDate.prop('disabled', true); // End date remains disabled until start date is filled
+            // Disable Fixed Rental date field
+            $fixedDate.prop('disabled', true);
             // Set up date restrictions for open rental
-            setDateRestrictions();        } else if (rentalType === 'Fixed Rental') {
+            setDateRestrictions();
+        } else if (rentalType === 'Fixed Rental') {
             $openDatesWrapper.hide();
             $fixedDetailsRow.show();
-            // Reset end date state when switching away from open rental
-            $('#event-end-date').prop('disabled', true);
-            // Set date restrictions for fixed rental
+            // Enable Fixed Rental date field
+            $fixedDate.prop('disabled', false);
+            // Disable Open Rental date fields
+            $startDate.prop('disabled', true);
+            $endDate.prop('disabled', true);
+            // Set date restrictions for fixed rental (current date + 3 days)
             setFixedRentalDateRestrictions();
         } else {
-            // No rental type selected
+            // No rental type selected - disable all date fields
             $openDatesWrapper.hide();
             $fixedDetailsRow.show();
+            $startDate.prop('disabled', true);
+            $endDate.prop('disabled', true);
+            $fixedDate.prop('disabled', true);
         }
     });
     // ===== END TABLE-BASED INTERFACE UI FUNCTIONS =====    // Set date restrictions for Fixed Rental event date
     function setFixedRentalDateRestrictions() {
         const today = new Date();
         const minEventDate = new Date(today);
-        minEventDate.setDate(today.getDate() + 2); // Minimum is current date + 2 days
+        minEventDate.setDate(today.getDate() + 3); // Minimum is current date + 3 days for Fixed Rental
         
         const minDateString = minEventDate.toISOString().split('T')[0];
         console.log('Today:', today.toDateString());
-        console.log('Minimum event date:', minEventDate.toDateString());
+        console.log('Minimum fixed event date:', minEventDate.toDateString());
         console.log('Setting min date string for fixed event date:', minDateString);
         
         const $fixedDate = $('#fixed-event-date');
@@ -2271,7 +2290,7 @@ $(document).ready(function () {
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 const minAllowedDate = new Date(today);
-                minAllowedDate.setDate(today.getDate() + 2);
+                minAllowedDate.setDate(today.getDate() + 3); // Fixed Rental needs 3 days advance
                 
                 if (selectedDate < minAllowedDate) {
                     // Immediately clear the invalid value
@@ -2303,5 +2322,10 @@ $(document).ready(function () {
     console.log('Current date + 2 days:', new Date(new Date().setDate(new Date().getDate() + 2)).toISOString().split('T')[0]);    // Also set restrictions when document is ready
     setFixedRentalDateRestrictions();
     
-    console.log('Rental subscript initialization complete');
+    // Initially disable all date fields until rental type is selected
+    $('#event-start-date').prop('disabled', true);
+    $('#event-end-date').prop('disabled', true);
+    $('#fixed-event-date').prop('disabled', true);
+    
+    console.log('Rental subscript initialization complete - date fields initially disabled');
 });
