@@ -74,7 +74,6 @@ $(document).ready(function () {
                 }
 
                 if (user) {
-                    // Coordinate all async operations with Promise.all
                     await Promise.all([
                         updateCartCount(),
                         wishlistService.updateWishlistCountUI(),
@@ -84,49 +83,36 @@ $(document).ready(function () {
 
                             // Check if user is an admin
                             const adminDocRef = doc(chandriaDB, "adminAccounts", user.uid);
-                            const adminDocSnap = await getDoc(adminDocRef);                            if (adminDocSnap.exists()) {
-                                // If user is admin, redirect to admin panel
+                            const adminDocSnap = await getDoc(adminDocRef);
+                            if (adminDocSnap.exists()) {
                                 window.location.href = "../admin/dashboard.html";
                                 return;
                             }
 
                             if (userSnap.exists()) {
                                 const userData = userSnap.data();
-
-                                $("#email").val(userData.email || "");
-                                $("#name").val(userData.fullname || "");
-                                
-                                // Store the original name for cancel functionality
+                                $("#email").val(userData.email || "");                                $("#name").val(userData.fullname || "");
                                 initialName = userData.fullname || "";
-
-                                // ✅ Load profile image if available
+                                
+                                // Update the profile image display
                                 if (userData.profileImageUrl) {
+                                    const timestamp = new Date().getTime();
                                     const $img = $("<img>", {
-                                        src: userData.profileImageUrl,
-                                        alt: "Profile Picture",
-                                        css: {
-                                            width: "100%",
-                                            height: "100%",
-                                            objectFit: "cover",
-                                            borderRadius: "50%"
-                                        },
-                                        error: function() {
-                                            // Fallback to default avatar if image fails to load
-                                            console.warn("Profile image failed to load, showing default avatar");
-                                            $(".avatar-placeholder").html(`
-                                                <div class="avatar-content">
-                                                    <i class="fas fa-user"></i>
-                                                    <span>AVATAR</span>
-                                                </div>
-                                            `);
-                                            $(".avatar-reset-btn").hide();
-                                        }
+                                        src: `${userData.profileImageUrl}?t=${timestamp}`,
+                                        alt: "Profile Picture"
                                     });
-                                    
-                                    $(".avatar-placeholder").empty().append($img);
+
+                                    $(".avatar-placeholder")
+                                        .empty()
+                                        .append($img);
                                     $(".avatar-reset-btn").css("display", "flex");
+
+                                    // Also update the navigation profile image
+                                    if (window.profileNavService) {
+                                        await window.profileNavService.refreshProfileImage();
+                                    }
                                 } else {
-                                    // No profile image, show default avatar
+                                    // Show default avatar
                                     $(".avatar-placeholder").html(`
                                         <div class="avatar-content">
                                             <i class="fas fa-user"></i>
@@ -135,8 +121,6 @@ $(document).ready(function () {
                                     `);
                                     $(".avatar-reset-btn").hide();
                                 }
-                            } else {
-                                console.warn("No user profile found in Firestore.");
                             }
                         })()
                     ]);
@@ -159,9 +143,7 @@ $(document).ready(function () {
             }
         });
     }
-    loadUserProfile();
-
-    function previewImage(event) {
+    loadUserProfile();    function previewImage(event) {
         const input = event.target;
         const $avatarPlaceholder = $(".avatar-placeholder");
         const $resetButton = $(".avatar-reset-btn");
@@ -171,14 +153,12 @@ $(document).ready(function () {
             reader.onload = function (e) {
                 const $img = $("<img>", {
                     src: e.target.result,
-                    css: {
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover"
-                    }
+                    alt: "Profile Picture"
                 });
-
-                $avatarPlaceholder.empty().append($img);
+                
+                $avatarPlaceholder
+                    .empty()
+                    .append($img);
                 $resetButton.css("display", "flex");
             };
             reader.readAsDataURL(input.files[0]);
@@ -415,6 +395,10 @@ $(document).ready(function () {
             });
 
             notyf.success("Account settings updated!");
+            // Update profile nav image
+            if (window.profileNavService) {
+                await window.profileNavService.refreshProfileImage();
+            }
         } catch (error) {
             console.error("Update failed:", error);
             notyf.error("Failed to update account settings.");

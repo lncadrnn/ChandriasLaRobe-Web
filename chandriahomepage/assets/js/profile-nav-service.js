@@ -50,18 +50,28 @@ class ProfileNavService {
      * DISABLED: Profile pictures are no longer shown in navigation
      */
     async loadUserProfileImage(uid) {
-        // Profile picture navigation functionality has been disabled
-        // Always set profileImageUrl to null to ensure default icon is shown
-        this.profileImageUrl = null;
+        try {
+            const userRef = doc(chandriaDB, "userAccounts", uid);
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists()) {
+                const userData = userSnap.data();
+                this.profileImageUrl = userData.profileImageUrl || null;
+            }
+        } catch (error) {
+            console.error("Error loading profile image:", error);
+            this.profileImageUrl = null;
+        }
     }/**
      * Update the navigation account button display
      */
     updateNavigationDisplay() {
         const accountButtons = document.querySelectorAll(this.accountButtonSelector);
-        
         accountButtons.forEach(button => {
-            // Always display default icon, regardless of profile image availability
-            this.displayDefaultIcon(button);
+            if (this.profileImageUrl) {
+                this.displayProfileImage(button);
+            } else {
+                this.displayDefaultIcon(button);
+            }
         });
     }/**
      * Check if we're on the accounts page
@@ -73,66 +83,54 @@ class ProfileNavService {
 
     /**
      * Display user profile image in the account button
-     */
-    displayProfileImage(button) {
-        // Only modify account buttons, not cart or other buttons
+     */    displayProfileImage(button) {
         if (!this.isAccountButton(button)) return;
         
-        // Clear existing content
         button.innerHTML = '';
-        
-        // Check if we're on the accounts page for special handling
         const isAccountsPage = this.isAccountsPage();
         
-        // Create profile image element
+        // Create and style profile image element
         const profileImg = document.createElement('img');
         profileImg.src = this.profileImageUrl;
         profileImg.alt = 'Profile Picture';
         profileImg.className = 'profile-nav-image';
-        
-        if (isAccountsPage) {
-            // Larger profile image for accounts page - replace entire button
-            profileImg.style.cssText = `
-                width: 48px;
-                height: 48px;
-                border-radius: 50%;
-                object-fit: cover;
-                border: 3px solid rgba(255, 133, 177, 0.4);
-                transition: all 0.3s ease;
-                cursor: pointer;
-                box-shadow: 0 4px 12px rgba(255, 133, 177, 0.2);
-            `;
-            button.style.cssText = `
-                background: none !important;
-                border: none !important;
-                padding: 0 !important;
-                cursor: pointer;
-                border-radius: 50%;
-                transition: all 0.3s ease;
-            `;
-        } else {
-            // Standard size for other pages
-            profileImg.style.cssText = `
-                width: 24px;
-                height: 24px;
-                border-radius: 50%;
-                object-fit: cover;
-                border: 2px solid rgba(255, 133, 177, 0.3);
-                transition: all 0.3s ease;
-            `;
-        }
 
-        // Add error handling for broken images
+        // Error handling
         profileImg.onerror = () => {
             this.displayDefaultIcon(button);
         };
 
-        button.appendChild(profileImg);
-        button.classList.add('has-profile-image');
-        
+        // Apply styles based on page context
         if (isAccountsPage) {
-            button.classList.add('accounts-page-profile');
+            button.className = 'header-action-btn accounts-page-profile';
+        } else {
+            button.className = 'header-action-btn has-profile-image';
+            button.style.cssText = `
+                width: 45px !important;
+                height: 45px !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                border-radius: 50% !important;
+                overflow: hidden !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                background: rgba(255, 133, 177, 0.1) !important;
+                border: none !important;
+                cursor: pointer !important;
+            `;
+            
+            profileImg.style.cssText = `
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: cover !important;
+                border-radius: 50% !important;
+                border: 2px solid rgba(255, 133, 177, 0.4) !important;
+                display: block !important;
+            `;
         }
+
+        button.appendChild(profileImg);
     }    /**
      * Display default user icon
      */
@@ -146,12 +144,11 @@ class ProfileNavService {
 
         // Create default icon element
         const defaultIcon = document.createElement('img');
-        
-        // Determine correct path based on current page location
-        const isRootLevel = window.location.pathname === '/' || 
-                           window.location.pathname.endsWith('/index.html') ||
-                           window.location.pathname.endsWith('/ChandriasLaRobe-Web/') ||
-                           !window.location.pathname.includes('/chandriahomepage/');
+          // Determine correct path based on current page location
+        const isInChandriaHomepage = window.location.pathname.includes('/chandriahomepage/');
+        const isRootLevel = !isInChandriaHomepage || 
+                           window.location.pathname === '/' || 
+                           window.location.pathname.endsWith('/index.html');
         
         defaultIcon.src = isRootLevel ? 'chandriahomepage/assets/img/icon-user.svg' : 'assets/img/icon-user.svg';
         defaultIcon.alt = 'Account';// Use consistent sizing for all pages - same as other header action buttons (20px icon, 45px button)
@@ -160,8 +157,7 @@ class ProfileNavService {
             height: 20px;
             transition: filter 0.3s ease;
         `;
-        
-        // Apply consistent header-action-btn styling for all pages
+          // Apply consistent header-action-btn styling for all pages
         button.style.cssText = `
             background: rgba(255, 133, 177, 0.1) !important;
             border: 2px solid transparent !important;
@@ -169,8 +165,11 @@ class ProfileNavService {
             height: 45px !important;
             border-radius: 50%;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.3s ease;
-        `;        button.appendChild(defaultIcon);
+        `;button.appendChild(defaultIcon);
         button.classList.remove('has-profile-image');
         button.classList.remove('accounts-page-profile');
         button.classList.remove('accounts-page-default');
@@ -210,13 +209,23 @@ class ProfileNavService {
             this.displayDefaultIcon(button);
         });
     }    /**
-     * Refresh profile image (called after profile update)
-     * DISABLED: Profile pictures are no longer shown in navigation
+     * Refresh profile image after profile update
      */
     async refreshProfileImage() {
-        // Profile picture navigation functionality has been disabled
-        // Navigation will always show default user icon
-        return;
+        if (this.currentUser) {
+            await this.loadUserProfileImage(this.currentUser.uid);
+            // Force refresh all account buttons
+            const accountButtons = document.querySelectorAll(this.accountButtonSelector);
+            accountButtons.forEach(button => {
+                // Remove any existing styles
+                button.removeAttribute('style');
+                if (this.profileImageUrl) {
+                    this.displayProfileImage(button);
+                } else {
+                    this.displayDefaultIcon(button);
+                }
+            });
+        }
     }
 
     /**
@@ -241,86 +250,103 @@ class ProfileNavService {
 const profileNavStyles = `
     /* Profile image navigation styles */
     .header-action-btn.has-profile-image {
-        padding: 2px;
-    }
-
-    .header-action-btn.has-profile-image:hover .profile-nav-image {
-        border-color: rgba(255, 133, 177, 0.6);
-        transform: scale(1.1);
-    }
-
-    .header-action-btn.has-profile-image .profile-nav-image {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Special styling for accounts page - larger profile image */
-    .header-action-btn.accounts-page-profile {
-        width: 48px !important;
-        height: 48px !important;
+        width: 45px !important;
+        height: 45px !important;
         padding: 0 !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        overflow: hidden !important;
         border-radius: 50% !important;
-        background: none !important;
+        background: transparent !important;
         border: none !important;
     }
 
-    .header-action-btn.accounts-page-profile:hover {
-        transform: translateY(-2px) scale(1.05);
-        box-shadow: 0 6px 20px rgba(255, 133, 177, 0.3) !important;
+    .header-action-btn.has-profile-image .profile-nav-image {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        border-radius: 50% !important;
+        box-shadow: none !important;
+        transition: transform 0.3s ease !important;
+        display: block !important;
     }
 
-    .header-action-btn.accounts-page-profile .profile-nav-image {
-        box-shadow: 0 4px 12px rgba(255, 133, 177, 0.2);
+    /* Non-accounts pages styling */
+    :not(.accounts-page-profile).header-action-btn.has-profile-image {
+        background: rgba(255, 133, 177, 0.1) !important;
     }
 
-    .header-action-btn.accounts-page-profile:hover .profile-nav-image {
-        border-color: rgba(255, 133, 177, 0.7);
-        box-shadow: 0 6px 20px rgba(255, 133, 177, 0.3);    }
+    :not(.accounts-page-profile).header-action-btn.has-profile-image .profile-nav-image {
+        border: 2px solid rgba(255, 133, 177, 0.4) !important;
+    }
 
-    /* Ensure proper sizing on different screen sizes */
+    :not(.accounts-page-profile).header-action-btn.has-profile-image:hover .profile-nav-image {
+        border-color: rgba(255, 133, 177, 0.6) !important;
+        transform: scale(1.05) !important;
+    }
+
+    /* Accounts page specific styling */
+    .accounts-page-profile.has-profile-image,
+    .accounts-page-profile.header-action-btn.has-profile-image {
+        background: transparent !important;
+    }
+
+    .accounts-page-profile.has-profile-image .profile-nav-image,
+    .accounts-page-profile.header-action-btn.has-profile-image .profile-nav-image {
+        border: none !important;
+        transform: none !important;
+    }
+
+    .accounts-page-profile.has-profile-image:hover .profile-nav-image {
+        opacity: 0.9;
+    }
+
+    /* Accounts page specific styling - force override */
+    .accounts-page-profile.header-action-btn,
+    .accounts-page-profile.header-action-btn.has-profile-image {
+        width: 45px !important;
+        height: 45px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border-radius: 50% !important;
+        overflow: hidden !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        position: relative !important;
+    }
+
+    .accounts-page-profile.header-action-btn img,
+    .accounts-page-profile.header-action-btn.has-profile-image img {
+        width: 45px !important;
+        height: 45px !important;
+        object-fit: cover !important;
+        border-radius: 50% !important;
+        border: none !important;
+        background: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Responsive sizing */
     @media screen and (max-width: 768px) {
-        .header-action-btn .profile-nav-image {
-            width: 20px;
-            height: 20px;
-        }
-        
-        .header-action-btn.accounts-page-profile {
-            width: 40px !important;
-            height: 40px !important;
-        }
-          .header-action-btn.accounts-page-profile .profile-nav-image {
+        .header-action-btn.has-profile-image {
             width: 40px !important;
             height: 40px !important;
         }
     }
 
     @media screen and (max-width: 480px) {
-        .header-action-btn .profile-nav-image {
-            width: 18px;
-            height: 18px;
-        }
-        
-        .header-action-btn.accounts-page-profile {
+        .header-action-btn.has-profile-image {
             width: 36px !important;
             height: 36px !important;
         }
-        
-        .header-action-btn.accounts-page-profile .profile-nav-image {
-            width: 36px !important;
-            height: 36px !important;
-        }
-    }
-
-    /* Legacy support for body.page-accounts class */
-    body.page-accounts .header-action-btn.has-profile-image {
-        background: rgba(255, 133, 177, 0.1) !important;
-        border: 2px solid rgba(255, 133, 177, 0.3) !important;
-    }
-
-    body.page-accounts .header-action-btn.has-profile-image:hover {
-        background: rgba(255, 133, 177, 0.2) !important;
-        border-color: rgba(255, 133, 177, 0.4) !important;
-        transform: translateY(-1px);
-        box-shadow: 0 3px 10px rgba(255, 133, 177, 0.15) !important;
     }
 `;
 
