@@ -93,7 +93,7 @@ $(document).ready(function () {
     const cart = {
         products: [],
         accessories: []
-    };    // --- Utility to update the cart summary ---
+    };    // --- Utility to update the Rental List summary ---
     function updateCartSummary() {
         // Update new table-based cart display
         if (typeof updateNewCartDisplay === 'function') {
@@ -149,13 +149,13 @@ $(document).ready(function () {
                     // Remove the product
                     cart.products = cart.products.filter(p => p.name !== name);
                     
-                    // Check if there are any products left in cart
+                    // Check if there are any products left in Rental List
                     const remainingProductCount = cart.products.length;
                     
                     if (remainingProductCount === 0) {
                         // If no products left, remove all additionals
                         cart.accessories = [];
-                        notyf.error("All additionals removed as no products remain in cart.");
+                        notyf.error("All additionals removed as no products remain in Rental List.");
                     } else {
                         // Check if we need to remove excess additionals due to product limit
                         // Group additionals by name and count them
@@ -413,7 +413,7 @@ $(document).ready(function () {
                 p => p.id === productId && p.size === size
             );            if (exists) {
                 notyf.error(
-                    `"${productName}" (${size}) is already in the cart.`
+                    `"${productName}" (${size}) is already in the Rental List.`
                 );
             } else {
                 cart.products.push({
@@ -430,7 +430,7 @@ $(document).ready(function () {
 
         if (!anyValid) {
             console.warn(
-                "No valid size/quantity selected or all items already in cart."
+                "No valid size/quantity selected or all items already in Rental List."
             );
         }
 
@@ -1140,17 +1140,18 @@ $(document).ready(function () {
             .join(", ");
         $("#client-additional-code").val(additionalSummary);
 
-        // Set rental fee from cart total
+        // Set rental fee from Rental List total
         $("#client-rental-fee").val($("#cart-total-amount").text() || "");
     }
 
     // FUNCTION FOR CART PROCEED BUTTON
     if ($checkoutBtn.length && $customerModal.length) {
-        $checkoutBtn.on("click", function (e) {
-            e.preventDefault();            // Prevent checkout if no product is in the cart
+        $checkoutBtn.on("click", function (e) {            e.preventDefault();
+            
+            // Prevent checkout if no product is in the Rental List
             if (!cart.products.length) {
                 notyf.error(
-                    "Please add at least one product to the cart before proceeding."
+                    "Please add at least one product to the Rental List before proceeding."
                 );
                 return;
             }
@@ -1792,7 +1793,7 @@ $(document).ready(function () {
                         data-product-price="${price}"
                         data-size="${size}"
                         data-stock="${stock}"
-                        title="Click to add ${displaySize} to cart">
+                        title="Click to add ${displaySize} to Rental List">
                     ${size}
                     <div class="stock-count">${stock}</div>
                 </button>
@@ -1859,7 +1860,7 @@ $(document).ready(function () {
                             data-additional-name="${additional.name}"
                             data-additional-code="${additional.code}"
                             data-additional-price="${price}"
-                            title="Click to add to cart">
+                            title="Click to add to Rental List">
                         ONE SIZE
                     </button>
                 </td>
@@ -1909,7 +1910,7 @@ $(document).ready(function () {
                 row.hide();
             }
         });
-    });      // Handle size button clicks for products - direct add to cart
+    });    // Handle size button clicks for products - direct add to Rental List
     $(document).on('click', '.size-button[data-product-id]', function(e) {
         e.stopPropagation(); // Prevent row click
         
@@ -1920,15 +1921,16 @@ $(document).ready(function () {
         const size = $(this).data('size');
         const stock = $(this).data('stock');
         
-        // Check if this product-size combination already exists in cart
-        const exists = cart.products.some(
+        // Count how many of this product-size combination we already have in Rental List
+        const existingCount = cart.products.filter(
             p => p.id === productId && p.size === size
-        );
+        ).length;
         
-        if (exists) {
-            notyf.error(`"${productName}" (${size}) is already in the cart.`);
+        // Check if we can add one more based on available stock
+        if (existingCount >= stock) {
+            notyf.error(`Cannot add more "${productName}" (${size}). Stock limit reached (${stock} available).`);
         } else {
-            // Add product directly to cart with quantity 1
+            // Add product directly to Rental List with quantity 1
             cart.products.push({
                 id: productId,
                 name: productName,
@@ -1939,7 +1941,7 @@ $(document).ready(function () {
             });
             
             updateNewCartDisplay();
-            notyf.success(`Added "${productName}" (${size}) to cart!`);
+            notyf.success(`Added "${productName}" (${size}) to Rental List!`);
         }
     });
 
@@ -1967,7 +1969,7 @@ $(document).ready(function () {
         }
     });
 
-    // Handle additional row clicks (for additional details, not adding to cart)
+    // Handle additional row clicks (for additional details, not adding to Rental List)
     $(document).on('click', '.additional-row', function(e) {
         // Only trigger if not clicking on size button
         if (!$(e.target).closest('.size-button').length) {
@@ -1976,11 +1978,14 @@ $(document).ready(function () {
             
             // You can add additional details modal here if needed
             console.log(`Additional details: ${additionalName} (${additionalCode})`);
-        }    });      // Add additional to cart
+        }
+    });
+      
+    // Add additional to Rental List
     function addAdditionalToCart(id, name, code, price) {
         const productCount = cart.products.length;
         
-        // Check if there are any products in the cart first
+        // Check if there are any products in the Rental List first
         if (productCount === 0) {
             notyf.error("You must add at least one product before adding additional items.");
             return;
@@ -2086,13 +2091,13 @@ $(document).ready(function () {
             if (productIndex >= 0 && productIndex < cart.products.length) {
                 const removedProduct = cart.products.splice(productIndex, 1)[0];
                 
-                // Check if there are any products left in cart
+                // Check if there are any products left in Rental List
                 const remainingProductCount = cart.products.length;
                 
                 if (remainingProductCount === 0) {
                     // If no products left, remove all additionals
                     cart.accessories = [];
-                    notyf.error("All additionals removed as no products remain in cart.");
+                    notyf.error("All additionals removed as no products remain in Rental List.");
                 } else {
                     // Check if we need to remove excess additionals due to product limit
                     // Group additionals by name and count them
@@ -2124,11 +2129,11 @@ $(document).ready(function () {
                     }
                 }
                 
-                notyf.success(`Removed "${removedProduct.name}" (${removedProduct.size}) from cart.`);
+                notyf.success(`Removed "${removedProduct.name}" (${removedProduct.size}) from Rental List.`);
             }
         } else if (accessoryIdx !== undefined) {
             cart.accessories.splice(accessoryIdx, 1);
-            notyf.success("Additional item removed from cart.");
+            notyf.success("Additional item removed from Rental List.");
         }
         
         updateNewCartDisplay();
