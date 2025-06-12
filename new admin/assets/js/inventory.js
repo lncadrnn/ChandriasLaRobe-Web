@@ -546,9 +546,14 @@ function closeModal(modal) {
 
 // Save Functions
 function saveProduct() {
-    // Validate Cloudinary image upload first
+    // Validate Cloudinary image upload first - check for both URL and public_id
     if (!frontImageData || !frontImageData.url || !frontImageData.publicId ||
         !backImageData || !backImageData.url || !backImageData.publicId) {
+        
+        console.warn('❌ Image validation failed:');
+        console.log('Front image data:', frontImageData);
+        console.log('Back image data:', backImageData);
+        
         if (window.showErrorModal) {
             window.showErrorModal('Please upload and crop both front and back images before saving.');
         } else {
@@ -556,6 +561,10 @@ function saveProduct() {
         }
         return;
     }
+    
+    console.log('✅ Image validation passed');
+    console.log('Front image:', frontImageData.url);
+    console.log('Back image:', backImageData.url);
 
     const form = document.getElementById('addProductForm');
     // Get selected sizes with stock quantities
@@ -1143,6 +1152,8 @@ function updateDateTime() {
 
 // Initialize image upload functionality
 function initializeImageUpload() {
+    console.log('🔧 Initializing image upload functionality...');
+    
     // Front image upload
     const frontZone = document.getElementById('frontImageZone');
     const frontInput = document.getElementById('frontImageInput');
@@ -1155,24 +1166,52 @@ function initializeImageUpload() {
     const backPlaceholder = document.getElementById('backPlaceholder');
     const backPreview = document.getElementById('backPreview');
     
+    // Check if all elements exist
+    console.log('🔍 Element check:', {
+        frontZone: !!frontZone,
+        frontInput: !!frontInput,
+        frontPlaceholder: !!frontPlaceholder,
+        frontPreview: !!frontPreview,
+        backZone: !!backZone,
+        backInput: !!backInput,
+        backPlaceholder: !!backPlaceholder,
+        backPreview: !!backPreview
+    });
+    
+    if (!frontZone || !frontInput || !backZone || !backInput) {
+        console.error('❌ Missing required image upload elements');
+        return;
+    }
+    
     // Setup front image upload
     setupImageUpload(frontZone, frontInput, frontPlaceholder, frontPreview, 'front');
     
     // Setup back image upload
     setupImageUpload(backZone, backInput, backPlaceholder, backPreview, 'back');
+    
+    console.log('✅ Image upload functionality initialized successfully');
 }
 
 // Setup individual image upload zone
 function setupImageUpload(zone, input, placeholder, preview, type) {
+    console.log(`🔧 Setting up ${type} image upload...`);
+    
+    if (!zone || !input) {
+        console.error(`❌ Missing elements for ${type} image upload`);
+        return;
+    }
+    
     // Click to upload
     zone.addEventListener('click', (e) => {
         if (e.target.closest('.image-actions')) return;
+        console.log(`📁 ${type} zone clicked, opening file dialog...`);
         input.click();
     });
     
     // File input change
     input.addEventListener('change', (e) => {
         const file = e.target.files[0];
+        console.log(`📁 ${type} file selected:`, file ? file.name : 'none');
         if (file) {
             handleImageFile(file, placeholder, preview, type);
         }
@@ -1196,17 +1235,27 @@ function setupImageUpload(zone, input, placeholder, preview, type) {
         const files = e.dataTransfer.files;
         if (files.length > 0) {
             const file = files[0];
+            console.log(`📁 ${type} file dropped:`, file.name);
             if (file.type.startsWith('image/')) {
                 handleImageFile(file, placeholder, preview, type);
             }
         }
     });
+    
+    console.log(`✅ ${type} image upload setup complete`);
 }
 
 // Handle image file upload
 function handleImageFile(file, placeholder, preview, type) {
+    console.log(`🖼️ Handling ${type} image file:`, {
+        name: file.name,
+        size: file.size,
+        type: file.type
+    });
+    
     // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
+        console.error(`❌ ${type} file too large:`, file.size);
         if (window.notyf) {
             window.notyf.error('File size must be less than 5MB');
         } else {
@@ -1217,6 +1266,7 @@ function handleImageFile(file, placeholder, preview, type) {
     
     // Validate file type
     if (!file.type.startsWith('image/')) {
+        console.error(`❌ ${type} invalid file type:`, file.type);
         if (window.notyf) {
             window.notyf.error('Please select a valid image file');
         } else {
@@ -1225,22 +1275,42 @@ function handleImageFile(file, placeholder, preview, type) {
         return;
     }
     
+    console.log(`✅ ${type} file validation passed`);
+    
     // Show loading state
     showImageUploadProgress(type, 'Preparing image...');
-      const reader = new FileReader();
+    
+    const reader = new FileReader();
     reader.onload = (e) => {
+        console.log(`📖 ${type} file read successfully`);
+        
         // Store image data
         if (type === 'front') {
             frontImageData = e.target.result;
+            console.log('📥 Front image data stored');
         } else {
             backImageData = e.target.result;
+            console.log('📥 Back image data stored');
         }
         
+        // Hide loading progress
+        hideImageUploadProgress(type);
+        
         // Automatically open crop modal when image is uploaded
+        console.log(`🔄 Opening cropper for ${type} image...`);
         setTimeout(() => {
             openImageCropper(type);
         }, 100);
     };
+    
+    reader.onerror = (error) => {
+        console.error(`❌ Error reading ${type} file:`, error);
+        hideImageUploadProgress(type);
+        if (window.notyf) {
+            window.notyf.error('Error reading image file');
+        }
+    };
+    
     reader.readAsDataURL(file);
 }
 
@@ -1267,10 +1337,13 @@ function removeImage(type) {
 
 // Open image cropper
 function openImageCropper(type) {
+    console.log(`✂️ Opening cropper for ${type} image...`);
+    
     currentImageType = type;
     const imageData = type === 'front' ? frontImageData : backImageData;
     
     if (!imageData) {
+        console.error(`❌ No ${type} image data available for cropping`);
         alert('Please upload an image first');
         return;
     }
@@ -1278,14 +1351,22 @@ function openImageCropper(type) {
     const cropperModal = document.getElementById('imageCropperModal');
     const cropperImage = document.getElementById('cropperImage');
     
+    if (!cropperModal || !cropperImage) {
+        console.error('❌ Cropper modal elements not found');
+        return;
+    }
+    
     // Set image source
     cropperImage.src = imageData;
+    console.log(`🖼️ Set ${type} image source for cropper`);
     
     // Show modal
     cropperModal.classList.add('active');
+    console.log('📱 Cropper modal opened');
     
     // Initialize cropper after image loads
     cropperImage.onload = function() {
+        console.log('🔄 Initializing cropper...');
         initializeCropper();
     };
 }
@@ -1368,12 +1449,11 @@ async function applyCrop() {
                 
                 // Upload to Cloudinary
                 const uploadResult = await uploadImageToCloudinary(blob, 'inventory/products');
-                
-                if (uploadResult.success) {
+                  if (uploadResult.success) {
                     // Store Cloudinary URL instead of base64 data
                     const imageData = {
                         url: uploadResult.url,
-                        publicId: uploadResult.public_id,
+                        publicId: uploadResult.public_id,  // Make sure this matches the property used in saveProduct
                         localData: canvas.toDataURL('image/jpeg', 0.9) // Keep for preview
                     };
                     
@@ -1381,9 +1461,11 @@ async function applyCrop() {
                     if (currentImageType === 'front') {
                         frontImageData = imageData;
                         updateImagePreview('front', imageData.localData);
+                        console.log('✅ Front image data updated:', frontImageData);
                     } else {
                         backImageData = imageData;
                         updateImagePreview('back', imageData.localData);
+                        console.log('✅ Back image data updated:', backImageData);
                     }
                     
                     hideImageUploadProgress(currentImageType);
@@ -1407,15 +1489,22 @@ async function applyCrop() {
                 if (window.notyf) {
                     window.notyf.error('Failed to upload image to Cloudinary, saving locally');
                 }
-                
-                // Fallback: save locally
+                  // Fallback: save locally with consistent structure
                 const localData = canvas.toDataURL('image/jpeg', 0.9);
+                const fallbackImageData = { 
+                    localData, 
+                    url: null, 
+                    publicId: null 
+                };
+                
                 if (currentImageType === 'front') {
-                    frontImageData = { localData, url: null, publicId: null };
+                    frontImageData = fallbackImageData;
                     updateImagePreview('front', localData);
+                    console.log('⚠️ Front image saved locally (fallback):', frontImageData);
                 } else {
-                    backImageData = { localData, url: null, publicId: null };
+                    backImageData = fallbackImageData;
                     updateImagePreview('back', localData);
+                    console.log('⚠️ Back image saved locally (fallback):', backImageData);
                 }
                 closeCropperModal();
             }
@@ -1846,19 +1935,22 @@ window.checkFirebaseConnection = checkFirebaseConnection;
 function showImageUploadProgress(type, message) {
     const zone = document.getElementById(`${type}ImageZone`);
     if (zone) {
-        const progressDiv = zone.querySelector('.upload-progress') || document.createElement('div');
+        // Remove any existing progress indicator
+        const existingProgress = zone.querySelector('.upload-progress');
+        if (existingProgress) {
+            existingProgress.remove();
+        }
+        
+        const progressDiv = document.createElement('div');
         progressDiv.className = 'upload-progress';
         progressDiv.innerHTML = `
             <div class="progress-content">
-                <div class="spinner"></div>
-                <span class="progress-text">${message}</span>
+                <i class='bx bx-loader-alt bx-spin'></i>
+                <span>${message}</span>
             </div>
         `;
         
-        if (!zone.querySelector('.upload-progress')) {
-            zone.appendChild(progressDiv);
-        }
-        
+        zone.appendChild(progressDiv);
         zone.classList.add('uploading');
     }
 }
