@@ -77,162 +77,161 @@ $(document).ready(function () {
     const cart = {
         products: [],
         accessories: []
-    };
-
-    // --- Utility to update the cart summary ---
+    };    // --- Utility to update the cart summary ---
     function updateCartSummary() {
-        // --- Products (Gowns): Grouped Display ---
+        // Update new table-based cart display
+        if (typeof updateNewCartDisplay === 'function') {
+            updateNewCartDisplay();
+        }
+        
+        // Legacy support for old cart elements
         const $cartItemsDiv = $(".cart-items");
-        $cartItemsDiv.empty(); // Clear the cart items section
-
-        const groupedProducts = {};
-
-        // Group products by name
-        cart.products.forEach(item => {
-            if (!groupedProducts[item.name]) {
-                groupedProducts[item.name] = {
-                    price: item.price,
-                    sizes: []
-                };
-            }
-            groupedProducts[item.name].sizes.push({
-                size: item.size,
-                quantity: item.quantity
-            });
-        });
-
-        // Render grouped products
-        Object.entries(groupedProducts).forEach(([name, group]) => {
-            const $div = $('<div class="cart-item"></div>');
-            let sizesHTML = "";
-
-            group.sizes.forEach(({ size, quantity }) => {
-                sizesHTML += `- ${quantity} x ${size}<br>`;
-            });
-
-            const total = group.sizes.reduce(
-                (sum, s) => sum + s.quantity * group.price,
-                0
-            );
-
-            $div.html(`
-        <span>
-            <strong>${name}</strong><br>
-            ${sizesHTML}
-        </span>
-        <span>
-            ₱${total.toLocaleString()}
-            <i class='bx bx-trash cart-remove' title="Remove All"></i>
-        </span>
-    `);
-
-            // Remove all sizes of this product
-            $div.find(".cart-remove").on("click", function () {
-                cart.products = cart.products.filter(p => p.name !== name);
-                updateCartSummary();
-            });
-
-            $cartItemsDiv.append($div);
-        });
-
-        // --- Accessories & Other Items (Grouped Display) ---
         const $cartDetailsDiv = $(".cart-details");
-        $cartDetailsDiv.empty(); // Clear the details section
-
-        const grouped = {};
-
-        // Group non-accessory items (e.g., wings)
-        cart.accessories.forEach((item, idx) => {
-            if (item.name.toLowerCase().includes("accessor")) return; // Skip if it's an accessory
-            if (!grouped[item.name]) {
-                grouped[item.name] = { ...item, count: 1, indexes: [idx] };
-            } else {
-                grouped[item.name].count++;
-                grouped[item.name].indexes.push(idx);
-            }
-        });
-
-        // Render grouped non-accessories
-        $.each(grouped, (name, item) => {
-            const $div = $('<div class="cart-row"></div>');
-            $div.html(`
-      <span>${item.name} <span class="cart-qty-badge">x${
-          item.count
-      }</span></span>
-      <span>
-        ₱${(item.price * item.count).toLocaleString()}
-        <i class='bx bx-trash cart-remove' title="Remove One"></i>
-      </span>
-    `);
-
-            // Click to remove one instance
-            $div.find(".cart-remove").on("click", function () {
-                if (item.indexes.length > 0) {
-                    cart.accessories.splice(item.indexes[0], 1);
+        
+        if ($cartItemsDiv.length) {
+            $cartItemsDiv.empty();
+            
+            const groupedProducts = {};
+            
+            cart.products.forEach(item => {
+                if (!groupedProducts[item.name]) {
+                    groupedProducts[item.name] = {
+                        price: item.price,
+                        sizes: []
+                    };
+                }
+                groupedProducts[item.name].sizes.push({
+                    size: item.size,
+                    quantity: item.quantity
+                });
+            });
+            
+            Object.entries(groupedProducts).forEach(([name, group]) => {
+                const $div = $('<div class="cart-item"></div>');
+                let sizesHTML = "";
+                
+                group.sizes.forEach(({ size, quantity }) => {
+                    sizesHTML += `- ${quantity} x ${size}<br>`;
+                });
+                
+                const total = group.sizes.reduce(
+                    (sum, s) => sum + s.quantity * group.price,
+                    0
+                );
+                
+                $div.html(`
+                    <span>
+                        <strong>${name}</strong><br>
+                        ${sizesHTML}
+                    </span>
+                    <span>
+                        ₱${total.toLocaleString()}
+                        <i class='bx bx-trash cart-remove' title="Remove All"></i>
+                    </span>
+                `);
+                
+                $div.find(".cart-remove").on("click", function () {
+                    cart.products = cart.products.filter(p => p.name !== name);
                     updateCartSummary();
+                });
+                
+                $cartItemsDiv.append($div);
+            });
+        }
+        
+        if ($cartDetailsDiv.length) {
+            $cartDetailsDiv.empty();
+            
+            const grouped = {};
+            
+            cart.accessories.forEach((item, idx) => {
+                if (item.name.toLowerCase().includes("accessor")) return;
+                if (!grouped[item.name]) {
+                    grouped[item.name] = { ...item, count: 1, indexes: [idx] };
+                } else {
+                    grouped[item.name].count++;
+                    grouped[item.name].indexes.push(idx);
                 }
             });
-
-            $cartDetailsDiv.append($div);
-        });
-
-        // --- Render accessories (individually with edit) ---
-        cart.accessories.forEach((item, idx) => {
-            if (!item.name.toLowerCase().includes("accessor")) return;
-
-            const $div = $('<div class="cart-row"></div>');
-            let typesStr = "";
-
-            if (item.types && item.types.length) {
-                typesStr =
-                    '<ul class="cart-accessory-types">' +
-                    item.types
-                        .map(
-                            type =>
-                                `<li>- ${
-                                    type.charAt(0).toUpperCase() +
-                                    type.slice(1).toLowerCase()
-                                }</li>`
-                        )
-                        .join("") +
-                    "</ul>";
-            }
-
-            // EDIT BUTTON
-            const editIcon = `<i class='bx bx-edit cart-edit' title="Edit" data-idx="${idx}" data-id="${item.id}" style="cursor:pointer;"></i>`;
-
-            $div.html(`
-      <span>${item.name}${typesStr}</span>
-      <span>
-        ₱${item.price.toLocaleString()}
-        <i class='bx bx-trash cart-remove' title="Remove"></i>
-        ${editIcon}
-      </span>
-    `);
-
-            // Remove accessory on click
-            $div.find(".cart-remove").on("click", function () {
-                cart.accessories.splice(idx, 1);
-                updateCartSummary();
+            
+            $.each(grouped, (name, item) => {
+                const $div = $('<div class="cart-row"></div>');
+                $div.html(`
+                    <span>${item.name} <span class="cart-qty-badge">x${item.count}</span></span>
+                    <span>
+                        ₱${(item.price * item.count).toLocaleString()}
+                        <i class='bx bx-trash cart-remove' title="Remove One"></i>
+                    </span>
+                `);
+                
+                $div.find(".cart-remove").on("click", function () {
+                    if (item.indexes.length > 0) {
+                        cart.accessories.splice(item.indexes[0], 1);
+                        updateCartSummary();
+                    }
+                });
+                
+                $cartDetailsDiv.append($div);
             });
-
-            // Open accessory editor
-            $div.find(".cart-edit").on("click", function () {
-                const idx = $(this).data("idx");
-                const id = $(this).data("id");
-                showAccessoryModal(idx, id);
+            
+            cart.accessories.forEach((item, idx) => {
+                if (!item.name.toLowerCase().includes("accessor")) return;
+                
+                const $div = $('<div class="cart-row"></div>');
+                let typesStr = "";
+                
+                if (item.types && item.types.length) {
+                    typesStr =
+                        '<ul class="cart-accessory-types">' +
+                        item.types
+                            .map(
+                                type =>
+                                    `<li>- ${
+                                        type.charAt(0).toUpperCase() +
+                                        type.slice(1).toLowerCase()
+                                    }</li>`
+                            )
+                            .join("") +
+                        "</ul>";
+                }
+                
+                const editIcon = `<i class='bx bx-edit cart-edit' title="Edit" data-idx="${idx}" data-id="${item.id}" style="cursor:pointer;"></i>`;
+                
+                $div.html(`
+                    <span>${item.name}${typesStr}</span>
+                    <span>
+                        ₱${item.price.toLocaleString()}
+                        <i class='bx bx-trash cart-remove' title="Remove"></i>
+                        ${editIcon}
+                    </span>
+                `);
+                
+                $div.find(".cart-remove").on("click", function () {
+                    cart.accessories.splice(idx, 1);
+                    updateCartSummary();
+                });
+                
+                $div.find(".cart-edit").on("click", function () {
+                    const idx = $(this).data("idx");
+                    const id = $(this).data("id");
+                    showAccessoryModal(idx, id);
+                });
+                
+                $cartDetailsDiv.append($div);
             });
-
-            $cartDetailsDiv.append($div);
-        });
-
-        // --- Calculate and display total amount ---
+        }
+        
+        // Calculate and display total amount for legacy elements
         const total = [
             ...cart.products.map(p => p.price * (p.quantity || 1)),
             ...cart.accessories.map(a => a.price)
         ].reduce((sum, val) => sum + val, 0);
-
-        $("#cart-total-amount").text(`₱${total.toLocaleString()}`);
+        
+        // Update any legacy total amount displays that might still exist
+        const legacyTotalElements = $("#cart-total-amount").not("#order-items #cart-total-amount");
+        if (legacyTotalElements.length) {
+            legacyTotalElements.text(`₱${total.toLocaleString()}`);
+        }
     }
     
     // CLEAR CART FUNCTION 
@@ -1613,7 +1612,7 @@ $(document).ready(function () {
                 totalPayment: parseFloat($("#total-payment").val()) || 0,
                 remainingBalance:
                     parseFloat($("#remaining-balance").val()) || 0,
-                referenceNo: $("#reference-no").val().trim(),
+                referenceNo: $("#client-reference-no").val().trim(),
                 region: $("#client-region").val(),
                 city: $("#client-city").val(),
                 address: $("#client-address").val().trim(),
@@ -1664,4 +1663,394 @@ $(document).ready(function () {
     // --====== END OF SUBMITTING DATA TO FIREBASE ======--
   
     // END OF JAVASCRIPT HERE
+
+    // ===== TABLE-BASED INTERFACE UI FUNCTIONS =====
+    
+    // Function to populate the products table
+    function populateProductsTable(products, additionals) {
+        const tableBody = $("#products-table-body");
+        tableBody.empty();
+        
+        // Add products to table (with sizes)
+        products.forEach(product => {
+            if (product.size && typeof product.size === 'object') {
+                Object.entries(product.size).forEach(([sizeKey, sizeStock]) => {
+                    if (sizeStock > 0) {
+                        const row = createProductTableRow(product, sizeKey, sizeStock);
+                        tableBody.append(row);
+                    }
+                });
+            }
+        });
+        
+        // Add additionals to table
+        additionals.forEach(additional => {
+            const row = createAdditionalTableRow(additional);
+            tableBody.append(row);
+        });
+    }
+    
+    // Create a table row for products
+    function createProductTableRow(product, size, stock) {
+        const sizeLabels = {
+            XS: "Extra Small",
+            S: "Small", 
+            M: "Medium",
+            L: "Large",
+            XL: "Extra Large",
+            XXL: "Double Extra Large",
+            XXXL: "Triple Extra Large"
+        };
+        
+        const displaySize = sizeLabels[size] || size;
+        const imageUrl = product.frontImageUrl || './assets/images/long-gown.png';
+        const price = product.price || 0;
+        
+        return $(`
+            <tr class="product-row" 
+                data-id="${product.id}" 
+                data-name="${product.name}" 
+                data-code="${product.code}"
+                data-price="${price}"
+                data-size="${size}"
+                data-stock="${stock}"
+                data-category="products">
+                <td>
+                    <img src="${imageUrl}" alt="${product.name}" class="product-image" />
+                </td>
+                <td>
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-description">${product.description || ''}</div>
+                </td>
+                <td>
+                    <span class="product-code">${product.code}</span>
+                </td>
+                <td>
+                    <span class="category-badge">Product</span>
+                </td>
+                <td>
+                    <div class="size-info">${displaySize} (${size})</div>
+                    <div class="size-stock">Stock: ${stock}</div>
+                </td>
+                <td>
+                    <span class="price-display">₱${price.toLocaleString()}</span>
+                </td>
+            </tr>
+        `);
+    }
+    
+    // Create a table row for additionals
+    function createAdditionalTableRow(additional) {
+        const imageUrl = additional.imageUrl || './assets/images/accessory-sets.png';
+        const price = additional.price || 0;
+        
+        return $(`
+            <tr class="additional-row" 
+                data-id="${additional.id}" 
+                data-name="${additional.name}" 
+                data-code="${additional.code}"
+                data-price="${price}"
+                data-category="additionals">
+                <td>
+                    <img src="${imageUrl}" alt="${additional.name}" class="product-image" />
+                </td>
+                <td>
+                    <div class="product-name">${additional.name}</div>
+                    <div class="product-description">${additional.description || ''}</div>
+                </td>
+                <td>
+                    <span class="product-code">${additional.code}</span>
+                </td>
+                <td>
+                    <span class="category-badge">Additional</span>
+                </td>
+                <td>
+                    <div class="size-info">One Size</div>
+                </td>
+                <td>
+                    <span class="price-display">₱${price.toLocaleString()}</span>
+                </td>
+            </tr>
+        `);
+    }
+    
+    // Listen for data loaded event from rental-service
+    $(document).on('rentalDataLoaded', function(event, data) {
+        populateProductsTable(data.products, data.additionals);
+    });
+    
+    // Filter functionality
+    $(document).on('click', '.filter-btn', function() {
+        $('.filter-btn').removeClass('active');
+        $(this).addClass('active');
+        
+        const filter = $(this).data('filter');
+        const rows = $('.products-table tbody tr');
+        
+        if (filter === 'all') {
+            rows.show();
+        } else {
+            rows.hide();
+            $(`.products-table tbody tr[data-category="${filter}"]`).show();
+        }
+    });
+    
+    // Search functionality for table
+    $('.search-input').on('input', function() {
+        const searchTerm = $(this).val().toLowerCase();
+        const rows = $('.products-table tbody tr');
+        
+        rows.each(function() {
+            const row = $(this);
+            const name = row.find('.product-name').text().toLowerCase();
+            const code = row.find('.product-code').text().toLowerCase();
+            const category = row.find('.category-badge').text().toLowerCase();
+            
+            if (name.includes(searchTerm) || code.includes(searchTerm) || category.includes(searchTerm)) {
+                row.show();
+            } else {
+                row.hide();
+            }
+        });
+    });
+    
+    // Handle product row clicks
+    $(document).on('click', '.product-row', function() {
+        const productId = $(this).data('id');
+        const productName = $(this).data('name');
+        const productCode = $(this).data('code');
+        const productPrice = $(this).data('price');
+        const size = $(this).data('size');
+        const stock = $(this).data('stock');
+        
+        showProductSizeModal(productId, productName, productCode, productPrice, size, stock);
+    });
+    
+    // Handle additional row clicks
+    $(document).on('click', '.additional-row', function() {
+        const additionalId = $(this).data('id');
+        const additionalName = $(this).data('name');
+        const additionalCode = $(this).data('code');
+        const additionalPrice = $(this).data('price');
+        
+        addAdditionalToCart(additionalId, additionalName, additionalCode, additionalPrice);
+    });
+    
+    // Show product size modal with quantity selection
+    function showProductSizeModal(productId, productName, productCode, productPrice, selectedSize, stock) {
+        $("#modal-product-name").text(productName);
+        $("#modal-product-code").text(productCode);
+        $("#modal-product-price").text(`₱${productPrice.toLocaleString()}`);
+        
+        $("#proceed-btn").data({
+            'id': productId,
+            'name': productName,
+            'code': productCode,
+            'price': productPrice,
+            'size': selectedSize,
+            'stock': stock
+        });
+        
+        // Create quantity selection form
+        $("#product-size-form").html(`
+            <div class="size-quantity-selection">
+                <div class="selected-size">
+                    <h4>Selected Size: ${selectedSize}</h4>
+                    <p>Available Stock: ${stock}</p>
+                </div>
+                <div class="quantity-input-group">
+                    <label for="product-quantity">Quantity:</label>
+                    <input type="number" id="product-quantity" min="1" max="${stock}" value="1" />
+                </div>
+            </div>
+        `);
+        
+        $("#proceed-btn").removeClass("disabled");
+        $("#product-size-modal").show();
+    }
+    
+    // Add additional to cart
+    function addAdditionalToCart(id, name, code, price) {
+        const countOfThis = cart.accessories.filter(item => item.name === name).length;
+        const productCount = cart.products.length;
+        
+        if (countOfThis >= productCount && productCount > 0) {
+            showErrorModal(`You can only add as many '${name}' as products selected.`);
+            return;
+        }
+        
+        const accessory = { id, name, price };
+        if (code) accessory.code = code;
+        if (name.toLowerCase().includes("accessor")) accessory.types = [];
+        
+        cart.accessories.push(accessory);
+        updateNewCartDisplay();
+    }
+    
+    // Update cart display for new interface
+    function updateNewCartDisplay() {
+        const orderItems = $("#order-items");
+        const emptyCart = $("#empty-cart");
+        
+        orderItems.find('.cart-item').remove();
+        
+        if (cart.products.length === 0 && cart.accessories.length === 0) {
+            emptyCart.show();
+        } else {
+            emptyCart.hide();
+            
+            // Add products to display
+            const groupedProducts = {};
+            cart.products.forEach(item => {
+                if (!groupedProducts[item.name]) {
+                    groupedProducts[item.name] = {
+                        price: item.price,
+                        sizes: []
+                    };
+                }
+                groupedProducts[item.name].sizes.push({
+                    size: item.size,
+                    quantity: item.quantity
+                });
+            });
+            
+            Object.entries(groupedProducts).forEach(([name, group]) => {
+                let sizesHTML = "";
+                group.sizes.forEach(({ size, quantity }) => {
+                    sizesHTML += `${quantity} x ${size}<br>`;
+                });
+                
+                const total = group.sizes.reduce((sum, s) => sum + s.quantity * group.price, 0);
+                
+                const cartItem = $(`
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${name}</div>
+                            <div class="cart-item-details">${sizesHTML}</div>
+                        </div>
+                        <div class="cart-item-actions">
+                            <div class="cart-item-price">₱${total.toLocaleString()}</div>
+                            <button class="remove-item-btn" data-product-name="${name}">
+                                <i class="bx bx-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `);
+                
+                orderItems.append(cartItem);
+            });
+            
+            // Add accessories to display
+            cart.accessories.forEach((item, idx) => {
+                let detailsText = "Additional Item";
+                if (item.types && item.types.length > 0) {
+                    detailsText = item.types.join(", ");
+                }
+                
+                const cartItem = $(`
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-details">${detailsText}</div>
+                        </div>
+                        <div class="cart-item-actions">
+                            <div class="cart-item-price">₱${item.price.toLocaleString()}</div>
+                            ${item.name.toLowerCase().includes("accessor") ? 
+                                `<button class="edit-item-btn" data-accessory-idx="${idx}">
+                                    <i class="bx bx-edit"></i>
+                                </button>` : ''
+                            }
+                            <button class="remove-item-btn" data-accessory-idx="${idx}">
+                                <i class="bx bx-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `);
+                
+                orderItems.append(cartItem);
+            });
+        }
+        
+        updateOrderSummary();
+    }
+    
+    // Update order summary
+    function updateOrderSummary() {
+        const subtotal = [
+            ...cart.products.map(p => p.price * (p.quantity || 1)),
+            ...cart.accessories.map(a => a.price)
+        ].reduce((sum, val) => sum + val, 0);
+        
+        const discount = 0;
+        const tax = subtotal * 0.12;
+        const total = subtotal - discount + tax;
+        
+        $("#cart-subtotal").text(`₱${subtotal.toLocaleString()}`);
+        $("#cart-discount").text(`-₱${discount.toLocaleString()}`);
+        $("#cart-tax").text(`₱${tax.toLocaleString()}`);
+        $("#cart-total-amount").text(`₱${total.toLocaleString()}`);
+    }
+    
+    // Handle remove item buttons
+    $(document).on('click', '.remove-item-btn', function() {
+        const productName = $(this).data('product-name');
+        const accessoryIdx = $(this).data('accessory-idx');
+        
+        if (productName) {
+            cart.products = cart.products.filter(p => p.name !== productName);
+        } else if (accessoryIdx !== undefined) {
+            cart.accessories.splice(accessoryIdx, 1);
+        }
+        
+        updateNewCartDisplay();
+    });
+    
+    // Handle edit accessory buttons
+    $(document).on('click', '.edit-item-btn', function() {
+        const accessoryIdx = $(this).data('accessory-idx');
+        const accessory = cart.accessories[accessoryIdx];
+        showAccessoryModal(accessoryIdx, accessory.id);
+    });
+    
+    // Handle clear cart button
+    $("#clear-cart-btn").on('click', function() {
+        cart.products = [];
+        cart.accessories = [];
+        updateNewCartDisplay();
+    });
+    
+    // Update the proceed button click handler for new modal
+    $("#proceed-btn").on("click", function () {
+        if ($(this).hasClass("disabled")) return;
+        
+        const data = $(this).data();
+        const quantity = parseInt($("#product-quantity").val()) || 1;
+        
+        if (!quantity || quantity < 1) {
+            showErrorModal("Please enter a valid quantity.");
+            return;
+        }
+        
+        const exists = cart.products.some(
+            p => p.id === data.id && p.size === data.size
+        );
+        
+        if (exists) {
+            showErrorModal(`"${data.name}" (${data.size}) is already in the cart.`);
+        } else {
+            cart.products.push({
+                id: data.id,
+                name: data.name,
+                code: data.code,
+                price: data.price,
+                size: data.size,
+                quantity: quantity
+            });
+            
+            updateNewCartDisplay();
+            $("#product-size-modal").hide();
+        }
+    });
+    
+    // ===== END TABLE-BASED INTERFACE UI FUNCTIONS =====
 });

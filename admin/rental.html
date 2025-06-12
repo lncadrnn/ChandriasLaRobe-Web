@@ -113,54 +113,100 @@
                     <h1 class="page-title">Rental Management</h1>
                     <p class="page-subtitle">Create new rentals and manage rental transactions</p>
                 </div>
-                <div class="header-right">
-                    <div class="search-box">
-                        <i class="bx bx-search icon"></i>
-                        <input type="text" placeholder="Search products..." />
+            </header>            <div class="page-content">
+                <!-- Main Rental Container -->
+                <div class="rental-container">
+                    <!-- Left Section - Products Table -->
+                    <div class="products-section">
+                        <!-- Filter Section -->
+                        <div class="filter-section">
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="products">Products</button>
+                            <button class="filter-btn" data-filter="additionals">Additionals</button>
+                        </div>
+
+                        <!-- Search Section -->
+                        <div class="search-section">
+                            <div class="search-container">
+                                <i class="bx bx-search search-icon"></i>
+                                <input type="text" class="search-input" placeholder="Search products..." />
+                            </div>
+                        </div>
+
+                        <!-- Products Table -->
+                        <div class="table-container">
+                            <table class="products-table">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Product Name</th>
+                                        <th>Product Code</th>
+                                        <th>Category</th>
+                                        <th>Size</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="products-table-body">
+                                    <!-- Table rows will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Right Section - Order Cart -->
+                    <div class="order-section">
+                        <div class="order-header">
+                            <h3>Current Order</h3>
+                            <button class="clear-btn" id="clear-cart-btn">
+                                <i class="bx bx-trash"></i>
+                                Clear
+                            </button>
+                        </div>
+
+                        <div class="customer-type-section">
+                            <label for="customer-type-select">Customer Type</label>
+                            <select id="customer-type-select" class="customer-type-dropdown">
+                                <option value="regular">Regular Customer</option>
+                                <option value="vip">VIP Customer</option>
+                            </select>
+                        </div>
+
+                        <div class="order-content">
+                            <div class="order-items" id="order-items">
+                                <!-- Cart icon when empty -->
+                                <div class="empty-cart" id="empty-cart">
+                                    <i class="bx bx-shopping-bag"></i>
+                                    <p>No items in cart</p>
+                                </div>
+                            </div>
+
+                            <div class="order-summary">
+                                <div class="summary-row">
+                                    <span>Subtotal:</span>
+                                    <span id="cart-subtotal">₱0.00</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Discount:</span>
+                                    <span id="cart-discount">-₱0.00</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Tax (12%):</span>
+                                    <span id="cart-tax">₱0.00</span>
+                                </div>
+                                <div class="summary-row total-row">
+                                    <span>Total:</span>
+                                    <span id="cart-total-amount">₱0.00</span>
+                                </div>
+                            </div>
+
+                            <button class="proceed-btn" id="cart-checkout-btn">
+                                <i class="bx bx-credit-card"></i>
+                                PROCEED TO PAYMENT
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </header>
-            <div class="page-content">
-            <div class="pos-tabs">
-                <button class="tab-btn active" data-tab="products">
-                    Products
-                </button>
-                <button class="tab-btn" data-tab="accessories">
-                    Additional
-                </button>
             </div>
-            <div class="pos-layout">
-                <div class="pos-products tab-content active" id="products">
-                    <!-- Product cards here -->
-                </div>
-                <div class="pos-accessories tab-content" id="accessories">
-                    <!-- Accessories cards here -->
-                </div>
-                <div class="pos-cart-summary">
-                    <div class="cart-title">Cart Summary</div>
-                    <div class="cart-scroll">
-                        <div class="cart-items">
-                          <!-- CART ITEMS HERE -->
-                        </div>
-                        <div class="cart-details">
-                          <!-- CART TOTAL AMOUNT HERE -->
-                        </div>
-                    </div>
-                    <div class="cart-bottom-bar">
-                        <div class="cart-total">
-                            <span>Total</span>
-                            <span id="cart-total-amount"></span>
-                        </div>
-                        <button
-                            class="cart-checkout-btn"
-                            id="cart-checkout-btn"
-                        >
-                            Proceed
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
 
         <!-- PRODUCT SIZE MODAL -->
         <div id="product-size-modal" class="modal">

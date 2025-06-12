@@ -43,28 +43,27 @@ $(document).ready(function () {
         if ($rentalLoader.length) {
             $rentalLoader.addClass("hidden").css("display", "none");
         }
-    }
-
-    // DISPLAY PRODUCTS FUNCTION
+    }    // DISPLAY PRODUCTS FUNCTION
     async function displayProducts() {
         const querySnapshot = await getDocs(collection(chandriaDB, "products"));
+        const products = [];
 
         // FETCHING DATA FROM DATABASE
         querySnapshot.forEach(doc => {
             const data = doc.data();
-
-            // DISPLAYING DATA TO TABLE
-            const card = `
-            <div class="pos-card product-card" data-id="${doc.id}" data-name="${data.name}">
-                <img src="${data.frontImageUrl}" alt="Gown" class="pos-img">
-                    <div class="pos-info">
-                        <div class="pos-name">${data.code}</div>
-                        <div class="pos-price">₱${data.price}</div>
-                    </div>
-            </div>
-            `; // APPEND TO CONTAINER
-            $(".pos-products").append(card);
+            products.push({
+                id: doc.id,
+                name: data.name,
+                code: data.code,
+                price: data.price,
+                size: data.size,
+                frontImageUrl: data.frontImageUrl,
+                description: data.description || '',
+                category: 'Product'
+            });
         });
+
+        return products;
     }
 
     // DISPLAY ADDITIONALS PRODUCT FUNCTION
@@ -72,29 +71,40 @@ $(document).ready(function () {
         const querySnapshot = await getDocs(
             collection(chandriaDB, "additionals")
         );
+        const additionals = [];
 
         querySnapshot.forEach(doc => {
             const data = doc.data();
-
-            const card = `
-            <div class="pos-card additional-card" data-id="${doc.id}" data-code="${data.code}">
-                <img src="${data.imageUrl}" alt="Accessory" class="pos-img">
-                <div class="pos-info">
-                    <div class="pos-name">${data.name}</div>
-                    <div class="pos-price">₱${data.price}</div>
-                </div>
-            </div>
-            `;
-
-            $(".pos-accessories").append(card);
+            additionals.push({
+                id: doc.id,
+                name: data.name,
+                code: data.code || data.name,
+                price: data.price,
+                imageUrl: data.imageUrl,
+                description: data.description || '',
+                category: 'Additional',
+                inclusions: data.inclusions || []
+            });
         });
+
+        return additionals;
     }
 
     // Initialize all rental data with loader
     async function initializeAllRentalData() {
         try {
             showRentalLoader();
-            await Promise.all([displayProducts(), displayAccessories()]);
+            const [products, additionals] = await Promise.all([displayProducts(), displayAccessories()]);
+            
+            // Make data globally available
+            window.rentalData = {
+                products: products,
+                additionals: additionals
+            };
+            
+            // Trigger event to notify that data is loaded
+            $(document).trigger('rentalDataLoaded', { products, additionals });
+            
         } catch (error) {
             console.error("Error initializing rental data:", error);
         } finally {

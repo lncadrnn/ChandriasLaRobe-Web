@@ -7,6 +7,7 @@ import {
     collection,
     getDoc,
     addDoc,
+    updateDoc,
     doc,
     signOut
 } from "./sdk/chandrias-sdk.js";
@@ -282,8 +283,22 @@ $(document).ready(function () {
             // SAVE TO FIREBASE
             await addDoc(collection(chandriaDB, "appointments"), productData);
 
+            // CLEAR CART AFTER SUCCESSFUL APPOINTMENT
+            if (user) {
+                const userRef = doc(chandriaDB, "userAccounts", user.uid);
+                await updateDoc(userRef, {
+                    added_to_cart: []
+                });
+                
+                // Update cart count in UI
+                updateCartCount();
+                
+                // Clear the checkout items display and reload it
+                await loadCartItems(user.uid);
+            }
+
             notyf.success(
-                "Checkout successful! Your appointment has been saved."
+                "Checkout successful! Your appointment has been saved and cart has been cleared."
             );
 
             // RESET FORM
