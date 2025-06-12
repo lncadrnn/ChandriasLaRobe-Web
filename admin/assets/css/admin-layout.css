@@ -132,7 +132,7 @@ body {
 .sidebar header .toggle {
     position: absolute;
     top: 50%;
-    right: -20px;
+    right: -11px;
     transform: translateY(-50%) rotate(180deg);
     height: 22px;
     width: 22px;
@@ -151,6 +151,7 @@ body {
 
 .sidebar.close header .toggle {
     transform: translateY(-50%) rotate(0deg);
+    right: -11px;
 }
 
 /* Sidebar Menu */
