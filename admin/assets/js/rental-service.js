@@ -10,6 +10,14 @@ import {
 } from "./sdk/chandrias-sdk.js";
 
 $(document).ready(function () {
+    // Prevent multiple initializations
+    if (window.rentalServiceInitialized) {
+        console.log('Rental service already initialized, skipping...');
+        return;
+    }
+    window.rentalServiceInitialized = true;
+    
+    console.log('Initializing rental service...');
     // COMMENTED OUT: Check if user is already signed in, if so, redirect to HOME PAGE
     // onAuthStateChanged(auth, async user => {
     //     if (user) {
@@ -88,13 +96,15 @@ $(document).ready(function () {
         });
 
         return additionals;
-    }
-
-    // Initialize all rental data with loader
+    }    // Initialize all rental data with loader
     async function initializeAllRentalData() {
         try {
+            console.log('Starting rental data initialization...');
             showRentalLoader();
             const [products, additionals] = await Promise.all([displayProducts(), displayAccessories()]);
+            
+            console.log('Fetched products:', products.length);
+            console.log('Fetched additionals:', additionals.length);
             
             // Make data globally available
             window.rentalData = {
@@ -103,6 +113,7 @@ $(document).ready(function () {
             };
             
             // Trigger event to notify that data is loaded
+            console.log('Triggering rentalDataLoaded event...');
             $(document).trigger('rentalDataLoaded', { products, additionals });
             
         } catch (error) {

@@ -10,6 +10,15 @@ import {
 } from "./sdk/chandrias-sdk.js";
 
 $(document).ready(function () {
+    // Prevent multiple initializations
+    if (window.rentalSubscriptInitialized) {
+        console.log('Rental subscript already initialized, skipping...');
+        return;
+    }
+    window.rentalSubscriptInitialized = true;
+    
+    console.log('Initializing rental subscript...');
+    
     // NOTYF
     const notyf = new Notyf({
         position: {
@@ -1665,11 +1674,16 @@ $(document).ready(function () {
     // END OF JAVASCRIPT HERE
 
     // ===== TABLE-BASED INTERFACE UI FUNCTIONS =====
-    
-    // Function to populate the products table
+      // Function to populate the products table
     function populateProductsTable(products, additionals) {
+        console.log('Populating table with:', products.length, 'products and', additionals.length, 'additionals');
+        
         const tableBody = $("#products-table-body");
+        
+        // Clear any existing content completely
         tableBody.empty();
+        
+        console.log('Table cleared, current rows:', tableBody.find('tr').length);
         
         // Add products to table (with sizes)
         products.forEach(product => {
@@ -1688,6 +1702,8 @@ $(document).ready(function () {
             const row = createAdditionalTableRow(additional);
             tableBody.append(row);
         });
+        
+        console.log('Table populated, final rows:', tableBody.find('tr').length);
     }
     
     // Create a table row for products
@@ -1773,9 +1789,9 @@ $(document).ready(function () {
             </tr>
         `);
     }
-    
-    // Listen for data loaded event from rental-service
-    $(document).on('rentalDataLoaded', function(event, data) {
+      // Listen for data loaded event from rental-service
+    $(document).off('rentalDataLoaded').on('rentalDataLoaded', function(event, data) {
+        console.log('Data loaded event triggered:', data);
         populateProductsTable(data.products, data.additionals);
     });
     
