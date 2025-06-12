@@ -1935,11 +1935,9 @@ $(document).ready(function () {
                 code: productCode,
                 price: productPrice,
                 size: size,
-                quantity: 1
-            });
+                quantity: 1            });
             
             updateNewCartDisplay();
-            notyf.success(`Added "${productName}" (${size}) to Rental List!`);
         }
     });
 
@@ -2122,14 +2120,10 @@ $(document).ready(function () {
                         });
                         
                         notyf.error(`Removed ${indicesToRemove.length} excess additional item(s) due to product removal.`);
-                    }
-                }
-                
-                notyf.success(`Removed "${removedProduct.name}" (${removedProduct.size}) from Rental List.`);
+                    }                }
             }
         } else if (accessoryIdx !== undefined) {
             cart.accessories.splice(accessoryIdx, 1);
-            notyf.success("Additional item removed from Rental List.");
         }
         
         updateNewCartDisplay();
