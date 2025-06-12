@@ -102,8 +102,7 @@
             <div class="page-content">
             <div class="dashboard-layout">
                 <div class="dashboard-main">
-                    <section class="dashboard-cards-row">
-                        <div class="dashboard-card active-rentals">
+                    <section class="dashboard-cards-row">                        <div class="dashboard-card active-rentals">
                             <div class="card-header">
                                 <div class="card-icon">
                                     <i class="bx bxs-package"></i>
@@ -111,11 +110,8 @@
                                 <div class="card-title">ACTIVE RENTALS</div>
                             </div>
                             <div class="card-content">
-                                <div class="card-main">
-                                    17 <span>Items out</span>
-                                </div>
-                                <div class="card-sub">
-                                    4 <span>Due Today</span>
+                                <div class="card-main" id="active-rentals-count">
+                                    0
                                 </div>
                             </div>
                         </div>
@@ -130,11 +126,8 @@
                                 </div>
                             </div>
                             <div class="card-content">
-                                <div class="card-main">
-                                    2 <span>Booked Today</span>
-                                </div>
-                                <div class="card-sub">
-                                    11 <span>Due This Week</span>
+                                <div class="card-main" id="active-appointments-count">
+                                    0
                                 </div>
                             </div>
                         </div>
@@ -147,11 +140,8 @@
                                 <div class="card-title">TOTAL PRODUCTS</div>
                             </div>
                             <div class="card-content">
-                                <div class="card-main">
-                                    5 <span>Gowns & Suits</span>
-                                </div>
-                                <div class="card-sub">
-                                    4 <span>Rented Today</span>
+                                <div class="card-main" id="total-products-count">
+                                    0
                                 </div>
                             </div>
                         </div>
@@ -191,74 +181,9 @@
                                     </tr>
                                 </thead>                                <tbody id="rentals-table-body">
                                     <tr>
-                                        <td>Maria Santos</td>
-                                        <td>TXN-2024-001</td>
-                                        <td>₱2,500.00</td>
-                                        <td><span class="status-badge status-active">Active</span></td>
-                                        <td><button class="btn-details">View</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>John Dela Cruz</td>
-                                        <td>TXN-2024-002</td>
-                                        <td>₱1,800.00</td>
-                                        <td><span class="status-badge status-pending">Pending</span></td>
-                                        <td><button class="btn-details">View</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Anna Rodriguez</td>
-                                        <td>TXN-2024-003</td>
-                                        <td>₱3,200.00</td>
-                                        <td><span class="status-badge status-overdue">Overdue</span></td>
-                                        <td><button class="btn-details">View</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Carlos Reyes</td>
-                                        <td>TXN-2024-004</td>
-                                        <td>₱0.00</td>
-                                        <td><span class="status-badge status-completed">Completed</span></td>
-                                        <td><button class="btn-details">View</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lisa Garcia</td>
-                                        <td>TXN-2024-005</td>
-                                        <td>₱1,500.00</td>
-                                        <td><span class="status-badge status-active">Active</span></td>
-                                        <td><button class="btn-details">View</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Miguel Torres</td>
-                                        <td>TXN-2024-006</td>
-                                        <td>₱2,100.00</td>
-                                        <td><span class="status-badge status-pending">Pending</span></td>
-                                        <td><button class="btn-details">View</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sofia Mendez</td>
-                                        <td>TXN-2024-007</td>
-                                        <td>₱1,200.00</td>
-                                        <td><span class="status-badge status-active">Active</span></td>
-                                        <td><button class="btn-details">View</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Roberto Cruz</td>
-                                        <td>TXN-2024-008</td>
-                                        <td>₱2,800.00</td>
-                                        <td><span class="status-badge status-overdue">Overdue</span></td>
-                                        <td><button class="btn-details">View</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Elena Flores</td>
-                                        <td>TXN-2024-009</td>
-                                        <td>₱0.00</td>
-                                        <td><span class="status-badge status-completed">Completed</span></td>
-                                        <td><button class="btn-details">View</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>David Morales</td>
-                                        <td>TXN-2024-010</td>
-                                        <td>₱1,900.00</td>
-                                        <td><span class="status-badge status-pending">Pending</span></td>
-                                        <td><button class="btn-details">View</button></td>
+                                        <td colspan="5" style="text-align: center; color: #999; padding: 20px;">
+                                            <i class="bx bx-loader-alt bx-spin"></i> Loading rentals...
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -432,10 +357,10 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
             crossorigin="anonymous"
         ></script>        <!-- Firebase Config -->
-        <script type="module" src="./firebase-config.js"></script>
+        <script src="./firebase-config.js"></script>
         <script src="./assets/js/admin-layout.js"></script>
         <script src="./assets/js/admin-layout-mob.js"></script>
-        <script type="module" src="./assets/js/dashboard-service.js"></script>
-        <script type="module" src="./assets/js/dashboard-subscript.js"></script>
+        <script src="./assets/js/dashboard-service.js"></script>
+        <script src="./assets/js/dashboard-subscript.js"></script>
     </body>
 </html>

@@ -379,6 +379,34 @@ document.addEventListener("DOMContentLoaded", () => {
         renderRentals();
     }
 
+    // Update dashboard cards with real data
+    async function updateDashboardCards() {
+        try {
+            // Update Active Rentals count
+            const activeRentalsCount = rentals.filter(rental => 
+                rental.status === 'Ongoing' || rental.status === 'Upcoming'
+            ).length;
+            document.getElementById('active-rentals-count').textContent = activeRentalsCount;
+
+            // Update Active Appointments count
+            const appointments = await fetchAppointments();
+            const activeAppointmentsCount = appointments.length;
+            document.getElementById('active-appointments-count').textContent = activeAppointmentsCount;
+
+            // Update Total Products count
+            const productsSnapshot = await db.collection("products").get();
+            const totalProductsCount = productsSnapshot.size;
+            document.getElementById('total-products-count').textContent = totalProductsCount;
+
+        } catch (error) {
+            console.error("Error updating dashboard cards:", error);
+            // Set default values if there's an error
+            document.getElementById('active-rentals-count').textContent = '0';
+            document.getElementById('active-appointments-count').textContent = '0';
+            document.getElementById('total-products-count').textContent = '0';
+        }
+    }
+
     // Appointments Functions
     async function fetchAppointments() {
         try {
@@ -616,6 +644,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 loadRentals(),
                 renderAppointments()
             ]);
+            // Update dashboard cards after loading data
+            await updateDashboardCards();
         } catch (error) {
             console.error("Error initializing dashboard:", error);
         }

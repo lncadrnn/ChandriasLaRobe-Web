@@ -108,15 +108,20 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
 }
 
 .card-main {
-    font-size: 2rem;
+    font-size: 3.5rem;
     font-weight: 700;
     color: var(--text-dark);
     display: flex;
-    align-items: baseline;
-    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
 }
 
 .card-main span {
@@ -626,9 +631,8 @@ tr:hover {
     .dashboard-card {
         padding: 18px;
     }
-    
-    .card-main {
-        font-size: 1.75rem;
+      .card-main {
+        font-size: 3rem;
     }
     
     .dashboard-table {
@@ -714,9 +718,8 @@ tr:hover {
         height: 40px;
         font-size: 1.25rem;
     }
-    
-    .card-main {
-        font-size: 1.5rem;
+      .card-main {
+        font-size: 2.5rem;
     }
     
     th,
