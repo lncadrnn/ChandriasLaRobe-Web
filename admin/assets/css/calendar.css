@@ -1,44 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
-
-:root {
-    --body-color: #f5f6fa;
-    --sidebar-color: #fff;
-    --primary-color: #ff7eac;
-    --primary-light: #fff0f6;
-    --gray-100: #f8f9fa;
-    --gray-200: #e9ecef;
-    --gray-300: #dee2e6;
-}
-
-body {
-    background: var(--body-color);
-    min-height: 100vh;
-    display: flex;
-}
-
-.main-content {
-    flex: 1;
-    padding: 20px;
-    margin-left: 250px;
-    width: calc(100% - 250px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.sidebar.close ~ .main-content {
-    margin-left: 88px;
-    width: calc(100% - 88px);
-}
-
-.page-name {
-    margin-bottom: 20px;
-}
+/* Calendar specific styles - base styles moved to admin-layout.css */
 
 .page-name .text {
     font-size: 24px;

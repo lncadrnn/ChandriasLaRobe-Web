@@ -3,9 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-        <title>Chandria's La Robe</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />        <title>Chandria's La Robe - Inventory</title>
 
         <!-- BOX-ICON CDN -->
         <link
@@ -24,6 +22,7 @@
         />
 
         <!-- EXTERNAL CSS -->
+        <link rel="stylesheet" href="./assets/css/admin-layout.css" />
         <link rel="stylesheet" href="./assets/css/inventory.css" />
     </head>
     <body>
@@ -42,12 +41,11 @@
             <div class="spinner"></div>
             <div class="spinner-text" id="spinner-text">Uploading</div>
         </div>
-        
-        <!-- // -->
-        <nav class="custom-sidebar close">
+          <!-- // -->
+        <nav class="sidebar close">
             <header>
-                <div class="custom-image-text">
-                    <span class="custom-image">
+                <div class="image-text">
+                    <span class="image">
                         <img
                             src="./assets/images/chandriaslogo.png"
                             alt="logo"
@@ -55,110 +53,76 @@
                     </span>
                 </div>
 
-                <i class="bx bx-chevron-right custom-toggle"></i>
+                <i class="bx bx-chevron-right toggle"></i>
             </header>
 
-            <div class="custom-menu-bar">
-                <div class="custom-menu">
-                    <ul class="custom-menu-links">
-                        <li class="custom-nav-link custom-active">
+            <div class="menu-bar">
+                <div class="menu">
+                    <ul class="menu-links">
+                        <li class="nav-link">
                             <a href="./dashboard.html">
-                                <i class="bx bxs-dashboard custom-icon"></i>
-                                <span class="custom-text custom-nav-text"
-                                    >Dashboard</span
-                                >
+                                <i class="bx bxs-dashboard icon"></i>
+                                <span class="text nav-text">Dashboard</span>
                             </a>
                         </li>
 
-                        <li class="custom-nav-link active">
-                            <a href="#">
-                                <i class="bx bxs-t-shirt custom-icon"></i>
-                                <span class="custom-text custom-nav-text"
-                                    >Inventory</span
-                                >
+                        <li class="nav-link active">
+                            <a href="./inventory.html">
+                                <i class="bx bxs-t-shirt icon"></i>
+                                <span class="text nav-text">Inventory</span>
                             </a>
                         </li>
 
-                        <li class="custom-nav-link">
+                        <li class="nav-link">
                             <a href="./calendar.html">
-                                <i class="bx bxs-calendar custom-icon"></i>
-                                <span class="custom-text custom-nav-text"
-                                    >Calendar</span
-                                >
+                                <i class="bx bxs-calendar icon"></i>
+                                <span class="text nav-text">Calendar</span>
                             </a>
                         </li>
 
-                        <li class="custom-nav-link">
+                        <li class="nav-link">
                             <a href="./rental.html">
-                                <i class="bx bxs-package custom-icon"></i>
-                                <span class="custom-text custom-nav-text"
-                                    >Rental</span
-                                >
+                                <i class="bx bxs-package icon"></i>
+                                <span class="text nav-text">Rental</span>
                             </a>
                         </li>
 
-                        <li class="custom-nav-link">
+                        <li class="nav-link">
                             <a href="./customer-logs.html">
-                                <i class="bx bxs-user custom-icon"></i>
-                                <span class="custom-text custom-nav-text"
-                                    >Rental History</span
-                                >
+                                <i class="bx bxs-user icon"></i>
+                                <span class="text nav-text">Rental History</span>
                             </a>
                         </li>
 
-                        <li class="custom-nav-link">
+                        <li class="nav-link">
                             <a href="./settings.html">
-                                <i class="bx bxs-cog custom-icon"></i>
-                                <span class="custom-text custom-nav-text"
-                                    >Settings</span
-                                >
+                                <i class="bx bxs-cog icon"></i>
+                                <span class="text nav-text">Settings</span>
                             </a>
                         </li>
                     </ul>
                 </div>
 
-                <div class="custom-bottom-content"></div>
+                <div class="bottom-content"></div>
             </div>
-        </nav>
-
-        <section class="custom-page-name">
-            <div class="custom-text">Inventory</div>
-            <div class="container-fluid">
-                <div
-                    class="search-and-button"
-                    style="
-                        display: flex;
-                        align-items: center;
-                        gap: 1rem;
-                        justify-content: space-between;
-                        margin-right: 2.5rem;
-                    "
-                >
-                    <div
-                        class="search-box"
-                        style="
-                            flex: 1;
-                            max-width: 350px;
-                            min-width: 180px;
-                            width: 220px;
-                            margin-left: 0;
-                            margin-right: 0.5rem;
-                        "
-                    >
-                        <i class="bx bx-search icon"></i>
-                        <input type="text" placeholder="Search" />
-                    </div>
-                    <div style="display: flex; align-items: center">
-                        <button
-                            class="custom-btn primary-btn ms-auto mt-2 mb-3"
-                            id="add-item-btn"
-                            data-open="addProductModal"
-                            style="margin-left: 1.5rem; min-width: 120px"
-                        >
-                            Add Product
-                        </button>
-                    </div>
+        </nav>        <main class="main-content">
+            <header class="page-header">
+                <div class="header-left">
+                    <h1 class="page-title">Inventory Management</h1>
+                    <p class="page-subtitle">Manage your rental inventory, add new products, and track availability</p>
                 </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <i class="bx bx-search icon"></i>
+                        <input type="text" placeholder="Search products..." />
+                    </div>
+                    <button class="btn btn-primary" id="add-item-btn" data-open="addProductModal">
+                        <i class="bx bx-plus"></i>
+                        <span>Add Product</span>
+                    </button>
+                </div>
+            </header>
+            <div class="page-content">
                 <div class="pos-tabs" style="margin-top: 1.5rem">
                     <button class="tab-btn active" data-tab="products">
                         Products
@@ -904,9 +868,10 @@
                     <button class="custom-btn" id="confirm-modal-cancel">
                         Cancel
                     </button>
-                </div>
-            </div>
+                </div>            </div>
         </div>
+            </div>
+        </main>
 
         <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
 
@@ -918,8 +883,8 @@
             src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
             crossorigin="anonymous"
-        ></script>
-        <!-- EXTERNAL SCRIPT -->
+        ></script>        <!-- EXTERNAL SCRIPT -->
+        <script src="./assets/js/admin-layout.js"></script>
         <script type="module" src="./assets/js/inventory-service.js"></script>
         <script type="module" src="./assets/js/inventory-subscript.js"></script>
     </body>

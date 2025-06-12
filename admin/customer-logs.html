@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Chandria's La Robe - Web System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />    <title>Chandria's La Robe - Rental History</title>
     
     <!-- EXTERNAL CSS -->
+    <link rel="stylesheet" href="./assets/css/admin-layout.css" />
     <link rel="stylesheet" href="./assets/css/customer-logs.css" />
-    <link rel="stylesheet" href="./assets/css/sidebar.css" />
 
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
@@ -91,19 +89,21 @@
             <div class="bottom-content">
             </div>
 
-        </div>
-    </nav>
+        </div>    </nav>
 
-    <section class="page-name">
-        <div class="text">Rental History</div>
-        <div class="table-header">
-            <div class="table-search">
-                <i class='bx bx-search search-icon'></i>
-                <input type="text" placeholder="Search by customer name, transaction code..." id="search-input">
+    <main class="main-content">
+        <header class="page-header">
+            <div class="header-left">
+                <h1 class="page-title">Rental History</h1>
+                <p class="page-subtitle">View and manage all rental transactions and customer history</p>
             </div>
-            <div class="table-actions">
+            <div class="header-right">
+                <div class="search-box">
+                    <i class='bx bx-search icon'></i>
+                    <input type="text" placeholder="Search by customer, transaction..." id="search-input">
+                </div>
                 <div class="sort-dropdown">
-                    <button class="filter-btn" id="sort-btn">
+                    <button class="btn btn-secondary" id="sort-btn">
                         <i class='bx bx-sort'></i> Sort
                         <i class='bx bx-chevron-down'></i>
                     </button>
@@ -127,12 +127,10 @@
                             <i class='bx bx-calendar-check'></i> Event Date (Latest)
                         </div>
                     </div>
-                </div>
-                <button class="filter-btn" id="refresh-btn">
-                    <i class='bx bx-refresh'></i> Refresh
-                </button>
+                </div>                </div>
             </div>
-        </div>
+        </header>
+        <div class="page-content">
         
         <div class="table-wrapper">
             <table id="rental-history-table">
@@ -331,15 +329,16 @@
                         <i class='bx bx-trash'></i> DELETE FOREVER
                     </button>
                 </div>
+            </div>        </div>
             </div>
-        </div>
-    </div>
+        </main>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     
     <!-- EXTERNAL SCRIPT -->
+    <script src="./assets/js/admin-layout.js"></script>
     <script type="module" src="./assets/js/customer-logs-service.js"></script>
 
 </body>

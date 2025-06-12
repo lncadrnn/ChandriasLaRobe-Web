@@ -3,10 +3,8 @@
     <head>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Chandria's La Robe - Web System</title>
-        <link rel="stylesheet" href="/admin/assets/css/sidebar.css" />
-        <link rel="stylesheet" href="/admin/assets/css/styles.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />        <title>Chandria's La Robe - Dashboard</title>
+        <link rel="stylesheet" href="/admin/assets/css/admin-layout.css" />
         <link rel="stylesheet" href="/admin/assets/css/dashboard.css" />
 
         <link
@@ -91,22 +89,24 @@
 
                 <div class="bottom-content"></div>
             </div>
-        </nav>
-        <main class="main-content">            <header class="main-header">
+        </nav>        <main class="main-content">
+            <header class="page-header">
                 <div class="header-left">
-                    <h1><span class="brand">Dashboard</span></h1>
+                    <h1 class="page-title">Dashboard</h1>
+                    <p class="page-subtitle">Monitor your rental business performance and key metrics</p>
                 </div>
                 <div class="header-right">
                     <div class="datetime-display">
                         <div class="current-date" id="currentDate"></div>
                         <div class="current-time" id="currentTime"></div>
                     </div>
-                    <button class="view-analytics-btn">
+                    <button class="btn btn-primary view-analytics-btn">
                         <i class="bx bx-bar-chart-alt-2"></i>
                         <span>View Analytics</span>
                     </button>
                 </div>
             </header>
+            <div class="page-content">
             <div class="dashboard-layout">
                 <div class="dashboard-main">
                     <section class="dashboard-cards-row">
@@ -278,9 +278,9 @@
                         <div
                             id="rental-details"
                             class="rental-modal-body"
-                        ></div>
-                    </div>
+                        ></div>                    </div>
                 </div>
+            </div>
             </div>
         </main>
 
@@ -294,9 +294,9 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
             crossorigin="anonymous"
         ></script>
-        
-        <!-- Firebase Config -->
+          <!-- Firebase Config -->
         <script type="module" src="./firebase-config.js"></script>
+        <script src="./assets/js/admin-layout.js"></script>
         <script type="module" src="./assets/js/dashboard-service.js"></script>
         <script type="module" src="./assets/js/dashboard-subscript.js"></script>
     </body>

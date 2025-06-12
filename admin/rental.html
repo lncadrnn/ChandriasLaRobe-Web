@@ -3,9 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-        <title>Chandria's La Robe - Web System</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />        <title>Chandria's La Robe - Rental Management</title>
 
         <!-- BOX-ICON CDN -->
         <link
@@ -20,7 +18,7 @@
         />
         
         <!-- EXTERNAL CSS -->
-        <link rel="stylesheet" href="./assets/css/sidebar.css" />
+        <link rel="stylesheet" href="./assets/css/admin-layout.css" />
         <link rel="stylesheet" href="./assets/css/rental.css" />
     </head>
 
@@ -109,18 +107,22 @@
 
                 <div class="bottom-content"></div>
             </div>
-        </nav>
+        </nav>        <!-- Sidebar End; Start of Rental and Transaction Form -->
 
-        <!-- Sidebar End; Start of Rental and Transaction Form -->
-
-        <section class="page-name">
-            <div class="page-header">
-                <div class="text">Rental</div>
-                <form class="pos-search-bar">
-                    <input type="text" placeholder="Search" />
-                    <i class="bx bx-search search-icon"></i>
-                </form>
-            </div>
+        <main class="main-content">
+            <header class="page-header">
+                <div class="header-left">
+                    <h1 class="page-title">Rental Management</h1>
+                    <p class="page-subtitle">Create new rentals and manage rental transactions</p>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <i class="bx bx-search icon"></i>
+                        <input type="text" placeholder="Search products..." />
+                    </div>
+                </div>
+            </header>
+            <div class="page-content">
             <div class="pos-tabs">
                 <button class="tab-btn active" data-tab="products">
                     Products
@@ -434,10 +436,11 @@
                         <button type="submit" id="customer-form-submit">
                             Submit Rental
                         </button>
-                    </form>
-                </div>
+                    </form>                </div>
             </div>
         </div>
+            </div>
+        </main>
 
         <!-- NOTYF CDN -->
         <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
@@ -449,6 +452,7 @@
             crossorigin="anonymous"
         ></script>
         <!-- EXTERNAL SCRIPT -->
+        <script src="./assets/js/admin-layout.js"></script>
         <script type="module" src="./assets/js/rental-service.js"></script>
         <script type="module" src="./assets/js/rental-subscript.js"></script>
     </body>

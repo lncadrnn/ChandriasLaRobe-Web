@@ -1,34 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
-* {
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-:root {
-    --body-color: #e4e9f7;
-    --sidebar-color: #fff;
-    --primary-color: hsl(346, 100%, 74%);
-    --primary-color-light: #f6f5ff;
-    --toggle-color: #dddd;
-    --text-color: #808080;
-    --secondary-color: hsl(346, 85%, 90%);
-    --secondary-text-color: hsl(346, 100%, 74%);
-
-    /* Set transitions to none */
-    --tran-02: none;
-    --tran-03: none;
-    --tran-04: none;
-    --tran-05: none;
-}
-
-body {
-    height: 100vh;
-    background: var(--body-color);
-    overflow: hidden;
-}
+/* Customer logs specific styles - base styles moved to admin-layout.css */
 
 /*=============== CURSOR POINTER STYLES ===============*/
 button,

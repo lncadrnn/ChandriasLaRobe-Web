@@ -1,0 +1,696 @@
+/* ===============================================
+   UNIFIED ADMIN LAYOUT CSS
+   This file contains all shared admin layout styles:
+   - Sidebar navigation
+   - Page headers with title/subtitle
+   - Main content layout
+   - Common variables and utilities
+   =============================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* =============== CSS RESET & BASE =============== */
+* {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* =============== CSS VARIABLES =============== */
+:root {
+    /* Colors */
+    --body-color: #e4e9f7;
+    --sidebar-color: #fff;
+    --primary-color: hsl(346, 100%, 74%);
+    --primary-color-light: #f6f5ff;
+    --secondary-color: hsl(346, 85%, 90%);
+    --secondary-text-color: hsl(346, 100%, 74%);
+    --toggle-color: #dddd;
+    --text-color: #808080;
+    --text-dark: #333;
+    --text-light: #6c757d;
+    --white: #ffffff;
+    --border-color: #e9ecef;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+    
+    /* Layout */
+    --sidebar-width: 250px;
+    --sidebar-width-closed: 88px;
+    --header-height: 80px;
+    --border-radius: 8px;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 4px 20px rgba(0, 0, 0, 0.15);
+    
+    /* Transitions */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --tran-02: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --tran-03: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --tran-04: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --tran-05: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* =============== BODY & LAYOUT =============== */
+body {
+    height: 100vh;
+    background: var(--body-color);
+    overflow-y: auto;
+}
+
+/* =============== SIDEBAR STYLES =============== */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
+    height: 100%;
+    padding: 10px 14px;
+    background: var(--sidebar-color);
+    transition: var(--tran-05);
+    z-index: 100;
+    box-shadow: var(--shadow);
+}
+
+.sidebar.close {
+    width: var(--sidebar-width-closed);
+}
+
+/* Sidebar Header */
+.sidebar header {
+    position: relative;
+}
+
+.sidebar .image-text {
+    display: flex;
+    align-items: center;
+}
+
+.sidebar .image {
+    min-width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar .image-text .image img {
+    width: 70%;
+    height: auto;
+    border-radius: var(--border-radius);
+    object-fit: cover;
+    object-position: center;
+    margin-top: 10%;
+}
+
+.sidebar.close .image-text .image img {
+    width: 100%;
+}
+
+.sidebar header .toggle {
+    position: absolute;
+    top: 50%;
+    right: -25px;
+    transform: translateY(-50%) rotate(180deg);
+    height: 25px;
+    width: 25px;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--white);
+    font-size: 18px;
+    cursor: pointer;
+    transition: var(--tran-03);
+    box-shadow: var(--shadow);
+}
+
+.sidebar.close header .toggle {
+    transform: translateY(-50%);
+}
+
+/* Sidebar Menu */
+.sidebar .menu {
+    margin-top: 20px;
+}
+
+.sidebar .menu-bar {
+    height: calc(100% - 70px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar li {
+    height: 50px;
+    margin-top: 8px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar li .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    font-size: 18px;
+}
+
+.sidebar li .icon,
+.sidebar li .text {
+    color: var(--text-color);
+    transition: var(--tran-02);
+}
+
+.sidebar li a {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    transition: var(--tran-04);
+}
+
+.sidebar li a:hover {
+    background: var(--secondary-color);
+}
+
+.sidebar li a:hover .icon,
+.sidebar li a:hover .text {
+    color: var(--secondary-text-color);
+}
+
+/* Active Navigation Item */
+.menu-links .nav-link.active a,
+.menu-links .custom-nav-link.active a {
+    background-color: var(--secondary-color);
+}
+
+.menu-links .nav-link.active a .icon,
+.menu-links .nav-link.active a .text,
+.menu-links .custom-nav-link.active a .custom-icon,
+.menu-links .custom-nav-link.active a .custom-text {
+    color: var(--secondary-text-color);
+}
+
+/* Sidebar Text */
+.sidebar .text,
+.sidebar .custom-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-color);
+    transition: var(--tran-03);
+    white-space: nowrap;
+    opacity: 1;
+}
+
+.sidebar.close .text,
+.sidebar.close .custom-text {
+    opacity: 0;
+}
+
+/* Bottom Content */
+.bottom-content,
+.custom-bottom-content {
+    margin-bottom: 10%;
+}
+
+.sidebar.close .bottom-content,
+.sidebar.close .custom-bottom-content {
+    margin-bottom: 0;
+}
+
+/* =============== MAIN CONTENT LAYOUT =============== */
+.main-content {
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+    background: var(--body-color);
+    transition: var(--tran-05);
+    padding: 0;
+}
+
+.sidebar.close ~ .main-content {
+    margin-left: var(--sidebar-width-closed);
+}
+
+/* Legacy support for old page-name class */
+.page-name,
+.custom-page-name {
+    position: relative;
+    left: var(--sidebar-width);
+    height: 100vh;
+    width: calc(100% - var(--sidebar-width));
+    background: var(--body-color);
+    transition: var(--tran-05);
+}
+
+.sidebar.close ~ .page-name,
+.sidebar.close ~ .custom-page-name {
+    left: var(--sidebar-width-closed);
+    width: calc(100% - var(--sidebar-width-closed));
+}
+
+/* =============== PAGE HEADER SYSTEM =============== */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 30px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    margin-bottom: 0;
+    min-height: var(--header-height);
+}
+
+.header-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Page Title Styles */
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #000000 !important; /* Black color as requested */
+    margin: 0;
+    line-height: 1.2;
+}
+
+.page-subtitle {
+    font-size: 14px;
+    font-weight: 400;
+    color: #6c757d !important; /* Light gray color */
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Legacy support for existing header styles */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 30px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    margin-bottom: 0;
+    min-height: var(--header-height);
+}
+
+.main-header .header-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.main-header .header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.main-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #000000 !important; /* Black color as requested */
+    margin: 0;
+    line-height: 1.2;
+}
+
+.main-header h1 .brand {
+    color: var(--secondary-text-color);
+}
+
+/* Legacy custom page title */
+.custom-page-name .custom-text {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--secondary-text-color);
+    margin: 25px 30px;
+    line-height: 1.2;
+}
+
+/* =============== CONTENT AREA =============== */
+.page-content {
+    max-width: 100%;
+    overflow-x: auto;
+    padding-top: 12px;
+}
+
+/* =============== COMMON BUTTON STYLES =============== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--transition);
+    line-height: 1;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background: var(--secondary-text-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.btn-secondary {
+    background: var(--secondary-color);
+    color: var(--secondary-text-color);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+/* =============== SEARCH BOX STYLES =============== */
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: var(--white);
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 10px 15px;
+    transition: var(--transition);
+}
+
+.search-box:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.1);
+}
+
+.search-box .icon {
+    color: var(--text-light);
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.search-box input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+    color: var(--text-dark);
+}
+
+.search-box input::placeholder {
+    color: var(--text-light);
+}
+
+/* =============== PLACEHOLDER STYLES =============== */
+.settings-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    text-align: center;
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin: 20px 0;
+}
+
+.placeholder-content {
+    padding: 40px;
+}
+
+.placeholder-content i {
+    font-size: 64px;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    opacity: 0.7;
+}
+
+.placeholder-content h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.placeholder-content p {
+    font-size: 16px;
+    color: var(--text-light);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* =============== UTILITY CLASSES =============== */
+.text-primary { color: var(--primary-color); }
+.text-secondary { color: var(--secondary-text-color); }
+.text-dark { color: var(--text-dark); }
+.text-light { color: var(--text-light); }
+.text-white { color: var(--white); }
+
+.bg-primary { background: var(--primary-color); }
+.bg-secondary { background: var(--secondary-color); }
+.bg-white { background: var(--white); }
+
+.d-flex { display: flex; }
+.align-items-center { align-items: center; }
+.justify-content-between { justify-content: space-between; }
+.justify-content-center { justify-content: center; }
+.gap-1 { gap: 8px; }
+.gap-2 { gap: 15px; }
+.gap-3 { gap: 20px; }
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 8px; }
+.mb-2 { margin-bottom: 15px; }
+.mb-3 { margin-bottom: 20px; }
+.mb-4 { margin-bottom: 25px; }
+.mb-5 { margin-bottom: 30px; }
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 15px; }
+.mt-3 { margin-top: 20px; }
+.mt-4 { margin-top: 25px; }
+.mt-5 { margin-top: 30px; }
+
+/* =============== RESPONSIVE DESIGN =============== */
+@media (max-width: 1024px) {
+    .main-content,
+    .page-name,
+    .custom-page-name {
+        margin-left: var(--sidebar-width-closed);
+    }
+    
+    .sidebar {
+        width: var(--sidebar-width-closed);
+    }
+    
+    .sidebar .text,
+    .sidebar .custom-text {
+        opacity: 0;
+    }
+    
+    .page-header,
+    .main-header {
+        padding: 20px 25px;
+    }
+    
+    .page-content {
+        padding: 25px;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header,
+    .main-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 20px;
+    }
+    
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .page-title,
+    .main-header h1 {
+        font-size: 24px;
+    }
+    
+    .page-subtitle {
+        font-size: 13px;
+    }
+    
+    .page-content {
+        padding: 20px;
+    }
+    
+    .btn {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: var(--sidebar-width-closed);
+    }
+    
+    .main-content,
+    .page-name,
+    .custom-page-name {
+        margin-left: var(--sidebar-width-closed);
+    }
+    
+    .page-header,
+    .main-header {
+        padding: 15px;
+    }
+    
+    .page-title,
+    .main-header h1 {
+        font-size: 20px;
+    }
+    
+    .page-content {
+        padding: 15px;
+    }
+    
+    .search-box {
+        padding: 8px 12px;
+    }
+}
+    .search-box {}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =============== CURSOR POINTER STYLES =============== */
+button,
+.toggle,
+.nav-link,
+.nav-link a,
+.custom-nav-link,
+.custom-nav-link a,
+.menu-links a,
+.sidebar-toggle,
+input[type="submit"],
+input[type="button"],
+.btn,
+a[href] {
+    cursor: pointer;
+}
+
+/* =============== PLACEHOLDER STYLES =============== */
+.settings-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    text-align: center;
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin: 20px 0;
+}
+
+.placeholder-content {
+    padding: 40px;
+}
+
+.placeholder-content i {
+    font-size: 64px;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    opacity: 0.7;
+}
+
+.placeholder-content h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.placeholder-content p {
+    font-size: 16px;
+    color: var(--text-light);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* =============== SCROLL STYLES =============== */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--border-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-text-color);
+}
