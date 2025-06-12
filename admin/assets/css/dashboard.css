@@ -241,7 +241,7 @@
 }
 
 .table-content {
-    overflow-y: auto;
+    overflow-y: hidden; /* Hide scrollbar on desktop */
     flex: 1;
     max-height: 250px; /* Reduced content height to show ~4 rows */
 }
@@ -391,7 +391,7 @@ tr:hover {
 
 .appointments-content {
     flex: 1;
-    overflow-y: auto;
+    overflow-y: hidden; /* Hide scrollbar on desktop */
     padding: 16px 0;
     max-height: calc(480px - 140px); /* Subtract header height (padding + title + search) */
 }
@@ -417,33 +417,32 @@ tr:hover {
     border-bottom: none;
 }
 
-.appointment-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 8px;
+.appointment-text {
+    font-size: 0.75rem;
+    color: var(--text-dark);
+    line-height: 1.6;
 }
 
-.appointment-name {
-    font-size: 0.875rem;
+.appointment-text strong {
     font-weight: 600;
     color: var(--text-dark);
 }
 
-.appointment-time {
+.appointment-view-details {
+    background: none;
+    border: none;
+    color: var(--primary-color);
     font-size: 0.75rem;
-    color: var(--text-light);
     font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: none;
+    transition: var(--transition);
 }
 
-.appointment-details {
-    font-size: 0.75rem;
-    color: var(--text-light);
-    line-height: 1.4;
-}
-
-.appointment-status {
-    margin-top: 8px;
+.appointment-view-details:hover {
+    color: #ff4d7a;
+    text-decoration: underline;
 }
 
 /* =============== MODALS =============== */
@@ -596,6 +595,7 @@ tr:hover {
     
     .appointments-content {
         max-height: 250px; /* Reduced height for tablet */
+        overflow-y: auto; /* Enable scrollbar on tablet */
     }
     
     .dashboard-table {
@@ -603,7 +603,7 @@ tr:hover {
     }
       .table-content {
         max-height: 250px; /* Keep reduced table scroll on tablet */
-        overflow-y: auto;
+        overflow-y: auto; /* Enable scrollbar on tablet */
     }
 }
 
@@ -636,7 +636,7 @@ tr:hover {
     }
       .table-content {
         max-height: 200px; /* Smaller reduced content height on mobile */
-        overflow-y: auto;
+        overflow-y: auto; /* Enable scrollbar on mobile */
         overflow-x: scroll; /* Keep horizontal scroll for wide tables */
     }
     
@@ -646,6 +646,7 @@ tr:hover {
     
     .appointments-content {
         max-height: 200px; /* Reduced height for mobile */
+        overflow-y: auto; /* Enable scrollbar on mobile */
     }
     
     .table-header {
