@@ -145,9 +145,48 @@ $(document).ready(function () {
                         <i class='bx bx-trash cart-remove' title="Remove All"></i>
                     </span>
                 `);
-                
-                $div.find(".cart-remove").on("click", function () {
+                  $div.find(".cart-remove").on("click", function () {
+                    // Remove the product
                     cart.products = cart.products.filter(p => p.name !== name);
+                    
+                    // Check if there are any products left in cart
+                    const remainingProductCount = cart.products.length;
+                    
+                    if (remainingProductCount === 0) {
+                        // If no products left, remove all additionals
+                        cart.accessories = [];
+                        notyf.error("All additionals removed as no products remain in cart.");
+                    } else {
+                        // Check if we need to remove excess additionals due to product limit
+                        // Group additionals by name and count them
+                        const additionalGroups = {};
+                        cart.accessories.forEach((item, idx) => {
+                            if (!additionalGroups[item.name]) {
+                                additionalGroups[item.name] = [];
+                            }
+                            additionalGroups[item.name].push(idx);
+                        });
+                        
+                        // Remove excess additionals that exceed remaining product count
+                        const indicesToRemove = [];
+                        Object.entries(additionalGroups).forEach(([name, indices]) => {
+                            if (indices.length > remainingProductCount) {
+                                // Keep only up to remainingProductCount, mark rest for removal
+                                const excessIndices = indices.slice(remainingProductCount);
+                                indicesToRemove.push(...excessIndices);
+                            }
+                        });
+                        
+                        // Remove excess additionals (sort indices in descending order to avoid index shifting)
+                        if (indicesToRemove.length > 0) {
+                            indicesToRemove.sort((a, b) => b - a).forEach(idx => {
+                                cart.accessories.splice(idx, 1);
+                            });
+                            
+                            notyf.error(`Removed ${indicesToRemove.length} excess additional item(s) due to product removal.`);
+                        }
+                    }
+                    
                     updateCartSummary();
                 });
                 
@@ -372,10 +411,8 @@ $(document).ready(function () {
 
             const exists = cart.products.some(
                 p => p.id === productId && p.size === size
-            );
-
-            if (exists) {
-                showErrorModal(
+            );            if (exists) {
+                notyf.error(
                     `"${productName}" (${size}) is already in the cart.`
                 );
             } else {
@@ -505,7 +542,7 @@ $(document).ready(function () {
         
         // Check if there are any products in the cart first
         if (productCount === 0) {
-            showErrorModal("You must add at least one product before adding additional items.");
+            notyf.error("You must add at least one product before adding additional items.");
             return;
         }
 
@@ -514,7 +551,7 @@ $(document).ready(function () {
         ).length;
 
         if (countOfThis >= productCount) {
-            showErrorModal(
+            notyf.error(
                 `You can only add as many '${name}' as products selected. You currently have ${productCount} product(s) and ${countOfThis} '${name}' item(s).`
             );
             return;
@@ -1110,11 +1147,9 @@ $(document).ready(function () {
     // FUNCTION FOR CART PROCEED BUTTON
     if ($checkoutBtn.length && $customerModal.length) {
         $checkoutBtn.on("click", function (e) {
-            e.preventDefault();
-
-            // Prevent checkout if no product is in the cart
+            e.preventDefault();            // Prevent checkout if no product is in the cart
             if (!cart.products.length) {
-                showErrorModal(
+                notyf.error(
                     "Please add at least one product to the cart before proceeding."
                 );
                 return;
@@ -1374,10 +1409,9 @@ $(document).ready(function () {
             const minBookableDateOnSubmit = new Date(todayForSubmit);
             minBookableDateOnSubmit.setDate(todayForSubmit.getDate() + 2);
 
-            if (rentalTypeSelected === "Fixed Rental") {
-                const fixedDateVal = $fixedEventDateInput.val();
+            if (rentalTypeSelected === "Fixed Rental") {                const fixedDateVal = $fixedEventDateInput.val();
                 if (!fixedDateVal) { 
-                    showErrorModal("Event Date is required for Fixed Rental.");
+                    notyf.error("Event Date is required for Fixed Rental.");
                     e.preventDefault();
                     $fixedEventDateInput.focus();
                     return;
@@ -1386,14 +1420,13 @@ $(document).ready(function () {
                 const dateLocal = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
                 if (dateLocal < minBookableDateOnSubmit) {
                     e.preventDefault();
-                    showErrorModal("Event Date must be at least 2 days after today.");
+                    notyf.error("Event Date must be at least 2 days after today.");
                     $fixedEventDateInput.focus();
                     return;
                 }
-            } else if (rentalTypeSelected === "Open Rental") {
-                const startDateVal = $eventStartDate.val();
+            } else if (rentalTypeSelected === "Open Rental") {                const startDateVal = $eventStartDate.val();
                 if (!startDateVal) { 
-                    showErrorModal("Event start date is required for Open Rental.");
+                    notyf.error("Event start date is required for Open Rental.");
                     e.preventDefault();
                     $eventStartDate.focus();
                     return;
@@ -1402,14 +1435,14 @@ $(document).ready(function () {
                 const startDateLocal = new Date(parseInt(startParts[0]), parseInt(startParts[1]) - 1, parseInt(startParts[2]));
                 if (startDateLocal < minBookableDateOnSubmit) {
                     e.preventDefault();
-                    showErrorModal("Event start date must be at least 2 days after today.");
+                    notyf.error("Event start date must be at least 2 days after today.");
                     $eventStartDate.focus();
                     return;
                 }
 
                 const endDateVal = $eventEndDate.val();
                 if (!endDateVal) { 
-                     showErrorModal("Event end date is required for Open Rental.");
+                     notyf.error("Event end date is required for Open Rental.");
                      e.preventDefault();
                      $eventEndDate.focus();
                      return;
@@ -1420,7 +1453,7 @@ $(document).ready(function () {
                 expectedMinEndDate.setDate(startDateLocal.getDate() + 1);
                 if (endDateLocal < expectedMinEndDate) {
                      e.preventDefault();
-                     showErrorModal("Event end date must be at least one day after the event start date.");
+                     notyf.error("Event end date must be at least one day after the event start date.");
                      $eventEndDate.focus();
                      return;
                 }
@@ -1943,14 +1976,13 @@ $(document).ready(function () {
             
             // You can add additional details modal here if needed
             console.log(`Additional details: ${additionalName} (${additionalCode})`);
-        }    });
-      // Add additional to cart
+        }    });      // Add additional to cart
     function addAdditionalToCart(id, name, code, price) {
         const productCount = cart.products.length;
         
         // Check if there are any products in the cart first
         if (productCount === 0) {
-            showErrorModal("You must add at least one product before adding additional items.");
+            notyf.error("You must add at least one product before adding additional items.");
             return;
         }
         
@@ -1958,7 +1990,7 @@ $(document).ready(function () {
         
         // Check if we already have this additional item (limit one per product)
         if (countOfThis >= productCount) {
-            showErrorModal(`You can only add as many '${name}' as products selected. You currently have ${productCount} product(s) and ${countOfThis} '${name}' item(s).`);
+            notyf.error(`You can only add as many '${name}' as products selected. You currently have ${productCount} product(s) and ${countOfThis} '${name}' item(s).`);
             return;
         }
         
@@ -2065,14 +2097,52 @@ $(document).ready(function () {
         
         $("#cart-total-amount").text(`₱${total.toLocaleString()}`);
     }
-    
-    // Handle remove item buttons
+      // Handle remove item buttons
     $(document).on('click', '.remove-item-btn', function() {
         const productName = $(this).data('product-name');
         const accessoryIdx = $(this).data('accessory-idx');
         
         if (productName) {
+            // Remove the product
             cart.products = cart.products.filter(p => p.name !== productName);
+            
+            // Check if there are any products left in cart
+            const remainingProductCount = cart.products.length;
+            
+            if (remainingProductCount === 0) {
+                // If no products left, remove all additionals
+                cart.accessories = [];
+                notyf.error("All additionals removed as no products remain in cart.");
+            } else {
+                // Check if we need to remove excess additionals due to product limit
+                // Group additionals by name and count them
+                const additionalGroups = {};
+                cart.accessories.forEach((item, idx) => {
+                    if (!additionalGroups[item.name]) {
+                        additionalGroups[item.name] = [];
+                    }
+                    additionalGroups[item.name].push(idx);
+                });
+                
+                // Remove excess additionals that exceed remaining product count
+                const indicesToRemove = [];
+                Object.entries(additionalGroups).forEach(([name, indices]) => {
+                    if (indices.length > remainingProductCount) {
+                        // Keep only up to remainingProductCount, mark rest for removal
+                        const excessIndices = indices.slice(remainingProductCount);
+                        indicesToRemove.push(...excessIndices);
+                    }
+                });
+                
+                // Remove excess additionals (sort indices in descending order to avoid index shifting)
+                if (indicesToRemove.length > 0) {
+                    indicesToRemove.sort((a, b) => b - a).forEach(idx => {
+                        cart.accessories.splice(idx, 1);
+                    });
+                    
+                    notyf.error(`Removed ${indicesToRemove.length} excess additional item(s) due to product removal.`);
+                }
+            }
         } else if (accessoryIdx !== undefined) {
             cart.accessories.splice(accessoryIdx, 1);
         }
