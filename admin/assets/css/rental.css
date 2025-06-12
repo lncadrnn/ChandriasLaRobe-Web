@@ -867,7 +867,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   transition: left 0.3s ease;
 }
 
@@ -1547,23 +1547,23 @@
 /* Customer Modal Content */
 #customer-modal .modal-content {
     background: white;
-    border-radius: 20px;
-    max-width: 900px;
+    border-radius: 12px;
+    max-width: 1200px;
     width: 95%;
     max-height: 90vh;
     overflow: hidden;
-    box-shadow: 0 25px 80px rgba(255, 105, 180, 0.4);
-    animation: modalSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    animation: modalSlideUp 0.3s ease-out;
     display: flex;
     flex-direction: column;
-    border: 2px solid var(--secondary-color);
+    border: 1px solid #e0e0e0;
     position: relative;
 }
 
 @keyframes modalSlideUp {
     from {
         opacity: 0;
-        transform: translateY(60px) scale(0.95);
+        transform: translateY(30px) scale(0.98);
     }
     to {
         opacity: 1;
@@ -1573,40 +1573,18 @@
 
 /* Customer Modal Header */
 #customer-modal .modal-header {
-    background: linear-gradient(135deg, var(--primary-color) 0%, #ff6b9d 100%);
+    background: var(--primary-color);
     color: white;
-    padding: 2rem 2.5rem 1.5rem;
-    border-radius: 20px 20px 0 0;
+    padding: 1.5rem 2rem;
+    border-radius: 12px 12px 0 0;
     position: relative;
-    overflow: hidden;
-}
-
-#customer-modal .modal-header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
-    pointer-events: none;
 }
 
 #customer-modal .modal-header h3 {
     margin: 0;
-    font-size: 1.75rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-#customer-modal .modal-header h3::before {
-    content: '📋';
     font-size: 1.5rem;
+    font-weight: 600;
+    position: relative;
 }
 
 /* Customer Modal Close Button */
@@ -1636,11 +1614,11 @@
 
 /* Customer Modal Body */
 #customer-modal .modal-body {
-    padding: 2.5rem;
+    padding: 1.5rem;
     overflow-y: auto;
     flex: 1;
     min-height: 0;
-    background: #fafafa;
+    background: white;
 }
 
 #customer-modal .modal-body::-webkit-scrollbar {
@@ -1663,53 +1641,38 @@
 
 /* Form Sections */
 #customer-modal .form-section {
-    background: white;
-    border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e8f4fd;
-    position: relative;
-    overflow: hidden;
-}
-
-#customer-modal .form-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-    border-radius: 16px 16px 0 0;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid #e9ecef;
 }
 
 #customer-modal .form-section:last-of-type {
     margin-bottom: 0;
 }
 
-/* Form Section Headers (if needed) */
+/* Form Section Headers */
 #customer-modal .form-section h4 {
-    color: var(--primary-color);
-    font-size: 1.25rem;
+    color: #333;
+    font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 2px solid var(--secondary-color);
-    position: relative;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
 }
 
 /* Form Rows */
 #customer-modal .form-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
     margin-bottom: 0;
 }
 
 /* Form Groups */
 #customer-modal .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 #customer-modal .form-group:last-child {
@@ -1719,23 +1682,10 @@
 /* Form Labels */
 #customer-modal .form-group label {
     display: block;
-    margin-bottom: 0.75rem;
-    font-weight: 600;
-    color: #333;
-    font-size: 0.95rem;
-    letter-spacing: 0.3px;
-    position: relative;
-}
-
-#customer-modal .form-group label::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 30px;
-    height: 2px;
-    background: var(--primary-color);
-    border-radius: 1px;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.9rem;
 }
 
 /* Form Inputs */
@@ -1743,13 +1693,13 @@
 #customer-modal .form-group select,
 #customer-modal .form-group textarea {
     width: 100%;
-    padding: 1rem 1.25rem;
-    border: 2px solid #e1e8ed;
-    border-radius: 12px;
-    font-size: 1rem;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 0.9rem;
     background: white;
-    color: #333;
-    transition: all 0.3s ease;
+    color: #495057;
+    transition: border-color 0.2s ease;
     font-family: inherit;
     box-sizing: border-box;
 }
@@ -1759,8 +1709,7 @@
 #customer-modal .form-group textarea:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 4px rgba(255, 105, 180, 0.1);
-    background: #fefefe;
+    box-shadow: 0 0 0 2px rgba(255, 105, 180, 0.15);
 }
 
 #customer-modal .form-group input:hover,
@@ -1809,45 +1758,24 @@
 /* Submit Button */
 #customer-modal #customer-form-submit {
     width: 100%;
-    background: linear-gradient(135deg, var(--primary-color) 0%, #ff6b9d 100%);
+    background: var(--primary-color);
     color: white;
     border: none;
-    padding: 1.25rem 2rem;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 1.5rem;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 6px 20px rgba(255, 105, 180, 0.3);
-}
-
-#customer-modal #customer-form-submit::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s ease;
+    transition: background-color 0.2s ease;
+    margin-top: 1rem;
 }
 
 #customer-modal #customer-form-submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(255, 105, 180, 0.4);
-}
-
-#customer-modal #customer-form-submit:hover::before {
-    left: 100%;
+    background: #ff4d7a;
 }
 
 #customer-modal #customer-form-submit:active {
-    transform: translateY(0);
+    background: #e6447a;
 }
 
 /* Date wrapper visibility handling */
@@ -1859,152 +1787,53 @@
     display: block !important;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    #customer-modal .modal-content {
-        width: 98%;
-        margin: 1rem;
-        max-height: 95vh;
-        border-radius: 16px;
-    }
-    
-    #customer-modal .modal-header {
-        padding: 1.5rem 1.5rem 1rem;
-        border-radius: 16px 16px 0 0;
-    }
-    
-    #customer-modal .modal-header h3 {
-        font-size: 1.5rem;
-    }
-    
-    #customer-modal .customer-close {
-        top: 1rem;
-        right: 1.5rem;
-        width: 35px;
-        height: 35px;
-        font-size: 1.25rem;
-    }
-    
-    #customer-modal .modal-body {
-        padding: 1.5rem;
-    }
-    
-    #customer-modal .form-section {
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-        border-radius: 12px;
-    }
-    
-    #customer-modal .form-row {
-        grid-template-columns: 1fr;
-        gap: 0;
-    }
-    
-    #customer-modal .form-group {
-        margin-bottom: 1.25rem;
-    }
-    
-    #customer-modal .form-group input,
-    #customer-modal .form-group select,
-    #customer-modal .form-group textarea {
-        padding: 0.875rem 1rem;
-        border-radius: 10px;
-        font-size: 0.95rem;
-    }
-    
-    #customer-modal #customer-form-submit {
-        padding: 1rem 1.5rem;
-        font-size: 1rem;
-        border-radius: 10px;
-        margin-top: 1rem;
-    }
+/* Payment-specific styles */
+.change-amount {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    background: #f8f9fa;
+    font-size: 0.9rem;
+    font-weight: 600;
+    min-height: 38px;
 }
 
-@media (max-width: 480px) {
-    #customer-modal .modal-content {
-        width: 100%;
-        margin: 0.5rem;
-        border-radius: 12px;
-    }
-    
-    #customer-modal .modal-header {
-        padding: 1.25rem;
-        border-radius: 12px 12px 0 0;
-    }
-    
-    #customer-modal .modal-header h3 {
-        font-size: 1.25rem;
-    }
-    
-    #customer-modal .modal-body {
-        padding: 1.25rem;
-    }
-    
-    #customer-modal .form-section {
-        padding: 1.25rem;
-        border-radius: 10px;
-    }
-    
-    #customer-modal .form-group input,
-    #customer-modal .form-group select,
-    #customer-modal .form-group textarea {
-        padding: 0.75rem;
-        border-radius: 8px;
-    }
+.change-amount.positive {
+    color: #28a745;
+    background: #d4edda;
+    border-color: #c3e6cb;
 }
 
-/* Animation for form sections when they become visible */
-#customer-modal .form-section {
-    animation: slideInUp 0.3s ease-out;
+.change-amount.negative {
+    color: #dc3545;
+    background: #f8d7da;
+    border-color: #f5c6cb;
 }
 
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.change-amount.negative::after {
+    content: " (short)";
+    font-weight: normal;
+    opacity: 0.8;
 }
 
-/* Focus states enhancement */
-#customer-modal .form-group input:focus,
-#customer-modal .form-group select:focus,
-#customer-modal .form-group textarea:focus {
-    animation: focusPulse 0.3s ease;
+.payment-warning {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 0.8rem;
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+    color: #856404;
+    font-size: 0.85rem;
+    text-align: center;
+    min-height: 38px;
 }
 
-@keyframes focusPulse {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.02);
-    }
-    100% {
-        transform: scale(1);
-    }
+/* Conditional field visibility */
+.payment-field-hidden {
+    display: none !important;
 }
-
-/* Enhanced visual feedback for required fields */
-#customer-modal .form-group input[required],
-#customer-modal .form-group select[required] {
-    position: relative;
-}
-
-#customer-modal .form-group input[required]:invalid,
-#customer-modal .form-group select[required]:invalid {
-    border-color: #ff6b6b;
-    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
-}
-
-/* Success state for valid inputs */
-#customer-modal .form-group input:valid:not(:placeholder-shown),
-#customer-modal .form-group select:valid {
-    border-color: #51cf66;
-    box-shadow: 0 0 0 3px rgba(81, 207, 102, 0.1);
-}
-
-/* ====== END OF CUSTOMER INFORMATION MODAL STYLES ====== */

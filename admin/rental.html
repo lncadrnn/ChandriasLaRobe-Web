@@ -296,52 +296,70 @@
                     <span class="close-modal customer-close" title="Close">
                         <i class="bx bx-x"></i>
                     </span>
-                </div>
-                <div class="modal-body">
+                </div>                <div class="modal-body">
                     <form id="customer-form" autocomplete="off">
-                        <!-- Client Information -->
+                        <!-- Order Summary -->
                         <div class="form-section">
-                            <div class="form-group">
-                                <label for="client-full-name">Client Full Name</label>
-                                <input type="text" id="client-full-name" required />
-                            </div>
-                            <div class="form-group">
-                                <label for="client-contact">Client Contact Number</label>
-                                <input type="text" id="client-contact" />
+                            <h4>Order Summary</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="client-product-code">Products</label>
+                                    <textarea id="client-product-code" readonly rows="2" placeholder="No products selected"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="client-additional-code">Additional Items</label>
+                                    <textarea id="client-additional-code" readonly rows="2" placeholder="No additional items"></textarea>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Product Information -->
+                        <!-- Customer Information -->
                         <div class="form-section">
-                            <div class="form-group">
-                                <label for="client-product-code">Selected Products</label>
-                                <div class="expandable-field">
-                                    <textarea id="client-product-code" readonly rows="2" placeholder="No products selected"></textarea>
+                            <h4>Customer Information</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="client-full-name">Name</label>
+                                    <input type="text" id="client-full-name" required />
+                                </div>
+                                <div class="form-group">
+                                    <label for="client-contact">Contact</label>
+                                    <input type="text" id="client-contact" />
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label for="client-additional-code">Additional Items</label>
-                                <div class="expandable-field">
-                                    <textarea id="client-additional-code" readonly rows="1" placeholder="No additional items"></textarea>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="rental-type">Rental Type</label>
+                                    <select id="rental-type" required>
+                                        <option value="">Select Type</option>
+                                        <option value="Open Rental">Open Rental</option>
+                                        <option value="Fixed Rental">Fixed Rental</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="client-region">Region</label>
+                                    <select id="client-region" required></select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="client-city">City</label>
+                                    <select id="client-city" required></select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="client-address">Address</label>
+                                    <input type="text" id="client-address" required />
                                 </div>
                             </div>
                         </div>
 
                         <!-- Rental Details -->
                         <div class="form-section">
+                            <h4>Rental Details</h4>
                             <div class="form-row">
-                                <div class="form-group">
-                                    <label for="rental-type">Rental Type</label>
-                                    <select id="rental-type" required>
-                                        <option value="">Select Rental Type</option>
-                                        <option value="Open Rental">Open Rental</option>
-                                        <option value="Fixed Rental">Fixed Rental</option>
-                                    </select>
-                                </div>
                                 <div class="form-group">
                                     <label for="event-type">Event Type</label>
                                     <select id="event-type" required>
-                                        <option value="">Select Event Type</option>
+                                        <option value="">Select Event</option>
                                         <option value="Sagala">Sagala</option>
                                         <option value="Grad Ball">Grad Ball</option>
                                         <option value="Debut">Debut</option>
@@ -350,38 +368,37 @@
                                         <option value="Other Outdoor Events">Other Outdoor Events</option>
                                     </select>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Date Section -->
-                        <div class="form-section" id="open-rental-dates-wrapper" style="display: none;">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="event-start-date">Event Start Date</label>
-                                    <input type="date" id="event-start-date" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="event-end-date">Event End Date</label>
-                                    <input type="date" id="event-end-date" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-section" id="fixed-details-row">
-                            <div class="form-row">
-                                <div class="form-group" id="fixed-event-date-wrapper">
-                                    <label for="fixed-event-date">Event Date</label>
-                                    <input type="date" id="fixed-event-date" />
-                                </div>
                                 <div class="form-group" id="rental-fee-wrapper">
                                     <label for="client-rental-fee">Rental Fee</label>
                                     <input type="text" id="client-rental-fee" readonly />
                                 </div>
                             </div>
+                            
+                            <!-- Open Rental Dates -->
+                            <div class="form-row" id="open-rental-dates-wrapper" style="display: none;">
+                                <div class="form-group">
+                                    <label for="event-start-date">Start Date</label>
+                                    <input type="date" id="event-start-date" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="event-end-date">End Date</label>
+                                    <input type="date" id="event-end-date" />
+                                </div>
+                            </div>
+
+                            <!-- Fixed Rental Date -->
+                            <div class="form-row" id="fixed-details-row">
+                                <div class="form-group" id="fixed-event-date-wrapper">
+                                    <label for="fixed-event-date">Event Date</label>
+                                    <input type="date" id="fixed-event-date" />
+                                </div>
+                                <div class="form-group"></div>
+                            </div>
                         </div>
 
                         <!-- Payment Information -->
                         <div class="form-section">
+                            <h4>Payment Information</h4>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="payment-method">Payment Method</label>
@@ -394,17 +411,38 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="payment-type">Payment Type</label>
-                                    <select id="payment-type" required>
-                                        <option value="">Select Payment Type</option>
+                                    <label for="payment-status">Payment Status</label>
+                                    <select id="payment-status" required>
+                                        <option value="">Select Status</option>
                                         <option value="Full Payment">Full Payment</option>
                                         <option value="Down Payment">Down Payment</option>
                                     </select>
                                 </div>
                             </div>
-                        </div>
+                            
+                            <!-- Cash Payment Fields -->
+                            <div class="form-row" id="cash-payment-fields" style="display: none;">
+                                <div class="form-group">
+                                    <label for="cash-received">Amount Received</label>
+                                    <input type="number" id="cash-received" min="0" step="0.01" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="change-display">Change</label>
+                                    <div id="change-display" class="change-amount">₱0.00</div>
+                                </div>
+                            </div>
 
-                        <div class="form-section">
+                            <!-- Digital Payment Fields -->
+                            <div class="form-row" id="digital-payment-fields" style="display: none;">
+                                <div class="form-group">
+                                    <label for="reference-no">Reference Number</label>
+                                    <input type="text" id="reference-no" />
+                                </div>
+                                <div class="form-group">
+                                    <div class="payment-warning">⚠️ Verify payment before confirming rental</div>
+                                </div>
+                            </div>
+
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="total-payment">Total Payment</label>
@@ -417,37 +455,11 @@
                             </div>
                         </div>
 
+                        <!-- Additional Information -->
                         <div class="form-section">
+                            <h4>Additional Information</h4>
                             <div class="form-group">
-                                <label for="reference-no">Reference Number</label>
-                                <input type="text" id="reference-no" />
-                            </div>
-                        </div>
-
-                        <!-- Address Information -->
-                        <div class="form-section">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="client-region">Region</label>
-                                    <select id="client-region" required></select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="client-city">City</label>
-                                    <select id="client-city" required></select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-section">
-                            <div class="form-group">
-                                <label for="client-address">Address</label>
-                                <input type="text" id="client-address" required />
-                            </div>
-                        </div>
-
-                        <div class="form-section">
-                            <div class="form-group">
-                                <label for="client-notes">Additional Notes / Repair</label>
+                                <label for="client-notes">Notes / Repair Instructions</label>
                                 <textarea id="client-notes" rows="2" placeholder="Enter any additional notes or repair instructions"></textarea>
                             </div>
                         </div>
@@ -455,7 +467,7 @@
                         <button type="submit" id="customer-form-submit">
                             Submit Rental
                         </button>
-                    </form>                </div>
+                    </form></div>
             </div>
         </div>
             </div>        </main>        <!-- Mobile Bottom Navigation (hidden on desktop) -->
