@@ -1363,63 +1363,130 @@
     box-shadow: none;
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
-    .rental-container {
-        grid-template-columns: 1fr 350px;
-    }
+/* Table column width adjustments */
+.products-table th:nth-child(1) { width: 80px; }    /* Image */
+.products-table th:nth-child(2) { width: 200px; }   /* Product Name - shortened */
+.products-table th:nth-child(3) { width: 120px; }   /* Product Code */
+.products-table th:nth-child(4) { width: 100px; }   /* Category */
+.products-table th:nth-child(5) { width: 150px; }   /* Size - widened */
+.products-table th:nth-child(6) { width: 100px; }   /* Price */
+
+.products-table td:nth-child(1) { width: 80px; }
+.products-table td:nth-child(2) { width: 200px; }
+.products-table td:nth-child(3) { width: 120px; }
+.products-table td:nth-child(4) { width: 100px; }
+.products-table td:nth-child(5) { width: 150px; }
+.products-table td:nth-child(6) { width: 100px; }
+
+/* Size button styling */
+.size-button {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 60px;
+    text-align: center;
 }
 
-@media (max-width: 968px) {
-    .rental-container {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr;
-        gap: 1rem;
-    }
-    
-    .order-section {
-        order: -1;
-        max-height: 400px;
-    }
-    
-    .products-table th,
-    .products-table td {
-        padding: 0.75rem;
-    }
-    
-    .product-image {
-        width: 40px;
-        height: 40px;
-    }
+.size-button:hover {
+    background: #ff1493;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 105, 180, 0.3);
 }
 
-@media (max-width: 640px) {
-    .rental-container {
-        padding: 0.5rem;
-    }
-    
-    .products-section,
-    .order-section {
-        padding: 1rem;
-    }
-    
-    .filter-section {
-        flex-wrap: wrap;
-    }
-    
-    .filter-btn {
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
-    }
-    
-    .products-table {
-        font-size: 0.85rem;
-    }
-    
-    .products-table th,
-    .products-table td {
-        padding: 0.5rem;
-    }
+.size-button:active {
+    transform: translateY(0);
 }
 
-/* ===== END TABLE-BASED RENTAL INTERFACE STYLES ===== */
+/* Remove description styling since we're removing it */
+.product-description {
+    display: none;
+}
+
+/* Compact product name styling */
+.product-name-compact {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+/* Multiple size buttons container */
+.size-buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* Small size button styling for multiple sizes in one row */
+.size-button-small {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.3rem 0.5rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    min-width: 40px;
+    min-height: 35px;
+    text-align: center;
+    margin: 2px;
+}
+
+.size-button-small:hover {
+    background: #ff1493;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(255, 20, 147, 0.3);
+}
+
+.size-button-small .stock-count {
+    font-size: 0.6rem;
+    font-weight: normal;
+    margin-top: 2px;
+    opacity: 0.9;
+}
+
+/* Sizes column styling */
+.sizes-column {
+    max-width: 150px;
+    padding: 0.5rem !important;
+}
+
+/* Responsive adjustments for small size buttons */
+@media (max-width: 768px) {
+    .size-button-small {
+        min-width: 35px;
+        min-height: 30px;
+        font-size: 0.7rem;
+        padding: 0.25rem 0.4rem;
+    }
+    
+    .size-button-small .stock-count {
+        font-size: 0.55rem;
+    }
+    
+    .size-buttons-container {
+        gap: 2px;
+    }
+}

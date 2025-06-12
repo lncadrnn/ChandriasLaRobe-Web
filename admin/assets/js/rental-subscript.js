@@ -1673,41 +1673,65 @@ $(document).ready(function () {
   
     // END OF JAVASCRIPT HERE
 
-    // ===== TABLE-BASED INTERFACE UI FUNCTIONS =====
-      // Function to populate the products table
+    // ===== TABLE-BASED INTERFACE UI FUNCTIONS =====    // Function to populate the products table
     function populateProductsTable(products, additionals) {
-        console.log('Populating table with:', products.length, 'products and', additionals.length, 'additionals');
-        
         const tableBody = $("#products-table-body");
         
         // Clear any existing content completely
         tableBody.empty();
         
-        console.log('Table cleared, current rows:', tableBody.find('tr').length);
+        const addedRows = new Set(); // Track added rows to prevent duplicates
         
-        // Add products to table (with sizes)
+        // Group products by their base product ID to combine sizes
+        const groupedProducts = new Map();
+        
         products.forEach(product => {
             if (product.size && typeof product.size === 'object') {
+                if (!groupedProducts.has(product.id)) {
+                    groupedProducts.set(product.id, {
+                        product: product,
+                        sizes: {}
+                    });
+                }
+                
+                // Add all sizes with stock > 0
                 Object.entries(product.size).forEach(([sizeKey, sizeStock]) => {
                     if (sizeStock > 0) {
-                        const row = createProductTableRow(product, sizeKey, sizeStock);
-                        tableBody.append(row);
+                        groupedProducts.get(product.id).sizes[sizeKey] = sizeStock;
                     }
                 });
             }
         });
         
+        // Create rows for grouped products (one row per product with multiple size buttons)
+        groupedProducts.forEach((productData, productId) => {
+            if (Object.keys(productData.sizes).length > 0) {
+                const rowId = `product-${productId}`;
+                
+                if (addedRows.has(rowId)) {
+                    return; // Skip duplicate
+                }
+                
+                addedRows.add(rowId);
+                const row = createProductTableRow(productData.product, productData.sizes);
+                tableBody.append(row);
+            }
+        });
+        
         // Add additionals to table
         additionals.forEach(additional => {
+            const rowId = `additional-${additional.id}`;
+            
+            if (addedRows.has(rowId)) {
+                return; // Skip duplicate
+            }
+            
+            addedRows.add(rowId);
             const row = createAdditionalTableRow(additional);
             tableBody.append(row);
         });
-        
-        console.log('Table populated, final rows:', tableBody.find('tr').length);
-    }
-    
-    // Create a table row for products
-    function createProductTableRow(product, size, stock) {
+    }      // Create a table row for products with multiple size buttons
+    function createProductTableRow(product, sizes) {
         const sizeLabels = {
             XS: "Extra Small",
             S: "Small", 
@@ -1718,9 +1742,38 @@ $(document).ready(function () {
             XXXL: "Triple Extra Large"
         };
         
-        const displaySize = sizeLabels[size] || size;
         const imageUrl = product.frontImageUrl || './assets/images/long-gown.png';
         const price = product.price || 0;
+        
+        // Create size buttons HTML
+        let sizeButtonsHTML = '';
+        const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+        
+        // Sort sizes by predefined order
+        const sortedSizes = Object.entries(sizes).sort(([sizeA], [sizeB]) => {
+            const indexA = sizeOrder.indexOf(sizeA);
+            const indexB = sizeOrder.indexOf(sizeB);
+            const orderA = indexA === -1 ? sizeOrder.length : indexA;
+            const orderB = indexB === -1 ? sizeOrder.length : indexB;
+            return orderA - orderB;
+        });
+        
+        sortedSizes.forEach(([size, stock]) => {
+            const displaySize = sizeLabels[size] || size;
+            sizeButtonsHTML += `
+                <button class="size-button size-button-small" 
+                        data-product-id="${product.id}"
+                        data-product-name="${product.name}"
+                        data-product-code="${product.code}"
+                        data-product-price="${price}"
+                        data-size="${size}"
+                        data-stock="${stock}"
+                        title="Click to add ${displaySize} to cart">
+                    ${size}
+                    <div class="stock-count">${stock}</div>
+                </button>
+            `;
+        });
         
         return $(`
             <tr class="product-row" 
@@ -1728,15 +1781,12 @@ $(document).ready(function () {
                 data-name="${product.name}" 
                 data-code="${product.code}"
                 data-price="${price}"
-                data-size="${size}"
-                data-stock="${stock}"
                 data-category="products">
                 <td>
                     <img src="${imageUrl}" alt="${product.name}" class="product-image" />
                 </td>
                 <td>
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-description">${product.description || ''}</div>
+                    <div class="product-name-compact">${product.name}</div>
                 </td>
                 <td>
                     <span class="product-code">${product.code}</span>
@@ -1744,9 +1794,10 @@ $(document).ready(function () {
                 <td>
                     <span class="category-badge">Product</span>
                 </td>
-                <td>
-                    <div class="size-info">${displaySize} (${size})</div>
-                    <div class="size-stock">Stock: ${stock}</div>
+                <td class="sizes-column">
+                    <div class="size-buttons-container">
+                        ${sizeButtonsHTML}
+                    </div>
                 </td>
                 <td>
                     <span class="price-display">₱${price.toLocaleString()}</span>
@@ -1754,8 +1805,7 @@ $(document).ready(function () {
             </tr>
         `);
     }
-    
-    // Create a table row for additionals
+      // Create a table row for additionals
     function createAdditionalTableRow(additional) {
         const imageUrl = additional.imageUrl || './assets/images/accessory-sets.png';
         const price = additional.price || 0;
@@ -1771,8 +1821,7 @@ $(document).ready(function () {
                     <img src="${imageUrl}" alt="${additional.name}" class="product-image" />
                 </td>
                 <td>
-                    <div class="product-name">${additional.name}</div>
-                    <div class="product-description">${additional.description || ''}</div>
+                    <div class="product-name-compact">${additional.name}</div>
                 </td>
                 <td>
                     <span class="product-code">${additional.code}</span>
@@ -1781,19 +1830,27 @@ $(document).ready(function () {
                     <span class="category-badge">Additional</span>
                 </td>
                 <td>
-                    <div class="size-info">One Size</div>
+                    <button class="size-button" 
+                            data-additional-id="${additional.id}"
+                            data-additional-name="${additional.name}"
+                            data-additional-code="${additional.code}"
+                            data-additional-price="${price}"
+                            title="Click to add to cart">
+                        ONE SIZE
+                    </button>
                 </td>
                 <td>
                     <span class="price-display">₱${price.toLocaleString()}</span>
                 </td>
             </tr>
         `);
+    }// Listen for data loaded event from rental-service (bind only once)
+    if (!window.rentalDataEventBound) {
+        window.rentalDataEventBound = true;
+        $(document).on('rentalDataLoaded', function(event, data) {
+            populateProductsTable(data.products, data.additionals);
+        });
     }
-      // Listen for data loaded event from rental-service
-    $(document).off('rentalDataLoaded').on('rentalDataLoaded', function(event, data) {
-        console.log('Data loaded event triggered:', data);
-        populateProductsTable(data.products, data.additionals);
-    });
     
     // Filter functionality
     $(document).on('click', '.filter-btn', function() {
@@ -1829,27 +1886,54 @@ $(document).ready(function () {
             }
         });
     });
-    
-    // Handle product row clicks
-    $(document).on('click', '.product-row', function() {
-        const productId = $(this).data('id');
-        const productName = $(this).data('name');
-        const productCode = $(this).data('code');
-        const productPrice = $(this).data('price');
+      // Handle size button clicks for products
+    $(document).on('click', '.size-button[data-product-id]', function(e) {
+        e.stopPropagation(); // Prevent row click
+        
+        const productId = $(this).data('product-id');
+        const productName = $(this).data('product-name');
+        const productCode = $(this).data('product-code');
+        const productPrice = $(this).data('product-price');
         const size = $(this).data('size');
         const stock = $(this).data('stock');
         
         showProductSizeModal(productId, productName, productCode, productPrice, size, stock);
     });
-    
-    // Handle additional row clicks
-    $(document).on('click', '.additional-row', function() {
-        const additionalId = $(this).data('id');
-        const additionalName = $(this).data('name');
-        const additionalCode = $(this).data('code');
-        const additionalPrice = $(this).data('price');
+
+    // Handle size button clicks for additionals
+    $(document).on('click', '.size-button[data-additional-id]', function(e) {
+        e.stopPropagation(); // Prevent row click
+        
+        const additionalId = $(this).data('additional-id');
+        const additionalName = $(this).data('additional-name');
+        const additionalCode = $(this).data('additional-code');
+        const additionalPrice = $(this).data('additional-price');
         
         addAdditionalToCart(additionalId, additionalName, additionalCode, additionalPrice);
+    });
+
+    // Handle product row clicks (for product details, not size selection)
+    $(document).on('click', '.product-row', function(e) {
+        // Only trigger if not clicking on size button
+        if (!$(e.target).closest('.size-button').length) {
+            const productName = $(this).data('name');
+            const productCode = $(this).data('code');
+            
+            // You can add product details modal here if needed
+            console.log(`Product details: ${productName} (${productCode})`);
+        }
+    });
+
+    // Handle additional row clicks (for additional details, not adding to cart)
+    $(document).on('click', '.additional-row', function(e) {
+        // Only trigger if not clicking on size button
+        if (!$(e.target).closest('.size-button').length) {
+            const additionalName = $(this).data('name');
+            const additionalCode = $(this).data('code');
+            
+            // You can add additional details modal here if needed
+            console.log(`Additional details: ${additionalName} (${additionalCode})`);
+        }
     });
     
     // Show product size modal with quantity selection
