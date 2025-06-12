@@ -5,15 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Chandria's La Robe - Inventory Management</title>
       <!-- Boxicons CSS -->
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    
-    <!-- Cropper.js CSS -->
+      <!-- Cropper.js CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
-    
-    <!-- Notyf CSS for notifications -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="assets/reusable css/sidebar.css">
+      <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/reusable/sidebar/sidebar.css">
+    <link rel="stylesheet" href="assets/reusable/notyf/notyf.css">
     <link rel="stylesheet" href="assets/css/inventory.css">
 </head>
 <body>
@@ -549,12 +545,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
     <!-- Cropper.js Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
-    
-    <!-- Notyf JS for notifications -->
-    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-      <!-- Custom JavaScript -->
-    <script src="assets/js/sidebar.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>    <!-- Custom JavaScript -->
+    <script src="assets/reusable/sidebar/sidebar.js"></script>
+    <script src="assets/reusable/notyf/notyf.js"></script>
     <script src="assets/js/inventory.js"></script>
       <!-- Cloudinary Configuration -->
     <script src="assets/js/js firebase/cloudinary-config.js"></script>
@@ -583,141 +576,10 @@
             } catch (error) {
                 console.error('❌ Firebase connection check failed:', error);
                 return false;
-            }
-        };// Initialize Notyf for notifications with auto-removal
-        const notyf = new Notyf({
-            duration: 3000, // 3 seconds display time
-            position: { x: 'center', y: 'top' },
-            dismissible: true,
-            ripple: false, // Disable ripple effect for cleaner animations
-            types: [
-                {
-                    type: 'success',
-                    background: '#10b981', // Solid green
-                    duration: 3000,
-                    dismissible: true,
-                    icon: {
-                        className: 'bx bx-check-circle',
-                        tagName: 'i',
-                        text: '',
-                        color: '#ffffff'
-                    }
-                },
-                {
-                    type: 'error',
-                    background: '#ef4444', // Solid red
-                    duration: 4000,
-                    dismissible: true,
-                    icon: {
-                        className: 'bx bx-x-circle',
-                        tagName: 'i',
-                        text: '',
-                        color: '#ffffff'
-                    }
-                },
-                {
-                    type: 'info',
-                    background: '#3b82f6', // Solid blue
-                    duration: 3000,
-                    dismissible: true,
-                    icon: {
-                        className: 'bx bx-info-circle',
-                        tagName: 'i',
-                        text: '',
-                        color: '#ffffff'
-                    }
-                },
-                {
-                    type: 'warning',
-                    background: '#f59e0b', // Solid orange
-                    duration: 3000,
-                    dismissible: true,
-                    icon: {
-                        className: 'bx bx-error-circle',
-                        tagName: 'i',
-                        text: '',
-                        color: '#ffffff'
-                    }
-                },
-                {
-                    type: 'firebase',
-                    background: '#8b5cf6', // Solid purple
-                    duration: 3000,
-                    dismissible: true,
-                    icon: {
-                        className: 'bx bx-data',
-                        tagName: 'i',
-                        text: '',
-                        color: '#ffffff'
-                    }
-                }
-            ]
-        });
-        
-        // Make Notyf available globally
-        window.notyf = notyf;
-          // Enhanced notification removal with proper cleanup
-        const originalDismiss = notyf.dismiss;
-        notyf.dismiss = function(notification) {
-            if (notification && notification.targetElement) {
-                // Add fade-out class for smooth animation
-                notification.targetElement.classList.add('notyf__toast--disappear');
-                
-                // Remove after animation completes
-                setTimeout(() => {
-                    if (notification.targetElement && notification.targetElement.parentNode) {
-                        originalDismiss.call(this, notification);
-                    }
-                }, 400); // Match the CSS animation duration
-            } else {
-                originalDismiss.call(this, notification);
-            }
-        };
-        
-        // Auto-dismiss with fade-out for all notifications
-        const originalOpen = notyf.open;
-        notyf.open = function(options) {
-            const notification = originalOpen.call(this, options);
-            
-            // Set up auto-dismiss with smooth removal
-            if (notification && notification.options && notification.options.duration) {
-                setTimeout(() => {
-                    if (notification.targetElement && 
-                        notification.targetElement.parentNode && 
-                        !notification.targetElement.classList.contains('notyf__toast--disappear')) {
-                        this.dismiss(notification);
-                    }
-                }, notification.options.duration);
-            }
-            
-            return notification;
-        };
-        
-        // Additional cleanup function to ensure no lingering notifications
-        const cleanupNotifications = () => {
-            const notificationElements = document.querySelectorAll('.notyf__toast');
-            notificationElements.forEach((element, index) => {
-                // If notification has been visible for more than 10 seconds, force cleanup
-                if (element.dataset.createdAt) {
-                    const createdTime = parseInt(element.dataset.createdAt);
-                    const now = Date.now();
-                    if (now - createdTime > 10000) { // 10 seconds
-                        element.classList.add('notyf__toast--disappear');
-                        setTimeout(() => {
-                            if (element.parentNode) {
-                                element.remove();
-                            }
-                        }, 400);
-                    }
-                } else {
-                    // Mark creation time for tracking
-                    element.dataset.createdAt = Date.now().toString();
-                }
-            });
-        };
-        
-        // Run cleanup every 5 seconds to ensure no notifications get stuck
-        setInterval(cleanupNotifications, 5000);        // Enhanced initialization with better error diagnostics
+            }        };        // Simple notification system is initialized in inventory.js
+        // No additional configuration needed here
+
+        // Enhanced initialization with better error diagnostics
         document.addEventListener('DOMContentLoaded', async function() {
             try {
                 console.log('🚀 Initializing Firebase inventory services...');
@@ -726,11 +588,10 @@
                 
                 // Wait a moment for modules to load
                 await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                // Check if InventoryFetcher is available
+                  // Check if InventoryFetcher is available
                 if (!window.InventoryFetcher) {
                     console.error('❌ InventoryFetcher not available');
-                    notyf.error('Firebase service not loaded properly');
+                    window.notyf?.error('Firebase service not loaded properly');
                     return;
                 }
                 
@@ -743,7 +604,7 @@
                 
                 if (!isConnected) {
                     console.warn('⚠️ Firebase connection failed - using offline mode');
-                    notyf.warning('Working in offline mode - Firebase unavailable');
+                    window.notyf?.warning('Working in offline mode - Firebase unavailable');
                     
                     // Log detailed connection info
                     console.log('🔍 Connection details:');
@@ -776,20 +637,18 @@
                     
                     // Load initial data from Firebase
                     console.log('📦 Loading initial data...');
-                    await loadInventoryFromFirebase();
-                } else {
+                    await loadInventoryFromFirebase();                } else {
                     console.error('❌ Failed to initialize Firebase services:', initResult.message);
-                    notyf.error(`Firebase initialization failed: ${initResult.message}`);
+                    window.notyf?.error(`Firebase initialization failed: ${initResult.message}`);
                 }
                 
             } catch (error) {
                 console.error('❌ Error initializing Firebase:', error);
                 console.log('🔍 Error details:', {
                     name: error.name,
-                    message: error.message,
-                    stack: error.stack
+                    message: error.message,                    stack: error.stack
                 });
-                notyf.error(`Firebase connection failed: ${error.message}`);
+                window.notyf?.error(`Firebase connection failed: ${error.message}`);
                 
                 // Don't show additional alerts, let user use offline mode
                 setTimeout(() => {
@@ -845,122 +704,20 @@
                         window.loadAdditionals();
                     }
                 }
-                
-                // Show product count notification only
+                  // Show product count notification only
                 if (products.length > 0 || additionals.length > 0) {
-                    notyf.success(`📦 Loaded ${products.length} products and ${additionals.length} additionals`);
+                    window.notyf.success(`📦 Loaded ${products.length} products and ${additionals.length} additionals`);
                 } else {
-                    notyf.info('📦 No products found in database');
+                    window.notyf.info('📦 No products found in database');
                 }
                 
             } catch (error) {
                 console.error('❌ Error loading inventory from Firebase:', error);
-                notyf.error(`Failed to load inventory data: ${error.message}`);
+                window.notyf.error(`Failed to load inventory data: ${error.message}`);
             }
         }
-        
-        // Make the load function available globally
-        window.loadInventoryFromFirebase = loadInventoryFromFirebase;
-        
-        // Debug function to test Firebase connection
-        window.testFirebaseConnection = async function() {
-            try {
-                console.log('🧪 Testing Firebase connection...');
-                
-                // Test basic connection
-                const isConnected = await window.checkFirebaseStatus();
-                console.log(`📡 Basic connection test: ${isConnected ? 'PASS' : 'FAIL'}`);
-                
-                if (!isConnected) {
-                    console.error('❌ Firebase connection failed - check network and credentials');
-                    return false;
-                }
-                
-                // Test InventoryFetcher
-                if (!window.InventoryFetcher) {
-                    console.error('❌ InventoryFetcher not available');
-                    return false;
-                }
-                
-                console.log(`📡 InventoryFetcher available: PASS`);
-                console.log(`📡 InventoryFetcher connected: ${window.InventoryFetcher.getConnectionStatus() ? 'PASS' : 'FAIL'}`);
-                
-                // Test basic data fetch
-                try {
-                    const products = await window.InventoryFetcher.fetchProducts();
-                    console.log(`📡 Product fetch test: PASS (${products.length} products)`);
-                } catch (error) {
-                    console.error('❌ Product fetch test: FAIL', error);
-                    return false;
-                }
-                
-                console.log('✅ All Firebase tests passed!');
-                return true;
-                
-            } catch (error) {
-                console.error('❌ Firebase test failed:', error);
-                return false;
-            }
-        };
-        
-        // Debug function to manually test product saving
-        window.testProductSave = async function() {
-            const testProduct = {
-                name: 'Test Product',
-                category: 'ball-gown',
-                sizes: { 'S': 1, 'M': 1 },
-                sleeves: 'sleeveless',
-                color: 'Red',
-                colorHex: '#FF0000',
-                rentalPrice: 100,
-                status: 'available',
-                description: 'Test product for debugging'
-            };
-            
-            try {
-                console.log('🧪 Testing product save...');
-                const savedProduct = await window.InventoryFetcher.addProduct(testProduct);
-                console.log('✅ Product save test: PASS', savedProduct);
-                return savedProduct;
-            } catch (error) {
-                console.error('❌ Product save test: FAIL', error);
-                throw error;
-            }
-        };
-
-        // Debug function to test Cloudinary connection
-window.testCloudinaryConnection = async function() {
-    try {
-        console.log('☁️ Testing Cloudinary connection...');
-        
-        // Perform a simple upload test with a small placeholder image
-        const testImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA\n\
-        AAAFCAYAAACNbyblAAAAHElEQVR42mJ8//8/w38GIAXDIBKE0jDgAAAABJRU5ErkJggg==';
-        
-        // Upload to Cloudinary
-        const result = await window.cloudinaryUpload(testImage, 'test/connection', 'Test upload for connection check');
-        
-        console.log('☁️ Cloudinary upload test result:', result);
-        
-        if (result && result.secure_url) {
-            notyf.success('☁️ Cloudinary connection test successful!');
-        } else {
-            notyf.error('❌ Cloudinary connection test failed');
-        }
-    } catch (error) {
-        console.error('❌ Cloudinary connection test error:', error);
-        notyf.error(`❌ Cloudinary connection test error: ${error.message}`);
-    }
-};        // Debug Panel (temporary for troubleshooting)
-            <div style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; border-radius: 5px; z-index: 9999; font-size: 12px;">
-                <div style="margin-bottom: 5px;">🔧 Debug Panel</div>
-                <button onclick="window.testFirebaseConnection()" style="margin: 2px; padding: 4px 8px; font-size: 11px;">Test Firebase</button>
-                <button onclick="window.testProductSave()" style="margin: 2px; padding: 4px 8px; font-size: 11px;">Test Save</button>
-                <button onclick="window.testCloudinaryConnection()" style="margin: 2px; padding: 4px 8px; font-size: 11px;">Test Cloudinary</button>
-            </div>
-
-            <!-- ...existing main content... -->
-    </script>
+          // Make the load function available globally
+        window.loadInventoryFromFirebase = loadInventoryFromFirebase;    </script>
   
 </body>
 </html>
