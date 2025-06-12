@@ -2008,44 +2008,24 @@ $(document).ready(function () {
         const emptyCart = $("#empty-cart");
         
         orderItems.find('.cart-item').remove();
-        
-        if (cart.products.length === 0 && cart.accessories.length === 0) {
+          if (cart.products.length === 0 && cart.accessories.length === 0) {
             emptyCart.show();
         } else {
             emptyCart.hide();
             
-            // Add products to display
-            const groupedProducts = {};
-            cart.products.forEach(item => {
-                if (!groupedProducts[item.name]) {
-                    groupedProducts[item.name] = {
-                        price: item.price,
-                        sizes: []
-                    };
-                }
-                groupedProducts[item.name].sizes.push({
-                    size: item.size,
-                    quantity: item.quantity
-                });
-            });
-            
-            Object.entries(groupedProducts).forEach(([name, group]) => {
-                let sizesHTML = "";
-                group.sizes.forEach(({ size, quantity }) => {
-                    sizesHTML += `${quantity} x ${size}<br>`;
-                });
-                
-                const total = group.sizes.reduce((sum, s) => sum + s.quantity * group.price, 0);
+            // Add individual product entries (not grouped)
+            cart.products.forEach((product, index) => {
+                const total = product.price * (product.quantity || 1);
                 
                 const cartItem = $(`
                     <div class="cart-item">
                         <div class="cart-item-info">
-                            <div class="cart-item-name">${name}</div>
-                            <div class="cart-item-details">${sizesHTML}</div>
+                            <div class="cart-item-name">${product.name}</div>
+                            <div class="cart-item-details">Size: ${product.size} | Qty: ${product.quantity || 1}</div>
                         </div>
                         <div class="cart-item-actions">
                             <div class="cart-item-price">₱${total.toLocaleString()}</div>
-                            <button class="remove-item-btn" data-product-name="${name}">
+                            <button class="remove-item-btn" data-product-index="${index}">
                                 <i class="bx bx-trash"></i>
                             </button>
                         </div>
@@ -2096,55 +2076,59 @@ $(document).ready(function () {
         ].reduce((sum, val) => sum + val, 0);
         
         $("#cart-total-amount").text(`₱${total.toLocaleString()}`);
-    }
-      // Handle remove item buttons
+    }    // Handle remove item buttons
     $(document).on('click', '.remove-item-btn', function() {
-        const productName = $(this).data('product-name');
+        const productIndex = $(this).data('product-index');
         const accessoryIdx = $(this).data('accessory-idx');
         
-        if (productName) {
-            // Remove the product
-            cart.products = cart.products.filter(p => p.name !== productName);
-            
-            // Check if there are any products left in cart
-            const remainingProductCount = cart.products.length;
-            
-            if (remainingProductCount === 0) {
-                // If no products left, remove all additionals
-                cart.accessories = [];
-                notyf.error("All additionals removed as no products remain in cart.");
-            } else {
-                // Check if we need to remove excess additionals due to product limit
-                // Group additionals by name and count them
-                const additionalGroups = {};
-                cart.accessories.forEach((item, idx) => {
-                    if (!additionalGroups[item.name]) {
-                        additionalGroups[item.name] = [];
-                    }
-                    additionalGroups[item.name].push(idx);
-                });
+        if (productIndex !== undefined) {
+            // Remove individual product-size entry by index
+            if (productIndex >= 0 && productIndex < cart.products.length) {
+                const removedProduct = cart.products.splice(productIndex, 1)[0];
                 
-                // Remove excess additionals that exceed remaining product count
-                const indicesToRemove = [];
-                Object.entries(additionalGroups).forEach(([name, indices]) => {
-                    if (indices.length > remainingProductCount) {
-                        // Keep only up to remainingProductCount, mark rest for removal
-                        const excessIndices = indices.slice(remainingProductCount);
-                        indicesToRemove.push(...excessIndices);
-                    }
-                });
+                // Check if there are any products left in cart
+                const remainingProductCount = cart.products.length;
                 
-                // Remove excess additionals (sort indices in descending order to avoid index shifting)
-                if (indicesToRemove.length > 0) {
-                    indicesToRemove.sort((a, b) => b - a).forEach(idx => {
-                        cart.accessories.splice(idx, 1);
+                if (remainingProductCount === 0) {
+                    // If no products left, remove all additionals
+                    cart.accessories = [];
+                    notyf.error("All additionals removed as no products remain in cart.");
+                } else {
+                    // Check if we need to remove excess additionals due to product limit
+                    // Group additionals by name and count them
+                    const additionalGroups = {};
+                    cart.accessories.forEach((item, idx) => {
+                        if (!additionalGroups[item.name]) {
+                            additionalGroups[item.name] = [];
+                        }
+                        additionalGroups[item.name].push(idx);
                     });
                     
-                    notyf.error(`Removed ${indicesToRemove.length} excess additional item(s) due to product removal.`);
+                    // Remove excess additionals that exceed remaining product count
+                    const indicesToRemove = [];
+                    Object.entries(additionalGroups).forEach(([name, indices]) => {
+                        if (indices.length > remainingProductCount) {
+                            // Keep only up to remainingProductCount, mark rest for removal
+                            const excessIndices = indices.slice(remainingProductCount);
+                            indicesToRemove.push(...excessIndices);
+                        }
+                    });
+                    
+                    // Remove excess additionals (sort indices in descending order to avoid index shifting)
+                    if (indicesToRemove.length > 0) {
+                        indicesToRemove.sort((a, b) => b - a).forEach(idx => {
+                            cart.accessories.splice(idx, 1);
+                        });
+                        
+                        notyf.error(`Removed ${indicesToRemove.length} excess additional item(s) due to product removal.`);
+                    }
                 }
+                
+                notyf.success(`Removed "${removedProduct.name}" (${removedProduct.size}) from cart.`);
             }
         } else if (accessoryIdx !== undefined) {
             cart.accessories.splice(accessoryIdx, 1);
+            notyf.success("Additional item removed from cart.");
         }
         
         updateNewCartDisplay();
