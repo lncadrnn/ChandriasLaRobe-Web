@@ -151,12 +151,12 @@
     border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    max-height: 450px; /* Reduced table height */
-    margin-bottom: 0; /* Small bottom margin */
+    height: 365px; /* Match appointments section height exactly */
+    margin-bottom: 0;
 }
 
 .table-header {
-    padding: 15px;
+    padding: 24px; /* Match appointments header padding */
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
@@ -246,9 +246,9 @@
 }
 
 .table-content {
-    overflow-y: auto; /* Show scrollbar */
+    overflow-y: auto;
     flex: 1;
-    max-height: 288px; /* Increased height to show more rows */
+    /* Remove max-height to allow table to fill available space */
 }
 
 table {
@@ -604,9 +604,11 @@ tr:hover {
     }
     
     .dashboard-table {
+        height: auto; /* Allow natural height on tablet */
         max-height: none;
     }
-      .table-content {
+      
+    .table-content {
         max-height: 250px; /* Keep reduced table scroll on tablet */
         overflow-y: auto; /* Enable scrollbar on tablet */
     }
@@ -634,11 +636,12 @@ tr:hover {
       .card-main {
         font-size: 3rem;
     }
-    
-    .dashboard-table {
+      .dashboard-table {
+        height: auto; /* Allow natural height on mobile */
         max-height: none;
     }
-      .table-content {
+      
+    .table-content {
         max-height: 200px; /* Smaller reduced content height on mobile */
         overflow-y: auto; /* Enable scrollbar on mobile */
         overflow-x: scroll; /* Keep horizontal scroll for wide tables */
@@ -652,8 +655,8 @@ tr:hover {
         max-height: 200px; /* Reduced height for mobile */
         overflow-y: auto; /* Enable scrollbar on mobile */
     }
-    
-    .table-header {
+      .table-header {
+        padding: 20px; /* Match mobile appointments header padding */
         flex-direction: column;
         align-items: stretch;
         gap: 16px;
@@ -727,9 +730,8 @@ tr:hover {
         padding: 8px 12px;
         font-size: 0.75rem;
     }
-    
-    .table-header {
-        padding: 15px;
+      .table-header {
+        padding: 16px; /* Match smallest mobile appointments header padding */
     }
     
     .appointments-header {
