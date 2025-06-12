@@ -1067,7 +1067,6 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    opacity: 0.9;
 }
 
 .crop-btn {
@@ -1388,64 +1387,483 @@
     overflow-x: hidden;
 }
 
-/* Image Upload Zone Improvements */
-.image-upload-container {
-    gap: 30px;
+/* =============== ADDITIONAL MODAL SPECIFIC STYLES =============== */
+
+/* Additional Modal Input Fields */
+#addAdditionalModal input[type="text"],
+#addAdditionalModal input[type="number"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #333;
+    background: white;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
-.image-upload-item label {
-    text-align: center;
+#addAdditionalModal input[type="text"]:focus,
+#addAdditionalModal input[type="number"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.1);
+}
+
+#addAdditionalModal input[readonly] {
+    background: #f8f9fa;
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+/* Additional Modal Buttons */
+#addAdditionalModal #cancelAddAdditionalBtn,
+#addAdditionalModal #saveAdditionalBtn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
     font-weight: 600;
-    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+#addAdditionalModal #saveAdditionalBtn {
+    background: linear-gradient(135deg, var(--primary-color), hsl(346, 100%, 80%));
+    color: white;
+}
+
+#addAdditionalModal #saveAdditionalBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 182, 193, 0.4);
+}
+
+#addAdditionalModal #cancelAddAdditionalBtn {
+    background: transparent;
+    color: #6c757d;
+    border: 2px solid #e9ecef;
+}
+
+#addAdditionalModal #cancelAddAdditionalBtn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+/* Form Section Styling */
+#addAdditionalModal .form-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+#addAdditionalModal .form-section h4 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 20px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+#addAdditionalModal .form-section h4 i {
+    color: var(--primary-color);
+    font-size: 18px;
+}
+
+/* Inclusion Section Styles */
+#addAdditionalModal .inclusion-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#addAdditionalModal .inclusion-checkbox:hover {
+    border-color: var(--primary-color);
+    background: rgba(255, 182, 193, 0.05);
+}
+
+#addAdditionalModal .inclusion-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+    cursor: pointer;
+}
+
+#addAdditionalModal .inclusion-checkbox span {
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+/* Inclusions Container */
+#addAdditionalModal #inclusionsContainer {
+    margin-top: 20px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    border: 2px solid var(--primary-color);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+        max-height: 0;
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        max-height: 500px;
+    }
+}
+
+#addAdditionalModal .inclusions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+#addAdditionalModal .inclusions-header h5 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#addAdditionalModal .inclusions-header h5::before {
+    content: "💎";
+    font-size: 18px;
+}
+
+#addAdditionalModal .inclusion-actions {
+    display: flex;
+    gap: 10px;
+}
+
+#addAdditionalModal .btn-sm {
+    padding: 8px 16px;
+    font-size: 12px;
+    border-radius: 6px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+#addAdditionalModal .btn-sm:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+#addAdditionalModal .btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+#addAdditionalModal .btn-danger:hover {
+    background: #c82333;
+}
+
+/* Inclusions List */
+#addAdditionalModal .inclusions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#addAdditionalModal .inclusion-item {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    animation: fadeInScale 0.3s ease-out;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+#addAdditionalModal .inclusion-item .form-group {
+    margin-bottom: 0;
+    position: relative;
+}
+
+#addAdditionalModal .inclusion-item .form-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+#addAdditionalModal .inclusion-item .form-group label::before {
+    content: "✨";
+    font-size: 14px;
+}
+
+#addAdditionalModal .inclusion-input {
+    width: 100%;
+    padding: 12px 45px 12px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+#addAdditionalModal .inclusion-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.1);
+}
+
+#addAdditionalModal .remove-single-inclusion {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-top: 14px; /* Adjust for label height */
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 12px;
+}
+
+#addAdditionalModal .remove-single-inclusion:hover {
+    background: #c82333;
+    transform: translateY(-50%) scale(1.1);
+    margin-top: 14px; /* Maintain position during hover */
+}
+
+/* Additional Image Upload Zone */
+#addAdditionalModal #additionalImageZone {
+    min-height: 250px;
+    border: 3px dashed #e9ecef;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+#addAdditionalModal #additionalImageZone:hover {
+    border-color: var(--primary-color);
+    background: rgba(255, 182, 193, 0.05);
+}
+
+#addAdditionalModal #additionalImageZone.dragover {
+    border-color: var(--primary-color);
+    background: rgba(255, 182, 193, 0.1);
+    transform: scale(1.02);
+}
+
+#addAdditionalModal #additionalPlaceholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 250px;
+    padding: 30px;
+    text-align: center;
+}
+
+#addAdditionalModal #additionalPlaceholder i {
+    font-size: 60px;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    opacity: 0.7;
+}
+
+#addAdditionalModal #additionalPlaceholder p {
+    font-size: 16px;
+    color: #333;
+    margin: 0 0 10px 0;
+    font-weight: 600;
+}
+
+#addAdditionalModal #additionalPlaceholder small {
+    font-size: 12px;
+    color: #6c757d;
+    font-style: italic;
+}
+
+#addAdditionalModal #additionalPreview {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 250px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Additional Image Cropper Modal Z-Index */
+#additionalImageCropperModal {
+    z-index: 1600;
+}
+
+#additionalImageCropperModal .modal-backdrop {
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1600;
+}
+
+#additionalImageCropperModal .modal-content {
+    background: #ffffff !important;
+    opacity: 1 !important;
+    filter: none !important;
+    backdrop-filter: none !important;
+    z-index: 1601;
+}
+
+/* Loading State for Additional Form */
+#addAdditionalModal.additional-form-loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+#addAdditionalModal.additional-form-loading #saveAdditionalBtn {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+#addAdditionalModal.additional-form-loading #saveAdditionalBtn::after {
+    content: "";
+    width: 16px;
+    height: 16px;
+    margin-left: 8px;
+    border: 2px solid transparent;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Success and Error States for Inclusions */
+#addAdditionalModal .inclusion-item.saved {
+    border-color: #28a745;
+    background: rgba(40, 167, 69, 0.05);
+}
+
+#addAdditionalModal .inclusion-item.saved .inclusion-input {
+    border-color: #28a745;
+}
+
+#addAdditionalModal .inclusion-item.error {
+    border-color: #dc3545;
+    background: rgba(220, 53, 69, 0.05);
+}
+
+#addAdditionalModal .inclusion-item.error .inclusion-input {
+    border-color: #dc3545;
+}
+
+/* Empty State for Inclusions List */
+#addAdditionalModal .inclusions-list:empty::after {
+    content: "No inclusion items added yet. Click 'Add More' to start.";
     display: block;
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px dashed #e9ecef;
 }
 
-/* Hidden class for color picker inputs */
-.hidden {
-    display: none !important;
-}
-
-/* Responsive Design */
-@media (max-width: 1240px) {
-    .modal-content {
-        max-width: 95%;
-        width: 95%;
-    }
-}
-
+/* Responsive Design for Additional Modal */
 @media (max-width: 768px) {
-    .modal-content {
-        max-width: 98%;
-        width: 98%;
-        margin: 5px;
-    }
-    
-    .image-upload-container {
-        grid-template-columns: 1fr;
-    }
-    
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .ratio-buttons {
+    #addAdditionalModal .btn-sm {
+        flex: 1;
         justify-content: center;
     }
     
-    .crop-actions {
-        justify-content: center;
+    #addAdditionalModal #additionalImageZone {
+        min-height: 200px;
     }
     
-    .modal-footer {
-        flex-direction: column;
-        gap: 8px;
+    #addAdditionalModal #additionalPlaceholder {
+        min-height: 200px;
+        padding: 20px;
     }
     
-    .btn-primary, .btn-secondary {
-        width: 100%;
-        justify-content: center;
+    #addAdditionalModal #additionalPlaceholder i {
+        font-size: 40px;
+    }
+    
+    #addAdditionalModal #additionalPlaceholder p {
+        font-size: 14px;
     }
 }
+
+@media (max-width: 480px) {
+    #addAdditionalModal .inclusion-item {
+        padding: 12px;
+    }
+    
+    #addAdditionalModal .inclusion-input {
+        padding: 10px 40px 10px 12px;
+        font-size: 13px;
+    }
+    
+    #addAdditionalModal .remove-single-inclusion {
+        width: 26px;
+        height: 26px;
+        font-size: 10px;
+    }
+    
+    #addAdditionalModal .inclusions-header h5 {
+        font-size: 14px;
+    }
+    
+    #addAdditionalModal .btn-sm {
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+}
+
+/* =============== END ADDITIONAL MODAL STYLES =============== */
 
 /* =============== CLOUDINARY UPLOAD PROGRESS STYLES =============== */
 
