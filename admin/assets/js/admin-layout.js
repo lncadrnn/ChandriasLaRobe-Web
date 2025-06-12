@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function initAdminLayout() {
     initSidebarToggle();
     highlightActiveNavigation();
+    initMobileNavigation();
     initSearchFunctionality();
 }
 
@@ -67,6 +68,27 @@ function highlightActiveNavigation() {
                 href === currentPage) {
                 link.classList.add('active');
             }
+        }
+    });
+}
+
+/**
+ * Initialize mobile navigation highlighting
+ */
+function initMobileNavigation() {
+    const currentPage = window.location.pathname.split('/').pop() || 'dashboard.html';
+    const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+    
+    mobileNavItems.forEach(item => {
+        const href = item.getAttribute('href');
+        
+        // Remove existing active classes
+        item.classList.remove('active');
+        
+        // Add active class to current page
+        if (href === `./${currentPage}` || 
+            (currentPage === 'dashboard.html' && href === './dashboard.html')) {
+            item.classList.add('active');
         }
     });
 }
