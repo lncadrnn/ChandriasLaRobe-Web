@@ -209,22 +209,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }    // Show rental details modal
     async function showRentalDetails(id) {
         try {
-            // Show spinner while loading
-            adminSpinners.showActionSpinner('Loading rental details...');
+            const modal = document.getElementById('rental-modal');
+            
+            // Show modal with loading state
+            modal.classList.add('visible');
+            showModalLoadingState();
             
             const docSnap = await db.collection("transaction").doc(id).get();
             if (!docSnap.exists) {
-                adminSpinners.hideActionSpinner();
+                hideModalLoadingState();
+                modal.classList.remove('visible');
                 alert('Rental transaction not found');
                 return;
             }
 
             const data = docSnap.data();
-            
-            // Hide spinner once data is loaded
-            adminSpinners.hideActionSpinner();
-            
-            const modal = document.getElementById('rental-modal');
+              // Hide loading state
+            hideModalLoadingState();
             
             // Format dates
             const eventStartDate = data.eventStartDate ? new Date(data.eventStartDate).toLocaleDateString('en-US', {
@@ -293,10 +294,10 @@ document.addEventListener("DOMContentLoaded", () => {
             notesElement.textContent = data.notes || data.additionalNotes || 'No additional notes provided.';
 
             // Show modal
-            modal.classList.add('visible');
-
-        } catch (error) {
-            adminSpinners.hideActionSpinner();
+            modal.classList.add('visible');        } catch (error) {
+            hideModalLoadingState();
+            const modal = document.getElementById('rental-modal');
+            modal.classList.remove('visible');
             console.error('Error loading rental details:', error);
             alert('Error loading rental details. Please try again.');
         }
@@ -802,7 +803,37 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error("Error showing appointment details:", error);
         }
-    }    // Close modal handlers
+    }    // Helper functions for modal loading state
+    function showModalLoadingState() {
+        // Set all content to loading state
+        document.getElementById('customer-name').textContent = 'Loading...';
+        document.getElementById('customer-contact').textContent = 'Loading...';
+        document.getElementById('customer-address').textContent = 'Loading...';
+        document.getElementById('transaction-code').textContent = 'Loading...';
+        document.getElementById('rental-type').textContent = 'Loading...';
+        document.getElementById('rental-fee').textContent = '₱0.00';
+        document.getElementById('payment-total').textContent = '₱0.00';
+        document.getElementById('payment-remaining').textContent = '₱0.00';
+        
+        // Show loading for items
+        const itemsContainer = document.getElementById('rented-items');
+        if (itemsContainer) {
+            itemsContainer.innerHTML = '<div class="loading-items"><i class="fas fa-spinner fa-spin"></i> Loading items...</div>';
+        }
+        
+        // Clear dates section
+        const datesSection = document.getElementById('rental-dates-section');
+        if (datesSection) {
+            datesSection.innerHTML = '';
+        }
+    }
+    
+    function hideModalLoadingState() {
+        // Loading state will be replaced by actual data in showRentalDetails function
+        // This function exists for consistency and future use
+    }
+
+    // Close modal handlers
     
     
     document.querySelector('.close-modal')?.addEventListener('click', () => {
