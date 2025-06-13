@@ -834,6 +834,259 @@ document.addEventListener('click', (e) => {
     }
 });
 
+/**
+ * Mark as Complete Modal Functions
+ */
+let currentTransactionToComplete = null;
+
+/**
+ * Shows the mark as complete confirmation modal
+ * @param {string} transactionId - The ID of the transaction to mark as complete
+ */
+function showMarkCompleteConfirmation(transactionId) {
+    const transaction = window.allTransactions?.find(t => t.id === transactionId);
+    if (!transaction) {
+        console.error('Transaction not found');
+        return;
+    }
+
+    // Store the current transaction
+    currentTransactionToComplete = transaction;
+
+    // Populate modal with transaction data
+    populateMarkCompleteModal(transaction);
+
+    // Show the modal
+    const modal = document.getElementById('mark-complete-confirmation-modal');
+    if (modal) {
+        modal.classList.add('show');
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+/**
+ * Closes the mark as complete confirmation modal
+ */
+function closeMarkCompleteConfirmationModal() {
+    const modal = document.getElementById('mark-complete-confirmation-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300);
+        document.body.style.overflow = '';
+    }
+    
+    // Clear the current transaction
+    currentTransactionToComplete = null;
+}
+
+/**
+ * Populates the mark complete modal with transaction data
+ * @param {Object} transaction - The transaction object
+ */
+function populateMarkCompleteModal(transaction) {
+    // Customer name
+    const customerNameEl = document.getElementById('complete-customer-name');
+    if (customerNameEl) {
+        customerNameEl.textContent = transaction.fullName || 'Unknown';
+    }
+
+    // Transaction code
+    const transactionCodeEl = document.getElementById('complete-transaction-code');
+    if (transactionCodeEl) {
+        transactionCodeEl.textContent = transaction.transactionCode || 'N/A';
+    }
+
+    // Event date (use start date or single event date)
+    const eventDateEl = document.getElementById('complete-event-date');
+    if (eventDateEl) {
+        let eventDate = 'Not specified';
+        if (transaction.eventStartDate) {
+            const startDate = new Date(transaction.eventStartDate);
+            eventDate = startDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            if (transaction.eventEndDate) {
+                const endDate = new Date(transaction.eventEndDate);
+                eventDate += ` - ${endDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                })}`;
+            }
+        } else if (transaction.eventDate) {
+            const singleDate = new Date(transaction.eventDate);
+            eventDate = singleDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+        eventDateEl.textContent = eventDate;
+    }
+
+    // Total amount
+    const totalAmountEl = document.getElementById('complete-total-amount');
+    if (totalAmountEl) {
+        const amount = transaction.totalAmount || transaction.amount || 0;
+        totalAmountEl.textContent = `₱${parseFloat(amount).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })}`;
+    }
+}
+
+/**
+ * Proceeds with marking the transaction as complete
+ */
+async function proceedWithMarkComplete() {
+    if (!currentTransactionToComplete) {
+        console.error('No transaction selected for completion');
+        return;
+    }
+
+    try {
+        // Show loading state
+        const confirmBtn = document.getElementById('confirm-mark-complete-btn');
+        if (confirmBtn) {
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Processing...';
+        }
+
+        // Show action spinner
+        const actionSpinner = document.querySelector('.admin-action-spinner');
+        if (actionSpinner) {
+            actionSpinner.style.display = 'flex';
+        }
+
+        // Update transaction in Firebase
+        const transactionRef = doc(chandriaDB, 'transaction', currentTransactionToComplete.id);
+        const updateData = {
+            returnConfirmed: true,
+            completedDate: new Date().toISOString(),
+            lastUpdated: new Date().toISOString(),
+            rentalStatus: 'Completed'
+        };
+
+        await updateDoc(transactionRef, updateData);
+
+        // Update local data in global arrays
+        if (window.allTransactions) {
+            const transactionIndex = window.allTransactions.findIndex(t => t.id === currentTransactionToComplete.id);
+            if (transactionIndex !== -1) {
+                Object.assign(window.allTransactions[transactionIndex], updateData);
+            }
+        }
+
+        // Update filtered transactions
+        if (window.filteredTransactions) {
+            const filteredIndex = window.filteredTransactions.findIndex(t => t.id === currentTransactionToComplete.id);
+            if (filteredIndex !== -1) {
+                Object.assign(window.filteredTransactions[filteredIndex], updateData);
+            }
+        }
+
+        // Close confirmation modal
+        closeMarkCompleteConfirmationModal();
+
+        // Hide loading spinner
+        if (actionSpinner) {
+            actionSpinner.style.display = 'none';
+        }
+
+        // Re-render the views
+        if (window.currentView) {
+            if (window.currentView === 'cards') {
+                if (window.renderTransactionCards) {
+                    await window.renderTransactionCards();
+                }
+            } else {
+                if (window.renderTransactionTable) {
+                    await window.renderTransactionTable();
+                }
+            }
+        }
+
+        // Show success modal
+        showMarkCompleteSuccessModal(currentTransactionToComplete);
+
+        console.log('Transaction marked as complete successfully');
+
+    } catch (error) {
+        console.error('Error marking transaction as complete:', error);
+
+        // Hide loading spinner
+        const actionSpinner = document.querySelector('.admin-action-spinner');
+        if (actionSpinner) {
+            actionSpinner.style.display = 'none';
+        }
+
+        // Reset button state
+        const confirmBtn = document.getElementById('confirm-mark-complete-btn');
+        if (confirmBtn) {
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = '<i class="bx bx-check-circle"></i> Mark as Complete';
+        }
+
+        // Show error notification
+        if (window.showNotification) {
+            window.showNotification('Error marking transaction as complete: ' + (error.message || 'Please try again.'), 'error');
+        } else {
+            alert('Error marking transaction as complete: ' + (error.message || 'Please try again.'));
+        }
+    }
+}
+
+/**
+ * Shows the mark as complete success modal
+ * @param {Object} transaction - The completed transaction object
+ */
+function showMarkCompleteSuccessModal(transaction) {
+    const modal = document.getElementById('mark-complete-success-modal');
+    const customerNameEl = document.getElementById('success-customer-name');
+    const completionDateEl = document.getElementById('success-completion-date');
+    
+    if (!modal || !customerNameEl || !completionDateEl) {
+        console.error('Mark complete success modal elements not found');
+        return;
+    }
+    
+    customerNameEl.textContent = transaction.fullName || 'Unknown';
+    completionDateEl.textContent = new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    modal.style.display = 'flex';
+    // Force reflow to ensure transition works
+    modal.offsetHeight;
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+/**
+ * Closes the mark as complete success modal
+ */
+function closeMarkCompleteSuccessModal() {
+    const modal = document.getElementById('mark-complete-success-modal');
+    if (!modal) return;
+    
+    modal.classList.remove('show');
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+    
+    document.body.style.overflow = '';
+}
+
 // Export functions for global access (if needed)
 if (typeof window !== 'undefined') {    // Preserve the original function if it exists
     if (window.confirmCancelRental && typeof window.confirmCancelRental === 'function') {
@@ -854,6 +1107,11 @@ if (typeof window !== 'undefined') {    // Preserve the original function if it 
     window.showUndoConfirmation = showUndoConfirmation;
     window.showCancellationUndoneModal = showCancellationUndoneModal;
     window.closeCancellationUndoneModal = closeCancellationUndoneModal;
+    window.showMarkCompleteConfirmation = showMarkCompleteConfirmation;
+    window.closeMarkCompleteConfirmationModal = closeMarkCompleteConfirmationModal;
+    window.proceedWithMarkComplete = proceedWithMarkComplete;
+    window.showMarkCompleteSuccessModal = showMarkCompleteSuccessModal;
+    window.closeMarkCompleteSuccessModal = closeMarkCompleteSuccessModal;
     
     console.log('Customer logs modal functions loaded and exported');
 }

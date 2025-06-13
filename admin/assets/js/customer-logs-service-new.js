@@ -640,9 +640,14 @@ function addActionListeners() {
     document.querySelectorAll('.mark-complete-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const transactionId = e.target.closest('.mark-complete-btn').dataset.id;
-            showMarkCompleteModal(transactionId);
+            if (window.showMarkCompleteConfirmation) {
+                window.showMarkCompleteConfirmation(transactionId);
+            } else {
+                // Fallback to the original function if modal is not available
+                markTransactionAsComplete(transactionId);
+            }
         });
-    });    // Process Overdue buttons
+    });// Process Overdue buttons
     document.querySelectorAll('.process-overdue-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const transactionId = e.target.closest('.process-overdue-btn').dataset.id;
@@ -1428,46 +1433,54 @@ function applySorting() {
 
 // Mark transaction as complete
 async function markTransactionAsComplete(transactionId) {
-    try {
-        const transaction = allTransactions.find(t => t.id === transactionId);
-        if (!transaction) {
-            console.error('Transaction not found');
-            return;
+    // Use the new confirmation modal instead of browser confirm
+    if (window.showMarkCompleteConfirmation) {
+        window.showMarkCompleteConfirmation(transactionId);
+    } else {
+        // Fallback to original method if modal functions are not available
+        try {
+            const transaction = allTransactions.find(t => t.id === transactionId);
+            if (!transaction) {
+                console.error('Transaction not found');
+                return;
+            }
+
+            // Show confirmation dialog
+            const confirmed = confirm(`Mark "${transaction.fullName || 'Unknown'}" rental as completed?\n\nThis will change the status to "Completed" and cannot be undone.`);
+            if (!confirmed) return;
+
+            // Show loading
+            document.querySelector('.admin-action-spinner').style.display = 'flex';
+
+            // Update the transaction in Firebase
+            const transactionRef = doc(chandriaDB, 'transaction', transactionId);
+            await updateDoc(transactionRef, {
+                returnConfirmed: true,
+                completedDate: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            });
+
+            // Update local data
+            const transactionIndex = allTransactions.findIndex(t => t.id === transactionId);
+            if (transactionIndex !== -1) {
+                allTransactions[transactionIndex].returnConfirmed = true;
+                allTransactions[transactionIndex].completedDate = new Date().toISOString();
+            }
+
+            // Re-filter and re-render
+            filterTransactions();
+            
+            // Hide loading
+            document.querySelector('.admin-action-spinner').style.display = 'none';
+            
+            // Show success notification
+            showNotification('Transaction marked as completed successfully!', 'success');
+
+        } catch (error) {
+            console.error('Error marking transaction as complete:', error);
+            document.querySelector('.admin-action-spinner').style.display = 'none';
+            showNotification('Error marking transaction as complete. Please try again.', 'error');
         }
-
-        // Show confirmation dialog
-        const confirmed = confirm(`Mark "${transaction.fullName || 'Unknown'}" rental as completed?\n\nThis will change the status to "Completed" and cannot be undone.`);
-        if (!confirmed) return;
-
-        // Show loading
-        document.querySelector('.admin-action-spinner').style.display = 'flex';
-
-        // Update the transaction in Firebase
-        const transactionRef = doc(chandriaDB, 'transaction', transactionId);
-        await updateDoc(transactionRef, {
-            returnConfirmed: true,
-            completedDate: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-        });
-
-        // Update local data
-        const transactionIndex = allTransactions.findIndex(t => t.id === transactionId);
-        if (transactionIndex !== -1) {
-            allTransactions[transactionIndex].returnConfirmed = true;
-            allTransactions[transactionIndex].completedDate = new Date().toISOString();
-        }
-
-        // Re-filter and re-render
-        filterTransactions();
-        
-        // Hide loading
-        document.querySelector('.admin-action-spinner').style.display = 'none';        // Show success notification
-        showNotification('Transaction marked as completed successfully!', 'success');
-
-    } catch (error) {
-        console.error('Error marking transaction as complete:', error);
-        document.querySelector('.admin-action-spinner').style.display = 'none';
-        showNotification('Error marking transaction as complete. Please try again.', 'error');
     }
 }
 

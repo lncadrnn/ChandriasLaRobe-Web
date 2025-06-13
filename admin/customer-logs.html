@@ -802,5 +802,79 @@
         </div>
     </div>
 
+    <!-- Mark as Complete Confirmation Modal -->
+    <div id="mark-complete-confirmation-modal" class="modal-overlay">
+        <div class="confirmation-modal-content">
+            <div class="confirmation-modal-header">
+                <i class='bx bx-check-circle confirmation-icon'></i>
+                <h3>Mark as Complete</h3>
+            </div>
+            <div class="confirmation-modal-body">
+                <div class="warning-section complete-warning">
+                    <div class="warning-icon complete-warning-icon">
+                        <i class='bx bx-info-circle'></i>
+                    </div>
+                    <div class="warning-content">
+                        <h4>⚠️ This action cannot be reversed!</h4>
+                        <p>You are about to mark this rental as completed. This will:</p>
+                        <ul class="warning-list">
+                            <li>Change the rental status to "Completed"</li>
+                            <li>Record the completion date</li>
+                            <li>Mark items as returned</li>
+                            <li><strong>This action cannot be undone</strong></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="transaction-summary">
+                    <h4>Rental to be completed:</h4>
+                    <div class="summary-content">
+                        <p><strong>Customer:</strong> <span id="complete-customer-name">-</span></p>
+                        <p><strong>Transaction Code:</strong> <span id="complete-transaction-code">-</span></p>
+                        <p><strong>Event Date:</strong> <span id="complete-event-date">-</span></p>
+                        <p><strong>Total Amount:</strong> <span id="complete-total-amount">-</span></p>
+                    </div>
+                </div>
+                
+                <p class="final-confirmation">Are you sure you want to mark this rental as completed?</p>
+            </div>
+            <div class="confirmation-modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeMarkCompleteConfirmationModal()">
+                    <i class='bx bx-x'></i> Cancel
+                </button>
+                <button type="button" class="btn-complete" id="confirm-mark-complete-btn" onclick="proceedWithMarkComplete()">
+                    <i class='bx bx-check-circle'></i> Mark as Complete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mark as Complete Success Modal -->
+    <div id="mark-complete-success-modal" class="modal-overlay" style="display: none;">
+        <div class="success-modal-content">
+            <div class="success-modal-header">
+                <i class='bx bx-check-circle success-icon'></i>
+                <h3>Rental Completed!</h3>
+            </div>
+            <div class="success-modal-body">
+                <p>The rental has been successfully marked as completed.</p>
+                <div class="completion-details">
+                    <p><strong>Customer:</strong> <span id="success-customer-name">-</span></p>
+                    <p><strong>Completed Date:</strong> <span id="success-completion-date">-</span></p>
+                    <p><strong>Status:</strong> <span class="status-highlight completed">Completed</span></p>
+                </div>
+                <div class="success-note">
+                    <i class='bx bx-info-circle'></i>
+                    <span>The rental items are now marked as returned and available for other bookings.</span>
+                </div>
+            </div>
+            <div class="success-modal-footer">
+                <button type="button" class="btn-success-ok" onclick="closeMarkCompleteSuccessModal()">
+                    <i class='bx bx-check'></i> OK
+                </button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
