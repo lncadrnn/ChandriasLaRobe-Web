@@ -134,13 +134,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
                 calendarContainer.appendChild(errorOverlay);
             }
-        }
-          function closeModal() {
+        }        function closeModal() {
             console.log('🔒 closeModal called');
             if (modal) {
+                // Enhanced modal closing logic
                 modal.classList.remove('visible');
+                modal.style.display = 'none';
                 document.body.style.overflow = '';
-                console.log('✅ Modal closed');
+                
+                // Clear any lingering content to prevent issues
+                setTimeout(() => {
+                    if (!modal.classList.contains('visible')) {
+                        rentalDetailsList.innerHTML = '';
+                    }
+                }, 300);
+                
+                console.log('✅ Modal closed with enhanced logic');
             }
         }
 
@@ -976,7 +985,7 @@ document.addEventListener("DOMContentLoaded", () => {
             quickView.querySelector('.btn-close-quick').addEventListener('click', (e) => {
                 e.stopPropagation();
                 closeQuickView();
-            });              quickView.querySelector('.btn-view-full').addEventListener('click', (e) => {
+            });            quickView.querySelector('.btn-view-full').addEventListener('click', (e) => {
                 e.stopPropagation();
                 console.log('🔍 View Full Details clicked');
                 
@@ -986,12 +995,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 const month = rentalDate.getMonth();
                 const year = rentalDate.getFullYear();
                 
-                // Close quick view first, then show modal after a brief delay
+                // Close quick view first
                 closeQuickView();
                 
+                // Enhanced modal opening with better timing
                 setTimeout(() => {
+                    console.log('🚀 Opening modal after quick view close delay');
                     showDayDetails(day, month, year, [rental]);
-                }, 200); // Small delay to ensure quick view is fully closed
+                    
+                    // Additional safety check
+                    setTimeout(() => {
+                        if (modal && !modal.classList.contains('visible')) {
+                            console.warn('⚠️ Modal opening backup triggered');
+                            modal.classList.add('visible');
+                            modal.style.display = 'flex';
+                            document.body.style.overflow = 'hidden';
+                        }
+                    }, 150);
+                }, 250);
             });
             
             // Prevent click events from bubbling up from the quick view
@@ -1021,8 +1042,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }, 150);
             }
-        }
-          function showDayDetails(day, month, year, rentals) {
+        }        function showDayDetails(day, month, year, rentals) {
             console.log('🔍 showDayDetails called:', { day, month, year, rentalsCount: rentals.length });
             
             // Ensure modal is found
@@ -1049,14 +1069,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
             
-            // Force remove any existing visible class first
+            // Enhanced modal opening logic with multiple fallbacks
             modal.classList.remove('visible');
+            modal.style.display = 'none';
             
-            // Use requestAnimationFrame to ensure the removal is processed
+            // Force DOM update and then show modal
             requestAnimationFrame(() => {
-                modal.classList.add('visible');
-                document.body.style.overflow = 'hidden'; // Prevent background scrolling
-                console.log('✅ Modal should now be visible');
+                requestAnimationFrame(() => {
+                    modal.style.display = 'flex';
+                    modal.classList.add('visible');
+                    document.body.style.overflow = 'hidden';
+                    
+                    // Additional backup to ensure visibility
+                    setTimeout(() => {
+                        if (!modal.classList.contains('visible')) {
+                            console.warn('⚠️ Modal visibility backup triggered');
+                            modal.classList.add('visible');
+                            modal.style.display = 'flex';
+                        }
+                    }, 100);
+                    
+                    console.log('✅ Modal opened with enhanced logic');
+                });
             });
         }
         

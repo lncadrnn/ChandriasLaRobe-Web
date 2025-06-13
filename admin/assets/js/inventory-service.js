@@ -526,7 +526,6 @@ $(document).ready(function () {
         } finally {
             spinner.addClass("d-none");
         }
-    });
 
     // DELETE REQUEST FUNCTION
     // WARNING: This function uses API secret in client-side code - security risk!

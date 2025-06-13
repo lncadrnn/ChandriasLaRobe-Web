@@ -614,683 +614,282 @@ body.quick-view-active .rental-quick-view {
 }
 
 /* =============== RENTAL DETAILS MODAL =============== */
+/* =============== MODAL STYLES =============== */
 .modal {
     display: none;
     position: fixed;
-    top: 0;
+    z-index: 9999;
     left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    align-items: center;
+    backdrop-filter: blur(3px);
     justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.25s ease;
+    padding: 1rem;
+    overflow-y: auto;
 }
 
 .modal.visible {
-    display: flex;
+    display: flex !important;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
 }
 
 .modal-content {
-    background: white;
-    border-radius: 12px;
-    width: 90%;
+    background: var(--sidebar-color, #fff);
+    margin: 0 auto;
+    padding: 0;
+    border-radius: 16px;
     max-width: 800px;
+    min-width: 300px;
+    width: 90%;
     max-height: 80vh;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    border: none;
+    animation: modalSlideIn 0.3s ease;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes modalSlideIn {
+    0% { transform: scale(0.95) translateY(-20px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
 }
 
 .modal-header {
-    background: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color, #ff4757), #ff6b9d);
     color: white;
-    padding: 20px 24px;
+    padding: 1.5rem 2rem;
+    border-radius: 16px 16px 0 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
 }
 
 .modal-header h3 {
     margin: 0;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
+    font-weight: 600;
 }
 
 .close-modal {
-    background: none;
-    border: none;
-    color: white;
+    position: absolute;
+    top: 50%;
+    right: 1.5rem;
+    transform: translateY(-50%);
     font-size: 1.5rem;
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .close-modal:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-50%) scale(1.1);
 }
 
 .modal-body {
-    padding: 24px;
-    max-height: 60vh;
+    padding: 2rem;
     overflow-y: auto;
+    flex: 1;
+    max-height: calc(80vh - 120px);
 }
 
-/* =============== RENTAL DETAILS LIST =============== */
+/* Rental Details List Styles */
 .rental-details-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 1.5rem;
 }
 
 .rental-detail-item {
     background: #f8f9fa;
-    border-radius: 8px;
-    padding: 16px;
-    border-left: 4px solid var(--primary-color);
-    transition: all 0.3s ease;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border-left: 4px solid var(--primary-color, #ff4757);
+    transition: all 0.2s ease;
 }
 
 .rental-detail-item:hover {
-    background: #e9ecef;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
-.rental-detail-item.upcoming {
-    border-left-color: #3498db;
+.rental-detail-item.confirmed {
+    border-left-color: #10b981;
 }
 
 .rental-detail-item.ongoing {
-    border-left-color: #f39c12;
+    border-left-color: #f59e0b;
 }
 
 .rental-detail-item.completed {
-    border-left-color: #27ae60;
+    border-left-color: #6366f1;
 }
 
 .rental-detail-item.overdue {
-    border-left-color: #e74c3c;
+    border-left-color: #ef4444;
 }
 
 .rental-detail-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 1rem;
 }
 
 .rental-customer {
+    font-size: 1.25rem;
     font-weight: 600;
-    color: var(--text-color);
-    font-size: 1.1rem;
+    color: #1f2937;
 }
 
 .rental-status {
-    padding: 4px 12px;
+    background: var(--primary-color, #ff4757);
+    color: white;
+    padding: 0.5rem 1rem;
     border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 500;
+    font-size: 0.875rem;
+    font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.rental-status.upcoming {
-    background: #3498db;
-    color: white;
+.rental-status.confirmed {
+    background: #10b981;
 }
 
 .rental-status.ongoing {
-    background: #f39c12;
-    color: white;
+    background: #f59e0b;
 }
 
 .rental-status.completed {
-    background: #27ae60;
-    color: white;
+    background: #6366f1;
 }
 
 .rental-status.overdue {
-    background: #e74c3c;
-    color: white;
+    background: #ef4444;
 }
 
 .rental-detail-info {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 12px;
-    margin-bottom: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .rental-info-item {
-    display: flex;
-    flex-direction: column;
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .rental-info-label {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    font-weight: 500;
-    margin-bottom: 2px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .rental-info-value {
-    font-weight: 600;
-    color: var(--text-color);
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1f2937;
 }
 
 .rental-products {
-    margin-top: 12px;
+    margin-bottom: 1.5rem;
 }
 
 .rental-products h4 {
-    margin: 0 0 8px 0;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
+    margin: 0 0 1rem 0;
+    color: #374151;
+    font-size: 1.1rem;
+    font-weight: 600;
 }
 
 .product-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 0.5rem;
 }
 
 .product-tag {
-    background: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color, #ff4757), #ff6b9d);
     color: white;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 0.75rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-block;
 }
 
-/* =============== RESPONSIVE DESIGN =============== */
-@media (max-width: 1024px) {
-    .page-content {
-        padding: 16px 20px;
-    }
-    
-    .calendar-container {
-        max-width: calc(100vw - 140px); /* Account for closed sidebar width */
-    }
-    
-    .calendar-header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 16px;
-    }
-    
-    .calendar-nav {
-        justify-content: center;
-    }
-    
-    .calendar-legend {
-        justify-content: center;
-    }
-    
-    .calendar-filters {
-        justify-content: center;
-    }
-}
-
-@media (max-width: 768px) {
-    .page-content {
-        padding: 12px 16px;
-    }
-    
-    .calendar-container {
-        max-width: calc(100vw - 32px); /* Account for page padding */
-        margin: 0;
-    }
-    
-    .calendar-header {
-        padding: 16px;
-    }
-    
-    .calendar-title h2 {
-        font-size: 1.25rem;
-        min-width: auto;
-    }
-    
-    .nav-btn {
-        width: 36px;
-        height: 36px;
-        font-size: 1rem;
-    }
-    
-    .calendar-legend {
-        gap: 12px;
-    }
-    
-    .legend-item {
-        font-size: 0.8rem;
-    }
-    
-    .calendar-day {
-        min-height: 100px;
-        padding: 6px;
-    }
-    
-    .day-header {
-        padding: 12px 4px;
-        font-size: 0.8rem;
-    }
-    
-    .rental-item {
-        font-size: 0.65rem;
-        padding: 2px 4px;
-    }
-    
-    .modal-content {
-        width: 95%;
-        margin: 20px;
-    }
-    
-    .modal-header {
-        padding: 16px;
-    }
-    
-    .modal-body {
-        padding: 16px;
-    }
-    
-    .rental-detail-info {
-        grid-template-columns: 1fr;
-    }
-    
-    /* Quick View Mobile Responsive */
-    .rental-quick-view {
-        min-width: 280px;
-        max-width: calc(100vw - 40px);
-        font-size: 0.9rem;
-    }
-    
-    .quick-view-header h4 {
-        font-size: 1rem;
-    }
-    
-    .quick-view-actions {
-        flex-direction: column;
-        gap: 8px;
-    }
-    
-    .btn-view-full,
-    .btn-close-quick {
-        width: 100%;
-        padding: 10px 14px;
-    }
-}
-
-@media (max-width: 480px) {
-    .page-content {
-        padding: 8px 12px;
-    }
-    
-    .calendar-container {
-        max-width: calc(100vw - 24px); /* Account for page padding */
-        margin: 0;
-    }
-    
-    .calendar-header {
-        padding: 12px;
-    }
-    
-    .calendar-title h2 {
-        font-size: 1.1rem;
-    }
-    
-    .nav-btn {
-        width: 32px;
-        height: 32px;
-        font-size: 0.9rem;
-    }
-    
-    .calendar-legend {
-        gap: 8px;
-    }
-    
-    .legend-item {
-        font-size: 0.75rem;
-    }
-    
-    .calendar-day {
-        min-height: 80px;
-        padding: 4px;
-    }
-    
-    .day-header {
-        padding: 8px 2px;
-        font-size: 0.75rem;
-    }
-    
-    .day-number {
-        font-size: 0.8rem;
-        margin-bottom: 4px;
-    }
-    
-    .rental-item {
-        font-size: 0.6rem;
-        padding: 1px 3px;
-    }
-    
-    .calendar-filters {
-        flex-direction: column;
-        gap: 8px;
-    }
-    
-    .filter-select,
-    .btn-today {
-        width: 100%;
-        padding: 10px;
-    }
-    
-    .quick-view-content {
-        padding: 14px;
-    }
-    
-    .quick-view-body p {
-        font-size: 0.85rem;
-    }
-}
-
-/* =============== LOADING STATES =============== */
-.calendar-loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 400px;
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-}
-
-.calendar-loading i {
-    margin-right: 8px;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-/* =============== ERROR STATES =============== */
-.calendar-error {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 400px;
-    color: #e74c3c;
-    text-align: center;
-}
-
-.calendar-error i {
-    font-size: 3rem;
-    margin-bottom: 16px;
-}
-
-.calendar-error h3 {
-    margin: 0 0 8px 0;
-    font-size: 1.25rem;
-}
-
-.calendar-error p {
-    margin: 0;
-    color: var(--text-secondary);
-}
-
-/* =============== RENTAL ACTION BUTTONS =============== */
 .rental-actions {
-    margin-top: 16px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1rem;
 }
 
 .action-buttons {
     display: flex;
-    gap: 8px;
+    gap: 0.75rem;
     flex-wrap: wrap;
 }
 
 .btn-action {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 12px;
+    padding: 0.75rem 1.5rem;
     border: none;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 500;
+    border-radius: 8px;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-}
-
-.btn-action:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
 }
 
 .btn-complete {
-    background: #27ae60;
+    background: #10b981;
     color: white;
 }
 
 .btn-complete:hover {
-    background: #229954;
-}
-
-.btn-overdue {
-    background: #e74c3c;
-    color: white;
-    animation: pulse-red 2s infinite;
-}
-
-.btn-overdue:hover {
-    background: #c0392b;
-    animation: none;
-}
-
-@keyframes pulse-red {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.8; }
-}
-
-.btn-edit {
-    background: #3498db;
-    color: white;
-}
-
-.btn-edit:hover {
-    background: #2980b9;
-}
-
-/* =============== OVERDUE FEE MODAL =============== */
-.overdue-fee-modal .modal-content {
-    max-width: 500px;
-    width: 90%;
-}
-
-.overdue-fee-content {
-    max-height: 90vh;
-    overflow-y: auto;
-}
-
-.overdue-info {
-    background: #f8f9fa;
-    padding: 16px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    border-left: 4px solid #e74c3c;
-}
-
-.overdue-info h4 {
-    margin: 0 0 8px 0;
-    color: var(--text-color);
-}
-
-.overdue-info p {
-    margin: 4px 0;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-}
-
-.overdue-days {
-    color: #e74c3c;
-    font-weight: 600;
-}
-
-.fee-calculation {
-    background: white;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 20px;
-}
-
-.fee-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    padding: 8px 0;
-}
-
-.fee-row label {
-    font-weight: 500;
-    color: var(--text-color);
-}
-
-.fee-row input {
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    padding: 6px 8px;
-    width: 120px;
-    text-align: right;
-}
-
-.fee-row input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(166, 122, 99, 0.1);
-}
-
-.total-row {
-    border-top: 2px solid var(--border-color);
-    margin-top: 12px;
-    padding-top: 12px;
-    font-weight: 600;
-}
-
-.total-fee {
-    font-size: 1.1rem;
-    color: #e74c3c;
-    font-weight: 700;
-}
-
-.payment-options {
-    margin-bottom: 20px;
-}
-
-.payment-options h5 {
-    margin: 0 0 12px 0;
-    color: var(--text-color);
-}
-
-.payment-methods {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-}
-
-.payment-method {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    padding: 8px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    transition: all 0.3s ease;
-}
-
-.payment-method:hover {
-    background: #f8f9fa;
-    border-color: var(--primary-color);
-}
-
-.payment-method input[type="radio"] {
-    margin: 0;
-}
-
-.payment-method span {
-    font-size: 0.9rem;
-    color: var(--text-color);
-}
-
-.notes-section {
-    margin-bottom: 20px;
-}
-
-.notes-section label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 500;
-    color: var(--text-color);
-}
-
-.notes-section textarea {
-    width: 100%;
-    min-height: 80px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 10px;
-    font-family: inherit;
-    resize: vertical;
-    box-sizing: border-box;
-}
-
-.notes-section textarea:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(166, 122, 99, 0.1);
-}
-
-.modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    padding: 20px 24px;
-    border-top: 1px solid var(--border-color);
-    background: #f8f9fa;
-}
-
-.btn-cancel,
-.btn-process-fee {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-cancel {
-    background: #6c757d;
-    color: white;
-}
-
-.btn-cancel:hover {
-    background: #5a6268;
+    background: #059669;
     transform: translateY(-1px);
 }
 
-.btn-process-fee {
-    background: var(--primary-color);
+.btn-overdue {
+    background: #ef4444;
     color: white;
 }
 
-.btn-process-fee:hover {
-    background: var(--secondary-text-color);
+.btn-overdue:hover {
+    background: #dc2626;
     transform: translateY(-1px);
 }
 
