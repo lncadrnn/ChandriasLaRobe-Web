@@ -1,5 +1,5 @@
 // Import Firebase configuration
-import { chandriaDB, collection, getDocs, doc, getDoc, updateDoc, deleteDoc } from './sdk/chandrias-sdk.js';
+import { chandriaDB, collection, getDocs, doc, getDoc, updateDoc, deleteDoc, arrayUnion } from './sdk/chandrias-sdk.js';
 
 // Initialize Firebase
 let allTransactions = [];
@@ -99,6 +99,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (window.closeAddFeeModal) {
                     closeAddFeeModal();
                 }
+            } else if (e.target.id === 'process-overdue-modal') {
+                closeProcessOverdueModal();
             }
         }
         
@@ -1400,51 +1402,7 @@ async function cancelRental(transactionId) {
 
 // Process overdue rental (for Overdue status)
 async function processOverdueRental(transactionId) {
-    try {
-        const transaction = allTransactions.find(t => t.id === transactionId);
-        if (!transaction) {
-            console.error('Transaction not found');
-            return;
-        }
-
-        // Show confirmation dialog with options
-        const action = confirm(`Process overdue rental for "${transaction.fullName || 'Unknown'}"?\n\nThis will mark the rental as completed and notify the customer about any applicable fees.`);
-        if (!action) return;
-
-        // Show loading
-        document.querySelector('.admin-action-spinner').style.display = 'flex';
-
-        // Update the transaction in Firebase
-        const transactionRef = doc(chandriaDB, 'transaction', transactionId);
-        await updateDoc(transactionRef, {
-            returnConfirmed: true,
-            completedDate: new Date().toISOString(),
-            processedOverdue: true,
-            updatedAt: new Date().toISOString()
-        });
-
-        // Update local data
-        const transactionIndex = allTransactions.findIndex(t => t.id === transactionId);
-        if (transactionIndex !== -1) {
-            allTransactions[transactionIndex].returnConfirmed = true;
-            allTransactions[transactionIndex].completedDate = new Date().toISOString();
-            allTransactions[transactionIndex].processedOverdue = true;
-        }
-
-        // Re-filter and re-render
-        filterTransactions();
-        
-        // Hide loading
-        document.querySelector('.admin-action-spinner').style.display = 'none';
-
-        // Show success notification
-        alert('Overdue rental processed successfully!');
-
-    } catch (error) {
-        console.error('Error processing overdue rental:', error);
-        document.querySelector('.admin-action-spinner').style.display = 'none';
-        alert('Error processing overdue rental. Please try again.');
-    }
+    showProcessOverdueModal(transactionId);
 }
 
 // Show Add Fee Modal
@@ -1683,243 +1641,219 @@ async function confirmCancelRental() {
     }
 }
 
-// === MARK AS COMPLETE MODAL FUNCTIONS ===
+// ============================================
+// Process Overdue Modal Functions
+// ============================================
 
-let currentCompleteTransaction = null;
+let currentOverdueTransaction = null;
 
-// Show mark complete modal
-function showMarkCompleteModal(transactionId) {
+// Show Process Overdue Modal
+function showProcessOverdueModal(transactionId) {
     const transaction = allTransactions.find(t => t.id === transactionId);
     if (!transaction) {
         console.error('Transaction not found');
         return;
     }
 
-    currentCompleteTransaction = transaction;
-
-    // Format event date
-    const eventDateDisplay = formatEventDate(transaction);
-    const totalPayment = parseFloat(transaction.totalPayment) || 0;
-
+    currentOverdueTransaction = transaction;
+    
     // Populate modal with transaction details
-    document.getElementById('complete-customer-name').textContent = transaction.fullName || 'Unknown';
-    document.getElementById('complete-transaction-code').textContent = transaction.transactionCode || transaction.id.substring(0, 8);
-    document.getElementById('complete-event-date').textContent = eventDateDisplay;
-    document.getElementById('complete-total-amount').textContent = `₱${totalPayment.toLocaleString()}`;    // Show modal
-    const modal = document.getElementById('mark-complete-modal');
-    if (modal) {
-        modal.classList.add('show');
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-// Close mark complete modal
-function closeMarkCompleteModal() {
-    const modal = document.getElementById('mark-complete-modal');
-    if (modal) {
-        modal.classList.remove('show');
-        document.body.style.overflow = '';
-    }
-    currentCompleteTransaction = null;
-}
-
-// Confirm mark complete
-async function confirmMarkComplete() {
-    if (!currentCompleteTransaction) return;
-
-    try {
-        // Show loading
-        document.querySelector('.admin-action-spinner').style.display = 'flex';
-
-        // Update the transaction in Firebase
-        const transactionRef = doc(chandriaDB, 'transaction', currentCompleteTransaction.id);
-        await updateDoc(transactionRef, {
-            returnConfirmed: true,
-            returnDate: new Date().toISOString(),
-            lastUpdated: new Date().toISOString()
-        });
-
-        // Update local data
-        const transactionIndex = allTransactions.findIndex(t => t.id === currentCompleteTransaction.id);
-        if (transactionIndex !== -1) {
-            allTransactions[transactionIndex].returnConfirmed = true;
-            allTransactions[transactionIndex].returnDate = new Date().toISOString();
-            allTransactions[transactionIndex].lastUpdated = new Date().toISOString();
-        }
-
-        // Update filtered transactions
-        const filteredIndex = filteredTransactions.findIndex(t => t.id === currentCompleteTransaction.id);
-        if (filteredIndex !== -1) {
-            filteredTransactions[filteredIndex].returnConfirmed = true;
-            filteredTransactions[filteredIndex].returnDate = new Date().toISOString();
-            filteredTransactions[filteredIndex].lastUpdated = new Date().toISOString();
-        }
-
-        // Re-render the views
-        if (currentView === 'cards') {
-            renderTransactionCards();
-        } else {
-            renderTransactionTable();
-        }
-
-        // Close modal
-        closeMarkCompleteModal();
-
-        // Hide loading
-        document.querySelector('.admin-action-spinner').style.display = 'none';
-
-        // Show success notification
-        showSuccessToast('Rental marked as complete successfully!');
-
-    } catch (error) {
-        console.error('Error marking rental as complete:', error);
-        
-        // Hide loading
-        document.querySelector('.admin-action-spinner').style.display = 'none';
-        
-        // Show error notification
-        alert('Error marking rental as complete. Please try again.');
-    }
-}
-
-// === UNDO FUNCTIONS ===
-
-// Helper function to calculate what the rental status should be based on dates (ignoring current cancellation/completion)
-function calculateOriginalRentalStatus(transaction) {
-    const currentDate = new Date();
-    const eventStartDate = transaction.eventStartDate ? new Date(transaction.eventStartDate) : null;
-    const eventEndDate = transaction.eventEndDate ? new Date(transaction.eventEndDate) : null;
+    document.getElementById('overdue-customer-name').textContent = transaction.fullName || 'Unknown';
+    document.getElementById('overdue-transaction-code').textContent = transaction.transactionCode || 'N/A';
+    document.getElementById('overdue-event-date').textContent = formatEventDate(transaction);
+    document.getElementById('overdue-total-amount').textContent = `₱${transaction.totalAmount ? transaction.totalAmount.toLocaleString() : '0'}`;
     
-    let rentalStatus = 'Upcoming';
-    let statusClass = 'status-upcoming';
+    // Calculate days overdue
+    const daysOverdue = calculateDaysOverdue(transaction);
+    document.getElementById('overdue-days-count').textContent = `${daysOverdue} days`;
     
-    if (eventStartDate) {
-        if (eventEndDate) {
-            // Open rental with end date
-            if (currentDate < eventStartDate) {
-                rentalStatus = 'Upcoming';
-                statusClass = 'status-upcoming';
-            } else if (currentDate >= eventStartDate && currentDate <= eventEndDate) {
-                rentalStatus = 'Ongoing';
-                statusClass = 'status-ongoing';
-            } else if (currentDate > eventEndDate) {
-                // Check if it's overdue (1 day grace period)
-                const gracePeriod = new Date(eventEndDate);
-                gracePeriod.setDate(gracePeriod.getDate() + 1);
-                
-                if (currentDate > gracePeriod) {
-                    rentalStatus = 'Overdue';
-                    statusClass = 'status-overdue';
-                } else {
-                    rentalStatus = 'Completed';
-                    statusClass = 'status-completed';
-                }
+    // Reset form
+    document.getElementById('mark-completed').checked = true;
+    document.getElementById('late-fee-section').style.display = 'none';
+    document.getElementById('extend-rental-section').style.display = 'none';
+    document.getElementById('late-fee-amount').value = '';
+    document.getElementById('late-fee-notes').value = '';
+    document.getElementById('extension-fee').value = '';
+    document.getElementById('extension-notes').value = '';
+    
+    // Set minimum date for extension to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('new-end-date').setAttribute('min', today);
+    
+    // Show modal
+    const modal = document.getElementById('process-overdue-modal');
+    modal.style.display = 'flex';
+    setTimeout(() => modal.classList.add('show'), 10);
+    
+    // Add event listeners for radio buttons
+    setupOverdueModalListeners();
+}
+
+// Close Process Overdue Modal
+function closeProcessOverdueModal() {
+    const modal = document.getElementById('process-overdue-modal');
+    modal.classList.remove('show');
+    setTimeout(() => {
+        modal.style.display = 'none';
+        currentOverdueTransaction = null;
+    }, 300);
+}
+
+// Setup event listeners for the modal
+function setupOverdueModalListeners() {
+    const radioButtons = document.querySelectorAll('input[name="overdue-action"]');
+    radioButtons.forEach(radio => {
+        radio.addEventListener('change', function() {
+            // Hide all sections first
+            document.getElementById('late-fee-section').style.display = 'none';
+            document.getElementById('extend-rental-section').style.display = 'none';
+            
+            // Show relevant section based on selection
+            if (this.value === 'late-fee') {
+                document.getElementById('late-fee-section').style.display = 'block';
+            } else if (this.value === 'extend') {
+                document.getElementById('extend-rental-section').style.display = 'block';
             }
-        } else {
-            // Fixed rental (single day)
-            if (currentDate < eventStartDate) {
-                rentalStatus = 'Upcoming';
-                statusClass = 'status-upcoming';
-            } else if (currentDate.toDateString() === eventStartDate.toDateString()) {
-                rentalStatus = 'Ongoing';
-                statusClass = 'status-ongoing';
-            } else if (currentDate > eventStartDate) {
-                // Check if it's overdue (1 day grace period for fixed rentals)
-                const gracePeriod = new Date(eventStartDate);
-                gracePeriod.setDate(gracePeriod.getDate() + 1);
-                
-                if (currentDate > gracePeriod) {
-                    rentalStatus = 'Overdue';
-                    statusClass = 'status-overdue';
-                } else {
-                    rentalStatus = 'Completed';
-                    statusClass = 'status-completed';
-                }
-            }        }
+        });
+    });
+}
+
+// Calculate days overdue
+function calculateDaysOverdue(transaction) {
+    const today = new Date();
+    let eventEndDate = null;
+    
+    if (transaction.eventEndDate) {
+        eventEndDate = new Date(transaction.eventEndDate);
+    } else if (transaction.eventStartDate) {
+        eventEndDate = new Date(transaction.eventStartDate);
+    } else if (transaction.eventDate) {
+        eventEndDate = new Date(transaction.eventDate);
     }
     
-    return { rentalStatus, statusClass };
+    if (!eventEndDate) return 0;
+    
+    const timeDiff = today - eventEndDate;
+    const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    return Math.max(0, daysDiff);
 }
 
-// Export function to global scope for modal access
-window.calculateOriginalRentalStatus = calculateOriginalRentalStatus;
-
-// Undo cancellation - Now handled by customer-logs-modal.js
-// The modal-based undo cancellation function is imported from the modal script
-/*
-// Original undo cancellation (revert cancelled rental back to original status)
-async function undoCancellation(transactionId) {
+// Confirm Process Overdue
+async function confirmProcessOverdue() {
+    if (!currentOverdueTransaction) return;
+    
+    const selectedAction = document.querySelector('input[name="overdue-action"]:checked').value;
+    
     try {
-        const transaction = allTransactions.find(t => t.id === transactionId);
-        if (!transaction) {
-            console.error('Transaction not found');
-            return;
-        }
-
-        // Calculate what the status should be based on current date and event dates
-        const { rentalStatus: originalStatus } = calculateOriginalRentalStatus(transaction);
-
-        // Show confirmation dialog
-        const confirmed = confirm(`Undo cancellation for "${transaction.fullName || 'Unknown'}"?\n\nThis will change the status from "Cancelled" to "${originalStatus}".`);
-        if (!confirmed) return;
-
         // Show loading
         document.querySelector('.admin-action-spinner').style.display = 'flex';
-
-        // Update the transaction in Firebase
-        const transactionRef = doc(chandriaDB, 'transaction', transactionId);
+        
+        const transactionRef = doc(chandriaDB, 'transaction', currentOverdueTransaction.id);
         const updateData = {
-            rentalStatus: null, // Remove the cancelled status
-            lastUpdated: new Date().toISOString()
+            processedOverdue: true,
+            updatedAt: new Date().toISOString()
         };
-
-        // Remove cancellation date if it exists
-        if (transaction.cancelledDate) {
-            updateData.cancelledDate = null;
+        
+        if (selectedAction === 'completed') {
+            // Mark as completed
+            updateData.returnConfirmed = true;
+            updateData.completedDate = new Date().toISOString();
+            
+        } else if (selectedAction === 'late-fee') {
+            // Add late fee and mark as completed
+            const feeAmount = parseFloat(document.getElementById('late-fee-amount').value) || 0;
+            const feeReason = document.getElementById('late-fee-reason').value;
+            const feeNotes = document.getElementById('late-fee-notes').value;
+            
+            updateData.returnConfirmed = true;
+            updateData.completedDate = new Date().toISOString();
+            updateData.lateFee = {
+                amount: feeAmount,
+                reason: feeReason,
+                notes: feeNotes,
+                addedDate: new Date().toISOString()
+            };
+            
+            // Update total amount
+            const newTotal = (currentOverdueTransaction.totalAmount || 0) + feeAmount;
+            updateData.totalAmount = newTotal;
+            
+        } else if (selectedAction === 'extend') {
+            // Extend rental period
+            const newEndDate = document.getElementById('new-end-date').value;
+            const extensionFee = parseFloat(document.getElementById('extension-fee').value) || 0;
+            const extensionNotes = document.getElementById('extension-notes').value;
+            
+            if (!newEndDate) {
+                alert('Please select a new end date for the extension.');
+                document.querySelector('.admin-action-spinner').style.display = 'none';
+                return;
+            }
+            
+            updateData.eventEndDate = new Date(newEndDate).toISOString();
+            updateData.extensionHistory = arrayUnion({
+                previousEndDate: currentOverdueTransaction.eventEndDate || currentOverdueTransaction.eventStartDate || currentOverdueTransaction.eventDate,
+                newEndDate: new Date(newEndDate).toISOString(),
+                extensionFee: extensionFee,
+                notes: extensionNotes,
+                extendedDate: new Date().toISOString()
+            });
+            
+            // Update total amount if extension fee is added
+            if (extensionFee > 0) {
+                const newTotal = (currentOverdueTransaction.totalAmount || 0) + extensionFee;
+                updateData.totalAmount = newTotal;
+            }
         }
-
+        
+        // Update the transaction in Firebase
         await updateDoc(transactionRef, updateData);
-
+        
         // Update local data
-        const transactionIndex = allTransactions.findIndex(t => t.id === transactionId);
+        const transactionIndex = allTransactions.findIndex(t => t.id === currentOverdueTransaction.id);
         if (transactionIndex !== -1) {
-            delete allTransactions[transactionIndex].rentalStatus;
-            delete allTransactions[transactionIndex].cancelledDate;
-            allTransactions[transactionIndex].lastUpdated = new Date().toISOString();
+            Object.assign(allTransactions[transactionIndex], updateData);
         }
-
-        // Update filtered transactions
-        const filteredIndex = filteredTransactions.findIndex(t => t.id === transactionId);
-        if (filteredIndex !== -1) {
-            delete filteredTransactions[filteredIndex].rentalStatus;
-            delete filteredTransactions[filteredIndex].cancelledDate;
-            filteredTransactions[filteredIndex].lastUpdated = new Date().toISOString();
-        }
-
-        // Re-render the views
-        if (currentView === 'cards') {
-            renderTransactionCards();
-        } else {
-            renderTransactionTable();
-        }
-
+        
+        // Close modal and refresh
+        closeProcessOverdueModal();
+        filterTransactions();
+        
         // Hide loading
         document.querySelector('.admin-action-spinner').style.display = 'none';
-
-        // Show success notification
-        showSuccessToast(`Cancellation undone! Status changed to "${originalStatus}".`);
-
+        
+        // Show success message
+        let successMessage = '';
+        if (selectedAction === 'completed') {
+            successMessage = 'Overdue rental marked as completed successfully!';
+        } else if (selectedAction === 'late-fee') {
+            successMessage = 'Late fee added and rental completed successfully!';
+        } else if (selectedAction === 'extend') {
+            successMessage = 'Rental period extended successfully!';
+        }
+        
+        showSuccessModal('Process Overdue', successMessage);
+        
     } catch (error) {
-        console.error('Error undoing cancellation:', error);
-        
-        // Hide loading
+        console.error('Error processing overdue rental:', error);
         document.querySelector('.admin-action-spinner').style.display = 'none';
-        
-        // Show error notification
-        alert('Error undoing cancellation. Please try again.');
+        alert('Error processing overdue rental. Please try again.');
     }
 }
-*/
+
+// Close modal when clicking outside
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay')) {
+        if (e.target.id === 'process-overdue-modal') {
+            closeProcessOverdueModal();
+        }
+    }
+});
+
+// Make functions available globally
+window.showProcessOverdueModal = showProcessOverdueModal;
+window.closeProcessOverdueModal = closeProcessOverdueModal;
+window.confirmProcessOverdue = confirmProcessOverdue;
 
 // Hide page loader
 function hidePageLoader() {
@@ -1993,6 +1927,9 @@ document.addEventListener('click', function(event) {
                 if (window.closeAddFeeModal) {
                     closeAddFeeModal();
                 }
+                break;
+            case 'process-overdue-modal':
+                closeProcessOverdueModal();
                 break;
         }
     }

@@ -518,102 +518,208 @@
     transform: translateY(0);
 }
 
-/* Responsive Design */
+/* ============================================
+   Process Overdue Modal Styles
+   ============================================ */
+
+/* Overdue specific styling */
+.overdue-icon {
+    color: #dc3545 !important;
+}
+
+.overdue-count {
+    color: #dc3545;
+    font-weight: bold;
+    background: rgba(220, 53, 69, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* Overdue Options */
+.overdue-options {
+    margin: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.overdue-option {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.overdue-option:hover {
+    border-color: var(--primary-color);
+    background: rgba(247, 110, 155, 0.05);
+}
+
+.overdue-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.overdue-option input[type="radio"]:checked + label {
+    color: var(--primary-color-darker);
+}
+
+.overdue-option input[type="radio"]:checked ~ .overdue-option,
+.overdue-option:has(input[type="radio"]:checked) {
+    border-color: var(--primary-color);
+    background: rgba(247, 110, 155, 0.1);
+}
+
+.overdue-option label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    cursor: pointer;
+    margin: 0;
+    width: 100%;
+}
+
+.overdue-option label i {
+    font-size: 1.25rem;
+    margin-top: 2px;
+    color: #6c757d;
+    transition: color 0.3s ease;
+}
+
+.overdue-option label span {
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.2;
+}
+
+.overdue-option label small {
+    display: block;
+    color: #6c757d;
+    font-size: 0.875rem;
+    margin-top: 2px;
+    font-weight: normal;
+}
+
+.overdue-option input[type="radio"]:checked + label i {
+    color: var(--primary-color-darker);
+}
+
+/* Fee Section */
+.fee-section,
+.extend-section {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.fee-section h4,
+.extend-section h4 {
+    margin: 0 0 1rem 0;
+    color: #495057;
+    font-size: 1.1rem;
+}
+
+.fee-input-group,
+.extend-input-group {
+    margin-bottom: 1rem;
+}
+
+.fee-input-group:last-child,
+.extend-input-group:last-child {
+    margin-bottom: 0;
+}
+
+.fee-input-group label,
+.extend-input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #495057;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.fee-input-group input,
+.fee-input-group select,
+.fee-input-group textarea,
+.extend-input-group input,
+.extend-input-group select,
+.extend-input-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fee-input-group input:focus,
+.fee-input-group select:focus,
+.fee-input-group textarea:focus,
+.extend-input-group input:focus,
+.extend-input-group select:focus,
+.extend-input-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(247, 110, 155, 0.1);
+}
+
+.fee-input-group textarea,
+.extend-input-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Mobile Responsiveness for Process Overdue Modal */
 @media (max-width: 768px) {
-    .undo-modal-content {
-        width: 95%;
-        margin: 1rem;
-    }
-    
-    .undo-modal-header {
-        padding: 1rem 1.5rem;
-    }
-    
-    .undo-modal-header h2 {
-        font-size: 1.25rem;
-    }
-    
-    .undo-modal_body {
-        padding: 1.5rem;
-    }
-    
-    .undo-confirmation-section {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: 1rem;
-    }
-    
-    .undo-confirmation-icon {
-        width: 60px;
-        height: 60px;
-    }
-    
-    .undo-confirmation-icon i {
-        font-size: 2rem;
-    }
-    
-    .undo-form-actions {
-        flex-direction: column;
+    .overdue-options {
         gap: 0.75rem;
     }
     
-    .undo-btn-secondary,
-    .undo-btn-primary {
-        width: 100%;
+    .overdue-option {
+        padding: 0.75rem;
     }
     
-    .undo-summary-content p {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.25rem;
+    .overdue-option label {
+        gap: 0.5rem;
     }
     
-    .undo-summary-content span {
-        text-align: left;
+    .overdue-option label i {
+        font-size: 1.1rem;
     }
     
-    .success-modal-content {
-        width: 95%;
-        margin: 0 auto;
+    .fee-section,
+    .extend-section {
+        padding: 1rem;
+        margin-top: 1rem;
     }
     
-    .success-modal-header {
-        padding: 1.5rem 1.5rem 1rem 1.5rem;
-    }
-    
-    .success-modal-body {
-        padding: 1rem 1.5rem;
-    }
-    
-    .success-modal-footer {
-        padding: 1rem 1.5rem 1.5rem 1.5rem;
-    }
-    
-    .success-icon {
-        font-size: 2.5rem;
-    }
-    
-    .success-modal-header h3 {
-        font-size: 1.3rem;
-    }
-    
-    .success-modal-body p {
-        font-size: 1rem;
+    .fee-input-group input,
+    .fee-input-group select,
+    .fee-input-group textarea,
+    .extend-input-group input,
+    .extend-input-group select,
+    .extend-input-group textarea {
+        padding: 0.625rem;
+        font-size: 0.875rem;
     }
 }
 
 @media (max-width: 480px) {
-    .undo-modal-header {
-        padding: 1rem;
+    .overdue-option label span {
+        font-size: 0.9rem;
     }
     
-    .undo-modal_body {
-        padding: 1rem;
+    .overdue-option label small {
+        font-size: 0.8rem;
     }
     
-    .undo-transaction-summary,
-    .undo-status-prediction {
-        padding: 1rem;
+    .fee-section h4,
+    .extend-section h4 {
+        font-size: 1rem;
     }
 }

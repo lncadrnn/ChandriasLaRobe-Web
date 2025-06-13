@@ -615,105 +615,101 @@
         </div>
     </div>
 
-    <!-- Mark as Complete Confirmation Modal -->
-    <div id="mark-complete-modal" class="modal-overlay">
+    <!-- Process Overdue Modal -->
+    <div id="process-overdue-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h2><i class='bx bx-check-circle'></i> Mark as Complete</h2>
-                <button class="close-btn" onclick="closeMarkCompleteModal()">
+                <h2><i class='bx bx-time-five'></i> Process Overdue Rental</h2>
+                <button class="close-btn" onclick="closeProcessOverdueModal()">
                     <i class='bx bx-x'></i>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="confirmation-section">
-                    <div class="confirmation-icon">
-                        <i class='bx bx-check-circle'></i>
+                    <div class="confirmation-icon overdue-icon">
+                        <i class='bx bx-error-circle'></i>
                     </div>
                     <div class="confirmation-content">
-                        <h3>✅ Mark this rental as completed?</h3>
-                        <p>This action will:</p>
-                        <ul class="confirmation-list">
-                            <li>Change the rental status to "Completed"</li>
-                            <li>Confirm that all items have been returned</li>
-                            <li>Close the rental transaction</li>
-                            <li>Update customer rental history</li>
-                        </ul>
-                        <p class="final-note">
-                            <strong>Make sure all items have been returned and inspected before confirming.</strong>
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="transaction-summary">
-                    <h4>Rental to mark as complete:</h4>
-                    <div class="summary-content">
-                        <p><strong>Customer:</strong> <span id="complete-customer-name">-</span></p>
-                        <p><strong>Transaction Code:</strong> <span id="complete-transaction-code">-</span></p>
-                        <p><strong>Event Date:</strong> <span id="complete-event-date">-</span></p>
-                        <p><strong>Total Amount:</strong> <span id="complete-total-amount">-</span></p>
-                    </div>
-                </div>
-                
-                <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="closeMarkCompleteModal()">
-                        <i class='bx bx-x'></i> Cancel
-                    </button>
-                    <button type="button" class="btn-primary" id="confirm-mark-complete-btn" onclick="confirmMarkComplete()">
-                        <i class='bx bx-check'></i> Mark as Complete                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Undo Cancellation Modal -->
-    <div id="undo-cancel-modal" class="undo-modal-overlay">
-        <div class="undo-modal-content">
-            <div class="undo-modal-header">
-                <h2><i class='bx bx-undo'></i> Undo Cancellation</h2>
-                <button class="undo-modal-close" onclick="closeUndoCancelModal()">
-                    <i class='bx bx-x'></i>
-                </button>
-            </div>
-            <div class="undo-modal-body">
-                <div class="undo-confirmation-section">
-                    <div class="undo-confirmation-icon">
-                        <i class='bx bx-refresh'></i>
-                    </div>
-                    <div class="undo-confirmation-content">
-                        <h3>🔄 Restore this cancelled rental?</h3>
-                        <p>This action will:</p>
-                        <ul class="undo-confirmation-list">
-                            <li>Remove the "Cancelled" status</li>
-                            <li>Restore the rental to its appropriate status based on event dates</li>
-                            <li>Make the rental active again in the system</li>
-                            <li>Update customer rental history</li>
-                        </ul>
-                        <div class="undo-status-prediction">
-                            <h4>New Status Preview:</h4>
-                            <p>The rental will be changed to: <span id="predicted-status" class="status-badge">-</span></p>
+                        <h3>⚠️ Process this overdue rental?</h3>
+                        <p>This rental is overdue and requires processing. You can:</p>
+                        <div class="overdue-options">
+                            <div class="overdue-option">
+                                <input type="radio" id="mark-completed" name="overdue-action" value="completed" checked>
+                                <label for="mark-completed">
+                                    <i class='bx bx-check-circle'></i>
+                                    <span>Mark as Completed</span>
+                                    <small>Items have been returned</small>
+                                </label>
+                            </div>                            <div class="overdue-option">
+                                <input type="radio" id="add-late-fee" name="overdue-action" value="late-fee">
+                                <label for="add-late-fee">
+                                    <i class='bx bx-money'></i>
+                                    <span>Add Late Fee & Complete</span>
+                                    <small>Apply penalty for late return</small>
+                                </label>
+                            </div>                        </div>
+                        
+                        <!-- Late Fee Section -->
+                        <div id="late-fee-section" class="fee-section" style="display: none;">
+                            <h4>Late Fee Details</h4>
+                            <div class="fee-input-group">
+                                <label for="late-fee-amount">Fee Amount (₱)</label>
+                                <input type="number" id="late-fee-amount" min="0" step="0.01" placeholder="0.00">
+                            </div>
+                            <div class="fee-input-group">
+                                <label for="late-fee-reason">Reason</label>
+                                <select id="late-fee-reason">
+                                    <option value="late-return">Late Return</option>
+                                    <option value="damaged-item">Damaged Item</option>
+                                    <option value="missing-accessory">Missing Accessory</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="fee-input-group">
+                                <label for="late-fee-notes">Additional Notes</label>
+                                <textarea id="late-fee-notes" rows="3" placeholder="Optional notes about the late fee..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Extend Rental Section -->
+                        <div id="extend-rental-section" class="extend-section" style="display: none;">
+                            <h4>Extend Rental Period</h4>
+                            <div class="extend-input-group">
+                                <label for="new-end-date">New End Date</label>
+                                <input type="date" id="new-end-date">
+                            </div>
+                            <div class="extend-input-group">
+                                <label for="extension-fee">Extension Fee (₱)</label>
+                                <input type="number" id="extension-fee" min="0" step="0.01" placeholder="0.00">
+                            </div>
+                            <div class="extend-input-group">
+                                <label for="extension-notes">Extension Notes</label>
+                                <textarea id="extension-notes" rows="3" placeholder="Reason for extension..."></textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="undo-transaction-summary">
-                    <h4>Rental to restore:</h4>
-                    <div class="undo-summary-content">
-                        <p><strong>Customer:</strong> <span id="undo-customer-name">-</span></p>
-                        <p><strong>Transaction Code:</strong> <span id="undo-transaction-code">-</span></p>
-                        <p><strong>Event Start Date:</strong> <span id="undo-event-start-date">-</span></p>
-                        <p><strong>Event End Date:</strong> <span id="undo-event-end-date">-</span></p>
-                        <p><strong>Total Amount:</strong> <span id="undo-total-amount">-</span></p>
+                <div class="transaction-summary">
+                    <h4>Overdue Rental Details:</h4>
+                    <div class="summary-content">
+                        <p><strong>Customer:</strong> <span id="overdue-customer-name">-</span></p>
+                        <p><strong>Transaction Code:</strong> <span id="overdue-transaction-code">-</span></p>
+                        <p><strong>Event Date:</strong> <span id="overdue-event-date">-</span></p>
+                        <p><strong>Days Overdue:</strong> <span id="overdue-days-count" class="overdue-count">-</span></p>
+                        <p><strong>Total Amount:</strong> <span id="overdue-total-amount">-</span></p>
                     </div>
                 </div>
                 
-                <div class="undo-form-actions">
-                    <button type="button" class="undo-btn-secondary" onclick="closeUndoCancelModal()">
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeProcessOverdueModal()">
                         <i class='bx bx-x'></i> Cancel
                     </button>
-                    <button type="button" class="undo-btn-primary" id="confirm-undo-cancel-btn" onclick="confirmUndoCancel()">
-                        <i class='bx bx-undo'></i> Restore Rental
+                    <button type="button" class="btn-primary" id="confirm-process-overdue-btn" onclick="confirmProcessOverdue()">
+                        <i class='bx bx-check'></i> Process Rental
                     </button>
-                </div>            </div>
+                </div>
+            </div>
         </div>
     </div>
 

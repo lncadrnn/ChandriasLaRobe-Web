@@ -15,10 +15,21 @@ import {
     where
 } from "./sdk/chandrias-sdk.js";
 
+// Initialize Notyf globally first
+const notyf = new Notyf({
+    position: {
+        x: "center",
+        y: "top"
+    }
+});
+
+// Make notyf available globally immediately
+window.notyf = notyf;
+
 // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
 // INVENTORY LOADER FUNCTIONS
 function showInventoryLoader() {
-    const inventoryLoader = document.getElementById("inventory-loader");
+    const inventoryLoader = document.querySelector(".admin-page-loader");
     if (inventoryLoader) {
         inventoryLoader.classList.remove("hidden");
         inventoryLoader.style.display = "flex";
@@ -26,7 +37,7 @@ function showInventoryLoader() {
 }
 
 function hideInventoryLoader() {
-    const inventoryLoader = document.getElementById("inventory-loader");
+    const inventoryLoader = document.querySelector(".admin-page-loader");
     if (inventoryLoader) {
         inventoryLoader.classList.add("hidden");
         inventoryLoader.style.display = "none";
@@ -35,13 +46,7 @@ function hideInventoryLoader() {
 
 // INTITIALIZE NOTYF
 $(document).ready(function () {
-    // NOTYF
-    const notyf = new Notyf({
-        position: {
-            x: "center",
-            y: "top"
-        }
-    });
+    // Use the globally initialized notyf
     // COMMENTED OUT: Check if user is already signed in, if so, redirect to HOME PAGE
     // onAuthStateChanged(auth, async user => {
     //     if (user) {
@@ -107,23 +112,53 @@ $(document).ready(function () {
         if (event.target === modal) modal.classList.remove("show");
     });
 
-    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
-    // DISPLAY CARDS FUNCTION
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#    // DISPLAY CARDS FUNCTION
     async function loadProducts() {
+        console.log("🔄 Starting loadProducts function...");
+        
+        // Update debug status if available
+        const debugStatus = document.getElementById('debug-status');
+        function updateDebug(message) {
+            if (debugStatus) {
+                debugStatus.innerHTML += '<br>' + new Date().toLocaleTimeString() + ': ' + message;
+            }
+        }
+        
+        updateDebug('loadProducts() called');
+        
         try {
             const container = $("#products-container");
+            console.log("📦 Container found:", container.length > 0);
+            updateDebug(`Container found: ${container.length > 0}`);
+            
             container.empty(); // Clear existing cards to avoid duplicates
+            
+            console.log("🔥 Attempting to connect to Firebase...");
+            updateDebug('Connecting to Firebase...');
+            
             const querySnapshot = await getDocs(
                 collection(chandriaDB, "products")
             );
+            
+            console.log("📊 Firebase query result:", querySnapshot.size, "documents found");
+            updateDebug(`Firebase connected! Found ${querySnapshot.size} products`);
+            
             if (querySnapshot.empty) {
+                console.log("⚠️ No products found in inventory");
+                updateDebug('No products found in database');
                 container.append(
                     '<div style="margin:2rem;">No products found in inventory.</div>'
                 );
                 return;
             }
+            
+            console.log("🎯 Processing products...");
+            updateDebug('Processing products...');
             querySnapshot.forEach(doc => {
+                console.log("📄 Processing document:", doc.id);
                 const data = doc.data();
+                console.log("📋 Document data:", data);
+                
                 // Defensive: check for required fields
                 if (!data.frontImageUrl || !data.code) {
                     console.warn(
@@ -132,57 +167,64 @@ $(document).ready(function () {
                         data
                     );
                     return;
-                }
-                // Create the card HTML
-                const card = $(`
-                  <article class="card_article card">
-                    <div class="card_data">
-                        <span
-                            class="card_color"
-                            style="background-color: ${data.color}"
-                            data-color="${data.color}"
-                        ></span>                        <img
-                            src="${data.frontImageUrl}"
-                            alt="image"
-                            class="card_img"
-                            id="product-img"
-                        />
-                        <h2 class="card_title">${data.name}</h2> 
-                        <p class="card_price">₱${parseFloat(data.price).toLocaleString()}</p>
-                        <p class="card_size">Available Size: ${Object.entries(data.size)
-                            .map(([size, stock]) => `${size}(${stock})`)
-                            .join(", ")}</p>                     
-                        <p class="card_sleeve">Sleeve: ${data.sleeve}</p>
-                        <span class="card_category">${data.category}</span>
-                        <div class="product-actions">
-                            <a
-                                href="#"
-                                class="action-btn edit-btn"
-                                aria-label="Edit"
-                                data-open="viewProductModal"
-                                data-id="${doc.id}"
-                            >
-                                <i class="fi fi-rr-edit"></i>
-                            </a>
-                            <a
-                                href="#"
-                                class="action-btn delete-btn"
-                                aria-label="Delete"
-                                data-id="${doc.id}"
-                            >
-                                <i class="fi fi-rr-trash"></i>
-                            </a>
+                }// Create the card HTML to match the exact screenshot design
+                const totalStock = Object.values(data.size).reduce((sum, qty) => sum + qty, 0);
+                const statusClass = totalStock === 0 ? 'out-of-stock' : totalStock <= 2 ? 'low-stock' : 'available';
+                const statusText = totalStock === 0 ? 'Out of Stock' : totalStock <= 2 ? 'Low Stock' : 'Available';
+                
+                // Get color name from hex
+                const colorName = getColorNameFromHex(data.color) || 'Unknown';
+                  const card = $(`
+                  <article class="card_article" data-id="${doc.id}" data-name="${data.name}" data-category="${data.category}" data-color="${data.color}" data-size="${Object.keys(data.size).join(',')}" data-price="${data.price}" data-product-code="${data.code}">
+                    <div class="card_img">
+                        <img src="${data.frontImageUrl}" alt="${data.name}" />
+                        <div class="card_badge clothing">${data.category}</div>
+                        <div class="card_status_badge ${statusClass}">${statusText}</div>
+                        <div class="card_actions">
+                            <button class="card_action_btn edit_btn" data-action="edit" data-id="${doc.id}" title="Edit Product">
+                                <i class="bx bx-edit"></i>
+                            </button>
+                            <button class="card_action_btn delete_btn" data-action="delete" data-id="${doc.id}" title="Delete Product">
+                                <i class="bx bx-trash"></i>
+                            </button>
                         </div>
+                    </div>
+                    <div class="card_content" data-open="viewProductModal" data-id="${doc.id}">
+                        <h3 class="card_title product-name">${data.name}</h3>
+                        <div class="card_price product-price">₱${parseFloat(data.price).toLocaleString()}</div>
+                        <div class="card_color_section">
+                            <div class="card_color" style="background-color: ${data.color}"></div>
+                            <span class="card_color_text">${colorName}</span>
+                        </div>
+                        <div class="card_stock_section">
+                            <span class="card_stock_text">Stock:</span>
+                            <span class="card_stock_count">${totalStock}</span>
+                            <div class="card_stock_indicator ${statusClass}"></div>
+                        </div>
+                        <div class="card_sizes">
+                            ${Object.entries(data.size)
+                                .filter(([size, stock]) => stock > 0)
+                                .map(([size, stock]) => `<span class="card_size">${size}</span>`)
+                                .join("")}
+                        </div>
+                        <div class="product-category" style="display: none;">${data.category}</div>
                     </div>
                 </article>
                 `);
                 container.append(card);
                 $("body").addClass("loaded");
-            });
-        } catch (err) {
+            });        } catch (err) {
             console.error("Error loading products from Firebase:", err);
+            
+            // Update debug status if available
+            const debugStatus = document.getElementById('debug-status');
+            if (debugStatus) {
+                debugStatus.innerHTML += '<br>' + new Date().toLocaleTimeString() + ': ❌ ERROR: ' + err.message;
+            }
+            
+            const container = $("#products-container");
             container.append(
-                '<div style="color:red;margin:2rem;">Failed to load products. Check your connection or Firebase rules.</div>'
+                '<div style="color:red;margin:2rem;">Failed to load products. Check your connection or Firebase rules.<br>Error: ' + err.message + '</div>'
             );
             $("body").addClass("loaded");
         }
@@ -196,11 +238,13 @@ $(document).ready(function () {
         } catch (error) {
             console.error("Error initializing inventory data:", error);
         } finally {
-            hideInventoryLoader();
-        }
+            hideInventoryLoader();        }
     }
 
-    initializeAllInventoryData();
+    // Wait for DOM to be ready before initializing
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeAllInventoryData();
+    });
 
     // RGB TO HEX FUNCTION
     function rgbToHex(rgb) {
@@ -360,32 +404,31 @@ $(document).ready(function () {
         if (isNaN(priceValue) || priceValue < 0) {
             showErrorModal("Product price cannot be negative.");
             return;
-        }
-
-        // DISPLAYING SPINNER
+        }        // DISPLAYING SPINNER
         const spinnerText = $("#spinner-text");
         const spinner = $("#spinner");
 
-        // FUNCTION TO UPLOAD SINGLE IMAGE
-        const uploadImage = async file => {
-            const formData = new FormData();
-            formData.append("file", file);
-            formData.append("upload_preset", "UPLOAD_IMG");
+        try {
+            // FUNCTION TO UPLOAD SINGLE IMAGE
+            const uploadImage = async file => {
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("upload_preset", "UPLOAD_IMG");
 
-            const response = await fetch(
-                "https://api.cloudinary.com/v1_1/dbtomr3fm/image/upload",
-                {
-                    method: "POST",
-                    body: formData
-                }
-            );
+                const response = await fetch(
+                    "https://api.cloudinary.com/v1_1/dbtomr3fm/image/upload",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
 
-            const data = await response.json();
-            return {
-                url: data.secure_url,
-                public_id: data.public_id // Save this
+                const data = await response.json();
+                return {
+                    url: data.secure_url,
+                    public_id: data.public_id // Save this
+                };
             };
-        };
 
         // COLLECT SIZE + QUANTITY DATA
         const sizes = {};
@@ -474,15 +517,16 @@ $(document).ready(function () {
 
             $("#add-dropzone-back").css("background-image", "none");
             $("#add-upload-label-back").css("opacity", "1");
-
+            
             // CLOSING MODAL
             $("#addProductModal").removeClass("show");
         } catch (err) {
             console.error("Upload failed:", err);
             showErrorModal("There was an error uploading the product.");
+        } finally {
+            spinner.addClass("d-none");
         }
-
-        spinner.addClass("d-none");    });
+    });
 
     // DELETE REQUEST FUNCTION
     // WARNING: This function uses API secret in client-side code - security risk!
@@ -971,49 +1015,33 @@ $(document).ready(function () {
                         data
                     );
                     return;
-                }
-
-                // Create card HTML
-                const card = $(`
-                <article class="card_article card">
-                    <div class="card_data">
-                        <img
-                            src="${data.imageUrl}"
-                            alt="image"
-                            class="card_img"
-                        />
-                        <h2 class="card_title">${data.name}</h2>
-                        <p class="card_info">Price: ₱${data.price}</p>
-                        <p class="card_info">
-                            ${
-                                data.inclusions && data.inclusions.length
-                                    ? "With Inclusion"
-                                    : "Without Inclusion"
-                            }
-                        </p>
-                        <span class="card_category">${data.code}</span>
-                        <div class="product-actions">
-                            <a
-                                href="#"
-                                class="action-btn edit-add-btn"
-                                data-open="updateAdditionalModal"
-                                aria-label="Edit"
-                                data-id="${doc.id}"
-                            >
-                                <i class="fi fi-rr-edit"></i>
-                            </a>
-                            <a
-                                href="#"
-                                class="action-btn delete-add-btn"
-                                aria-label="Delete"
-                                data-id="${doc.id}"
-                            >
-                                <i class="fi fi-rr-trash"></i>
-                            </a>
+                }                // Create card HTML to match screenshot design
+                const statusClass = 'available'; // Accessories are typically always available
+                const statusText = 'Available';
+                  const card = $(`
+                <article class="card_article" data-open="updateAdditionalModal" data-id="${doc.id}">
+                    <div class="card_img">
+                        <img src="${data.imageUrl}" alt="${data.name}" />
+                        <div class="card_badge additional">Additional / Accessories</div>
+                        <div class="card_status_badge ${statusClass}">${statusText}</div>
+                    </div>
+                    <div class="card_content">
+                        <h3 class="card_title">${data.name}</h3>
+                        <div class="card_price">₱${parseFloat(data.price).toLocaleString()}</div>
+                        <div class="card_color_section">
+                            <div class="card_color" style="background-color: #8b5cf6"></div>
+                            <span class="card_color_text">Pearl White</span>
+                        </div>
+                        <div class="card_stock_section">
+                            <span class="card_stock_text">${data.inclusions && data.inclusions.length ? "With Inclusion" : "Without Inclusion"}</span>
+                            <div class="card_stock_indicator ${statusClass}"></div>
+                        </div>
+                        <div class="card_sizes">
+                            <span class="card_size">One Size</span>
                         </div>
                     </div>
                 </article>
-            `);
+                `);
 
                 container.append(card);
             });
@@ -1643,6 +1671,64 @@ $(document).ready(function () {
             $("#update-upload-label-back").css("opacity", "1");
         }
     });
+
+    // Helper function to get color name from hex value
+    function getColorNameFromHex(hex) {
+        const colorMap = {
+            '#ff0000': 'Red',
+            '#0000ff': 'Blue',
+            '#008000': 'Green',
+            '#ffff00': 'Yellow',
+            '#ffa500': 'Orange',
+            '#800080': 'Purple',
+            '#ffffff': 'White',
+            '#000000': 'Black',
+            '#808080': 'Gray',
+            '#964b00': 'Brown',
+            '#d2b48c': 'Beige',
+            '#f5deb3': 'Cream',
+            '#f4f3ee': 'White',
+            '#fffff0': 'Ivory',
+            '#daa520': 'Yellow'
+        };
+        
+        // Convert to lowercase for comparison
+        const lowerHex = hex.toLowerCase();
+        
+        // Return exact match if found
+        if (colorMap[lowerHex]) {
+            return colorMap[lowerHex];
+        }
+        
+        // Find closest color match
+        let closestColor = 'Unknown';
+        let minDistance = Infinity;
+        
+        for (const [hexColor, colorName] of Object.entries(colorMap)) {
+            const distance = getColorDistance(lowerHex, hexColor.toLowerCase());
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestColor = colorName;
+            }
+        }
+        
+        return closestColor;
+    }
+    
+    // Helper function to calculate color distance
+    function getColorDistance(hex1, hex2) {
+        const r1 = parseInt(hex1.substr(1, 2), 16);
+        const g1 = parseInt(hex1.substr(3, 2), 16);
+        const b1 = parseInt(hex1.substr(5, 2), 16);
+        
+        const r2 = parseInt(hex2.substr(1, 2), 16);
+        const g2 = parseInt(hex2.substr(3, 2), 16);
+        const b2 = parseInt(hex2.substr(5, 2), 16);
+        
+        return Math.sqrt(Math.pow(r2 - r1, 2) + Math.pow(g2 - g1, 2) + Math.pow(b2 - b1, 2));
+    }
+
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
 });
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -1658,3 +1744,28 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+// Export functions for use in other modules
+console.log("🔄 Creating InventoryService global object...");
+
+try {
+    window.InventoryService = {
+        generateProductCode,
+        uploadImage: uploadImage,
+        addDoc,
+        collection,
+        chandriaDB,
+        loadProducts,
+        initializeAllInventoryData,
+        showInventoryLoader,
+        hideInventoryLoader,
+        rgbToHex,
+        notyf
+    };
+    
+    console.log("✅ InventoryService created successfully with methods:", Object.keys(window.InventoryService));
+} catch (error) {
+    console.error("❌ Error creating InventoryService:", error);
+}
+
+// Notyf is already made globally available above
