@@ -1547,14 +1547,13 @@
         font-size: 0.9rem;
         margin: 0;
         color: #666;
-    }
-      /* Products Section - Table at top */
+    }    /* Products Section - Table at top */
     .products-section {
         order: 1;
         height: auto;
         max-height: 60vh;
         min-height: 300px;
-        margin-bottom: 2rem;
+        margin-bottom: 4rem;
         padding: 1rem;
     }
     
@@ -1764,11 +1763,10 @@
     
     .page-subtitle {
         font-size: 0.8rem;
-    }
-      .products-section {
+    }    .products-section {
         padding: 0.75rem;
         max-height: 50vh;
-        margin-bottom: 1.5rem;
+        margin-bottom: 3.5rem;
     }
     
     .filter-btn {
