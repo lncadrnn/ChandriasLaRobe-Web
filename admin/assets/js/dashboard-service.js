@@ -729,19 +729,35 @@ document.addEventListener("DOMContentLoaded", () => {
                 </li>
             `;
         }
-    }
-
-    async function showAppointmentDetails(id) {
+    }    async function showAppointmentDetails(id) {
         try {
+            console.log('📋 Loading appointment details for ID:', id);
+            
             const docSnap = await db.collection("appointments").doc(id).get();
-            if (!docSnap.exists) return;
+            if (!docSnap.exists) {
+                console.warn('❌ Appointment not found:', id);
+                return;
+            }
 
-            const data = docSnap.data();        const modal = document.getElementById('appointment-modal');
-        const details = document.getElementById('appointment-details');
+            const data = docSnap.data();
+            const modal = document.getElementById('appointment-modal');
+            const details = document.getElementById('appointment-details');
 
-        // Fetch product details for each cart item
-        let cartItems = [];
-        if (Array.isArray(data.cartItems) && data.cartItems.length > 0) {
+            console.log('🔍 Modal element found:', !!modal);
+            console.log('🔍 Modal current classes:', modal.className);
+            
+            // Forcefully reset modal state
+            modal.className = 'modal'; // Reset all classes
+            modal.style.display = 'none';
+            modal.style.visibility = 'hidden';
+            modal.style.opacity = '0';
+            
+            // Prevent background interaction
+            preventBackgroundInteraction();
+
+            // Fetch product details for each cart item
+            let cartItems = [];
+            if (Array.isArray(data.cartItems) && data.cartItems.length > 0) {
                 cartItems = await Promise.all(data.cartItems.map(async item => {
                     let productDoc;
                     if (item.type === "accessory") {
@@ -750,10 +766,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         productDoc = await db.collection("products").doc(item.productId).get();
                     }
                     if (!productDoc.exists) return null;
-                    const productData = productDoc.data();                    return {
+                    const productData = productDoc.data();
+
+                    return {
                         id: productDoc.id,
                         name: productData.name || productData.code || "Unknown",
-                        code: productData.code || productData.name || "Unknown", // Add code field
+                        code: productData.code || productData.name || "Unknown",
                         image: productData.frontImageUrl || productData.imageUrl || "",
                         price: productData.price || 0,
                         size: item.size || "",
@@ -765,7 +783,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             let products = '';
-            if (cartItems.length > 0) {                products = cartItems.map(item => `
+            if (cartItems.length > 0) {
+                products = cartItems.map(item => `
                     <tr>
                         <td><img src="${item.image}" alt="${item.name}" class="appointment-product-img"></td>
                         <td>
@@ -781,13 +800,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 products = `<tr><td colspan="3" style="text-align:center;color:#888;">No booked items found for this appointment.</td></tr>`;
             }
 
-            const total = cartItems.reduce((sum, i) => sum + (Number(i.price) * (i.quantity || 1)), 0);            // Ensure all fields are filled (use empty string if undefined)
+            const total = cartItems.reduce((sum, i) => sum + (Number(i.price) * (i.quantity || 1)), 0);
+
+            // Ensure all fields are filled (use empty string if undefined)
             const customerName = data.customerName || '';
             const customerEmail = data.customerEmail || '';
             const customerContact = data.customerContact || '';
             const checkoutDate = data.checkoutDate || '';
             const checkoutTime = data.checkoutTime || '';
-            const customerRequest = data.customerRequest || '';            details.innerHTML = `
+            const customerRequest = data.customerRequest || '';
+
+            details.innerHTML = `
                 <div class="appointment-modal-grid">
                     <div class="appointment-customer-info">
                         <h4><i class="fas fa-user"></i> Customer Information</h4>
@@ -842,24 +865,168 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             `;
 
-            modal.classList.add('visible');            // Proceed to Transaction handler
-            modal.querySelector('.proceed-transaction').onclick = () => {
-                sessionStorage.setItem('appointmentData', JSON.stringify({
-                    customerName: data.customerName,
-                    customerEmail: data.customerEmail,
-                    customerContact: data.customerContact,
-                    eventDate: data.checkoutDate,
-                    appointmentTime: data.checkoutTime,
-                    appointmentId: id,
-                    cartItems: cartItems,
-                    totalAmount: total
-                }));
-                window.location.href = './rental.html';
-            };
+            // Force show modal using multiple approaches
+            setTimeout(() => {
+                // Reset styles
+                modal.style.display = 'flex';
+                modal.style.visibility = 'visible';
+                modal.style.opacity = '1';
+                
+                // Add classes
+                modal.classList.add('visible');
+                modal.classList.add('show');
+                
+                console.log('✅ Real appointment modal displayed for ID:', id);
+                console.log('🔍 Modal classes after show:', modal.className);
+            }, 10);
+
+            // Proceed to Transaction handler
+            const proceedBtn = modal.querySelector('.proceed-transaction');
+            if (proceedBtn) {
+                // Remove any previous event listeners
+                proceedBtn.onclick = null;
+                proceedBtn.onclick = () => {
+                    sessionStorage.setItem('appointmentData', JSON.stringify({
+                        customerName: data.customerName,
+                        customerEmail: data.customerEmail,
+                        customerContact: data.customerContact,
+                        eventDate: data.checkoutDate,
+                        appointmentTime: data.checkoutTime,
+                        appointmentId: id,
+                        cartItems: cartItems,
+                        totalAmount: total
+                    }));
+                    window.location.href = './rental.html';
+                };
+            }
         } catch (error) {
-            console.error("Error showing appointment details:", error);
+            console.error("❌ Error showing appointment details:", error);
+            restoreBackgroundInteraction();
         }
-    }    // Helper functions for modal loading state
+    }// Show sample appointment details for hardcoded appointments
+    function showSampleAppointmentDetails(button) {
+        try {
+            console.log('📋 Showing sample appointment details');
+            
+            const appointmentItem = button.closest('.appointment-item');
+            const appointmentText = appointmentItem.querySelector('.appointment-text').textContent;
+            
+            // Extract customer name, date, and time from the text
+            const nameMatch = appointmentText.match(/^([^h]+) has booked/);
+            const dateMatch = appointmentText.match(/on ([^a]+) at/);
+            const timeMatch = appointmentText.match(/at ([^.]+)\./);
+            
+            const customerName = nameMatch ? nameMatch[1].trim() : 'Unknown Customer';
+            const appointmentDate = dateMatch ? dateMatch[1].trim() : 'Unknown Date';
+            const appointmentTime = timeMatch ? timeMatch[1].trim() : 'Unknown Time';
+            
+            const modal = document.getElementById('appointment-modal');
+            const details = document.getElementById('appointment-details');
+
+            console.log('🔍 Modal element found:', !!modal);
+            console.log('🔍 Modal current classes:', modal.className);
+            console.log('🔍 Modal current display style:', modal.style.display);
+            
+            // Forcefully reset modal state
+            modal.className = 'modal'; // Reset all classes
+            modal.style.display = 'none';
+            modal.style.visibility = 'hidden';
+            modal.style.opacity = '0';
+            
+            // Prevent background interaction
+            preventBackgroundInteraction();
+
+            // Show sample data for hardcoded appointments
+            details.innerHTML = `
+                <div class="appointment-modal-grid">
+                    <div class="appointment-customer-info">
+                        <h4><i class="fas fa-user"></i> Customer Information</h4>
+                        <div class="appointment-info-item">
+                            <span class="appointment-info-label">Name:</span>
+                            <span class="appointment-info-value">${customerName}</span>
+                        </div>
+                        <div class="appointment-info-item">
+                            <span class="appointment-info-label">Email:</span>
+                            <span class="appointment-info-value">Not available in sample data</span>
+                        </div>
+                        <div class="appointment-info-item">
+                            <span class="appointment-info-label">Phone:</span>
+                            <span class="appointment-info-value">Not available in sample data</span>
+                        </div>
+                        <div class="appointment-info-item">
+                            <span class="appointment-info-label">Date:</span>
+                            <span class="appointment-info-value">${appointmentDate}</span>
+                        </div>
+                        <div class="appointment-info-item">
+                            <span class="appointment-info-label">Time:</span>
+                            <span class="appointment-info-value">${appointmentTime}</span>
+                        </div>
+                        <div class="appointment-info-item">
+                            <span class="appointment-info-label">Notes:</span>
+                            <span class="appointment-info-value">No special requests</span>
+                        </div>
+                    </div>
+                    <div class="appointment-products-section">
+                        <div class="appointment-products-header">
+                            <h4><i class="fas fa-box"></i> Booked Items</h4>
+                        </div>
+                        <table class="appointment-products-table">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Product Details</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="3" style="text-align:center;color:#888;">
+                                        <i class="fas fa-info-circle"></i> 
+                                        This is sample appointment data. Actual booked items will be displayed for real appointments from the database.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="appointment-total-section">
+                            <div class="appointment-total-row">
+                                <span>Total Amount:</span>
+                                <span>Sample Data</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Force show modal using multiple approaches
+            setTimeout(() => {
+                // Reset styles
+                modal.style.display = 'flex';
+                modal.style.visibility = 'visible';
+                modal.style.opacity = '1';
+                
+                // Add classes
+                modal.classList.add('visible');
+                modal.classList.add('show');
+                
+                console.log('✅ Sample appointment modal should be visible');
+                console.log('🔍 Modal classes after show:', modal.className);
+                console.log('🔍 Modal display after show:', modal.style.display);
+                console.log('🔍 Modal computed style:', getComputedStyle(modal).display);
+            }, 10);
+
+            // For sample data, we can still show a proceed button but with a message
+            const proceedBtn = modal.querySelector('.proceed-transaction');
+            if (proceedBtn) {
+                // Remove any previous event listeners
+                proceedBtn.onclick = null;
+                proceedBtn.onclick = () => {
+                    alert('This is sample appointment data. Cannot proceed to transaction.');
+                };
+            }
+        } catch (error) {
+            console.error('❌ Error showing sample appointment details:', error);
+        }
+    }// Helper functions for modal loading state
     function showModalLoadingState() {
         // Set all content to loading state
         document.getElementById('customer-name').textContent = 'Loading...';
@@ -889,11 +1056,23 @@ document.addEventListener("DOMContentLoaded", () => {
         // This function exists for consistency and future use
     }    // Modal event handlers using event delegation
     document.addEventListener('click', function(e) {
-        // Handle appointment modal close
+        // Add debugging for all clicks
+        if (e.target.classList.contains('appointment-view-details') || 
+            e.target.classList.contains('close-modal') || 
+            e.target.classList.contains('modal-backdrop')) {
+            console.log('🖱️ Click detected on:', e.target.className, e.target.tagName);
+        }
+          // Handle appointment modal close
         if (e.target.classList.contains('close-modal') || 
             (e.target.closest('.close-modal'))) {
+            console.log('🔄 Closing appointment modal via close button');
             restoreBackgroundInteraction();
-            document.getElementById('appointment-modal').classList.remove('visible');
+            const appointmentModal = document.getElementById('appointment-modal');
+            // Force close with all methods
+            appointmentModal.className = 'modal';
+            appointmentModal.style.display = 'none';
+            appointmentModal.style.visibility = 'hidden';
+            appointmentModal.style.opacity = '0';
         }
         
         // Handle rental modal close
@@ -911,13 +1090,33 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log('🔍 Opening rental details for ID:', rentalId);
                 showRentalDetails(rentalId);
             }
-        }
-          // Close modal when clicking the backdrop
+        }        // Handle appointment view details button clicks
+        if (e.target.classList.contains('appointment-view-details')) {
+            e.preventDefault();
+            console.log('🔍 Appointment view details button clicked!', e.target);
+            console.log('🔍 Button classes:', e.target.classList.toString());
+            console.log('🔍 Current modal state:', document.getElementById('appointment-modal').classList.contains('visible'));
+            
+            const appointmentId = e.target.getAttribute('data-id');
+            if (appointmentId) {
+                console.log('🔍 Opening appointment details for ID:', appointmentId);
+                showAppointmentDetails(appointmentId);
+            } else {
+                // Handle hardcoded appointments that don't have IDs
+                console.log('🔍 Showing sample appointment details');
+                showSampleAppointmentDetails(e.target);
+            }
+        }          // Close modal when clicking the backdrop (only for modal-backdrop class)
         if (e.target.classList.contains('modal-backdrop')) {
+            console.log('🔄 Closing modal via backdrop click');
+            restoreBackgroundInteraction();
             const modal = e.target.closest('.modal');
             if (modal) {
-                restoreBackgroundInteraction();
-                modal.classList.remove('visible');
+                // Force close with all methods
+                modal.className = 'modal';
+                modal.style.display = 'none';
+                modal.style.visibility = 'hidden';
+                modal.style.opacity = '0';
             }
         }
     });
