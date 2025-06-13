@@ -353,10 +353,187 @@ function undoCancellation(transactionId) {
     openUndoCancelModal(transactionId);
 }
 
+/**
+ * Enhanced cancel rental function that ensures global array updates
+ * @param {string} transactionId - The ID of the transaction to cancel
+ */
+async function cancelRentalWithGlobalUpdate(transactionId) {
+    try {
+        const transaction = window.allTransactions?.find(t => t.id === transactionId);
+        if (!transaction) {
+            console.error('Transaction not found');
+            return;
+        }
+
+        // Show loading
+        const actionSpinner = document.querySelector('.admin-action-spinner');
+        if (actionSpinner) {
+            actionSpinner.style.display = 'flex';
+        }
+
+        // Update the transaction in Firebase
+        const transactionRef = doc(chandriaDB, 'transaction', transactionId);
+        await updateDoc(transactionRef, {
+            rentalStatus: 'Cancelled',
+            cancelledDate: new Date().toISOString(),
+            lastUpdated: new Date().toISOString()
+        });
+
+        // Update local data in global arrays
+        if (window.allTransactions) {
+            const transactionIndex = window.allTransactions.findIndex(t => t.id === transactionId);
+            if (transactionIndex !== -1) {
+                window.allTransactions[transactionIndex].rentalStatus = 'Cancelled';
+                window.allTransactions[transactionIndex].cancelledDate = new Date().toISOString();
+                window.allTransactions[transactionIndex].lastUpdated = new Date().toISOString();
+            }
+        }
+
+        // Update filtered transactions
+        if (window.filteredTransactions) {
+            const filteredIndex = window.filteredTransactions.findIndex(t => t.id === transactionId);
+            if (filteredIndex !== -1) {
+                window.filteredTransactions[filteredIndex].rentalStatus = 'Cancelled';
+                window.filteredTransactions[filteredIndex].cancelledDate = new Date().toISOString();
+                window.filteredTransactions[filteredIndex].lastUpdated = new Date().toISOString();
+            }
+        }
+
+        // Re-render the views
+        if (window.currentView) {
+            if (window.currentView === 'cards') {
+                if (window.renderTransactionCards) {
+                    window.renderTransactionCards();
+                }
+            } else {
+                if (window.renderTransactionTable) {
+                    window.renderTransactionTable();
+                }
+            }
+        }
+
+        // Hide loading
+        if (actionSpinner) {
+            actionSpinner.style.display = 'none';
+        }
+
+        // Show success notification with Notyf
+        if (window.notyf) {
+            window.notyf.success({
+                message: 'Rental cancelled successfully!',
+                duration: 4000,
+                background: '#dc3545',
+                icon: {
+                    className: 'bx bx-x-circle',
+                    tagName: 'i'
+                }
+            });
+        } else {
+            alert('Rental cancelled successfully!');
+        }
+
+        return true;
+
+    } catch (error) {
+        console.error('Error cancelling rental:', error);
+        
+        // Hide loading
+        const actionSpinner = document.querySelector('.admin-action-spinner');
+        if (actionSpinner) {
+            actionSpinner.style.display = 'none';
+        }
+        
+        // Show error notification
+        if (window.notyf) {
+            window.notyf.error({
+                message: 'Error cancelling rental. Please try again.',
+                duration: 5000
+            });
+        } else {
+            alert('Error cancelling rental. Please try again.');
+        }
+
+        return false;
+    }
+}
+
+/**
+ * Enhanced confirm cancel rental function that ensures proper global updates
+ * This overrides the main service function to ensure consistency
+ */
+async function confirmCancelRental() {
+    // Try to get the current transaction from the main service or window
+    const currentTransaction = window.currentCancelTransaction || 
+                              (window.allTransactions && window.allTransactions.find(t => t.isBeingCancelled));
+    
+    if (!currentTransaction) {
+        console.error('No transaction selected for cancellation');
+        // Fallback to calling the original function if it exists
+        if (window.originalConfirmCancelRental) {
+            return window.originalConfirmCancelRental();
+        }
+        return;
+    }
+
+    try {
+        console.log('Starting cancel rental process for:', currentTransaction.id);
+        
+        // Disable the confirm button to prevent double-clicks
+        const confirmBtn = document.getElementById('confirm-cancel-rental-btn');
+        if (confirmBtn) {
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Cancelling...';
+        }
+
+        // Use the enhanced cancel function
+        const success = await cancelRentalWithGlobalUpdate(currentTransaction.id);
+        
+        if (success && window.closeCancelRentalModal) {
+            // Close the modal
+            window.closeCancelRentalModal();
+        }
+
+        // Re-enable button in case modal stays open
+        if (confirmBtn) {
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = '<i class="bx bx-x-circle"></i> Cancel Rental';
+        }
+
+    } catch (error) {
+        console.error('Error in confirmCancelRental:', error);
+        
+        // Re-enable button
+        const confirmBtn = document.getElementById('confirm-cancel-rental-btn');
+        if (confirmBtn) {
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = '<i class="bx bx-x-circle"></i> Cancel Rental';
+        }
+        
+        // Show error notification
+        if (window.notyf) {
+            window.notyf.error({
+                message: 'Error cancelling rental. Please try again.',
+                duration: 5000
+            });
+        } else {
+            alert('Error cancelling rental. Please try again.');
+        }
+    }
+}
+
 // Export functions for global access (if needed)
 if (typeof window !== 'undefined') {
+    // Preserve the original function if it exists
+    if (window.confirmCancelRental && typeof window.confirmCancelRental === 'function') {
+        window.originalConfirmCancelRental = window.confirmCancelRental;
+    }
+    
     window.openUndoCancelModal = openUndoCancelModal;
     window.closeUndoCancelModal = closeUndoCancelModal;
     window.confirmUndoCancel = confirmUndoCancel;
     window.undoCancellation = undoCancellation;
+    window.cancelRentalWithGlobalUpdate = cancelRentalWithGlobalUpdate;
+    window.confirmCancelRental = confirmCancelRental;
+    
+    console.log('Customer logs modal functions loaded and exported');
 }

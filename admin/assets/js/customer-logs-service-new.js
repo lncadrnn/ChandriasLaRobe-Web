@@ -1477,7 +1477,8 @@ function showCancelRentalModal(transactionId) {
         return;
     }
 
-    currentCancelTransaction = transaction;    // Format event date
+    currentCancelTransaction = transaction;
+    window.currentCancelTransaction = currentCancelTransaction; // Update global reference    // Format event date
     const eventDateDisplay = formatEventDate(transaction);
     const totalAmount = transaction.totalAmount || transaction.totalPayment || transaction.amount || 0;    // Populate modal with transaction details
     const customerNameEl = document.getElementById('cancel-customer-name');
@@ -1517,6 +1518,7 @@ function closeCancelRentalModal() {
         document.body.style.overflow = '';
     }
     currentCancelTransaction = null;
+    window.currentCancelTransaction = null; // Clear global reference
 }
 
 // Confirm cancel rental
@@ -1540,9 +1542,7 @@ async function confirmCancelRental() {
             rentalStatus: 'Cancelled',
             cancelledDate: new Date().toISOString(),
             lastUpdated: new Date().toISOString()
-        });
-
-        // Update local data
+        });        // Update local data
         const transactionIndex = allTransactions.findIndex(t => t.id === currentCancelTransaction.id);
         if (transactionIndex !== -1) {
             allTransactions[transactionIndex].rentalStatus = 'Cancelled';
@@ -1557,6 +1557,10 @@ async function confirmCancelRental() {
             filteredTransactions[filteredIndex].cancelledDate = new Date().toISOString();
             filteredTransactions[filteredIndex].lastUpdated = new Date().toISOString();
         }
+
+        // Update global references
+        window.allTransactions = allTransactions;
+        window.filteredTransactions = filteredTransactions;
 
         // Re-render the views
         if (currentView === 'cards') {
@@ -1939,3 +1943,6 @@ window.showSuccessToast = showSuccessToast;
 // Export cancel rental functions
 window.showCancelRentalModal = showCancelRentalModal;
 window.confirmCancelRental = confirmCancelRental;
+
+// Export cancel rental state
+window.currentCancelTransaction = currentCancelTransaction;
