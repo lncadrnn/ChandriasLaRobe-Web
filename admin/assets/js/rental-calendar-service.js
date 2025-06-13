@@ -265,8 +265,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log('🔄 Refreshing transaction data...');
             await fetchRentalsData();
         }
-        
-        // Get transaction statistics
+          // Get transaction statistics
         function getTransactionStatistics() {
             const stats = {
                 total: rentalsData.length,
@@ -282,7 +281,36 @@ document.addEventListener("DOMContentLoaded", () => {
             return stats;
         }
         
-        // Make utility functions globally available
+        // Update statistics panel in UI
+        function updateStatisticsPanel() {
+            const stats = getTransactionStatistics();
+            
+            // Update stat values in the UI
+            const statUpcoming = document.getElementById('stat-upcoming');
+            const statOngoing = document.getElementById('stat-ongoing');
+            const statCompleted = document.getElementById('stat-completed');
+            const statOverdue = document.getElementById('stat-overdue');
+            const statTotal = document.getElementById('stat-total');
+            
+            if (statUpcoming) statUpcoming.textContent = stats.upcoming;
+            if (statOngoing) statOngoing.textContent = stats.ongoing;
+            if (statCompleted) statCompleted.textContent = stats.completed;
+            if (statOverdue) statOverdue.textContent = stats.overdue;
+            if (statTotal) statTotal.textContent = stats.total;
+            
+            // Add animation for value changes
+            [statUpcoming, statOngoing, statCompleted, statOverdue, statTotal].forEach(element => {
+                if (element) {
+                    element.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        element.style.transform = 'scale(1)';
+                    }, 200);
+                }
+            });
+            
+            console.log('📊 Statistics panel updated');
+        }
+          // Make utility functions globally available
         window.transactionUtils = {
             fetchTransactionById,
             fetchTransactionsByDateRange,
@@ -290,8 +318,104 @@ document.addEventListener("DOMContentLoaded", () => {
             fetchOverdueTransactions,
             refreshTransactionData,
             getTransactionStatistics,
+            updateStatisticsPanel,
             getRentalsData: () => rentalsData
         };
+        
+        // Additional transaction fetching utilities for different data sources
+        async function fetchAllTransactionTypes() {
+            try {
+                console.log('🔄 Fetching all transaction types...');
+                
+                const [transactions, overdueFees, appointments] = await Promise.all([
+                    db.collection("transaction").get(),
+                    db.collection("overdue_fees").get(),
+                    db.collection("appointments").get().catch(() => ({ docs: [] })) // Optional collection
+                ]);
+                
+                const allData = {
+                    transactions: transactions.docs.map(doc => ({ id: doc.id, type: 'transaction', ...doc.data() })),
+                    overdueFees: overdueFees.docs.map(doc => ({ id: doc.id, type: 'overdue_fee', ...doc.data() })),
+                    appointments: appointments.docs.map(doc => ({ id: doc.id, type: 'appointment', ...doc.data() }))
+                };
+                
+                console.log('📦 All transaction data:', {
+                    transactions: allData.transactions.length,
+                    overdueFees: allData.overdueFees.length,
+                    appointments: allData.appointments.length
+                });
+                
+                return allData;
+                
+            } catch (error) {
+                console.error('❌ Error fetching all transaction types:', error);
+                return { transactions: [], overdueFees: [], appointments: [] };
+            }
+        }
+        
+        // Fetch transaction details with related data
+        async function fetchTransactionWithDetails(transactionId) {
+            try {
+                console.log('🔍 Fetching detailed transaction data for:', transactionId);
+                
+                const [transactionDoc, overdueFees] = await Promise.all([
+                    db.collection("transaction").doc(transactionId).get(),
+                    db.collection("overdue_fees").where("originalTransactionId", "==", transactionId).get()
+                ]);
+                
+                if (!transactionDoc.exists) {
+                    return null;
+                }
+                
+                const transaction = {
+                    id: transactionDoc.id,
+                    ...transactionDoc.data(),
+                    relatedOverdueFees: overdueFees.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+                };
+                
+                // Process product and accessory details
+                if (transaction.products && Array.isArray(transaction.products)) {
+                    const productDetails = await Promise.all(
+                        transaction.products.map(async (product) => {
+                            try {
+                                const productDoc = await db.collection("products").doc(product.id).get();
+                                return productDoc.exists ? { ...product, details: productDoc.data() } : product;
+                            } catch (error) {
+                                console.warn('Could not fetch product details for:', product.id);
+                                return product;
+                            }
+                        })
+                    );
+                    transaction.products = productDetails;
+                }
+                
+                if (transaction.accessories && Array.isArray(transaction.accessories)) {
+                    const accessoryDetails = await Promise.all(
+                        transaction.accessories.map(async (accessory) => {
+                            try {
+                                const accessoryDoc = await db.collection("additionals").doc(accessory.id).get();
+                                return accessoryDoc.exists ? { ...accessory, details: accessoryDoc.data() } : accessory;
+                            } catch (error) {
+                                console.warn('Could not fetch accessory details for:', accessory.id);
+                                return accessory;
+                            }
+                        })
+                    );
+                    transaction.accessories = accessoryDetails;
+                }
+                
+                console.log('✅ Detailed transaction data fetched:', transaction.id);
+                return transaction;
+                
+            } catch (error) {
+                console.error('❌ Error fetching transaction details:', error);
+                return null;
+            }
+        }
+        
+        // Export additional utility functions
+        window.transactionUtils.fetchAllTransactionTypes = fetchAllTransactionTypes;
+        window.transactionUtils.fetchTransactionWithDetails = fetchTransactionWithDetails;
 
         async function fetchRentalsData() {
             try {
@@ -346,8 +470,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         rental.overdueFeesPaid = associatedFees;
                     }
                 });
-                
-                console.log('✅ Successfully processed rental data:', {
+                  console.log('✅ Successfully processed rental data:', {
                     totalTransactions: rentalsData.length,
                     withOverdueFees: rentalsData.filter(r => r.hasOverdueFee).length,
                     statusBreakdown: {
@@ -359,6 +482,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
                 
                 hideLoading();
+                updateStatisticsPanel(); // Update statistics panel
                 renderCalendar();
                 
             } catch (error) {

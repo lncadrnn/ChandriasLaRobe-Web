@@ -112,10 +112,32 @@
                         <button id="today-btn" class="btn-today">Today</button>
                     </div>
                 </div>
-            </header>
+            </header>            <div class="page-content">
+                <!-- Transaction Statistics Panel -->
+                <div class="transaction-stats" id="transaction-stats">
+                    <div class="stat-item stat-upcoming">
+                        <div class="stat-value" id="stat-upcoming">0</div>
+                        <div class="stat-label">Upcoming</div>
+                    </div>
+                    <div class="stat-item stat-ongoing">
+                        <div class="stat-value" id="stat-ongoing">0</div>
+                        <div class="stat-label">Ongoing</div>
+                    </div>
+                    <div class="stat-item stat-completed">
+                        <div class="stat-value" id="stat-completed">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-item stat-overdue">
+                        <div class="stat-value" id="stat-overdue">0</div>
+                        <div class="stat-label">Overdue</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="stat-total">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                </div>
 
-            <div class="page-content">
-                <div class="calendar-container">
+                <div class="calendar-container" id="calendar-container">
                     <!-- Calendar Navigation -->
                     <div class="calendar-header">
                         <div class="calendar-nav">
