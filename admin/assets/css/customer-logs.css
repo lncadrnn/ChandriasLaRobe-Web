@@ -1195,6 +1195,12 @@ select:disabled {
     border: 1px solid #fca5a5;
 }
 
+.status-cancelled {
+    background: #d1d5db;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
 /* === PAYMENT STATUS === */
 .payment-status {
     font-weight: 600;
