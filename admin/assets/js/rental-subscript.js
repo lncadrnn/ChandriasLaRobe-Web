@@ -825,13 +825,17 @@ $(document).ready(function () {
         }
 
         console.log('Customer form pre-filled with appointment data');
-    }
-
-    // Check for appointment flow on page load
+    }    // Check for appointment flow on page load
     const isAppointmentFlow = checkAppointmentFlow();
     if (isAppointmentFlow) {
         console.log('Page loaded from appointment flow - data pre-populated');
-    }    // --- Error Notification Logic (Using Notyf) ---
+    }
+
+    // Check for additional fee flow on page load
+    const isAdditionalFeeFlow = checkAdditionalFeeFlow();
+    if (isAdditionalFeeFlow) {
+        console.log('Page loaded from additional fee flow - data pre-populated');
+    }// --- Error Notification Logic (Using Notyf) ---
     function showErrorModal(message) {
         notyf.error(message);
     }
@@ -2549,5 +2553,103 @@ $(document).ready(function () {
         closeAddFeeModal();
         notyf.success("Additional fee submitted successfully!");
     });
+    
+    // === ADDITIONAL FEE FLOW FUNCTIONS ===
+    // Check if the page was loaded from additional fee flow
+    function checkAdditionalFeeFlow() {
+        const additionalFeeData = sessionStorage.getItem('additionalFeeData');
+        if (additionalFeeData) {
+            try {
+                const data = JSON.parse(additionalFeeData);
+                
+                console.log("Additional Fee Flow Data:", data);
+                
+                // Pre-fill customer form with transaction data
+                preFillCustomerFormFromTransaction(data);
+                
+                // If there's a pre-selected fee type, open the Add Fee modal
+                if (data.preSelectedFeeType) {
+                    setTimeout(() => {
+                        openAddFeeModalWithPreSelected(data.preSelectedFeeType);
+                    }, 500);
+                }
+                
+                // Clear the session storage after using it
+                sessionStorage.removeItem('additionalFeeData');
+                
+                return true;
+            } catch (error) {
+                console.error('Error parsing additional fee data:', error);
+                sessionStorage.removeItem('additionalFeeData');
+            }
+        }
+        return false;
+    }
+
+    // Pre-fill customer form with transaction data
+    function preFillCustomerFormFromTransaction(transactionData) {
+        // Fill customer information
+        if (transactionData.customerName) {
+            $("#client-full-name").val(transactionData.customerName);
+        }
+        if (transactionData.customerContact) {
+            $("#client-contact").val(transactionData.customerContact);
+        }
+        if (transactionData.customerAddress) {
+            $("#client-address").val(transactionData.customerAddress);
+        }
+        if (transactionData.customerCity) {
+            $("#client-city").val(transactionData.customerCity);
+        }
+        if (transactionData.customerRegion) {
+            $("#client-region").val(transactionData.customerRegion);
+        }
+        
+        // Fill event information
+        if (transactionData.eventType) {
+            $("#event-type").val(transactionData.eventType);
+        }
+        if (transactionData.eventDate) {
+            $("#fixed-event-date").val(transactionData.eventDate);
+        }
+        if (transactionData.eventEndDate) {
+            $("#event-end-date").val(transactionData.eventEndDate);
+        }
+        if (transactionData.rentalType) {
+            $("#rental-type").val(transactionData.rentalType);
+        }
+        
+        // Fill payment information
+        if (transactionData.paymentMethod) {
+            $("#payment-method").val(transactionData.paymentMethod);
+        }
+        if (transactionData.paymentStatus) {
+            $("#payment-status").val(transactionData.paymentStatus);
+        }
+        
+        console.log('Customer form pre-filled with transaction data');
+    }
+
+    // Open Add Fee modal with pre-selected fee type
+    function openAddFeeModalWithPreSelected(feeType) {
+        // Open the modal
+        $("#add-fee-modal").show();
+        
+        // Reset form
+        $("#add-fee-form")[0].reset();
+        
+        // Pre-select the fee type
+        $("#fee-type").val(feeType);
+        
+        // Focus on amount field
+        $("#fee-amount").focus();
+        
+        console.log('Add Fee modal opened with pre-selected type:', feeType);
+    }
+
+    // --- Error Notification Logic (Using Notyf) ---
+    function showErrorModal(message) {
+        notyf.error(message);
+    }
 });
 

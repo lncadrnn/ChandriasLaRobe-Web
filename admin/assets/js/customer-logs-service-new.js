@@ -242,16 +242,13 @@ async function renderTransactionTable() {
         const eventDateDisplay = formatEventDate(transaction);
         
         // Calculate total payment
-        const totalPayment = parseFloat(transaction.totalPayment) || 0;
-
-        const row = `
+        const totalPayment = parseFloat(transaction.totalPayment) || 0;        const row = `
             <tr data-transaction-id="${transaction.id}">
                 <td><strong>${transaction.fullName || 'Unknown'}</strong></td>
                 <td><code class="transaction-code">${transaction.transactionCode || transaction.id.substring(0, 8)}</code></td>
                 <td>${eventDateDisplay}</td>
                 <td><span class="status-badge ${statusClass}">${rentalStatus}</span></td>
-                <td><strong class="amount">₱${totalPayment.toLocaleString()}</strong></td>
-                <td>
+                <td><strong class="amount">₱${totalPayment.toLocaleString()}</strong></td>                <td>
                     <div class="action-buttons">
                         <button class="view-details-btn" data-id="${transaction.id}" title="View Details">
                             <i class='bx bx-show'></i> View
@@ -262,6 +259,21 @@ async function renderTransactionTable() {
                         <button class="delete-btn" data-id="${transaction.id}" title="Delete Transaction">
                             <i class='bx bx-trash'></i> Delete
                         </button>
+                        ${(rentalStatus === 'Ongoing' || rentalStatus === 'Overdue') ? `
+                            <button class="mark-complete-btn" data-id="${transaction.id}" title="Mark as Complete">
+                                <i class='bx bx-check'></i> Complete
+                            </button>
+                            <div class="dropdown">
+                                <button class="additional-fee-btn dropdown-toggle" data-id="${transaction.id}" title="Add Additional Fee">
+                                    <i class='bx bx-plus'></i> Add Fee
+                                </button>
+                                <div class="dropdown-menu">
+                                    <button class="dropdown-item" data-id="${transaction.id}" data-fee-type="repair">Repair Fee</button>
+                                    <button class="dropdown-item" data-id="${transaction.id}" data-fee-type="deposit">Deposit Fee</button>
+                                    ${rentalStatus === 'Overdue' ? `<button class="dropdown-item" data-id="${transaction.id}" data-fee-type="overdue">Overdue Fee</button>` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
                     </div>
                 </td>
             </tr>
@@ -347,11 +359,9 @@ async function renderTransactionCards() {
                         <span class="detail-value" style="color: #e74c3c; font-weight: 600;">₱${remainingBalance.toLocaleString()}</span>
                     </div>
                     ` : ''}
-                </div>
-                
-                <div class="card-actions">
+                </div>                <div class="card-actions">
                     <button class="card-action-btn view-details-btn" data-id="${transaction.id}">
-                        <i class='bx bx-show'></i> View Details
+                        <i class='bx bx-show'></i> View
                     </button>
                     <button class="card-action-btn edit-btn" data-id="${transaction.id}">
                         <i class='bx bx-edit'></i> Edit
@@ -359,6 +369,21 @@ async function renderTransactionCards() {
                     <button class="card-action-btn delete-btn" data-id="${transaction.id}">
                         <i class='bx bx-trash'></i> Delete
                     </button>
+                    ${(rentalStatus === 'Ongoing' || rentalStatus === 'Overdue') ? `
+                        <button class="card-action-btn mark-complete-btn" data-id="${transaction.id}">
+                            <i class='bx bx-check'></i> Complete
+                        </button>
+                        <div class="card-dropdown">
+                            <button class="card-action-btn additional-fee-btn dropdown-toggle" data-id="${transaction.id}">
+                                <i class='bx bx-plus'></i> Add Fee
+                            </button>
+                            <div class="dropdown-menu">
+                                <button class="dropdown-item" data-id="${transaction.id}" data-fee-type="repair">Repair Fee</button>
+                                <button class="dropdown-item" data-id="${transaction.id}" data-fee-type="deposit">Deposit Fee</button>
+                                ${rentalStatus === 'Overdue' ? `<button class="dropdown-item" data-id="${transaction.id}" data-fee-type="overdue">Overdue Fee</button>` : ''}
+                            </div>
+                        </div>
+                    ` : ''}
                 </div>
             </div>
         `;
@@ -473,6 +498,56 @@ function addActionListeners() {
             const transactionId = e.target.closest('.delete-btn').dataset.id;
             deleteTransaction(transactionId);
         });
+    });
+
+    // Mark as Complete buttons
+    document.querySelectorAll('.mark-complete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const transactionId = e.target.closest('.mark-complete-btn').dataset.id;
+            markTransactionAsComplete(transactionId);
+        });
+    });
+
+    // Additional Fee dropdown toggles
+    document.querySelectorAll('.additional-fee-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const dropdown = e.target.closest('.dropdown, .card-dropdown');
+            const menu = dropdown.querySelector('.dropdown-menu');
+            
+            // Close other dropdowns
+            document.querySelectorAll('.dropdown-menu').forEach(otherMenu => {
+                if (otherMenu !== menu) {
+                    otherMenu.classList.remove('show');
+                }
+            });
+            
+            // Toggle current dropdown
+            menu.classList.toggle('show');
+        });
+    });
+
+    // Fee type selection
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const transactionId = e.target.dataset.id;
+            const feeType = e.target.dataset.feeType;
+            redirectToRentalWithFee(transactionId, feeType);
+            
+            // Close dropdown
+            const menu = e.target.closest('.dropdown-menu');
+            menu.classList.remove('show');
+        });
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.dropdown, .card-dropdown')) {
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                menu.classList.remove('show');
+            });
+        }
     });
 }
 
@@ -1076,6 +1151,114 @@ function applySorting() {
         renderTransactionCards();
     } else {
         renderTransactionTable();
+    }
+}
+
+// Mark transaction as complete
+async function markTransactionAsComplete(transactionId) {
+    try {
+        const transaction = allTransactions.find(t => t.id === transactionId);
+        if (!transaction) {
+            console.error('Transaction not found');
+            return;
+        }
+
+        // Show confirmation dialog
+        const confirmed = confirm(`Mark "${transaction.fullName || 'Unknown'}" rental as completed?\n\nThis will change the status to "Completed" and cannot be undone.`);
+        if (!confirmed) return;
+
+        // Show loading
+        document.querySelector('.admin-action-spinner').style.display = 'flex';
+
+        // Update the transaction in Firebase
+        const transactionRef = doc(chandriaDB, 'transaction', transactionId);
+        await updateDoc(transactionRef, {
+            returnConfirmed: true,
+            completedDate: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        });
+
+        // Update local data
+        const transactionIndex = allTransactions.findIndex(t => t.id === transactionId);
+        if (transactionIndex !== -1) {
+            allTransactions[transactionIndex].returnConfirmed = true;
+            allTransactions[transactionIndex].completedDate = new Date().toISOString();
+        }
+
+        // Re-filter and re-render
+        filterTransactions();
+        
+        // Hide loading
+        document.querySelector('.admin-action-spinner').style.display = 'none';
+
+        // Show success notification
+        alert('Transaction marked as completed successfully!');
+
+    } catch (error) {
+        console.error('Error marking transaction as complete:', error);
+        document.querySelector('.admin-action-spinner').style.display = 'none';
+        alert('Error marking transaction as complete. Please try again.');
+    }
+}
+
+// Redirect to rental page with transaction data for adding fees
+async function redirectToRentalWithFee(transactionId, feeType) {
+    try {
+        const transaction = allTransactions.find(t => t.id === transactionId);
+        if (!transaction) {
+            console.error('Transaction not found');
+            return;
+        }
+
+        // Map fee type to display name
+        const feeTypeMap = {
+            'repair': 'Repair Fee',
+            'deposit': 'Deposit Fee', 
+            'overdue': 'Overdue Fee'
+        };
+
+        // Prepare data to pass to rental page
+        const rentalData = {
+            // Customer information
+            customerName: transaction.fullName,
+            customerContact: transaction.contactNumber,
+            customerAddress: transaction.address,
+            customerCity: transaction.city,
+            customerRegion: transaction.region,
+            
+            // Event information
+            eventType: transaction.eventType,
+            eventDate: transaction.eventStartDate,
+            eventEndDate: transaction.eventEndDate,
+            rentalType: transaction.rentalType,
+            
+            // Payment information
+            paymentMethod: transaction.paymentMethod,
+            paymentStatus: transaction.paymentStatus,
+            totalPayment: transaction.totalPayment,
+            remainingBalance: transaction.remainingBalance,
+            
+            // Transaction reference
+            originalTransactionId: transactionId,
+            originalTransactionCode: transaction.transactionCode,
+            
+            // Fee information
+            preSelectedFeeType: feeTypeMap[feeType],
+            isAdditionalFeeFlow: true,
+            
+            // Empty cart for fees only
+            cartItems: []
+        };
+
+        // Store data in sessionStorage for the rental page to pick up
+        sessionStorage.setItem('additionalFeeData', JSON.stringify(rentalData));
+        
+        // Redirect to rental page
+        window.location.href = './rental.html';
+
+    } catch (error) {
+        console.error('Error preparing rental data:', error);
+        alert('Error preparing rental data. Please try again.');
     }
 }
 
