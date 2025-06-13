@@ -47,12 +47,28 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem("admin-sidebar-closed", isClosed);
     });
 
+    // Show initial loading spinner
+    if (window.adminSpinners) {
+        window.adminSpinners.showPageLoader('Initializing...');
+    }
+
     // Load transactions on page load
     loadTransactions();
-    
-    // Add event listeners
+      // Add event listeners
     searchInput?.addEventListener('input', handleSearch);
-    refreshBtn?.addEventListener('click', loadTransactions);
+    refreshBtn?.addEventListener('click', async () => {
+        // Show button loading state
+        if (window.adminSpinners && refreshBtn) {
+            window.adminSpinners.showButtonSpinner(refreshBtn, 'Refreshing...');
+        }
+        
+        await loadTransactions();
+        
+        // Hide button loading state
+        if (window.adminSpinners && refreshBtn) {
+            window.adminSpinners.hideButtonSpinner(refreshBtn);
+        }
+    });
     
     // View toggle listeners
     cardViewBtn?.addEventListener('click', () => switchView('cards'));
@@ -144,7 +160,10 @@ document.addEventListener('DOMContentLoaded', function() {
 // Load transactions from Firebase
 async function loadTransactions() {
     try {
-        showLoading();
+        // Show loading spinner
+        if (window.adminSpinners) {
+            window.adminSpinners.showPageLoader('Loading transactions...');
+        }
         
         const transactionRef = collection(chandriaDB, 'transaction');
         const snapshot = await getDocs(transactionRef);
@@ -164,14 +183,18 @@ async function loadTransactions() {
         updateTransactionCount();
         
         // Hide page loader after successful load
-        hidePageLoader();
+        if (window.adminSpinners) {
+            window.adminSpinners.hidePageLoader();
+        }
         
     } catch (error) {
         console.error('Error loading transactions:', error);
         showError('Failed to load transaction history. Please try again.');
         
         // Hide page loader even on error
-        hidePageLoader();
+        if (window.adminSpinners) {
+            window.adminSpinners.hidePageLoader();
+        }
     }
 }
 

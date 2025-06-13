@@ -563,7 +563,7 @@ body.quick-view-active .rental-quick-view {
 
 /* =============== VIEW HISTORY BUTTON =============== */
 .btn-history {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    background: linear-gradient(135deg, var(--primary-color, #ff4757), #ff6b9d);
     color: white;
     padding: 8px 14px;
     border-radius: 6px;
@@ -575,7 +575,7 @@ body.quick-view-active .rental-quick-view {
 }
 
 .btn-history:hover {
-    background: linear-gradient(135deg, #5b21b6, #7c3aed);
+    background: linear-gradient(135deg, #ff3742, #ff5a8a);
     transform: translateY(-1px);
 }
 
