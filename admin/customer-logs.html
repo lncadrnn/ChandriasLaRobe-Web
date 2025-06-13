@@ -129,34 +129,75 @@
                     </div>
                 </div>                </div>
             </div>
-        </header>
-        <div class="page-content">
-        
-        <div class="table-wrapper">
-            <table id="rental-history-table">
-                <thead>
-                    <tr>
-                        <th>Customer Name</th>
-                        <th>Transaction Code</th>
-                        <th>Products Rented</th>
-                        <th>Additional Items</th>
-                        <th>Event Date</th>
-                        <th>Payment Status</th>
-                        <th>Rental Status</th>
-                        <th>Total Amount</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="rental-history-tbody">
-                    <tr>
-                        <td colspan="9" class="table-loading">
-                            <i class='bx bx-loader-alt bx-spin'></i> Loading rental history...
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        </header>        <div class="page-content">
+            <div class="transactions-container">
+                <div class="transactions-header">
+                    <div class="header-info">
+                        <h3>All Transactions</h3>
+                        <span class="transaction-count" id="transaction-count">Loading...</span>
+                    </div>
+                    <div class="view-toggle">
+                        <button class="view-btn active" data-view="cards" id="card-view-btn">
+                            <i class='bx bx-grid-alt'></i> Cards
+                        </button>
+                        <button class="view-btn" data-view="table" id="table-view-btn">
+                            <i class='bx bx-table'></i> Table
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Card View -->
+                <div class="cards-container" id="cards-container">
+                    <div class="transaction-cards" id="transaction-cards">
+                        <!-- Cards will be populated by JavaScript -->
+                        <div class="loading-card">
+                            <i class='bx bx-loader-alt bx-spin'></i>
+                            <span>Loading transactions...</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Table View -->
+                <div class="table-container" id="table-container" style="display: none;">
+                    <div class="table-wrapper">
+                        <table id="rental-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Customer Name</th>
+                                    <th>Transaction Code</th>
+                                    <th>Event Date</th>
+                                    <th>Rental Status</th>
+                                    <th>Total Amount</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rental-history-tbody">
+                                <tr>
+                                    <td colspan="6" class="table-loading">
+                                        <i class='bx bx-loader-alt bx-spin'></i> Loading rental history...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
-    </section>
+    
+    <!-- Transaction Details Modal -->
+    <div id="transaction-details-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content transaction-details-content">
+            <div class="modal-header">
+                <h2><i class='bx bx-receipt'></i> Transaction Details</h2>
+                <button class="close-btn" onclick="closeTransactionDetailsModal()">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="modal-body" id="transaction-details-body">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
     
     <!-- Edit Transaction Modal -->
     <div id="edit-modal" class="modal-overlay" style="display: none;">

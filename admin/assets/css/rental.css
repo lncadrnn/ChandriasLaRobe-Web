@@ -1523,6 +1523,7 @@
         grid-template-columns: none;
         gap: 1rem;
         height: auto;
+        padding-bottom: 0;
         padding: 0.5rem;
         min-height: calc(100vh - 120px);
     }

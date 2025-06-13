@@ -22,6 +22,8 @@ const transactionCount = document.getElementById('transaction-count');
 
 // View state
 let currentView = 'cards'; // Default to cards view
+
+// Sort state
 let currentSort = 'recent'; // Default sort by recent
 
 // Initialize
@@ -44,8 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load transactions on page load
     loadTransactions();
-    
-    // Add event listeners
+      // Add event listeners
     searchInput?.addEventListener('input', handleSearch);
     refreshBtn?.addEventListener('click', loadTransactions);
     
@@ -85,8 +86,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 closeEditModal();
             } else if (e.target.id === 'delete-modal') {
                 closeDeleteModal();
-            } else if (e.target.id === 'transaction-details-modal') {
-                closeTransactionDetailsModal();
             }
         }
         
@@ -143,8 +142,7 @@ async function loadTransactions() {
                 ...data
             });
         });
-        
-        filteredTransactions = [...allTransactions];
+          filteredTransactions = [...allTransactions];
         applySorting(); // Apply current sort
         updateTransactionCount();
         
@@ -216,16 +214,97 @@ async function fetchAccessoryDetails(accessoryId) {
     }
 }
 
-// Render transaction table (simplified)
-async function renderTransactionTable() {
-    if (!tableBody) return;
+// Format products for display with images
+async function formatProducts(products) {
+    if (!products || !Array.isArray(products) || products.length === 0) {
+        return '<span class="no-items">No products</span>';
+    }
     
-    if (filteredTransactions.length === 0) {
+    const productPromises = products.map(async (product) => {
+        const productDetails = await fetchProductDetails(product.id);
+        
+        if (!product.sizes || Object.keys(product.sizes).length === 0) {
+            return `
+                <div class="product-item">
+                    ${productDetails?.frontImageUrl ? 
+                        `<img src="${productDetails.frontImageUrl}" alt="${product.name}" class="product-image">` : ''
+                    }
+                    <div class="item-details">
+                        <div class="item-name">${product.name || 'Unknown'}</div>
+                        <div class="item-code">${product.code || 'N/A'}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        const sizeDetails = Object.entries(product.sizes)
+            .map(([size, qty]) => `${size} x${qty}`)
+            .join(', ');
+        
+        return `
+            <div class="product-item">
+                ${productDetails?.frontImageUrl ? 
+                    `<img src="${productDetails.frontImageUrl}" alt="${product.name}" class="product-image">` : ''
+                }
+                <div class="item-details">
+                    <div class="item-name">${product.name || 'Unknown'}</div>
+                    <div class="item-code">${product.code || 'N/A'}</div>
+                    <div class="item-sizes">${sizeDetails}</div>
+                </div>
+            </div>
+        `;
+    });
+    
+    const results = await Promise.all(productPromises);
+    return results.join('');
+}
+
+// Format accessories for display with images
+async function formatAccessories(accessories) {
+    if (!accessories || !Array.isArray(accessories) || accessories.length === 0) {
+        return '<span class="no-items">No additional items</span>';
+    }
+    
+    const accessoryPromises = accessories.map(async (accessory) => {
+        const accessoryDetails = await fetchAccessoryDetails(accessory.id);
+        
+        let itemText = `
+            <div class="item-details">
+                <div class="item-name">${accessory.name || 'Unknown'}</div>
+                <div class="item-code">${accessory.code || 'N/A'}</div>
+        `;
+        
+        if (accessory.quantity && accessory.quantity > 1) {
+            itemText += `<div class="item-sizes">Quantity: ${accessory.quantity}</div>`;
+        }
+        
+        if (accessory.types && Array.isArray(accessory.types) && accessory.types.length > 0) {
+            const types = accessory.types.join(', ');
+            itemText += `<div class="item-sizes">Types: ${types}</div>`;
+        }
+        
+        itemText += '</div>';
+        
+        return `
+            <div class="accessory-item">
+                ${accessoryDetails?.imageUrl ? 
+                    `<img src="${accessoryDetails.imageUrl}" alt="${accessory.name}" class="accessory-image">` : ''
+                }
+                ${itemText}
+            </div>
+        `;
+    });
+    
+    const results = await Promise.all(accessoryPromises);
+    return results.join('');
+}
+
+// Render transaction table
+async function renderTransactionTable() {    if (filteredTransactions.length === 0) {
         tableBody.innerHTML = `
             <tr>
                 <td colspan="6" class="table-empty">
-                    <i class='bx bx-file'></i>
-                    <div>No transactions found</div>
+                    <i class='bx bx-file'></i> No transactions found
                 </td>
             </tr>
         `;
@@ -235,22 +314,74 @@ async function renderTransactionTable() {
     const tableRows = [];
     
     for (const transaction of filteredTransactions) {
-        // Calculate rental status
-        const { rentalStatus, statusClass } = calculateRentalStatus(transaction);
+        // Calculate rental status based on dates
+        const currentDate = new Date();
+        const eventStartDate = transaction.eventStartDate ? new Date(transaction.eventStartDate) : null;
+        const eventEndDate = transaction.eventEndDate ? new Date(transaction.eventEndDate) : null;
         
-        // Format event date
-        const eventDateDisplay = formatEventDate(transaction);
+        let rentalStatus = 'Upcoming';
+        let statusClass = 'status-upcoming';
         
-        // Calculate total payment
+        if (eventStartDate) {
+            if (eventEndDate) {
+                // Open rental with end date
+                if (currentDate < eventStartDate) {
+                    rentalStatus = 'Upcoming';
+                    statusClass = 'status-upcoming';
+                } else if (currentDate >= eventStartDate && currentDate <= eventEndDate) {
+                    rentalStatus = 'Ongoing';
+                    statusClass = 'status-ongoing';
+                } else if (currentDate > eventEndDate) {
+                    rentalStatus = 'Completed';
+                    statusClass = 'status-completed';
+                }
+            } else {
+                // Fixed rental (single day)
+                if (currentDate < eventStartDate) {
+                    rentalStatus = 'Upcoming';
+                    statusClass = 'status-upcoming';
+                } else if (currentDate.toDateString() === eventStartDate.toDateString()) {
+                    rentalStatus = 'Ongoing';
+                    statusClass = 'status-ongoing';
+                } else if (currentDate > eventStartDate) {
+                    rentalStatus = 'Completed';
+                    statusClass = 'status-completed';
+                }
+            }
+        }
+
+        // Calculate payment status
         const totalPayment = parseFloat(transaction.totalPayment) || 0;
+        const remainingBalance = parseFloat(transaction.remainingBalance) || 0;
+        const paymentStatus = remainingBalance > 0 ? 
+            `Balance: ₱${remainingBalance.toLocaleString()}` : 
+            'Fully Paid';
+        const paymentClass = remainingBalance > 0 ? 'payment-balance' : 'payment-fully-paid';
+
+        // Format event date
+        let eventDateDisplay = 'N/A';
+        if (eventStartDate) {
+            if (eventEndDate && transaction.rentalType === 'Open Rental') {
+                eventDateDisplay = `${eventStartDate.toLocaleDateString()} - ${eventEndDate.toLocaleDateString()}`;
+            } else {
+                eventDateDisplay = eventStartDate.toLocaleDateString();
+            }
+        }
+
+        // Format products and accessories with images
+        const formattedProducts = await formatProducts(transaction.products);
+        const formattedAccessories = await formatAccessories(transaction.accessories);
 
         const row = `
             <tr data-transaction-id="${transaction.id}">
                 <td><strong>${transaction.fullName || 'Unknown'}</strong></td>
-                <td><code class="transaction-code">${transaction.transactionCode || transaction.id.substring(0, 8)}</code></td>
+                <td><code>${transaction.transactionCode || transaction.id.substring(0, 8)}</code></td>
+                <td><div class="products-cell">${formattedProducts}</div></td>
+                <td><div class="accessories-cell">${formattedAccessories}</div></td>
                 <td>${eventDateDisplay}</td>
+                <td><span class="payment-status ${paymentClass}">${paymentStatus}</span></td>
                 <td><span class="status-badge ${statusClass}">${rentalStatus}</span></td>
-                <td><strong class="amount">₱${totalPayment.toLocaleString()}</strong></td>
+                <td><strong>₱${totalPayment.toLocaleString()}</strong></td>
                 <td>
                     <div class="action-buttons">
                         <button class="view-details-btn" data-id="${transaction.id}" title="View Details">
@@ -269,164 +400,10 @@ async function renderTransactionTable() {
         
         tableRows.push(row);
     }
-    
+
     tableBody.innerHTML = tableRows.join('');
-    addActionListeners();
-}
 
-// Render transaction cards
-async function renderTransactionCards() {
-    if (!transactionCards) return;
-    
-    if (filteredTransactions.length === 0) {
-        transactionCards.innerHTML = `
-            <div class="empty-state">
-                <i class='bx bx-file'></i>
-                <h3>No transactions found</h3>
-                <p>No rental transactions match your current search or filter criteria.</p>
-            </div>
-        `;
-        return;
-    }
-
-    const cards = [];
-    
-    for (const transaction of filteredTransactions) {
-        // Calculate rental status
-        const { rentalStatus, statusClass } = calculateRentalStatus(transaction);
-        
-        // Format event date
-        const eventDateDisplay = formatEventDate(transaction);
-        
-        // Calculate payment details
-        const totalPayment = parseFloat(transaction.totalPayment) || 0;
-        const remainingBalance = parseFloat(transaction.remainingBalance) || 0;
-        const paymentStatus = remainingBalance > 0 ? 'Partial Payment' : 'Fully Paid';
-        
-        // Count items
-        const productCount = transaction.products?.length || 0;
-        const accessoryCount = transaction.accessories?.length || 0;
-        const totalItems = productCount + accessoryCount;
-
-        const card = `
-            <div class="transaction-card" data-transaction-id="${transaction.id}">
-                <div class="card-header">
-                    <div class="customer-info">
-                        <h4>${transaction.fullName || 'Unknown Customer'}</h4>
-                        <code class="transaction-code">${transaction.transactionCode || transaction.id.substring(0, 8)}</code>
-                    </div>
-                    <div class="card-status">
-                        <span class="status-badge ${statusClass}">${rentalStatus}</span>
-                    </div>
-                </div>
-                
-                <div class="card-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Event Date</span>
-                        <span class="detail-value">${eventDateDisplay}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Event Type</span>
-                        <span class="detail-value">${transaction.eventType || 'N/A'}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Items Rented</span>
-                        <span class="detail-value">${totalItems} item${totalItems !== 1 ? 's' : ''}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Payment Status</span>
-                        <span class="detail-value">${paymentStatus}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Total Amount</span>
-                        <span class="detail-value amount">₱${totalPayment.toLocaleString()}</span>
-                    </div>
-                    ${remainingBalance > 0 ? `
-                    <div class="detail-item">
-                        <span class="detail-label">Remaining Balance</span>
-                        <span class="detail-value" style="color: #e74c3c; font-weight: 600;">₱${remainingBalance.toLocaleString()}</span>
-                    </div>
-                    ` : ''}
-                </div>
-                
-                <div class="card-actions">
-                    <button class="card-action-btn view-details-btn" data-id="${transaction.id}">
-                        <i class='bx bx-show'></i> View Details
-                    </button>
-                    <button class="card-action-btn edit-btn" data-id="${transaction.id}">
-                        <i class='bx bx-edit'></i> Edit
-                    </button>
-                    <button class="card-action-btn delete-btn" data-id="${transaction.id}">
-                        <i class='bx bx-trash'></i> Delete
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        cards.push(card);
-    }
-    
-    transactionCards.innerHTML = cards.join('');
-    addActionListeners();
-}
-
-// Helper function to calculate rental status
-function calculateRentalStatus(transaction) {
-    const currentDate = new Date();
-    const eventStartDate = transaction.eventStartDate ? new Date(transaction.eventStartDate) : null;
-    const eventEndDate = transaction.eventEndDate ? new Date(transaction.eventEndDate) : null;
-    
-    let rentalStatus = 'Upcoming';
-    let statusClass = 'status-upcoming';
-    
-    if (eventStartDate) {
-        if (eventEndDate) {
-            // Open rental with end date
-            if (currentDate < eventStartDate) {
-                rentalStatus = 'Upcoming';
-                statusClass = 'status-upcoming';
-            } else if (currentDate >= eventStartDate && currentDate <= eventEndDate) {
-                rentalStatus = 'Ongoing';
-                statusClass = 'status-ongoing';
-            } else if (currentDate > eventEndDate) {
-                rentalStatus = 'Completed';
-                statusClass = 'status-completed';
-            }
-        } else {
-            // Fixed rental (single day)
-            if (currentDate < eventStartDate) {
-                rentalStatus = 'Upcoming';
-                statusClass = 'status-upcoming';
-            } else if (currentDate.toDateString() === eventStartDate.toDateString()) {
-                rentalStatus = 'Ongoing';
-                statusClass = 'status-ongoing';
-            } else if (currentDate > eventStartDate) {
-                rentalStatus = 'Completed';
-                statusClass = 'status-completed';
-            }
-        }
-    }
-    
-    return { rentalStatus, statusClass };
-}
-
-// Helper function to format event date
-function formatEventDate(transaction) {
-    const eventStartDate = transaction.eventStartDate ? new Date(transaction.eventStartDate) : null;
-    const eventEndDate = transaction.eventEndDate ? new Date(transaction.eventEndDate) : null;
-    
-    if (!eventStartDate) return 'N/A';
-    
-    if (eventEndDate && transaction.rentalType === 'Open Rental') {
-        return `${eventStartDate.toLocaleDateString()} - ${eventEndDate.toLocaleDateString()}`;
-    } else {
-        return eventStartDate.toLocaleDateString();
-    }
-}
-
-// Add action listeners to buttons
-function addActionListeners() {
-    // View details buttons
+    // Add click event listeners for view details buttons
     document.querySelectorAll('.view-details-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const transactionId = e.target.closest('.view-details-btn').dataset.id;
@@ -434,7 +411,7 @@ function addActionListeners() {
         });
     });
 
-    // Edit buttons
+    // Add click event listeners for edit buttons
     document.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const transactionId = e.target.closest('.edit-btn').dataset.id;
@@ -442,7 +419,7 @@ function addActionListeners() {
         });
     });
 
-    // Delete buttons
+    // Add click event listeners for delete buttons
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const transactionId = e.target.closest('.delete-btn').dataset.id;
@@ -522,78 +499,91 @@ async function showTransactionDetails(transactionId) {
     const transactionDate = transaction.timestamp ? new Date(transaction.timestamp).toLocaleDateString() : 'N/A';
     const lastUpdated = transaction.lastUpdated ? new Date(transaction.lastUpdated).toLocaleDateString() : null;
     
-    const modalBody = document.getElementById('transaction-details-body');
-    if (modalBody) {
-        modalBody.innerHTML = `
-            <div class="customer-payment-section">
-                <div class="customer-info">
-                    <h3><i class='bx bx-user'></i> Customer Information</h3>
-                    <div class="info-grid">
-                        <p><strong>Name:</strong> ${transaction.fullName || 'N/A'}</p>
-                        <p><strong>Contact:</strong> ${transaction.contactNumber || 'N/A'}</p>
-                        <p><strong>Address:</strong> ${[transaction.address, transaction.city, transaction.region].filter(Boolean).join(', ') || 'N/A'}</p>
-                        <p><strong>Event Type:</strong> ${transaction.eventType || 'N/A'}</p>
-                        <p><strong>Rental Type:</strong> ${transaction.rentalType || 'N/A'}</p>
-                        <p><strong>Event Start:</strong> ${eventStartDate}</p>
-                        ${eventEndDate ? `<p><strong>Event End:</strong> ${eventEndDate}</p>` : ''}
-                        <p><strong>Transaction Date:</strong> ${transactionDate}</p>
-                        ${lastUpdated ? `<p><strong>Last Updated:</strong> ${lastUpdated}</p>` : ''}
+    const modalContent = `
+        <div class="transaction-modal-overlay" onclick="closeTransactionModal()">
+            <div class="transaction-modal-content" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h2><i class='bx bx-receipt'></i> Transaction Details</h2>
+                    <button class="close-btn" onclick="closeTransactionModal()">
+                        <i class='bx bx-x'></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="customer-payment-section">
+                        <div class="customer-info">
+                            <h3><i class='bx bx-user'></i> Customer Information</h3>
+                            <div class="info-grid">
+                                <p><strong>Name:</strong> ${transaction.fullName || 'N/A'}</p>
+                                <p><strong>Contact:</strong> ${transaction.contactNumber || 'N/A'}</p>
+                                <p><strong>Address:</strong> ${[transaction.address, transaction.city, transaction.region].filter(Boolean).join(', ') || 'N/A'}</p>
+                                <p><strong>Event Type:</strong> ${transaction.eventType || 'N/A'}</p>
+                                <p><strong>Rental Type:</strong> ${transaction.rentalType || 'N/A'}</p>
+                                <p><strong>Event Start:</strong> ${eventStartDate}</p>
+                                ${eventEndDate ? `<p><strong>Event End:</strong> ${eventEndDate}</p>` : ''}
+                                <p><strong>Transaction Date:</strong> ${transactionDate}</p>
+                                ${lastUpdated ? `<p><strong>Last Updated:</strong> ${lastUpdated}</p>` : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="payment-info">
+                            <h3><i class='bx bx-credit-card'></i> Payment Information</h3>
+                            <div class="info-grid">
+                                <p><strong>Payment Method:</strong> ${transaction.paymentMethod || 'N/A'}</p>
+                                <p><strong>Payment Type:</strong> ${transaction.paymentType || 'N/A'}</p>
+                                <p><strong>Rental Fee:</strong> ₱${transaction.rentalFee?.toLocaleString() || '0'}</p>
+                                <p><strong>Total Payment:</strong> ₱${transaction.totalPayment?.toLocaleString() || '0'}</p>
+                                <p><strong>Remaining Balance:</strong> ₱${transaction.remainingBalance?.toLocaleString() || '0'}</p>
+                                <p><strong>Reference Number:</strong> ${transaction.referenceNo || 'N/A'}</p>
+                            </div>
+                        </div>
                     </div>
+                    
+                    <div class="rental-items">
+                        <h3><i class='bx bx-package'></i> Products Rented</h3>
+                        <div class="products-detail">${productsHtml}</div>
+                        
+                        <h3><i class='bx bx-plus-circle'></i> Additional Items</h3>
+                        <div class="accessories-detail">${accessoriesHtml}</div>
+                    </div>
+                    
+                    ${transaction.notes ? `
+                    <div class="additional-notes">
+                        <h3><i class='bx bx-note'></i> Additional Notes</h3>
+                        <p class="notes-content">${transaction.notes}</p>
+                    </div>
+                    ` : ''}
                 </div>
                 
-                <div class="payment-info">
-                    <h3><i class='bx bx-credit-card'></i> Payment Information</h3>
-                    <div class="info-grid">
-                        <p><strong>Payment Method:</strong> ${transaction.paymentMethod || 'N/A'}</p>
-                        <p><strong>Payment Type:</strong> ${transaction.paymentType || 'N/A'}</p>
-                        <p><strong>Rental Fee:</strong> ₱${transaction.rentalFee?.toLocaleString() || '0'}</p>
-                        <p><strong>Total Payment:</strong> ₱${transaction.totalPayment?.toLocaleString() || '0'}</p>
-                        <p><strong>Remaining Balance:</strong> ₱${transaction.remainingBalance?.toLocaleString() || '0'}</p>
-                        <p><strong>Reference Number:</strong> ${transaction.referenceNo || 'N/A'}</p>
-                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeTransactionModal()">
+                        <i class='bx bx-x'></i> Close
+                    </button>
+                    <button type="button" class="btn-primary" onclick="closeTransactionModal(); editTransaction('${transaction.id}')">
+                        <i class='bx bx-edit'></i> Edit Transaction
+                    </button>
                 </div>
             </div>
-            
-            <div class="rental-items">
-                <h3><i class='bx bx-package'></i> Products Rented</h3>
-                <div class="products-detail">${productsHtml}</div>
-                
-                <h3><i class='bx bx-plus-circle'></i> Additional Items</h3>
-                <div class="accessories-detail">${accessoriesHtml}</div>
-            </div>
-            
-            ${transaction.notes ? `
-            <div class="additional-notes">
-                <h3><i class='bx bx-note'></i> Additional Notes</h3>
-                <p class="notes-content">${transaction.notes}</p>
-            </div>
-            ` : ''}
-            
-            <div class="modal-footer">
-                <button type="button" class="btn-secondary" onclick="closeTransactionDetailsModal()">
-                    <i class='bx bx-x'></i> Close
-                </button>
-                <button type="button" class="btn-primary" onclick="closeTransactionDetailsModal(); editTransaction('${transaction.id}')">
-                    <i class='bx bx-edit'></i> Edit Transaction
-                </button>
-            </div>
-        `;
+        </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.querySelector('.transaction-modal-overlay');
+    if (existingModal) {
+        existingModal.remove();
     }
     
-    const modal = document.getElementById('transaction-details-modal');
-    if (modal) {
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-// Close transaction details modal
-function closeTransactionDetailsModal() {
-    const modal = document.getElementById('transaction-details-modal');
-    if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = '';
-    }
+    // Add modal to DOM
+    document.body.insertAdjacentHTML('beforeend', modalContent);
+    document.body.style.overflow = 'hidden';
+    
+    // Make close function globally available
+    window.closeTransactionModal = function() {
+        const modal = document.querySelector('.transaction-modal-overlay');
+        if (modal) {
+            modal.remove();
+            document.body.style.overflow = '';
+        }
+    };
 }
 
 // Search functionality
@@ -626,51 +616,29 @@ function handleSearch() {
         });
     }
     
-    updateTransactionCount();
     applySorting(); // Apply current sort after filtering
 }
 
 // Show loading state
 function showLoading() {
-    if (currentView === 'cards' && transactionCards) {
-        transactionCards.innerHTML = `
-            <div class="loading-card">
-                <i class='bx bx-loader-alt bx-spin'></i>
-                <span>Loading transactions...</span>
-            </div>
-        `;
-    } else if (tableBody) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="6" class="table-loading">
-                    <i class='bx bx-loader-alt bx-spin'></i>
-                    <div>Loading rental history...</div>
-                </td>
-            </tr>
-        `;
-    }
+    tableBody.innerHTML = `
+        <tr>
+            <td colspan="9" class="table-loading">
+                <i class='bx bx-loader-alt bx-spin'></i> Loading rental history...
+            </td>
+        </tr>
+    `;
 }
 
 // Show error state
 function showError(message) {
-    if (currentView === 'cards' && transactionCards) {
-        transactionCards.innerHTML = `
-            <div class="empty-state">
-                <i class='bx bx-error'></i>
-                <h3>Error Loading Data</h3>
-                <p>${message}</p>
-            </div>
-        `;
-    } else if (tableBody) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="6" class="table-error">
-                    <i class='bx bx-error'></i>
-                    <div>${message}</div>
-                </td>
-            </tr>
-        `;
-    }
+    tableBody.innerHTML = `
+        <tr>
+            <td colspan="9" class="table-error">
+                <i class='bx bx-error'></i> ${message}
+            </td>
+        </tr>
+    `;
 }
 
 // Edit transaction function
@@ -764,13 +732,9 @@ async function handleEditSubmit(e) {
             filteredTransactions = [...allTransactions];
         }
         
-        // Close modal and refresh view
+        // Close modal and refresh table
         closeEditModal();
-        if (currentView === 'cards') {
-            renderTransactionCards();
-        } else {
-            renderTransactionTable();
-        }
+        renderTransactionTable();
         
         // Show success message
         showSuccessMessage('Transaction updated successfully!');
@@ -826,7 +790,16 @@ function populateDeleteModal(transaction) {
         transaction.transactionCode || transaction.id.substring(0, 8);
     
     // Format event date
-    const eventDate = formatEventDate(transaction);
+    let eventDate = 'N/A';
+    if (transaction.eventStartDate) {
+        const startDate = new Date(transaction.eventStartDate);
+        if (transaction.eventEndDate && transaction.rentalType === 'Open Rental') {
+            const endDate = new Date(transaction.eventEndDate);
+            eventDate = `${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`;
+        } else {
+            eventDate = startDate.toLocaleDateString();
+        }
+    }
     document.getElementById('delete-event-date').textContent = eventDate;
     document.getElementById('delete-total-amount').textContent = 
         `₱${(transaction.totalPayment || 0).toLocaleString()}`;
@@ -862,14 +835,9 @@ async function confirmDelete() {
         allTransactions = allTransactions.filter(t => t.id !== currentDeletingTransaction.id);
         filteredTransactions = filteredTransactions.filter(t => t.id !== currentDeletingTransaction.id);
         
-        // Close modal and refresh view
+        // Close modal and refresh table
         closeDeleteModal();
-        updateTransactionCount();
-        if (currentView === 'cards') {
-            renderTransactionCards();
-        } else {
-            renderTransactionTable();
-        }
+        renderTransactionTable();
         
         // Show success message
         showSuccessMessage('Transaction deleted successfully!');
@@ -1046,12 +1014,8 @@ function applySorting() {
             });
     }
     
-    // Re-render current view with sorted data
-    if (currentView === 'cards') {
-        renderTransactionCards();
-    } else {
-        renderTransactionTable();
-    }
+    // Re-render the table with sorted data
+    renderTransactionTable();
 }
 
 // Make functions globally available
@@ -1059,6 +1023,4 @@ window.toggleSortOptions = toggleSortOptions;
 window.handleSort = handleSort;
 window.closeEditModal = closeEditModal;
 window.closeDeleteModal = closeDeleteModal;
-window.closeTransactionDetailsModal = closeTransactionDetailsModal;
 window.confirmDelete = confirmDelete;
-window.editTransaction = editTransaction;
