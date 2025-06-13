@@ -10,9 +10,12 @@ let currentDeletingTransaction = null;
 // DOM elements
 const tableBody = document.getElementById('rental-history-tbody');
 const searchInput = document.getElementById('search-input');
+const searchInputMobile = document.getElementById('search-input-mobile');
 const refreshBtn = document.getElementById('refresh-btn');
 const sortBtn = document.getElementById('sort-btn');
+const sortBtnMobile = document.getElementById('sort-btn-mobile');
 const sortOptions = document.getElementById('sort-options');
+const sortOptionsMobile = document.getElementById('sort-options-mobile');
 const transactionCards = document.getElementById('transaction-cards');
 const cardsContainer = document.getElementById('cards-container');
 const tableContainer = document.getElementById('table-container');
@@ -42,9 +45,9 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem("admin-sidebar-closed", isClosed);
     });    // Load transactions on page load
     loadTransactions();
-    
-    // Add event listeners
+      // Add event listeners
     searchInput?.addEventListener('input', handleSearch);
+    searchInputMobile?.addEventListener('input', handleSearch);
     refreshBtn?.addEventListener('click', loadTransactions);
     
     // View toggle functionality
@@ -54,18 +57,33 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize with cards view
     switchView('cards');
     
-    // Sort functionality
+    // Sort functionality - both desktop and mobile
     sortBtn?.addEventListener('click', toggleSortOptions);
+    sortBtnMobile?.addEventListener('click', toggleSortOptionsMobile);
     
-    // Sort option event listeners
-    const sortOptionElements = document.querySelectorAll('.sort-option');
-    sortOptionElements.forEach(option => {
-        option.addEventListener('click', (e) => {
-            const sortType = e.currentTarget.getAttribute('data-sort');
-            handleSort(sortType);
-            closeSortOptions();
+    // Sort option event listeners - desktop
+    if (sortOptions) {
+        const sortOptionElements = sortOptions.querySelectorAll('.sort-option');
+        sortOptionElements.forEach(option => {
+            option.addEventListener('click', (e) => {
+                const sortType = e.currentTarget.getAttribute('data-sort');
+                handleSort(sortType);
+                closeSortOptions();
+            });
         });
-    });
+    }
+    
+    // Sort option event listeners - mobile
+    if (sortOptionsMobile) {
+        const sortOptionElementsMobile = sortOptionsMobile.querySelectorAll('.sort-option');
+        sortOptionElementsMobile.forEach(option => {
+            option.addEventListener('click', (e) => {
+                const sortType = e.currentTarget.getAttribute('data-sort');
+                handleSort(sortType);
+                closeSortOptionsMobile();
+            });
+        });
+    }
     
     // Edit form event listener
     const editForm = document.getElementById('edit-transaction-form');
@@ -90,10 +108,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 closeTransactionDetailsModal();
             }
         }
-        
-        // Close sort dropdown when clicking outside
+          // Close sort dropdown when clicking outside
         if (!e.target.closest('.sort-dropdown')) {
             closeSortOptions();
+            closeSortOptionsMobile();
         }
     });
       // Add CSS for animations
@@ -1035,7 +1053,7 @@ function showSuccessMessage(message) {
 
 // === SORT FUNCTIONALITY ===
 
-// Toggle sort dropdown
+// Toggle sort dropdown (desktop)
 function toggleSortOptions() {
     const sortOptions = document.getElementById('sort-options');
     const sortBtn = document.getElementById('sort-btn');
@@ -1051,7 +1069,23 @@ function toggleSortOptions() {
     }
 }
 
-// Open sort dropdown
+// Toggle sort dropdown (mobile)
+function toggleSortOptionsMobile() {
+    const sortOptions = document.getElementById('sort-options-mobile');
+    const sortBtn = document.getElementById('sort-btn-mobile');
+    
+    if (sortOptions && sortBtn) {
+        const isOpen = sortOptions.classList.contains('show');
+        
+        if (isOpen) {
+            closeSortOptionsMobile();
+        } else {
+            openSortOptionsMobile();
+        }
+    }
+}
+
+// Open sort dropdown (desktop)
 function openSortOptions() {
     const sortOptions = document.getElementById('sort-options');
     const sortBtn = document.getElementById('sort-btn');
@@ -1061,11 +1095,25 @@ function openSortOptions() {
         sortBtn.classList.add('active');
         
         // Update active sort option
-        updateActiveSortOption();
+        updateActiveSortOption(sortOptions);
     }
 }
 
-// Close sort dropdown
+// Open sort dropdown (mobile)
+function openSortOptionsMobile() {
+    const sortOptions = document.getElementById('sort-options-mobile');
+    const sortBtn = document.getElementById('sort-btn-mobile');
+    
+    if (sortOptions && sortBtn) {
+        sortOptions.classList.add('show');
+        sortBtn.classList.add('active');
+        
+        // Update active sort option
+        updateActiveSortOption(sortOptions);
+    }
+}
+
+// Close sort dropdown (desktop)
 function closeSortOptions() {
     const sortOptions = document.getElementById('sort-options');
     const sortBtn = document.getElementById('sort-btn');
@@ -1076,9 +1124,22 @@ function closeSortOptions() {
     }
 }
 
+// Close sort dropdown (mobile)
+function closeSortOptionsMobile() {
+    const sortOptions = document.getElementById('sort-options-mobile');
+    const sortBtn = document.getElementById('sort-btn-mobile');
+    
+    if (sortOptions && sortBtn) {
+        sortOptions.classList.remove('show');
+        sortBtn.classList.remove('active');
+    }
+}
+
 // Update active sort option visual indicator
-function updateActiveSortOption() {
-    const sortOptionElements = document.querySelectorAll('.sort-option');
+function updateActiveSortOption(container) {
+    if (!container) return;
+    
+    const sortOptionElements = container.querySelectorAll('.sort-option');
     sortOptionElements.forEach(option => {
         option.classList.remove('active');
         if (option.getAttribute('data-sort') === currentSort) {
@@ -1090,7 +1151,11 @@ function updateActiveSortOption() {
 // Handle sort selection
 function handleSort(sortType) {
     currentSort = sortType;
-    updateActiveSortOption();
+    
+    // Update both desktop and mobile dropdowns
+    updateActiveSortOption(document.getElementById('sort-options'));
+    updateActiveSortOption(document.getElementById('sort-options-mobile'));
+    
     applySorting();
 }
 

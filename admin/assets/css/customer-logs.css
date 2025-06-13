@@ -76,28 +76,70 @@ select:disabled {
 }
 
 /* === HEADER CONTROLS LAYOUT === */
-.header-controls {
+
+/* Mobile controls - stacked layout */
+.mobile-controls {
     display: flex;
     flex-direction: column;
     gap: 1rem;
     margin-bottom: 1.5rem;
-    padding: 0 2rem;
+    padding: 0 0.75rem;
+}
+
+/* Desktop controls - inline with header */
+.desktop-controls {
+    display: none; /* Hidden on mobile */
 }
 
 /* Desktop header controls layout */
 @media (min-width: 769px) {
-    .header-controls {
+    .mobile-controls {
+        display: none; /* Hide mobile controls on desktop */
+    }
+    
+    .desktop-controls {
+        display: flex;
         flex-direction: row;
         align-items: center;
-        gap: 1.5rem;
+        gap: 1rem;
+        margin: 0; /* No margin for inline layout */
+        padding: 0; /* No padding for inline layout */
+    }
+      .transactions-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding: 1.5rem 0; /* Remove horizontal padding, keep vertical */
+        background: transparent; /* Remove white background */
+        border-radius: 0; /* Remove border radius */
+        box-shadow: none; /* Remove shadow */
+        border: none; /* Remove border */
+        flex-wrap: wrap;
+        gap: 1rem;
     }
     
-    .search-box {
+    .header-info {
+        flex: 0 0 auto;
+    }
+    
+    .desktop-controls {
         flex: 1;
-        max-width: 500px;
+        max-width: 600px;
+        justify-content: center;
     }
     
-    .sort-dropdown {
+    .view-toggle {
+        flex: 0 0 auto;
+    }
+    
+    .desktop-controls .search-box {
+        flex: 1;
+        max-width: 350px;
+        min-width: 250px;
+    }
+    
+    .desktop-controls .sort-dropdown {
         flex-shrink: 0;
         width: auto;
     }
@@ -117,10 +159,10 @@ select:disabled {
 .search-box input {
     width: 100%;
     padding: 0.75rem 1rem 0.75rem 2.75rem; /* Reduced padding for smaller height */
-    border: none; /* Removed gray border */
+    border: 1px solid rgba(255, 105, 180, 0.3); /* Add subtle border */
     border-radius: 12px; /* Slightly smaller border radius */
     font-size: 0.9rem; /* Slightly smaller font */
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
     color: #2c3e50;
     outline: none;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -134,7 +176,7 @@ select:disabled {
     border: 2px solid var(--primary-color); /* Add border only on focus */
     box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.12), 0 6px 20px rgba(255, 105, 180, 0.1);
     transform: translateY(-1px);
-    background: #fefefe; /* Slightly brighter background on focus */
+    background: rgba(255, 255, 255, 0.2); /* Slightly more opaque on focus */
 }
 
 .search-box input:hover {
@@ -167,8 +209,8 @@ select:disabled {
     border-radius: 12px; /* Slightly smaller border radius */
     font-size: 0.9rem; /* Slightly smaller font */
     font-weight: 600;
-    border: none; /* Removed gray border to match search box */
-    background: #ffffff;
+    border: 1px solid rgba(255, 105, 180, 0.3); /* Add subtle border */
+    background: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
     color: #2c3e50;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
@@ -198,7 +240,8 @@ select:disabled {
     position: absolute;
     top: 100%;
     right: 0;
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.95); /* Semi-transparent background */
+    backdrop-filter: blur(10px); /* Add blur effect */
     border: 1px solid rgba(255, 105, 180, 0.2);
     border-radius: 8px;
     padding: 0.5rem 0;
@@ -280,16 +323,16 @@ select:disabled {
 
 .view-toggle {
     display: flex;
-    background: var(--white-color);
+    background: transparent; /* Remove white background */
     border-radius: 8px;
     padding: 0.25rem;
-    box-shadow: 0 2px 8px rgba(255, 105, 180, 0.1);
-    border: 1px solid rgba(255, 105, 180, 0.2);
+    box-shadow: none; /* Remove shadow */
+    border: none; /* Remove border */
 }
 
 .view-btn {
-    background: transparent;
-    border: none;
+    background: rgba(255, 255, 255, 0.1); /* Subtle background */
+    border: 1px solid rgba(255, 105, 180, 0.2); /* Add subtle border */
     padding: 0.75rem 1.25rem;
     border-radius: 8px;
     font-size: 0.85rem;
@@ -306,10 +349,12 @@ select:disabled {
     background: var(--primary-color);
     color: var(--white-color);
     box-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
+    border-color: var(--primary-color);
 }
 
 .view-btn:hover:not(.active) {
     background: rgba(255, 105, 180, 0.1);
+    border-color: var(--primary-color);
 }
 
 /* View toggle is now enabled */
@@ -832,28 +877,30 @@ select:disabled {
     .page-subtitle {
         font-size: 0.9rem;
     }
-      /* Header controls responsive */
-    .header-controls {
-        flex-direction: column;
-        gap: 0.75rem;
-        align-items: stretch;
-        padding: 0 0.75rem;
-        margin-bottom: 1rem;
+    
+    /* Show mobile controls, hide desktop controls */
+    .mobile-controls {
+        display: flex !important;
     }
     
-    .search-box {
+    .desktop-controls {
+        display: none !important;
+    }
+    
+    /* Mobile controls styling */
+    .mobile-controls .search-box {
         order: 1;
         max-width: 100%;
         width: 100%;
         min-width: auto;
     }
     
-    .sort-dropdown {
+    .mobile-controls .sort-dropdown {
         order: 2;
         width: 100%;
     }
     
-    .sort-dropdown .btn {
+    .mobile-controls .sort-dropdown .btn {
         width: 100%;
         justify-content: center;
     }
@@ -863,13 +910,15 @@ select:disabled {
         flex-direction: column;
         gap: 1rem;
         align-items: stretch;
-        padding: 1rem 0;
+        padding: 1rem;
+        margin: 0 0 1rem 0;
     }
     
     .header-info {
         text-align: center;
     }
-      .view-toggle {
+    
+    .view-toggle {
         display: none !important; /* Hide view toggle on mobile - cards only */
     }
     
