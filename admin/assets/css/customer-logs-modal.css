@@ -343,323 +343,381 @@
     box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
 }
 
-/* Form Actions */
-.undo-form-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-    padding: 1.5rem 2rem;
-    border-top: 1px solid #e9ecef;
-    background: white;
-    border-radius: 0 0 16px 16px;
-    flex-shrink: 0;
+/* =============== UNDO CANCELLATION MODAL STYLES =============== */
+.undo-icon {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
 }
 
-.undo-btn-secondary,
-.undo-btn-primary {
-    border: none;
+.undo-icon i {
+    color: white;
+}
+
+.status-prediction {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
     border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.95rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.2s ease;
-    text-decoration: none;
-    padding: 0.75rem 1.5rem;
-    min-width: 140px;
-    justify-content: center;
+    padding: 1rem;
+    margin-top: 1rem;
 }
 
-.undo-btn-secondary {
-    background: #6c757d;
-    color: white;
-    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2);
-}
-
-.undo-btn-secondary:hover {
-    background: #5a6268;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
-}
-
-.undo-btn-primary {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
-    color: white;
-    box-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
-}
-
-.undo-btn-primary:hover {
-    background: linear-gradient(135deg, var(--primary-color-dark), var(--primary-color-darker));
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.4);
-}
-
-.undo-btn-primary:active,
-.undo-btn-secondary:active {
-    transform: translateY(0);
-}
-
-/* ============================================
-   Success Modal Styles
-   ============================================ */
-
-/* Success Modal Overlay */
-#success-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(3px);
-    display: none;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 10vh;
-    z-index: 1500;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-#success-modal.show {
-    display: flex;
-    opacity: 1;
-}
-
-/* Success Modal Content */
-.success-modal-content {
-    background: white;
-    border-radius: 16px;
-    width: 90%;
-    max-width: 480px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-    transform: scale(0.9) translateY(-20px);
-    transition: transform 0.3s ease;
-    position: relative;
-    border: 2px solid var(--primary-color);
-    overflow: hidden;
-}
-
-#success-modal.show .success-modal-content {
-    transform: scale(1) translateY(0);
-}
-
-/* Success Modal Header */
-.success-modal-header {
-    background: linear-gradient(135deg, #fefefe, #fdf7f8);
-    padding: 2rem 2rem 1rem 2rem;
-    text-align: center;
-    border-bottom: 1px solid #f5f5f5;
-}
-
-.success-icon {
-    font-size: 3rem;
-    color: var(--primary-color);
-    margin-bottom: 0.5rem;
-    display: block;
-}
-
-.success-modal-header h3 {
-    margin: 0;
-    color: #333;
-    font-size: 1.5rem;
+.status-prediction h4 {
+    margin: 0 0 0.5rem 0;
+    color: #374151;
+    font-size: 1rem;
     font-weight: 600;
 }
 
-/* Success Modal Body */
-.success-modal-body {
-    padding: 1.5rem 2rem;
-    text-align: center;
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
 }
 
-.success-modal-body p {
+.status-badge.upcoming {
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #3b82f6;
+}
+
+.status-badge.ongoing {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #f59e0b;
+}
+
+.status-badge.overdue {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #ef4444;
+}
+
+.status-badge.completed {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #10b981;
+}
+
+.status-explanation {
     margin: 0;
-    color: #555;
-    font-size: 1.1rem;
+    font-size: 0.875rem;
+    color: #6b7280;
     line-height: 1.4;
 }
 
-/* Success Modal Footer */
-.success-modal-footer {
-    padding: 1rem 2rem 2rem 2rem;
-    text-align: center;
-}
-
-.btn-success-ok {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
-    border: 2px solid var(--primary-color);
-    color: white;
-    padding: 0.875rem 2rem;
-    border-radius: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
+/* Modal animations for undo modal */
+#undo-cancel-modal {
+    opacity: 0;
+    visibility: hidden;
     transition: all 0.3s ease;
-    text-decoration: none;
-    font-size: 1rem;
-    min-width: 120px;
-    justify-content: center;
 }
 
-.btn-success-ok:hover {
-    background: linear-gradient(135deg, var(--primary-color-dark), var(--primary-color-darker));
-    border-color: var(--primary-color-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(245, 135, 157, 0.4);
+#undo-cancel-modal.show {
+    opacity: 1;
+    visibility: visible;
 }
 
-.btn-success-ok:active {
-    transform: translateY(0);
+#undo-cancel-modal .modal-content {
+    transform: translateY(-20px) scale(0.95);
+    transition: all 0.3s ease;
 }
 
-/* ============================================
-   Process Overdue Modal Styles
-   ============================================ */
-
-/* Overdue specific styling */
-.overdue-icon {
-    color: #dc3545 !important;
+#undo-cancel-modal.show .modal-content {
+    transform: translateY(0) scale(1);
 }
 
-.overdue-count {
-    color: #dc3545;
-    font-weight: bold;
-    background: rgba(220, 53, 69, 0.1);
-    padding: 2px 8px;
+/* Button loading state for undo confirmation */
+#confirm-undo-btn.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+#confirm-undo-btn.loading i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Modal Body */
+.undo-modal-body {
+    padding: 2rem;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+/* Custom Scrollbar for Modal Body */
+.undo-modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.undo-modal-body::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
     border-radius: 4px;
+    margin: 8px 0;
 }
 
-/* Overdue Options */
-.overdue-options {
-    margin: 1.5rem 0;
+.undo-modal-body::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.undo-modal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color-dark);
+}
+
+/* Firefox Scrollbar for Modal Body */
+.undo-modal-body {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.05);
+}
+
+/* Confirmation Section */
+.undo-confirmation-section {
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
-.overdue-option {
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    padding: 1rem;
-    transition: all 0.3s ease;
-    cursor: pointer;
+.undo-confirmation-icon {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-color-light), rgba(255, 105, 180, 0.2));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.undo-confirmation-icon::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(23, 162, 184, 0.1), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.undo-confirmation-icon i {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    z-index: 1;
     position: relative;
 }
 
-.overdue-option:hover {
-    border-color: var(--primary-color);
-    background: rgba(247, 110, 155, 0.05);
+.undo-confirmation-content {
+    flex: 1;
 }
 
-.overdue-option input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-}
-
-.overdue-option input[type="radio"]:checked + label {
-    color: var(--primary-color-darker);
-}
-
-.overdue-option input[type="radio"]:checked ~ .overdue-option,
-.overdue-option:has(input[type="radio"]:checked) {
-    border-color: var(--primary-color);
-    background: rgba(247, 110, 155, 0.1);
-}
-
-.overdue-option label {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    cursor: pointer;
-    margin: 0;
-    width: 100%;
-}
-
-.overdue-option label i {
-    font-size: 1.25rem;
-    margin-top: 2px;
-    color: #6c757d;
-    transition: color 0.3s ease;
-}
-
-.overdue-option label span {
-    font-weight: 600;
-    font-size: 1rem;
-    line-height: 1.2;
-}
-
-.overdue-option label small {
-    display: block;
-    color: #6c757d;
-    font-size: 0.875rem;
-    margin-top: 2px;
-    font-weight: normal;
-}
-
-.overdue-option input[type="radio"]:checked + label i {
-    color: var(--primary-color-darker);
-}
-
-/* Fee Section */
-.fee-section {
-    margin-top: 1.5rem;
-    padding: 1.5rem;
-    background: #f8f9fa;
-    border-radius: 8px;
-    border: 1px solid #dee2e6;
-}
-
-.fee-section h4 {
+.undo-confirmation-content h3 {
     margin: 0 0 1rem 0;
-    color: #495057;
-    font-size: 1.1rem;
-}
-
-.fee-input-group {
-    margin-bottom: 1rem;
-}
-
-.fee-input-group:last-child {
-    margin-bottom: 0;
-}
-
-.fee-input-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #495057;
+    color: #2c3e50;
+    font-size: 1.25rem;
     font-weight: 600;
-    font-size: 0.9rem;
 }
 
-.fee-input-group input,
-.fee-input-group select,
-.fee-input-group textarea {
+.undo-confirmation-content p {
+    margin: 0 0 1rem 0;
+    color: #6c757d;
+    line-height: 1.5;
+}
+
+.undo-confirmation-list {
+    margin: 0 0 1.5rem 0;
+    padding-left: 1.2rem;
+    color: #495057;
+}
+
+.undo-confirmation-list li {
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+    position: relative;
+}
+
+.undo-confirmation-list li::marker {
+    color: var(--primary-color);
+}
+
+/* Status Prediction */
+.undo-status-prediction {
+    background: linear-gradient(135deg, var(--primary-color-light), #f8f9fa);
+    border: 2px solid rgba(255, 105, 180, 0.2);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.undo-status-prediction::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ced4da;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(23, 162, 184, 0.1), transparent);
+    animation: slideIn 3s infinite;
 }
 
-.fee-input-group input:focus,
-.fee-input-group select:focus,
-.fee-input-group textarea:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(247, 110, 155, 0.1);
+@keyframes slideIn {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: 100%; }
 }
 
-.fee-input-group textarea {
-    resize: vertical;
-    min-height: 80px;
+.undo-status-prediction h4 {
+    margin: 0 0 0.75rem 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+}
+
+.undo-status-prediction p {
+    margin: 0;
+    font-size: 1rem;
+    color: #495057;
+    position: relative;
+    z-index: 1;
+}
+
+/* Transaction Summary */
+.undo-transaction-summary {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.undo-transaction-summary h4 {
+    margin: 0 0 1rem 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.undo-summary-content p {
+    margin: 0.75rem 0;
+    color: #495057;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    line-height: 1.4;
+}
+
+.undo-summary-content strong {
+    color: #2c3e50;
+    font-weight: 600;
+    min-width: 140px;
+}
+
+.undo-summary-content span {
+    text-align: right;
+    font-weight: 500;
+}
+
+/* Status Badge */
+.status-badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.status-badge.status-upcoming {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.status-badge.status-ongoing {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    color: white;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.status-badge.status-overdue {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.status-badge.status-completed {
+    background: linear-gradient(135deg, #6c757d, #545b62);
+    color: white;
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+}
+
+.status-badge.status-cancelled {
+    background: linear-gradient(135deg, #ffc107, #e0a800);
+    color: #212529;
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+}
+
+/* Modal animations for undo modal */
+#undo-cancel-modal {
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+#undo-cancel-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+#undo-cancel-modal .modal-content {
+    transform: translateY(-20px) scale(0.95);
+    transition: all 0.3s ease;
+}
+
+#undo-cancel-modal.show .modal-content {
+    transform: translateY(0) scale(1);
+}
+
+/* Button loading state for undo confirmation */
+#confirm-undo-btn.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+#confirm-undo-btn.loading i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 /* Mobile Responsiveness for Process Overdue Modal */

@@ -2394,6 +2394,7 @@ select:disabled {
 .card-action-btn.cancel-rental-btn:hover {
     background: #c82333;
     border-color: #bd2130;
+    transform: translateY(-1px);
 }
 
 /* === LONG BUTTON LAYOUT STYLES */
@@ -2499,44 +2500,124 @@ select:disabled {
     padding-top: 1rem;
 }
 
-/* === RESPONSIVE DESIGN FOR PRODUCT/ACCESSORY LAYOUT === */
+/* =============== NOTIFICATION SYSTEM =============== */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    padding: 1rem 1.5rem;
+    min-width: 300px;
+    max-width: 400px;
+    transform: translateX(420px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    border-left: 4px solid #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.notification-content i {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.notification-message {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #374151;
+    line-height: 1.4;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    margin-left: 0.5rem;
+}
+
+.notification-close:hover {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.notification-close i {
+    font-size: 1.1rem;
+}
+
+/* Notification Types */
+.notification-success {
+    border-left-color: #10b981;
+}
+
+.notification-success .notification-content i {
+    color: #10b981;
+}
+
+.notification-error {
+    border-left-color: #ef4444;
+}
+
+.notification-error .notification-content i {
+    color: #ef4444;
+}
+
+.notification-warning {
+    border-left-color: #f59e0b;
+}
+
+.notification-warning .notification-content i {
+    color: #f59e0b;
+}
+
+.notification-info {
+    border-left-color: #3b82f6;
+}
+
+.notification-info .notification-content i {
+    color: #3b82f6;
+}
+
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
-    .product-content, .accessory-content {
-        flex-direction: column;
-        gap: 1rem;
+    .notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+        max-width: none;
+        transform: translateY(-100px);
     }
     
-    .product-image, .accessory-image {
-        width: 100%;
-        order: 0; /* Reset order on mobile, image stays at top */
+    .notification.show {
+        transform: translateY(0);
     }
     
-    .info-list {
-        grid-template-columns: 1fr; /* Single column on mobile */
-        gap: 0.5rem;
-    }
-    
-    .modal-product-image, .modal-accessory-image {
-        height: 200px;
-    }
-    
-    .no-image-placeholder {
-        height: 200px;
-    }
-    
-    .info-item {
-        gap: 0.1rem;
-    }
-    
-    .info-label {
-        font-size: 0.8rem;
-    }
-    
-    .info-value {
-        font-size: 0.85rem;
-    }
-    
-    .detail-product, .detail-accessory {
-        padding: 1rem;
+    .notification-message {
+        font-size: 0.9rem;
     }
 }

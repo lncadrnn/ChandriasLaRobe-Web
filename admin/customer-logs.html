@@ -709,5 +709,58 @@
         </div>
     </div>
 
+    <!-- Undo Cancellation Modal -->
+    <div id="undo-cancel-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class='bx bx-undo'></i> Undo Cancellation</h2>
+                <button class="close-btn" onclick="closeUndoCancelModal()">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="confirmation-section">
+                    <div class="confirmation-icon undo-icon">
+                        <i class='bx bx-undo'></i>
+                    </div>
+                    <div class="confirmation-content">
+                        <h3>Restore this cancelled rental?</h3>
+                        <p>This will undo the cancellation and restore the rental to its appropriate status based on the event dates.</p>
+                    </div>
+                </div>
+                
+                <div class="transaction-summary">
+                    <h4>Rental Details:</h4>
+                    <div class="summary-content">
+                        <p><strong>Customer:</strong> <span id="undo-customer-name">-</span></p>
+                        <p><strong>Transaction Code:</strong> <span id="undo-transaction-code">-</span></p>
+                        <p><strong>Event Start Date:</strong> <span id="undo-event-start-date">-</span></p>
+                        <p><strong>Event End Date:</strong> <span id="undo-event-end-date">-</span></p>
+                        <p><strong>Total Amount:</strong> <span id="undo-total-amount">-</span></p>
+                    </div>
+                </div>
+
+                <div class="status-prediction">
+                    <h4>Predicted New Status:</h4>
+                    <div class="status-badge" id="predicted-status-badge">
+                        <span id="predicted-status-text">Calculating...</span>
+                    </div>
+                    <p class="status-explanation" id="status-explanation">
+                        The rental status will be automatically determined based on the current date and event dates.
+                    </p>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeUndoCancelModal()">
+                        <i class='bx bx-x'></i> Cancel
+                    </button>
+                    <button type="button" class="btn-primary" id="confirm-undo-btn" onclick="confirmUndoCancellation()">
+                        <i class='bx bx-undo'></i> Confirm Undo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

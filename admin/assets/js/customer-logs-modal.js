@@ -211,22 +211,41 @@ function populateUndoModalData(transaction) {
  * @param {Object} transaction - The transaction object
  */
 function updatePredictedStatus(transaction) {
-    const predictedStatusEl = document.getElementById('predicted-status');
-    if (!predictedStatusEl) return;
-
-    // Use the same calculation logic as the main service (access via window)
-    const { rentalStatus, statusClass } = window.calculateOriginalRentalStatus ? 
-        window.calculateOriginalRentalStatus(transaction) : 
-        calculateRentalStatusFallback(transaction);
-
-    // Update the status badge
-    predictedStatusEl.textContent = rentalStatus;
-    predictedStatusEl.className = `status-badge ${statusClass}`;
-
-    // Update button text based on status
-    const confirmBtn = document.getElementById('confirm-undo-cancel-btn');
-    if (confirmBtn) {
-        confirmBtn.innerHTML = `<i class='bx bx-undo'></i> Restore to "${rentalStatus}"`;
+    const predictedStatus = calculateNewStatusAfterUndo(transaction);
+    const statusBadge = document.getElementById('predicted-status-badge');
+    const statusText = document.getElementById('predicted-status-text');
+    const statusExplanation = document.getElementById('status-explanation');
+    
+    if (statusText) {
+        statusText.textContent = predictedStatus;
+    }
+    
+    if (statusBadge) {
+        // Remove existing status classes
+        statusBadge.classList.remove('upcoming', 'ongoing', 'overdue', 'completed');
+        // Add new status class
+        statusBadge.classList.add(predictedStatus.toLowerCase());
+    }
+    
+    if (statusExplanation) {
+        let explanation = '';
+        switch (predictedStatus) {
+            case 'Upcoming':
+                explanation = 'The event date is in the future, so the rental will be marked as upcoming.';
+                break;
+            case 'Ongoing':
+                explanation = 'The event is currently happening or recently ended (within 3 days).';
+                break;
+            case 'Overdue':
+                explanation = 'The event ended more than 3 days ago, making this rental overdue.';
+                break;
+            case 'Completed':
+                explanation = 'The rental has been marked as completed with items returned.';
+                break;
+            default:
+                explanation = 'The rental status will be automatically determined based on the event dates.';
+        }
+        statusExplanation.textContent = explanation;
     }
 }
 
@@ -240,41 +259,48 @@ async function confirmUndoCancel() {
     }
 
     try {
-        // Disable the confirm button to prevent double-clicks
-        const confirmBtn = document.getElementById('confirm-undo-cancel-btn');
+        // Show loading state
+        const confirmBtn = document.getElementById('confirm-undo-btn');
         if (confirmBtn) {
             confirmBtn.disabled = true;
             confirmBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Processing...';
         }
 
-        // Show loading spinner
+        // Show action spinner
         const actionSpinner = document.querySelector('.admin-action-spinner');
         if (actionSpinner) {
             actionSpinner.style.display = 'flex';
-        }        // Get the predicted status
-        const { rentalStatus: originalStatus } = window.calculateOriginalRentalStatus ? 
-            window.calculateOriginalRentalStatus(currentTransactionToUndo) :
-            calculateRentalStatusFallback(currentTransactionToUndo);
+        }
 
-        // Update the transaction in Firebase
+        // Validate that the transaction is actually cancelled
+        if (currentTransactionToUndo.rentalStatus !== 'Cancelled') {
+            throw new Error('This transaction is not cancelled and cannot be undone');
+        }
+
+        // Calculate the new status based on current date and event dates
+        const newStatus = calculateNewStatusAfterUndo(currentTransactionToUndo);
+
+        // Update transaction in Firebase
         const transactionRef = doc(chandriaDB, 'transaction', currentTransactionToUndo.id);
         const updateData = {
-            rentalStatus: null, // Remove the cancelled status
-            lastUpdated: new Date().toISOString()
+            rentalStatus: newStatus,
+            lastUpdated: new Date().toISOString(),
+            cancellationUndone: true,
+            cancellationUndoneDate: new Date().toISOString()
         };
 
-        // Remove cancellation date if it exists
+        // Remove cancellation-related fields
         if (currentTransactionToUndo.cancelledDate) {
             updateData.cancelledDate = null;
         }
 
-        await updateDoc(transactionRef, updateData);        // Update local data (use global arrays)
+        await updateDoc(transactionRef, updateData);
+
+        // Update local data in global arrays
         if (window.allTransactions) {
             const transactionIndex = window.allTransactions.findIndex(t => t.id === currentTransactionToUndo.id);
             if (transactionIndex !== -1) {
-                delete window.allTransactions[transactionIndex].rentalStatus;
-                delete window.allTransactions[transactionIndex].cancelledDate;
-                window.allTransactions[transactionIndex].lastUpdated = new Date().toISOString();
+                Object.assign(window.allTransactions[transactionIndex], updateData);
             }
         }
 
@@ -282,51 +308,113 @@ async function confirmUndoCancel() {
         if (window.filteredTransactions) {
             const filteredIndex = window.filteredTransactions.findIndex(t => t.id === currentTransactionToUndo.id);
             if (filteredIndex !== -1) {
-                delete window.filteredTransactions[filteredIndex].rentalStatus;
-                delete window.filteredTransactions[filteredIndex].cancelledDate;
-                window.filteredTransactions[filteredIndex].lastUpdated = new Date().toISOString();
+                Object.assign(window.filteredTransactions[filteredIndex], updateData);
             }
         }
+
+        // Close modal
+        closeUndoCancelModal();
 
         // Hide loading spinner
         if (actionSpinner) {
             actionSpinner.style.display = 'none';
         }
 
-        // Close the modal
-        closeUndoCancelModal();        // Re-render the views (use global functions)
+        // Re-render the views
         if (window.currentView) {
             if (window.currentView === 'cards') {
                 if (window.renderTransactionCards) {
-                    window.renderTransactionCards();
+                    await window.renderTransactionCards();
                 }
             } else {
                 if (window.renderTransactionTable) {
-                    window.renderTransactionTable();
-                }            }
+                    await window.renderTransactionTable();
+                }
+            }
         }
 
-        // Show success modal instead of Notyf
-        showSuccessModal(`Cancellation undone! Status changed to "${originalStatus}".`, "Cancellation Restored");
+        // Show success notification
+        if (window.showNotification) {
+            window.showNotification(`Cancellation undone successfully. Status updated to ${newStatus}.`, 'success');
+        } else {
+            alert(`Cancellation undone successfully. Status updated to ${newStatus}.`);
+        }
+
+        console.log('Cancellation undone successfully, new status:', newStatus);
 
     } catch (error) {
         console.error('Error undoing cancellation:', error);
-        
+
         // Hide loading spinner
         const actionSpinner = document.querySelector('.admin-action-spinner');
         if (actionSpinner) {
             actionSpinner.style.display = 'none';
         }
-        
-        // Re-enable button
-        const confirmBtn = document.getElementById('confirm-undo-cancel-btn');
+
+        // Reset button state
+        const confirmBtn = document.getElementById('confirm-undo-btn');
         if (confirmBtn) {
             confirmBtn.disabled = false;
-            confirmBtn.innerHTML = '<i class="bx bx-undo"></i> Restore Rental';
+            confirmBtn.innerHTML = '<i class="bx bx-undo"></i> Confirm Undo';
         }
-        
+
         // Show error notification
-        alert('Error undoing cancellation. Please try again.');
+        if (window.showNotification) {
+            window.showNotification('Error undoing cancellation: ' + (error.message || 'Please try again.'), 'error');
+        } else {
+            alert('Error undoing cancellation: ' + (error.message || 'Please try again.'));        }
+    }
+}
+
+/**
+ * Calculates what the new status should be after undoing cancellation
+ * @param {Object} transaction - The transaction object
+ * @returns {string} - The new rental status
+ */
+function calculateNewStatusAfterUndo(transaction) {
+    const today = new Date();
+    const currentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    
+    // Get event dates
+    const eventStartDate = transaction.eventStartDate ? new Date(transaction.eventStartDate) : null;
+    const eventEndDate = transaction.eventEndDate ? new Date(transaction.eventEndDate) : null;
+    const eventDate = transaction.eventDate ? new Date(transaction.eventDate) : null;
+    
+    // Determine the effective start and end dates
+    let startDate = eventStartDate || eventDate;
+    let endDate = eventEndDate || eventDate;
+    
+    if (!startDate) {
+        return 'Upcoming'; // Default if no dates are available
+    }
+    
+    // Normalize dates to ignore time components
+    startDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+    if (endDate) {
+        endDate = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+    }
+    
+    // Determine status based on dates
+    if (currentDate < startDate) {
+        return 'Upcoming';
+    } else if (endDate && currentDate <= endDate) {
+        return 'Ongoing';
+    } else if (endDate && currentDate > endDate) {
+        // Check if it's overdue (3+ days after end date)
+        const daysPastEnd = Math.floor((currentDate - endDate) / (1000 * 60 * 60 * 24));
+        if (daysPastEnd >= 3) {
+            return 'Overdue';
+        } else {
+            return 'Ongoing';
+        }
+    } else {
+        // Single day event that has passed
+        const daysPastEvent = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
+        if (daysPastEvent >= 3) {
+            return 'Overdue';
+        } else {
+            return 'Ongoing';
+        }
     }
 }
 
@@ -558,9 +646,7 @@ function closeSuccessModal() {
 if (typeof window !== 'undefined') {
     // Preserve the original function if it exists
     if (window.confirmCancelRental && typeof window.confirmCancelRental === 'function') {
-        window.originalConfirmCancelRental = window.confirmCancelRental;
-    }
-    
+        window.originalConfirmCancelRental = window.confirmCancelRental;    }
     window.openUndoCancelModal = openUndoCancelModal;
     window.closeUndoCancelModal = closeUndoCancelModal;
     window.confirmUndoCancel = confirmUndoCancel;

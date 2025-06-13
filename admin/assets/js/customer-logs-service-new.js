@@ -1203,6 +1203,55 @@ function showSuccessMessage(message) {
     }, 3000);
 }
 
+// =============== NOTIFICATION SYSTEM ===============
+
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    
+    // Set the message
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="bx ${getNotificationIcon(type)}"></i>
+            <span class="notification-message">${message}</span>
+        </div>
+        <button class="notification-close" onclick="this.parentElement.remove()">
+            <i class="bx bx-x"></i>
+        </button>
+    `;
+    
+    // Add to body
+    document.body.appendChild(notification);
+    
+    // Show notification with animation
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    // Auto-remove after 4 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 300);
+        }
+    }, 4000);
+}
+
+function getNotificationIcon(type) {
+    switch (type) {
+        case 'success': return 'bx-check-circle';
+        case 'error': return 'bx-error-circle';
+        case 'warning': return 'bx-error';
+        case 'info':
+        default: return 'bx-info-circle';
+    }
+}
+
 // === SORT FUNCTIONALITY ===
 
 // Toggle sort dropdown
@@ -1367,15 +1416,13 @@ async function markTransactionAsComplete(transactionId) {
         filterTransactions();
         
         // Hide loading
-        document.querySelector('.admin-action-spinner').style.display = 'none';
-
-        // Show success notification
-        alert('Transaction marked as completed successfully!');
+        document.querySelector('.admin-action-spinner').style.display = 'none';        // Show success notification
+        showNotification('Transaction marked as completed successfully!', 'success');
 
     } catch (error) {
         console.error('Error marking transaction as complete:', error);
         document.querySelector('.admin-action-spinner').style.display = 'none';
-        alert('Error marking transaction as complete. Please try again.');
+        showNotification('Error marking transaction as complete. Please try again.', 'error');
     }
 }
 
@@ -1420,16 +1467,14 @@ async function cancelRental(transactionId) {
                 icon: {
                     className: 'bx bx-check-circle',
                     tagName: 'i'
-                }
-            });
+                }            });
         } else {
-            alert('Rental cancelled successfully!');
+            showNotification('Rental cancelled successfully!', 'success');
         }
 
-    } catch (error) {
-        console.error('Error cancelling rental:', error);
+    } catch (error) {        console.error('Error cancelling rental:', error);
         hideActionSpinner();
-        alert('Error cancelling rental. Please try again.');
+        showNotification('Error cancelling rental. Please try again.', 'error');
     }
 }
 
@@ -1818,21 +1863,19 @@ async function confirmProcessOverdue() {
         filterTransactions();
         
         // Hide loading
-        document.querySelector('.admin-action-spinner').style.display = 'none';
-          // Show success message
+        document.querySelector('.admin-action-spinner').style.display = 'none';        // Show success message
         let successMessage = '';
         if (selectedAction === 'completed') {
-            successMessage = 'Overdue rental marked as completed successfully!';
+            successMessage = 'Overdue Processed. Product is now Completed.';
         } else if (selectedAction === 'late-fee') {
-            successMessage = 'Overdue fee added and rental completed successfully!';
+            successMessage = 'Overdue Processed. Product is now Completed.';
         }
         
-        showSuccessModal('Process Overdue', successMessage);
-        
-    } catch (error) {
+        showNotification(successMessage, 'success');
+      } catch (error) {
         console.error('Error processing overdue rental:', error);
         document.querySelector('.admin-action-spinner').style.display = 'none';
-        alert('Error processing overdue rental. Please try again.');
+        showNotification('Overdue Processed. Product is now Completed.', 'error');
     }
 }
 
@@ -1942,6 +1985,7 @@ window.closeMarkCompleteModal = closeMarkCompleteModal;
 window.renderTransactionCards = renderTransactionCards;
 window.renderTransactionTable = renderTransactionTable;
 window.showSuccessToast = showSuccessToast;
+window.showNotification = showNotification;
 
 // Export cancel rental functions
 window.showCancelRentalModal = showCancelRentalModal;
