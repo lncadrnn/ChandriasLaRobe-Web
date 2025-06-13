@@ -1607,6 +1607,9 @@ select:disabled {
 .item-image-container {
     flex-shrink: 0;
     width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .item-info-container {
