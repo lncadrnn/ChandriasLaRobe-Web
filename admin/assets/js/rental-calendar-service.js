@@ -1157,15 +1157,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 markCompleteBtn.className = 'btn-action btn-complete';
                 markCompleteBtn.innerHTML = '<i class="bx bx-check-circle"></i> Mark as Returned';
                 markCompleteBtn.onclick = () => markAsReturned(rental);
-                buttonsContainer.appendChild(markCompleteBtn);
-            }
-            
-            // Edit button (for all rentals)
-            const editBtn = document.createElement('button');
-            editBtn.className = 'btn-action btn-edit';
-            editBtn.innerHTML = '<i class="bx bx-edit"></i> Edit Rental';
-            editBtn.onclick = () => editRental(rental);
-            buttonsContainer.appendChild(editBtn);
+                buttonsContainer.appendChild(markCompleteBtn);            }
             
             return buttonsContainer;
         }
@@ -1374,14 +1366,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } finally {
                 document.body.style.cursor = 'default';
             }
-        }
-        
-        function editRental(rental) {
-            // Open rental page with pre-filled data for editing
-            sessionStorage.setItem('editRentalData', JSON.stringify(rental));
-            window.location.href = './rental.html?edit=' + rental.id;
-        }
-        
+        }        
         function showSuccessMessage(message) {
             const successDiv = document.createElement('div');
             successDiv.className = 'success-message';

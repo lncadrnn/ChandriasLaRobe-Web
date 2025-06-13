@@ -528,6 +528,13 @@ function calculateRentalStatus(transaction) {
     let rentalStatus = 'Upcoming';
     let statusClass = 'status-upcoming';
     
+    // If rental has been marked as returned, it's completed
+    if (transaction.returnConfirmed) {
+        rentalStatus = 'Completed';
+        statusClass = 'status-completed';
+        return { rentalStatus, statusClass };
+    }
+    
     if (eventStartDate) {
         if (eventEndDate) {
             // Open rental with end date
@@ -538,8 +545,17 @@ function calculateRentalStatus(transaction) {
                 rentalStatus = 'Ongoing';
                 statusClass = 'status-ongoing';
             } else if (currentDate > eventEndDate) {
-                rentalStatus = 'Completed';
-                statusClass = 'status-completed';
+                // Check if it's overdue (1 day grace period)
+                const gracePeriod = new Date(eventEndDate);
+                gracePeriod.setDate(gracePeriod.getDate() + 1);
+                
+                if (currentDate > gracePeriod && !transaction.returnConfirmed) {
+                    rentalStatus = 'Overdue';
+                    statusClass = 'status-overdue';
+                } else {
+                    rentalStatus = 'Completed';
+                    statusClass = 'status-completed';
+                }
             }
         } else {
             // Fixed rental (single day)
@@ -550,8 +566,17 @@ function calculateRentalStatus(transaction) {
                 rentalStatus = 'Ongoing';
                 statusClass = 'status-ongoing';
             } else if (currentDate > eventStartDate) {
-                rentalStatus = 'Completed';
-                statusClass = 'status-completed';
+                // Check if it's overdue (1 day grace period for fixed rentals)
+                const gracePeriod = new Date(eventStartDate);
+                gracePeriod.setDate(gracePeriod.getDate() + 1);
+                
+                if (currentDate > gracePeriod && !transaction.returnConfirmed) {
+                    rentalStatus = 'Overdue';
+                    statusClass = 'status-overdue';
+                } else {
+                    rentalStatus = 'Completed';
+                    statusClass = 'status-completed';
+                }
             }
         }
     }
