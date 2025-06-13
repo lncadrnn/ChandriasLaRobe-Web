@@ -1684,19 +1684,17 @@
     
     .order-header h3 {
         font-size: 1.1rem;
-    }
-    
-    .clear-btn {
+    }    .clear-btn {
         padding: 0.4rem 0.8rem;
         font-size: 0.8rem;
     }
     
     .order-content {
-        max-height: 200px;
+        max-height: 500px;
     }
     
     .order-items {
-        max-height: 120px;
+        max-height: 400px;
         overflow-y: auto;
     }
     
@@ -1802,11 +1800,19 @@
     
     .size-button-small .stock-count {
         font-size: 0.45rem;
-    }
-      .order-section {
+    }      .order-section {
         padding: 0.75rem;
         bottom: 65px; /* Adjust for smaller mobile nav */
         margin-top: 1rem;
+    }
+    
+    .order-content {
+        max-height: 450px;
+    }
+    
+    .order-items {
+        max-height: 350px;
+        overflow-y: auto;
     }
     
     .order-header h3 {
