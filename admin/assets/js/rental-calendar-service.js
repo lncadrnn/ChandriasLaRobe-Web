@@ -104,16 +104,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 showError();
             }
         }
-        
-        function calculateRentalStatus(rental) {
+          function calculateRentalStatus(rental) {
             const currentDate = new Date();
             const eventStartDate = rental.eventStartDate ? new Date(rental.eventStartDate) : null;
             const eventEndDate = rental.eventEndDate ? new Date(rental.eventEndDate) : null;
             const eventDate = rental.eventDate ? new Date(rental.eventDate) : null;
             
-            // If there's a specific status in the data, use it
+            // If rental has been marked as returned, it's completed
+            if (rental.returnConfirmed) {
+                return 'completed';
+            }
+            
+            // If there's a specific status in the data, use it (but respect return confirmation)
             if (rental.status && ['upcoming', 'ongoing', 'completed', 'overdue'].includes(rental.status.toLowerCase())) {
-                return rental.status.toLowerCase();
+                const status = rental.status.toLowerCase();
+                
+                // Double-check overdue status based on dates
+                if (status === 'completed' && !rental.returnConfirmed) {
+                    const endDate = eventEndDate || eventDate;
+                    if (endDate && currentDate > endDate) {
+                        // Grace period check (1 day after end date)
+                        const gracePeriod = new Date(endDate);
+                        gracePeriod.setDate(gracePeriod.getDate() + 1);
+                        
+                        if (currentDate > gracePeriod) {
+                            return 'overdue';
+                        }
+                    }
+                }
+                
+                return status;
             }
             
             // Calculate status based on dates
@@ -126,11 +146,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else if (currentDate >= startDate && currentDate <= endDate) {
                     return 'ongoing';
                 } else if (currentDate > endDate) {
-                    // Check if it's overdue (assuming 1 day grace period)
+                    // Check if it's overdue (1 day grace period)
                     const gracePeriod = new Date(endDate);
                     gracePeriod.setDate(gracePeriod.getDate() + 1);
                     
-                    if (currentDate > gracePeriod && !rental.returned) {
+                    if (currentDate > gracePeriod && !rental.returnConfirmed) {
                         return 'overdue';
                     } else {
                         return 'completed';
@@ -221,16 +241,33 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const rentalItems = document.createElement('div');
             rentalItems.className = 'rental-items';
-            
-            // Add rental items (show max 5, then "X more")
+              // Add rental items (show max 5, then "X more")
             const maxVisible = 5;
             const visibleRentals = filteredRentals.slice(0, maxVisible);
             
-            visibleRentals.forEach(rental => {
+            visibleRentals.forEach((rental, index) => {
                 const rentalItem = document.createElement('div');
                 rentalItem.className = `rental-item ${rental.status}`;
                 rentalItem.textContent = rental.fullName || rental.customerName || 'Unknown';
-                rentalItem.title = `${rental.fullName || rental.customerName} - ${rental.status.toUpperCase()}`;
+                
+                // Create detailed tooltip
+                const duration = calculateRentalDuration(rental);
+                const durationText = duration > 1 ? `${duration} days` : '1 day';
+                const eventInfo = getEventDateInfo(rental);
+                
+                rentalItem.title = `${rental.fullName || rental.customerName} - ${rental.status.toUpperCase()}\nDuration: ${durationText}\nDates: ${eventInfo}\nTransaction: ${rental.transactionCode || 'N/A'}`;
+                
+                // Add click event for individual rental item
+                rentalItem.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent day click event
+                    showRentalQuickView(rental);
+                });
+                
+                // Add visual indicator for duration (longest rentals get special styling)
+                if (index === 0 && duration > 3) {
+                    rentalItem.classList.add('longest-rental');
+                }
+                
                 rentalItems.appendChild(rentalItem);
             });
             
@@ -254,11 +291,10 @@ document.addEventListener("DOMContentLoaded", () => {
             
             return dayElement;
         }
-        
-        function getRentalsForDay(day, month, year) {
+          function getRentalsForDay(day, month, year) {
             const targetDate = new Date(year, month, day);
             
-            return rentalsData.filter(rental => {
+            const dayRentals = rentalsData.filter(rental => {
                 const eventStartDate = rental.eventStartDate ? new Date(rental.eventStartDate) : null;
                 const eventEndDate = rental.eventEndDate ? new Date(rental.eventEndDate) : null;
                 const eventDate = rental.eventDate ? new Date(rental.eventDate) : null;
@@ -277,6 +313,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 return false;
             });
+            
+            // Sort rentals by duration (longest to shortest)
+            return dayRentals.sort((a, b) => {
+                const durationA = calculateRentalDuration(a);
+                const durationB = calculateRentalDuration(b);
+                return durationB - durationA; // Descending order (longest first)
+            });
+        }
+        
+        function calculateRentalDuration(rental) {
+            const eventStartDate = rental.eventStartDate ? new Date(rental.eventStartDate) : null;
+            const eventEndDate = rental.eventEndDate ? new Date(rental.eventEndDate) : null;
+            const eventDate = rental.eventDate ? new Date(rental.eventDate) : null;
+            
+            if (eventStartDate && eventEndDate) {
+                // Multi-day rental - calculate duration in days
+                const timeDiff = eventEndDate.getTime() - eventStartDate.getTime();
+                return Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 to include both start and end days
+            } else if (eventDate) {
+                // Single day rental
+                return 1;
+            } else {
+                // Default duration for rentals without proper dates
+                return 0;
+            }
         }
         
         function filterRentalsByStatus(rentals) {
@@ -284,6 +345,77 @@ document.addEventListener("DOMContentLoaded", () => {
                 return rentals;
             }
             return rentals.filter(rental => rental.status === filteredStatus);
+        }
+        
+        function getEventDateInfo(rental) {
+            const eventStartDate = rental.eventStartDate ? new Date(rental.eventStartDate) : null;
+            const eventEndDate = rental.eventEndDate ? new Date(rental.eventEndDate) : null;
+            const eventDate = rental.eventDate ? new Date(rental.eventDate) : null;
+            
+            if (eventDate) {
+                return eventDate.toLocaleDateString();
+            } else if (eventStartDate && eventEndDate) {
+                return `${eventStartDate.toLocaleDateString()} - ${eventEndDate.toLocaleDateString()}`;
+            } else if (eventStartDate) {
+                return eventStartDate.toLocaleDateString();
+            }
+            
+            return 'Date not specified';
+        }
+        
+        function showRentalQuickView(rental) {
+            // Create a quick view popup with rental details
+            const quickView = document.createElement('div');
+            quickView.className = 'rental-quick-view';
+            quickView.innerHTML = `
+                <div class="quick-view-content">
+                    <div class="quick-view-header">
+                        <h4>${rental.fullName || rental.customerName || 'Unknown Customer'}</h4>
+                        <span class="quick-view-status ${rental.status}">${rental.status.toUpperCase()}</span>
+                    </div>
+                    <div class="quick-view-body">
+                        <p><strong>Duration:</strong> ${calculateRentalDuration(rental)} day(s)</p>
+                        <p><strong>Dates:</strong> ${getEventDateInfo(rental)}</p>
+                        <p><strong>Transaction:</strong> ${rental.transactionCode || 'N/A'}</p>
+                        <p><strong>Contact:</strong> ${rental.contactNumber || rental.customerContactNumber || 'N/A'}</p>
+                        ${rental.totalPayment ? `<p><strong>Total:</strong> ₱${parseFloat(rental.totalPayment).toLocaleString()}</p>` : ''}
+                    </div>
+                    <div class="quick-view-actions">
+                        <button class="btn-view-full">View Full Details</button>
+                        <button class="btn-close-quick">Close</button>
+                    </div>
+                </div>
+            `;
+            
+            // Position the quick view near the cursor
+            const rect = event.target.getBoundingClientRect();
+            quickView.style.position = 'fixed';
+            quickView.style.top = `${rect.bottom + 10}px`;
+            quickView.style.left = `${rect.left}px`;
+            quickView.style.zIndex = '2000';
+            
+            document.body.appendChild(quickView);
+            
+            // Add event listeners
+            quickView.querySelector('.btn-close-quick').addEventListener('click', () => {
+                document.body.removeChild(quickView);
+            });
+            
+            quickView.querySelector('.btn-view-full').addEventListener('click', () => {
+                document.body.removeChild(quickView);
+                showDayDetails(
+                    new Date().getDate(),
+                    new Date().getMonth(),
+                    new Date().getFullYear(),
+                    [rental]
+                );
+            });
+              // Auto-close after 5 seconds
+            setTimeout(() => {
+                if (document.body.contains(quickView)) {
+                    document.body.removeChild(quickView);
+                }
+            }, 5000);
         }
         
         function showDayDetails(day, month, year, rentals) {
@@ -389,44 +521,305 @@ document.addEventListener("DOMContentLoaded", () => {
             if (productsList.children.length === 0) {
                 productsList.innerHTML = '<span style="color: #999;">No items listed</span>';
             }
-            
-            productsSection.appendChild(productsTitle);
+              productsSection.appendChild(productsTitle);
             productsSection.appendChild(productsList);
+            
+            // Add action buttons section
+            const actionsSection = document.createElement('div');
+            actionsSection.className = 'rental-actions';
+            
+            const actionButtons = createActionButtons(rental);
+            actionsSection.appendChild(actionButtons);
             
             item.appendChild(header);
             item.appendChild(info);
             item.appendChild(productsSection);
+            item.appendChild(actionsSection);
             
             return item;
         }
         
-        function closeModal() {
-            modal.classList.remove('visible');
+        function createActionButtons(rental) {
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.className = 'action-buttons';
+            
+            const currentDate = new Date();
+            const eventEndDate = rental.eventEndDate ? new Date(rental.eventEndDate) : rental.eventDate ? new Date(rental.eventDate) : null;
+            
+            // Mark as Complete/Return button (for ongoing rentals or completed without return confirmation)
+            if (rental.status === 'ongoing' || (rental.status === 'completed' && !rental.returnConfirmed)) {
+                const markCompleteBtn = document.createElement('button');
+                markCompleteBtn.className = 'btn-action btn-complete';
+                markCompleteBtn.innerHTML = '<i class="bx bx-check-circle"></i> Mark as Returned';
+                markCompleteBtn.onclick = () => markAsReturned(rental);
+                buttonsContainer.appendChild(markCompleteBtn);
+            }
+            
+            // Overdue Fee button (for overdue rentals)
+            if (rental.status === 'overdue') {
+                const overdueFeeBtn = document.createElement('button');
+                overdueFeeBtn.className = 'btn-action btn-overdue';
+                overdueFeeBtn.innerHTML = '<i class="bx bx-money"></i> Process Overdue Fee';
+                overdueFeeBtn.onclick = () => processOverdueFee(rental);
+                buttonsContainer.appendChild(overdueFeeBtn);
+                
+                // Also show Mark as Returned button for overdue items
+                const markCompleteBtn = document.createElement('button');
+                markCompleteBtn.className = 'btn-action btn-complete';
+                markCompleteBtn.innerHTML = '<i class="bx bx-check-circle"></i> Mark as Returned';
+                markCompleteBtn.onclick = () => markAsReturned(rental);
+                buttonsContainer.appendChild(markCompleteBtn);
+            }
+            
+            // Edit button (for all rentals)
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn-action btn-edit';
+            editBtn.innerHTML = '<i class="bx bx-edit"></i> Edit Rental';
+            editBtn.onclick = () => editRental(rental);
+            buttonsContainer.appendChild(editBtn);
+            
+            return buttonsContainer;
         }
         
-        function showLoading() {
-            calendarDays.innerHTML = `
-                <div class="calendar-loading">
-                    <i class="bx bx-loader-alt bx-spin"></i>
-                    Loading calendar data...
+        // =============== RENTAL ACTION FUNCTIONS ===============
+        
+        async function markAsReturned(rental) {
+            const confirmReturn = confirm(`Mark rental for ${rental.fullName || rental.customerName} as returned?`);
+            if (!confirmReturn) return;
+            
+            try {
+                // Show loading
+                document.body.style.cursor = 'wait';
+                
+                const returnDate = new Date().toISOString();
+                
+                // Update rental in database
+                await db.collection("transaction").doc(rental.id).update({
+                    status: 'completed',
+                    returnConfirmed: true,
+                    returnDate: returnDate,
+                    returnedBy: 'admin', // You might want to track which admin marked it
+                    updatedAt: returnDate
+                });
+                
+                console.log('✅ Rental marked as returned:', rental.id);
+                
+                // Refresh calendar data
+                await fetchRentalsData();
+                
+                // Close modal and show success message
+                closeModal();
+                showSuccessMessage('Rental marked as returned successfully!');
+                
+            } catch (error) {
+                console.error('❌ Error marking rental as returned:', error);
+                alert('Error updating rental status. Please try again.');
+            } finally {
+                document.body.style.cursor = 'default';
+            }
+        }
+        
+        async function processOverdueFee(rental) {
+            const overdueFeeModal = createOverdueFeeModal(rental);
+            document.body.appendChild(overdueFeeModal);
+        }
+        
+        function createOverdueFeeModal(rental) {
+            const modal = document.createElement('div');
+            modal.className = 'modal overdue-fee-modal';
+            modal.style.display = 'flex';
+            
+            const currentDate = new Date();
+            const eventEndDate = rental.eventEndDate ? new Date(rental.eventEndDate) : rental.eventDate ? new Date(rental.eventDate) : null;
+            const overdueDays = eventEndDate ? Math.ceil((currentDate - eventEndDate) / (1000 * 60 * 60 * 24)) : 0;
+            
+            // Calculate overdue fee (you can adjust this calculation)
+            const dailyOverdueFee = 100; // ₱100 per day overdue
+            const suggestedFee = overdueDays * dailyOverdueFee;
+            
+            modal.innerHTML = `
+                <div class="modal-content overdue-fee-content">
+                    <div class="modal-header">
+                        <h3>Process Overdue Fee</h3>
+                        <button class="close-modal" onclick="this.closest('.modal').remove()">
+                            <i class="bx bx-x"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="overdue-info">
+                            <h4>${rental.fullName || rental.customerName}</h4>
+                            <p><strong>Transaction:</strong> ${rental.transactionCode || 'N/A'}</p>
+                            <p><strong>Due Date:</strong> ${eventEndDate ? eventEndDate.toLocaleDateString() : 'N/A'}</p>
+                            <p><strong>Days Overdue:</strong> <span class="overdue-days">${overdueDays} days</span></p>
+                        </div>
+                        
+                        <div class="fee-calculation">
+                            <div class="fee-row">
+                                <label>Daily Overdue Rate:</label>
+                                <input type="number" id="daily-rate" value="${dailyOverdueFee}" min="0" step="0.01">
+                            </div>
+                            <div class="fee-row">
+                                <label>Number of Days:</label>
+                                <input type="number" id="overdue-days-input" value="${overdueDays}" min="1">
+                            </div>
+                            <div class="fee-row total-row">
+                                <label>Total Overdue Fee:</label>
+                                <span class="total-fee">₱<span id="calculated-fee">${suggestedFee.toLocaleString()}</span></span>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-options">
+                            <h5>Payment Method:</h5>
+                            <div class="payment-methods">
+                                <label class="payment-method">
+                                    <input type="radio" name="payment-method" value="cash" checked>
+                                    <span>Cash</span>
+                                </label>
+                                <label class="payment-method">
+                                    <input type="radio" name="payment-method" value="gcash">
+                                    <span>GCash</span>
+                                </label>
+                                <label class="payment-method">
+                                    <input type="radio" name="payment-method" value="bank">
+                                    <span>Bank Transfer</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="notes-section">
+                            <label for="overdue-notes">Notes (Optional):</label>
+                            <textarea id="overdue-notes" placeholder="Additional notes about the overdue fee..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-cancel" onclick="this.closest('.modal').remove()">Cancel</button>
+                        <button class="btn-process-fee" onclick="processOverdueFeePayment('${rental.id}')">Process Fee</button>
+                    </div>
                 </div>
             `;
+            
+            // Add event listeners for dynamic calculation
+            const dailyRateInput = modal.querySelector('#daily-rate');
+            const overdueDaysInput = modal.querySelector('#overdue-days-input');
+            const calculatedFeeSpan = modal.querySelector('#calculated-fee');
+            
+            function updateFeeCalculation() {
+                const rate = parseFloat(dailyRateInput.value) || 0;
+                const days = parseInt(overdueDaysInput.value) || 0;
+                const total = rate * days;
+                calculatedFeeSpan.textContent = total.toLocaleString();
+            }
+            
+            dailyRateInput.addEventListener('input', updateFeeCalculation);
+            overdueDaysInput.addEventListener('input', updateFeeCalculation);
+            
+            return modal;
         }
         
-        function hideLoading() {
-            // Loading will be cleared when calendar renders
+        async function processOverdueFeePayment(rentalId) {
+            try {
+                const modal = document.querySelector('.overdue-fee-modal');
+                const dailyRate = parseFloat(modal.querySelector('#daily-rate').value) || 0;
+                const overdueDays = parseInt(modal.querySelector('#overdue-days-input').value) || 0;
+                const totalFee = dailyRate * overdueDays;
+                const paymentMethod = modal.querySelector('input[name="payment-method"]:checked').value;
+                const notes = modal.querySelector('#overdue-notes').value;
+                
+                if (totalFee <= 0) {
+                    alert('Please enter a valid overdue fee amount.');
+                    return;
+                }
+                
+                const confirmPayment = confirm(`Process overdue fee of ₱${totalFee.toLocaleString()} via ${paymentMethod.toUpperCase()}?`);
+                if (!confirmPayment) return;
+                
+                // Show loading
+                document.body.style.cursor = 'wait';
+                
+                // Get the original rental data
+                const rentalDoc = await db.collection("transaction").doc(rentalId).get();
+                const rentalData = rentalDoc.data();
+                
+                // Create overdue fee transaction
+                const overdueFeeTransaction = {
+                    type: 'overdue_fee',
+                    originalTransactionId: rentalId,
+                    originalTransactionCode: rentalData.transactionCode,
+                    customerName: rentalData.fullName || rentalData.customerName,
+                    customerEmail: rentalData.customerEmail,
+                    customerContact: rentalData.contactNumber || rentalData.customerContactNumber,
+                    customerAddress: rentalData.address || rentalData.customerAddress,
+                    overdueFee: totalFee,
+                    dailyRate: dailyRate,
+                    overdueDays: overdueDays,
+                    paymentMethod: paymentMethod,
+                    notes: notes,
+                    status: 'paid',
+                    createdAt: new Date().toISOString(),
+                    createdBy: 'admin'
+                };
+                
+                // Add overdue fee transaction to database
+                const overdueRef = await db.collection("overdue_fees").add(overdueFeeTransaction);
+                
+                // Update original rental with overdue fee information
+                await db.collection("transaction").doc(rentalId).update({
+                    overdueFeePaid: true,
+                    overdueFeeAmount: totalFee,
+                    overdueFeeTransactionId: overdueRef.id,
+                    overdueFeeDate: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                });
+                
+                console.log('✅ Overdue fee processed:', overdueRef.id);
+                
+                // Close modal and refresh data
+                modal.remove();
+                await fetchRentalsData();
+                
+                showSuccessMessage(`Overdue fee of ₱${totalFee.toLocaleString()} processed successfully!`);
+                
+            } catch (error) {
+                console.error('❌ Error processing overdue fee:', error);
+                alert('Error processing overdue fee. Please try again.');
+            } finally {
+                document.body.style.cursor = 'default';
+            }
         }
         
-        function showError() {
-            calendarDays.innerHTML = `
-                <div class="calendar-error">
-                    <i class="bx bx-error"></i>
-                    <h3>Error Loading Calendar</h3>
-                    <p>Unable to load rental data. Please refresh the page.</p>
+        function editRental(rental) {
+            // Open rental page with pre-filled data for editing
+            sessionStorage.setItem('editRentalData', JSON.stringify(rental));
+            window.location.href = './rental.html?edit=' + rental.id;
+        }
+        
+        function showSuccessMessage(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-message';
+            successDiv.innerHTML = `
+                <div class="success-content">
+                    <i class="bx bx-check-circle"></i>
+                    <span>${message}</span>
                 </div>
             `;
+            
+            document.body.appendChild(successDiv);
+            
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                if (document.body.contains(successDiv)) {
+                    successDiv.classList.add('fade-out');
+                    setTimeout(() => {
+                        if (document.body.contains(successDiv)) {
+                            document.body.removeChild(successDiv);
+                        }
+                    }, 300);
+                }
+            }, 3000);
         }
         
+        // Make processOverdueFeePayment globally accessible for modal buttons
+        window.processOverdueFeePayment = processOverdueFeePayment;
     } else {
         console.error('Firebase not available');
         showError();

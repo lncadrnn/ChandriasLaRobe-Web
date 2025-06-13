@@ -256,15 +256,26 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    position: relative;
+    border: 2px solid transparent;
 }
 
 .rental-item:hover {
-    transform: scale(1.02);
+    transform: translateY(-2px) scale(1.05);
     z-index: 10;
     position: relative;
     white-space: normal;
     overflow: visible;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 6px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.rental-item:active {
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Status-based colors */
@@ -272,17 +283,38 @@
     background: #3498db;
 }
 
+.rental-item.upcoming:hover {
+    background: #2980b9;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+}
+
 .rental-item.ongoing {
     background: #f39c12;
+}
+
+.rental-item.ongoing:hover {
+    background: #e67e22;
+    box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);
 }
 
 .rental-item.completed {
     background: #27ae60;
 }
 
+.rental-item.completed:hover {
+    background: #229954;
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+}
+
 .rental-item.overdue {
     background: #e74c3c;
     animation: pulse 2s infinite;
+}
+
+.rental-item.overdue:hover {
+    background: #c0392b;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    animation: none; /* Stop pulsing on hover */
 }
 
 @keyframes pulse {
@@ -300,10 +332,143 @@
     text-align: center;
     cursor: pointer;
     margin-top: 2px;
+    transition: all 0.3s ease;
 }
 
 .more-rentals:hover {
     background: #5a6268;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Special styling for longest rental */
+.rental-item.longest-rental {
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.rental-item.longest-rental::before {
+    content: '👑';
+    margin-right: 4px;
+    font-size: 0.6rem;
+}
+
+/* =============== RENTAL QUICK VIEW =============== */
+.rental-quick-view {
+    position: fixed;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    min-width: 280px;
+    max-width: 350px;
+    z-index: 2000;
+    animation: quickViewFadeIn 0.3s ease;
+}
+
+@keyframes quickViewFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.quick-view-content {
+    padding: 16px;
+}
+
+.quick-view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.quick-view-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.quick-view-status {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.quick-view-status.upcoming {
+    background: #3498db;
+    color: white;
+}
+
+.quick-view-status.ongoing {
+    background: #f39c12;
+    color: white;
+}
+
+.quick-view-status.completed {
+    background: #27ae60;
+    color: white;
+}
+
+.quick-view-status.overdue {
+    background: #e74c3c;
+    color: white;
+}
+
+.quick-view-body {
+    margin-bottom: 12px;
+}
+
+.quick-view-body p {
+    margin: 6px 0;
+    font-size: 0.85rem;
+    color: var(--text-color);
+}
+
+.quick-view-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.btn-view-full,
+.btn-close-quick {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-view-full {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-view-full:hover {
+    background: var(--secondary-text-color);
+    transform: translateY(-1px);
+}
+
+.btn-close-quick {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-close-quick:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
 }
 
 /* =============== ADAPTIVE ROW HEIGHTS =============== */
@@ -710,4 +875,340 @@
 .calendar-error p {
     margin: 0;
     color: var(--text-secondary);
+}
+
+/* =============== RENTAL ACTION BUTTONS =============== */
+.rental-actions {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-complete {
+    background: #27ae60;
+    color: white;
+}
+
+.btn-complete:hover {
+    background: #229954;
+}
+
+.btn-overdue {
+    background: #e74c3c;
+    color: white;
+    animation: pulse-red 2s infinite;
+}
+
+.btn-overdue:hover {
+    background: #c0392b;
+    animation: none;
+}
+
+@keyframes pulse-red {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+.btn-edit {
+    background: #3498db;
+    color: white;
+}
+
+.btn-edit:hover {
+    background: #2980b9;
+}
+
+/* =============== OVERDUE FEE MODAL =============== */
+.overdue-fee-modal .modal-content {
+    max-width: 500px;
+    width: 90%;
+}
+
+.overdue-fee-content {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.overdue-info {
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #e74c3c;
+}
+
+.overdue-info h4 {
+    margin: 0 0 8px 0;
+    color: var(--text-color);
+}
+
+.overdue-info p {
+    margin: 4px 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.overdue-days {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+.fee-calculation {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.fee-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 8px 0;
+}
+
+.fee-row label {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.fee-row input {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 6px 8px;
+    width: 120px;
+    text-align: right;
+}
+
+.fee-row input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(166, 122, 99, 0.1);
+}
+
+.total-row {
+    border-top: 2px solid var(--border-color);
+    margin-top: 12px;
+    padding-top: 12px;
+    font-weight: 600;
+}
+
+.total-fee {
+    font-size: 1.1rem;
+    color: #e74c3c;
+    font-weight: 700;
+}
+
+.payment-options {
+    margin-bottom: 20px;
+}
+
+.payment-options h5 {
+    margin: 0 0 12px 0;
+    color: var(--text-color);
+}
+
+.payment-methods {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.payment-method {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.payment-method:hover {
+    background: #f8f9fa;
+    border-color: var(--primary-color);
+}
+
+.payment-method input[type="radio"] {
+    margin: 0;
+}
+
+.payment-method span {
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.notes-section {
+    margin-bottom: 20px;
+}
+
+.notes-section label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.notes-section textarea {
+    width: 100%;
+    min-height: 80px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 10px;
+    font-family: inherit;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.notes-section textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(166, 122, 99, 0.1);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 20px 24px;
+    border-top: 1px solid var(--border-color);
+    background: #f8f9fa;
+}
+
+.btn-cancel,
+.btn-process-fee {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+.btn-process-fee {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-process-fee:hover {
+    background: var(--secondary-text-color);
+    transform: translateY(-1px);
+}
+
+/* =============== SUCCESS MESSAGE =============== */
+.success-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #27ae60;
+    color: white;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 3000;
+    animation: slideInRight 0.3s ease;
+}
+
+.success-message.fade-out {
+    animation: fadeOut 0.3s ease forwards;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.success-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.success-content i {
+    font-size: 1.2rem;
+}
+
+/* =============== MOBILE RESPONSIVE FOR ACTIONS =============== */
+@media (max-width: 768px) {
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .btn-action {
+        justify-content: center;
+        padding: 12px;
+    }
+    
+    .overdue-fee-modal .modal-content {
+        width: 95%;
+        margin: 10px;
+    }
+    
+    .payment-methods {
+        flex-direction: column;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+    }
+    
+    .btn-cancel,
+    .btn-process-fee {
+        width: 100%;
+        padding: 12px;
+    }
 }
