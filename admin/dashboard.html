@@ -347,12 +347,6 @@
                                 </div>
                                 <div class="info-grid">
                                     <div class="info-item">
-                                        <label>Email:</label>
-                                        <span id="customer-email">Loading...</span>
-                                    </div>
-                                </div>
-                                <div class="info-grid">
-                                    <div class="info-item">
                                         <label>Address:</label>
                                         <span id="customer-address">Loading...</span>
                                     </div>
@@ -377,29 +371,18 @@
                                 <div class="info-grid" id="rental-dates-section">
                                     <!-- Dynamic date fields will be inserted here -->
                                 </div>
-                            </div>
-
-                            <!-- Payment Information -->
+                            </div>                            <!-- Payment Information -->
                             <div class="rental-section">
                                 <h4 class="section-title">
                                     <i class="fas fa-credit-card"></i>
                                     Payment Information
-                                </h4>
-                                <div class="payment-breakdown">
+                                </h4>                                <div class="payment-breakdown">
                                     <div class="payment-row">
-                                        <span>Subtotal:</span>
-                                        <span id="payment-subtotal">₱0.00</span>
-                                    </div>
-                                    <div class="payment-row">
-                                        <span>Down Payment:</span>
-                                        <span id="payment-down">₱0.00</span>
-                                    </div>
-                                    <div class="payment-row">
-                                        <span>Security Deposit:</span>
-                                        <span id="payment-deposit">₱0.00</span>
+                                        <span>Rental Fee:</span>
+                                        <span id="rental-fee">₱0.00</span>
                                     </div>
                                     <div class="payment-row total">
-                                        <span>Total Amount:</span>
+                                        <span>Total Payment:</span>
                                         <span id="payment-total">₱0.00</span>
                                     </div>
                                     <div class="payment-row remaining">
@@ -433,9 +416,7 @@
                                     No additional notes provided.
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Modal Actions -->
+                        </div>                        <!-- Modal Actions -->
                         <div class="rental-modal-actions">
                             <button class="btn btn-secondary close-rental-modal">
                                 <i class="fas fa-times"></i>
@@ -444,10 +425,6 @@
                             <button class="btn btn-primary" id="update-status-btn">
                                 <i class="fas fa-edit"></i>
                                 Update Status
-                            </button>
-                            <button class="btn btn-success" id="print-receipt-btn">
-                                <i class="fas fa-print"></i>
-                                Print Receipt
                             </button>
                         </div>
                     </div>

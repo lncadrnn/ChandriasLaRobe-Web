@@ -248,34 +248,39 @@ document.addEventListener("DOMContentLoaded", () => {
                 hour: 'numeric',
                 minute: '2-digit'
             }) : 'Not available';            // Populate customer information
-            document.getElementById('customer-name').textContent = data.customerName || 'Not provided';
-            document.getElementById('customer-contact').textContent = data.customerContactNumber || 'Not provided';
-            document.getElementById('customer-email').textContent = data.customerEmail || 'Not provided';
-            document.getElementById('customer-address').textContent = data.customerAddress || 'Not provided';
+            document.getElementById('customer-name').textContent = data.fullName || data.customerName || 'Not provided';
+            document.getElementById('customer-contact').textContent = data.contactNumber || data.customerContactNumber || 'Not provided';
+            document.getElementById('customer-address').textContent = data.address || data.customerAddress || 'Not provided';
 
             // Populate transaction details
             document.getElementById('transaction-code').textContent = data.transactionCode || 'Not assigned';
             
-            // Handle rental type and dates
-            const rentalType = data.status || 'Unknown';
+            // Handle rental type and dates - check multiple possible field names
+            const rentalType = data.rentalType || data.status || data.type || 'Unknown';
+            console.log('Rental Type from Firebase:', rentalType, 'Full data:', data);
+            
             const rentalTypeElement = document.getElementById('rental-type');
-            rentalTypeElement.textContent = rentalType;
+            rentalTypeElement.textContent = getRentalTypeDisplayName(rentalType);
             rentalTypeElement.className = `status-badge ${getRentalTypeClass(rentalType)}`;
             
             // Set up date fields based on rental type
-            setupRentalDates(data, rentalType);
+            setupRentalDates(data, rentalType);            // Calculate payment information - updated field mapping
+            const rentalFee = parseFloat(data.totalPayment || data.totalAmount || data.total || 0);
+            const totalPayment = parseFloat(data.paidAmount || data.amountPaid || data.paid || 0);
+            const remainingBalance = Math.max(0, rentalFee - totalPayment);
+            
+            console.log('Payment Info:', {
+                totalPayment: data.totalPayment,
+                totalAmount: data.totalAmount,
+                total: data.total,
+                paidAmount: data.paidAmount,
+                amountPaid: data.amountPaid,
+                paid: data.paid,
+                calculated: { rentalFee, totalPayment, remainingBalance }
+            });
 
-            // Calculate payment information
-            const totalAmount = parseFloat(data.totalPayment || 0);
-            const downPayment = parseFloat(data.downPayment || 0);
-            const securityDeposit = parseFloat(data.securityDeposit || 0);
-            const paidAmount = parseFloat(data.paidAmount || 0);
-            const remainingBalance = Math.max(0, totalAmount - paidAmount);
-
-            document.getElementById('payment-subtotal').textContent = `₱${(totalAmount - securityDeposit).toLocaleString()}`;
-            document.getElementById('payment-down').textContent = `₱${downPayment.toLocaleString()}`;
-            document.getElementById('payment-deposit').textContent = `₱${securityDeposit.toLocaleString()}`;
-            document.getElementById('payment-total').textContent = `₱${totalAmount.toLocaleString()}`;
+            document.getElementById('rental-fee').textContent = `₱${rentalFee.toLocaleString()}`;
+            document.getElementById('payment-total').textContent = `₱${totalPayment.toLocaleString()}`;
             document.getElementById('payment-remaining').textContent = `₱${remainingBalance.toLocaleString()}`;
 
             // Populate rented items
@@ -312,6 +317,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 return 'cancelled';
             default:
                 return 'default';
+        }
+    }
+
+    // Helper function to get rental type display name
+    function getRentalTypeDisplayName(rentalType) {
+        switch (rentalType?.toLowerCase()) {
+            case 'fixed date':
+                return 'Fixed Date';
+            case 'open rental':
+                return 'Open Rental';
+            case 'completed':
+                return 'Completed';
+            case 'overdue':
+                return 'Overdue';
+            case 'cancelled':
+                return 'Cancelled';
+            default:
+                return rentalType || 'Unknown';
         }
     }
 
@@ -439,7 +462,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     try {
                         if (!accessory.id) return null;
                         
-                        const accessoryDoc = await db.collection("accessories").doc(accessory.id).get();
+                        const accessoryDoc = await db.collection("additionals").doc(accessory.id).get();
                         if (!accessoryDoc.exists) return null;
                         
                         const accessoryData = accessoryDoc.data();
@@ -474,9 +497,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error('Error loading rental items:', error);
             itemsContainer.innerHTML = '<div class="error-state"><i class="fas fa-exclamation-triangle"></i><p>Error loading rental items.</p></div>';
         }
-    }
-
-    // Create HTML for individual rental item
+    }    // Create HTML for individual rental item
     function createItemHtml(item) {
         const inclusionsHtml = item.inclusions && item.inclusions.length > 0 
             ? `<span><strong>Inclusions:</strong> ${item.inclusions.join(', ')}</span>`
@@ -491,7 +512,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="item-info">
                         <span><strong>Code:</strong> ${item.code}</span>
                         ${item.sizes ? `<span><strong>Sizes:</strong> ${item.sizes}</span>` : ''}
-                        ${item.color ? `<span><strong>Color:</strong> ${item.color}</span>` : ''}
                         ${item.category ? `<span><strong>Category:</strong> ${item.category}</span>` : ''}
                         ${item.quantity ? `<span><strong>Quantity:</strong> ${item.quantity}</span>` : ''}
                         ${inclusionsHtml}
@@ -500,9 +520,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="item-price">₱${parseFloat(item.price || 0).toLocaleString()}</div>
             </div>
         `;
-    }
-
-    // Setup modal action buttons
+    }// Setup modal action buttons
     function setupModalActions(transactionId, transactionData) {
         // Update Status button
         const updateStatusBtn = document.getElementById('update-status-btn');
@@ -513,64 +531,35 @@ document.addEventListener("DOMContentLoaded", () => {
             alert('Status update functionality coming soon!');
         };
 
-        // Print Receipt button
-        const printReceiptBtn = document.getElementById('print-receipt-btn');
-        printReceiptBtn.onclick = () => {
-            printRentalReceipt(transactionData);
-        };
-    }
+        // Setup close modal functionality
+        const modal = document.getElementById('rental-modal');
+        const closeButtons = document.querySelectorAll('.close-rental-modal');
+        const modalBackdrop = modal.querySelector('.modal-backdrop');
 
-    // Print rental receipt
-    function printRentalReceipt(data) {
-        const printWindow = window.open('', '_blank');
-        const receiptHtml = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Rental Receipt - ${data.transactionCode}</title>
-                <style>
-                    body { font-family: Arial, sans-serif; margin: 20px; }
-                    .header { text-align: center; margin-bottom: 20px; }
-                    .section { margin-bottom: 15px; }
-                    .section h3 { margin-bottom: 5px; border-bottom: 1px solid #ccc; }
-                    .info-row { display: flex; justify-content: space-between; margin: 5px 0; }
-                    .total { font-weight: bold; border-top: 1px solid #ccc; padding-top: 5px; }
-                    @media print { body { margin: 0; } }
-                </style>
-            </head>
-            <body>
-                <div class="header">
-                    <h1>Chandria's La Robe</h1>
-                    <h2>Rental Receipt</h2>
-                    <p>Transaction Code: ${data.transactionCode}</p>
-                </div>
-                
-                <div class="section">
-                    <h3>Customer Information</h3>
-                    <div class="info-row"><span>Name:</span><span>${data.customerName}</span></div>
-                    <div class="info-row"><span>Contact:</span><span>${data.customerContactNumber}</span></div>
-                    <div class="info-row"><span>Email:</span><span>${data.customerEmail}</span></div>
-                </div>
-                
-                <div class="section">
-                    <h3>Rental Period</h3>
-                    <div class="info-row"><span>Start Date:</span><span>${new Date(data.eventStartDate).toLocaleDateString()}</span></div>
-                    <div class="info-row"><span>End Date:</span><span>${new Date(data.eventEndDate).toLocaleDateString()}</span></div>
-                </div>
-                
-                <div class="section">
-                    <h3>Payment Summary</h3>
-                    <div class="info-row"><span>Total Amount:</span><span>₱${parseFloat(data.totalPayment || 0).toLocaleString()}</span></div>
-                    <div class="info-row"><span>Paid Amount:</span><span>₱${parseFloat(data.paidAmount || 0).toLocaleString()}</span></div>
-                    <div class="info-row total"><span>Remaining Balance:</span><span>₱${Math.max(0, parseFloat(data.totalPayment || 0) - parseFloat(data.paidAmount || 0)).toLocaleString()}</span></div>
-                </div>
-            </body>
-            </html>
-        `;
-          printWindow.document.write(receiptHtml);
-        printWindow.document.close();
-        printWindow.focus();
-        printWindow.print();    }
+        // Close modal function
+        const closeModal = () => {
+            modal.classList.remove('visible');
+            document.body.style.overflow = '';
+        };
+
+        // Add event listeners for close buttons
+        closeButtons.forEach(btn => {
+            btn.onclick = closeModal;
+        });
+
+        // Close modal when clicking backdrop
+        if (modalBackdrop) {
+            modalBackdrop.onclick = closeModal;
+        }
+
+        // Close modal with Escape key
+        const handleEscape = (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('visible')) {
+                closeModal();
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+        document.addEventListener('keydown', handleEscape);    }
 
     // Load and render rentals
     async function loadRentals() {
