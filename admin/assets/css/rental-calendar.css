@@ -692,6 +692,23 @@ body.quick-view-active .rental-quick-view {
 }
 
 .rental-detail-item:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.rental-detail-item.upcoming {
+    border-left-color: #3498db;
+}
+
+.rental-detail-item.ongoing {
+    border-left-color: #f39c12;
+}
+
+.rental-detail-item.completed {
+    border-left-color: #27ae60;
+}
+
 .rental-detail-item.overdue {
     border-left-color: #e74c3c;
 }
@@ -1536,7 +1553,8 @@ body.quick-view-active .rental-quick-view {
 @media (max-width: 768px) {
     .loading-content,
     .error-content {
-        padding: 1.5rem;        margin: 1rem;
+        padding: 1.5rem;
+        margin: 1rem;
     }
     
     .transaction-stats {
@@ -1547,8 +1565,9 @@ body.quick-view-active .rental-quick-view {
     
     .stat-item {
         padding: 0.5rem;
-    }    .stat-value {
+    }
+    
+    .stat-value {
         font-size: 1.25rem;
     }
-};
 }
