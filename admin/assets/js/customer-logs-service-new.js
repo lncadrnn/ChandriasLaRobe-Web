@@ -811,12 +811,11 @@ async function showTransactionDetails(transactionId) {
                 <p class="notes-content">${transaction.notes}</p>
             </div>
             ` : ''}
-            
-            <div class="modal-footer">
+              <div class="modal-footer">
                 <button type="button" class="btn-secondary" onclick="closeTransactionDetailsModal()">
                     <i class='bx bx-x'></i> Close
                 </button>
-                <button type="button" class="btn-primary" onclick="closeTransactionDetailsModal(); editTransaction('${transaction.id}')">
+                <button type="button" class="btn-primary" onclick="openEditFromDetails('${transaction.id}')">
                     <i class='bx bx-edit'></i> Edit Transaction
                 </button>
             </div>
@@ -827,6 +826,17 @@ async function showTransactionDetails(transactionId) {
         modal.classList.add('show');
         document.body.style.overflow = 'hidden';
     }
+}
+
+// Open edit modal from transaction details modal
+function openEditFromDetails(transactionId) {
+    // Close the details modal first
+    closeTransactionDetailsModal();
+    
+    // Wait a short moment for the close animation, then open edit modal
+    setTimeout(() => {
+        editTransaction(transactionId);
+    }, 100);
 }
 
 // Close transaction details modal
@@ -1670,20 +1680,16 @@ function showProcessOverdueModal(transactionId) {
     // Reset form
     document.getElementById('mark-completed').checked = true;
     document.getElementById('late-fee-section').style.display = 'none';
-    document.getElementById('extend-rental-section').style.display = 'none';
     document.getElementById('late-fee-amount').value = '';
     document.getElementById('late-fee-notes').value = '';
-    document.getElementById('extension-fee').value = '';
-    document.getElementById('extension-notes').value = '';
     
-    // Set minimum date for extension to today
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('new-end-date').setAttribute('min', today);
-    
-    // Show modal
+    // Show modal immediately
     const modal = document.getElementById('process-overdue-modal');
     modal.style.display = 'flex';
-    setTimeout(() => modal.classList.add('show'), 10);
+    modal.classList.add('show');
+    
+    // Prevent background interaction
+    document.body.classList.add('modal-open');
     
     // Add event listeners for radio buttons
     setupOverdueModalListeners();
@@ -1692,11 +1698,14 @@ function showProcessOverdueModal(transactionId) {
 // Close Process Overdue Modal
 function closeProcessOverdueModal() {
     const modal = document.getElementById('process-overdue-modal');
+    
+    // Remove modal classes immediately
     modal.classList.remove('show');
-    setTimeout(() => {
-        modal.style.display = 'none';
-        currentOverdueTransaction = null;
-    }, 300);
+    document.body.classList.remove('modal-open');
+    
+    // Hide modal immediately
+    modal.style.display = 'none';
+    currentOverdueTransaction = null;
 }
 
 // Setup event listeners for the modal
@@ -1706,13 +1715,10 @@ function setupOverdueModalListeners() {
         radio.addEventListener('change', function() {
             // Hide all sections first
             document.getElementById('late-fee-section').style.display = 'none';
-            document.getElementById('extend-rental-section').style.display = 'none';
             
             // Show relevant section based on selection
             if (this.value === 'late-fee') {
                 document.getElementById('late-fee-section').style.display = 'block';
-            } else if (this.value === 'extend') {
-                document.getElementById('extend-rental-section').style.display = 'block';
             }
         });
     });
@@ -1777,33 +1783,6 @@ async function confirmProcessOverdue() {
             // Update total amount
             const newTotal = (currentOverdueTransaction.totalAmount || 0) + feeAmount;
             updateData.totalAmount = newTotal;
-            
-        } else if (selectedAction === 'extend') {
-            // Extend rental period
-            const newEndDate = document.getElementById('new-end-date').value;
-            const extensionFee = parseFloat(document.getElementById('extension-fee').value) || 0;
-            const extensionNotes = document.getElementById('extension-notes').value;
-            
-            if (!newEndDate) {
-                alert('Please select a new end date for the extension.');
-                document.querySelector('.admin-action-spinner').style.display = 'none';
-                return;
-            }
-            
-            updateData.eventEndDate = new Date(newEndDate).toISOString();
-            updateData.extensionHistory = arrayUnion({
-                previousEndDate: currentOverdueTransaction.eventEndDate || currentOverdueTransaction.eventStartDate || currentOverdueTransaction.eventDate,
-                newEndDate: new Date(newEndDate).toISOString(),
-                extensionFee: extensionFee,
-                notes: extensionNotes,
-                extendedDate: new Date().toISOString()
-            });
-            
-            // Update total amount if extension fee is added
-            if (extensionFee > 0) {
-                const newTotal = (currentOverdueTransaction.totalAmount || 0) + extensionFee;
-                updateData.totalAmount = newTotal;
-            }
         }
         
         // Update the transaction in Firebase
@@ -1828,8 +1807,6 @@ async function confirmProcessOverdue() {
             successMessage = 'Overdue rental marked as completed successfully!';
         } else if (selectedAction === 'late-fee') {
             successMessage = 'Late fee added and rental completed successfully!';
-        } else if (selectedAction === 'extend') {
-            successMessage = 'Rental period extended successfully!';
         }
         
         showSuccessModal('Process Overdue', successMessage);
@@ -1851,6 +1828,7 @@ document.addEventListener('click', function(e) {
 });
 
 // Make functions available globally
+window.openEditFromDetails = openEditFromDetails;
 window.showProcessOverdueModal = showProcessOverdueModal;
 window.closeProcessOverdueModal = closeProcessOverdueModal;
 window.confirmProcessOverdue = confirmProcessOverdue;

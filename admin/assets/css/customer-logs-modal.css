@@ -608,8 +608,7 @@
 }
 
 /* Fee Section */
-.fee-section,
-.extend-section {
+.fee-section {
     margin-top: 1.5rem;
     padding: 1.5rem;
     background: #f8f9fa;
@@ -617,25 +616,21 @@
     border: 1px solid #dee2e6;
 }
 
-.fee-section h4,
-.extend-section h4 {
+.fee-section h4 {
     margin: 0 0 1rem 0;
     color: #495057;
     font-size: 1.1rem;
 }
 
-.fee-input-group,
-.extend-input-group {
+.fee-input-group {
     margin-bottom: 1rem;
 }
 
-.fee-input-group:last-child,
-.extend-input-group:last-child {
+.fee-input-group:last-child {
     margin-bottom: 0;
 }
 
-.fee-input-group label,
-.extend-input-group label {
+.fee-input-group label {
     display: block;
     margin-bottom: 0.5rem;
     color: #495057;
@@ -645,10 +640,7 @@
 
 .fee-input-group input,
 .fee-input-group select,
-.fee-input-group textarea,
-.extend-input-group input,
-.extend-input-group select,
-.extend-input-group textarea {
+.fee-input-group textarea {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid #ced4da;
@@ -659,17 +651,13 @@
 
 .fee-input-group input:focus,
 .fee-input-group select:focus,
-.fee-input-group textarea:focus,
-.extend-input-group input:focus,
-.extend-input-group select:focus,
-.extend-input-group textarea:focus {
+.fee-input-group textarea:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(247, 110, 155, 0.1);
 }
 
-.fee-input-group textarea,
-.extend-input-group textarea {
+.fee-input-group textarea {
     resize: vertical;
     min-height: 80px;
 }
@@ -692,18 +680,14 @@
         font-size: 1.1rem;
     }
     
-    .fee-section,
-    .extend-section {
+    .fee-section {
         padding: 1rem;
         margin-top: 1rem;
     }
     
     .fee-input-group input,
     .fee-input-group select,
-    .fee-input-group textarea,
-    .extend-input-group input,
-    .extend-input-group select,
-    .extend-input-group textarea {
+    .fee-input-group textarea {
         padding: 0.625rem;
         font-size: 0.875rem;
     }
@@ -718,8 +702,42 @@
         font-size: 0.8rem;
     }
     
-    .fee-section h4,
-    .extend-section h4 {
+    .fee-section h4 {
         font-size: 1rem;
     }
+}
+
+/* Prevent background interaction when Process Overdue modal is open */
+#process-overdue-modal.show {
+    pointer-events: auto;
+}
+
+#process-overdue-modal.show ~ * {
+    pointer-events: none;
+}
+
+body.modal-open {
+    overflow: hidden;
+    pointer-events: none;
+}
+
+body.modal-open .modal-overlay.show {
+    pointer-events: auto;
+}
+
+body.modal-open .modal-overlay.show .modal-content {
+    pointer-events: auto;
+}
+
+/* Additional modal backdrop styles */
+#process-overdue-modal {
+    pointer-events: none;
+}
+
+#process-overdue-modal.show {
+    pointer-events: auto;
+}
+
+#process-overdue-modal .modal-content {
+    pointer-events: auto;
 }
