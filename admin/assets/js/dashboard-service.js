@@ -722,6 +722,16 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('rental-modal').classList.remove('visible');
     });
 
+    // View All button functionality to navigate to customer-logs.html
+    const viewAllBtn = document.querySelector('.view-all-btn');
+    if (viewAllBtn) {
+        viewAllBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log("🔄 Navigating to customer logs...");
+            window.location.href = './customer-logs.html';
+        });
+    }
+
     // Appointment search functionality
     const searchInput = document.getElementById('appointment-search');
     const clearSearch = document.getElementById('clear-search');
