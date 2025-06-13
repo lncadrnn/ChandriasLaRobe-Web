@@ -96,10 +96,9 @@
         max-width: 60px;
         position: relative;
     }
-    
-    .mobile-nav-item.active {
+      .mobile-nav-item.active {
         background: var(--primary-color);
-        color: var(--white-color);
+        color: white; /* Fixed: changed from var(--white-color) to white */
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
     }
@@ -126,14 +125,19 @@
     .mobile-nav-item.active .icon {
         transform: scale(1.1);
     }
-    
-    .mobile-nav-item.active .text {
+      .mobile-nav-item.active .text {
         font-weight: 600;
     }
     
-    .mobile-nav-item:hover {
+    .mobile-nav-item:hover:not(.active) {
         background: var(--secondary-color);
         color: var(--secondary-text-color);
+    }
+    
+    /* Ensure active state overrides hover */
+    .mobile-nav-item.active:hover {
+        background: var(--primary-color) !important;
+        color: white !important;
     }
     
     .mobile-nav-item .icon {
