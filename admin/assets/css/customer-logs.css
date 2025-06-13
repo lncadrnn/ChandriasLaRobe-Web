@@ -20,6 +20,14 @@
     flex-direction: column;
     gap: 1.5rem;
 }
+
+/* Mobile page content padding */
+@media (max-width: 768px) {
+    .page-content {
+        padding: 1rem 0.75rem 100px 0.75rem !important; /* Extra bottom padding for mobile nav */
+        min-height: calc(100vh - 100px);
+    }
+}
 /*=============== CURSOR POINTER STYLES ===============*/
 button,
 .btn,
@@ -779,23 +787,80 @@ select:disabled {
 
 /* === RESPONSIVE DESIGN === */
 @media (max-width: 768px) {
+    /* Page layout adjustments */
+    .page-content {
+        padding: 1rem 0.75rem 100px 0.75rem; /* Extra bottom padding for mobile nav */
+    }
+    
+    .page-header {
+        padding: 1rem 0.75rem;
+        margin-bottom: 1rem;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .page-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    /* Header controls responsive */
+    .header-controls {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: stretch;
+    }
+    
+    .search-box {
+        order: 1;
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    .sort-dropdown {
+        order: 2;
+        width: 100%;
+    }
+    
+    .sort-dropdown .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Transactions header responsive */
     .transactions-header {
         flex-direction: column;
         gap: 1rem;
         align-items: stretch;
+        padding: 1rem 0;
     }
     
+    .header-info {
+        text-align: center;
+    }
+    
+    .view-toggle {
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    /* Card view responsive */
     .transaction-cards {
         grid-template-columns: 1fr;
         gap: 1rem;
+        padding: 0;
     }
     
     .transaction-card {
         padding: 1rem;
+        margin: 0;
+        box-shadow: 0 4px 16px rgba(255, 105, 180, 0.08);
     }
     
     .customer-info h4 {
-        max-width: 250px; /* Allow more width on mobile */
+        max-width: 100%;
+        font-size: 1rem;
     }
     
     .card-details {
@@ -807,36 +872,256 @@ select:disabled {
         flex-direction: column;
         gap: 0.5rem;
     }
-      .table-wrapper {
+    
+    .card-action-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    /* Table view responsive - Complete overhaul for mobile */
+    .table-container {
+        padding: 0;
+        margin: 0;
+    }
+    
+    .table-wrapper {
         border-radius: 12px;
-        max-height: calc(50px + 8 * 70px); /* Smaller height on mobile: header + 8 rows */
+        max-height: none; /* Remove height restriction on mobile */
+        box-shadow: 0 4px 16px rgba(255, 105, 180, 0.08);
+        overflow: visible;
+    }
+    
+    /* Hide traditional table on mobile and use card-like layout */
+    #rental-history-table {
+        display: none;
+    }
+    
+    /* Create mobile-friendly table layout */
+    .mobile-table-view {
+        display: block;
+        background: var(--white-color);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .mobile-table-header {
+        background: var(--primary-color);
+        color: var(--white-color);
+        padding: 1rem;
+        text-align: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .mobile-table-items {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+    
+    .mobile-table-item {
+        border-bottom: 1px solid rgba(255, 105, 180, 0.1);
+        padding: 1rem;
+        transition: all 0.2s ease;
+    }
+    
+    .mobile-table-item:hover {
+        background: rgba(255, 105, 180, 0.03);
+    }
+    
+    .mobile-table-item:last-child {
+        border-bottom: none;
+    }
+    
+    .mobile-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+        gap: 1rem;
+    }
+    
+    .mobile-item-customer {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .mobile-item-customer h4 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-color);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .mobile-item-customer .transaction-code {
+        font-size: 0.75rem;
+        color: var(--secondary-color);
+        margin-top: 0.25rem;
+    }
+    
+    .mobile-item-status {
+        flex-shrink: 0;
+    }
+    
+    .mobile-item-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .mobile-detail-item {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .mobile-detail-label {
+        font-size: 0.7rem;
+        color: var(--secondary-color);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    
+    .mobile-detail-value {
+        font-size: 0.85rem;
+        color: var(--text-color);
+        font-weight: 500;
+    }
+    
+    .mobile-detail-value.amount {
+        font-weight: 700;
+        color: var(--primary-color);
+        font-size: 0.95rem;
+    }
+    
+    .mobile-item-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .mobile-action-btn {
+        flex: 1;
+        min-width: calc(33.333% - 0.33rem);
+        background: transparent;
+        border: 1px solid rgba(255, 105, 180, 0.3);
+        color: var(--text-color);
+        padding: 0.6rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+        text-align: center;
+    }
+    
+    .mobile-action-btn:hover {
+        background: rgba(255, 105, 180, 0.1);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+    
+    .mobile-action-btn.edit-btn:hover {
+        background: rgba(52, 152, 219, 0.1);
+        border-color: #3498db;
+        color: #3498db;
+    }
+    
+    .mobile-action-btn.delete-btn:hover {
+        background: rgba(231, 76, 60, 0.1);
+        border-color: #e74c3c;
+        color: #e74c3c;
+    }
+    
+    /* Empty state responsive */
+    .table-empty,
+    .mobile-table-empty {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--secondary-color);
+    }
+    
+    .table-empty i,
+    .mobile-table-empty i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+    
+    /* Sort dropdown mobile adjustments */
+    .sort-options {
+        position: fixed;
+        top: auto;
+        bottom: 85px; /* Above mobile nav */
+        left: 0.75rem;
+        right: 0.75rem;
+        width: auto;
+        max-height: 50vh;
+        overflow-y: auto;
+        z-index: 9998;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Modal responsive adjustments */
+    .modal-content {
+        margin: 1rem;
+        max-height: calc(100vh - 2rem);
+        overflow-y: auto;
+        border-radius: 12px;
+    }
+    
+    .transaction-details-content {
+        max-width: none;
+        width: calc(100vw - 2rem);
+    }
+    
+    /* Status badges mobile */
+    .status-badge {
+        font-size: 0.65rem;
+        padding: 0.25rem 0.5rem;
+    }
+}
+
+/* Tablet responsive adjustments */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .transaction-cards {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .table-wrapper {
+        max-height: calc(55px + 10 * 75px);
     }
     
     #rental-history-table {
-        font-size: 0.8rem;
-    }
-    
-    #rental-history-table tbody {
-        max-height: calc(8 * 70px); /* Maximum height for 8 rows on mobile */
+        font-size: 0.85rem;
     }
     
     #rental-history-table thead th {
         padding: 1rem 0.75rem;
-        font-size: 0.7rem;
+        font-size: 0.75rem;
     }
     
     #rental-history-table tbody td {
-        padding: 0.75rem;
-    }
-    
-    .action-buttons {
-        flex-direction: column;
-        gap: 0.25rem;
+        padding: 0.875rem 0.75rem;
     }
     
     .action-buttons button {
-        font-size: 0.7rem;
-        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+        padding: 0.45rem 0.65rem;
     }
 }
 

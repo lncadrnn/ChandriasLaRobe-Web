@@ -39,8 +39,7 @@
     .sidebar {
         display: none !important;
     }
-    
-    /* Show mobile bottom navigation */
+      /* Show mobile bottom navigation */
     .mobile-bottom-nav {
         display: flex !important;
         position: fixed !important;
@@ -51,7 +50,7 @@
         height: 70px !important;
         background: var(--sidebar-color) !important;
         border-top: 1px solid var(--border-color);
-        box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
         z-index: 9999 !important;
         justify-content: space-around;
         align-items: center;
@@ -67,6 +66,8 @@
     body {
         position: relative;
         overflow-x: hidden;
+        margin: 0;
+        padding: 0;
     }
     
     /* Adjust main content for mobile */
@@ -77,9 +78,9 @@
         width: 100% !important;
         padding-bottom: 85px !important; /* Extra space for bottom navigation */
         min-height: calc(100vh - 85px);
+        box-sizing: border-box;
     }
-    
-    /* Mobile navigation items */
+      /* Mobile navigation items */
     .mobile-nav-item {
         display: flex !important;
         flex-direction: column;
@@ -94,11 +95,41 @@
         text-align: center;
         flex: 1;
         max-width: 60px;
+        position: relative;
     }
     
     .mobile-nav-item.active {
-        background: var(--secondary-color);
-        color: var(--secondary-text-color);
+        background: var(--primary-color);
+        color: var(--white-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+    }
+    
+    .mobile-nav-item:hover:not(.active) {
+        background: rgba(255, 105, 180, 0.1);
+        color: var(--primary-color);
+        transform: translateY(-1px);
+    }
+    
+    .mobile-nav-item .icon {
+        font-size: 1.2rem;
+        margin-bottom: 2px;
+        transition: var(--tran-03);
+    }
+    
+    .mobile-nav-item .text {
+        font-size: 0.65rem;
+        font-weight: 500;
+        white-space: nowrap;
+        transition: var(--tran-03);
+    }
+    
+    .mobile-nav-item.active .icon {
+        transform: scale(1.1);
+    }
+    
+    .mobile-nav-item.active .text {
+        font-weight: 600;
     }
     
     .mobile-nav-item:hover {

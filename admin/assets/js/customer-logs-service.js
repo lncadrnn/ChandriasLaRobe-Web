@@ -96,8 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
             closeSortOptions();
         }
     });
-    
-    // Add CSS for animations
+      // Add CSS for animations
     if (!document.getElementById('modal-animations')) {
         const style = document.createElement('style');
         style.id = 'modal-animations';
@@ -126,7 +125,27 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         document.head.appendChild(style);
     }
+    
+    // Add window resize listener for responsive behavior
+    window.addEventListener('resize', debounce(() => {
+        if (currentView === 'table') {
+            renderCurrentView();
+        }
+    }, 250));
 });
+
+// Debounce function for resize events
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
 
 // Load transactions from Firebase
 async function loadTransactions() {
@@ -231,6 +250,14 @@ async function fetchAccessoryDetails(accessoryId) {
 async function renderTransactionTable() {
     if (!tableBody) return;
     
+    // Check if we're on mobile
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+        renderMobileTableView();
+        return;
+    }
+    
     if (filteredTransactions.length === 0) {
         tableBody.innerHTML = `
             <tr>
@@ -282,6 +309,92 @@ async function renderTransactionTable() {
     }
     
     tableBody.innerHTML = tableRows.join('');
+    addActionListeners();
+}
+
+// Render mobile-friendly table view
+async function renderMobileTableView() {
+    const tableContainer = document.getElementById('table-container');
+    if (!tableContainer) return;
+    
+    if (filteredTransactions.length === 0) {
+        tableContainer.innerHTML = `
+            <div class="mobile-table-view">
+                <div class="mobile-table-header">
+                    Rental History
+                </div>
+                <div class="mobile-table-empty">
+                    <i class='bx bx-file'></i>
+                    <div>No transactions found</div>
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    const mobileItems = [];
+    
+    for (const transaction of filteredTransactions) {
+        // Calculate rental status
+        const { rentalStatus, statusClass } = calculateRentalStatus(transaction);
+        
+        // Format event date
+        const eventDateDisplay = formatEventDate(transaction);
+        
+        // Calculate total payment
+        const totalPayment = parseFloat(transaction.totalPayment) || 0;
+
+        const item = `
+            <div class="mobile-table-item" data-transaction-id="${transaction.id}">
+                <div class="mobile-item-header">
+                    <div class="mobile-item-customer">
+                        <h4>${transaction.fullName || 'Unknown'}</h4>
+                        <code class="transaction-code">${transaction.transactionCode || transaction.id.substring(0, 8)}</code>
+                    </div>
+                    <div class="mobile-item-status">
+                        <span class="status-badge ${statusClass}">${rentalStatus}</span>
+                    </div>
+                </div>
+                
+                <div class="mobile-item-details">
+                    <div class="mobile-detail-item">
+                        <span class="mobile-detail-label">Event Date</span>
+                        <span class="mobile-detail-value">${eventDateDisplay}</span>
+                    </div>
+                    <div class="mobile-detail-item">
+                        <span class="mobile-detail-label">Total Amount</span>
+                        <span class="mobile-detail-value amount">₱${totalPayment.toLocaleString()}</span>
+                    </div>
+                </div>
+                
+                <div class="mobile-item-actions">
+                    <button class="mobile-action-btn view-details-btn" data-id="${transaction.id}" title="View Details">
+                        <i class='bx bx-show'></i> View
+                    </button>
+                    <button class="mobile-action-btn edit-btn" data-id="${transaction.id}" title="Edit Transaction">
+                        <i class='bx bx-edit'></i> Edit
+                    </button>
+                    <button class="mobile-action-btn delete-btn" data-id="${transaction.id}" title="Delete Transaction">
+                        <i class='bx bx-trash'></i> Delete
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        mobileItems.push(item);
+    }
+    
+    tableContainer.innerHTML = `
+        <div class="mobile-table-view">
+            <div class="mobile-table-header">
+                Rental History (${filteredTransactions.length} transaction${filteredTransactions.length !== 1 ? 's' : ''})
+            </div>
+            <div class="mobile-table-items">
+                ${mobileItems.join('')}
+            </div>
+        </div>
+    `;
+    
     addActionListeners();
 }
 
@@ -435,26 +548,26 @@ function formatEventDate(transaction) {
 
 // Add action listeners to buttons
 function addActionListeners() {
-    // View details buttons
-    document.querySelectorAll('.view-details-btn').forEach(btn => {
+    // View details buttons (both regular and mobile)
+    document.querySelectorAll('.view-details-btn, .mobile-action-btn.view-details-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const transactionId = e.target.closest('.view-details-btn').dataset.id;
+            const transactionId = e.target.closest('[data-id]').dataset.id;
             showTransactionDetails(transactionId);
         });
     });
 
-    // Edit buttons
-    document.querySelectorAll('.edit-btn').forEach(btn => {
+    // Edit buttons (both regular and mobile)
+    document.querySelectorAll('.edit-btn, .mobile-action-btn.edit-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const transactionId = e.target.closest('.edit-btn').dataset.id;
+            const transactionId = e.target.closest('[data-id]').dataset.id;
             editTransaction(transactionId);
         });
     });
 
-    // Delete buttons
-    document.querySelectorAll('.delete-btn').forEach(btn => {
+    // Delete buttons (both regular and mobile)
+    document.querySelectorAll('.delete-btn, .mobile-action-btn.delete-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const transactionId = e.target.closest('.delete-btn').dataset.id;
+            const transactionId = e.target.closest('[data-id]').dataset.id;
             deleteTransaction(transactionId);
         });
     });
