@@ -234,8 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 month: 'long',
                 day: 'numeric'
             }) : 'Not specified';
-            
-            const eventEndDate = data.eventEndDate ? new Date(data.eventEndDate).toLocaleDateString('en-US', {
+              const eventEndDate = data.eventEndDate ? new Date(data.eventEndDate).toLocaleDateString('en-US', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
@@ -248,7 +247,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 day: 'numeric',
                 hour: 'numeric',
                 minute: '2-digit'
-            }) : 'Not available';            // Populate customer information
+            }) : 'Not available';
+
+            // Populate customer information
             document.getElementById('customer-name').textContent = data.fullName || data.customerName || 'Not provided';
             document.getElementById('customer-contact').textContent = data.contactNumber || data.customerContactNumber || 'Not provided';
             document.getElementById('customer-address').textContent = data.address || data.customerAddress || 'Not provided';
@@ -458,8 +459,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Process accessories
             if (data.accessories && Array.isArray(data.accessories)) {
-                const accessoryDetails = await Promise.all(data.accessories.map(async accessory => {
-                    try {
+                const accessoryDetails = await Promise.all(data.accessories.map(async accessory => {                    try {
                         if (!accessory.id) return null;
                         
                         const accessoryDoc = await db.collection("additionals").doc(accessory.id).get();
@@ -831,21 +831,22 @@ document.addEventListener("DOMContentLoaded", () => {
     function hideModalLoadingState() {
         // Loading state will be replaced by actual data in showRentalDetails function
         // This function exists for consistency and future use
-    }
-
-    // Close modal handlers
-    
-    
-    document.querySelector('.close-modal')?.addEventListener('click', () => {
-        document.getElementById('appointment-modal').classList.remove('visible');
-    });
-
-    document.querySelector('.close-rental-modal')?.addEventListener('click', () => {
-        document.getElementById('rental-modal').classList.remove('visible');
-    });
-
-    // Rental view button event listener (using event delegation)
+    }    // Modal event handlers using event delegation
     document.addEventListener('click', function(e) {
+        // Handle appointment modal close
+        if (e.target.classList.contains('close-modal') || 
+            (e.target.closest('.close-modal'))) {
+            document.getElementById('appointment-modal').classList.remove('visible');
+        }
+        
+        // Handle rental modal close
+        if (e.target.classList.contains('close-rental-modal') || 
+            (e.target.closest('.close-rental-modal'))) {
+            console.log('🔄 Closing rental modal');
+            document.getElementById('rental-modal').classList.remove('visible');
+        }
+        
+        // Handle rental view button clicks
         if (e.target.classList.contains('rental-view')) {
             const rentalId = e.target.getAttribute('data-id');
             if (rentalId) {
@@ -853,18 +854,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 showRentalDetails(rentalId);
             }
         }
-    });
-
-    // Close rental modal event listeners
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('close-rental-modal') || 
-            (e.target.closest('.close-rental-modal'))) {
-            document.getElementById('rental-modal').classList.remove('visible');
-        }
         
         // Close modal when clicking the backdrop
         if (e.target.classList.contains('modal-backdrop')) {
-            document.getElementById('rental-modal').classList.remove('visible');
+            const modal = e.target.closest('.modal');
+            if (modal) {
+                modal.classList.remove('visible');
+            }
         }
     });
 

@@ -565,28 +565,41 @@ tr:hover {
     overflow-y: auto;
 }
 
+/* Close buttons - more aggressive styling */
 .close-modal,
 .close-rental-modal {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: var(--text-light);
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 6px;
-    transition: var(--transition);
-    min-width: 40px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: #ffffff !important;
+    border: 2px solid #e0e0e0 !important;
+    font-size: 1.5rem !important;
+    color: #666666 !important;
+    cursor: pointer !important;
+    padding: 10px !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+    min-width: 44px !important;
+    width: 44px !important;
+    height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    z-index: 10 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
 .close-modal:hover,
 .close-rental-modal:hover {
-    background: var(--border-color);
-    color: var(--text-dark);
+    background: #f5f5f5 !important;
+    color: #333333 !important;
+    border-color: #cccccc !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.close-modal:active,
+.close-rental-modal:active {
+    transform: scale(0.95) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
 }
 
 .btn {
@@ -906,12 +919,13 @@ tr:hover {
 }
 
 .rental-modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 24px 24px 0 24px;
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 24px;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 24px 24px 0 24px !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    margin-bottom: 24px !important;
+    min-height: 70px !important;
 }
 
 .rental-modal-header .modal-title {
@@ -943,10 +957,11 @@ tr:hover {
     justify-content: center;
     width: 40px;
     height: 40px;
+    z-index: 10;
 }
 
 .close-rental-modal:hover {
-    background: var(--hover-color);
+    background: var(--border-color);
     color: var(--text-dark);
 }
 
@@ -1194,36 +1209,49 @@ tr:hover {
 }
 
 .rental-modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    padding: 24px;
-    background: #f8f9fa;
-    border-top: 1px solid var(--border-color);
-    border-radius: 0 0 12px 12px;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+    padding: 24px !important;
+    background: #f8f9fa !important;
+    border-top: 1px solid var(--border-color) !important;
+    border-radius: 0 0 12px 12px !important;
+    min-height: 80px !important;
+    align-items: center !important;
 }
 
 .rental-modal-actions .btn {
-    padding: 12px 24px;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 0.875rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: var(--transition);
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
+    padding: 12px 24px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-size: 0.875rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: all 0.3s ease !important;
+    border: 2px solid transparent !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    min-height: 44px !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
 .rental-modal-actions .btn-secondary {
-    background: #6c757d;
-    color: white;
+    background: #6c757d !important;
+    color: white !important;
+    border-color: #6c757d !important;
 }
 
 .rental-modal-actions .btn-secondary:hover {
-    background: #5a6268;
+    background: #5a6268 !important;
+    border-color: #5a6268 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.rental-modal-actions .btn-secondary:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
 .rental-modal-actions .btn-primary {
