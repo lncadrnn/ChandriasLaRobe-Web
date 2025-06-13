@@ -306,13 +306,11 @@ async function renderTransactionCards() {
         // Count items
         const productCount = transaction.products?.length || 0;
         const accessoryCount = transaction.accessories?.length || 0;
-        const totalItems = productCount + accessoryCount;
-
-        const card = `
+        const totalItems = productCount + accessoryCount;        const card = `
             <div class="transaction-card" data-transaction-id="${transaction.id}">
                 <div class="card-header">
                     <div class="customer-info">
-                        <h4>${transaction.fullName || 'Unknown Customer'}</h4>
+                        <h4 title="${transaction.fullName || 'Unknown Customer'}">${transaction.fullName || 'Unknown Customer'}</h4>
                         <code class="transaction-code">${transaction.transactionCode || transaction.id.substring(0, 8)}</code>
                     </div>
                     <div class="card-status">

@@ -487,6 +487,12 @@ select:disabled {
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.customer-info {
+    flex: 1;
+    min-width: 0; /* Allow shrinking */
 }
 
 .customer-info h4 {
@@ -494,6 +500,36 @@ select:disabled {
     font-size: 1.1rem;
     font-weight: 600;
     margin: 0 0 0.25rem 0;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: help;
+    position: relative;
+}
+
+.customer-info h4:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #333;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 400;
+    white-space: nowrap;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    animation: fadeIn 0.2s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
 }
 
 .transaction-code {
@@ -579,30 +615,30 @@ select:disabled {
 .card-action-btn {
     flex: 1;
     background: transparent;
-    border: 1px solid var(--secondary-color);
+    border: 1px solid rgba(255, 105, 180, 0.3);
     color: var(--text-color);
-    padding: 0.75rem;
+    padding: 0.6rem;
     border-radius: 8px;
     font-size: 0.8rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
 }
 
 .card-action-btn:hover {
-    background: var(--primary-color);
-    color: var(--white-color);
+    background: rgba(255, 105, 180, 0.1);
     border-color: var(--primary-color);
-    transform: translateY(-1px);
+    color: var(--primary-color);
 }
 
 .card-action-btn.delete-btn:hover {
-    background: #e74c3c;
+    background: rgba(231, 76, 60, 0.1);
     border-color: #e74c3c;
+    color: #e74c3c;
 }
 
 .loading-card {
@@ -754,41 +790,41 @@ select:disabled {
 /* === ACTION BUTTONS === */
 .action-buttons {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.4rem;
     justify-content: center;
 }
 
 .action-buttons button {
     background: transparent;
-    border: 1px solid var(--secondary-color);
+    border: 1px solid rgba(255, 105, 180, 0.3);
     color: var(--text-color);
-    padding: 0.5rem 0.75rem;
+    padding: 0.4rem 0.6rem;
     border-radius: 6px;
     font-size: 0.75rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     gap: 0.25rem;
 }
 
 .action-buttons .view-details-btn:hover {
-    background: var(--primary-color);
-    color: var(--white-color);
+    background: rgba(255, 105, 180, 0.1);
     border-color: var(--primary-color);
+    color: var(--primary-color);
 }
 
 .action-buttons .edit-btn:hover {
-    background: #3498db;
-    color: var(--white-color);
+    background: rgba(52, 152, 219, 0.1);
     border-color: #3498db;
+    color: #3498db;
 }
 
 .action-buttons .delete-btn:hover {
-    background: #e74c3c;
-    color: var(--white-color);
+    background: rgba(231, 76, 60, 0.1);
     border-color: #e74c3c;
+    color: #e74c3c;
 }
 
 /* === RESPONSIVE DESIGN === */
@@ -806,6 +842,10 @@ select:disabled {
     
     .transaction-card {
         padding: 1rem;
+    }
+    
+    .customer-info h4 {
+        max-width: 250px; /* Allow more width on mobile */
     }
     
     .card-details {
@@ -905,24 +945,23 @@ select:disabled {
     color: white;
     border: none;
     padding: 0.4rem 0.8rem;
-    border-radius: 15px;
+    border-radius: 8px;
     font-size: 0.75rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     text-decoration: none;
     display: inline-block;
 }
 
 .action-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 105, 180, 0.3);
+    background: rgba(255, 105, 180, 0.8);
     text-decoration: none;
     color: white;
 }
 
 .action-btn:active {
-    transform: translateY(0);
+    background: var(--primary-color);
 }
 
 /* === ACTION COLUMN BUTTONS === */
@@ -934,60 +973,60 @@ select:disabled {
 }
 
 .view-details-btn {
-    background: var(--primary-color);
-    color: white;
-    border: none;
+    background: transparent;
+    color: var(--primary-color);
+    border: 1px solid rgba(255, 105, 180, 0.3);
     padding: 0.35rem 0.6rem;
-    border-radius: 8px;
+    border-radius: 6px;
     font-size: 0.7rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     gap: 0.3rem;
 }
 
 .view-details-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+    background: rgba(255, 105, 180, 0.1);
+    border-color: var(--primary-color);
 }
 
 .edit-btn {
-    background: #28a745;
-    color: white;
-    border: none;
+    background: transparent;
+    color: #3498db;
+    border: 1px solid rgba(52, 152, 219, 0.3);
     padding: 0.35rem 0.6rem;
-    border-radius: 8px;
+    border-radius: 6px;
     font-size: 0.7rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     gap: 0.3rem;
 }
 
 .edit-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    background: rgba(52, 152, 219, 0.1);
+    border-color: #3498db;
 }
 
 .delete-btn {
-    background: #dc3545;
-    color: white;
-    border: none;
+    background: transparent;
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.3);
     padding: 0.35rem 0.6rem;
-    border-radius: 8px;
+    border-radius: 6px;
     font-size: 0.7rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     gap: 0.3rem;
 }
 
 .delete-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    background: rgba(231, 76, 60, 0.1);
+    border-color: #e74c3c;
 }
 
 /* === LOADING STATES === */
