@@ -1,0 +1,10 @@
+/* Footer logo fix - make it blend with pink background */
+
+/* Fix footer logo to blend naturally with pink background */
+.footer-logo,
+.footer-logo-img {
+  width: 120px;
+  height: auto;
+  margin-bottom: 1rem;
+  filter: none !important; /* Override any white filter */
+}

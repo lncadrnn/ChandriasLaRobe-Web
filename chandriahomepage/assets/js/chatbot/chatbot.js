@@ -97,7 +97,6 @@ class ChandriasChatbot {    constructor() {
                         </div>
                     </div>
                     <div class="chatbot-controls">
-                        <button class="minimize-btn" id="minimizeChatbot">−</button>
                         <button class="close-btn" id="closeChatbot">×</button>
                     </div>
                 </div>
@@ -135,7 +134,6 @@ class ChandriasChatbot {    constructor() {
         const closeSpeechBtn = document.getElementById('closeSpeechBubble');
         const input = document.getElementById('chatbotInput');
         const sendBtn = document.getElementById('sendMessage');
-        const minimizeBtn = document.getElementById('minimizeChatbot');
         const closeBtn = document.getElementById('closeChatbot');
 
         sendBtn.addEventListener('click', () => this.handleSendMessage());
@@ -143,7 +141,6 @@ class ChandriasChatbot {    constructor() {
             if (e.key === 'Enter') this.handleSendMessage();
         });
 
-        minimizeBtn.addEventListener('click', () => this.minimizeChatbot());
         closeBtn.addEventListener('click', () => this.closeChatbot());
         
         // Store reference to the maximize function for the draggable functionality

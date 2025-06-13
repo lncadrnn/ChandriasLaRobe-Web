@@ -32,6 +32,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 0 1rem;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /*=============== LOGO ===============*/
@@ -198,6 +200,48 @@ button.header-action-btn:active img {
   width: 20px;
   height: 20px;
   transition: filter 0.3s ease;
+}
+
+/*=============== MOBILE NAVIGATION FIXES ===============*/
+@media screen and (max-width: 768px) {
+  .nav {
+    padding: 0 0.75rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .header-user-actions {
+    gap: 0.75rem;
+  }
+  
+  .header-action-btn {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .nav-logo-img {
+    width: 100px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .nav {
+    padding: 0 0.5rem;
+  }
+  
+  .header-user-actions {
+    gap: 0.5rem;
+  }
+  
+  .header-action-btn {
+    width: 38px;
+    height: 38px;
+  }
+  
+  .nav-logo-img {
+    width: 90px;
+  }
 }
 
 /*=============== NOTIFICATION COUNT BUBBLE ===============*/

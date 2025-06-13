@@ -577,7 +577,7 @@
     
     .wishlist-header {
         margin-bottom: 2rem;
-        padding: 0 1rem;
+        padding: 0 0.75rem;
     }
     
     .wishlist-title {
@@ -586,13 +586,15 @@
     
     .wishlist-subtitle {
         font-size: 1rem;
-        padding: 0 1rem;
+        padding: 0 0.5rem;
     }
     
     .wishlist .table-container {
         overflow-x: auto;
         border-radius: 0.5rem;
-        margin: 0 1rem;
+        margin: 0;
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .wishlist .table {
@@ -602,17 +604,21 @@
     /* Mobile card layout */
     .wishlist-mobile-cards {
         display: block;
-        padding: 0 1rem;
+        padding: 0 0.75rem;
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .wishlist-card {
         background: white;
         border-radius: 1rem;
-        padding: 1.5rem;
+        padding: 1rem;
         margin-bottom: 1rem;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         border: 1px solid var(--border-color-alt);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .wishlist-card:hover {
@@ -834,7 +840,9 @@
     .wishlist-card {
         margin: 0 0 1rem 0;
         border-radius: 0.75rem;
-        padding: 1rem;
+        padding: 0.875rem;
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .wishlist-card-header {
@@ -1276,8 +1284,10 @@
 /* Extra small mobile devices */
 @media screen and (max-width: 375px) {
     .wishlist-card {
-        padding: 1rem 0.75rem;
+        padding: 0.75rem;
         margin-bottom: 0.75rem;
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .wishlist-card-header {
@@ -1406,4 +1416,44 @@
     display: inline-block !important;
     opacity: 1 !important;
     visibility: visible !important;
+}
+
+/*=============== GLOBAL MOBILE FIXES ===============*/
+/* Prevent horizontal overflow */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+}
+
+.page-wishlist {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+/* Fix container on mobile */
+@media screen and (max-width: 768px) {
+    .container {
+        padding-inline: 0.75rem;
+        margin-inline: auto;
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .section {
+        padding-block: 1.5rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .section-lg {
+        padding-block: 2rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .container {
+        padding-inline: 0.5rem;
+    }
 }

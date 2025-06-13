@@ -16,7 +16,7 @@ class ProfileNavService {
     constructor() {
         this.currentUser = null;
         this.profileImageUrl = null;
-        this.accountButtonSelector = '#account-btn, button.header-action-btn[onclick*="showAuthModal"]:not([href]), .header-action-btn[onclick*="showAuthModal"]:not([href]), button.header-action-btn[onclick*="handleAccountClick"]:not([href])';
+        this.accountButtonSelector = '#account-btn, button.header-action-btn[onclick*="showAuthModal"], .header-action-btn[onclick*="showAuthModal"], button.header-action-btn[onclick*="handleAccountClick"]';
         this.init();
     }
 
@@ -47,7 +47,6 @@ class ProfileNavService {
         });
     }    /**
      * Load user profile image from Firestore
-     * DISABLED: Profile pictures are no longer shown in navigation
      */
     async loadUserProfileImage(uid) {
         try {
@@ -56,17 +55,23 @@ class ProfileNavService {
             if (userSnap.exists()) {
                 const userData = userSnap.data();
                 this.profileImageUrl = userData.profileImageUrl || null;
+                console.log('Profile Nav Service - Loaded profile image URL:', this.profileImageUrl);
+            } else {
+                console.log('Profile Nav Service - User document does not exist');
+                this.profileImageUrl = null;
             }
         } catch (error) {
             console.error("Error loading profile image:", error);
             this.profileImageUrl = null;
         }
-    }/**
+    }    /**
      * Update the navigation account button display
      */
     updateNavigationDisplay() {
         const accountButtons = document.querySelectorAll(this.accountButtonSelector);
+        console.log('Profile Nav Service - Found account buttons:', accountButtons.length, 'Profile URL:', this.profileImageUrl);
         accountButtons.forEach(button => {
+            console.log('Profile Nav Service - Processing button:', button.id || button.className);
             if (this.profileImageUrl) {
                 this.displayProfileImage(button);
             } else {
@@ -83,8 +88,15 @@ class ProfileNavService {
 
     /**
      * Display user profile image in the account button
-     */    displayProfileImage(button) {
-        if (!this.isAccountButton(button)) return;
+     */
+    displayProfileImage(button) {
+        if (!this.isAccountButton(button)) {
+            console.log('Profile Nav Service - Not an account button, skipping:', button);
+            return;
+        }
+        
+        console.log('Profile Nav Service - Displaying profile image for button:', button.id || button.className);
+        console.log('Profile Nav Service - Image URL:', this.profileImageUrl);
         
         button.innerHTML = '';
         const isAccountsPage = this.isAccountsPage();
@@ -97,12 +109,44 @@ class ProfileNavService {
 
         // Error handling
         profileImg.onerror = () => {
+            console.log('Profile Nav Service - Image failed to load, showing default icon');
             this.displayDefaultIcon(button);
+        };
+
+        profileImg.onload = () => {
+            console.log('Profile Nav Service - Image loaded successfully');
         };
 
         // Apply styles based on page context
         if (isAccountsPage) {
-            button.className = 'header-action-btn accounts-page-profile';
+            // For accounts page, use consistent styling with other header buttons
+            button.className = 'header-action-btn accounts-page-profile has-profile-image';
+            button.style.cssText = `
+                width: 45px !important;
+                height: 45px !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                border-radius: 50% !important;
+                overflow: hidden !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                background: none !important;
+                border: none !important;
+                cursor: pointer !important;
+                position: relative !important;
+            `;
+            
+            profileImg.style.cssText = `
+                width: 45px !important;
+                height: 45px !important;
+                object-fit: cover !important;
+                border-radius: 50% !important;
+                display: block !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+            `;
         } else {
             button.className = 'header-action-btn has-profile-image';
             button.style.cssText = `

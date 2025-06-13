@@ -61,6 +61,81 @@ $(document).ready(function () {
         }
     }
 
+    // Check if user signed in with Google
+    function isGoogleUser(user) {
+        if (!user || !user.providerData) return false;
+        return user.providerData.some(provider => provider.providerId === 'google.com');
+    }
+
+    // Force update account button with profile image
+    function forceUpdateAccountButton(button, imageUrl) {
+        if (!button || !imageUrl) return;
+        
+        console.log('Forcing account button update with image:', imageUrl);
+        
+        // Remove all existing classes and start fresh
+        button.className = 'header-action-btn accounts-page-profile has-profile-image';
+        button.innerHTML = '';
+        
+        // Apply aggressive styling
+        button.style.cssText = `
+            width: 45px !important;
+            height: 45px !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border-radius: 50% !important;
+            overflow: hidden !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: none !important;
+            border: none !important;
+            cursor: pointer !important;
+            position: relative !important;
+            box-shadow: none !important;
+        `;
+        
+        const img = document.createElement('img');
+        img.src = imageUrl + '?t=' + new Date().getTime(); // Add timestamp to force reload
+        img.alt = 'Profile Picture';
+        img.style.cssText = `
+            width: 45px !important;
+            height: 45px !important;
+            object-fit: cover !important;
+            border-radius: 50% !important;
+            display: block !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            border: none !important;
+            background: none !important;
+            filter: none !important;
+            box-shadow: none !important;
+        `;
+        
+        img.onload = () => {
+            console.log('Direct account button image loaded successfully');
+            // Extra guarantee that styling persists
+            button.style.background = 'none !important';
+            button.style.border = 'none !important';
+        };
+        
+        img.onerror = () => {
+            console.log('Direct account button image failed to load');
+            // Fallback to default icon
+            button.innerHTML = '<img src="assets/img/icon-user.svg" alt="Account" style="width: 20px; height: 20px;" />';
+            button.style.background = 'rgba(255, 133, 177, 0.1) !important';
+        };
+        
+        button.appendChild(img);
+        
+        // Force one more time after a brief delay to ensure it sticks
+        setTimeout(() => {
+            button.style.background = 'none !important';
+            button.style.border = 'none !important';
+        }, 100);
+    }
+
     // LOADS USER PROFILE
     async function loadUserProfile() {
         auth.onAuthStateChanged(async user => {
@@ -74,6 +149,10 @@ $(document).ready(function () {
                 }
 
                 if (user) {
+                    // Check if user is a Google user and handle password change UI
+                    const isGoogle = isGoogleUser(user);
+                    handlePasswordChangeUI(isGoogle);
+
                     await Promise.all([
                         updateCartCount(),
                         wishlistService.updateWishlistCountUI(),
@@ -109,7 +188,21 @@ $(document).ready(function () {
 
                                     // Also update the navigation profile image
                                     if (window.profileNavService) {
+                                        // Force reload the profile image URL first
+                                        await window.profileNavService.loadUserProfileImage(user.uid);
                                         await window.profileNavService.refreshProfileImage();
+                                        
+                                        // Add a small delay and force another update to ensure it works
+                                        setTimeout(async () => {
+                                            await window.profileNavService.refreshProfileImage();
+                                            window.profileNavService.updateNavigationDisplay();
+                                            
+                                            // Direct approach - force update the account button
+                                            const accountBtn = document.getElementById('account-btn');
+                                            if (accountBtn && userData.profileImageUrl) {
+                                                forceUpdateAccountButton(accountBtn, userData.profileImageUrl);
+                                            }
+                                        }, 500);
                                     }
                                 } else {
                                     // Show default avatar
@@ -143,6 +236,37 @@ $(document).ready(function () {
             }
         });
     }
+    // Handle password change UI based on authentication provider
+    function handlePasswordChangeUI(isGoogleUser) {
+        const $toggleButton = $("#togglePasswordFields");
+        const $passwordFields = $("#passwordFields");
+        
+        if (isGoogleUser) {
+            // Disable password change for Google users
+            $toggleButton.prop('disabled', true);
+            $toggleButton.addClass('disabled-google-user');
+            $toggleButton.html('<i class="fab fa-google"></i> Signed in with Google');
+            $toggleButton.attr('title', 'You signed in using your Google account');
+            
+            // Add click handler to show message
+            $toggleButton.off('click').on('click', function(e) {
+                e.preventDefault();
+                notyf.error("Since you signed in with Google, password changes can be made through your Google account for security.");
+            });
+        } else {
+            // Enable password change for email users
+            $toggleButton.prop('disabled', false);
+            $toggleButton.removeClass('disabled-google-user');
+            $toggleButton.html('Change Password');
+            $toggleButton.removeAttr('title');
+            
+            // Add normal toggle functionality
+            $toggleButton.off('click').on('click', function() {
+                $passwordFields.toggle();
+            });
+        }
+    }
+
     loadUserProfile();    function previewImage(event) {
         const input = event.target;
         const $avatarPlaceholder = $(".avatar-placeholder");
@@ -275,6 +399,13 @@ $(document).ready(function () {
 
             // === Step 1: Handle Password Change If Any Password Field Is Filled ===
             if (currentPassword || newPassword || confirmNewPassword) {
+                // Check if user is a Google user first
+                if (isGoogleUser(user)) {
+                    notyf.error("Since you signed in with Google, password changes can be made through your Google account for security.");
+                    spinner.addClass("d-none");
+                    return;
+                }
+
                 // Validate filled fields
                 if (!currentPassword || !newPassword || !confirmNewPassword) {
                     notyf.error("Please fill in all password fields.");
@@ -720,7 +851,7 @@ $(document).ready(function () {
             bookingCards.forEach(card => {
                 const title = card.querySelector('.booking-title')?.textContent.toLowerCase() || '';
                 const status = card.querySelector('.status-badge')?.textContent.toLowerCase() || '';
-                const dateText = card.querySelector('.booking-date')?.textContent || '';
+                const checkoutDate = card.getAttribute('data-checkout-date') || '';
                 
                 let showCard = true;
 
@@ -734,9 +865,28 @@ $(document).ready(function () {
                     showCard = false;
                 }
 
-                // Filter by date (basic implementation)
-                if (dateValue && !dateText.includes(dateValue)) {
-                    showCard = false;
+                // Filter by date - improved logic using data attribute
+                if (dateValue && showCard) {
+                    try {
+                        const selectedDate = new Date(dateValue);
+                        const bookingDate = new Date(checkoutDate);
+                        
+                        // Compare dates (ignoring time)
+                        const selectedDateStr = selectedDate.toDateString();
+                        const bookingDateStr = bookingDate.toDateString();
+                        
+                        if (selectedDateStr !== bookingDateStr) {
+                            showCard = false;
+                        }
+                    } catch (error) {
+                        console.warn('Error parsing dates for booking filter:', {
+                            selectedDate: dateValue,
+                            checkoutDate: checkoutDate,
+                            error: error.message
+                        });
+                        // If we can't parse the date, don't show the card for date filter
+                        showCard = false;
+                    }
                 }
 
                 if (showCard) {
@@ -758,6 +908,18 @@ $(document).ready(function () {
         if (statusFilter) statusFilter.addEventListener('change', filterBookings);
         if (dateFilter) dateFilter.addEventListener('change', filterBookings);
         if (searchFilter) searchFilter.addEventListener('input', filterBookings);
+
+        // Clear filters functionality
+        const clearFiltersBtn = document.getElementById('clear-filters-btn');
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener('click', function() {
+                if (statusFilter) statusFilter.value = 'all';
+                if (dateFilter) dateFilter.value = '';
+                if (searchFilter) searchFilter.value = '';
+                filterBookings();
+                notyf.success('Filters cleared');
+            });
+        }
 
         // Booking action handlers
         const bookingActions = document.querySelectorAll('.btn-action');
@@ -994,7 +1156,7 @@ $(document).ready(function () {
             const formattedDate = formatBookingDate(booking.checkoutDate, booking.checkoutTime);
 
             return `
-                <div class="booking-card" data-booking-id="${booking.id}">
+                <div class="booking-card" data-booking-id="${booking.id}" data-checkout-date="${booking.checkoutDate}">
                     <div class="booking-image">
                         <img src="${mainItem ? mainItem.image : 'assets/img/placeholder.svg'}" 
                              alt="${mainItem ? mainItem.name : 'No items'}" 

@@ -1,0 +1,51 @@
+/* Profile Navigation Override Styles */
+/* These styles override the default button styling when profile images are displayed */
+
+/* Override the pink background for buttons with profile images */
+button.header-action-btn.has-profile-image,
+button.header-action-btn.accounts-page-profile {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+button.header-action-btn.has-profile-image:hover,
+button.header-action-btn.accounts-page-profile:hover {
+    background: none !important;
+    border: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Ensure profile images don't get the pink filter */
+button.header-action-btn.has-profile-image img,
+button.header-action-btn.accounts-page-profile img {
+    filter: none !important;
+}
+
+/* Specific override for accounts page */
+button.header-action-btn.accounts-page-profile,
+button#account-btn.accounts-page-profile {
+    background: none !important;
+    border: none !important;
+    width: 45px !important;
+    height: 45px !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    position: relative !important;
+}
+
+button.header-action-btn.accounts-page-profile img,
+button#account-btn.accounts-page-profile img {
+    width: 45px !important;
+    height: 45px !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
+    border: none !important;
+    background: none !important;
+    filter: none !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+}

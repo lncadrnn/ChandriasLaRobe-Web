@@ -8,6 +8,8 @@ import {
     getDoc,
     addDoc,
     doc,
+    updateDoc,
+    setDoc,
     signOut
 } from "./sdk/chandrias-sdk.js";
 import wishlistService from "./wishlist-firebase.js";
@@ -20,6 +22,12 @@ $(document).ready(function () {
             y: "top"
         }
     });
+
+    // Check if user signed in with Google
+    function isGoogleUser(user) {
+        if (!user || !user.providerData) return false;
+        return user.providerData.some(provider => provider.providerId === 'google.com');
+    }
 
     // Set min date for checkout date input to today
     const todayDate = new Date().toISOString().split("T")[0];
@@ -84,6 +92,9 @@ $(document).ready(function () {
                         // Auto-fill email from Firebase Auth
                         $("#customer-email").val(user.email);
 
+                        // Check if user is Google user
+                        const isGoogle = isGoogleUser(user);
+
                         // Fetch user data from Firestore
                         const userDoc = await getDoc(
                             doc(chandriaDB, "userAccounts", user.uid)
@@ -92,7 +103,22 @@ $(document).ready(function () {
                         if (userDoc.exists()) {
                             const userData = userDoc.data();
                             $("#customer-name").val(userData.fullname || "");
-                            $("#customer-contact").val(userData.contact || "");
+                            
+                            const contactValue = userData.contact || "";
+                            $("#customer-contact").val(contactValue);
+                            
+                            // If Google user and no contact info, allow editing
+                            if (isGoogle && !contactValue.trim()) {
+                                $("#customer-contact").removeAttr("readonly");
+                                $("#customer-contact").attr("placeholder", "Phone No.");
+                            } else {
+                                // Keep readonly for non-Google users or Google users with existing contact
+                                $("#customer-contact").attr("readonly", true);
+                            }
+                        } else if (isGoogle) {
+                            // New Google user with no Firestore record
+                            $("#customer-contact").removeAttr("readonly");
+                            $("#customer-contact").attr("placeholder", "Phone No.");
                         }
                     })(),
                     loadCartItems(user.uid),
@@ -180,10 +206,18 @@ $(document).ready(function () {
         if (
             !customerName ||
             !customerEmail ||
+            !customerContact ||
             !checkoutDateStr ||
             !checkoutTimeStr
         ) {
-            notyf.error("Please fill in all required fields.");
+            notyf.error("Please fill in all required fields including phone number.");
+            return;
+        }
+
+        // Validate phone number format (basic validation)
+        const phoneRegex = /^[\+]?[0-9\s\-\(\)]{10,}$/;
+        if (!phoneRegex.test(customerContact.trim())) {
+            notyf.error("Please enter a valid phone number.");
             return;
         }
 
@@ -282,15 +316,62 @@ $(document).ready(function () {
             // SAVE TO FIREBASE
             await addDoc(collection(chandriaDB, "appointments"), productData);
 
+            // If Google user provided contact info, update their profile
+            if (isGoogleUser(user)) {
+                const userRef = doc(chandriaDB, "userAccounts", user.uid);
+                const userSnap = await getDoc(userRef);
+                
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    // Only update if the contact is different or was empty
+                    if (!userData.contact || userData.contact !== customerContact) {
+                        await updateDoc(userRef, {
+                            contact: customerContact
+                        });
+                        console.log("Updated Google user contact information");
+                    }
+                } else {
+                    // Create user record if it doesn't exist (new Google user)
+                    await setDoc(userRef, {
+                        fullname: customerName,
+                        email: customerEmail,
+                        contact: customerContact,
+                        createdAt: new Date()
+                    }, { merge: true });
+                    console.log("Created user profile for new Google user");
+                }
+            }
+
+            // CLEAR USER'S CART AFTER SUCCESSFUL APPOINTMENT
+            const userRef = doc(chandriaDB, "userAccounts", user.uid);
+            await updateDoc(userRef, {
+                added_to_cart: [] // Clear the cart by setting it to empty array
+            });
+
             notyf.success(
-                "Checkout successful! Your appointment has been saved."
+                "Appointment booked successfully! Your cart has been cleared."
             );
 
             // RESET FORM
             $("form")[0].reset();
+
+            // CLEAR CHECKOUT DISPLAY
+            $("#checkout-cart").empty();
+            $(".order-grand-total").text("₱ 0");
+
+            // UPDATE CART COUNT TO 0
+            await updateCartCount();
+
+            // UPDATE WISHLIST COUNT AS WELL FOR CONSISTENCY
+            await wishlistService.updateWishlistCountUI();
+
+            // REDIRECT TO CART PAGE AFTER A SHORT DELAY TO SHOW EMPTY CART
+            setTimeout(() => {
+                window.location.href = "./cart.html";
+            }, 2000); // 2 second delay to let user see the success message
         } catch (err) {
-            console.error("Upload failed:", err);
-            showErrorModal("There was an error uploading the product.");
+            console.error("Appointment creation failed:", err);
+            notyf.error("There was an error creating your appointment. Please try again.");
         }
     });
 
