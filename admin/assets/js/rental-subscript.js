@@ -534,12 +534,10 @@ $(document).ready(function () {
         const name = $card.find(".pos-name").text();
         const price = parseInt(
             $card.find(".pos-price").text().replace(/[^\d]/g, "")
-        );
-
-        const productCount = cart.products.length;
+        );        const productCount = cart.products.length;
         
-        // Check if there are any products in the cart first
-        if (productCount === 0) {
+        // Check if there are any products in the cart first (but allow fees to be added without products)
+        if (productCount === 0 && !name.toLowerCase().includes("fee")) {
             notyf.error("You must add at least one product before adding additional items.");
             return;
         }
@@ -548,7 +546,8 @@ $(document).ready(function () {
             item => item.name === name
         ).length;
 
-        if (countOfThis >= productCount) {
+        // Only apply product limit for non-fee items
+        if (!name.toLowerCase().includes("fee") && countOfThis >= productCount) {
             notyf.error(
                 `You can only add as many '${name}' as products selected. You currently have ${productCount} product(s) and ${countOfThis} '${name}' item(s).`
             );
@@ -1186,14 +1185,13 @@ $(document).ready(function () {
     // FUNCTION FOR CART PROCEED BUTTON
     if ($checkoutBtn.length && $customerModal.length) {
         $checkoutBtn.on("click", function (e) {            e.preventDefault();
-            
-            // Prevent checkout if no product is in the Rental List
-            if (!cart.products.length) {
+              // Prevent checkout if no items (products or fees) are in the Rental List
+            if (!cart.products.length && !cart.accessories.length) {
                 notyf.error(
-                    "Please add at least one product to the Rental List before proceeding."
+                    "Please add at least one item to the Rental List before proceeding."
                 );
                 return;
-            }            // Set rental fee field with total amount (if exists)
+            }// Set rental fee field with total amount (if exists)
             if ($rentalFeeField.length && $cartTotalAmount.length) {
                 const cartTotal = $cartTotalAmount.text() || "";
                 $rentalFeeField.val(cartTotal);
