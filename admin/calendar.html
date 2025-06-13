@@ -3,12 +3,11 @@
     <head>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />        <title>Chandria's La Robe - Admin</title>
-
-        <!-- EXTERNAL CSS -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />        <title>Chandria's La Robe - Admin</title>        <!-- EXTERNAL CSS -->
         <link rel="stylesheet" href="./assets/css/admin-layout.css" />
         <link rel="stylesheet" href="./assets/css/admin-layout-mob.css" />
         <link rel="stylesheet" href="./assets/css/spinners-admin.css" />
+        <link rel="stylesheet" href="./assets/css/rental-calendar.css" />
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -98,13 +97,96 @@
         </nav>        <main class="main-content">
             <header class="page-header">
                 <div class="header-left">
-                    <h1 class="page-title">Page</h1>
-                    <p class="page-subtitle">Content will be added here</p>
+                    <h1 class="page-title">Rental Calendar</h1>
+                    <p class="page-subtitle">View all product rentals by date</p>
+                </div>
+                <div class="header-right">
+                    <div class="calendar-filters">
+                        <select id="status-filter" class="filter-select">
+                            <option value="all">All Status</option>
+                            <option value="upcoming">Upcoming</option>
+                            <option value="ongoing">Ongoing</option>
+                            <option value="completed">Completed</option>
+                            <option value="overdue">Overdue</option>
+                        </select>
+                        <button id="today-btn" class="btn-today">Today</button>
+                    </div>
                 </div>
             </header>
 
             <div class="page-content">
-                <!-- Page content will be added here -->
+                <div class="calendar-container">
+                    <!-- Calendar Navigation -->
+                    <div class="calendar-header">
+                        <div class="calendar-nav">
+                            <button id="prev-month" class="nav-btn">
+                                <i class="bx bx-chevron-left"></i>
+                            </button>
+                            <div class="calendar-title">
+                                <h2 id="current-month-year">December 2024</h2>
+                            </div>
+                            <button id="next-month" class="nav-btn">
+                                <i class="bx bx-chevron-right"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Legend -->
+                        <div class="calendar-legend">
+                            <div class="legend-item">
+                                <span class="legend-color upcoming"></span>
+                                <span>Upcoming</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color ongoing"></span>
+                                <span>Ongoing</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color completed"></span>
+                                <span>Completed</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color overdue"></span>
+                                <span>Overdue</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calendar Grid -->
+                    <div class="calendar-grid">
+                        <!-- Days of Week Header -->
+                        <div class="calendar-days-header">
+                            <div class="day-header">Sun</div>
+                            <div class="day-header">Mon</div>
+                            <div class="day-header">Tue</div>
+                            <div class="day-header">Wed</div>
+                            <div class="day-header">Thu</div>
+                            <div class="day-header">Fri</div>
+                            <div class="day-header">Sat</div>
+                        </div>
+                        
+                        <!-- Calendar Days -->
+                        <div id="calendar-days" class="calendar-days">
+                            <!-- Days will be generated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rental Details Modal -->
+                <div id="rental-details-modal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 id="modal-date-title">Rentals for Date</h3>
+                            <button class="close-modal">
+                                <i class="bx bx-x"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="rental-details-list" class="rental-details-list">
+                                <!-- Rental details will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main><!-- Mobile Bottom Navigation (hidden on desktop) -->
         <nav class="mobile-bottom-nav">
@@ -147,5 +229,6 @@
         <script src="./assets/js/spinners-admin.js"></script>
         <script src="./assets/js/admin-layout.js"></script>
         <script src="./assets/js/admin-layout-mob.js"></script>
+        <script src="./assets/js/rental-calendar-service.js"></script>
     </body>
 </html>
