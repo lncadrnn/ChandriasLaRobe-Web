@@ -75,27 +75,34 @@ select:disabled {
     border: none; /* Remove border to prevent double border effect */
     padding: 0; /* Remove padding to let input handle spacing */
     background: transparent; /* Remove background to let input handle it */
+    margin-bottom: 1rem; /* Add margin bottom for spacing */
 }
 
 .search-box input {
     width: 100%;
-    padding: 1rem 1.25rem 1rem 3rem;
+    padding: 0.75rem 1rem 0.75rem 2.75rem; /* Reduced padding for smaller height */
     border: none; /* Removed gray border */
-    border-radius: 16px;
-    font-size: 0.95rem;
+    border-radius: 12px; /* Slightly smaller border radius */
+    font-size: 0.9rem; /* Slightly smaller font */
     background: #ffffff;
     color: #2c3e50;
     outline: none;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.08);
+    box-shadow: 0 3px 10px rgba(255, 105, 180, 0.06);
     font-weight: 500;
-    height: 54px; /* Set explicit height to match sort button */
+    height: 46px; /* Reduced from 54px to 46px */
     box-sizing: border-box;
 }
 
 .search-box input:focus {
     border: 2px solid var(--primary-color); /* Add border only on focus */
-    box-shadow: 0 0 0 4px rgba(255, 105, 180, 0.15), 0 8px 24px rgba(255, 105, 180, 0.12);
+    box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.12), 0 6px 20px rgba(255, 105, 180, 0.1);
+    transform: translateY(-1px);
+    background: #fefefe; /* Slightly brighter background on focus */
+}
+
+.search-box input:hover {
+    box-shadow: 0 4px 15px rgba(255, 105, 180, 0.1);
     transform: translateY(-1px);
 }
 
@@ -106,22 +113,23 @@ select:disabled {
 
 .search-box .icon {
     position: absolute;
-    left: 1rem;
+    left: 0.875rem; /* Adjusted for smaller padding */
     top: 50%;
     transform: translateY(-50%);
     color: var(--primary-color);
-    font-size: 1.2rem;
+    font-size: 1.1rem; /* Slightly smaller icon */
     transition: all 0.3s ease;
 }
 
 .sort-dropdown {
     position: relative;
+    margin-bottom: 1rem; /* Add margin bottom for spacing */
 }
 
 .btn {
-    padding: 1rem 1.5rem;
-    border-radius: 16px;
-    font-size: 0.95rem;
+    padding: 0.75rem 1.25rem; /* Reduced padding for smaller height */
+    border-radius: 12px; /* Slightly smaller border radius */
+    font-size: 0.9rem; /* Slightly smaller font */
     font-weight: 600;
     border: none; /* Removed gray border to match search box */
     background: #ffffff;
@@ -129,18 +137,25 @@ select:disabled {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.08);
+    gap: 0.65rem; /* Slightly smaller gap */
+    box-shadow: 0 3px 10px rgba(255, 105, 180, 0.06);
     cursor: pointer;
-    height: 54px; /* Set explicit height to match search box */
+    height: 46px; /* Reduced from 54px to 46px to match search box */
     box-sizing: border-box;
 }
 
-.btn-secondary:hover {
-    border-color: var(--primary-color);
-    background: rgba(255, 105, 180, 0.08);
+.btn:hover {
+    background: rgba(255, 105, 180, 0.1);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(255, 105, 180, 0.15);
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.15);
+    border: 1px solid rgba(255, 105, 180, 0.3);
+    color: var(--text-color) !important;
+}
+
+.btn:focus {
+    outline: none;
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.12), 0 4px 15px rgba(255, 105, 180, 0.1);
 }
 
 .sort-options {
