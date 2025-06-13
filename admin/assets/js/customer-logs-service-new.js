@@ -266,16 +266,8 @@ async function renderTransactionTable() {
                             <i class='bx bx-trash'></i> Delete
                         </button>
                     </div>                    ${rentalStatus === 'Ongoing' ? `
-                        <div class="action-buttons-long">
-                            <button class="mark-complete-btn long-btn" data-id="${transaction.id}" title="Mark as Complete">
+                        <div class="action-buttons-long">                            <button class="mark-complete-btn long-btn" data-id="${transaction.id}" title="Mark as Complete">
                                 <i class='bx bx-check'></i> Mark as Complete
-                            </button>
-                        </div>
-                    ` : ''}
-                    ${rentalStatus === 'Completed' ? `
-                        <div class="action-buttons-long">
-                            <button class="undo-complete-btn long-btn" data-id="${transaction.id}" title="Undo Completion">
-                                <i class='bx bx-undo'></i> Undo Completion
                             </button>
                         </div>
                     ` : ''}
@@ -402,15 +394,7 @@ async function renderTransactionCards() {
                             <button class="card-action-btn mark-complete-btn long-btn" data-id="${transaction.id}">
                                 <i class='bx bx-check'></i> Mark as Complete
                             </button>
-                        </div>
-                    ` : ''}
-                    ${rentalStatus === 'Completed' ? `
-                        <div class="card-actions-long">
-                            <button class="card-action-btn undo-complete-btn long-btn" data-id="${transaction.id}">
-                                <i class='bx bx-undo'></i> Undo Completion
-                            </button>
-                        </div>
-                    ` : ''}
+                        </div>                    ` : ''}
                     ${rentalStatus === 'Overdue' ? `
                         <div class="card-actions-long">
                             <button class="card-action-btn process-overdue-btn long-btn" data-id="${transaction.id}">
@@ -559,17 +543,7 @@ function addActionListeners() {
             const transactionId = e.target.closest('.mark-complete-btn').dataset.id;
             showMarkCompleteModal(transactionId);
         });
-    });
-
-    // Undo Complete buttons
-    document.querySelectorAll('.undo-complete-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const transactionId = e.target.closest('.undo-complete-btn').dataset.id;
-            undoCompletion(transactionId);
-        });
-    });
-
-    // Process Overdue buttons
+    });    // Process Overdue buttons
     document.querySelectorAll('.process-overdue-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const transactionId = e.target.closest('.process-overdue-btn').dataset.id;
@@ -1807,79 +1781,6 @@ async function undoCancellation(transactionId) {
         
         // Show error notification
         alert('Error undoing cancellation. Please try again.');
-    }
-}
-
-// Undo completion (revert completed rental back to original status)
-async function undoCompletion(transactionId) {
-    try {
-        const transaction = allTransactions.find(t => t.id === transactionId);
-        if (!transaction) {
-            console.error('Transaction not found');
-            return;
-        }
-
-        // Calculate what the status should be based on current date and event dates
-        const { rentalStatus: originalStatus } = calculateOriginalRentalStatus(transaction);
-
-        // Show confirmation dialog
-        const confirmed = confirm(`Undo completion for "${transaction.fullName || 'Unknown'}"?\n\nThis will change the status from "Completed" to "${originalStatus}".`);
-        if (!confirmed) return;
-
-        // Show loading
-        document.querySelector('.admin-action-spinner').style.display = 'flex';
-
-        // Update the transaction in Firebase
-        const transactionRef = doc(chandriaDB, 'transaction', transactionId);
-        const updateData = {
-            returnConfirmed: false,
-            lastUpdated: new Date().toISOString()
-        };
-
-        // Remove return date if it exists
-        if (transaction.returnDate) {
-            updateData.returnDate = null;
-        }
-
-        await updateDoc(transactionRef, updateData);
-
-        // Update local data
-        const transactionIndex = allTransactions.findIndex(t => t.id === transactionId);
-        if (transactionIndex !== -1) {
-            allTransactions[transactionIndex].returnConfirmed = false;
-            delete allTransactions[transactionIndex].returnDate;
-            allTransactions[transactionIndex].lastUpdated = new Date().toISOString();
-        }
-
-        // Update filtered transactions
-        const filteredIndex = filteredTransactions.findIndex(t => t.id === transactionId);
-        if (filteredIndex !== -1) {
-            filteredTransactions[filteredIndex].returnConfirmed = false;
-            delete filteredTransactions[filteredIndex].returnDate;
-            filteredTransactions[filteredIndex].lastUpdated = new Date().toISOString();
-        }
-
-        // Re-render the views
-        if (currentView === 'cards') {
-            renderTransactionCards();
-        } else {
-            renderTransactionTable();
-        }
-
-        // Hide loading
-        document.querySelector('.admin-action-spinner').style.display = 'none';
-
-        // Show success notification
-        showSuccessToast(`Completion undone! Status changed to "${originalStatus}".`);
-
-    } catch (error) {
-        console.error('Error undoing completion:', error);
-        
-        // Hide loading
-        document.querySelector('.admin-action-spinner').style.display = 'none';
-        
-        // Show error notification
-        alert('Error undoing completion. Please try again.');
     }
 }
 
