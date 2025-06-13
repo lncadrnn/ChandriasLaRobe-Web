@@ -1195,246 +1195,24 @@ document.addEventListener("DOMContentLoaded", () => {
             
             return item;
         }
-        
-        function createActionButtons(rental) {
+          function createActionButtons(rental) {
             const buttonsContainer = document.createElement('div');
             buttonsContainer.className = 'action-buttons';
             
-            const currentDate = new Date();
-            const eventEndDate = rental.eventEndDate ? new Date(rental.eventEndDate) : rental.eventDate ? new Date(rental.eventDate) : null;
-            
-            // Mark as Complete/Return button (for ongoing rentals or completed without return confirmation)
-            if (rental.status === 'ongoing' || (rental.status === 'completed' && !rental.returnConfirmed)) {
-                const markCompleteBtn = document.createElement('button');
-                markCompleteBtn.className = 'btn-action btn-complete';
-                markCompleteBtn.innerHTML = '<i class="bx bx-check-circle"></i> Mark as Returned';
-                markCompleteBtn.onclick = () => markAsReturned(rental);
-                buttonsContainer.appendChild(markCompleteBtn);
-            }
-            
-            // Overdue Fee button (for overdue rentals)
-            if (rental.status === 'overdue') {
-                const overdueFeeBtn = document.createElement('button');
-                overdueFeeBtn.className = 'btn-action btn-overdue';
-                overdueFeeBtn.innerHTML = '<i class="bx bx-money"></i> Process Overdue Fee';
-                overdueFeeBtn.onclick = () => processOverdueFee(rental);
-                buttonsContainer.appendChild(overdueFeeBtn);
-                
-                // Also show Mark as Returned button for overdue items
-                const markCompleteBtn = document.createElement('button');
-                markCompleteBtn.className = 'btn-action btn-complete';
-                markCompleteBtn.innerHTML = '<i class="bx bx-check-circle"></i> Mark as Returned';
-                markCompleteBtn.onclick = () => markAsReturned(rental);
-                buttonsContainer.appendChild(markCompleteBtn);            }
+            // View History button - always shown for all rentals
+            const viewHistoryBtn = document.createElement('button');
+            viewHistoryBtn.className = 'btn-action btn-history';
+            viewHistoryBtn.innerHTML = '<i class="bx bx-history"></i> View History';
+            viewHistoryBtn.onclick = () => {
+                // Redirect to customer logs page
+                window.location.href = './customer-logs.html';
+            };
+            buttonsContainer.appendChild(viewHistoryBtn);
             
             return buttonsContainer;
         }
+          // =============== UTILITY FUNCTIONS ===============
         
-        // =============== RENTAL ACTION FUNCTIONS ===============
-        
-        async function markAsReturned(rental) {
-            const confirmReturn = confirm(`Mark rental for ${rental.fullName || rental.customerName} as returned?`);
-            if (!confirmReturn) return;
-            
-            try {
-                // Show loading
-                document.body.style.cursor = 'wait';
-                
-                const returnDate = new Date().toISOString();
-                
-                // Update rental in database
-                await db.collection("transaction").doc(rental.id).update({
-                    status: 'completed',
-                    returnConfirmed: true,
-                    returnDate: returnDate,
-                    returnedBy: 'admin', // You might want to track which admin marked it
-                    updatedAt: returnDate
-                });
-                
-                console.log('✅ Rental marked as returned:', rental.id);
-                
-                // Refresh calendar data
-                await fetchRentalsData();
-                
-                // Close modal and show success message
-                closeModal();
-                showSuccessMessage('Rental marked as returned successfully!');
-                
-            } catch (error) {
-                console.error('❌ Error marking rental as returned:', error);
-                alert('Error updating rental status. Please try again.');
-            } finally {
-                document.body.style.cursor = 'default';
-            }
-        }
-        
-        async function processOverdueFee(rental) {
-            const overdueFeeModal = createOverdueFeeModal(rental);
-            document.body.appendChild(overdueFeeModal);
-        }
-        
-        function createOverdueFeeModal(rental) {
-            const modal = document.createElement('div');
-            modal.className = 'modal overdue-fee-modal';
-            modal.style.display = 'flex';
-            
-            const currentDate = new Date();
-            const eventEndDate = rental.eventEndDate ? new Date(rental.eventEndDate) : rental.eventDate ? new Date(rental.eventDate) : null;
-            const overdueDays = eventEndDate ? Math.ceil((currentDate - eventEndDate) / (1000 * 60 * 60 * 24)) : 0;
-            
-            // Calculate overdue fee (you can adjust this calculation)
-            const dailyOverdueFee = 100; // ₱100 per day overdue
-            const suggestedFee = overdueDays * dailyOverdueFee;
-            
-            modal.innerHTML = `
-                <div class="modal-content overdue-fee-content">
-                    <div class="modal-header">
-                        <h3>Process Overdue Fee</h3>
-                        <button class="close-modal" onclick="this.closest('.modal').remove()">
-                            <i class="bx bx-x"></i>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="overdue-info">
-                            <h4>${rental.fullName || rental.customerName}</h4>
-                            <p><strong>Transaction:</strong> ${rental.transactionCode || 'N/A'}</p>
-                            <p><strong>Due Date:</strong> ${eventEndDate ? eventEndDate.toLocaleDateString() : 'N/A'}</p>
-                            <p><strong>Days Overdue:</strong> <span class="overdue-days">${overdueDays} days</span></p>
-                        </div>
-                        
-                        <div class="fee-calculation">
-                            <div class="fee-row">
-                                <label>Daily Overdue Rate:</label>
-                                <input type="number" id="daily-rate" value="${dailyOverdueFee}" min="0" step="0.01">
-                            </div>
-                            <div class="fee-row">
-                                <label>Number of Days:</label>
-                                <input type="number" id="overdue-days-input" value="${overdueDays}" min="1">
-                            </div>
-                            <div class="fee-row total-row">
-                                <label>Total Overdue Fee:</label>
-                                <span class="total-fee">₱<span id="calculated-fee">${suggestedFee.toLocaleString()}</span></span>
-                            </div>
-                        </div>
-                        
-                        <div class="payment-options">
-                            <h5>Payment Method:</h5>
-                            <div class="payment-methods">
-                                <label class="payment-method">
-                                    <input type="radio" name="payment-method" value="cash" checked>
-                                    <span>Cash</span>
-                                </label>
-                                <label class="payment-method">
-                                    <input type="radio" name="payment-method" value="gcash">
-                                    <span>GCash</span>
-                                </label>
-                                <label class="payment-method">
-                                    <input type="radio" name="payment-method" value="bank">
-                                    <span>Bank Transfer</span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div class="notes-section">
-                            <label for="overdue-notes">Notes (Optional):</label>
-                            <textarea id="overdue-notes" placeholder="Additional notes about the overdue fee..."></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn-cancel" onclick="this.closest('.modal').remove()">Cancel</button>
-                        <button class="btn-process-fee" onclick="processOverdueFeePayment('${rental.id}')">Process Fee</button>
-                    </div>
-                </div>
-            `;
-            
-            // Add event listeners for dynamic calculation
-            const dailyRateInput = modal.querySelector('#daily-rate');
-            const overdueDaysInput = modal.querySelector('#overdue-days-input');
-            const calculatedFeeSpan = modal.querySelector('#calculated-fee');
-            
-            function updateFeeCalculation() {
-                const rate = parseFloat(dailyRateInput.value) || 0;
-                const days = parseInt(overdueDaysInput.value) || 0;
-                const total = rate * days;
-                calculatedFeeSpan.textContent = total.toLocaleString();
-            }
-            
-            dailyRateInput.addEventListener('input', updateFeeCalculation);
-            overdueDaysInput.addEventListener('input', updateFeeCalculation);
-            
-            return modal;
-        }
-        
-        async function processOverdueFeePayment(rentalId) {
-            try {
-                const modal = document.querySelector('.overdue-fee-modal');
-                const dailyRate = parseFloat(modal.querySelector('#daily-rate').value) || 0;
-                const overdueDays = parseInt(modal.querySelector('#overdue-days-input').value) || 0;
-                const totalFee = dailyRate * overdueDays;
-                const paymentMethod = modal.querySelector('input[name="payment-method"]:checked').value;
-                const notes = modal.querySelector('#overdue-notes').value;
-                
-                if (totalFee <= 0) {
-                    alert('Please enter a valid overdue fee amount.');
-                    return;
-                }
-                
-                const confirmPayment = confirm(`Process overdue fee of ₱${totalFee.toLocaleString()} via ${paymentMethod.toUpperCase()}?`);
-                if (!confirmPayment) return;
-                
-                // Show loading
-                document.body.style.cursor = 'wait';
-                
-                // Get the original rental data
-                const rentalDoc = await db.collection("transaction").doc(rentalId).get();
-                const rentalData = rentalDoc.data();
-                
-                // Create overdue fee transaction
-                const overdueFeeTransaction = {
-                    type: 'overdue_fee',
-                    originalTransactionId: rentalId,
-                    originalTransactionCode: rentalData.transactionCode,
-                    customerName: rentalData.fullName || rentalData.customerName,
-                    customerEmail: rentalData.customerEmail,
-                    customerContact: rentalData.contactNumber || rentalData.customerContactNumber,
-                    customerAddress: rentalData.address || rentalData.customerAddress,
-                    overdueFee: totalFee,
-                    dailyRate: dailyRate,
-                    overdueDays: overdueDays,
-                    paymentMethod: paymentMethod,
-                    notes: notes,
-                    status: 'paid',
-                    createdAt: new Date().toISOString(),
-                    createdBy: 'admin'
-                };
-                
-                // Add overdue fee transaction to database
-                const overdueRef = await db.collection("overdue_fees").add(overdueFeeTransaction);
-                
-                // Update original rental with overdue fee information
-                await db.collection("transaction").doc(rentalId).update({
-                    overdueFeePaid: true,
-                    overdueFeeAmount: totalFee,
-                    overdueFeeTransactionId: overdueRef.id,
-                    overdueFeeDate: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
-                });
-                
-                console.log('✅ Overdue fee processed:', overdueRef.id);
-                
-                // Close modal and refresh data
-                modal.remove();
-                await fetchRentalsData();
-                
-                showSuccessMessage(`Overdue fee of ₱${totalFee.toLocaleString()} processed successfully!`);
-                
-            } catch (error) {
-                console.error('❌ Error processing overdue fee:', error);
-                alert('Error processing overdue fee. Please try again.');
-            } finally {
-                document.body.style.cursor = 'default';
-            }
-        }        
         function showSuccessMessage(message) {
             const successDiv = document.createElement('div');
             successDiv.className = 'success-message';
@@ -1459,9 +1237,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }, 3000);
         }
-        
-        // Make processOverdueFeePayment globally accessible for modal buttons
-        window.processOverdueFeePayment = processOverdueFeePayment;
     } else {
         console.error('Firebase not available');
         showError();

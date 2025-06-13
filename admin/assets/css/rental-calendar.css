@@ -561,6 +561,24 @@ body.quick-view-active .rental-quick-view {
     transform: translateY(-1px);
 }
 
+/* =============== VIEW HISTORY BUTTON =============== */
+.btn-history {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-history:hover {
+    background: linear-gradient(135deg, #5b21b6, #7c3aed);
+    transform: translateY(-1px);
+}
+
 /* Quick View Mobile Responsive */
 @media (max-width: 768px) {
     .rental-quick-view {
