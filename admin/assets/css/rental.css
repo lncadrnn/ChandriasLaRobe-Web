@@ -1726,6 +1726,21 @@
     border-color: #dee2e6;
 }
 
+/* Disabled inputs */
+#customer-modal .form-group input[disabled],
+#customer-modal .form-group input:disabled {
+    background: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+    border-color: #ced4da;
+    opacity: 0.7;
+}
+
+#customer-modal .form-group input[disabled]:hover,
+#customer-modal .form-group input:disabled:hover {
+    border-color: #ced4da;
+}
+
 /* Select dropdowns */
 #customer-modal .form-group select {
     cursor: pointer;

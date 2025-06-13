@@ -1284,11 +1284,17 @@ $(document).ready(function () {
     const $digitalPaymentFields = $("#digital-payment-fields");
     const $cashReceived = $("#cash-received");
     const $changeDisplay = $("#change-display");
-    const $referenceNo = $("#reference-no");
-
-    // Payment method change handler
+    const $referenceNo = $("#reference-no");    // Payment method change handler
     $paymentMethod.on("change", function() {
         const method = $(this).val();
+        
+        // Enable/disable total payment field based on payment method selection
+        if (method) {
+            $totalPayment.prop("disabled", false);
+        } else {
+            $totalPayment.prop("disabled", true).val("");
+            $remainingBalance.val("");
+        }
         
         if (method === "Cash") {
             $cashPaymentFields.show();
@@ -1311,9 +1317,7 @@ $(document).ready(function () {
         const totalPayment = parseFloat($totalPayment.val()) || 0;
         const change = Math.max(received - totalPayment, 0);
         $changeDisplay.text(`₱${change.toLocaleString()}`);
-    });
-
-    // Update change when total payment changes
+    });    // Update change when total payment changes
     $totalPayment.on("input", function() {
         if ($paymentMethod.val() === "Cash") {
             const received = parseFloat($cashReceived.val()) || 0;
@@ -1322,6 +1326,17 @@ $(document).ready(function () {
             $changeDisplay.text(`₱${change.toLocaleString()}`);
         }
     });
+
+    // Prevent total payment input when no payment method is selected
+    $totalPayment.on("focus", function() {
+        if (!$paymentMethod.val()) {
+            $(this).blur();
+            notyf.error("Please select a payment method first.");
+        }
+    });
+
+    // Initialize total payment field as disabled
+    $totalPayment.prop("disabled", true);
 
     // --- Customer Form Validation and Submission Logic ---
     // Common validation rules
