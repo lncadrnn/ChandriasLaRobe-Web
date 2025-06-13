@@ -1295,20 +1295,26 @@ $(document).ready(function () {
                 $cashChangeDisplay.hide();
             }
         }
-    }
-
-    // Payment method change handler
-    $paymentMethod.on("change", function() {
-        const method = $(this).val();
+    }    // Function to check if total payment should be enabled
+    function updateTotalPaymentState() {
+        const method = $paymentMethod.val();
+        const status = $paymentType.val();
         
-        // Enable/disable total payment field based on payment method selection
-        if (method) {
+        if (method && status) {
             $totalPayment.prop("disabled", false);
         } else {
             $totalPayment.prop("disabled", true).val("");
             $remainingBalance.val("");
             $cashChangeDisplay.hide();
         }
+    }
+
+    // Payment method change handler
+    $paymentMethod.on("change", function() {
+        const method = $(this).val();
+        
+        // Update total payment field state based on both method and status
+        updateTotalPaymentState();
         
         if (method === "Cash") {
             $digitalPaymentFields.hide();
@@ -1326,16 +1332,29 @@ $(document).ready(function () {
             $referenceNo.val("").prop("readonly", false);
             $cashChangeDisplay.hide();
         }
-    });    // Update change when total payment changes for cash payments
-    $totalPayment.on("input", function() {
-        calculateCashChange();
     });
 
-    // Prevent total payment input when no payment method is selected
+    // Payment status change handler
+    $paymentType.on("change", function() {
+        // Update total payment field state based on both method and status
+        updateTotalPaymentState();
+    });// Update change when total payment changes for cash payments
+    $totalPayment.on("input", function() {
+        calculateCashChange();
+    });    // Prevent total payment input when payment method or status is not selected
     $totalPayment.on("focus", function() {
-        if (!$paymentMethod.val()) {
+        const paymentMethod = $paymentMethod.val();
+        const paymentStatus = $paymentType.val();
+        
+        if (!paymentMethod && !paymentStatus) {
+            $(this).blur();
+            notyf.error("Please select a payment method and payment status first.");
+        } else if (!paymentMethod) {
             $(this).blur();
             notyf.error("Please select a payment method first.");
+        } else if (!paymentStatus) {
+            $(this).blur();
+            notyf.error("Please select a payment status first.");
         }
     });
 
