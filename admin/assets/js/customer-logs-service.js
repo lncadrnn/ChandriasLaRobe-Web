@@ -21,7 +21,7 @@ const tableViewBtn = document.getElementById('table-view-btn');
 const transactionCount = document.getElementById('transaction-count');
 
 // View state
-let currentView = 'cards'; // Default to cards view
+let currentView = 'cards'; // Cards only view
 let currentSort = 'recent'; // Default sort by recent
 
 // Initialize
@@ -40,18 +40,20 @@ document.addEventListener('DOMContentLoaded', function() {
     toggle.addEventListener("click", () => {
         const isClosed = sidebar.classList.toggle("close");
         localStorage.setItem("admin-sidebar-closed", isClosed);
-    });
-
-    // Load transactions on page load
+    });    // Load transactions on page load
     loadTransactions();
     
     // Add event listeners
     searchInput?.addEventListener('input', handleSearch);
     refreshBtn?.addEventListener('click', loadTransactions);
     
-    // View toggle listeners
-    cardViewBtn?.addEventListener('click', () => switchView('cards'));
-    tableViewBtn?.addEventListener('click', () => switchView('table'));
+    // Hide view toggle and table container - cards only
+    if (tableContainer) tableContainer.style.display = 'none';
+    if (cardsContainer) cardsContainer.style.display = 'block';
+    
+    // Hide view toggle buttons
+    const viewToggle = document.querySelector('.view-toggle');
+    if (viewToggle) viewToggle.style.display = 'none';
     
     // Sort functionality
     sortBtn?.addEventListener('click', toggleSortOptions);
@@ -143,10 +145,10 @@ async function loadTransactions() {
                 ...data
             });
         });
-        
-        filteredTransactions = [...allTransactions];
+          filteredTransactions = [...allTransactions];
         applySorting(); // Apply current sort
         updateTransactionCount();
+        renderTransactionCards(); // Always render cards only
         
     } catch (error) {
         console.error('Error loading transactions:', error);
@@ -167,23 +169,13 @@ function updateTransactionCount() {
     }
 }
 
-// Switch between card and table views
+// Switch between card and table views - Cards only now
 function switchView(view) {
-    currentView = view;
-    
-    if (view === 'cards') {
-        cardsContainer.style.display = 'block';
-        tableContainer.style.display = 'none';
-        cardViewBtn.classList.add('active');
-        tableViewBtn.classList.remove('active');
-        renderTransactionCards();
-    } else {
-        cardsContainer.style.display = 'none';
-        tableContainer.style.display = 'block';
-        cardViewBtn.classList.remove('active');
-        tableViewBtn.classList.add('active');
-        renderTransactionTable();
-    }
+    // Always use cards view
+    currentView = 'cards';
+    cardsContainer.style.display = 'block';
+    tableContainer.style.display = 'none';
+    renderTransactionCards();
 }
 
 // Fetch product details from Firebase
@@ -463,20 +455,24 @@ async function showTransactionDetails(transactionId) {
                 Object.entries(product.sizes)
                     .map(([size, qty]) => `<li>${size}: ${qty} pc(s)</li>`)
                     .join('') : '';
-            
-            return `
+              return `
                 <div class="detail-product">
-                    ${productDetails?.frontImageUrl ? 
-                        `<img src="${productDetails.frontImageUrl}" alt="${product.name}" class="modal-product-image">` : ''
-                    }
-                    <h4>${product.name || 'Unknown Product'}</h4>
-                    <p><strong>Code:</strong> ${product.code || 'N/A'}</p>
-                    <p><strong>Price:</strong> ₱${product.price?.toLocaleString() || 'N/A'}</p>
-                    <p><strong>Category:</strong> ${productDetails?.category || 'N/A'}</p>
-                    <p><strong>Color:</strong> ${productDetails?.color || 'N/A'}</p>
-                    <p><strong>Sleeve:</strong> ${productDetails?.sleeve || 'N/A'}</p>
-                    ${sizesHtml ? `<p><strong>Sizes:</strong></p><ul>${sizesHtml}</ul>` : ''}
-                    ${productDetails?.description ? `<p><strong>Description:</strong> ${productDetails.description}</p>` : ''}
+                    <div class="item-image-container">
+                        ${productDetails?.frontImageUrl ? 
+                            `<img src="${productDetails.frontImageUrl}" alt="${product.name}" class="modal-product-image">` : 
+                            '<div class="no-image-placeholder">No Image</div>'
+                        }
+                    </div>
+                    <div class="item-info-container">
+                        <h4>${product.name || 'Unknown Product'}</h4>
+                        <p><strong>Code:</strong> ${product.code || 'N/A'}</p>
+                        <p><strong>Price:</strong> ₱${product.price?.toLocaleString() || 'N/A'}</p>
+                        <p><strong>Category:</strong> ${productDetails?.category || 'N/A'}</p>
+                        <p><strong>Color:</strong> ${productDetails?.color || 'N/A'}</p>
+                        <p><strong>Sleeve:</strong> ${productDetails?.sleeve || 'N/A'}</p>
+                        ${sizesHtml ? `<p><strong>Sizes:</strong></p><ul>${sizesHtml}</ul>` : ''}
+                        ${productDetails?.description ? `<p><strong>Description:</strong> ${productDetails.description}</p>` : ''}
+                    </div>
                 </div>
             `;
         });
@@ -494,18 +490,22 @@ async function showTransactionDetails(transactionId) {
                 `<p><strong>Types:</strong> ${accessory.types.join(', ')}</p>` : '';
             const inclusionsHtml = accessoryDetails?.inclusions?.length > 0 ?
                 `<p><strong>Inclusions:</strong> ${accessoryDetails.inclusions.join(', ')}</p>` : '';
-            
-            return `
+              return `
                 <div class="detail-accessory">
-                    ${accessoryDetails?.imageUrl ? 
-                        `<img src="${accessoryDetails.imageUrl}" alt="${accessory.name}" class="modal-accessory-image">` : ''
-                    }
-                    <h4>${accessory.name || 'Unknown Accessory'}</h4>
-                    <p><strong>Code:</strong> ${accessory.code || 'N/A'}</p>
-                    <p><strong>Price:</strong> ₱${accessory.price?.toLocaleString() || 'N/A'}</p>
-                    ${accessory.quantity ? `<p><strong>Quantity:</strong> ${accessory.quantity}</p>` : ''}
-                    ${typesHtml}
-                    ${inclusionsHtml}
+                    <div class="item-image-container">
+                        ${accessoryDetails?.imageUrl ? 
+                            `<img src="${accessoryDetails.imageUrl}" alt="${accessory.name}" class="modal-accessory-image">` : 
+                            '<div class="no-image-placeholder">No Image</div>'
+                        }
+                    </div>
+                    <div class="item-info-container">
+                        <h4>${accessory.name || 'Unknown Accessory'}</h4>
+                        <p><strong>Code:</strong> ${accessory.code || 'N/A'}</p>
+                        <p><strong>Price:</strong> ₱${accessory.price?.toLocaleString() || 'N/A'}</p>
+                        ${accessory.quantity ? `<p><strong>Quantity:</strong> ${accessory.quantity}</p>` : ''}
+                        ${typesHtml}
+                        ${inclusionsHtml}
+                    </div>
                 </div>
             `;
         });
@@ -630,43 +630,25 @@ function handleSearch() {
 
 // Show loading state
 function showLoading() {
-    if (currentView === 'cards' && transactionCards) {
+    if (transactionCards) {
         transactionCards.innerHTML = `
             <div class="loading-card">
                 <i class='bx bx-loader-alt bx-spin'></i>
                 <span>Loading transactions...</span>
             </div>
         `;
-    } else if (tableBody) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="6" class="table-loading">
-                    <i class='bx bx-loader-alt bx-spin'></i>
-                    <div>Loading rental history...</div>
-                </td>
-            </tr>
-        `;
     }
 }
 
 // Show error state
 function showError(message) {
-    if (currentView === 'cards' && transactionCards) {
+    if (transactionCards) {
         transactionCards.innerHTML = `
             <div class="empty-state">
                 <i class='bx bx-error'></i>
                 <h3>Error Loading Data</h3>
                 <p>${message}</p>
             </div>
-        `;
-    } else if (tableBody) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="6" class="table-error">
-                    <i class='bx bx-error'></i>
-                    <div>${message}</div>
-                </td>
-            </tr>
         `;
     }
 }
@@ -761,14 +743,9 @@ async function handleEditSubmit(e) {
             allTransactions[index] = { ...allTransactions[index], ...updatedData };
             filteredTransactions = [...allTransactions];
         }
-        
-        // Close modal and refresh view
+          // Close modal and refresh view
         closeEditModal();
-        if (currentView === 'cards') {
-            renderTransactionCards();
-        } else {
-            renderTransactionTable();
-        }
+        renderTransactionCards(); // Always render cards
         
         // Show success message
         showSuccessMessage('Transaction updated successfully!');
@@ -859,15 +836,10 @@ async function confirmDelete() {
         // Remove from local arrays
         allTransactions = allTransactions.filter(t => t.id !== currentDeletingTransaction.id);
         filteredTransactions = filteredTransactions.filter(t => t.id !== currentDeletingTransaction.id);
-        
-        // Close modal and refresh view
+          // Close modal and refresh view
         closeDeleteModal();
         updateTransactionCount();
-        if (currentView === 'cards') {
-            renderTransactionCards();
-        } else {
-            renderTransactionTable();
-        }
+        renderTransactionCards(); // Always render cards
         
         // Show success message
         showSuccessMessage('Transaction deleted successfully!');
@@ -1043,13 +1015,8 @@ function applySorting() {
                 return dateB - dateA;
             });
     }
-    
-    // Re-render current view with sorted data
-    if (currentView === 'cards') {
-        renderTransactionCards();
-    } else {
-        renderTransactionTable();
-    }
+      // Re-render current view with sorted data
+    renderTransactionCards(); // Always render cards
 }
 
 // Make functions globally available

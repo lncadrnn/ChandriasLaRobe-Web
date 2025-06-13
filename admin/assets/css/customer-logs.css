@@ -77,6 +77,9 @@ select:disabled {
     border: 2px solid rgba(255, 105, 180, 0.08);
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 .page-header::before {
@@ -87,6 +90,10 @@ select:disabled {
     width: 100%;
     height: 4px;
     background: linear-gradient(90deg, var(--primary-color), rgba(255, 105, 180, 0.6));
+}
+
+.header-left {
+    flex: 1;
 }
 
 .page-title {
@@ -111,13 +118,16 @@ select:disabled {
 
 .header-right {
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     align-items: center;
+    justify-content: flex-end;
 }
 
 .search-box {
     position: relative;
-    min-width: 320px;
+    flex: 1;
+    max-width: 350px;
+    min-width: 280px;
 }
 
 .search-box input {
@@ -401,10 +411,11 @@ select:disabled {
 }
 
 .transaction-count {
-    color: var(--secondary-color);
+    color: var(--primary-color);
     font-size: 0.9rem;
     margin-top: 0.25rem;
     display: block;
+    font-weight: 600;
 }
 
 .view-toggle {
@@ -439,6 +450,15 @@ select:disabled {
 
 .view-btn:hover:not(.active) {
     background: rgba(255, 105, 180, 0.1);
+}
+
+.view-toggle {
+    display: none !important; /* Hidden - cards only view */
+}
+
+/* Hide table container for cards-only view */
+.table-container {
+    display: none !important;
 }
 
 /* === CARDS CONTAINER === */
@@ -635,6 +655,12 @@ select:disabled {
     color: var(--primary-color);
 }
 
+.card-action-btn.edit-btn:hover {
+    background: rgba(52, 152, 219, 0.1);
+    border-color: #3498db;
+    color: #3498db;
+}
+
 .card-action-btn.delete-btn:hover {
     background: rgba(231, 76, 60, 0.1);
     border-color: #e74c3c;
@@ -687,8 +713,8 @@ select:disabled {
 
 /* === IMPROVED TABLE STYLES === */
 .table-container {
+    display: none !important; /* Hidden - cards only view */
     flex: 1;
-    display: flex;
     flex-direction: column;
     min-height: 0;
 }
@@ -829,6 +855,40 @@ select:disabled {
 
 /* === RESPONSIVE DESIGN === */
 @media (max-width: 768px) {
+    .page-header {
+        padding: 1.5rem;
+        gap: 1rem;
+    }
+    
+    .page-title {
+        font-size: 1.75rem;
+    }
+    
+    .page-subtitle {
+        font-size: 1rem;
+    }
+    
+    .header-right {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: stretch;
+    }
+    
+    .search-box {
+        max-width: none;
+        min-width: auto;
+    }
+    
+    .search-box input {
+        padding: 0.875rem 1rem 0.875rem 2.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .sort-dropdown .btn {
+        padding: 0.875rem 1.25rem;
+        font-size: 0.9rem;
+    }
+    
     .transactions-header {
         flex-direction: column;
         gap: 1rem;
@@ -856,10 +916,6 @@ select:disabled {
     .card-actions {
         flex-direction: column;
         gap: 0.5rem;
-    }
-    
-    .view-toggle {
-        order: -1;
     }
     
     .table-wrapper {
@@ -1276,18 +1332,31 @@ select:disabled {
 
 .modal-product-image, .modal-accessory-image {
     width: 100%;
-    max-width: 200px;
-    height: 150px;
+    height: 160px;
     object-fit: cover;
     border-radius: 12px;
-    margin-bottom: 1rem;
-    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.15);
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(255, 105, 180, 0.12);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .modal-product-image:hover, .modal-accessory-image:hover {
-    transform: scale(1.02);
-    box-shadow: 0 8px 24px rgba(255, 105, 180, 0.2);
+    transform: scale(1.03);
+    box-shadow: 0 8px 32px rgba(255, 105, 180, 0.2);
+}
+
+.no-image-placeholder {
+    width: 100%;
+    height: 160px;
+    background: linear-gradient(135deg, rgba(255, 105, 180, 0.05), rgba(255, 105, 180, 0.1));
+    border: 2px dashed rgba(255, 105, 180, 0.3);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 105, 180, 0.6);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
 }
 
 /* === MODAL FOOTER === */
@@ -1715,7 +1784,7 @@ select:disabled {
 
 .products-detail, .accessories-detail {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: 1fr;
     gap: 1.5rem;
     margin-bottom: 2rem;
 }
@@ -1726,6 +1795,9 @@ select:disabled {
     border-radius: 12px;
     padding: 1.5rem;
     transition: all 0.3s ease;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
 }
 
 .detail-product:hover, .detail-accessory:hover {
@@ -1733,12 +1805,21 @@ select:disabled {
     transform: translateY(-2px);
 }
 
+.item-image-container {
+    flex-shrink: 0;
+    width: 200px;
+}
+
+.item-info-container {
+    flex: 1;
+    min-width: 0;
+}
+
 .modal-product-image, .modal-accessory-image {
     width: 100%;
-    height: 180px;
+    height: 160px;
     object-fit: cover;
     border-radius: 12px;
-    margin-bottom: 1.25rem;
     box-shadow: 0 4px 16px rgba(255, 105, 180, 0.12);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -1746,6 +1827,21 @@ select:disabled {
 .modal-product-image:hover, .modal-accessory-image:hover {
     transform: scale(1.03);
     box-shadow: 0 8px 32px rgba(255, 105, 180, 0.2);
+}
+
+.no-image-placeholder {
+    width: 100%;
+    height: 160px;
+    background: linear-gradient(135deg, rgba(255, 105, 180, 0.05), rgba(255, 105, 180, 0.1));
+    border: 2px dashed rgba(255, 105, 180, 0.3);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 105, 180, 0.6);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
 }
 
 .detail-product h4, .detail-accessory h4 {
@@ -1847,7 +1943,6 @@ select:disabled {
     padding: 2rem;
     background: rgba(255, 105, 180, 0.02);
     border-radius: 8px;
-    grid-column: 1 / -1;
 }
 
 /* === RESPONSIVE MODAL === */
@@ -1873,9 +1968,19 @@ select:disabled {
     
     .detail-product, .detail-accessory {
         padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
     }
-      .modal-product-image, .modal-accessory-image {
+    
+    .item-image-container {
+        width: 100%;
+        align-self: center;
+    }
+    
+    .modal-product-image, .modal-accessory-image {
         height: 140px;
+        max-width: 200px;
+        margin: 0 auto;
     }
     
     .modal-footer {
