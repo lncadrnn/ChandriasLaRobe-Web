@@ -702,6 +702,47 @@ $(document).ready(function () {
     // --- Initialize cart summary on load ---
     updateCartSummary();
 
+    // --- GENERATE TRANSACTION CODE FUNCTION ---
+    async function generateTransactionCode() {
+        try {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = String(today.getFullYear()).slice(-2);
+            const dateString = `${day}${month}${year}`;
+            
+            // Query existing transactions to find the next sequence number
+            const transactionsRef = collection(chandriaDB, "transaction");
+            const q = query(transactionsRef, where("transactionCode", ">=", `TRNS-${dateString}-000`), where("transactionCode", "<=", `TRNS-${dateString}-999`));
+            const querySnapshot = await getDocs(q);
+            
+            let maxSequence = 0;
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                if (data.transactionCode) {
+                    const parts = data.transactionCode.split('-');
+                    if (parts.length === 3 && parts[0] === 'TRNS' && parts[1] === dateString) {
+                        const sequence = parseInt(parts[2]);
+                        if (!isNaN(sequence) && sequence > maxSequence) {
+                            maxSequence = sequence;
+                        }
+                    }
+                }
+            });
+            
+            // Generate next sequence number
+            const nextSequence = maxSequence + 1;
+            const sequenceString = String(nextSequence).padStart(3, '0');
+            
+            return `TRNS-${dateString}-${sequenceString}`;
+        } catch (error) {
+            console.error('Error generating transaction code:', error);
+            // Fallback to timestamp-based code if database query fails
+            const timestamp = Date.now().toString().slice(-6);
+            return `TRNS-${timestamp}`;
+        }
+    }
+
     // === APPOINTMENT FLOW FUNCTIONS ===
     // Check if the page was loaded from an appointment flow
     function checkAppointmentFlow() {
@@ -1643,19 +1684,17 @@ $(document).ready(function () {
                 throw new Error(
                     "Invalid transaction code generated: " + transactionCode
                 );
-            }
-
-            // --- COLLECT FORM DATA ---
+            }            // --- COLLECT FORM DATA ---
             const rentalTypeVal = $("#rental-type").val();
             let eventStartDateVal = "";
             let eventEndDateVal = "";
 
             if (rentalTypeVal === "Fixed Rental") {
-                eventStartDateVal = $fixedEventDateInput.val();
+                eventStartDateVal = $("#fixed-event-date").val();
                 eventEndDateVal = ""; // No end date for fixed rental
             } else if (rentalTypeVal === "Open Rental") {
-                eventStartDateVal = $eventStartDate.val();
-                eventEndDateVal = $eventEndDate.val();
+                eventStartDateVal = $("#event-start-date").val();
+                eventEndDateVal = $("#event-end-date").val();
             }
 
 
@@ -1675,7 +1714,7 @@ $(document).ready(function () {
                 totalPayment: parseFloat($("#total-payment").val()) || 0,
                 remainingBalance:
                     parseFloat($("#remaining-balance").val()) || 0,
-                referenceNo: $("#client-reference-no").val().trim(),
+                referenceNo: $("#reference-no").val().trim(),
                 region: $("#client-region").val(),
                 city: $("#client-city").val(),
                 address: $("#client-address").val().trim(),
@@ -2139,7 +2178,7 @@ $(document).ready(function () {
                     // Check if we need to remove excess additionals due to product limit
                     // Group additionals by name and count them
                     const additionalGroups = {};
-                    cart.accessories.forEach((item, idx) => {
+                    cart.accessories.forEach(( item, idx) => {
                         if (!additionalGroups[item.name]) {
                             additionalGroups[item.name] = [];
                         }
