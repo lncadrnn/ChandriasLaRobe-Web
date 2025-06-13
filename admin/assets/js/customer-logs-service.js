@@ -463,7 +463,7 @@ async function showTransactionDetails(transactionId) {
             const productDetails = await fetchProductDetails(product.id);
             const sizesHtml = product.sizes ? 
                 Object.entries(product.sizes)
-                    .map(([size, qty]) => `<li>${size}: ${qty} pcs</li>`)
+                    .map(([size, qty]) => `<li>${size}: ${qty} pc(s)</li>`)
                     .join('') : '';
             
             return `
