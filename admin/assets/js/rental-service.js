@@ -9,6 +9,38 @@ import {
     signOut
 } from "./sdk/chandrias-sdk.js";
 
+// Helper function to get image URL from product data
+function getImageUrl(product, type = 'front') {
+    // Try new structure first (using frontImageId/backImageId)
+    if (type === 'front' && product.frontImageId) {
+        return `https://res.cloudinary.com/dbtomr3fm/image/upload/${product.frontImageId}`;
+    }
+    if (type === 'back' && product.backImageId) {
+        return `https://res.cloudinary.com/dbtomr3fm/image/upload/${product.backImageId}`;
+    }
+    
+    // Try legacy structure (frontImageUrl/backImageUrl)
+    if (type === 'front' && product.frontImageUrl) {
+        return product.frontImageUrl;
+    }
+    if (type === 'back' && product.backImageUrl) {
+        return product.backImageUrl;
+    }
+    
+    // Try nested images structure
+    if (product.images) {
+        if (type === 'front' && product.images.front?.url) {
+            return product.images.front.url;
+        }
+        if (type === 'back' && product.images.back?.url) {
+            return product.images.back.url;
+        }
+    }
+    
+    // Fallback to generic imageUrl or placeholder
+    return product.imageUrl || '/admin/assets/images/placeholder.jpg';
+}
+
 $(document).ready(function () {
     // Prevent multiple initializations
     if (window.rentalServiceInitialized) {
@@ -66,11 +98,10 @@ $(document).ready(function () {
             
             products.push({
                 id: doc.id,
-                name: data.name,
-                code: data.code,
+                name: data.name,                code: data.code,
                 price: data.price,
                 size: data.size,
-                frontImageUrl: data.frontImageUrl,
+                frontImageUrl: getImageUrl(data, 'front'),
                 description: data.description || '',
                 category: 'Product'
             });

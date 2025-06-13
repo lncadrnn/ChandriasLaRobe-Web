@@ -181,11 +181,9 @@ class ComprehensiveInventoryLoader {
         card.setAttribute('data-name', product.name || '');
         card.setAttribute('data-category', product.category || '');
         card.setAttribute('data-price', product.price || '');
-        card.setAttribute('data-status', statusClass);
-
-        card.innerHTML = `
+        card.setAttribute('data-status', statusClass);        card.innerHTML = `
             <div class="card_img">
-                <img src="${product.frontImageUrl || product.imageUrl || '/placeholder.jpg'}" 
+                <img src="${this.getImageUrl(product, 'front')}" 
                      alt="${product.name || 'Product'}" 
                      loading="lazy" />
                 <div class="card_badge ${product.category?.toLowerCase().replace(/\s+/g, '-') || 'unknown'}">
@@ -227,6 +225,38 @@ class ComprehensiveInventoryLoader {
         `;
 
         return card;
+    }
+
+    // Get image URL from product data
+    getImageUrl(product, type = 'front') {
+        // Try new structure first (using frontImageId/backImageId)
+        if (type === 'front' && product.frontImageId) {
+            return `https://res.cloudinary.com/dbtomr3fm/image/upload/${product.frontImageId}`;
+        }
+        if (type === 'back' && product.backImageId) {
+            return `https://res.cloudinary.com/dbtomr3fm/image/upload/${product.backImageId}`;
+        }
+        
+        // Try legacy structure (frontImageUrl/backImageUrl)
+        if (type === 'front' && product.frontImageUrl) {
+            return product.frontImageUrl;
+        }
+        if (type === 'back' && product.backImageUrl) {
+            return product.backImageUrl;
+        }
+        
+        // Try nested images structure
+        if (product.images) {
+            if (type === 'front' && product.images.front?.url) {
+                return product.images.front.url;
+            }
+            if (type === 'back' && product.images.back?.url) {
+                return product.images.back.url;
+            }
+        }
+        
+        // Fallback to generic imageUrl or placeholder
+        return product.imageUrl || '/admin/assets/images/placeholder.jpg';
     }
 
     // Get status text

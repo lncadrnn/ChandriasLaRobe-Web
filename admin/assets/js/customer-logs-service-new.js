@@ -1699,12 +1699,11 @@ function showProcessOverdueModal(transactionId) {
     // Calculate days overdue
     const daysOverdue = calculateDaysOverdue(transaction);
     document.getElementById('overdue-days-count').textContent = `${daysOverdue} days`;
-    
-    // Reset form
+      // Reset form
     document.getElementById('mark-completed').checked = true;
     document.getElementById('late-fee-section').style.display = 'none';
     document.getElementById('late-fee-amount').value = '';
-    document.getElementById('late-fee-notes').value = '';
+    document.getElementById('late-fee-reason').value = 'late-return';
     
     // Show modal immediately
     const modal = document.getElementById('process-overdue-modal');
@@ -1787,19 +1786,16 @@ async function confirmProcessOverdue() {
             // Mark as completed
             updateData.returnConfirmed = true;
             updateData.completedDate = new Date().toISOString();
-            
-        } else if (selectedAction === 'late-fee') {
-            // Add late fee and mark as completed
+              } else if (selectedAction === 'late-fee') {
+            // Add overdue fee and mark as completed
             const feeAmount = parseFloat(document.getElementById('late-fee-amount').value) || 0;
             const feeReason = document.getElementById('late-fee-reason').value;
-            const feeNotes = document.getElementById('late-fee-notes').value;
             
             updateData.returnConfirmed = true;
             updateData.completedDate = new Date().toISOString();
-            updateData.lateFee = {
-                amount: feeAmount,
-                reason: feeReason,
-                notes: feeNotes,
+            updateData.overdueFee = {
+                overdueAmount: feeAmount,
+                overdueReason: feeReason,
                 addedDate: new Date().toISOString()
             };
             
@@ -1823,13 +1819,12 @@ async function confirmProcessOverdue() {
         
         // Hide loading
         document.querySelector('.admin-action-spinner').style.display = 'none';
-        
-        // Show success message
+          // Show success message
         let successMessage = '';
         if (selectedAction === 'completed') {
             successMessage = 'Overdue rental marked as completed successfully!';
         } else if (selectedAction === 'late-fee') {
-            successMessage = 'Late fee added and rental completed successfully!';
+            successMessage = 'Overdue fee added and rental completed successfully!';
         }
         
         showSuccessModal('Process Overdue', successMessage);

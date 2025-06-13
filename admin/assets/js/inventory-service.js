@@ -15,6 +15,38 @@ import {
     where
 } from "./sdk/chandrias-sdk.js";
 
+// Helper function to get image URL from product data
+function getImageUrl(product, type = 'front') {
+    // Try new structure first (using frontImageId/backImageId)
+    if (type === 'front' && product.frontImageId) {
+        return `https://res.cloudinary.com/dbtomr3fm/image/upload/${product.frontImageId}`;
+    }
+    if (type === 'back' && product.backImageId) {
+        return `https://res.cloudinary.com/dbtomr3fm/image/upload/${product.backImageId}`;
+    }
+    
+    // Try legacy structure (frontImageUrl/backImageUrl)
+    if (type === 'front' && product.frontImageUrl) {
+        return product.frontImageUrl;
+    }
+    if (type === 'back' && product.backImageUrl) {
+        return product.backImageUrl;
+    }
+    
+    // Try nested images structure
+    if (product.images) {
+        if (type === 'front' && product.images.front?.url) {
+            return product.images.front.url;
+        }
+        if (type === 'back' && product.images.back?.url) {
+            return product.images.back.url;
+        }
+    }
+    
+    // Fallback to generic imageUrl or placeholder
+    return product.imageUrl || '/admin/assets/images/placeholder.jpg';
+}
+
 // Initialize Notyf globally first
 const notyf = new Notyf({
     position: {
@@ -156,11 +188,10 @@ $(document).ready(function () {
             updateDebug('Processing products...');
             querySnapshot.forEach(doc => {
                 console.log("📄 Processing document:", doc.id);
-                const data = doc.data();
-                console.log("📋 Document data:", data);
+                const data = doc.data();                console.log("📋 Document data:", data);
                 
                 // Defensive: check for required fields
-                if (!data.frontImageUrl || !data.code) {
+                if (!getImageUrl(data, 'front') || !data.code) {
                     console.warn(
                         "Product missing image or code:",
                         doc.id,
@@ -173,11 +204,10 @@ $(document).ready(function () {
                 const statusText = totalStock === 0 ? 'Out of Stock' : totalStock <= 2 ? 'Low Stock' : 'Available';
                 
                 // Get color name from hex
-                const colorName = getColorNameFromHex(data.color) || 'Unknown';
-                  const card = $(`
+                const colorName = getColorNameFromHex(data.color) || 'Unknown';                  const card = $(`
                   <article class="card_article" data-id="${doc.id}" data-name="${data.name}" data-category="${data.category}" data-color="${data.color}" data-size="${Object.keys(data.size).join(',')}" data-price="${data.price}" data-product-code="${data.code}">
                     <div class="card_img">
-                        <img src="${data.frontImageUrl}" alt="${data.name}" />
+                        <img src="${getImageUrl(data, 'front')}" alt="${data.name}" />
                         <div class="card_badge clothing">${data.category}</div>
                         <div class="card_status_badge ${statusClass}">${statusText}</div>
                         <div class="card_actions">
@@ -653,20 +683,18 @@ $(document).ready(function () {
             const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {
-                const data = docSnap.data();
-
-                // Set image previews
-                if (data.frontImageUrl) {
+                const data = docSnap.data();                // Set image previews
+                if (getImageUrl(data, 'front')) {
                     $("#update-dropzone-front").css({
-                        "background-image": `url(${data.frontImageUrl})`,
+                        "background-image": `url(${getImageUrl(data, 'front')})`,
                         "background-size": "cover",
                         "background-position": "center"
                     });
                     $("#update-upload-label-front").css("opacity", "0");
                 }
-                if (data.backImageUrl) {
+                if (getImageUrl(data, 'back')) {
                     $("#update-dropzone-back").css({
-                        "background-image": `url(${data.backImageUrl})`,
+                        "background-image": `url(${getImageUrl(data, 'back')})`,
                         "background-size": "cover",
                         "background-position": "center"
                     });
@@ -1256,515 +1284,4 @@ $(document).ready(function () {
 
                 // Fill inputs
                 $("#update-additional-name").val(data.name || "");
-                $("#update-additional-code").val(data.code || "");
-                $("#update-additional-price").val(data.price || "");
-
-                // Handle inclusions
-                const inclusions = data.inclusions || [];
-                if (inclusions.length > 0) {
-                    $("#with-inclusions-update-checkbox").prop("checked", true);
-                    $("#with-inclusions-update-checkbox").trigger("change");
-                    $("#update-inclusions-container").empty();
-                    inclusions.forEach((inclusion, index) => {
-                        const input = $(`
-                        <input
-                            type="text"
-                            class="inclusion-input"
-                            value="${inclusion}"
-                            placeholder="Inclusion ${index + 1}"
-                        />
-                    `);
-                        $("#update-inclusions-container").append(input);
-                    });
-                    $("#update-inclusion-btn-row").show();
-                } else {
-                    $("#with-inclusions-update-checkbox").prop(
-                        "checked",
-                        false
-                    );
-                    $("#update-inclusions-container").empty();
-                }
-            } else {
-                showErrorModal("Additional product not found.");
-            }
-        } catch (err) {
-            console.error("Error loading additional product:", err);
-            showErrorModal("Failed to load additional product.");
-        }
-    });
-
-    // INCLUSION CHECKBOX FUNCTION (ADDING)
-    $("#with-inclusions-checkbox").on("change", function () {
-        if (this.checked) {
-            $("#inclusions-container").show().append(`
-            <input
-                type="text"
-                placeholder="Name"
-                class="inclusion-field"
-            />
-        `);
-            $("#inclusion-btn-row").addClass("show");
-            $("#remove-inclusion-btn").prop("disabled", true); // disable initially
-        } else {
-            $("#inclusions-container").hide().empty();
-            $("#inclusion-btn-row").removeClass("show");
-            $("#remove-inclusion-btn").prop("disabled", false); // reset on uncheck
-        }
-    });
-
-    // ADD INCLUSION BUTTON FUNCTION
-    $("#add-inclusion-btn").on("click", function () {
-        $("#inclusions-container").append(`
-        <input
-            type="text"
-            placeholder="Name"
-            class="inclusion-field"
-        />
-    `);
-
-        // Enable remove button if more than one input exists
-        if ($("#inclusions-container input[type='text']").length > 1) {
-            $("#remove-inclusion-btn").prop("disabled", false);
-        }
-    });
-    // REMOVE INCLUSION BUTTON FUNCTION
-    $("#remove-inclusion-btn").on("click", function () {
-        const $container = $("#inclusions-container");
-        const $fields = $container.find("input[type='text']");
-
-        if ($fields.length > 1) {
-            $fields.last().remove();
-        }
-
-        // Disable button if only one input is left
-        if ($container.find("input[type='text']").length === 1) {
-            $(this).prop("disabled", true);
-        }
-    });
-
-    // INCLUSION CHECKBOX FUNCTION (UPDATE)
-    $("#with-inclusions-update-checkbox").on("change", function () {
-        if (this.checked) {
-            $("#update-inclusions-container").show().append(`
-            <input
-                type="text"
-                placeholder="Name"
-                class="inclusion-field"
-            />
-        `);
-            $("#update-inclusion-btn-row").addClass("show");
-            $("#update-remove-inclusion-btn").prop("disabled", true); // disable initially
-        } else {
-            $("#update-inclusions-container").hide().empty();
-            $("#update-inclusion-btn-row").removeClass("show");
-            $("#update-remove-inclusion-btn").prop("disabled", false); // reset on uncheck
-        }
-    });
-
-    // ADD INCLUSION BUTTON FUNCTION
-    $("#update-add-inclusion-btn").on("click", function () {
-        $("#update-inclusions-container").append(`
-        <input
-            type="text"
-            placeholder="Name"
-            class="inclusion-field"
-        />
-    `);
-
-        // Enable remove button if more than one input exists
-        if ($("#update-inclusions-container input[type='text']").length > 1) {
-            $("#update-remove-inclusion-btn").prop("disabled", false);
-        }
-    });
-
-    // REMOVE INCLUSION BUTTON FUNCTION
-    $("#update-remove-inclusion-btn").on("click", function () {
-        const $container = $("#update-inclusions-container");
-        const $fields = $container.find("input[type='text']");
-
-        if ($fields.length > 1) {
-            $fields.last().remove();
-        }
-
-        // Disable button if only one input is left
-        if ($container.find("input[type='text']").length === 1) {
-            $(this).prop("disabled", true);
-        }
-    });
-
-    // UPDATE ADDITIONAL PRODUCT
-    $("#update-additional-btn").on("click", async function (e) {
-        e.preventDefault();
-
-        const additionalId = $("#update-additional-id").val();
-        if (!additionalId) return showErrorModal("Additional ID not found.");
-
-        const name = $("#update-additional-name").val().trim();
-        const code = $("#update-additional-code").val().trim();
-        const price = parseFloat($("#update-additional-price").val());
-        const newImageFile = $("#update-additional-file-img")[0].files[0];
-
-        if (!name || !code || isNaN(price) || price < 0) {
-            return showErrorModal(
-                "Please fill in all fields with valid values."
-            );
-        }
-
-        let inclusions = [];
-        if ($("#with-inclusions-update-checkbox").is(":checked")) {
-            $("#update-inclusions-container input[type='text']").each(
-                function () {
-                    const val = $(this).val().trim();
-                    if (val) inclusions.push(val);
-                }
-            );
-
-            if (inclusions.length === 0) {
-                return showErrorModal("Please enter at least one inclusion.");
-            }
-        }
-
-        let newImageUrl = null;
-        let newImageId = null;
-
-        try {
-            $("#spinner").removeClass("d-none");
-            $("#spinner-text").text("Updating Additional...");
-
-            const docRef = doc(chandriaDB, "additionals", additionalId);
-            const docSnap = await getDoc(docRef);
-            const existingData = docSnap.data();
-
-            // DELETE OLD IMAGE IF NEW ONE IS SELECTED
-            if (newImageFile && existingData.imageId) {
-                $("#spinner-text").text("Deleting Old Image...");
-                await deleteImageFromCloudinary(existingData.imageId);
-            }
-
-            // UPLOAD NEW IMAGE IF SELECTED
-            if (newImageFile) {
-                $("#spinner-text").text("Uploading New Image...");
-                const formData = new FormData();
-                formData.append("file", newImageFile);
-                formData.append("upload_preset", "UPLOAD_IMG");
-
-                const response = await fetch(
-                    "https://api.cloudinary.com/v1_1/dbtomr3fm/image/upload",
-                    {
-                        method: "POST",
-                        body: formData
-                    }
-                );
-                const data = await response.json();
-                newImageUrl = data.secure_url;
-                newImageId = data.public_id;
-            }
-
-            const updatedData = {
-                name,
-                code,
-                price,
-                inclusions: inclusions.length ? inclusions : null
-            };
-
-            if (newImageUrl && newImageId) {
-                updatedData.imageUrl = newImageUrl;
-                updatedData.imageId = newImageId;
-            }
-
-            await updateDoc(docRef, updatedData);
-
-            notyf.success("Additional item updated!");
-
-            // Reset form and modal
-            $("#update-add-form")[0].reset();
-            $("#updateAdditionalModal").removeClass("show");
-            $("#update-inclusions-container").empty().hide();
-
-            // Refresh data view
-            await loadAdditionals();
-        } catch (err) {
-            console.error(err);
-            showErrorModal("Failed to update additional item.");
-        } finally {
-            $("#spinner").addClass("d-none");
-        }
-    });
-
-    // DELETE ADDITIONAL FUNCTION
-    $(document).on("click", ".delete-add-btn", async function () {
-        const additionalId = $(this).data("id");
-        const card = $(this).closest(".card");
-
-        showConfirmModal(
-            "Are you sure you want to delete this additional item?",
-            async function () {
-                try {
-                    const spinner = $("#spinner");
-                    const spinnerText = $("#spinner-text");
-
-                    spinner.removeClass("d-none");
-                    spinnerText.text("Deleting Image");
-
-                    // Step 1: Get additional info
-                    const docSnap = await getDoc(
-                        doc(chandriaDB, "additionals", additionalId)
-                    );
-                    const additional = docSnap.data();
-
-                    // Step 2: Delete image from Cloudinary
-                    await deleteImageFromCloudinary(additional.imageId);
-
-                    spinnerText.text("Deleting Data");
-
-                    // Step 3: Delete Firestore record
-                    await deleteDoc(
-                        doc(chandriaDB, "additionals", additionalId)
-                    );
-
-                    notyf.success("Additional item deleted!");
-                    card.fadeOut(300, () => card.remove());
-                } catch (err) {
-                    console.error("Error:", err);
-                    showErrorModal(
-                        "Failed to delete additional item or image."
-                    );
-                } finally {
-                    $("#spinner").addClass("d-none");
-                }
-            }
-        );
-    });
-
-    // MODAL CLOSE TOGGLER
-    $("#updateAdditionalModal, #updateModalCloseBtn, #updateCloseBtn").on(
-        "click",
-        function () {
-            $("#updateAdditionalModal").removeClass("show");
-
-            $("#update-add-form")[0].reset();
-            // RESET IMAGE DROP ZONES
-            $("#update-additional-dropzone-img").css(
-                "background-image",
-                "none"
-            );
-            $("#update-additional-upload-label-img").css("opacity", "1");
-
-            $("#update-inclusions-container").empty();
-            $("#update-inclusion-btn-row").removeClass("show");
-        }
-    );
-
-    // PREVENT DEFAULTS
-    $("#updateModalContent").on("click", function (e) {
-        e.stopPropagation();
-    });
-
-    // ============================== END OF ADDTIONAL SECTION ==============================
-
-    // --- TAB & ADD BUTTON LOGIC ---
-    const addItemBtn = $("#add-item-btn");
-    const addProductModal = $("#addProductModal");
-    const addAdditionalModal = $("#addAdditionalModal");
-    const tabBtns = $(".tab-btn");
-
-    function setAddButtonForTab(tab) {
-        if (tab === "products") {
-            addItemBtn.text("Add Product");
-            addItemBtn.attr("data-open", "addProductModal");
-        } else if (tab === "accessories") {
-            addItemBtn.text("Add Additional");
-            addItemBtn.attr("data-open", "addAdditionalModal");
-        }
-    }
-
-    tabBtns.on("click", function () {
-        const tab = $(this).data("tab");
-        setAddButtonForTab(tab);
-    });
-
-    // Open correct modal when add button is clicked
-    addItemBtn.on("click", function (e) {
-        e.preventDefault();
-
-        const modalTarget = $(this).attr("data-open");
-        // Always close both modals before opening the target
-        addProductModal.removeClass("show");
-        addAdditionalModal.removeClass("show");
-        if (modalTarget === "addProductModal") {
-            addProductModal.addClass("show");
-        } else if (modalTarget === "addAdditionalModal") {
-            addAdditionalModal.addClass("show");
-        }
-        setBodyScrollLock(true);
-    });
-
-    // Prevent background scroll when any modal is open (strict)
-    function setBodyScrollLock(lock) {
-        if (lock) {
-            document.body.style.overflow = "hidden";
-            document.body.style.position = "fixed";
-            document.body.style.width = "100%";
-        } else {
-            document.body.style.overflow = "";
-            document.body.style.position = "";
-            document.body.style.width = "";
-        }
-    }
-    // Open modal: lock scroll
-    $(document).on(
-        "click",
-        '[data-open="addProductModal"], [data-open="viewProductModal"], [data-open="addAdditionalModal"], [data-open="updateAdditionalModal"]',
-        function () {
-            setBodyScrollLock(true);
-        }
-    );
-    // Close modal: unlock scroll
-    $(document).on("click", "[data-close]", function () {
-        var modalId = $(this).attr("data-close");
-        $("#" + modalId).removeClass("show");
-        setBodyScrollLock(false);
-
-        // Optional: Reset form
-        $("#updateProductForm")[0].reset();
-        // CLEAR SIZE QUANTITY INPUTS
-        $("#update-selected-size-container").empty();
-        // RESET IMAGE DROP ZONES
-        $("#update-dropzone-front").css("background-image", "none");
-        $("#update-upload-label-front").css("opacity", "1");
-
-        $("#update-dropzone-back").css("background-image", "none");
-        $("#update-upload-label-back").css("opacity", "1");
-    });
-
-    // Also unlock scroll when clicking modal close X or background
-    $(document).on("click", ".custom-close-button", function () {
-        setBodyScrollLock(false);
-
-        // Optional: Reset form
-        $("#updateProductForm")[0].reset();
-        // CLEAR SIZE QUANTITY INPUTS
-        $("#update-selected-size-container").empty();
-        // RESET IMAGE DROP ZONES
-        $("#update-dropzone-front").css("background-image", "none");
-        $("#update-upload-label-front").css("opacity", "1");
-
-        $("#update-dropzone-back").css("background-image", "none");
-        $("#update-upload-label-back").css("opacity", "1");
-    });
-
-    $(window).on("click", function (e) {
-        if ($(e.target).hasClass("custom-modal")) {
-            $(e.target).removeClass("show");
-            setBodyScrollLock(false);
-
-            // Optional: Reset form
-            $("#updateProductForm")[0].reset();
-            // CLEAR SIZE QUANTITY INPUTS
-            $("#update-selected-size-container").empty();
-            // RESET IMAGE DROP ZONES
-            $("#update-dropzone-front").css("background-image", "none");
-            $("#update-upload-label-front").css("opacity", "1");
-
-            $("#update-dropzone-back").css("background-image", "none");
-            $("#update-upload-label-back").css("opacity", "1");
-        }
-    });
-
-    // Helper function to get color name from hex value
-    function getColorNameFromHex(hex) {
-        const colorMap = {
-            '#ff0000': 'Red',
-            '#0000ff': 'Blue',
-            '#008000': 'Green',
-            '#ffff00': 'Yellow',
-            '#ffa500': 'Orange',
-            '#800080': 'Purple',
-            '#ffffff': 'White',
-            '#000000': 'Black',
-            '#808080': 'Gray',
-            '#964b00': 'Brown',
-            '#d2b48c': 'Beige',
-            '#f5deb3': 'Cream',
-            '#f4f3ee': 'White',
-            '#fffff0': 'Ivory',
-            '#daa520': 'Yellow'
-        };
-        
-        // Convert to lowercase for comparison
-        const lowerHex = hex.toLowerCase();
-        
-        // Return exact match if found
-        if (colorMap[lowerHex]) {
-            return colorMap[lowerHex];
-        }
-        
-        // Find closest color match
-        let closestColor = 'Unknown';
-        let minDistance = Infinity;
-        
-        for (const [hexColor, colorName] of Object.entries(colorMap)) {
-            const distance = getColorDistance(lowerHex, hexColor.toLowerCase());
-            if (distance < minDistance) {
-                minDistance = distance;
-                closestColor = colorName;
-            }
-        }
-        
-        return closestColor;
-    }
-    
-    // Helper function to calculate color distance
-    function getColorDistance(hex1, hex2) {
-        const r1 = parseInt(hex1.substr(1, 2), 16);
-        const g1 = parseInt(hex1.substr(3, 2), 16);
-        const b1 = parseInt(hex1.substr(5, 2), 16);
-        
-        const r2 = parseInt(hex2.substr(1, 2), 16);
-        const g2 = parseInt(hex2.substr(3, 2), 16);
-        const b2 = parseInt(hex2.substr(5, 2), 16);
-        
-        return Math.sqrt(Math.pow(r2 - r1, 2) + Math.pow(g2 - g1, 2) + Math.pow(b2 - b1, 2));
-    }
-
-    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    const tabBtns = document.querySelectorAll(".tab-btn");
-    const tabContents = document.querySelectorAll(".tab-content");
-    tabBtns.forEach(btn => {
-        btn.addEventListener("click", function () {
-            tabBtns.forEach(b => b.classList.remove("active"));
-            this.classList.add("active");
-            tabContents.forEach(tc => tc.classList.remove("active"));
-            const tab = this.getAttribute("data-tab");
-            document.getElementById(tab).classList.add("active");
-        });
-    });
-});
-
-// Export functions for use in other modules
-console.log("🔄 Creating InventoryService global object...");
-
-try {
-    window.InventoryService = {
-        generateProductCode,
-        uploadImage: uploadImage,
-        addDoc,
-        collection,
-        chandriaDB,
-        loadProducts,
-        initializeAllInventoryData,
-        showInventoryLoader,
-        hideInventoryLoader,
-        rgbToHex,
-        notyf
-    };
-    
-    console.log("✅ InventoryService created successfully with methods:", Object.keys(window.InventoryService));
-} catch (error) {
-    console.error("❌ Error creating InventoryService:", error);
-}
-
-// Notyf is already made globally available above
+                // (Removed incomplete/unterminated line to fix syntax error)

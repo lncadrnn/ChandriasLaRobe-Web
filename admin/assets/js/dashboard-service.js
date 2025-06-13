@@ -3,6 +3,38 @@ document.addEventListener("DOMContentLoaded", () => {
     firebase.initializeApp(window.firebaseConfig);
     const db = firebase.firestore();
 
+    // Helper function to get image URL from product data
+    function getImageUrl(product, type = 'front') {
+        // Try new structure first (using frontImageId/backImageId)
+        if (type === 'front' && product.frontImageId) {
+            return `https://res.cloudinary.com/dbtomr3fm/image/upload/${product.frontImageId}`;
+        }
+        if (type === 'back' && product.backImageId) {
+            return `https://res.cloudinary.com/dbtomr3fm/image/upload/${product.backImageId}`;
+        }
+        
+        // Try legacy structure (frontImageUrl/backImageUrl)
+        if (type === 'front' && product.frontImageUrl) {
+            return product.frontImageUrl;
+        }
+        if (type === 'back' && product.backImageUrl) {
+            return product.backImageUrl;
+        }
+        
+        // Try nested images structure
+        if (product.images) {
+            if (type === 'front' && product.images.front?.url) {
+                return product.images.front.url;
+            }
+            if (type === 'back' && product.images.back?.url) {
+                return product.images.back.url;
+            }
+        }
+        
+        // Fallback to generic imageUrl or placeholder
+        return product.imageUrl || './assets/images/placeholder.png';
+    }
+
     // Sidebar toggle logic
     const body = document.querySelector("body"),
         sidebar = body.querySelector(".sidebar"),
@@ -452,16 +484,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             .join(', ') || 'N/A';
                             
                         const totalQuantity = Object.values(product.sizes || {}).reduce((sum, qty) => sum + qty, 0);
-                        
-                        // Better image URL handling with multiple fallbacks
-                        let imageUrl = './assets/images/placeholder.png';
-                        if (productData.frontImageUrl && productData.frontImageUrl.trim() !== '') {
-                            imageUrl = productData.frontImageUrl;
-                        } else if (productData.imageUrl && productData.imageUrl.trim() !== '') {
-                            imageUrl = productData.imageUrl;
-                        } else if (productData.backImageUrl && productData.backImageUrl.trim() !== '') {
-                            imageUrl = productData.backImageUrl;
-                        }
+                          // Better image URL handling with multiple fallbacks
+                        const imageUrl = getImageUrl(productData, 'front') || './assets/images/placeholder.png';
                         
                         return {
                             type: 'Product',
