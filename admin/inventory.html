@@ -19,337 +19,27 @@
         <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css"
-        />        <!-- EXTERNAL CSS -->
+        />
+
+        <!-- EXTERNAL CSS -->
         <link rel="stylesheet" href="./assets/css/admin-layout.css" />
-        <link rel="stylesheet" href="./assets/css/admin-layout-mob.css" />
-        <link rel="stylesheet" href="./assets/css/inventory-modern.css" />
-        <link rel="stylesheet" href="./assets/css/spinners-admin.css" />
-
-        <!-- Custom Edit Modal Styles -->
-        <style>
-            /* Edit Modal Styles */
-            .custom-modal {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100vw;
-                height: 100vh;
-                background: rgba(0, 0, 0, 0.6);
-                display: none;
-                align-items: center;
-                justify-content: center;
-                z-index: 999999;
-                backdrop-filter: blur(3px);
-            }
-
-            .custom-modal.show {
-                display: flex;
-            }
-
-            .custom-modal-content {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: white;
-                border-radius: 16px;
-                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-                max-width: 600px;
-                width: 90%;
-                max-height: 85vh;
-                overflow-y: auto;
-                animation: modalSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            }
-
-            @keyframes modalSlideIn {
-                from { 
-                    opacity: 0; 
-                    transform: translate(-50%, -60%) scale(0.9); 
-                }
-                to { 
-                    opacity: 1; 
-                    transform: translate(-50%, -50%) scale(1); 
-                }
-            }
-
-            .custom-close-button {
-                position: absolute;
-                top: 16px;
-                right: 20px;
-                background: none;
-                border: none;
-                font-size: 28px;
-                color: #9ca3af;
-                cursor: pointer;
-                z-index: 10;
-                width: 40px;
-                height: 40px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 8px;
-                transition: all 0.2s ease;
-            }
-
-            .custom-close-button:hover {
-                background: #f3f4f6;
-                color: #6b7280;
-            }
-
-            #updateProductForm {
-                padding: 24px;
-            }
-
-            #updateProductForm input[type="text"],
-            #updateProductForm input[type="number"],
-            #updateProductForm select {
-                width: 100%;
-                padding: 12px 16px;
-                border: 2px solid #e5e7eb;
-                border-radius: 10px;
-                font-size: 14px;
-                margin-bottom: 16px;
-                transition: all 0.3s ease;
-                background: #f9fafb;
-            }
-            
-            /* Simple, spacious textarea design */
-            #updateProductForm textarea {
-                width: 100%;
-                padding: 16px;
-                border: 1px solid #e5e7eb;
-                border-radius: 8px;
-                font-size: 15px;
-                margin-bottom: 20px;
-                min-height: 120px;
-                resize: vertical;
-                background: white;
-                font-family: inherit;
-                line-height: 1.6;
-                transition: border-color 0.2s ease;
-            }
-
-            #updateProductForm input[type="text"]:focus,
-            #updateProductForm input[type="number"]:focus,
-            #updateProductForm select:focus {
-                outline: none;
-                border-color: var(--primary-color);
-                background: white;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-            }
-            
-            #updateProductForm textarea:focus {
-                outline: none;
-                border-color: var(--primary-color);
-                box-shadow: none;
-            }
-
-            .file-upload-container {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 16px;
-                margin-bottom: 20px;
-            }
-
-            .drop-zone {
-                border: 2px dashed #d1d5db;
-                border-radius: 12px;
-                padding: 24px;
-                text-align: center;
-                transition: all 0.3s ease;
-                background: #f9fafb;
-                position: relative;
-                min-height: 140px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .drop-zone:hover {
-                border-color: var(--primary-color);
-                background: #f0f9ff;
-            }
-
-            .upload-label {
-                cursor: pointer;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 8px;
-            }
-
-            .upload-icon {
-                width: 32px;
-                height: 32px;
-                opacity: 0.6;
-            }
-
-            .upload-label p {
-                margin: 0;
-                font-size: 14px;
-                color: #6b7280;
-                font-weight: 500;
-            }
-
-            .price-input {
-                display: flex;
-                align-items: center;
-                border: 2px solid #e5e7eb;
-                border-radius: 10px;
-                background: #f9fafb;
-                margin-bottom: 16px;
-                transition: all 0.3s ease;
-            }
-
-            .price-input:focus-within {
-                border-color: var(--primary-color);
-                background: white;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-            }
-
-            .price-symbol,
-            .price-suffix {
-                padding: 12px 16px;
-                background: #e5e7eb;
-                color: #6b7280;
-                font-weight: 600;
-                font-size: 14px;
-            }
-
-            .price-symbol {
-                border-radius: 8px 0 0 8px;
-                border-right: 1px solid #d1d5db;
-            }
-
-            .price-suffix {
-                border-radius: 0 8px 8px 0;
-                border-left: 1px solid #d1d5db;
-            }
-
-            .price-input input {
-                flex: 1;
-                border: none;
-                background: transparent;
-                padding: 12px 16px;
-                font-size: 14px;
-                margin: 0;
-            }
-
-            .price-input input:focus {
-                outline: none;
-                box-shadow: none;
-                border: none;
-            }
-
-            .size-container {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 12px;
-                margin-bottom: 20px;
-            }
-
-            .size-container label {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                padding: 8px 16px;
-                background: #f3f4f6;
-                border: 2px solid #e5e7eb;
-                border-radius: 8px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                font-size: 13px;
-                font-weight: 500;
-            }
-
-            .size-container label:hover {
-                background: #e5e7eb;
-            }
-
-            .size-container input[type="checkbox"]:checked + span,
-            .size-container label:has(input:checked) {
-                background: var(--primary-color);
-                color: white;
-                border-color: var(--primary-color);
-            }
-
-            #update-selected-size-container {
-                margin-bottom: 20px;
-            }
-
-            .modal-buttons {
-                display: flex;
-                gap: 12px;
-                justify-content: flex-end;
-                margin-top: 24px;
-                padding-top: 20px;
-                border-top: 1px solid #e5e7eb;
-            }
-
-            .custom-btn {
-                padding: 12px 24px;
-                border: 2px solid #e5e7eb;
-                border-radius: 10px;
-                font-size: 14px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                background: white;
-                color: #374151;
-                min-width: 100px;
-            }
-
-            .custom-btn:hover {
-                background: #f9fafb;
-                border-color: #d1d5db;
-            }
-
-            .custom-btn.primary-btn {
-                background: var(--primary-color);
-                color: white;
-                border-color: var(--primary-color);
-            }
-
-            .custom-btn.primary-btn:hover {
-                background: #2563eb;
-                border-color: #2563eb;
-                transform: translateY(-1px);
-            }
-
-            @media (max-width: 768px) {
-                .custom-modal-content {
-                    width: 95%;
-                    margin: 20px;
-                    max-height: 90vh;
-                }
-                
-                .file-upload-container {
-                    grid-template-columns: 1fr;
-                }
-                
-                .modal-buttons {
-                    flex-direction: column;
-                }
-                
-                .custom-btn {
-                    width: 100%;
-                }
-            }
-        </style>
+        <link rel="stylesheet" href="./assets/css/inventory.css" />
     </head>
     <body>
-        <!-- Page Loader -->
-        <div class="admin-page-loader">
-            <div class="admin-spinner-with-text">
-                <div class="admin-page-spinner"></div>
-                <div class="admin-spinner-text">Loading Inventory...</div>
+        <!-- ====== INVENTORY LOADER ====== -->
+        <div id="inventory-loader" class="inventory-loader hidden">
+            <div class="inventory-loader-content">
+                <div class="inventory-spinner"></div>
+                <div class="inventory-loader-text">
+                    Loading data from the inventory.
+                </div>
             </div>
-        </div>        <!-- Action Spinner -->
-        <div class="admin-action-spinner">
-            <div class="admin-spinner-with-text">
-                <div class="admin-spinner"></div>
-                <div class="admin-spinner-text">Processing...</div>
-            </div>
+        </div>
+
+        <!-- SPINNER -->
+        <div class="container-spinner d-none" id="spinner">
+            <div class="spinner"></div>
+            <div class="spinner-text" id="spinner-text">Uploading</div>
         </div>
           <!-- // -->
         <nav class="sidebar close">
@@ -416,345 +106,264 @@
                 <div class="bottom-content"></div>
             </div>
         </nav>        <main class="main-content">
-            <div class="inventory-container">
-                <header class="page-header">
-                    <div class="header-left">
-                        <h1 class="page-title">Inventory Management</h1>
-                        <p class="page-subtitle">Manage your rental inventory, add new products, and track availability</p>
+            <header class="page-header">
+                <div class="header-left">
+                    <h1 class="page-title">Inventory Management</h1>
+                    <p class="page-subtitle">Manage your rental inventory, add new products, and track availability</p>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <i class="bx bx-search icon"></i>
+                        <input type="text" placeholder="Search products..." />
                     </div>
-                    <div class="header-right">                        <div class="search-box">
-                            <i class="bx bx-search icon"></i>
-                            <input type="text" placeholder="Search products..." />
-                            <button class="clear-btn" style="display: none;" title="Clear search">
-                                <i class="bx bx-x"></i>
-                            </button>
-                        </div>                        <button class="btn btn-primary" id="add-item-btn" data-open="addProductModal">
-                            <i class="bx bx-plus"></i>
-                            <span>Add Product</span>
-                        </button>
-                        <button class="btn btn-secondary" id="reload-products-btn" style="margin-left: 10px;">
-                            <i class="bx bx-refresh"></i>
-                            <span>Reload Products</span>
-                        </button>
-                    </div>
-                </header>
-
-            <div class="page-content">
-                <!-- Category Tabs -->
-                <div class="pos-tabs" style="margin-top: 1.5rem">
-                    <button class="tab-btn active" data-tab="products">
-                        All Products
-                    </button>
-                    <button class="tab-btn" data-tab="clothing">
-                        Clothing
-                    </button>
-                    <button class="tab-btn" data-tab="accessories">
-                        Additional / Accessories
+                    <button class="btn btn-primary" id="add-item-btn" data-open="addProductModal">
+                        <i class="bx bx-plus"></i>
+                        <span>Add Product</span>
                     </button>
                 </div>
-
-                <!-- Products Layout -->
-                <div class="pos-layout">                    <div class="pos-products tab-content active" id="products">
+            </header>
+            <div class="page-content">
+                <div class="pos-tabs" style="margin-top: 1.5rem">
+                    <button class="tab-btn active" data-tab="products">
+                        Products
+                    </button>
+                    <button class="tab-btn" data-tab="accessories">
+                        Additional
+                    </button>
+                </div>
+                <div class="pos-layout">
+                    <div class="pos-products tab-content active" id="products">
                         <div class="card_container" id="products-container">
-                            <!-- Product cards fetched from Firebase -->
+                            <!-- Product cards fetched from Firebase (do not modify) -->
+                            <!-- ...existing product card rendering logic... -->
                         </div>
                     </div>
                     <div class="pos-accessories tab-content" id="accessories">
                         <div class="card_container" id="additional-container">
-                            <!-- Accessories cards -->
+                            <!-- Accessories cards or content here if needed -->
                         </div>
-                    </div>                </div>
+                    </div>
+                </div>
             </div>
-            </div> <!-- End of inventory-container -->
-        </main>        <!-- ADD PRODUCT MODAL -->
-        <div id="addProductModal" class="add-product-modal">
-            <div class="add-product-modal-content">
-                <div class="add-product-modal-header">
-                    <h2>Add New Product</h2>
-                    <span class="add-product-close" data-close="addProductModal">&times;</span>
-                </div>
-                
-                <!-- Progress Steps -->
-                <div class="add-product-steps">
-                    <div class="step active" data-step="1">
-                        <div class="step-circle">
-                            <span class="step-number">1</span>
-                            <i class="bx bx-check step-check"></i>
-                        </div>
-                        <span class="step-label">Images</span>
-                    </div>
-                    <div class="step-line"></div>
-                    <div class="step" data-step="2">
-                        <div class="step-circle">
-                            <span class="step-number">2</span>
-                            <i class="bx bx-check step-check"></i>
-                        </div>
-                        <span class="step-label">Details</span>
-                    </div>
-                    <div class="step-line"></div>
-                    <div class="step" data-step="3">
-                        <div class="step-circle">
-                            <span class="step-number">3</span>
-                            <i class="bx bx-check step-check"></i>
-                        </div>
-                        <span class="step-label">Pricing</span>
-                    </div>
-                    <div class="step-line"></div>
-                    <div class="step" data-step="4">
-                        <div class="step-circle">
-                            <span class="step-number">4</span>
-                            <i class="bx bx-check step-check"></i>
-                        </div>
-                        <span class="step-label">Review</span>
-                    </div>
-                </div>
+        </section>
 
+        <!-- ADD PRODUCT MODAL -->
+        <div id="addProductModal" class="custom-modal">
+            <div class="custom-modal-content">
+                <span class="custom-close-button" data-close="addProductModal"
+                    >&times;</span
+                >
+                <h2
+                    style="
+                        color: var(--secondary-text-color);
+                        transition: var(--tran-04);
+                    "
+                >
+                    Add Product
+                </h2>
                 <form id="addProductForm">
-                    <!-- Step 1: Upload Product Images -->
-                    <div class="add-product-step-content active" id="step-1">
-                        <div class="step-content-header">
-                            <h3>Upload Product Images</h3>
-                            <p>Add front and back view photos of your product</p>
+                    <!-- Image Preview (side by side like edit modal) -->
+                    <div class="file-upload-container">
+                        <div class="drop-zone" id="add-dropzone-front">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                id="add-file-front-img"
+                                hidden
+                            />
+                            <label
+                                for="add-file-front-img"
+                                class="upload-label"
+                                id="add-upload-label-front"
+                            >
+                                <img
+                                    src="https://cdn-icons-png.flaticon.com/512/724/724933.png"
+                                    alt="Upload"
+                                    class="upload-icon"
+                                />
+                                <p>Select Front View Image</p>
+                            </label>
                         </div>
-                        
-                        <div class="image-upload-section">
-                            <div class="image-upload-container">
-                                <label class="image-upload-label">Front Image</label>
-                                <div class="image-upload-box" id="front-image-upload">
-                                    <input type="file" accept="image/*" id="add-file-front-img" hidden />
-                                    <label for="add-file-front-img" class="upload-area">
-                                        <i class="bx bx-cloud-upload upload-icon"></i>
-                                        <p class="upload-text">Click to upload front image</p>
-                                        <span class="upload-hint">Recommended: 300x300px, max 5MB</span>
-                                    </label>
-                                    <div class="image-preview" id="front-image-preview"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="image-upload-container">
-                                <label class="image-upload-label">Back Image (Optional)</label>
-                                <div class="image-upload-box" id="back-image-upload">
-                                    <input type="file" accept="image/*" id="add-file-back-img" hidden />
-                                    <label for="add-file-back-img" class="upload-area">
-                                        <i class="bx bx-cloud-upload upload-icon"></i>
-                                        <p class="upload-text">Click to upload back image</p>
-                                        <span class="upload-hint">Recommended: 300x300px, max 5MB</span>
-                                    </label>
-                                    <div class="image-preview" id="back-image-preview"></div>
-                                </div>
-                            </div>
-                        </div>                    </div>
-                    
-                    <!-- Step 2: Product Details -->
-                    <div class="add-product-step-content" id="step-2" style="display: none;">
-                        <div class="step-content-header">
-                            <h3>Product Details</h3>
-                            <p>Enter the basic information about your product</p>
+                        <div class="drop-zone" id="add-dropzone-back">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                id="add-file-back-img"
+                                hidden
+                            />
+                            <label
+                                for="add-file-back-img"
+                                class="upload-label"
+                                id="add-upload-label-back"
+                            >
+                                <img
+                                    src="https://cdn-icons-png.flaticon.com/512/724/724933.png"
+                                    alt="Upload"
+                                    class="upload-icon"
+                                />
+                                <p>Select Back View Image</p>
+                            </label>
                         </div>
-                        
-                        <div class="form-group">
-                            <label for="add-product-name">Product Name *</label>
-                            <input type="text" id="add-product-name" placeholder="Enter product name" required />
-                        </div>
+                    </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="add-product-category">Category *</label>
-                                <select id="add-product-category" required>
-                                    <option value="">Select Category</option>
-                                    <option value="ball-gown">Ball Gown</option>
-                                    <option value="long-gown">Long Gown</option>
-                                    <option value="wedding-gown">Wedding Gown</option>
-                                    <option value="fairy-gown">Fairy Gown</option>
-                                    <option value="suits">Suits</option>
-                                    <option value="accessories">Accessories</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="add-product-color">Color *</label>
-                                <select id="add-product-color" required>
-                                    <option value="">Select Color</option>
-                                    <option value="red">Red</option>
-                                    <option value="blue">Blue</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="green">Green</option>
-                                    <option value="orange">Orange</option>
-                                    <option value="purple">Purple</option>
-                                    <option value="white">White</option>
-                                    <option value="black">Black</option>
-                                    <option value="gray">Gray</option>
-                                    <option value="brown">Brown</option>
-                                    <option value="beige">Beige</option>
-                                    <option value="cream">Cream</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Available Sizes *</label>
-                            <div class="size-selection">
-                                <label class="size-option">
-                                    <input type="checkbox" name="add-product-size" value="XS" />
-                                    <span>XS</span>
-                                </label>
-                                <label class="size-option">
-                                    <input type="checkbox" name="add-product-size" value="S" />
-                                    <span>S</span>
-                                </label>
-                                <label class="size-option">
-                                    <input type="checkbox" name="add-product-size" value="M" />
-                                    <span>M</span>
-                                </label>
-                                <label class="size-option">
-                                    <input type="checkbox" name="add-product-size" value="L" />
-                                    <span>L</span>
-                                </label>
-                                <label class="size-option">
-                                    <input type="checkbox" name="add-product-size" value="XL" />
-                                    <span>XL</span>
-                                </label>
-                                <label class="size-option">
-                                    <input type="checkbox" name="add-product-size" value="XXL" />
-                                    <span>XXL</span>
-                                </label>
-                                <label class="size-option">
-                                    <input type="checkbox" name="add-product-size" value="One Size" />
-                                    <span>One Size</span>
-                                </label>
-                            </div>
-                        </div>
+                    <!-- PRODUCT NAME -->
+                    <input
+                        type="text"
+                        id="add-product-name"
+                        placeholder="Product Name"
+                        required
+                    />
 
-                        <!-- Stock quantities for selected sizes -->
-                        <div class="form-group" id="stock-quantities-container" style="display: none;">
-                            <label>Stock Quantities for Selected Sizes</label>
-                            <div id="size-stock-inputs" class="size-stock-grid">
-                                <!-- Dynamic stock inputs will be added here -->
-                            </div>
-                        </div>
+                    <!-- PRODUCT PRICE -->
+                    <div class="price-input">
+                        <div class="price-symbol">₱</div>
+                        <input
+                            type="number"
+                            placeholder="Product Price"
+                            id="add-product-price"
+                        />
+                        <div class="price-suffix">.00</div>
+                    </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="add-product-code">Product Code</label>
-                                <div class="product-code-group">
-                                    <input type="text" id="add-product-code" placeholder="Auto-generated" readonly />
-                                    <button type="button" id="generate-code-btn" class="btn-small">Generate New</button>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="add-product-status">Status *</label>
-                                <select id="add-product-status" required>
-                                    <option value="available">Available</option>
-                                    <option value="out-of-stock">Out of Stock</option>
-                                    <option value="maintenance">Under Maintenance</option>
-                                </select>
-                            </div>
-                        </div>
+                    <!-- SIZE SELECT -->
+                    <label>Select Size</label>
+                    <div class="size-container">
+                        <label
+                            ><input
+                                type="checkbox"
+                                name="add-product-size"
+                                value="XS"
+                            />(XS)</label
+                        >
+                        <label
+                            ><input
+                                type="checkbox"
+                                name="add-product-size"
+                                value="S"
+                            />
+                            (S)</label
+                        >
+                        <label
+                            ><input
+                                type="checkbox"
+                                name="add-product-size"
+                                value="M"
+                            />
+                            (M)</label
+                        >
+                        <label
+                            ><input
+                                type="checkbox"
+                                name="add-product-size"
+                                value="L"
+                            />
+                            (L)</label
+                        >
+                        <label
+                            ><input
+                                type="checkbox"
+                                name="add-product-size"
+                                value="XL"
+                            />
+                            (XL)</label
+                        >
+                        <label
+                            ><input
+                                type="checkbox"
+                                name="add-product-size"
+                                value="XXL"
+                            />
+                            (XXL)</label
+                        >
+                    </div>
+                    <!-- QUANTITY CONTAINER -->
+                    <div id="add-selected-size-container"></div>
 
-                        <div class="form-group">
-                            <label for="add-product-description">Description</label>
-                            <textarea id="add-product-description" placeholder="Enter product description..." rows="4"></textarea>
-                        </div>
-                    </div>                    <!-- Step 3: Pricing -->
-                    <div class="add-product-step-content" id="step-3" style="display: none;">
-                        <div class="step-content-header">
-                            <h3>Pricing Information</h3>
-                            <p>Set the rental price for your product</p>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="add-product-price">Rental Price *</label>
-                            <div class="price-input-group">
-                                <span class="price-symbol">₱</span>
-                                <input type="number" id="add-product-price" placeholder="0" step="0.01" min="0" required />
-                                <span class="price-suffix">.00</span>
-                            </div>
-                        </div>
-                    </div><!-- Step 4: Review -->
-                    <div class="add-product-step-content" id="step-4" style="display: none;">
-                        <div class="step-content-header">
-                            <h3>Review Product</h3>
-                            <p>Please review all product information before submitting</p>
-                        </div>
-                        
-                        <div class="product-review">
-                            <div class="review-section">
-                                <h4>Product Images</h4>
-                                <div class="review-images">
-                                    <div class="review-image-item">
-                                        <label>Front Image:</label>
-                                        <div id="review-front-image" class="review-image-preview">No image selected</div>
-                                    </div>
-                                    <div class="review-image-item">
-                                        <label>Back Image:</label>
-                                        <div id="review-back-image" class="review-image-preview">No image selected</div>
-                                    </div>
-                                </div>
-                            </div>
+                    <!-- COLOR SELECT -->
+                    <select id="add-product-color">
+                        <option selected>Select Color</option>
+                        <option value="Red" style="color: #ff0000">Red</option>
+                        <option value="Blue" style="color: #0000ff">
+                            Blue
+                        </option>
+                        <option value="Yellow" style="color: #daa520">
+                            Yellow
+                        </option>
+                        <option value="Green" style="color: #008000">
+                            Green
+                        </option>
+                        <option value="Orange" style="color: #ffa500">
+                            Orange
+                        </option>
+                        <option value="Purple" style="color: #800080">
+                            Purple
+                        </option>
+                        <option value="White" style="color: #f4f3eeff">
+                            White
+                        </option>
+                        <option value="Black" style="color: #000000">
+                            Black
+                        </option>
+                        <option value="Gray" style="color: #808080">
+                            Gray
+                        </option>
+                        <option value="Brown" style="color: #964b00">
+                            Brown
+                        </option>
+                        <option value="Beige" style="color: #d2b48c">
+                            Beige
+                        </option>
+                        <option value="Cream" style="color: #f5deb3">
+                            Cream
+                        </option>
+                    </select>
 
-                            <div class="review-section">
-                                <h4>Product Details</h4>
-                                <div class="review-details">
-                                    <div class="review-item">
-                                        <label>Product Name:</label>
-                                        <span id="review-product-name">-</span>
-                                    </div>
-                                    <div class="review-item">
-                                        <label>Product Code:</label>
-                                        <span id="review-product-code">-</span>
-                                    </div>
-                                    <div class="review-item">
-                                        <label>Category:</label>
-                                        <span id="review-category">-</span>
-                                    </div>
-                                    <div class="review-item">
-                                        <label>Color:</label>
-                                        <span id="review-color">-</span>
-                                    </div>
-                                    <div class="review-item">
-                                        <label>Status:</label>
-                                        <span id="review-status">-</span>
-                                    </div>
-                                    <div class="review-item">
-                                        <label>Description:</label>
-                                        <span id="review-description">-</span>
-                                    </div>
-                                </div>
-                            </div>
+                    <!-- Sleeve Style Select -->
+                    <select id="add-product-sleeve">
+                        <option selected>Select Sleeve Style</option>
+                        <option value="Short Sleeves">Short Sleeves</option>
+                        <option value="Long Sleeves">Long Sleeves</option>
+                        <option value="Off Shoulder">Off Shoulder</option>
+                    </select>
 
-                            <div class="review-section">
-                                <h4>Pricing & Stock</h4>
-                                <div class="review-pricing">
-                                    <div class="review-item">
-                                        <label>Rental Price:</label>
-                                        <span id="review-price">₱0.00</span>
-                                    </div>
-                                    <div class="review-item">
-                                        <label>Available Sizes & Stock:</label>
-                                        <div id="review-sizes-stock" class="review-sizes">No sizes selected</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- Modal Footer -->
-                    <div class="add-product-modal-footer">
-                        <div class="modal-footer-left">
-                            <button type="button" class="btn-modal btn-secondary" id="prev-step-btn" style="display: none;">
-                                <i class="bx bx-chevron-left"></i>
-                                Previous
-                            </button>
-                        </div>
-                        <div class="modal-footer-right">
-                            <button type="button" class="btn-modal btn-primary" id="next-step-btn">
-                                Next
-                                <i class="bx bx-chevron-right"></i>
-                            </button>
-                            <button type="submit" class="btn-modal btn-primary" id="submit-product-btn" style="display: none;">
-                                <i class="bx bx-check"></i>
-                                Add Product
-                            </button>
-                        </div>
+                    <!-- Category Select -->
+                    <select id="add-product-category">
+                        <option selected>Select Category</option>
+                        <option value="Ball Gown">Ball Gown</option>
+                        <option value="Long Gown">Long Gown</option>
+                        <option value="Wedding Gown">Wedding Gown</option>
+                        <option value="Fairy Gown">Fairy Gown</option>
+                        <option value="Suits">Suits</option>
+                    </select>
+
+                    <!-- PRODUCT CODE -->
+                    <input
+                        type="text"
+                        id="add-product-code"
+                        placeholder="Product Code"
+                        readonly
+                        disabled
+                        required
+                    />
+
+                    <!-- PRODUCT DESCRIPTION -->
+                    <textarea
+                        id="add-product-description"
+                        placeholder="Product Description here..."
+                        rows="1"
+                    ></textarea>
+
+                    <!-- Modal Buttons -->
+                    <div class="modal-buttons">
+                        <button class="custom-btn" data-close="addProductModal">
+                            Close
+                        </button>
+                        <button
+                            class="custom-btn primary-btn"
+                            id="add-product-btn"
+                        >
+                            Submit
+                        </button>
                     </div>
                 </form>
             </div>
@@ -967,12 +576,15 @@
                         readonly
                         disabled
                         required
-                    />                    <!-- PRODUCT DESCRIPTION -->
+                    />
+
+                    <!-- PRODUCT DESCRIPTION -->
                     <textarea
                         id="update-product-description"
                         placeholder="Product Description here..."
-                        rows="5"
-                    ></textarea>
+                        rows="1"
+                    >
+                    </textarea>
 
                     <!-- MODAL BUTTONS -->
                     <div class="modal-buttons">
@@ -1229,7 +841,9 @@
                     OK
                 </button>
             </div>
-        </div>        <!-- CONFIRM MODAL -->
+        </div>
+
+        <!-- CONFIRM MODAL -->
         <div id="confirm-modal" class="custom-modal">
             <div
                 class="custom-modal-content"
@@ -1256,75 +870,8 @@
                     </button>
                 </div>            </div>
         </div>
-
-        <!-- IMAGE CROP MODAL -->
-        <div id="crop-modal" class="crop-modal">
-            <div class="crop-modal-content">
-                <div class="crop-modal-header">
-                    <h3 class="crop-modal-title">Crop Image</h3>
-                    <button class="crop-close-btn" id="crop-close-btn">
-                        <i class="bx bx-x"></i>
-                    </button>
-                </div>
-                
-                <div class="crop-container">
-                    <img id="crop-image" class="crop-image" src="" alt="Image to crop">
-                    <div class="crop-preview">
-                        <img id="crop-preview-img" src="" alt="Preview">
-                        <div class="crop-preview-label">Preview</div>
-                    </div>
-                </div>
-                
-                <div class="crop-controls">
-                    <div class="crop-control-group">
-                        <label class="crop-control-label">Zoom</label>
-                        <input type="range" class="crop-slider" id="zoom-slider" min="1" max="3" step="0.1" value="1">
-                    </div>
-                    <div class="crop-control-group">
-                        <label class="crop-control-label">Rotate</label>
-                        <input type="range" class="crop-slider" id="rotate-slider" min="0" max="360" step="1" value="0">
-                    </div>
-                </div>
-                
-                <div class="crop-actions">
-                    <button class="crop-btn crop-btn-secondary" id="crop-cancel-btn">
-                        <i class="bx bx-x"></i>
-                        Cancel
-                    </button>
-                    <button class="crop-btn crop-btn-primary" id="crop-apply-btn">
-                        <i class="bx bx-check"></i>
-                        Apply Crop
-                    </button>
-                </div>            </div>
-        </div>
-
-        <!-- Mobile Bottom Navigation (hidden on desktop) -->
-        <nav class="mobile-bottom-nav">
-            <a href="./dashboard.html" class="mobile-nav-item">
-                <i class="bx bxs-dashboard icon"></i>
-                <span class="text">Dashboard</span>
-            </a>
-            <a href="./inventory.html" class="mobile-nav-item active">
-                <i class="bx bxs-t-shirt icon"></i>
-                <span class="text">Inventory</span>
-            </a>
-            <a href="./calendar.html" class="mobile-nav-item">
-                <i class="bx bxs-calendar icon"></i>
-                <span class="text">Calendar</span>
-            </a>
-            <a href="./rental.html" class="mobile-nav-item">
-                <i class="bx bxs-package icon"></i>
-                <span class="text">Rental</span>
-            </a>
-            <a href="./customer-logs.html" class="mobile-nav-item">
-                <i class="bx bxs-user icon"></i>
-                <span class="text">Logs</span>
-            </a>
-            <a href="./settings.html" class="mobile-nav-item">
-                <i class="bx bxs-cog icon"></i>
-                <span class="text">Settings</span>
-            </a>
-        </nav>
+            </div>
+        </main>
 
         <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
 
@@ -1335,16 +882,11 @@
         <script
             src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-            crossorigin="anonymous"        ></script>        <!-- EXTERNAL SCRIPT -->
-        <script src="./assets/js/spinners-admin.js"></script>
+            crossorigin="anonymous"
+        ></script>        <!-- EXTERNAL SCRIPT -->
         <script src="./assets/js/admin-layout.js"></script>
-        <script src="./assets/js/admin-layout-mob.js"></script>        <script src="./assets/js/image-crop-modal.js"></script>
-        <script src="./assets/js/simple-tabs.js"></script>
         <script type="module" src="./assets/js/inventory-service.js"></script>
-        <script type="module" src="./assets/js/comprehensive-inventory-loader.js"></script>
-        <script type="module" src="./assets/js/debug-firebase.js"></script>        <script src="./assets/js/simple-add-product.js"></script>        <script src="./assets/js/manual-test.js"></script>
-        <script type="module" src="./assets/js/simple-modal-handler.js"></script>
-        <script type="module" src="./assets/js/inventory-edit-delete.js"></script>
-        <!-- <script src="./assets/js/inventory-ui.js"></script> -->
+        <script type="module" src="./assets/js/inventory-subscript.js"></script>
+        <script type="module" src="./assets/js/inventory-edit-delete-jquery.js"></script>
     </body>
 </html>
