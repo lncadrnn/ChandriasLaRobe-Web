@@ -1057,6 +1057,32 @@ body.modal-open .modal-overlay.show .modal-content {
     box-shadow: none;
 }
 
+/* Disabled button styles for edit button */
+.btn-disabled {
+    background: #6c757d !important;
+    border: 2px solid #6c757d !important;
+    color: white !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+    text-decoration: none !important;
+    font-size: 0.9rem !important;
+}
+
+.btn-disabled:hover {
+    background: #6c757d !important;
+    border-color: #6c757d !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
 /* Loading states */
 .btn-primary.loading,
 .btn-complete.loading,

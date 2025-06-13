@@ -1729,10 +1729,7 @@ $(document).ready(function () {
             } else if (rentalTypeVal === "Open Rental") {
                 eventStartDateVal = $("#event-start-date").val();
                 eventEndDateVal = $("#event-end-date").val();
-            }
-
-
-            const formData = {
+            }            const formData = {
                 fullName: $("#client-full-name").val().trim(),
                 contactNumber: $("#client-contact").val().trim(),
                 eventStartDate: eventStartDateVal,
@@ -1748,11 +1745,12 @@ $(document).ready(function () {
                 totalPayment: parseFloat($("#total-payment").val()) || 0,
                 remainingBalance:
                     parseFloat($("#remaining-balance").val()) || 0,
-                referenceNo: $("#reference-no").val().trim(),
-                region: $("#client-region").val(),
+                referenceNo: $("#reference-no").val().trim(),                region: $("#client-region").val(),
                 city: $("#client-city").val(),
                 address: $("#client-address").val().trim(),
                 notes: $("#client-notes").val().trim(),
+                feeType: $("#additional-fee-description").val().trim() || "",
+                additionalAmount: parseFloat($("#additional-fee-amount").val()) || 0,
                 timestamp: new Date().toISOString(),
                 products: finalProductList,
                 accessories: finalAccessoriesList,
@@ -2565,20 +2563,22 @@ $(document).ready(function () {
             notyf.error("Please select a fee type and enter a valid amount greater than 0.");
             return;
         }
+          $addFeeModal.find("#fee-amount").removeClass("input-error");
         
-        $addFeeModal.find("#fee-amount").removeClass("input-error");
+        // Populate the additional fee fields in the rental form
+        $("#additional-fee-description").val(feeType + " Fee");
+        $("#additional-fee-amount").val(feeAmount);
         
-        // Add fee to cart as a special accessory/fee item
-        cart.accessories.push({
-            name: feeType,
-            price: feeAmount,
-            isFee: true
+        console.log("Fee populated in rental form:", { 
+            description: feeType + " Fee", 
+            amount: feeAmount 
         });
         
-        console.log("Fee added to cart:", { name: feeType, price: feeAmount, isFee: true });
-        console.log("Current cart:", cart);
+        // Show success message
+        notyf.success(`${feeType} fee of ₱${feeAmount.toLocaleString()} added to rental form.`);
         
-        // Update the display
+        // Close the modal
+        closeAddFeeModal();
         updateNewCartDisplay();
         
         // Close modal and show success
@@ -2586,6 +2586,13 @@ $(document).ready(function () {
         notyf.success("Additional fee submitted successfully!");
     });
     
+    // --- Clear Fee Button Logic ---
+    $("#clear-fee-btn").on("click", function () {
+        $("#additional-fee-description").val("");
+        $("#additional-fee-amount").val("");
+        notyf.success("Additional fee cleared from rental form.");
+    });
+
     // === ADDITIONAL FEE FLOW FUNCTIONS ===
     // Check if the page was loaded from additional fee flow
     function checkAdditionalFeeFlow() {

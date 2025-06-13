@@ -297,9 +297,18 @@ async function renderTransactionTable() {
                         <button class="view-details-btn" data-id="${transaction.id}" title="View Details">
                             <i class='bx bx-show'></i> View
                         </button>
-                        <button class="edit-btn" data-id="${transaction.id}" title="Edit Transaction">
-                            <i class='bx bx-edit'></i> Edit
-                        </button>
+                        ${(() => {
+                            const editValidation = canEditTransaction(transaction);
+                            if (editValidation.canEdit) {
+                                return `<button class="edit-btn" data-id="${transaction.id}" title="Edit Transaction">
+                                    <i class='bx bx-edit'></i> Edit
+                                </button>`;
+                            } else {
+                                return `<button class="edit-btn disabled" data-id="${transaction.id}" title="${editValidation.reason}" disabled>
+                                    <i class='bx bx-edit'></i> Edit
+                                </button>`;
+                            }
+                        })()}
                         <button class="delete-btn" data-id="${transaction.id}" title="Delete Transaction">
                             <i class='bx bx-trash'></i> Delete
                         </button>
@@ -416,18 +425,26 @@ async function renderTransactionCards() {
                     </div>
                 </div>
                 
-                <div class="card-actions-container">
-                    <div class="card-actions">
+                <div class="card-actions-container">                    <div class="card-actions">
                         <button class="card-action-btn view-details-btn" data-id="${transaction.id}">
                             <i class='bx bx-show'></i> View
                         </button>
-                        <button class="card-action-btn edit-btn" data-id="${transaction.id}">
-                            <i class='bx bx-edit'></i> Edit
-                        </button>
+                        ${(() => {
+                            const editValidation = canEditTransaction(transaction);
+                            if (editValidation.canEdit) {
+                                return `<button class="card-action-btn edit-btn" data-id="${transaction.id}">
+                                    <i class='bx bx-edit'></i> Edit
+                                </button>`;
+                            } else {
+                                return `<button class="card-action-btn edit-btn disabled" data-id="${transaction.id}" title="${editValidation.reason}" disabled>
+                                    <i class='bx bx-edit'></i> Edit
+                                </button>`;
+                            }
+                        })()}
                         <button class="card-action-btn delete-btn" data-id="${transaction.id}">
                             <i class='bx bx-trash'></i> Delete
                         </button>
-                    </div>                    ${rentalStatus === 'Ongoing' ? `
+                    </div>${rentalStatus === 'Ongoing' ? `
                         <div class="card-actions-long">
                             <button class="card-action-btn mark-complete-btn long-btn" data-id="${transaction.id}">
                                 <i class='bx bx-check'></i> Mark as Complete
@@ -847,23 +864,31 @@ async function showTransactionDetails(transactionId) {
                         </p>
                         ${transaction.depositFee?.reason ? `<p class="fee-reason"><em>Reason: ${transaction.depositFee.reason}</em></p>` : ''}
                     </div>
-                    
-                    <div class="fee-item">
+                      <div class="fee-item">
                         <p><strong>Other Fee:</strong> 
                             <span class="fee-amount">${transaction.otherFee?.amount ? '₱' + parseFloat(transaction.otherFee.amount).toLocaleString() : '-'}</span>
                         </p>
                         ${transaction.otherFee?.reason ? `<p class="fee-reason"><em>Reason: ${transaction.otherFee.reason}</em></p>` : ''}
                     </div>
+                    
+                    ${transaction.feeType && transaction.additionalAmount ? `
+                    <div class="fee-item">
+                        <p><strong>Additional Fee (${transaction.feeType}):</strong> 
+                            <span class="fee-amount">₱${parseFloat(transaction.additionalAmount).toLocaleString()}</span>
+                        </p>
+                        <p class="fee-reason"><em>Type: ${transaction.feeType}</em></p>
+                    </div>
+                    ` : ''}
                 </div>
-                
-                ${(transaction.overdueFee?.overdueAmount || transaction.repairFee?.amount || transaction.depositFee?.amount || transaction.otherFee?.amount) ? `
+                  ${(transaction.overdueFee?.overdueAmount || transaction.repairFee?.amount || transaction.depositFee?.amount || transaction.otherFee?.amount || transaction.additionalAmount) ? `
                 <div class="total-additional-fees">
                     <p><strong>Total Additional Fees:</strong> 
                         <span class="total-fee-amount">₱${(
                             (parseFloat(transaction.overdueFee?.overdueAmount) || 0) +
                             (parseFloat(transaction.repairFee?.amount) || 0) +
                             (parseFloat(transaction.depositFee?.amount) || 0) +
-                            (parseFloat(transaction.otherFee?.amount) || 0)
+                            (parseFloat(transaction.otherFee?.amount) || 0) +
+                            (parseFloat(transaction.additionalAmount) || 0)
                         ).toLocaleString()}</span>
                     </p>
                 </div>
@@ -883,14 +908,22 @@ async function showTransactionDetails(transactionId) {
                 <h3><i class='bx bx-note'></i> Additional Notes</h3>
                 <p class="notes-content">${transaction.notes}</p>
             </div>
-            ` : ''}
-              <div class="modal-footer">
+            ` : ''}              <div class="modal-footer">
                 <button type="button" class="btn-secondary" onclick="closeTransactionDetailsModal()">
                     <i class='bx bx-x'></i> Close
                 </button>
-                <button type="button" class="btn-primary" onclick="openEditFromDetails('${transaction.id}')">
-                    <i class='bx bx-edit'></i> Edit Transaction
-                </button>
+                ${(() => {
+                    const editValidation = canEditTransaction(transaction);
+                    if (editValidation.canEdit) {
+                        return `<button type="button" class="btn-primary" onclick="openEditFromDetails('${transaction.id}')">
+                            <i class='bx bx-edit'></i> Edit Transaction
+                        </button>`;
+                    } else {
+                        return `<button type="button" class="btn-disabled" disabled title="${editValidation.reason}">
+                            <i class='bx bx-edit'></i> Edit Transaction
+                        </button>`;
+                    }
+                })()}
             </div>
         `;
     }
@@ -903,6 +936,26 @@ async function showTransactionDetails(transactionId) {
 
 // Open edit modal from transaction details modal
 function openEditFromDetails(transactionId) {
+    // Find the transaction
+    const transaction = allTransactions.find(t => t.id === transactionId);
+    if (!transaction) {
+        if (window.showNotification) {
+            window.showNotification('Transaction not found', 'error');
+        }
+        return;
+    }
+    
+    // Validate if transaction can be edited
+    const editValidation = canEditTransaction(transaction);
+    if (!editValidation.canEdit) {
+        if (window.showNotification) {
+            window.showNotification(editValidation.reason, 'error');
+        } else {
+            alert(editValidation.reason);
+        }
+        return;
+    }
+    
     // Close the details modal first
     closeTransactionDetailsModal();
     
@@ -2051,3 +2104,82 @@ window.confirmCancelRental = confirmCancelRental;
 
 // Export cancel rental state
 window.currentCancelTransaction = currentCancelTransaction;
+
+// Validation function to check if transaction can be edited
+function canEditTransaction(transaction) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Check event date restrictions
+    let eventDate = null;
+    let minAllowedDate = new Date(today);
+    
+    if (transaction.rentalType === "Open Rental" && transaction.eventStartDate) {
+        eventDate = new Date(transaction.eventStartDate);
+        minAllowedDate.setDate(today.getDate() + 2); // Open Rental: +2 days
+    } else if (transaction.rentalType === "Fixed Rental" && transaction.eventDate) {
+        eventDate = new Date(transaction.eventDate);
+        minAllowedDate.setDate(today.getDate() + 3); // Fixed Rental: +3 days
+    } else if (transaction.eventStartDate) {
+        // Fallback to eventStartDate
+        eventDate = new Date(transaction.eventStartDate);
+        minAllowedDate.setDate(today.getDate() + 2);
+    }
+    
+    // If event date is too close, prevent editing
+    if (eventDate && eventDate < minAllowedDate) {
+        return {
+            canEdit: false,
+            reason: `Cannot edit: Event date is too close. Must be at least ${minAllowedDate.toLocaleDateString()}.`
+        };
+    }
+    
+    // Check if rental fee is valid (positive number)
+    const rentalFee = parseFloat(transaction.rentalFee) || 0;
+    if (rentalFee <= 0) {
+        return {
+            canEdit: false,
+            reason: "Cannot edit: Rental fee must be a positive number."
+        };
+    }
+    
+    // Check if total payment is valid (non-negative)
+    const totalPayment = parseFloat(transaction.totalPayment) || 0;
+    if (totalPayment < 0) {
+        return {
+            canEdit: false,
+            reason: "Cannot edit: Total payment cannot be negative."
+        };
+    }
+    
+    // Check contact number format if exists
+    if (transaction.contactNumber) {
+        const contactRegex = /^09[0-9]{9}$/;
+        if (!contactRegex.test(transaction.contactNumber)) {
+            return {
+                canEdit: false,
+                reason: "Cannot edit: Invalid contact number format (must be 11 digits starting with 09)."
+            };
+        }
+    }
+    
+    // Check if transaction status allows editing
+    if (transaction.rentalStatus === 'Completed') {
+        return {
+            canEdit: false,
+            reason: "Cannot edit: Transaction is already completed."
+        };
+    }
+    
+    if (transaction.rentalStatus === 'Cancelled') {
+        return {
+            canEdit: false,
+            reason: "Cannot edit: Transaction is cancelled."
+        };
+    }
+    
+    return {
+        canEdit: true,
+        reason: null
+    };
+}

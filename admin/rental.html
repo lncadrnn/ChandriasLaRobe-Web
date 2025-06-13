@@ -432,9 +432,7 @@
                                     <label>&nbsp;</label> <!-- Empty label for alignment -->
                                     <div class="payment-warning">⚠️ Verify payment before confirming rental</div>
                                 </div>
-                            </div>
-
-                            <div class="form-row">
+                            </div>                            <div class="form-row">
                                 <div class="form-group">
                                     <label for="total-payment">Total Payment</label>
                                     <input type="number" id="total-payment" min="0" step="0.01" required />
@@ -444,6 +442,19 @@
                                 <div class="form-group">
                                     <label for="remaining-balance">Remaining Balance</label>
                                     <input type="number" id="remaining-balance" readonly />
+                                </div>
+                            </div>                            <!-- Additional Fee Section -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="additional-fee-description">Fee Type</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="text" id="additional-fee-description" placeholder="e.g., Deposit Fee, Repair Fee, etc." readonly style="flex: 1;" />
+                                        <button type="button" id="clear-fee-btn" class="clear-fee-btn" style="padding: 0.5rem; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem;" title="Clear Fee">×</button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="additional-fee-amount">Additional Fee Amount (₱)</label>
+                                    <input type="number" id="additional-fee-amount" min="0" step="0.01" placeholder="0.00" readonly />
                                 </div>
                             </div>
                         </div>
@@ -479,7 +490,6 @@
                             <select id="fee-type" required>
                                 <option value="">Select Fee Type</option>
                                 <option value="Deposit">Deposit Fee</option>
-                                <option value="Overdue">Overdue Fee</option>
                                 <option value="Repair">Repair Fee</option>
                                 <option value="Other">Other Fee</option>
 
