@@ -155,9 +155,15 @@ async function loadTransactions() {
         applySorting(); // Apply current sort
         updateTransactionCount();
         
+        // Hide page loader after successful load
+        hidePageLoader();
+        
     } catch (error) {
         console.error('Error loading transactions:', error);
         showError('Failed to load transaction history. Please try again.');
+        
+        // Hide page loader even on error
+        hidePageLoader();
     }
 }
 
@@ -1274,14 +1280,12 @@ async function cancelRental(transactionId) {
         if (!transaction) {
             console.error('Transaction not found');
             return;
-        }
-
-        // Show confirmation dialog
+        }        // Show confirmation dialog
         const confirmed = confirm(`Cancel rental for "${transaction.fullName || 'Unknown'}"?\n\nThis action cannot be undone.`);
         if (!confirmed) return;
 
         // Show loading
-        document.querySelector('.admin-action-spinner').style.display = 'flex';
+        showActionSpinner('Cancelling rental...');
 
         // Update the transaction in Firebase
         const transactionRef = doc(chandriaDB, 'transaction', transactionId);
@@ -1296,20 +1300,18 @@ async function cancelRental(transactionId) {
         if (transactionIndex !== -1) {
             allTransactions[transactionIndex].rentalStatus = 'Cancelled';
             allTransactions[transactionIndex].cancelledDate = new Date().toISOString();
-        }
-
-        // Re-filter and re-render
+        }        // Re-filter and re-render
         filterTransactions();
         
         // Hide loading
-        document.querySelector('.admin-action-spinner').style.display = 'none';
+        hideActionSpinner();
 
         // Show success notification
         alert('Rental cancelled successfully!');
 
     } catch (error) {
         console.error('Error cancelling rental:', error);
-        document.querySelector('.admin-action-spinner').style.display = 'none';
+        hideActionSpinner();
         alert('Error cancelling rental. Please try again.');
     }
 }
@@ -1781,6 +1783,51 @@ async function undoCancellation(transactionId) {
         
         // Show error notification
         alert('Error undoing cancellation. Please try again.');
+    }
+}
+
+// Hide page loader
+function hidePageLoader() {
+    const pageLoader = document.querySelector('.admin-page-loader');
+    if (pageLoader) {
+        pageLoader.style.display = 'none';
+    }
+}
+
+// Show page loader
+function showPageLoader() {
+    const pageLoader = document.querySelector('.admin-page-loader');
+    if (pageLoader) {
+        pageLoader.style.display = 'flex';
+    }
+}
+
+// Show action spinner
+function showActionSpinner(text = 'Processing...') {
+    const actionSpinner = document.querySelector('.admin-action-spinner');
+    const actionSpinnerText = document.querySelector('.admin-action-spinner .admin-spinner-text');
+    
+    if (actionSpinner) {
+        actionSpinner.style.display = 'flex';
+    }
+    if (actionSpinnerText) {
+        actionSpinnerText.textContent = text;
+    }
+}
+
+// Hide action spinner
+function hideActionSpinner() {
+    const actionSpinner = document.querySelector('.admin-action-spinner');
+    if (actionSpinner) {
+        actionSpinner.style.display = 'none';
+    }
+}
+
+// Update action spinner text
+function updateActionSpinner(text) {
+    const actionSpinnerText = document.querySelector('.admin-action-spinner .admin-spinner-text');
+    if (actionSpinnerText) {
+        actionSpinnerText.textContent = text;
     }
 }
 

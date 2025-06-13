@@ -13,8 +13,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
-<body>
-    <!-- Page Loader -->
+<body>    <!-- Page Loader -->
     <div class="admin-page-loader">
         <div class="admin-spinner-with-text">
             <div class="admin-page-spinner"></div>
@@ -119,7 +118,7 @@
                 <div class="transactions-header">
                     <div class="header-info">
                         <h3>All Transactions</h3>
-                        <span class="transaction-count" id="transaction-count">Loading...</span>
+                        <span class="transaction-count" id="transaction-count">0</span>
                     </div>
                     
                     <!-- Desktop: Search and Sort controls inline with view toggle -->
@@ -199,15 +198,10 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- Card View -->
+                  <!-- Card View -->
                 <div class="cards-container" id="cards-container">
                     <div class="transaction-cards" id="transaction-cards">
                         <!-- Cards will be populated by JavaScript -->
-                        <div class="loading-card">
-                            <i class='bx bx-loader-alt bx-spin'></i>
-                            <span>Loading transactions...</span>
-                        </div>
                     </div>
                 </div>
                 
@@ -224,13 +218,8 @@
                                     <th>Total Amount</th>
                                     <th>Actions</th>
                                 </tr>
-                            </thead>
-                            <tbody id="rental-history-tbody">
-                                <tr>
-                                    <td colspan="6" class="table-loading">
-                                        <i class='bx bx-loader-alt bx-spin'></i> Loading rental history...
-                                    </td>
-                                </tr>
+                            </thead>                            <tbody id="rental-history-tbody">
+                                <!-- Table rows will be populated by JavaScript -->
                             </tbody>
                         </table>
                     </div>
