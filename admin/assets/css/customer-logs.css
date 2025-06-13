@@ -70,14 +70,17 @@ select:disabled {
 .search-box {
     position: relative;
     flex: 1;
-    max-width: 350px;
-    min-width: 280px;
+    max-width: 450px; /* Increased from 350px for wider search box */
+    min-width: 320px; /* Increased from 280px for better minimum width */
+    border: none; /* Remove border to prevent double border effect */
+    padding: 0; /* Remove padding to let input handle spacing */
+    background: transparent; /* Remove background to let input handle it */
 }
 
 .search-box input {
     width: 100%;
     padding: 1rem 1.25rem 1rem 3rem;
-    border: 2px solid rgba(255, 105, 180, 0.2);
+    border: none; /* Removed gray border */
     border-radius: 16px;
     font-size: 0.95rem;
     background: #ffffff;
@@ -86,10 +89,12 @@ select:disabled {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 4px 12px rgba(255, 105, 180, 0.08);
     font-weight: 500;
+    height: 54px; /* Set explicit height to match sort button */
+    box-sizing: border-box;
 }
 
 .search-box input:focus {
-    border-color: var(--primary-color);
+    border: 2px solid var(--primary-color); /* Add border only on focus */
     box-shadow: 0 0 0 4px rgba(255, 105, 180, 0.15), 0 8px 24px rgba(255, 105, 180, 0.12);
     transform: translateY(-1px);
 }
@@ -118,7 +123,7 @@ select:disabled {
     border-radius: 16px;
     font-size: 0.95rem;
     font-weight: 600;
-    border: 2px solid rgba(255, 105, 180, 0.2);
+    border: none; /* Removed gray border to match search box */
     background: #ffffff;
     color: #2c3e50;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -127,6 +132,8 @@ select:disabled {
     gap: 0.75rem;
     box-shadow: 0 4px 12px rgba(255, 105, 180, 0.08);
     cursor: pointer;
+    height: 54px; /* Set explicit height to match search box */
+    box-sizing: border-box;
 }
 
 .btn-secondary:hover {
