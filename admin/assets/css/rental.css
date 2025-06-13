@@ -1526,19 +1526,15 @@
         padding: 0.5rem;
         min-height: calc(100vh - 120px);
     }
-    
-    /* Page Header - Fix for mobile */
+      /* Page Header - Fix for mobile */
     .page-header {
         padding-right: 0;
         flex-direction: column;
         align-items: flex-start;
         gap: 0.5rem;
         padding: 1rem;
-        position: sticky;
-        top: 0;
+        position: relative;
         background: var(--body-color);
-        z-index: 100;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         margin-bottom: 0;
     }
     
@@ -1552,14 +1548,13 @@
         margin: 0;
         color: #666;
     }
-    
-    /* Products Section - Table at top */
+      /* Products Section - Table at top */
     .products-section {
         order: 1;
         height: auto;
         max-height: 60vh;
         min-height: 300px;
-        margin-bottom: 1rem;
+        margin-bottom: 2rem;
         padding: 1rem;
     }
     
@@ -1673,19 +1668,18 @@
         gap: 1px;
         flex-wrap: wrap;
     }
-    
-    /* Order Section - Cart at bottom */
+      /* Order Section - Cart at bottom */
     .order-section {
         order: 2;
         height: auto;
         max-height: none;
         min-height: 250px;
-        position: sticky;
-        bottom: 70px; /* Above mobile nav */
+        position: relative;
         background: white;
         z-index: 50;
-        box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.15);
-        margin-bottom: 0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        margin-bottom: 1rem;
+        margin-top: 1rem;
         padding: 1rem;
     }
     
@@ -1771,10 +1765,10 @@
     .page-subtitle {
         font-size: 0.8rem;
     }
-    
-    .products-section {
+      .products-section {
         padding: 0.75rem;
         max-height: 50vh;
+        margin-bottom: 1.5rem;
     }
     
     .filter-btn {
@@ -1811,10 +1805,10 @@
     .size-button-small .stock-count {
         font-size: 0.45rem;
     }
-    
-    .order-section {
+      .order-section {
         padding: 0.75rem;
         bottom: 65px; /* Adjust for smaller mobile nav */
+        margin-top: 1rem;
     }
     
     .order-header h3 {
