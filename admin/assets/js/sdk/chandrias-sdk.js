@@ -8,7 +8,13 @@ import {
     sendEmailVerification,
     validatePassword,
     signOut,
-    updateProfile
+    updateProfile,
+    EmailAuthProvider,
+    reauthenticateWithCredential,
+    updatePassword,
+    deleteUser,
+    GoogleAuthProvider,
+    signInWithPopup
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 import {
     getFirestore,
@@ -22,7 +28,10 @@ import {
     getDoc,
     query,
     where,
-    arrayUnion
+    orderBy,
+    limit,
+    arrayUnion,
+    arrayRemove
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
@@ -57,6 +66,15 @@ export {
     collection,
     query,
     where,
+    orderBy,
+    limit,
     arrayUnion,
-    updateProfile
+    arrayRemove,
+    updateProfile,
+    EmailAuthProvider,
+    reauthenticateWithCredential,
+    updatePassword,
+    deleteUser,
+    GoogleAuthProvider,
+    signInWithPopup
 };

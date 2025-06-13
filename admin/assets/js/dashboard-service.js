@@ -206,10 +206,44 @@ document.addEventListener("DOMContentLoaded", () => {
             rentalSearchInput.value = '';
             renderRentals();
         });
-    }    // Show rental details modal
+    }    // Functions to prevent background interaction
+    function preventBackgroundInteraction() {
+        // Prevent body scroll
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
+        document.body.style.top = `-${window.scrollY}px`;
+        
+        // Store current scroll position
+        document.body.setAttribute('data-scroll-position', window.scrollY);
+        
+        // Add modal-open class for additional styling
+        document.body.classList.add('modal-open');
+    }
+    
+    function restoreBackgroundInteraction() {
+        // Restore body scroll
+        const scrollY = document.body.getAttribute('data-scroll-position') || '0';
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.style.top = '';
+        document.body.classList.remove('modal-open');
+        
+        // Restore scroll position
+        window.scrollTo(0, parseInt(scrollY, 10));
+        
+        // Remove stored scroll position
+        document.body.removeAttribute('data-scroll-position');
+    }
+
+    // Show rental details modal
     async function showRentalDetails(id) {
         try {
             const modal = document.getElementById('rental-modal');
+            
+            // Prevent background interaction
+            preventBackgroundInteraction();
             
             // Show modal with loading state
             modal.classList.add('visible');
@@ -858,6 +892,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Handle appointment modal close
         if (e.target.classList.contains('close-modal') || 
             (e.target.closest('.close-modal'))) {
+            restoreBackgroundInteraction();
             document.getElementById('appointment-modal').classList.remove('visible');
         }
         
@@ -865,6 +900,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target.classList.contains('close-rental-modal') || 
             (e.target.closest('.close-rental-modal'))) {
             console.log('🔄 Closing rental modal');
+            restoreBackgroundInteraction();
             document.getElementById('rental-modal').classList.remove('visible');
         }
         
@@ -876,11 +912,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 showRentalDetails(rentalId);
             }
         }
-        
-        // Close modal when clicking the backdrop
+          // Close modal when clicking the backdrop
         if (e.target.classList.contains('modal-backdrop')) {
             const modal = e.target.closest('.modal');
             if (modal) {
+                restoreBackgroundInteraction();
                 modal.classList.remove('visible');
             }
         }

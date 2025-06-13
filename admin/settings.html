@@ -3,14 +3,23 @@
     <head>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />        <title>Chandria's La Robe - Settings</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Chandria's La Robe - Settings</title>
         <link rel="stylesheet" href="/admin/assets/css/admin-layout.css" />
         <link rel="stylesheet" href="/admin/assets/css/admin-layout-mob.css" />
         <link rel="stylesheet" href="/admin/assets/css/settings.css" />
-        <link rel="stylesheet" href="/admin/assets/css/spinners-admin.css" />
+
+        <!-- SPINNER STYLES -->
+        <link
+            rel="stylesheet"
+            href="/chandriahomepage/assets/css/spinner.css"
+        />
 
         <!-- Notyf for notifications -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css"
+        />
 
         <link
             href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
@@ -23,19 +32,16 @@
     </head>
 
     <body>
-        <!-- Page Loader -->
-        <div class="admin-page-loader">
-            <div class="admin-spinner-with-text">
-                <div class="admin-page-spinner"></div>
-                <div class="admin-spinner-text">Loading Settings...</div>
-            </div>
-        </div>
-
-        <!-- Action Spinner -->
-        <div class="admin-action-spinner">
-            <div class="admin-spinner-with-text">
-                <div class="admin-spinner"></div>
-                <div class="admin-spinner-text">Processing...</div>
+        <!-- UPLOAD SPINNER -->
+        <div id="spinner" class="page-spinner hidden">
+            <div class="spinner-content">
+                <div class="spinner-ring-container">
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                </div>
+                <p class="spinner-text" id="spinner-text">Uploading Changes</p>
             </div>
         </div>
 
@@ -87,7 +93,9 @@
                         <li class="nav-link">
                             <a href="./customer-logs.html">
                                 <i class="bx bxs-user icon"></i>
-                                <span class="text nav-text">Rental History</span>
+                                <span class="text nav-text"
+                                    >Rental History</span
+                                >
                             </a>
                         </li>
 
@@ -108,54 +116,91 @@
             <header class="page-header">
                 <div class="header-left">
                     <h1 class="page-title">Settings</h1>
-                    <p class="page-subtitle">Manage your account and application preferences</p>
+                    <p class="page-subtitle">
+                        Manage your account and application preferences
+                    </p>
                 </div>
             </header>
-            
+
             <!-- Profile Settings Section -->
             <section class="settings-content">
                 <div class="account-settings-form">
                     <h3><i class="fas fa-user-cog"></i> Profile Settings</h3>
-                      <div class="settings-form-container">
+                    <div class="settings-form-container">
                         <div class="form-group">
                             <label for="email">Email Address</label>
-                            <input type="email" id="email" class="disabled" disabled />
+                            <input
+                                type="email"
+                                id="email"
+                                class="disabled"
+                                disabled
+                            />
                         </div>
 
                         <div class="form-group">
                             <label for="name">Display Name</label>
-                            <input type="text" id="name" placeholder="Enter your display name" />
+                            <input
+                                type="text"
+                                id="name"
+                                placeholder="Enter your display name"
+                            />
                         </div>
 
                         <div class="form-group">
-                            <button type="button" class="btn-change-password" id="togglePasswordFields">
+                            <button
+                                type="button"
+                                class="btn-change-password"
+                                id="togglePasswordFields"
+                            >
                                 <i class="fas fa-key"></i> Change Password
                             </button>
                         </div>
 
-                        <div id="passwordFields" style="display: none;">
+                        <div id="passwordFields" style="display: none">
                             <div class="form-group">
                                 <label for="password">Current Password</label>
-                                <input type="password" id="password" placeholder="Enter current password" />
+                                <input
+                                    type="password"
+                                    id="password"
+                                    placeholder="Enter current password"
+                                />
                             </div>
 
                             <div class="form-group">
                                 <label for="new-password">New Password</label>
-                                <input type="password" id="new-password" placeholder="Enter new password" />
+                                <input
+                                    type="password"
+                                    id="new-password"
+                                    placeholder="Enter new password"
+                                />
                             </div>
 
                             <div class="form-group">
-                                <label for="confirm-new-password">Confirm New Password</label>
-                                <input type="password" id="confirm-new-password" placeholder="Confirm new password" />
+                                <label for="confirm-new-password"
+                                    >Confirm New Password</label
+                                >
+                                <input
+                                    type="password"
+                                    id="confirm-new-password"
+                                    placeholder="Confirm new password"
+                                />
                             </div>
                         </div>
                     </div>
 
                     <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" id="cancel-btn">
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            id="cancel-btn"
+                        >
                             <i class="fas fa-times"></i> Cancel
                         </button>
-                        <button type="button" class="btn btn-primary disabled" id="save-btn">
+                        <button
+                            type="button"
+                            class="btn btn-primary disabled"
+                            id="save-btn"
+                        >
                             <i class="fas fa-save"></i> Save Changes
                         </button>
                     </div>
@@ -164,14 +209,21 @@
                 <!-- Admin Actions Section -->
                 <div class="account-settings-form">
                     <h3><i class="fas fa-cog"></i> Admin Actions</h3>
-                    
+
                     <div class="admin-actions">
                         <div class="action-item">
                             <div class="action-info">
                                 <h4>Sign Out</h4>
-                                <p>Sign out from your admin account and return to the main website</p>
+                                <p>
+                                    Sign out from your admin account and return
+                                    to the main website
+                                </p>
                             </div>
-                            <button type="button" class="btn btn-danger" id="signOut-btn">
+                            <button
+                                type="button"
+                                class="btn btn-danger"
+                                id="signOut-btn"
+                            >
                                 <i class="fas fa-sign-out-alt"></i> Logout
                             </button>
                         </div>
@@ -183,8 +235,13 @@
             <div class="logout-modal-container" id="logout-modal">
                 <div class="logout-modal-box">
                     <div class="logout-modal-content">
-                        <h3><i class="fas fa-sign-out-alt"></i> Confirm Logout</h3>
-                        <p>Are you sure you want to sign out from the admin panel? You will be redirected to the main website.</p>
+                        <h3>
+                            <i class="fas fa-sign-out-alt"></i> Confirm Logout
+                        </h3>
+                        <p>
+                            Are you sure you want to sign out from the admin
+                            panel? You will be redirected to the main website.
+                        </p>
                         <div class="btn-group">
                             <button class="btn-cancel" id="logout-no">
                                 Cancel
@@ -223,20 +280,15 @@
                 <i class="bx bxs-cog icon"></i>
                 <span class="text">Settings</span>
             </a>
+        </nav>
 
-
-        </nav>        
-        
         <!-- jQuery for compatibility with settings-service.js -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <!-- Notyf for notifications -->
         <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-          <!-- EXTERNAL SCRIPT -->
-        <script src="./assets/js/spinners-admin.js"></script>
+        <!-- EXTERNAL SCRIPT -->
         <script src="./assets/js/admin-layout.js"></script>
         <script src="./assets/js/admin-layout-mob.js"></script>
-        <script type="module" src="./assets/js/admin-auth-state.js"></script>
         <script type="module" src="./assets/js/settings-service.js"></script>
-
     </body>
 </html>
