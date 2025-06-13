@@ -147,15 +147,14 @@
 }
 
 /* =============== DASHBOARD TABLE =============== */
-.dashboard-table {
-    background: white;
+.dashboard-table {    background: white;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    height: 300px; /* Reduced from 365px to 300px */
+    height: 350px; /* Increased from 300px to 350px */
     margin-bottom: 0;
 }
 
@@ -363,8 +362,8 @@ tr:hover {
     background: white;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    height: 440px; /* Reduced from 575px to 440px */
-    max-height: 480px; /* Reduced from 680px to 480px */
+    height: 490px; /* Increased from 440px to 490px */
+    max-height: 530px; /* Increased from 480px to 530px */
     border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
@@ -422,7 +421,7 @@ tr:hover {
     flex: 1;
     overflow-y: auto; /* Show scrollbar */
     padding: 16px 0;
-    max-height: 280px; /* Reduced from 340px to 280px */
+    max-height: 380px; /* Increased from 280px to 380px to utilize extra space */
 }
 
 .appointments-list {
