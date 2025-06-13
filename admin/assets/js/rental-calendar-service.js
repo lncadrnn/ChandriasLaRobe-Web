@@ -69,11 +69,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 filteredStatus = e.target.value;
                 renderCalendar();
             });
-            
-            closeModalBtn.addEventListener('click', closeModal);
+              closeModalBtn.addEventListener('click', closeModal);
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
                     closeModal();
+                }
+            });
+            
+            // Global click handler to close quick view when clicking outside
+            document.addEventListener('click', (e) => {
+                const quickView = document.getElementById('active-quick-view');
+                if (quickView && !quickView.contains(e.target)) {
+                    // Check if the click is not on a rental item (which would open a new quick view)
+                    if (!e.target.classList.contains('rental-item')) {
+                        closeQuickView();
+                    }
                 }
             });
         }
@@ -643,11 +653,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 const eventInfo = getEventDateInfo(rental);
                 
                 rentalItem.title = `${rental.fullName || rental.customerName} - ${rental.status.toUpperCase()}\nDuration: ${durationText}\nDates: ${eventInfo}\nTransaction: ${rental.transactionCode || 'N/A'}`;
-                
-                // Add click event for individual rental item
+                  // Add click event for individual rental item
                 rentalItem.addEventListener('click', (e) => {
                     e.stopPropagation(); // Prevent day click event
-                    showRentalQuickView(rental);
+                    showRentalQuickView(rental, rentalItem);
                 });
                 
                 // Add visual indicator for duration (longest rentals get special styling)
@@ -749,8 +758,10 @@ document.addEventListener("DOMContentLoaded", () => {
             
             return 'Date not specified';
         }
-        
-        function showRentalQuickView(rental) {
+          function showRentalQuickView(rental, targetElement) {
+            // Close any existing quick view
+            closeQuickView();
+            
             // Create a quick view popup with rental details
             const quickView = document.createElement('div');
             quickView.className = 'rental-quick-view';
@@ -774,22 +785,67 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             `;
             
-            // Position the quick view near the cursor
-            const rect = event.target.getBoundingClientRect();
+            // Add a unique identifier
+            quickView.id = 'active-quick-view';
+              // Calculate optimal position
+            const rect = targetElement.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            const viewportWidth = window.innerWidth;
+            const quickViewHeight = 280; // Estimated height
+            const quickViewWidth = 350; // From CSS max-width
+            
+            let top, left, showAbove = false;
+            
+            // Determine vertical position (above or below the element)
+            if (rect.bottom + quickViewHeight + 20 > viewportHeight) {
+                // Show above the element
+                top = rect.top - quickViewHeight - 10;
+                showAbove = true;
+                if (top < 10) {
+                    // If still not enough space above, center it vertically
+                    top = (viewportHeight - quickViewHeight) / 2;
+                    showAbove = false; // Reset since we're centering
+                }
+            } else {
+                // Show below the element
+                top = rect.bottom + 10;
+                showAbove = false;
+            }
+            
+            // Determine horizontal position
+            left = rect.left;
+            if (left + quickViewWidth > viewportWidth) {
+                // Adjust to fit within viewport
+                left = viewportWidth - quickViewWidth - 20;
+            }
+            if (left < 10) {
+                left = 10;
+            }
+            
+            // Apply positioning
             quickView.style.position = 'fixed';
-            quickView.style.top = `${rect.bottom + 10}px`;
-            quickView.style.left = `${rect.left}px`;
+            quickView.style.top = `${Math.max(10, top)}px`;
+            quickView.style.left = `${left}px`;
             quickView.style.zIndex = '2000';
+            
+            // Add positioning class for styling
+            if (showAbove) {
+                quickView.classList.add('quick-view-above');
+            } else {
+                quickView.classList.add('quick-view-below');
+            }
             
             document.body.appendChild(quickView);
             
             // Add event listeners
-            quickView.querySelector('.btn-close-quick').addEventListener('click', () => {
-                document.body.removeChild(quickView);
+            quickView.querySelector('.btn-close-quick').addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeQuickView();
             });
             
-            quickView.querySelector('.btn-view-full').addEventListener('click', () => {
-                document.body.removeChild(quickView);
+            quickView.querySelector('.btn-view-full').addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeQuickView();
                 showDayDetails(
                     new Date().getDate(),
                     new Date().getMonth(),
@@ -797,12 +853,32 @@ document.addEventListener("DOMContentLoaded", () => {
                     [rental]
                 );
             });
-              // Auto-close after 5 seconds
-            setTimeout(() => {
-                if (document.body.contains(quickView)) {
-                    document.body.removeChild(quickView);
+            
+            // Prevent click events from bubbling up from the quick view
+            quickView.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+            
+            // Add keyboard handler for escape key
+            const escapeHandler = (e) => {
+                if (e.key === 'Escape') {
+                    closeQuickView();
+                    document.removeEventListener('keydown', escapeHandler);
                 }
-            }, 5000);
+            };
+            document.addEventListener('keydown', escapeHandler);
+        }
+          function closeQuickView() {
+            const existingQuickView = document.getElementById('active-quick-view');
+            if (existingQuickView) {
+                // Add fade out animation
+                existingQuickView.style.animation = 'quickViewFadeOut 0.15s ease-in';
+                setTimeout(() => {
+                    if (existingQuickView.parentNode) {
+                        existingQuickView.remove();
+                    }
+                }, 150);
+            }
         }
         
         function showDayDetails(day, month, year, rentals) {

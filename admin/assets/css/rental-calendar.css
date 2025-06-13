@@ -358,19 +358,21 @@
 .rental-quick-view {
     position: fixed;
     background: white;
-    border-radius: 8px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
     border: 1px solid var(--border-color);
-    min-width: 280px;
+    min-width: 300px;
     max-width: 350px;
     z-index: 2000;
-    animation: quickViewFadeIn 0.3s ease;
+    animation: quickViewFadeIn 0.2s ease-out;
+    backdrop-filter: none;
+    pointer-events: all;
 }
 
 @keyframes quickViewFadeIn {
     from {
         opacity: 0;
-        transform: translateY(-10px) scale(0.95);
+        transform: translateY(-5px) scale(0.98);
     }
     to {
         opacity: 1;
@@ -378,31 +380,50 @@
     }
 }
 
+@keyframes quickViewFadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-3px) scale(0.98);
+    }
+}
+
 .quick-view-content {
-    padding: 16px;
+    padding: 18px;
+    background: white;
+    border-radius: 12px;
 }
 
 .quick-view-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
+    align-items: flex-start;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
 }
 
 .quick-view-header h4 {
     margin: 0;
-    font-size: 1rem;
+    font-size: 1.05rem;
+    font-weight: 600;
     color: var(--text-color);
+    line-height: 1.3;
+    flex: 1;
+    margin-right: 12px;
 }
 
 .quick-view-status {
-    padding: 2px 8px;
-    border-radius: 12px;
+    padding: 4px 10px;
+    border-radius: 14px;
     font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
 }
 
 .quick-view-status.upcoming {
@@ -426,29 +447,38 @@
 }
 
 .quick-view-body {
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
 .quick-view-body p {
-    margin: 6px 0;
-    font-size: 0.85rem;
+    margin: 8px 0;
+    font-size: 0.9rem;
     color: var(--text-color);
+    line-height: 1.4;
+}
+
+.quick-view-body strong {
+    color: var(--text-dark);
+    font-weight: 600;
 }
 
 .quick-view-actions {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     justify-content: flex-end;
+    padding-top: 4px;
 }
 
 .btn-view-full,
 .btn-close-quick {
-    padding: 6px 12px;
+    padding: 8px 14px;
     border: none;
-    border-radius: 4px;
-    font-size: 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
 }
 
 .btn-view-full {
@@ -459,16 +489,58 @@
 .btn-view-full:hover {
     background: var(--secondary-text-color);
     transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .btn-close-quick {
-    background: #6c757d;
-    color: white;
+    background: #f8f9fa;
+    color: #6c757d;
+    border-color: #dee2e6;
 }
 
 .btn-close-quick:hover {
-    background: #5a6268;
+    background: #e9ecef;
+    color: #495057;
     transform: translateY(-1px);
+}
+
+/* Quick View Mobile Responsive */
+@media (max-width: 768px) {
+    .rental-quick-view {
+        min-width: 280px;
+        max-width: calc(100vw - 40px);
+        font-size: 0.9rem;
+    }
+    
+    .quick-view-header h4 {
+        font-size: 1rem;
+    }
+    
+    .quick-view-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .btn-view-full,
+    .btn-close-quick {
+        width: 100%;
+        padding: 10px 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .rental-quick-view {
+        min-width: 260px;
+        max-width: calc(100vw - 20px);
+    }
+    
+    .quick-view-content {
+        padding: 14px;
+    }
+    
+    .quick-view-body p {
+        font-size: 0.85rem;
+    }
 }
 
 /* =============== ADAPTIVE ROW HEIGHTS =============== */
@@ -765,6 +837,28 @@
     .rental-detail-info {
         grid-template-columns: 1fr;
     }
+    
+    /* Quick View Mobile Responsive */
+    .rental-quick-view {
+        min-width: 280px;
+        max-width: calc(100vw - 40px);
+        font-size: 0.9rem;
+    }
+    
+    .quick-view-header h4 {
+        font-size: 1rem;
+    }
+    
+    .quick-view-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .btn-view-full,
+    .btn-close-quick {
+        width: 100%;
+        padding: 10px 14px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -828,6 +922,14 @@
     .btn-today {
         width: 100%;
         padding: 10px;
+    }
+    
+    .quick-view-content {
+        padding: 14px;
+    }
+    
+    .quick-view-body p {
+        font-size: 0.85rem;
     }
 }
 
