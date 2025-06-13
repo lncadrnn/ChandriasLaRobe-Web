@@ -77,31 +77,294 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         }
+          // =============== UI HELPER FUNCTIONS ===============
         
-        async function fetchRentalsData() {
+        function showLoading() {
+            const calendarContainer = document.getElementById('calendar-container');
+            if (calendarContainer) {
+                const loadingOverlay = document.createElement('div');
+                loadingOverlay.id = 'calendar-loading';
+                loadingOverlay.className = 'calendar-loading-overlay';
+                loadingOverlay.innerHTML = `
+                    <div class="loading-content">
+                        <div class="loading-spinner"></div>
+                        <p>Loading rental data...</p>
+                    </div>
+                `;
+                calendarContainer.appendChild(loadingOverlay);
+            }
+        }
+        
+        function hideLoading() {
+            const loadingOverlay = document.getElementById('calendar-loading');
+            if (loadingOverlay) {
+                loadingOverlay.remove();
+            }
+        }
+        
+        function showError(message = 'An error occurred while loading data') {
+            const calendarContainer = document.getElementById('calendar-container');
+            if (calendarContainer) {
+                const errorOverlay = document.createElement('div');
+                errorOverlay.className = 'calendar-error-overlay';
+                errorOverlay.innerHTML = `
+                    <div class="error-content">
+                        <i class="bx bx-error-circle"></i>
+                        <h3>Loading Error</h3>
+                        <p>${message}</p>
+                        <button class="btn-retry" onclick="location.reload()">
+                            <i class="bx bx-refresh"></i> Retry
+                        </button>
+                    </div>
+                `;
+                calendarContainer.appendChild(errorOverlay);
+            }
+        }
+        
+        function closeModal() {
+            modal.classList.remove('visible');
+            document.body.style.overflow = '';
+        }
+
+        // =============== TRANSACTION DATA FETCHING UTILITIES ===============
+        
+        async function fetchTransactionById(transactionId) {
             try {
-                showLoading();
+                console.log('🔍 Fetching transaction:', transactionId);
+                const doc = await db.collection("transaction").doc(transactionId).get();
+                
+                if (!doc.exists) {
+                    console.warn('⚠️ Transaction not found:', transactionId);
+                    return null;
+                }
+                
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    ...data,
+                    status: calculateRentalStatus(data),
+                    // Convert timestamps
+                    timestamp: data.timestamp?.toDate ? data.timestamp.toDate() : data.timestamp,
+                    eventDate: data.eventDate?.toDate ? data.eventDate.toDate() : (data.eventDate ? new Date(data.eventDate) : null),
+                    eventStartDate: data.eventStartDate?.toDate ? data.eventStartDate.toDate() : (data.eventStartDate ? new Date(data.eventStartDate) : null),
+                    eventEndDate: data.eventEndDate?.toDate ? data.eventEndDate.toDate() : (data.eventEndDate ? new Date(data.eventEndDate) : null)
+                };
+            } catch (error) {
+                console.error('❌ Error fetching transaction:', error);
+                return null;
+            }
+        }
+        
+        async function fetchTransactionsByDateRange(startDate, endDate) {
+            try {
+                console.log('📅 Fetching transactions for date range:', startDate, 'to', endDate);
                 
                 const snapshot = await db.collection("transaction")
-                    .orderBy("timestamp", "desc")
+                    .where("eventStartDate", ">=", startDate)
+                    .where("eventStartDate", "<=", endDate)
+                    .orderBy("eventStartDate", "asc")
                     .get();
                 
-                rentalsData = snapshot.docs.map(doc => {
+                const transactions = snapshot.docs.map(doc => {
                     const data = doc.data();
                     return {
                         id: doc.id,
                         ...data,
-                        status: calculateRentalStatus(data)
+                        status: calculateRentalStatus(data),
+                        timestamp: data.timestamp?.toDate ? data.timestamp.toDate() : data.timestamp,
+                        eventDate: data.eventDate?.toDate ? data.eventDate.toDate() : (data.eventDate ? new Date(data.eventDate) : null),
+                        eventStartDate: data.eventStartDate?.toDate ? data.eventStartDate.toDate() : (data.eventStartDate ? new Date(data.eventStartDate) : null),
+                        eventEndDate: data.eventEndDate?.toDate ? data.eventEndDate.toDate() : (data.eventEndDate ? new Date(data.eventEndDate) : null)
                     };
                 });
                 
-                console.log('Fetched rentals data:', rentalsData);
+                console.log(`✅ Found ${transactions.length} transactions in date range`);
+                return transactions;
+                
+            } catch (error) {
+                console.error('❌ Error fetching transactions by date range:', error);
+                return [];
+            }
+        }
+        
+        async function fetchTransactionsByStatus(status) {
+            try {
+                console.log('🔍 Fetching transactions with status:', status);
+                
+                // Since status is calculated, we need to fetch all and filter
+                const snapshot = await db.collection("transaction")
+                    .orderBy("timestamp", "desc")
+                    .get();
+                
+                const transactions = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        ...data,
+                        status: calculateRentalStatus(data),
+                        timestamp: data.timestamp?.toDate ? data.timestamp.toDate() : data.timestamp,
+                        eventDate: data.eventDate?.toDate ? data.eventDate.toDate() : (data.eventDate ? new Date(data.eventDate) : null),
+                        eventStartDate: data.eventStartDate?.toDate ? data.eventStartDate.toDate() : (data.eventStartDate ? new Date(data.eventStartDate) : null),
+                        eventEndDate: data.eventEndDate?.toDate ? data.eventEndDate.toDate() : (data.eventEndDate ? new Date(data.eventEndDate) : null)
+                    };
+                }).filter(transaction => transaction.status === status);
+                
+                console.log(`✅ Found ${transactions.length} transactions with status: ${status}`);
+                return transactions;
+                
+            } catch (error) {
+                console.error('❌ Error fetching transactions by status:', error);
+                return [];
+            }
+        }
+        
+        async function fetchOverdueTransactions() {
+            try {
+                console.log('⏰ Fetching overdue transactions...');
+                
+                const currentDate = new Date();
+                const snapshot = await db.collection("transaction")
+                    .orderBy("timestamp", "desc")
+                    .get();
+                
+                const overdueTransactions = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    const transaction = {
+                        id: doc.id,
+                        ...data,
+                        status: calculateRentalStatus(data),
+                        timestamp: data.timestamp?.toDate ? data.timestamp.toDate() : data.timestamp,
+                        eventDate: data.eventDate?.toDate ? data.eventDate.toDate() : (data.eventDate ? new Date(data.eventDate) : null),
+                        eventStartDate: data.eventStartDate?.toDate ? data.eventStartDate.toDate() : (data.eventStartDate ? new Date(data.eventStartDate) : null),
+                        eventEndDate: data.eventEndDate?.toDate ? data.eventEndDate.toDate() : (data.eventEndDate ? new Date(data.eventEndDate) : null)
+                    };
+                    
+                    // Calculate overdue days
+                    if (transaction.status === 'overdue') {
+                        const endDate = transaction.eventEndDate || transaction.eventDate;
+                        if (endDate) {
+                            const timeDiff = currentDate.getTime() - endDate.getTime();
+                            transaction.overdueDays = Math.floor(timeDiff / (1000 * 3600 * 24));
+                        }
+                    }
+                    
+                    return transaction;
+                }).filter(transaction => transaction.status === 'overdue');
+                
+                console.log(`⚠️ Found ${overdueTransactions.length} overdue transactions`);
+                return overdueTransactions;
+                
+            } catch (error) {
+                console.error('❌ Error fetching overdue transactions:', error);
+                return [];
+            }
+        }
+        
+        // Refresh transaction data
+        async function refreshTransactionData() {
+            console.log('🔄 Refreshing transaction data...');
+            await fetchRentalsData();
+        }
+        
+        // Get transaction statistics
+        function getTransactionStatistics() {
+            const stats = {
+                total: rentalsData.length,
+                upcoming: rentalsData.filter(r => r.status === 'upcoming').length,
+                ongoing: rentalsData.filter(r => r.status === 'ongoing').length,
+                completed: rentalsData.filter(r => r.status === 'completed').length,
+                overdue: rentalsData.filter(r => r.status === 'overdue').length,
+                withOverdueFees: rentalsData.filter(r => r.hasOverdueFee).length,
+                totalOverdueFees: rentalsData.reduce((total, r) => total + (r.overdueFeeAmount || 0), 0)
+            };
+            
+            console.log('📊 Transaction Statistics:', stats);
+            return stats;
+        }
+        
+        // Make utility functions globally available
+        window.transactionUtils = {
+            fetchTransactionById,
+            fetchTransactionsByDateRange,
+            fetchTransactionsByStatus,
+            fetchOverdueTransactions,
+            refreshTransactionData,
+            getTransactionStatistics,
+            getRentalsData: () => rentalsData
+        };
+
+        async function fetchRentalsData() {
+            try {
+                showLoading();
+                console.log('🔄 Fetching rental transactions from Firebase...');
+                
+                // Fetch all transaction data
+                const [transactionSnapshot, overdueFeeSnapshot] = await Promise.all([
+                    db.collection("transaction").orderBy("timestamp", "desc").get(),
+                    db.collection("overdue_fees").orderBy("createdAt", "desc").get()
+                ]);
+                
+                console.log(`📦 Found ${transactionSnapshot.docs.length} transactions and ${overdueFeeSnapshot.docs.length} overdue fee records`);
+                
+                // Process transaction data
+                rentalsData = transactionSnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    
+                    // Convert Firebase Timestamp objects to JavaScript Date objects
+                    const processedData = {
+                        id: doc.id,
+                        ...data,
+                        // Ensure proper date conversion
+                        timestamp: data.timestamp?.toDate ? data.timestamp.toDate() : data.timestamp,
+                        eventDate: data.eventDate?.toDate ? data.eventDate.toDate() : (data.eventDate ? new Date(data.eventDate) : null),
+                        eventStartDate: data.eventStartDate?.toDate ? data.eventStartDate.toDate() : (data.eventStartDate ? new Date(data.eventStartDate) : null),
+                        eventEndDate: data.eventEndDate?.toDate ? data.eventEndDate.toDate() : (data.eventEndDate ? new Date(data.eventEndDate) : null),
+                        // Calculate updated status
+                        status: calculateRentalStatus(data),
+                        // Add overdue fee tracking
+                        hasOverdueFee: false,
+                        overdueFeeAmount: 0,
+                        overdueFeesPaid: []
+                    };
+                    
+                    return processedData;
+                });
+                
+                // Process overdue fee data and associate with transactions
+                const overdueFees = overdueFeeSnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                    createdAt: doc.data().createdAt?.toDate ? doc.data().createdAt.toDate() : new Date(doc.data().createdAt)
+                }));
+                
+                // Associate overdue fees with their respective transactions
+                rentalsData.forEach(rental => {
+                    const associatedFees = overdueFees.filter(fee => fee.originalTransactionId === rental.id);
+                    if (associatedFees.length > 0) {
+                        rental.hasOverdueFee = true;
+                        rental.overdueFeeAmount = associatedFees.reduce((total, fee) => total + (fee.overdueFee || 0), 0);
+                        rental.overdueFeesPaid = associatedFees;
+                    }
+                });
+                
+                console.log('✅ Successfully processed rental data:', {
+                    totalTransactions: rentalsData.length,
+                    withOverdueFees: rentalsData.filter(r => r.hasOverdueFee).length,
+                    statusBreakdown: {
+                        upcoming: rentalsData.filter(r => r.status === 'upcoming').length,
+                        ongoing: rentalsData.filter(r => r.status === 'ongoing').length,
+                        completed: rentalsData.filter(r => r.status === 'completed').length,
+                        overdue: rentalsData.filter(r => r.status === 'overdue').length
+                    }
+                });
+                
                 hideLoading();
                 renderCalendar();
                 
             } catch (error) {
-                console.error('Error fetching rentals data:', error);
-                showError();
+                console.error('❌ Error fetching rental transactions:', error);
+                hideLoading();
+                showError('Failed to load rental data. Please check your connection and try again.');
             }
         }
           function calculateRentalStatus(rental) {
