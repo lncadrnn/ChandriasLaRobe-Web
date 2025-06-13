@@ -384,6 +384,9 @@ select:disabled {
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
 }
 
 .transaction-card::before {
@@ -528,8 +531,8 @@ select:disabled {
 .card-actions {
     display: flex;
     gap: 0.75rem;
-    padding-top: 1rem;
     border-top: 1px solid rgba(255, 105, 180, 0.1);
+    padding-top: 1rem;
 }
 
 .card-action-btn {
@@ -1034,11 +1037,11 @@ select:disabled {
         gap: 1rem;
         padding: 0;
     }
-    
-    .transaction-card {
+      .transaction-card {
         padding: 1rem;
         margin: 0;
         box-shadow: 0 4px 16px rgba(255, 105, 180, 0.08);
+        min-height: 350px;
     }
     
     .customer-info h4 {
@@ -1050,10 +1053,14 @@ select:disabled {
         grid-template-columns: 1fr;
         gap: 0.75rem;
     }
-    
-    .card-actions {
+      .card-actions {
         flex-direction: column;
         gap: 0.5rem;
+    }
+    
+    .card-actions-container {
+        margin-top: 1rem;
+        padding-top: 0.75rem;
     }
     
     .card-action-btn {
@@ -2328,7 +2335,7 @@ select:disabled {
     border-color: #bd2130;
 }
 
-/* === LONG BUTTON LAYOUT STYLES === */
+/* === LONG BUTTON LAYOUT STYLES */
 
 /* Table action buttons containers */
 .action-buttons-long {
@@ -2417,4 +2424,16 @@ select:disabled {
         padding: 0.75rem;
         font-size: 0.875rem;
     }
+}
+
+/* Card content and actions container */
+.card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-actions-container {
+    margin-top: auto;
+    padding-top: 1rem;
 }

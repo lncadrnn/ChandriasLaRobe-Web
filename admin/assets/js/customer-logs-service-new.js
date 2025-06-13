@@ -324,79 +324,83 @@ async function renderTransactionCards() {
         // Count items
         const productCount = transaction.products?.length || 0;
         const accessoryCount = transaction.accessories?.length || 0;
-        const totalItems = productCount + accessoryCount;
-
-        const card = `
+        const totalItems = productCount + accessoryCount;        const card = `
             <div class="transaction-card" data-transaction-id="${transaction.id}">
-                <div class="card-header">
-                    <div class="customer-info">
-                        <h4>${transaction.fullName || 'Unknown Customer'}</h4>
-                        <code class="transaction-code">${transaction.transactionCode || transaction.id.substring(0, 8)}</code>
+                <div class="card-content">
+                    <div class="card-header">
+                        <div class="customer-info">
+                            <h4>${transaction.fullName || 'Unknown Customer'}</h4>
+                            <code class="transaction-code">${transaction.transactionCode || transaction.id.substring(0, 8)}</code>
+                        </div>
+                        <div class="card-status">
+                            <span class="status-badge ${statusClass}">${rentalStatus}</span>
+                        </div>
                     </div>
-                    <div class="card-status">
-                        <span class="status-badge ${statusClass}">${rentalStatus}</span>
+                    
+                    <div class="card-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Event Date</span>
+                            <span class="detail-value">${eventDateDisplay}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Event Type</span>
+                            <span class="detail-value">${transaction.eventType || 'N/A'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Items Rented</span>
+                            <span class="detail-value">${totalItems} item${totalItems !== 1 ? 's' : ''}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Payment Status</span>
+                            <span class="detail-value">${paymentStatus}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Total Amount</span>
+                            <span class="detail-value amount">₱${totalPayment.toLocaleString()}</span>
+                        </div>
+                        ${remainingBalance > 0 ? `
+                        <div class="detail-item">
+                            <span class="detail-label">Remaining Balance</span>
+                            <span class="detail-value" style="color: #e74c3c; font-weight: 600;">₱${remainingBalance.toLocaleString()}</span>
+                        </div>
+                        ` : ''}
                     </div>
                 </div>
                 
-                <div class="card-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Event Date</span>
-                        <span class="detail-value">${eventDateDisplay}</span>
+                <div class="card-actions-container">
+                    <div class="card-actions">
+                        <button class="card-action-btn view-details-btn" data-id="${transaction.id}">
+                            <i class='bx bx-show'></i> View
+                        </button>
+                        <button class="card-action-btn edit-btn" data-id="${transaction.id}">
+                            <i class='bx bx-edit'></i> Edit
+                        </button>
+                        <button class="card-action-btn delete-btn" data-id="${transaction.id}">
+                            <i class='bx bx-trash'></i> Delete
+                        </button>
                     </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Event Type</span>
-                        <span class="detail-value">${transaction.eventType || 'N/A'}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Items Rented</span>
-                        <span class="detail-value">${totalItems} item${totalItems !== 1 ? 's' : ''}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Payment Status</span>
-                        <span class="detail-value">${paymentStatus}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Total Amount</span>
-                        <span class="detail-value amount">₱${totalPayment.toLocaleString()}</span>
-                    </div>
-                    ${remainingBalance > 0 ? `
-                    <div class="detail-item">
-                        <span class="detail-label">Remaining Balance</span>
-                        <span class="detail-value" style="color: #e74c3c; font-weight: 600;">₱${remainingBalance.toLocaleString()}</span>
-                    </div>
+                    ${rentalStatus !== 'Upcoming' && rentalStatus !== 'Overdue' ? `
+                        <div class="card-actions-long">
+                            <button class="card-action-btn mark-complete-btn long-btn" data-id="${transaction.id}">
+                                <i class='bx bx-check'></i> Mark as Complete
+                            </button>
+                        </div>
                     ` : ''}
-                </div>                <div class="card-actions">
-                    <button class="card-action-btn view-details-btn" data-id="${transaction.id}">
-                        <i class='bx bx-show'></i> View
-                    </button>
-                    <button class="card-action-btn edit-btn" data-id="${transaction.id}">
-                        <i class='bx bx-edit'></i> Edit
-                    </button>
-                    <button class="card-action-btn delete-btn" data-id="${transaction.id}">
-                        <i class='bx bx-trash'></i> Delete
-                    </button>
+                    ${rentalStatus === 'Overdue' ? `
+                        <div class="card-actions-long">
+                            <button class="card-action-btn process-overdue-btn long-btn" data-id="${transaction.id}">
+                                <i class='bx bx-exclamation-triangle'></i> Process Overdue
+                            </button>
+                        </div>
+                    ` : ''}
+                    ${rentalStatus === 'Upcoming' ? `
+                        <div class="card-actions-long">
+                            <button class="card-action-btn cancel-rental-btn long-btn" data-id="${transaction.id}">
+                                <i class='bx bx-x'></i> Cancel
+                            </button>
+                        </div>
+                    ` : ''}
                 </div>
-                ${rentalStatus !== 'Upcoming' && rentalStatus !== 'Overdue' ? `
-                    <div class="card-actions-long">
-                        <button class="card-action-btn mark-complete-btn long-btn" data-id="${transaction.id}">
-                            <i class='bx bx-check'></i> Mark as Complete
-                        </button>
-                    </div>
-                ` : ''}
-                ${rentalStatus === 'Overdue' ? `
-                    <div class="card-actions-long">
-                        <button class="card-action-btn process-overdue-btn long-btn" data-id="${transaction.id}">
-                            <i class='bx bx-exclamation-triangle'></i> Process Overdue
-                        </button>
-                    </div>
-                ` : ''}
-                ${rentalStatus === 'Upcoming' ? `
-                    <div class="card-actions-long">
-                        <button class="card-action-btn cancel-rental-btn long-btn" data-id="${transaction.id}">
-                            <i class='bx bx-x'></i> Cancel
-                        </button>
-                    </div>
-                ` : ''}
             </div>
         `;
         
