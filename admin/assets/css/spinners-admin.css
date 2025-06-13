@@ -1,0 +1,218 @@
+/* Admin Spinners CSS */
+
+/* Page Loader Spinner */
+.admin-page-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease-out;
+}
+
+.admin-page-loader.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.admin-page-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--primary-color, #ff4081);
+    border-radius: 50%;
+    animation: admin-spin 1s linear infinite;
+    position: relative;
+}
+
+.admin-page-spinner::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border: 2px solid transparent;
+    border-top: 2px solid rgba(255, 64, 129, 0.3);
+    border-radius: 50%;
+    animation: admin-spin 2s linear infinite reverse;
+}
+
+/* Action Spinner for forms and buttons */
+.admin-action-spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.admin-action-spinner.active {
+    display: flex;
+}
+
+.admin-spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid #fff;
+    border-radius: 50%;
+    animation: admin-spin 0.8s linear infinite;
+}
+
+/* Button spinner for inline loading */
+.admin-btn-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: admin-spin 0.8s linear infinite;
+    margin-right: 8px;
+}
+
+/* Table loading spinner */
+.admin-table-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid var(--primary-color, #ff4081);
+    border-radius: 50%;
+    animation: admin-spin 1s linear infinite;
+    margin-right: 8px;
+}
+
+/* Card loading spinner */
+.admin-card-spinner {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--primary-color, #ff4081);
+    border-radius: 50%;
+    animation: admin-spin 1s linear infinite;
+}
+
+/* Loading overlay for specific sections */
+.admin-section-loading {
+    position: relative;
+}
+
+.admin-section-loading::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #ffffff;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.admin-section-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--primary-color, #ff4081);
+    border-radius: 50%;
+    animation: admin-spin 1s linear infinite;
+    z-index: 101;
+}
+
+/* Spinner animations */
+@keyframes admin-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Spinner with text */
+.admin-spinner-with-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.admin-spinner-text {
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Dark theme support */
+.dark-theme .admin-page-loader {
+    background: #000000;
+}
+
+.dark-theme .admin-spinner-text {
+    color: #ccc;
+}
+
+.dark-theme .admin-table-spinner,
+.dark-theme .admin-card-spinner {
+    border-color: #444;
+    border-top-color: var(--primary-color, #ff4081);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .admin-page-spinner {
+        width: 50px;
+        height: 50px;
+        border-width: 3px;
+    }
+    
+    .admin-spinner {
+        width: 40px;
+        height: 40px;
+        border-width: 2px;
+    }
+    
+    .admin-spinner-text {
+        font-size: 13px;
+    }
+}
+
+/* Utility classes */
+.admin-loading {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.admin-spinner-hidden {
+    display: none !important;
+}
+
+.admin-spinner-visible {
+    display: flex !important;
+}
+
+/* Pulse animation for loading states */
+@keyframes admin-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.admin-loading-pulse {
+    animation: admin-pulse 1.5s ease-in-out infinite;
+}

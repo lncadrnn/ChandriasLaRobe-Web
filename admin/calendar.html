@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="./assets/css/admin-layout.css" />
         <link rel="stylesheet" href="./assets/css/admin-layout-mob.css" />
         <link rel="stylesheet" href="./assets/css/new-calendar.css" />
+        <link rel="stylesheet" href="./assets/css/spinners-admin.css" />
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -17,6 +18,22 @@
             rel="stylesheet"
         />
     </head>    <body>
+        <!-- Page Loader -->
+        <div class="admin-page-loader">
+            <div class="admin-spinner-with-text">
+                <div class="admin-page-spinner"></div>
+                <div class="admin-spinner-text">Loading Calendar...</div>
+            </div>
+        </div>
+
+        <!-- Action Spinner -->
+        <div class="admin-action-spinner">
+            <div class="admin-spinner-with-text">
+                <div class="admin-spinner"></div>
+                <div class="admin-spinner-text">Processing...</div>
+            </div>
+        </div>
+
         <nav class="sidebar close">
             <header>
                 <div class="image-text">
@@ -253,6 +270,7 @@
             crossorigin="anonymous"
         ></script>
           <!-- Admin Layout JS -->
+        <script src="./assets/js/spinners-admin.js"></script>
         <script src="./assets/js/admin-layout.js"></script>
         <script src="./assets/js/admin-layout-mob.js"></script>
         
