@@ -38,8 +38,7 @@
     /* Hide desktop sidebar completely */
     .sidebar {
         display: none !important;
-    }
-      /* Show mobile bottom navigation */
+    }    /* Show mobile bottom navigation */
     .mobile-bottom-nav {
         display: flex !important;
         position: fixed !important;
@@ -49,14 +48,14 @@
         width: 100% !important;
         height: 70px !important;
         background: var(--sidebar-color) !important;
-        border-top: 1px solid var(--border-color);
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+        border-top: 2px solid var(--primary-color);
+        box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.2);
         z-index: 9999 !important;
         justify-content: space-around;
         align-items: center;
         padding: 0 8px;
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         margin: 0 !important;
         transform: translateZ(0); /* Force hardware acceleration */
         will-change: transform; /* Optimize for animations */

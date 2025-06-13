@@ -125,10 +125,14 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         document.head.appendChild(style);
     }
-    
-    // Add window resize listener for responsive behavior
+      // Add window resize listener for responsive behavior
     window.addEventListener('resize', debounce(() => {
-        if (currentView === 'table') {
+        const isMobile = window.innerWidth <= 768;
+        
+        // Force cards view on mobile
+        if (isMobile && currentView === 'table') {
+            switchView('cards');
+        } else if (currentView === 'table') {
             renderCurrentView();
         }
     }, 250));
@@ -197,6 +201,12 @@ function renderCurrentView() {
 
 // Switch between card and table views
 function switchView(view) {
+    // Force cards view on mobile
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+        view = 'cards';
+    }
+    
     currentView = view;
     
     // Update button states
@@ -246,15 +256,14 @@ async function fetchAccessoryDetails(accessoryId) {
     }
 }
 
-// Render transaction table (simplified)
+// Render transaction table (desktop only)
 async function renderTransactionTable() {
     if (!tableBody) return;
     
-    // Check if we're on mobile
+    // Redirect to cards view on mobile
     const isMobile = window.innerWidth <= 768;
-    
     if (isMobile) {
-        renderMobileTableView();
+        switchView('cards');
         return;
     }
     
