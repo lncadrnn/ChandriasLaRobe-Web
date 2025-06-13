@@ -57,26 +57,35 @@ function calculateRentalStatusFallback(transaction) {
                     rentalStatus = 'Completed';
                     statusClass = 'status-completed';
                 }
-            }
-        } else {
-            // Fixed rental (single day)
-            if (currentDate < eventStartDate) {
+            }        } else {
+            // Fixed rental (single day) - extend ongoing period to 3 days total
+            // Normalize dates to ignore time components for accurate date comparison
+            const currentDateOnly = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+            const eventStartDateOnly = new Date(eventStartDate.getFullYear(), eventStartDate.getMonth(), eventStartDate.getDate());
+            
+            if (currentDateOnly < eventStartDateOnly) {
                 rentalStatus = 'Upcoming';
                 statusClass = 'status-upcoming';
-            } else if (currentDate.toDateString() === eventStartDate.toDateString()) {
-                rentalStatus = 'Ongoing';
-                statusClass = 'status-ongoing';
-            } else if (currentDate > eventStartDate) {
-                // Check if it's overdue (1 day grace period for fixed rentals)
-                const gracePeriod = new Date(eventStartDate);
-                gracePeriod.setDate(gracePeriod.getDate() + 1);
+            } else {
+                // Calculate if current date is within the 3-day ongoing period
+                const ongoingEndDate = new Date(eventStartDateOnly);
+                ongoingEndDate.setDate(ongoingEndDate.getDate() + 2); // Add 2 days to make it 3 days total
                 
-                if (currentDate > gracePeriod) {
-                    rentalStatus = 'Overdue';
-                    statusClass = 'status-overdue';
-                } else {
-                    rentalStatus = 'Completed';
-                    statusClass = 'status-completed';
+                if (currentDateOnly >= eventStartDateOnly && currentDateOnly <= ongoingEndDate) {
+                    rentalStatus = 'Ongoing';
+                    statusClass = 'status-ongoing';
+                } else if (currentDateOnly > ongoingEndDate) {
+                    // Check if it's overdue (1 day grace period after the 3-day ongoing period)
+                    const gracePeriod = new Date(ongoingEndDate);
+                    gracePeriod.setDate(gracePeriod.getDate() + 1);
+                    
+                    if (currentDateOnly > gracePeriod) {
+                        rentalStatus = 'Overdue';
+                        statusClass = 'status-overdue';
+                    } else {
+                        rentalStatus = 'Completed';
+                        statusClass = 'status-completed';
+                    }
                 }
             }
         }
