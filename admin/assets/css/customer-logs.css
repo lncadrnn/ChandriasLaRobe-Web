@@ -536,6 +536,7 @@ select:disabled {
     display: none; /* Hidden by default, shown when table view is selected */
     flex-direction: column;
     min-height: 0;
+    overflow-x: hidden; /* Prevent horizontal scrollbar */
 }
 
 .table-wrapper {
@@ -549,6 +550,7 @@ select:disabled {
     flex-direction: column;
     background: var(--white-color);
     max-height: calc(60px + 10 * 80px); /* Header (60px) + 10 rows * estimated row height (80px) */
+    overflow-x: hidden; /* Prevent horizontal scrollbar */
 }
 
 #rental-history-table {
@@ -558,16 +560,18 @@ select:disabled {
     background: var(--white-color);
     display: block;
     overflow: hidden;
+    overflow-x: hidden; /* Prevent horizontal scrollbar */
 }
 
 #rental-history-table thead,
 #rental-history-table tbody {
     display: block;
     width: 100%;
+    overflow-x: hidden; /* Prevent horizontal scrollbar */
 }
 
 #rental-history-table thead {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: var(--primary-color);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -576,6 +580,7 @@ select:disabled {
 #rental-history-table tbody {
     background: var(--white-color);
     overflow-y: auto;
+    overflow-x: hidden; /* Prevent horizontal scrollbar */
     max-height: calc(10 * 80px); /* Maximum height for 10 rows */
 }
 
@@ -584,6 +589,7 @@ select:disabled {
     display: table;
     width: 100%;
     table-layout: fixed;
+    overflow-x: hidden; /* Prevent horizontal scrollbar */
 }
 
 #rental-history-table thead th {
@@ -597,6 +603,47 @@ select:disabled {
     border: none;
     position: relative;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Column width specifications */
+#rental-history-table thead th:nth-child(1), /* Customer Name */
+#rental-history-table tbody td:nth-child(1) {
+    width: 20%;
+}
+
+#rental-history-table thead th:nth-child(2), /* Transaction Code */
+#rental-history-table tbody td:nth-child(2) {
+    width: 18%;
+}
+
+#rental-history-table thead th:nth-child(3), /* Event Date */
+#rental-history-table tbody td:nth-child(3) {
+    width: 16%;
+}
+
+#rental-history-table thead th:nth-child(4), /* Rental Status */
+#rental-history-table tbody td:nth-child(4) {
+    width: 15%;
+}
+
+#rental-history-table thead th:nth-child(5), /* Total Amount */
+#rental-history-table tbody td:nth-child(5) {
+    width: 12%;
+}
+
+#rental-history-table thead th:nth-child(6), /* Actions */
+#rental-history-table tbody td:nth-child(6) {
+    width: 19%;
+}
+
+#rental-history-table thead th:nth-child(5) { /* Total Amount header */
+    text-align: right;
+}
+
+#rental-history-table thead th:nth-child(6) { /* Actions header */
+    text-align: center;
 }
 
 #rental-history-table thead th:not(:last-child)::after {
@@ -632,6 +679,22 @@ select:disabled {
     color: var(--text-color);
     border: none;
     font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Actions column styling */
+#rental-history-table tbody td:nth-child(6) {
+    text-align: center;
+    white-space: normal; /* Allow wrapping for action buttons */
+}
+
+/* Special styling for total amount column */
+#rental-history-table tbody td:nth-child(5) {
+    text-align: right;
+    font-weight: 600;
+    color: var(--primary-color);
 }
 
 /* Custom scrollbar for table tbody */
@@ -675,6 +738,8 @@ select:disabled {
     display: flex;
     gap: 0.4rem;
     justify-content: center;
+    flex-wrap: wrap; /* Allow wrapping if needed */
+    max-width: 100%; /* Ensure it doesn't exceed container */
 }
 
 .action-buttons button {
@@ -690,6 +755,8 @@ select:disabled {
     display: flex;
     align-items: center;
     gap: 0.25rem;
+    flex-shrink: 0; /* Prevent buttons from shrinking too much */
+    min-width: fit-content; /* Ensure text doesn't wrap inside buttons */
 }
 
 .action-buttons .view-details-btn:hover {
