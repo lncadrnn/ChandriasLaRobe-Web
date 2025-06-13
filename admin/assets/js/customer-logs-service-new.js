@@ -562,20 +562,32 @@ async function showTransactionDetails(transactionId) {
                 Object.entries(product.sizes)
                     .map(([size, qty]) => `<li>${size}: ${qty} pcs</li>`)
                     .join('') : '';
-            
-            return `
+              return `
                 <div class="detail-product">
-                    ${productDetails?.frontImageUrl ? 
-                        `<img src="${productDetails.frontImageUrl}" alt="${product.name}" class="modal-product-image">` : ''
-                    }
-                    <h4>${product.name || 'Unknown Product'}</h4>
-                    <p><strong>Code:</strong> ${product.code || 'N/A'}</p>
-                    <p><strong>Price:</strong> ₱${product.price?.toLocaleString() || 'N/A'}</p>
-                    <p><strong>Category:</strong> ${productDetails?.category || 'N/A'}</p>
-                    <p><strong>Color:</strong> ${productDetails?.color || 'N/A'}</p>
-                    <p><strong>Sleeve:</strong> ${productDetails?.sleeve || 'N/A'}</p>
-                    ${sizesHtml ? `<p><strong>Sizes:</strong></p><ul>${sizesHtml}</ul>` : ''}
-                    ${productDetails?.description ? `<p><strong>Description:</strong> ${productDetails.description}</p>` : ''}
+                    <div class="product-content">
+                        <div class="product-info">
+                            <h4>${product.name || 'Unknown Product'}</h4>                            <div class="info-list">
+                                <div class="info-item">
+                                    <span class="info-label">Code:</span>
+                                    <span class="info-value">${product.code || 'N/A'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Price:</span>
+                                    <span class="info-value">₱${product.price?.toLocaleString() || 'N/A'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Category:</span>
+                                    <span class="info-value">${productDetails?.category || 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-image">
+                            ${productDetails?.frontImageUrl ? 
+                                `<img src="${productDetails.frontImageUrl}" alt="${product.name}" class="modal-product-image">` : 
+                                `<div class="no-image-placeholder">No Image Available</div>`
+                            }
+                        </div>
+                    </div>
                 </div>
             `;
         });
@@ -593,18 +605,47 @@ async function showTransactionDetails(transactionId) {
                 `<p><strong>Types:</strong> ${accessory.types.join(', ')}</p>` : '';
             const inclusionsHtml = accessoryDetails?.inclusions?.length > 0 ?
                 `<p><strong>Inclusions:</strong> ${accessoryDetails.inclusions.join(', ')}</p>` : '';
-            
-            return `
+              return `
                 <div class="detail-accessory">
-                    ${accessoryDetails?.imageUrl ? 
-                        `<img src="${accessoryDetails.imageUrl}" alt="${accessory.name}" class="modal-accessory-image">` : ''
-                    }
-                    <h4>${accessory.name || 'Unknown Accessory'}</h4>
-                    <p><strong>Code:</strong> ${accessory.code || 'N/A'}</p>
-                    <p><strong>Price:</strong> ₱${accessory.price?.toLocaleString() || 'N/A'}</p>
-                    ${accessory.quantity ? `<p><strong>Quantity:</strong> ${accessory.quantity}</p>` : ''}
-                    ${typesHtml}
-                    ${inclusionsHtml}
+                    <div class="accessory-content">
+                        <div class="accessory-info">
+                            <h4>${accessory.name || 'Unknown Accessory'}</h4>
+                            <div class="info-list">
+                                <div class="info-item">
+                                    <span class="info-label">Code:</span>
+                                    <span class="info-value">${accessory.code || 'N/A'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Price:</span>
+                                    <span class="info-value">₱${accessory.price?.toLocaleString() || 'N/A'}</span>
+                                </div>
+                                ${accessory.quantity ? `
+                                <div class="info-item">
+                                    <span class="info-label">Quantity:</span>
+                                    <span class="info-value">${accessory.quantity}</span>
+                                </div>
+                                ` : ''}
+                                ${accessory.types?.length > 0 ? `
+                                <div class="info-item">
+                                    <span class="info-label">Types:</span>
+                                    <span class="info-value">${accessory.types.join(', ')}</span>
+                                </div>
+                                ` : ''}
+                                ${accessoryDetails?.inclusions?.length > 0 ? `
+                                <div class="info-item">
+                                    <span class="info-label">Inclusions:</span>
+                                    <span class="info-value">${accessoryDetails.inclusions.join(', ')}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <div class="accessory-image">
+                            ${accessoryDetails?.imageUrl ? 
+                                `<img src="${accessoryDetails.imageUrl}" alt="${accessory.name}" class="modal-accessory-image">` : 
+                                `<div class="no-image-placeholder">No Image Available</div>`
+                            }
+                        </div>
+                    </div>
                 </div>
             `;
         });
