@@ -718,9 +718,10 @@
                     <i class='bx bx-x'></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="confirmation-section">
-                    
+            <div class="modal-body">                <div class="confirmation-section">
+                    <div class="confirmation-icon undo-icon">
+                        <i class='bx bx-undo'></i>
+                    </div>
                     <div class="confirmation-content">
                         <h3>Restore this cancelled rental?</h3>
                         <p>This will undo the cancellation and restore the rental to its appropriate status based on the event dates.</p>
@@ -751,8 +752,7 @@
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="closeUndoCancelModal()">
                         <i class='bx bx-x'></i> Cancel
-                    </button>
-                    <button type="button" class="btn-primary" id="confirm-undo-btn" onclick="confirmUndoCancellation()">
+                    </button>                    <button type="button" class="btn-primary" id="confirm-undo-btn" onclick="confirmUndoCancel()">
                         <i class='bx bx-undo'></i> Confirm Undo
                     </button>
                 </div>
