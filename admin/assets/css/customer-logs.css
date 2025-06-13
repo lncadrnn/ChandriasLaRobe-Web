@@ -5,7 +5,7 @@
 :root {
     --white-color: #ffffff;
     --background-color: #f8fcff;
-    --text-color: #333;
+    /* Removed --text-color override to use admin-layout.css default (#808080) for proper sidebar icon colors */
     --secondary-color: hsl(346, 85%, 90%);
 }
 
