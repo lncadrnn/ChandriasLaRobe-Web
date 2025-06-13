@@ -447,8 +447,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ]);
                 
                 console.log(`📦 Found ${transactionSnapshot.docs.length} transactions and ${overdueFeeSnapshot.docs.length} overdue fee records`);
-                
-                // Process transaction data
+                  // Process transaction data and filter out completed rentals
                 rentalsData = transactionSnapshot.docs.map(doc => {
                     const data = doc.data();
                     
@@ -470,6 +469,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     };
                     
                     return processedData;
+                }).filter(rental => {
+                    // Filter out completed rentals from calendar display
+                    return rental.status !== 'completed';
                 });
                 
                 // Process overdue fee data and associate with transactions
@@ -487,15 +489,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         rental.overdueFeeAmount = associatedFees.reduce((total, fee) => total + (fee.overdueFee || 0), 0);
                         rental.overdueFeesPaid = associatedFees;
                     }
-                });
-                  console.log('✅ Successfully processed rental data:', {
+                });                console.log('✅ Successfully processed rental data (completed rentals filtered out):', {
                     totalTransactions: rentalsData.length,
                     withOverdueFees: rentalsData.filter(r => r.hasOverdueFee).length,
                     statusBreakdown: {
                         upcoming: rentalsData.filter(r => r.status === 'upcoming').length,
                         ongoing: rentalsData.filter(r => r.status === 'ongoing').length,
-                        completed: rentalsData.filter(r => r.status === 'completed').length,
-                        overdue: rentalsData.filter(r => r.status === 'overdue').length
+                        overdue: rentalsData.filter(r => r.status === 'overdue').length,
+                        cancelled: rentalsData.filter(r => r.status === 'cancelled').length
                     }
                 });
                 
