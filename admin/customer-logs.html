@@ -760,5 +760,47 @@
         </div>
     </div>
 
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="modal-overlay">
+        <div class="confirmation-modal-content">
+            <div class="confirmation-modal-header">
+                <i class='bx bx-help-circle confirmation-icon'></i>
+                <h3 id="confirmation-modal-title">Confirm Action</h3>
+            </div>
+            <div class="confirmation-modal-body">
+                <p id="confirmation-modal-message">Are you sure you want to proceed with this action?</p>
+            </div>
+            <div class="confirmation-modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeConfirmationModal()">
+                    <i class='bx bx-x'></i> Cancel
+                </button>
+                <button type="button" class="btn-primary" id="confirmation-okay-btn" onclick="proceedWithAction()">
+                    <i class='bx bx-check'></i> Okay
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancellation Undone Modal -->
+    <div id="cancellation-undone-modal" class="modal-overlay" style="display: none;">
+        <div class="success-modal-content">
+            <div class="success-modal-header">
+                <i class='bx bx-undo success-icon'></i>
+                <h3 id="cancellation-undone-title">Cancellation Undone!</h3>
+            </div>
+            <div class="success-modal-body">
+                <p id="cancellation-undone-message">The rental cancellation has been successfully undone and the status has been restored.</p>
+                <div class="status-update-info">
+                    <p><strong>New Status:</strong> <span id="undone-new-status" class="status-highlight">-</span></p>
+                </div>
+            </div>
+            <div class="success-modal-footer">
+                <button type="button" class="btn-success-ok" onclick="closeCancellationUndoneModal()">
+                    <i class='bx bx-check'></i> OK
+                </button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

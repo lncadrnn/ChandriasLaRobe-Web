@@ -331,14 +331,8 @@ async function confirmUndoCancel() {
                     await window.renderTransactionTable();
                 }
             }
-        }
-
-        // Show success notification
-        if (window.showNotification) {
-            window.showNotification(`Cancellation undone successfully. Status updated to ${newStatus}.`, 'success');
-        } else {
-            alert(`Cancellation undone successfully. Status updated to ${newStatus}.`);
-        }
+        }        // Show success notification with the new modal
+        showCancellationUndoneModal(newStatus, `Cancellation undone successfully! The rental status has been updated to ${newStatus}.`);
 
         console.log('Cancellation undone successfully, new status:', newStatus);
 
@@ -602,6 +596,135 @@ async function confirmCancelRental() {
 }
 
 /**
+ * Confirmation Modal Functions
+ */
+let pendingAction = null;
+let pendingActionData = null;
+
+/**
+ * Shows the confirmation modal with a custom message
+ * @param {string} title - The title of the confirmation modal
+ * @param {string} message - The confirmation message
+ * @param {function} action - The action to execute if confirmed
+ * @param {*} actionData - Any data needed for the action
+ */
+function showConfirmationModal(title, message, action, actionData = null) {
+    const modal = document.getElementById('confirmation-modal');
+    const titleElement = document.getElementById('confirmation-modal-title');
+    const messageElement = document.getElementById('confirmation-modal-message');
+    
+    if (!modal || !titleElement || !messageElement) {
+        console.error('Confirmation modal elements not found');
+        return;
+    }
+    
+    titleElement.textContent = title;
+    messageElement.textContent = message;
+    
+    // Store the pending action
+    pendingAction = action;
+    pendingActionData = actionData;
+    
+    modal.classList.add('show');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+/**
+ * Closes the confirmation modal
+ */
+function closeConfirmationModal() {
+    const modal = document.getElementById('confirmation-modal');
+    if (!modal) return;
+    
+    modal.classList.remove('show');
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+    
+    document.body.style.overflow = '';
+    
+    // Clear pending action
+    pendingAction = null;
+    pendingActionData = null;
+}
+
+/**
+ * Proceeds with the confirmed action
+ */
+function proceedWithAction() {
+    if (pendingAction && typeof pendingAction === 'function') {
+        closeConfirmationModal();
+        
+        // Execute the pending action with any stored data
+        if (pendingActionData) {
+            pendingAction(pendingActionData);
+        } else {
+            pendingAction();
+        }
+    }
+}
+
+/**
+ * Enhanced cancel rental function with confirmation
+ * @param {string} transactionId - The ID of the transaction to cancel
+ */
+function showCancelConfirmation(transactionId) {
+    if (!transactionId) {
+        console.error('No transaction ID provided for cancellation');
+        return;
+    }
+    
+    showConfirmationModal(
+        'Confirm Rental Cancellation',
+        'Are you sure you want to cancel this rental? This action can be undone later if needed.',
+        () => {
+            // Open the main cancel rental modal after confirmation
+            if (window.showCancelRentalModal) {
+                window.showCancelRentalModal(transactionId);
+            }
+        }
+    );
+}
+
+/**
+ * Enhanced undo cancellation function with confirmation
+ * @param {string} transactionId - The ID of the transaction to undo cancellation for
+ */
+function showUndoConfirmation(transactionId) {
+    if (!transactionId) {
+        console.error('No transaction ID provided for undo cancellation');
+        return;
+    }
+    
+    showConfirmationModal(
+        'Confirm Undo Cancellation',
+        'Are you sure you want to restore this cancelled rental? The rental status will be updated based on the event dates.',
+        () => {
+            // Open the undo cancellation modal after confirmation
+            openUndoCancelModal(transactionId);
+        }
+    );
+}
+
+// Handle ESC key for confirmation modal
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('confirmation-modal');
+        if (modal && modal.classList.contains('show')) {
+            closeConfirmationModal();
+        }
+    }
+});
+
+// Handle modal overlay click for confirmation modal
+document.addEventListener('click', (e) => {
+    if (e.target.id === 'confirmation-modal' && e.target.classList.contains('modal-overlay')) {
+        closeConfirmationModal();
+    }
+});
+
+/**
  * Success Modal Functions
  */
 
@@ -642,11 +765,81 @@ function closeSuccessModal() {
     }, 300);
 }
 
+/**
+ * Cancellation Undone Modal Functions
+ */
+
+/**
+ * Shows the cancellation undone modal with the new status
+ * @param {string} newStatus - The new rental status after undoing cancellation
+ * @param {string} customMessage - Optional custom message
+ */
+function showCancellationUndoneModal(newStatus, customMessage = null) {
+    const modal = document.getElementById('cancellation-undone-modal');
+    const titleElement = document.getElementById('cancellation-undone-title');
+    const messageElement = document.getElementById('cancellation-undone-message');
+    const statusElement = document.getElementById('undone-new-status');
+    
+    if (!modal || !titleElement || !messageElement || !statusElement) {
+        console.error('Cancellation undone modal elements not found');
+        return;
+    }
+    
+    titleElement.textContent = 'Cancellation Undone!';
+    
+    if (customMessage) {
+        messageElement.textContent = customMessage;
+    } else {
+        messageElement.textContent = 'The rental cancellation has been successfully undone and the status has been restored.';
+    }
+    
+    statusElement.textContent = newStatus;
+    
+    modal.style.display = 'flex';
+    // Force reflow to ensure transition works
+    modal.offsetHeight;
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+/**
+ * Closes the cancellation undone modal
+ */
+function closeCancellationUndoneModal() {
+    const modal = document.getElementById('cancellation-undone-modal');
+    if (!modal) return;
+    
+    modal.classList.remove('show');
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+    
+    document.body.style.overflow = '';
+}
+
+// Handle ESC key for cancellation undone modal
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('cancellation-undone-modal');
+        if (modal && modal.classList.contains('show')) {
+            closeCancellationUndoneModal();
+        }
+    }
+});
+
+// Handle modal overlay click for cancellation undone modal
+document.addEventListener('click', (e) => {
+    if (e.target.id === 'cancellation-undone-modal' && e.target.classList.contains('modal-overlay')) {
+        closeCancellationUndoneModal();
+    }
+});
+
 // Export functions for global access (if needed)
-if (typeof window !== 'undefined') {
-    // Preserve the original function if it exists
+if (typeof window !== 'undefined') {    // Preserve the original function if it exists
     if (window.confirmCancelRental && typeof window.confirmCancelRental === 'function') {
-        window.originalConfirmCancelRental = window.confirmCancelRental;    }
+        window.originalConfirmCancelRental = window.confirmCancelRental;
+    }
+    
     window.openUndoCancelModal = openUndoCancelModal;
     window.closeUndoCancelModal = closeUndoCancelModal;
     window.confirmUndoCancel = confirmUndoCancel;
@@ -655,6 +848,12 @@ if (typeof window !== 'undefined') {
     window.confirmCancelRental = confirmCancelRental;
     window.showSuccessModal = showSuccessModal;
     window.closeSuccessModal = closeSuccessModal;
+    window.showConfirmationModal = showConfirmationModal;
+    window.closeConfirmationModal = closeConfirmationModal;
+    window.proceedWithAction = proceedWithAction;    window.showCancelConfirmation = showCancelConfirmation;
+    window.showUndoConfirmation = showUndoConfirmation;
+    window.showCancellationUndoneModal = showCancellationUndoneModal;
+    window.closeCancellationUndoneModal = closeCancellationUndoneModal;
     
     console.log('Customer logs modal functions loaded and exported');
 }

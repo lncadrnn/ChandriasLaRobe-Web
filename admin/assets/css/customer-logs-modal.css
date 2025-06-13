@@ -1140,3 +1140,159 @@ body.modal-open .modal-overlay.show .modal-content {
         padding: 1rem;
     }
 }
+
+/* =============== CONFIRMATION MODAL STYLES =============== */
+.confirmation-modal-content {
+    background: white;
+    border-radius: 16px;
+    max-width: 400px;
+    margin: 2rem auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    transform: translateY(-20px) scale(0.95);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+#confirmation-modal.show .confirmation-modal-content {
+    transform: translateY(0) scale(1);
+}
+
+.confirmation-modal-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+    color: white;
+    padding: 1.5rem;
+    text-align: center;
+    position: relative;
+}
+
+.confirmation-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    display: block;
+    animation: confirmationPulse 0.6s ease-out;
+}
+
+@keyframes confirmationPulse {
+    0% { 
+        transform: scale(0.3);
+        opacity: 0;
+    }
+    50% { 
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+    100% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.confirmation-modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.confirmation-modal-body {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.confirmation-modal-body p {
+    margin: 0;
+    color: #374151;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.confirmation-modal-footer {
+    padding: 1rem 1.5rem 1.5rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.confirmation-modal-footer button {
+    flex: 1;
+    max-width: 120px;
+}
+
+/* Mobile styles for confirmation modal */
+@media (max-width: 768px) {
+    .confirmation-modal-content {
+        margin: 1rem;
+        max-width: none;
+        width: calc(100% - 2rem);
+    }
+    
+    .confirmation-modal-footer {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .confirmation-modal-footer button {
+        max-width: none;
+        width: 100%;
+    }
+}
+
+/* =============== CANCELLATION UNDONE MODAL STYLES =============== */
+#cancellation-undone-modal .success-modal-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+    color: white;
+}
+
+#cancellation-undone-modal .success-icon {
+    color: white;
+    animation: undoPulse 0.8s ease-out;
+}
+
+@keyframes undoPulse {
+    0% { 
+        transform: scale(0.3) rotate(-180deg);
+        opacity: 0;
+    }
+    50% { 
+        transform: scale(1.2) rotate(0deg);
+        opacity: 0.8;
+    }
+    100% { 
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+.status-update-info {
+    background: var(--primary-color-light);
+    border: 1px solid rgba(255, 105, 180, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    text-align: left;
+}
+
+.status-update-info p {
+    margin: 0;
+    color: #374151;
+    font-size: 0.95rem;
+}
+
+.status-highlight {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#cancellation-undone-modal .btn-success-ok {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+}
+
+#cancellation-undone-modal .btn-success-ok:hover {
+    background: linear-gradient(135deg, var(--primary-color-dark), var(--primary-color-darker));
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+}
