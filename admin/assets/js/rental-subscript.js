@@ -2104,12 +2104,14 @@ $(document).ready(function () {
                 `);
                 
                 orderItems.append(cartItem);
-            });
-            
-            // Add accessories to display
+            });            // Add accessories to display
             cart.accessories.forEach((item, idx) => {
                 let detailsText = "Additional Item";
-                if (item.types && item.types.length > 0) {
+                
+                // Handle fees differently
+                if (item.isFee) {
+                    detailsText = "Additional Fee";
+                } else if (item.types && item.types.length > 0) {
                     detailsText = item.types.join(", ");
                 }
                 
@@ -2121,7 +2123,7 @@ $(document).ready(function () {
                         </div>
                         <div class="cart-item-actions">
                             <div class="cart-item-price">₱${item.price.toLocaleString()}</div>
-                            ${item.name.toLowerCase().includes("accessor") ? 
+                            ${item.name.toLowerCase().includes("accessor") && !item.isFee ? 
                                 `<button class="edit-item-btn" data-accessory-idx="${idx}">
                                     <i class="bx bx-edit"></i>
                                 </button>` : ''
@@ -2481,8 +2483,7 @@ $(document).ready(function () {
     $('#event-start-date').prop('disabled', true);
     $('#event-end-date').prop('disabled', true);
     $('#fixed-event-date').prop('disabled', true);
-    
-    console.log('Rental subscript initialization complete - date fields initially disabled');
+      console.log('Rental subscript initialization complete - date fields initially disabled');
 
     // --- Add Fee Modal Logic ---
     const $addFeeModal = $("#add-fee-modal");
@@ -2508,27 +2509,48 @@ $(document).ready(function () {
         if ($(e.target).is($addFeeModal)) {
             closeAddFeeModal();
         }
-    });
-
-    // Add Fee Form Submission
+    });    // Add Fee Form Submission
     $addFeeForm.on("submit", function (e) {
         e.preventDefault();
+        
+        console.log("Form submitted, debugging values...");
+        console.log("Fee type element:", $("#fee-type"));
+        console.log("Fee amount element:", $("#fee-amount"));
+        
         const feeType = $("#fee-type").val();
-        const feeAmount = parseFloat($("#fee-amount").val());
+        const feeAmountVal = $("#fee-amount").val();
+        const feeAmount = parseFloat(feeAmountVal);
+        
+        console.log("Fee type value:", feeType);
+        console.log("Fee amount value (raw):", feeAmountVal);
+        console.log("Fee amount value (parsed):", feeAmount);
+        console.log("Is fee amount NaN?", isNaN(feeAmount));
+        console.log("Is fee amount <= 0?", feeAmount <= 0);
+        
         if (!feeType || isNaN(feeAmount) || feeAmount <= 0) {
             $addFeeModal.find("#fee-amount").addClass("input-error");
             notyf.error("Please select a fee type and enter a valid amount greater than 0.");
             return;
         }
+        
         $addFeeModal.find("#fee-amount").removeClass("input-error");
+        
         // Add fee to cart as a special accessory/fee item
         cart.accessories.push({
             name: feeType,
             price: feeAmount,
             isFee: true
         });
-        updateCartSummary();
+        
+        console.log("Fee added to cart:", { name: feeType, price: feeAmount, isFee: true });
+        console.log("Current cart:", cart);
+        
+        // Update the display
+        updateNewCartDisplay();
+        
+        // Close modal and show success
         closeAddFeeModal();
+        notyf.success("Additional fee submitted successfully!");
     });
 });
 
