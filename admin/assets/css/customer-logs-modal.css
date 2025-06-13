@@ -2,6 +2,14 @@
    Undo Cancellation Modal Styles
    ============================================ */
 
+/* Use the same primary color variables as the admin layout */
+:root {
+    --primary-color: hsl(346, 100%, 74%);
+    --primary-color-light: #f6f5ff;
+    --primary-color-dark: hsl(346, 100%, 65%);
+    --primary-color-darker: hsl(346, 100%, 55%);
+}
+
 /* Modal Overlay */
 .undo-modal-overlay {
     position: fixed;
@@ -31,11 +39,12 @@
     width: 90%;
     max-width: 600px;
     max-height: 90vh;
-    overflow-y: auto;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     transform: scale(0.9) translateY(20px);
     transition: transform 0.3s ease;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .undo-modal-overlay.show .undo-modal-content {
@@ -44,7 +53,7 @@
 
 /* Modal Header */
 .undo-modal-header {
-    background: linear-gradient(135deg, #17a2b8, #138496);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
     color: white;
     padding: 1.5rem 2rem;
     border-radius: 16px 16px 0 0;
@@ -100,6 +109,36 @@
 /* Modal Body */
 .undo-modal-body {
     padding: 2rem;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+/* Custom Scrollbar for Modal Body */
+.undo-modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.undo-modal-body::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+    margin: 8px 0;
+}
+
+.undo-modal-body::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.undo-modal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color-dark);
+}
+
+/* Firefox Scrollbar for Modal Body */
+.undo-modal-body {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.05);
 }
 
 /* Confirmation Section */
@@ -113,7 +152,7 @@
     flex-shrink: 0;
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    background: linear-gradient(135deg, var(--primary-color-light), rgba(255, 105, 180, 0.2));
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -140,7 +179,7 @@
 
 .undo-confirmation-icon i {
     font-size: 2.5rem;
-    color: #17a2b8;
+    color: var(--primary-color);
     z-index: 1;
     position: relative;
 }
@@ -175,13 +214,13 @@
 }
 
 .undo-confirmation-list li::marker {
-    color: #17a2b8;
+    color: var(--primary-color);
 }
 
 /* Status Prediction */
 .undo-status-prediction {
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-    border: 2px solid #dee2e6;
+    background: linear-gradient(135deg, var(--primary-color-light), #f8f9fa);
+    border: 2px solid rgba(255, 105, 180, 0.2);
     border-radius: 12px;
     padding: 1.25rem;
     margin-top: 1.5rem;
@@ -303,8 +342,11 @@
     display: flex;
     gap: 1rem;
     justify-content: flex-end;
-    padding-top: 1.5rem;
+    padding: 1.5rem 2rem;
     border-top: 1px solid #e9ecef;
+    background: white;
+    border-radius: 0 0 16px 16px;
+    flex-shrink: 0;
 }
 
 .undo-btn-secondary,
@@ -337,15 +379,15 @@
 }
 
 .undo-btn-primary {
-    background: linear-gradient(135deg, #17a2b8, #138496);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
     color: white;
-    box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+    box-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
 }
 
 .undo-btn-primary:hover {
-    background: linear-gradient(135deg, #138496, #117a8b);
+    background: linear-gradient(135deg, var(--primary-color-dark), var(--primary-color-darker));
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(23, 162, 184, 0.4);
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.4);
 }
 
 .undo-btn-primary:active,
