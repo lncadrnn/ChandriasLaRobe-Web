@@ -1,0 +1,104 @@
+/* Transaction Statistics Panel Styling */
+.transaction-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1.2rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.stat-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #d1d5db;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+    font-family: 'Arial', sans-serif;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* Status-specific colors */
+.stat-upcoming .stat-value { 
+    color: #3b82f6; 
+}
+
+.stat-ongoing .stat-value { 
+    color: #f59e0b; 
+}
+
+.stat-completed .stat-value { 
+    color: #10b981; 
+}
+
+.stat-overdue .stat-value { 
+    color: #ef4444; 
+}
+
+/* Default total stats */
+.stat-item:not(.stat-upcoming):not(.stat-ongoing):not(.stat-completed):not(.stat-overdue) .stat-value {
+    color: #374151;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .transaction-stats {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 0.75rem;
+        gap: 0.75rem;
+    }
+    
+    .stat-item {
+        padding: 0.8rem;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+    }
+    
+    .stat-label {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .transaction-stats {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .stat-item {
+        padding: 0.6rem;
+    }
+    
+    .stat-value {
+        font-size: 1.3rem;
+    }
+}

@@ -1439,16 +1439,25 @@ body.quick-view-active .rental-quick-view {
 
 .stat-item {
     text-align: center;
-    padding: 0.75rem;
+    padding: 1rem;
     background: white;
     border-radius: 8px;
     border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #d1d5db;
 }
 
 .stat-value {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
     margin-bottom: 0.25rem;
+    line-height: 1;
 }
 
 .stat-label {
@@ -1456,11 +1465,12 @@ body.quick-view-active .rental-quick-view {
     color: #6b7280;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    font-weight: 500;
 }
 
 .stat-upcoming .stat-value { color: #3b82f6; }
-.stat-ongoing .stat-value { color: #10b981; }
-.stat-completed .stat-value { color: #6b7280; }
+.stat-ongoing .stat-value { color: #f59e0b; }
+.stat-completed .stat-value { color: #10b981; }
 .stat-overdue .stat-value { color: #ef4444; }
 
 /* Enhanced Calendar Positioning */
@@ -1524,4 +1534,5 @@ body.quick-view-active .rental-quick-view {
     .stat-value {
         font-size: 1.25rem;
     }
+};
 }
