@@ -1432,94 +1432,75 @@ body.modal-open .modal-overlay.show .modal-content {
     box-shadow: none;
 }
 
-/* Mark as Complete Success Modal Styles */
-.completion-details {
-    background: var(--primary-color-light);
-    border: 1px solid rgba(255, 105, 180, 0.3);
-    border-radius: 8px;
-    padding: 1rem;
-    margin: 1rem 0;
+/* Mark as Complete Success Modal Specific Styles */
+#mark-complete-success-modal {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-.completion-details p {
-    margin: 0.5rem 0;
-    color: #374151;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+#mark-complete-success-modal.show {
+    display: flex !important;
+    opacity: 1;
 }
 
-.completion-details strong {
-    color: var(--primary-color-darker);
-    font-weight: 600;
+#mark-complete-success-modal .success-modal-content {
+    transform: translateY(-20px) scale(0.95);
+    transition: all 0.3s ease;
 }
 
-.status-highlight.completed {
+#mark-complete-success-modal.show .success-modal-content {
+    transform: translateY(0) scale(1);
+}
+
+#mark-complete-success-modal .success-modal-header {
     background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
     color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
+}
+
+#mark-complete-success-modal .success-icon {
+    color: white;
+    animation: successPulse 0.6s ease-out;
+}
+
+@keyframes successPulse {
+    0% { 
+        transform: scale(0.3);
+        opacity: 0;
+    }
+    50% { 
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+    100% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+#mark-complete-success-modal .btn-success-ok {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
     font-weight: 600;
-    font-size: 0.875rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-}
-
-.success-note {
-    background: #f0f9ff;
-    border: 1px solid #0ea5e9;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-top: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
     display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    color: #0c4a6e;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
 }
 
-.success-note i {
-    color: #0ea5e9;
-    font-size: 1.25rem;
-    flex-shrink: 0;
-    margin-top: 0.125rem;
+#mark-complete-success-modal .btn-success-ok:hover {
+    background: linear-gradient(135deg, var(--primary-color-dark), var(--primary-color-darker));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.4);
 }
 
-.success-note span {
-    font-size: 0.95rem;
-    line-height: 1.4;
-}
-
-/* Mobile responsiveness for mark complete modals */
-@media (max-width: 768px) {
-    .complete-warning {
-        flex-direction: column;
-        text-align: center;
-        gap: 0.75rem;
-    }
-    
-    .complete-warning-icon {
-        align-self: center;
-    }
-    
-    .final-confirmation {
-        font-size: 1rem;
-        padding: 0.75rem;
-    }
-    
-    .completion-details p {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.25rem;
-        text-align: left;
-    }
-    
-    .success-note {
-        flex-direction: column;
-        text-align: center;
-        gap: 0.5rem;
-    }
-    
-    .success-note i {
-        align-self: center;
-    }
+#mark-complete-success-modal .btn-success-ok:active {
+    transform: translateY(0);
 }
