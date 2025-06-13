@@ -786,9 +786,10 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
             
             // Add a unique identifier
-            quickView.id = 'active-quick-view';
-              // Calculate optimal position
+            quickView.id = 'active-quick-view';            // Calculate optimal position relative to page content
             const rect = targetElement.getBoundingClientRect();
+            const pageContent = document.querySelector('.page-content');
+            const pageContentRect = pageContent.getBoundingClientRect();
             const viewportHeight = window.innerHeight;
             const viewportWidth = window.innerWidth;
             const quickViewHeight = 280; // Estimated height
@@ -796,37 +797,47 @@ document.addEventListener("DOMContentLoaded", () => {
             
             let top, left, showAbove = false;
             
+            // Position relative to the page content container
+            const relativeTop = rect.top - pageContentRect.top;
+            const relativeLeft = rect.left - pageContentRect.left;
+            
             // Determine vertical position (above or below the element)
             if (rect.bottom + quickViewHeight + 20 > viewportHeight) {
                 // Show above the element
-                top = rect.top - quickViewHeight - 10;
+                top = relativeTop - quickViewHeight - 10;
                 showAbove = true;
                 if (top < 10) {
-                    // If still not enough space above, center it vertically
-                    top = (viewportHeight - quickViewHeight) / 2;
-                    showAbove = false; // Reset since we're centering
+                    // If still not enough space above, show below
+                    top = relativeTop + rect.height + 10;
+                    showAbove = false;
                 }
             } else {
                 // Show below the element
-                top = rect.bottom + 10;
+                top = relativeTop + rect.height + 10;
                 showAbove = false;
             }
             
             // Determine horizontal position
-            left = rect.left;
-            if (left + quickViewWidth > viewportWidth) {
-                // Adjust to fit within viewport
-                left = viewportWidth - quickViewWidth - 20;
-            }
-            if (left < 10) {
-                left = 10;
-            }
-            
-            // Apply positioning
-            quickView.style.position = 'fixed';
-            quickView.style.top = `${Math.max(10, top)}px`;
-            quickView.style.left = `${left}px`;
-            quickView.style.zIndex = '2000';
+            left = relativeLeft;
+            const containerWidth = pageContent.offsetWidth;
+            if (left + quickViewWidth > containerWidth) {
+                // Adjust to fit within container
+                left = relativeLeft + rect.width - quickViewWidth;
+                if (left < 10) {
+                    left = 10;
+                }
+            }// Apply aggressive positioning with inline styles
+            quickView.style.cssText = `
+                position: absolute !important;
+                top: ${Math.max(10, top)}px !important;
+                left: ${left}px !important;
+                z-index: 999999 !important;
+                transform: translateZ(0) !important;
+                -webkit-transform: translateZ(0) !important;
+                backface-visibility: hidden !important;
+                will-change: auto !important;
+                pointer-events: auto !important;
+            `;
             
             // Add positioning class for styling
             if (showAbove) {
@@ -834,8 +845,10 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 quickView.classList.add('quick-view-below');
             }
+              document.querySelector('.page-content').appendChild(quickView);
             
-            document.body.appendChild(quickView);
+            // Add body class for additional CSS control
+            document.body.classList.add('quick-view-active');
             
             // Add event listeners
             quickView.querySelector('.btn-close-quick').addEventListener('click', (e) => {
@@ -867,10 +880,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             };
             document.addEventListener('keydown', escapeHandler);
-        }
-          function closeQuickView() {
+        }          function closeQuickView() {
             const existingQuickView = document.getElementById('active-quick-view');
             if (existingQuickView) {
+                // Remove body class
+                document.body.classList.remove('quick-view-active');
+                
                 // Add fade out animation
                 existingQuickView.style.animation = 'quickViewFadeOut 0.15s ease-in';
                 setTimeout(() => {

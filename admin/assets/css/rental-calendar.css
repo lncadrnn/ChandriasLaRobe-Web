@@ -356,17 +356,55 @@
 
 /* =============== RENTAL QUICK VIEW =============== */
 .rental-quick-view {
-    position: fixed;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
-    border: 1px solid var(--border-color);
-    min-width: 300px;
-    max-width: 350px;
-    z-index: 2000;
-    animation: quickViewFadeIn 0.2s ease-out;
-    backdrop-filter: none;
-    pointer-events: all;
+    position: fixed !important;
+    background: white !important;
+    border-radius: 12px !important;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35) !important;
+    border: 1px solid var(--border-color) !important;
+    min-width: 300px !important;
+    max-width: 350px !important;
+    z-index: 999999 !important;
+    animation: quickViewFadeIn 0.2s ease-out !important;
+    backdrop-filter: none !important;
+    pointer-events: all !important;
+    /* Aggressive positioning fixes */
+    transform: translateZ(0) !important;
+    -webkit-transform: translateZ(0) !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
+    will-change: auto !important;
+    -webkit-font-smoothing: antialiased !important;
+    contain: layout style paint !important;
+    isolation: isolate !important;
+}
+
+/* Prevent quick view from moving during scroll */
+body.quick-view-active .rental-quick-view {
+    position: fixed !important;
+    transform: none !important;
+    -webkit-transform: none !important;
+}
+
+/* Ensure quick view content doesn't interfere with positioning */
+.rental-quick-view * {
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* Ultra-aggressive positioning for scroll prevention */
+.rental-quick-view {
+    /* Force hardware acceleration and prevent any layout shifts */
+    transform: translate3d(0, 0, 0) !important;
+    -webkit-transform: translate3d(0, 0, 0) !important;
+    position: fixed !important;
+    left: var(--qv-left, 10px) !important;
+    top: var(--qv-top, 10px) !important;
+}
+
+/* Prevent any parent elements from affecting positioning */
+.rental-quick-view,
+.rental-quick-view * {
+    box-sizing: border-box !important;
 }
 
 @keyframes quickViewFadeIn {
@@ -635,22 +673,6 @@
 }
 
 .rental-detail-item:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-}
-
-.rental-detail-item.upcoming {
-    border-left-color: #3498db;
-}
-
-.rental-detail-item.ongoing {
-    border-left-color: #f39c12;
-}
-
-.rental-detail-item.completed {
-    border-left-color: #27ae60;
-}
-
 .rental-detail-item.overdue {
     border-left-color: #e74c3c;
 }
