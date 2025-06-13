@@ -1312,12 +1312,23 @@ async function cancelRental(transactionId) {
             allTransactions[transactionIndex].cancelledDate = new Date().toISOString();
         }        // Re-filter and re-render
         filterTransactions();
-        
-        // Hide loading
+          // Hide loading
         hideActionSpinner();
 
-        // Show success notification
-        alert('Rental cancelled successfully!');
+        // Show success notification with Notyf
+        if (window.notyf) {
+            window.notyf.success({
+                message: 'Rental cancelled successfully!',
+                duration: 4000,
+                background: '#28a745',
+                icon: {
+                    className: 'bx bx-check-circle',
+                    tagName: 'i'
+                }
+            });
+        } else {
+            alert('Rental cancelled successfully!');
+        }
 
     } catch (error) {
         console.error('Error cancelling rental:', error);
@@ -1571,16 +1582,14 @@ async function confirmCancelRental() {
 
         // Close modal
         closeCancelRentalModal();        // Hide loading
-        document.querySelector('.admin-action-spinner').style.display = 'none';
-
-        // Show success notification with Notyf
+        document.querySelector('.admin-action-spinner').style.display = 'none';        // Show success notification with Notyf
         if (window.notyf) {
             window.notyf.success({
                 message: 'Rental cancelled successfully!',
                 duration: 4000,
-                background: '#dc3545',
+                background: '#28a745',
                 icon: {
-                    className: 'bx bx-x-circle',
+                    className: 'bx bx-check-circle',
                     tagName: 'i'
                 }
             });

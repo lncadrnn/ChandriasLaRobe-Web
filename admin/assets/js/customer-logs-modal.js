@@ -283,25 +283,11 @@ async function confirmUndoCancel() {
             } else {
                 if (window.renderTransactionTable) {
                     window.renderTransactionTable();
-                }
-            }
-        }        // Show success notification with Notyf (green)
-        if (window.notyf) {
-            window.notyf.success({
-                message: `Cancellation undone! Status changed to "${originalStatus}".`,
-                duration: 4000,
-                background: '#28a745',
-                icon: {
-                    className: 'bx bx-check-circle',
-                    tagName: 'i'
-                }
-            });
-        } else if (window.showSuccessToast) {
-            window.showSuccessToast(`Cancellation undone! Status changed to "${originalStatus}".`);
-        } else {
-            // Fallback to alert if no notification system available
-            alert(`Cancellation undone! Status changed to "${originalStatus}".`);
+                }            }
         }
+
+        // Show success modal instead of Notyf
+        showSuccessModal(`Cancellation undone! Status changed to "${originalStatus}".`, "Cancellation Restored");
 
     } catch (error) {
         console.error('Error undoing cancellation:', error);
@@ -410,27 +396,13 @@ async function cancelRentalWithGlobalUpdate(transactionId) {
                     window.renderTransactionTable();
                 }
             }
-        }
-
-        // Hide loading
+        }        // Hide loading
         if (actionSpinner) {
             actionSpinner.style.display = 'none';
         }
 
-        // Show success notification with Notyf
-        if (window.notyf) {
-            window.notyf.success({
-                message: 'Rental cancelled successfully!',
-                duration: 4000,
-                background: '#dc3545',
-                icon: {
-                    className: 'bx bx-x-circle',
-                    tagName: 'i'
-                }
-            });
-        } else {
-            alert('Rental cancelled successfully!');
-        }
+        // Show success modal instead of Notyf
+        showSuccessModal('Rental cancelled successfully!', 'Rental Cancelled');
 
         return true;
 
@@ -521,6 +493,47 @@ async function confirmCancelRental() {
     }
 }
 
+/**
+ * Success Modal Functions
+ */
+
+/**
+ * Shows the success modal with a custom message
+ * @param {string} message - The success message to display
+ * @param {string} title - Optional title (defaults to "Success!")
+ */
+function showSuccessModal(message, title = "Success!") {
+    const modal = document.getElementById('success-modal');
+    const titleElement = document.getElementById('success-modal-title');
+    const messageElement = document.getElementById('success-modal-message');
+    
+    if (!modal || !titleElement || !messageElement) {
+        console.error('Success modal elements not found');
+        return;
+    }
+    
+    titleElement.textContent = title;
+    messageElement.textContent = message;
+    
+    modal.style.display = 'flex';
+    // Force reflow to ensure transition works
+    modal.offsetHeight;
+    modal.classList.add('show');
+}
+
+/**
+ * Closes the success modal
+ */
+function closeSuccessModal() {
+    const modal = document.getElementById('success-modal');
+    if (!modal) return;
+    
+    modal.classList.remove('show');
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+}
+
 // Export functions for global access (if needed)
 if (typeof window !== 'undefined') {
     // Preserve the original function if it exists
@@ -534,6 +547,8 @@ if (typeof window !== 'undefined') {
     window.undoCancellation = undoCancellation;
     window.cancelRentalWithGlobalUpdate = cancelRentalWithGlobalUpdate;
     window.confirmCancelRental = confirmCancelRental;
+    window.showSuccessModal = showSuccessModal;
+    window.closeSuccessModal = closeSuccessModal;
     
     console.log('Customer logs modal functions loaded and exported');
 }

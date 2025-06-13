@@ -106,9 +106,22 @@
             #cancel-rental-modal .form-actions button {
                 width: 100% !important;
                 justify-content: center !important;
-            }
-        }
+            }        }
     </style>
+      <!-- Notyf CSS and JS for notifications -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+    <script>
+        // Initialize Notyf globally
+        window.notyf = new Notyf({
+            duration: 4000,
+            position: {
+                x: 'right',
+                y: 'top'
+            },
+            dismissible: true
+        });
+    </script>
 </head>
 
 <body>    <!-- Page Loader -->
@@ -700,7 +713,24 @@
                     <button type="button" class="undo-btn-primary" id="confirm-undo-cancel-btn" onclick="confirmUndoCancel()">
                         <i class='bx bx-undo'></i> Restore Rental
                     </button>
-                </div>
+                </div>            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal-overlay" style="display: none;">
+        <div class="success-modal-content">
+            <div class="success-modal-header">
+                <i class='bx bx-check-circle success-icon'></i>
+                <h3 id="success-modal-title">Success!</h3>
+            </div>
+            <div class="success-modal-body">
+                <p id="success-modal-message">Operation completed successfully.</p>
+            </div>
+            <div class="success-modal-footer">
+                <button type="button" class="btn-success-ok" onclick="closeSuccessModal()">
+                    <i class='bx bx-check'></i> OK
+                </button>
             </div>
         </div>
     </div>
