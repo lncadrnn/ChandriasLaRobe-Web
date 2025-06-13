@@ -415,16 +415,17 @@ document.addEventListener("DOMContentLoaded", () => {
         itemsContainer.innerHTML = '<div class="loading-items"><i class="fas fa-spinner fa-spin"></i> Loading items...</div>';
 
         try {
-            let itemsHtml = '';
-
-            // Process products
+            let itemsHtml = '';            // Process products
             if (data.products && Array.isArray(data.products)) {
                 const productDetails = await Promise.all(data.products.map(async product => {
                     try {
                         if (!product.id) return null;
                         
                         const productDoc = await db.collection("products").doc(product.id).get();
-                        if (!productDoc.exists) return null;
+                        if (!productDoc.exists) {
+                            console.warn('Product not found in database:', product.id);
+                            return null;
+                        }
                         
                         const productData = productDoc.data();
                         
@@ -435,19 +436,30 @@ document.addEventListener("DOMContentLoaded", () => {
                             
                         const totalQuantity = Object.values(product.sizes || {}).reduce((sum, qty) => sum + qty, 0);
                         
+                        // Better image URL handling with multiple fallbacks
+                        let imageUrl = './assets/images/placeholder.png';
+                        if (productData.frontImageUrl && productData.frontImageUrl.trim() !== '') {
+                            imageUrl = productData.frontImageUrl;
+                        } else if (productData.imageUrl && productData.imageUrl.trim() !== '') {
+                            imageUrl = productData.imageUrl;
+                        } else if (productData.backImageUrl && productData.backImageUrl.trim() !== '') {
+                            imageUrl = productData.backImageUrl;
+                        }
+                        
                         return {
                             type: 'Product',
                             name: productData.name || product.name || 'Unknown Product',
                             code: productData.code || product.code || 'N/A',
-                            image: productData.frontImageUrl || productData.imageUrl || './assets/images/placeholder.png',
+                            image: imageUrl,
                             sizes: sizesDisplay,
                             price: product.price || productData.price || 0,
                             quantity: totalQuantity,
                             color: productData.color || 'N/A',
-                            category: productData.category || 'N/A'
+                            category: productData.category || 'N/A',
+                            description: productData.description || 'No description available'
                         };
                     } catch (error) {
-                        console.error('Error fetching product details:', error);
+                        console.error('Error fetching product details:', error, 'Product ID:', product.id);
                         return null;
                     }
                 }));
@@ -455,29 +467,39 @@ document.addEventListener("DOMContentLoaded", () => {
                 productDetails.filter(item => item !== null).forEach(item => {
                     itemsHtml += createItemHtml(item);
                 });
-            }
-
-            // Process accessories
+            }            // Process accessories
             if (data.accessories && Array.isArray(data.accessories)) {
                 const accessoryDetails = await Promise.all(data.accessories.map(async accessory => {                    try {
                         if (!accessory.id) return null;
                         
                         const accessoryDoc = await db.collection("additionals").doc(accessory.id).get();
-                        if (!accessoryDoc.exists) return null;
+                        if (!accessoryDoc.exists) {
+                            console.warn('Accessory not found in database:', accessory.id);
+                            return null;
+                        }
                         
                         const accessoryData = accessoryDoc.data();
+                        
+                        // Better image URL handling for accessories
+                        let imageUrl = './assets/images/accessory-sets.png';
+                        if (accessoryData.imageUrl && accessoryData.imageUrl.trim() !== '') {
+                            imageUrl = accessoryData.imageUrl;
+                        } else if (accessoryData.frontImageUrl && accessoryData.frontImageUrl.trim() !== '') {
+                            imageUrl = accessoryData.frontImageUrl;
+                        }
                         
                         return {
                             type: 'Accessory',
                             name: accessoryData.name || accessory.name || 'Unknown Accessory',
                             code: accessoryData.code || accessory.code || 'N/A',
-                            image: accessoryData.imageUrl || './assets/images/placeholder.png',
+                            image: imageUrl,
                             price: accessory.price || accessoryData.price || 0,
                             quantity: accessory.quantity || 1,
-                            inclusions: accessoryData.inclusions || []
+                            inclusions: accessoryData.inclusions || [],
+                            description: accessoryData.description || 'No description available'
                         };
                     } catch (error) {
-                        console.error('Error fetching accessory details:', error);
+                        console.error('Error fetching accessory details:', error, 'Accessory ID:', accessory.id);
                         return null;
                     }
                 }));

@@ -919,6 +919,7 @@ tr:hover {
     .payment-row {
         font-size: 0.8rem;
         padding: 6px 0;
+        padding-right: 80px;
     }
     
     .payment-row.total {
