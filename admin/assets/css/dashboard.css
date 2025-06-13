@@ -1145,15 +1145,28 @@ tr:hover {
         gap: 16px;
     }
       .dashboard-cards-row {
-        grid-template-columns: 1fr;
-        gap: 14px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
     }
     
     .dashboard-card {
-        padding: 18px;
+        padding: 12px 8px;
+        height: 100px;
+        min-width: 0;
+    }
+    
+    .card-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
+    }
+    
+    .card-title {
+        font-size: 0.75rem;
+        line-height: 1.2;
     }
       .card-main {
-        font-size: 3rem;
+        font-size: 1.8rem;
     }
       .dashboard-table {
         height: auto; /* Allow natural height on mobile */
@@ -1225,19 +1238,33 @@ tr:hover {
     }
     
     .dashboard-cards-row {
-        gap: 12px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
         margin-bottom: 10px;
     }
     
     .dashboard-card {
-        padding: 16px;
-        margin: 0; /* Ensure no extra margins */
+        padding: 8px 6px;
+        margin: 0;
+        height: 85px;
+        min-width: 0;
     }
     
     .card-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 1.25rem;
+        width: 24px;
+        height: 24px;
+        font-size: 0.9rem;
+    }
+    
+    .card-title {
+        font-size: 0.65rem;
+        line-height: 1.1;
+        text-align: center;
+    }
+    
+    .card-main {
+        font-size: 1.4rem;
+        font-weight: 700;
     }
       .card-main {
         font-size: 2.5rem;
