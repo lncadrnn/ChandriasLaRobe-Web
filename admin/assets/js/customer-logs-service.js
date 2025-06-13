@@ -525,58 +525,80 @@ function calculateRentalStatus(transaction) {
     const eventStartDate = transaction.eventStartDate ? new Date(transaction.eventStartDate) : null;
     const eventEndDate = transaction.eventEndDate ? new Date(transaction.eventEndDate) : null;
     
+    // Normalize current date to ignore time components
+    const today = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+    
     let rentalStatus = 'Upcoming';
     let statusClass = 'status-upcoming';
     
-    // If rental has been marked as returned, it's completed
-    if (transaction.returnConfirmed) {
-        rentalStatus = 'Completed';
-        statusClass = 'status-completed';
-        return { rentalStatus, statusClass };
+    // Priority 1: Check if rental has been cancelled
+    if (transaction.rentalStatus === 'Cancelled') {
+        return { rentalStatus: 'Cancelled', statusClass: 'status-cancelled' };
     }
     
+    // Priority 2: Check if rental has been marked as completed
+    if (transaction.returnConfirmed) {
+        return { rentalStatus: 'Completed', statusClass: 'status-completed' };
+    }
+    
+    // Priority 3: Calculate status based on dates
+    let rentalStartDate = null;
+    let rentalEndDate = null;
+    
     if (eventStartDate) {
+        rentalStartDate = new Date(eventStartDate.getFullYear(), eventStartDate.getMonth(), eventStartDate.getDate());
         if (eventEndDate) {
-            // Open rental with end date
-            if (currentDate < eventStartDate) {
-                rentalStatus = 'Upcoming';
-                statusClass = 'status-upcoming';
-            } else if (currentDate >= eventStartDate && currentDate <= eventEndDate) {
+            rentalEndDate = new Date(eventEndDate.getFullYear(), eventEndDate.getMonth(), eventEndDate.getDate());
+        }
+    }
+    
+    if (!rentalStartDate) {
+        return { rentalStatus: 'Upcoming', statusClass: 'status-upcoming' };
+    }
+    
+    if (rentalEndDate) {
+        // MULTI-DAY RENTAL (has both start and end dates)
+        if (today < rentalStartDate) {
+            // Event hasn't started yet
+            rentalStatus = 'Upcoming';
+            statusClass = 'status-upcoming';
+        } else if (today >= rentalStartDate && today <= rentalEndDate) {
+            // Currently within the event period
+            rentalStatus = 'Ongoing';
+            statusClass = 'status-ongoing';
+        } else if (today > rentalEndDate) {
+            // Past end date - check if it's overdue (3 days after end date)
+            const overduePeriod = new Date(rentalEndDate);
+            overduePeriod.setDate(overduePeriod.getDate() + 3);
+            
+            if (today > overduePeriod) {
+                rentalStatus = 'Overdue';
+                statusClass = 'status-overdue';
+            } else {
                 rentalStatus = 'Ongoing';
                 statusClass = 'status-ongoing';
-            } else if (currentDate > eventEndDate) {
-                // Check if it's overdue (1 day grace period)
-                const gracePeriod = new Date(eventEndDate);
-                gracePeriod.setDate(gracePeriod.getDate() + 1);
-                
-                if (currentDate > gracePeriod && !transaction.returnConfirmed) {
-                    rentalStatus = 'Overdue';
-                    statusClass = 'status-overdue';
-                } else {
-                    rentalStatus = 'Completed';
-                    statusClass = 'status-completed';
-                }
             }
-        } else {
-            // Fixed rental (single day)
-            if (currentDate < eventStartDate) {
-                rentalStatus = 'Upcoming';
-                statusClass = 'status-upcoming';
-            } else if (currentDate.toDateString() === eventStartDate.toDateString()) {
+        }
+    } else {
+        // SINGLE-DAY RENTAL (only start date, no end date)
+        if (today < rentalStartDate) {
+            // Event is in the future
+            rentalStatus = 'Upcoming';
+            statusClass = 'status-upcoming';
+        } else if (today.getTime() === rentalStartDate.getTime()) {
+            // Event is today
+            rentalStatus = 'Ongoing';
+            statusClass = 'status-ongoing';
+        } else if (today > rentalStartDate) {
+            // Past event date - check if it's overdue (3+ days after event)
+            const daysDiff = Math.floor((today - rentalStartDate) / (1000 * 60 * 60 * 24));
+            
+            if (daysDiff >= 3) {
+                rentalStatus = 'Overdue';
+                statusClass = 'status-overdue';
+            } else {
                 rentalStatus = 'Ongoing';
                 statusClass = 'status-ongoing';
-            } else if (currentDate > eventStartDate) {
-                // Check if it's overdue (1 day grace period for fixed rentals)
-                const gracePeriod = new Date(eventStartDate);
-                gracePeriod.setDate(gracePeriod.getDate() + 1);
-                
-                if (currentDate > gracePeriod && !transaction.returnConfirmed) {
-                    rentalStatus = 'Overdue';
-                    statusClass = 'status-overdue';
-                } else {
-                    rentalStatus = 'Completed';
-                    statusClass = 'status-completed';
-                }
             }
         }
     }
