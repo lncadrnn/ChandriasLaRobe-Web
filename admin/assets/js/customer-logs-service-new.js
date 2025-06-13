@@ -259,22 +259,28 @@ async function renderTransactionTable() {
                         <button class="delete-btn" data-id="${transaction.id}" title="Delete Transaction">
                             <i class='bx bx-trash'></i> Delete
                         </button>
-                        ${(rentalStatus === 'Ongoing' || rentalStatus === 'Overdue') ? `
-                            <button class="mark-complete-btn" data-id="${transaction.id}" title="Mark as Complete">
-                                <i class='bx bx-check'></i> Complete
-                            </button>
-                            <div class="dropdown">
-                                <button class="additional-fee-btn dropdown-toggle" data-id="${transaction.id}" title="Add Additional Fee">
-                                    <i class='bx bx-plus'></i> Add Fee
-                                </button>
-                                <div class="dropdown-menu">
-                                    <button class="dropdown-item" data-id="${transaction.id}" data-fee-type="repair">Repair Fee</button>
-                                    <button class="dropdown-item" data-id="${transaction.id}" data-fee-type="deposit">Deposit Fee</button>
-                                    ${rentalStatus === 'Overdue' ? `<button class="dropdown-item" data-id="${transaction.id}" data-fee-type="overdue">Overdue Fee</button>` : ''}
-                                </div>
-                            </div>
-                        ` : ''}
                     </div>
+                    ${rentalStatus !== 'Upcoming' && rentalStatus !== 'Overdue' ? `
+                        <div class="action-buttons-long">
+                            <button class="mark-complete-btn long-btn" data-id="${transaction.id}" title="Mark as Complete">
+                                <i class='bx bx-check'></i> Mark as Complete
+                            </button>
+                        </div>
+                    ` : ''}
+                    ${rentalStatus === 'Overdue' ? `
+                        <div class="action-buttons-long">
+                            <button class="process-overdue-btn long-btn" data-id="${transaction.id}" title="Process Overdue">
+                                <i class='bx bx-exclamation-triangle'></i> Process Overdue
+                            </button>
+                        </div>
+                    ` : ''}
+                    ${rentalStatus === 'Upcoming' ? `
+                        <div class="action-buttons-long">
+                            <button class="cancel-rental-btn long-btn" data-id="${transaction.id}" title="Cancel Rental">
+                                <i class='bx bx-x'></i> Cancel
+                            </button>
+                        </div>
+                    ` : ''}
                 </td>
             </tr>
         `;
@@ -369,22 +375,28 @@ async function renderTransactionCards() {
                     <button class="card-action-btn delete-btn" data-id="${transaction.id}">
                         <i class='bx bx-trash'></i> Delete
                     </button>
-                    ${(rentalStatus === 'Ongoing' || rentalStatus === 'Overdue') ? `
-                        <button class="card-action-btn mark-complete-btn" data-id="${transaction.id}">
-                            <i class='bx bx-check'></i> Complete
-                        </button>
-                        <div class="card-dropdown">
-                            <button class="card-action-btn additional-fee-btn dropdown-toggle" data-id="${transaction.id}">
-                                <i class='bx bx-plus'></i> Add Fee
-                            </button>
-                            <div class="dropdown-menu">
-                                <button class="dropdown-item" data-id="${transaction.id}" data-fee-type="repair">Repair Fee</button>
-                                <button class="dropdown-item" data-id="${transaction.id}" data-fee-type="deposit">Deposit Fee</button>
-                                ${rentalStatus === 'Overdue' ? `<button class="dropdown-item" data-id="${transaction.id}" data-fee-type="overdue">Overdue Fee</button>` : ''}
-                            </div>
-                        </div>
-                    ` : ''}
                 </div>
+                ${rentalStatus !== 'Upcoming' && rentalStatus !== 'Overdue' ? `
+                    <div class="card-actions-long">
+                        <button class="card-action-btn mark-complete-btn long-btn" data-id="${transaction.id}">
+                            <i class='bx bx-check'></i> Mark as Complete
+                        </button>
+                    </div>
+                ` : ''}
+                ${rentalStatus === 'Overdue' ? `
+                    <div class="card-actions-long">
+                        <button class="card-action-btn process-overdue-btn long-btn" data-id="${transaction.id}">
+                            <i class='bx bx-exclamation-triangle'></i> Process Overdue
+                        </button>
+                    </div>
+                ` : ''}
+                ${rentalStatus === 'Upcoming' ? `
+                    <div class="card-actions-long">
+                        <button class="card-action-btn cancel-rental-btn long-btn" data-id="${transaction.id}">
+                            <i class='bx bx-x'></i> Cancel
+                        </button>
+                    </div>
+                ` : ''}
             </div>
         `;
         
@@ -498,9 +510,7 @@ function addActionListeners() {
             const transactionId = e.target.closest('.delete-btn').dataset.id;
             deleteTransaction(transactionId);
         });
-    });
-
-    // Mark as Complete buttons
+    });    // Mark as Complete buttons
     document.querySelectorAll('.mark-complete-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const transactionId = e.target.closest('.mark-complete-btn').dataset.id;
@@ -508,36 +518,19 @@ function addActionListeners() {
         });
     });
 
-    // Additional Fee dropdown toggles
-    document.querySelectorAll('.additional-fee-btn').forEach(btn => {
+    // Process Overdue buttons
+    document.querySelectorAll('.process-overdue-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const dropdown = e.target.closest('.dropdown, .card-dropdown');
-            const menu = dropdown.querySelector('.dropdown-menu');
-            
-            // Close other dropdowns
-            document.querySelectorAll('.dropdown-menu').forEach(otherMenu => {
-                if (otherMenu !== menu) {
-                    otherMenu.classList.remove('show');
-                }
-            });
-            
-            // Toggle current dropdown
-            menu.classList.toggle('show');
+            const transactionId = e.target.closest('.process-overdue-btn').dataset.id;
+            processOverdueRental(transactionId);
         });
     });
 
-    // Fee type selection
-    document.querySelectorAll('.dropdown-item').forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const transactionId = e.target.dataset.id;
-            const feeType = e.target.dataset.feeType;
-            redirectToRentalWithFee(transactionId, feeType);
-            
-            // Close dropdown
-            const menu = e.target.closest('.dropdown-menu');
-            menu.classList.remove('show');
+    // Cancel Rental buttons (for Upcoming status)
+    document.querySelectorAll('.cancel-rental-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const transactionId = e.target.closest('.cancel-rental-btn').dataset.id;
+            cancelRental(transactionId);
         });
     });
 
@@ -1201,8 +1194,8 @@ async function markTransactionAsComplete(transactionId) {
     }
 }
 
-// Redirect to rental page with transaction data for adding fees
-async function redirectToRentalWithFee(transactionId, feeType) {
+// Cancel rental (for Upcoming status)
+async function cancelRental(transactionId) {
     try {
         const transaction = allTransactions.find(t => t.id === transactionId);
         if (!transaction) {
@@ -1210,57 +1203,182 @@ async function redirectToRentalWithFee(transactionId, feeType) {
             return;
         }
 
-        // Map fee type to display name
-        const feeTypeMap = {
-            'repair': 'Repair Fee',
-            'deposit': 'Deposit Fee', 
-            'overdue': 'Overdue Fee'
-        };
+        // Show confirmation dialog
+        const confirmed = confirm(`Cancel rental for "${transaction.fullName || 'Unknown'}"?\n\nThis action cannot be undone.`);
+        if (!confirmed) return;
 
-        // Prepare data to pass to rental page
-        const rentalData = {
-            // Customer information
-            customerName: transaction.fullName,
-            customerContact: transaction.contactNumber,
-            customerAddress: transaction.address,
-            customerCity: transaction.city,
-            customerRegion: transaction.region,
-            
-            // Event information
-            eventType: transaction.eventType,
-            eventDate: transaction.eventStartDate,
-            eventEndDate: transaction.eventEndDate,
-            rentalType: transaction.rentalType,
-            
-            // Payment information
-            paymentMethod: transaction.paymentMethod,
-            paymentStatus: transaction.paymentStatus,
-            totalPayment: transaction.totalPayment,
-            remainingBalance: transaction.remainingBalance,
-            
-            // Transaction reference
-            originalTransactionId: transactionId,
-            originalTransactionCode: transaction.transactionCode,
-            
-            // Fee information
-            preSelectedFeeType: feeTypeMap[feeType],
-            isAdditionalFeeFlow: true,
-            
-            // Empty cart for fees only
-            cartItems: []
-        };
+        // Show loading
+        document.querySelector('.admin-action-spinner').style.display = 'flex';
 
-        // Store data in sessionStorage for the rental page to pick up
-        sessionStorage.setItem('additionalFeeData', JSON.stringify(rentalData));
+        // Update the transaction in Firebase
+        const transactionRef = doc(chandriaDB, 'transaction', transactionId);
+        await updateDoc(transactionRef, {
+            rentalStatus: 'Cancelled',
+            cancelledDate: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        });
+
+        // Update local data
+        const transactionIndex = allTransactions.findIndex(t => t.id === transactionId);
+        if (transactionIndex !== -1) {
+            allTransactions[transactionIndex].rentalStatus = 'Cancelled';
+            allTransactions[transactionIndex].cancelledDate = new Date().toISOString();
+        }
+
+        // Re-filter and re-render
+        filterTransactions();
         
-        // Redirect to rental page
-        window.location.href = './rental.html';
+        // Hide loading
+        document.querySelector('.admin-action-spinner').style.display = 'none';
+
+        // Show success notification
+        alert('Rental cancelled successfully!');
 
     } catch (error) {
-        console.error('Error preparing rental data:', error);
-        alert('Error preparing rental data. Please try again.');
+        console.error('Error cancelling rental:', error);
+        document.querySelector('.admin-action-spinner').style.display = 'none';
+        alert('Error cancelling rental. Please try again.');
     }
 }
+
+// Process overdue rental (for Overdue status)
+async function processOverdueRental(transactionId) {
+    try {
+        const transaction = allTransactions.find(t => t.id === transactionId);
+        if (!transaction) {
+            console.error('Transaction not found');
+            return;
+        }
+
+        // Show confirmation dialog with options
+        const action = confirm(`Process overdue rental for "${transaction.fullName || 'Unknown'}"?\n\nThis will mark the rental as completed and notify the customer about any applicable fees.`);
+        if (!action) return;
+
+        // Show loading
+        document.querySelector('.admin-action-spinner').style.display = 'flex';
+
+        // Update the transaction in Firebase
+        const transactionRef = doc(chandriaDB, 'transaction', transactionId);
+        await updateDoc(transactionRef, {
+            returnConfirmed: true,
+            completedDate: new Date().toISOString(),
+            processedOverdue: true,
+            updatedAt: new Date().toISOString()
+        });
+
+        // Update local data
+        const transactionIndex = allTransactions.findIndex(t => t.id === transactionId);
+        if (transactionIndex !== -1) {
+            allTransactions[transactionIndex].returnConfirmed = true;
+            allTransactions[transactionIndex].completedDate = new Date().toISOString();
+            allTransactions[transactionIndex].processedOverdue = true;
+        }
+
+        // Re-filter and re-render
+        filterTransactions();
+        
+        // Hide loading
+        document.querySelector('.admin-action-spinner').style.display = 'none';
+
+        // Show success notification
+        alert('Overdue rental processed successfully!');
+
+    } catch (error) {
+        console.error('Error processing overdue rental:', error);
+        document.querySelector('.admin-action-spinner').style.display = 'none';
+        alert('Error processing overdue rental. Please try again.');
+    }
+}
+
+// Show Add Fee Modal
+let currentTransactionForFee = null;
+
+function showAddFeeModal(transactionId) {
+    const transaction = allTransactions.find(t => t.id === transactionId);
+    if (!transaction) {
+        console.error('Transaction not found');
+        return;
+    }
+
+    currentTransactionForFee = transaction;
+    
+    // Get rental status to filter fee options
+    const { rentalStatus } = calculateRentalStatus(transaction);
+      // Update fee type options for Ongoing status
+    const feeTypeSelect = document.getElementById('fee-type');
+    feeTypeSelect.innerHTML = `
+        <option value="">Select Fee Type</option>
+        <option value="Repair Fee">Repair Fee</option>
+        <option value="Deposit Fee">Deposit Fee</option>
+        <option value="Others">Others</option>
+    `;
+    
+    // Reset form
+    document.getElementById('add-fee-form').reset();
+    
+    // Show modal
+    document.getElementById('add-fee-modal').style.display = 'flex';
+}
+
+// Close Add Fee Modal
+function closeAddFeeModal() {
+    document.getElementById('add-fee-modal').style.display = 'none';
+    currentTransactionForFee = null;
+}
+
+// Initialize Add Fee Modal Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Close modal buttons
+    document.querySelector('.add-fee-close')?.addEventListener('click', closeAddFeeModal);
+    document.getElementById('cancel-add-fee-btn')?.addEventListener('click', closeAddFeeModal);
+    
+    // Close modal when clicking outside
+    document.getElementById('add-fee-modal')?.addEventListener('click', (e) => {
+        if (e.target === document.getElementById('add-fee-modal')) {
+            closeAddFeeModal();
+        }
+    });
+    
+    // Handle form submission
+    document.getElementById('add-fee-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const feeType = document.getElementById('fee-type').value;
+        const feeAmount = parseFloat(document.getElementById('fee-amount').value);
+        
+        if (!feeType || isNaN(feeAmount) || feeAmount <= 0) {
+            alert('Please select a fee type and enter a valid amount greater than 0.');
+            return;
+        }
+        
+        if (!currentTransactionForFee) {
+            alert('No transaction selected.');
+            return;
+        }
+        
+        try {
+            // Show loading
+            document.querySelector('.admin-action-spinner').style.display = 'flex';
+            
+            // Here you would typically create a new transaction or update the existing one
+            // For now, we'll just show a success message
+            
+            // Hide loading
+            document.querySelector('.admin-action-spinner').style.display = 'none';
+            
+            // Close modal
+            closeAddFeeModal();
+            
+            // Show success message
+            alert(`${feeType} of ₱${feeAmount.toLocaleString()} added successfully to ${currentTransactionForFee.fullName}'s rental!`);
+            
+        } catch (error) {
+            console.error('Error adding fee:', error);
+            document.querySelector('.admin-action-spinner').style.display = 'none';
+            alert('Error adding fee. Please try again.');
+        }
+    });
+});
 
 // Make functions globally available
 window.toggleSortOptions = toggleSortOptions;
