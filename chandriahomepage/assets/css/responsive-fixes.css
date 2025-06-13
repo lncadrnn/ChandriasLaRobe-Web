@@ -1,0 +1,89 @@
+/* Responsive fixes for buttons and footer logo */
+
+/* Footer logo responsive sizing and alignment */
+.footer-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.footer-logo-img {
+    width: 150px; /* Larger size on PC */
+    height: auto;
+    margin: 0 auto 1rem;
+    display: block;
+}
+
+/* Mobile adjustments */
+@media screen and (max-width: 768px) {
+    .footer-logo-img {
+        width: 120px; /* Smaller size on mobile */
+    }
+
+    /* Center logo container on mobile */
+    .footer-logo {
+        margin: 0 auto 1rem auto;
+    }
+}
+
+/* Make buttons more responsive */
+.policy-section button,
+.service-item button,
+.header-action-btn,
+.mobile-nav-link,
+.nav-link {
+    max-width: 100%;
+    white-space: normal;
+    word-wrap: break-word;
+    padding: 0.5rem;
+}
+
+/* Service items grid responsiveness */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.service-item {
+    width: 100%;
+    padding: 1.5rem;
+    box-sizing: border-box;
+}
+
+/* Service icons styling */
+.service-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    vertical-align: middle;
+    display: inline-block;
+    fill: #FF85B1;
+}
+
+.service-item h3 {
+    display: flex;
+    align-items: center;
+    color: #FF85B1;
+    margin-bottom: 1rem;
+    gap: 8px;
+}
+
+.service-item h3 img {
+    margin-right: 8px;
+    width: 24px;
+    height: 24px;
+}
+
+.service-item h3 i {
+    font-size: 24px;
+    color: #FF85B1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}

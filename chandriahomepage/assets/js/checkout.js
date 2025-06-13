@@ -33,7 +33,39 @@ $(document).ready(function () {
     const todayDate = new Date().toISOString().split("T")[0];
     $("#checkout-date").attr("min", todayDate);
 
-    // FILL UP FORM BASE ON CURRENT USER LOGGED-IN
+    // Initialize Bootstrap Clockpicker (with clock UI)
+    $("#checkout-time").clockpicker({
+        autoclose: true,
+        placement: "bottom",
+        align: "left",
+        donetext: "Done",
+        twelvehour: false, // 24-hour mode for easier validation
+        afterDone: function () {
+            const selectedTimeStr = $("#checkout-time").val(); // Format: HH:MM
+            if (selectedTimeStr) {
+                const timeParts = selectedTimeStr.split(":");
+                const hours = parseInt(timeParts[0], 10);
+                const minutes = parseInt(timeParts[1], 10);
+                const selectedTotalMinutes = hours * 60 + minutes;
+                const minTotalMinutes = 8 * 60; // 8:00 AM
+                const maxTotalMinutes = 21 * 60; // 9:00 PM
+                if (
+                    selectedTotalMinutes < minTotalMinutes ||
+                    selectedTotalMinutes > maxTotalMinutes
+                ) {
+                    notyf.error(
+                        "Please select a time between 8:00 AM and 9:00 PM."
+                    );
+                    $("#checkout-time").val("");
+                }
+            }
+        }
+    });
+    // Also open clockpicker when clicking the clock button
+    $("#clock-btn").on("click", function (e) {
+        e.preventDefault();
+        $("#checkout-time").clockpicker("show");
+    }); // FILL UP FORM BASE ON CURRENT USER LOGGED-IN
 
     // AUTH STATE CHANGED FUNCTION
     onAuthStateChanged(auth, async user => {
@@ -178,7 +210,7 @@ $(document).ready(function () {
             !checkoutDateStr ||
             !checkoutTimeStr
         ) {
-            notyf.error("Please fill in all required fields including phone number and time.");
+            notyf.error("Please fill in all required fields including phone number.");
             return;
         }
 
@@ -202,26 +234,51 @@ $(document).ready(function () {
         }
 
         // --- TIME VALIDATION ---
-        if (checkoutTimeStr) {
-            // Validate time format and business hours (8:00 AM - 9:00 PM)
+        if (!checkoutTimeStr) {
+            // Check if time is provided
+            notyf.error("Please select a checkout time.");
+            return;
+        } else {
+            // Validate the time format and range if a time is provided
             const timeParts = checkoutTimeStr.split(":");
             if (timeParts.length === 2) {
                 const hours = parseInt(timeParts[0], 10);
                 const minutes = parseInt(timeParts[1], 10);
 
-                if (!isNaN(hours) && !isNaN(minutes) && hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
+                // Check if hours and minutes are valid numbers and within typical time ranges (00-23 for hours, 00-59 for minutes)
+                if (
+                    !isNaN(hours) &&
+                    !isNaN(minutes) &&
+                    hours >= 0 &&
+                    hours <= 23 &&
+                    minutes >= 0 &&
+                    minutes <= 59
+                ) {
                     const selectedTotalMinutes = hours * 60 + minutes;
-                    const minTotalMinutes = 8 * 60; // 8:00 AM
-                    const maxTotalMinutes = 21 * 60; // 9:00 PM
+                    const minTotalMinutes = 8 * 60; // 8:00 AM (480 minutes)
+                    const maxTotalMinutes = 21 * 60; // 9:00 PM (1260 minutes)
 
-                    if (selectedTotalMinutes < minTotalMinutes || selectedTotalMinutes > maxTotalMinutes) {
-                        notyf.error("Appointment time must be between 8:00 AM and 9:00 PM.");
+                    // Check if the selected time is outside the allowed range [8:00 AM, 9:00 PM]
+                    if (
+                        selectedTotalMinutes < minTotalMinutes ||
+                        selectedTotalMinutes > maxTotalMinutes
+                    ) {
+                        notyf.error(
+                            "Checkout time must be between 8:00 AM and 9:00 PM."
+                        );
                         return;
                     }
                 } else {
-                    notyf.error("Please enter a valid time.");
+                    // Handles cases like "aa:bb" or invalid numbers like "25:00" or "10:70"
+                    notyf.error(
+                        "Invalid time format. Please enter a valid time (HH:MM)."
+                    );
                     return;
                 }
+            } else {
+                // Handles cases where format is not HH:MM, e.g., "123" or "10:10:10"
+                notyf.error("Invalid time format. Please use HH:MM format.");
+                return;
             }
         }
 

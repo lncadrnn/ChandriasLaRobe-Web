@@ -178,8 +178,7 @@ $(document).ready(function () {
                 `);
                 container.append(card);
                 $("body").addClass("loaded");
-            });
-        } catch (err) {
+            });        } catch (err) {
             console.error("Error loading products from Firebase:", err);
             container.append(
                 '<div style="color:red;margin:2rem;">Failed to load products. Check your connection or Firebase rules.</div>'
@@ -187,6 +186,9 @@ $(document).ready(function () {
             $("body").addClass("loaded");
         }
     }
+
+    // Make loadProducts globally available for refresh after edits/deletes
+    window.loadProducts = loadProducts;
 
     // Initialize all inventory data with loader
     async function initializeAllInventoryData() {
@@ -518,48 +520,46 @@ $(document).ready(function () {
         }
 
         return result;
-    }
+    }    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+    // DELETE CARD FUNCTION - DISABLED (Now handled by inventory-edit-delete-jquery.js)
+    // $(document).on("click", ".delete-btn", async function () {
+    //     const productId = $(this).data("id");
+    //     const card = $(this).closest(".card");
 
-    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
-    // DELETE CARD FUNCTION
-    $(document).on("click", ".delete-btn", async function () {
-        const productId = $(this).data("id");
-        const card = $(this).closest(".card");
+    //     // DISPLAYING SPINNER
+    //     const spinner = $("#spinner");
+    //     const spinnerText = $("#spinner-text");
 
-        // DISPLAYING SPINNER
-        const spinner = $("#spinner");
-        const spinnerText = $("#spinner-text");
+    //     showConfirmModal(
+    //         "Are you sure you want to delete this product?",
+    //         async function () {
+    //             try {
+    //                 spinner.removeClass("d-none");
+    //                 spinnerText.text("Deleting Image");
+    //                 // Step 1: Get product info from Firestore
+    //                 const docSnap = await getDoc(
+    //                     doc(chandriaDB, "products", productId)
+    //                 );
+    //                 const product = docSnap.data();
 
-        showConfirmModal(
-            "Are you sure you want to delete this product?",
-            async function () {
-                try {
-                    spinner.removeClass("d-none");
-                    spinnerText.text("Deleting Image");
-                    // Step 1: Get product info from Firestore
-                    const docSnap = await getDoc(
-                        doc(chandriaDB, "products", productId)
-                    );
-                    const product = docSnap.data();
+    //                 // Step 2: Delete images
+    //                 await deleteImageFromCloudinary(product.frontImageId);
+    //                 await deleteImageFromCloudinary(product.backImageId);
 
-                    // Step 2: Delete images
-                    await deleteImageFromCloudinary(product.frontImageId);
-                    await deleteImageFromCloudinary(product.backImageId);
+    //                 spinnerText.text("Deleting Data");
 
-                    spinnerText.text("Deleting Data");
-
-                    // Step 3: Delete product record
-                    await deleteDoc(doc(chandriaDB, "products", productId));
-                    notyf.success("Product Deleted!");
-                    card.remove();
-                    spinner.addClass("d-none");
-                } catch (err) {
-                    console.error("Error:", err);
-                    showErrorModal("Failed to delete product or images.");
-                }
-            }
-        );
-    });
+    //                 // Step 3: Delete product record
+    //                 await deleteDoc(doc(chandriaDB, "products", productId));
+    //                 notyf.success("Product Deleted!");
+    //                 card.remove();
+    //                 spinner.addClass("d-none");
+    //             } catch (err) {
+    //                 console.error("Error:", err);
+    //                 showErrorModal("Failed to delete product or images.");
+    //             }
+    //         }
+    //     );
+    // });
 
     // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // SIZE CHECKBOX FUNCTION
@@ -601,89 +601,89 @@ $(document).ready(function () {
     });
 
     // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
-    // VIEW DETAILS FUNCTION
-    $(document).on("click", ".edit-btn", async function () {
-        const productId = $(this).data("id");
+    // VIEW DETAILS FUNCTION    // EDIT BUTTON HANDLER - DISABLED (Now handled by inventory-edit-delete-jquery.js)
+    // $(document).on("click", ".edit-btn", async function () {
+    //     const productId = $(this).data("id");
 
-        try {
-            const docRef = doc(chandriaDB, "products", productId);
-            const docSnap = await getDoc(docRef);
+    //     try {
+    //         const docRef = doc(chandriaDB, "products", productId);
+    //         const docSnap = await getDoc(docRef);
 
-            if (docSnap.exists()) {
-                const data = docSnap.data();
+    //         if (docSnap.exists()) {
+    //             const data = docSnap.data();
 
-                // Set image previews
-                if (data.frontImageUrl) {
-                    $("#update-dropzone-front").css({
-                        "background-image": `url(${data.frontImageUrl})`,
-                        "background-size": "cover",
-                        "background-position": "center"
-                    });
-                    $("#update-upload-label-front").css("opacity", "0");
-                }
-                if (data.backImageUrl) {
-                    $("#update-dropzone-back").css({
-                        "background-image": `url(${data.backImageUrl})`,
-                        "background-size": "cover",
-                        "background-position": "center"
-                    });
-                    $("#update-upload-label-back").css("opacity", "0");
-                }
+    //             // Set image previews
+    //             if (data.frontImageUrl) {
+    //                 $("#update-dropzone-front").css({
+    //                     "background-image": `url(${data.frontImageUrl})`,
+    //                     "background-size": "cover",
+    //                     "background-position": "center"
+    //                 });
+    //                 $("#update-upload-label-front").css("opacity", "0");
+    //             }
+    //             if (data.backImageUrl) {
+    //                 $("#update-dropzone-back").css({
+    //                     "background-image": `url(${data.backImageUrl})`,
+    //                     "background-size": "cover",
+    //                     "background-position": "center"
+    //                 });
+    //                 $("#update-upload-label-back").css("opacity", "0");
+    //             }
 
-                // Fill text inputs
-                $("#update-product-id").val(productId);
-                $("#update-product-name").val(data.name);
-                $("#update-product-price").val(data.price);
-                $("#update-product-code").val(data.code);
-                $("#update-product-description").val(data.description);
+    //             // Fill text inputs
+    //             $("#update-product-id").val(productId);
+    //             $("#update-product-name").val(data.name);
+    //             $("#update-product-price").val(data.price);
+    //             $("#update-product-code").val(data.code);
+    //             $("#update-product-description").val(data.description);
 
-                // Set category
-                $("#update-product-category").val(data.category);
+    //             // Set category
+    //             $("#update-product-category").val(data.category);
 
-                // Set sleeve
-                $("#update-product-sleeve").val(data.sleeve);
+    //             // Set sleeve
+    //             $("#update-product-sleeve").val(data.sleeve);
 
-                // Set color using hex style matching
-                const colorOptions = $("#update-product-color option");
-                colorOptions.each(function () {
-                    const optionColor = rgbToHex($(this).css("color"));
-                    if (
-                        optionColor.toLowerCase() === data.color.toLowerCase()
-                    ) {
-                        $(this).prop("selected", true);
-                    }
-                });
+    //             // Set color using hex style matching
+    //             const colorOptions = $("#update-product-color option");
+    //             colorOptions.each(function () {
+    //                 const optionColor = rgbToHex($(this).css("color"));
+    //                 if (
+    //                     optionColor.toLowerCase() === data.color.toLowerCase()
+    //                 ) {
+    //                     $(this).prop("selected", true);
+    //                 }
+    //             });
 
-                // Set sizes and quantities
-                const sizeData = data.size || {}; // e.g., { S: 3, M: 5 }
-                const selectedSizes = Object.keys(sizeData);
+    //             // Set sizes and quantities
+    //             const sizeData = data.size || {}; // e.g., { S: 3, M: 5 }
+    //             const selectedSizes = Object.keys(sizeData);
 
-                // Check checkboxes and trigger change event to auto-generate inputs
-                $("input[name='update-product-size']").each(function () {
-                    const size = $(this).val();
-                    if (selectedSizes.includes(size)) {
-                        $(this).prop("checked", true).trigger("change");
-                    } else {
-                        $(this).prop("checked", false).trigger("change");
-                    }
-                });
+    //             // Check checkboxes and trigger change event to auto-generate inputs
+    //             $("input[name='update-product-size']").each(function () {
+    //                 const size = $(this).val();
+    //                 if (selectedSizes.includes(size)) {
+    //                     $(this).prop("checked", true).trigger("change");
+    //                 } else {
+    //                     $(this).prop("checked", false).trigger("change");
+    //                 }
+    //             });
 
-                // After inputs are created by the change handler, set their values
-                selectedSizes.forEach(size => {
-                    const inputId = `qty-${size}`;
-                    const input = $(`#${inputId}`);
-                    if (input.length) {
-                        input.val(sizeData[size]);
-                    }
-                });
-            } else {
-                showErrorModal("Product not found.");
-            }
-        } catch (error) {
-            console.error("Error getting product:", error);
-            showErrorModal("Failed to load product.");
-        }
-    });
+    //             // After inputs are created by the change handler, set their values
+    //             selectedSizes.forEach(size => {
+    //                 const inputId = `qty-${size}`;
+    //                 const input = $(`#${inputId}`);
+    //                 if (input.length) {
+    //                     input.val(sizeData[size]);
+    //                 }
+    //             });
+    //         } else {
+    //             showErrorModal("Product not found.");
+    //         }
+    //     } catch (error) {
+    //         console.error("Error getting product:", error);
+    //         showErrorModal("Failed to load product.");
+    //     }
+    // });
 
     // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
     // UPDATE PRODUCT FUNCTION

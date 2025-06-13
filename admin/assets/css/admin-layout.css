@@ -322,7 +322,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 25px 30px;
+    padding: 25px 25px; /* Equal left and right padding */
     padding-bottom: 0;
     background: var(--body-color);
     border-bottom: 1px solid var(--border-color);
@@ -371,7 +371,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 25px 30px;
+    padding: 25px 25px; /* Equal left and right padding */
     background: var(--body-color);
     border-bottom: 1px solid var(--border-color);
     /* box-shadow: var(--shadow); */
@@ -412,7 +412,7 @@ body {
     font-size: 28px;
     font-weight: 700;
     color: var(--secondary-text-color);
-    margin: 25px 30px;
+    margin: 25px 25px; /* Equal left and right margins */
     line-height: 1.2;
 }
 
@@ -420,6 +420,16 @@ body {
 .page-content {
     max-width: 100%;
     overflow-x: auto;
+    padding: 0 25px; /* Equal left and right padding for all content */
+    margin-bottom: 25px;
+}
+
+/* For pages that already have their own container */
+.page-content .container,
+.page-content .card_container,
+.page-content .pos-layout {
+    padding-left: 0;
+    padding-right: 0;
 }
 
 /* =============== COMMON BUTTON STYLES =============== */

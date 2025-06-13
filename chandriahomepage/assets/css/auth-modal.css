@@ -15,6 +15,7 @@
   visibility: hidden;
   pointer-events: none;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  padding: 1rem; /* Add padding to prevent sticking to edges */
 }
 
 .auth-modal-container.show {
@@ -25,25 +26,103 @@
 
 .auth-modal {
   background: #ffffff;
-  border-radius: 24px;
-  box-shadow: 
-    0 32px 64px rgba(0, 0, 0, 0.12),
-    0 16px 32px rgba(0, 0, 0, 0.08),
-    0 8px 16px rgba(0, 0, 0, 0.04);
-  width: 90vw;
-  max-width: 900px;
-  max-height: 80vh; /* Reduced from 85vh to leave more room */
-  min-height: 550px; /* Slightly reduced minimum height */
-  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  max-width: 95%;
   position: relative;
-  transform: scale(0.9) translateY(40px);
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  aspect-ratio: 1.4/1; /* Make it more square-like */
-  margin-top: 2vh; /* Add top margin to better center in viewport */
+  margin: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 90vh;
 }
 
-.auth-modal-container.show .auth-modal {
-  transform: scale(1) translateY(0);
+/* Base form styles */
+.auth-form {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    width: 100%;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    padding: 1.5rem;
+}
+
+/* Active form state */
+.auth-form.active {
+    opacity: 1;
+    visibility: visible;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Form section container */
+.auth-form-section {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: auto;
+    position: relative;
+}
+
+/* Specific styles for sign-up form */
+#signup-form {
+    display: none;
+}
+
+#signup-form.active {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    opacity: 1;
+    visibility: visible;
+    height: auto;
+    position: relative;
+}
+
+/* Form content */
+.auth-form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+/* Modal adjustments */
+.auth-modal {
+    background: #ffffff;
+    border-radius: 16px;
+    width: 400px;
+    max-width: 95%;
+    position: relative;
+    margin: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 90vh;
+}
+
+/* Form transition effects */
+.auth-form-enter {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.auth-form-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.auth-form-exit {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.auth-form-exit-active {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 /* =============== MODERN CLOSE BUTTON =============== */
@@ -144,24 +223,13 @@
 
 /* =============== MODERN FORM SECTION =============== */
 .auth-form-section {
-  padding: 1.5rem 2rem 2rem 2rem; /* Reduced padding to fit better */
+  padding: 0; /* Removed padding to eliminate extra space */
+  margin: 0; /* Remove margin to eliminate extra space */
   background: #ffffff;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Start from top to utilize full height */
-  overflow-y: auto; /* Allow scrolling if needed */
-  position: relative;
-  min-height: 0;
-  height: 100%; /* Take full height of the modal */
-}
-
-.auth-form-section::-webkit-scrollbar {
-  display: none;
-}
-
-.auth-form-section {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  align-items: center;
+  height: auto;
 }
 
 .auth-form {
@@ -169,176 +237,129 @@
   visibility: hidden;
   transform: translateY(20px);
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;  
-  padding: 1.5rem 2rem 2rem 2rem; /* Reduced top padding, increased bottom padding */
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Distribute content to use full height */
-  height: 100%; /* Take full height */
+  gap: 0.75rem; /* Adjusted gap */
 }
 
 .auth-form.active {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
-  position: relative;
-  padding: 1rem 1.5rem 2rem 1.5rem; /* Better distribution with more bottom padding */
+  padding: 0;
+  margin: 0;
+  height: auto;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Use full height available */
-  height: 100%;
+  gap: 0.75rem; /* Adjusted gap */
 }
 
-/* =============== MODERN FORM HEADERS =============== */
 .auth-header {
   text-align: center;
-  margin-bottom: 1.25rem; /* Optimized margin for better fit */
-  flex-shrink: 0; /* Prevent header from shrinking */
+  margin-bottom: 1.25rem; /* Slightly reduce bottom margin */
+  width: 100%;
 }
 
 .auth-header h2 {
-  font-size: 1.875rem;
-  font-weight: 800;
-  color: #111827;
-  margin-bottom: 0.25rem;
-  letter-spacing: -0.025em;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 0.5rem;
 }
 
 .auth-header p {
-  color: #6b7280;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
+  color: #6B7280;
+  font-size: 0.875rem;
 }
 
-/* =============== MODERN FORM LAYOUT =============== */
 .auth-form-content {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem; /* Optimized gap for better fit */
-  flex-grow: 1; /* Allow content to grow and fill available space */
-  justify-content: space-around; /* Better distribution that fits within bounds */
-}
-
-.auth-input-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: 0.75rem; /* Adjusted gap */
+  margin-bottom: 0; /* Ensure no extra space */
 }
 
 .auth-input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.auth-input-group label {
-  font-weight: 600;
-  color: #374151;
-  font-size: 0.875rem;
-  letter-spacing: 0.025em;
+  margin-bottom: 0.75rem;
 }
 
 .auth-input-group input {
-  padding: 1.25rem 1.75rem; /* Increased padding for better visual spacing */
-  border: 2px solid #e5e7eb;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 400;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 0.875rem;
   transition: all 0.2s ease;
-  background: #ffffff;
-  color: #111827;
 }
 
 .auth-input-group input:focus {
   outline: none;
   border-color: hsl(346, 100%, 74%);
-  box-shadow: 0 0 0 3px rgba(255, 133, 177, 0.1);
-  background: #ffffff;
-}
-
-.auth-input-group input::placeholder {
-  color: #9ca3af;
-  font-weight: 400;
+  box-shadow: 0 0 0 2px rgba(255, 133, 177, 0.1);
 }
 
 /* =============== MODERN FORGOT PASSWORD =============== */
 .auth-forgot {
   text-align: right;
-  margin-top: -0.25rem;
-  margin-bottom: 0.25rem;
+  margin-bottom: 1.5rem;
 }
 
 .auth-forgot a {
   color: hsl(346, 100%, 74%);
+  font-size: 0.75rem;
   text-decoration: none;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: color 0.2s ease;
-}
-
-.auth-forgot a:hover {
-  color: hsl(346, 85%, 65%);
-  text-decoration: underline;
 }
 
 /* =============== MODERN BUTTONS =============== */
 .auth-btn {
-  padding: 1rem; /* Increased from .75rem for better button size */
+  width: 100%;
+  padding: 0.75rem;
   border: none;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 600;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  letter-spacing: 0.025em;
+  margin-bottom: 0.5rem; /* Reduce margin */
 }
 
 .auth-btn-primary {
   background: hsl(346, 100%, 74%);
   color: white;
-  box-shadow: 0 4px 12px rgba(255, 133, 177, 0.4);
 }
 
-.auth-btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(255, 133, 177, 0.4);
-}
-
-.auth-btn-primary:active {
-  transform: translateY(0);
+.auth-btn-social {
+  background: #F3F4F6;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 /* =============== MODERN DIVIDER =============== */
 .auth-divider {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin: 1.25rem 0; /* Optimized margins for better fit */
-  flex-shrink: 0; /* Prevent divider from shrinking */
+  text-align: center;
+  margin: 0.5rem 0; /* Reduce margin */
+  color: #9CA3AF;
+  font-size: 0.75rem;
 }
 
 .auth-divider::before,
 .auth-divider::after {
-  content: '';
+  content: "";
   flex: 1;
-  height: 1px;
-  background: #e5e7eb;
+  border-bottom: 1px solid #E5E7EB;
 }
 
 .auth-divider span {
-  color: #6b7280;
-  font-size: 0.875rem;
-  font-weight: 500;
-  padding: 0 0.5rem;
+  margin: 0 0.5rem;
 }
 
 /* =============== MODERN SOCIAL BUTTONS =============== */
@@ -369,15 +390,32 @@
 }
 
 .google-btn {
-  color: #374151;
-  border-color: #d1d5db;
+  background: #ffffff;
+  color: #3c4043;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  height: 40px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-bottom: 0.5rem; /* Reduce bottom margin */
 }
 
 .google-btn:hover {
-  border-color: #9ca3af;
-  background: #f9fafb;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(66, 133, 244, 0.15);
+  background-color: #f8f9fa;
+}
+
+.google-btn img {
+  width: 18px;
+  height: 18px;
 }
 
 .facebook-btn {
@@ -410,28 +448,17 @@
 /* =============== MODERN FORM SWITCH =============== */
 .auth-switch {
   text-align: center;
-  margin-top: 1.25rem; /* Optimized top margin */
-  margin-bottom: 0.5rem; /* Small bottom margin */
-  flex-shrink: 0; /* Prevent switch from shrinking */
-}
-
-.auth-switch span {
-  color: #6b7280;
   font-size: 0.875rem;
-  font-weight: 400;
+  color: #6B7280;
+  margin: 0; /* Remove margin to eliminate extra space */
+  padding: 0; /* Remove padding to eliminate extra space */
+  line-height: 1.5;
 }
 
 .auth-switch a {
   color: hsl(346, 100%, 74%);
   text-decoration: none;
-  font-weight: 600;
-  font-size: 0.875rem;
-  transition: color 0.2s ease;
-}
-
-.auth-switch a:hover {
-  color: hsl(346, 85%, 65%);
-  text-decoration: underline;
+  font-weight: 500;
 }
 
 /* =============== MODERN ERROR STATES =============== */
@@ -625,151 +652,72 @@
 
 @media (max-width: 768px) {
   .auth-modal {
-    margin: 1rem;
-    max-height: calc(100vh - 2rem);
-    border-radius: 20px;
+    width: 95%;
+    min-height: auto;
+    max-height: 95vh;
+    margin: 1rem auto;
   }
-    .auth-content {
+
+  .auth-content {
     grid-template-columns: 1fr;
+    height: auto;
   }
-  
+
   .auth-image-section {
-    display: none; /* Hide the image section on mobile */
-  }  .auth-form-section {
-    padding: 1rem;
-    max-height: none; /* Remove height constraint */
-    overflow-y: visible; /* Change to visible to prevent unnecessary scrolling */
-    min-height: 0; /* Remove minimum height */
+    display: none; /* Hide image section on mobile */
   }
-  
-  .auth-form-section::-webkit-scrollbar {
-    width: 6px; /* Narrow scrollbar for mobile */
-    display: block; /* Show scrollbar when needed */
-  }
-  
-  .auth-form-section::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-  }
-  
+
   .auth-form-section {
-    scrollbar-width: thin; /* For Firefox */
-    -ms-overflow-style: auto; /* For IE/Edge */
+    padding: 1.5rem;
+    height: auto;
+    max-height: 80vh;
+    overflow-y: auto;
   }
-  
-  .auth-form.active {
-    padding: 0;
-  }
-  
-  .auth-input-row {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }  /* Mobile sign-up and sign-in forms - consistent behavior */
-  #signup-form, #signin-form, #forgot-form {
-    max-height: 90vh; /* Increased to 90vh to give maximum space for icons */
-    padding-top: 0.25rem; /* Minimal top padding on mobile */
-    width: 100%; /* Full width on mobile */
-    overflow-y: auto; /* Enable scrollbar when content overflows */
-  }
-  
-  #signup-form .auth-form-content,
-  #signin-form .auth-form-content,
-  #forgot-form .auth-form-content {
-    padding-right: 0.5rem; /* Small right padding for some breathing room */
-    margin-bottom: 0; /* Ensure no bottom margin */
-  }
-  
-  /* Show scrollbars on mobile when needed */
-  #signup-form::-webkit-scrollbar,
-  #signin-form::-webkit-scrollbar,
-  #forgot-form::-webkit-scrollbar {
-    width: 5px;
-    display: block;
-  }
-  
-  #signup-form::-webkit-scrollbar-thumb,
-  #signin-form::-webkit-scrollbar-thumb,
-  #forgot-form::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-  }  /* Mobile form section adjustments for consistent height behavior */
-  #signup-form, #signin-form, #forgot-form {
-    max-height: 90vh; /* Increased to 90vh to give maximum space for icons */
-    overflow-y: auto; /* Enable scrollbar when needed */
-  }
-  
-  .auth-form-section {
-    max-height: none; /* Remove height constraints for auto-adjustment */
-    overflow-y: visible; /* Match signup form behavior */
-    min-height: 0; /* Remove minimum height constraints */
-  }
-  
-  /* Sign-up and sign-in form section padding override for mobile */
-  .auth-modal:has(#signup-form.active) .auth-form-section,
-  .auth-modal:has(#signin-form.active) .auth-form-section,
-  .auth-modal:has(#forgot-form.active) .auth-form-section,
-  .auth-form-section.signup-active {
-    padding: 1rem 0 0 1rem; /* Match consistent padding for all forms */
-    overflow-y: visible; /* Change from auto to visible for consistent behavior */
-    min-height: 0; /* Remove minimum height */
-  }
-  .auth-divider {
-    margin-bottom: 0; /* Remove bottom margin on mobile */
-  }
-  
-  .auth-social {
-    gap: 1rem;
-    margin: 0.75rem 0;
-    padding: 0 0.5rem;
-  }
-  
-  .auth-social-btn {
-    width: 100%;
-    min-width: 280px;
-    height: 48px;
-    padding: 0 1rem;
-    font-size: 0.9rem;
-    font-weight: 500;
-    gap: 10px;
-  }
-  
-  .auth-social-btn svg {
-    width: 18px;
-    height: 18px;
-    flex-shrink: 0;
-  }
-  
-  .auth-social-btn span {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
+
   .auth-header h2 {
     font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .auth-form {
+    padding: 1rem;
+  }
+
+  .auth-form.active {
+    padding: 1rem;
+    height: auto;
+  }
+
+  .auth-input-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .auth-modal {
+    width: 85%;
+    margin: 2rem auto;
   }
   
-  .auth-close {
-    top: 16px;
-    right: 16px;
-    width: 40px;
-    height: 40px;
+  .auth-form-section {
+    padding: 2rem;
   }
 }
 
 /* =============== SIGN-UP FORM SPECIFIC STYLING =============== */
 #signup-form {
-  padding: 0;
-  padding-top: 0.5rem; /* Reduced top padding further */
-  max-height: none; /* Remove max-height constraint completely */
-  overflow-y: visible; /* Change to visible to prevent unnecessary scrolling */
-  overflow-x: hidden;
-  /* Ensure the form starts from the top */
+  display: none;
+}
+
+#signup-form.active {
   display: flex;
   flex-direction: column;
-  width: 100%; /* Ensure form takes full width */
-  box-sizing: border-box; /* Include padding in width calculation */
-  flex-shrink: 0; /* Prevent shrinking */
+  gap: 1rem;
+  opacity: 1;
+  visibility: visible;
+  height: auto;
+  position: relative;
 }
 
 /* Using default browser scrollbar */

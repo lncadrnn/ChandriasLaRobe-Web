@@ -247,46 +247,54 @@ class AuthModal {
         // Clear errors first
         this.clearErrors();
         
-        // Hide all forms immediately
-        this.signInForm.classList.remove('active');
-        this.signUpForm.classList.remove('active');
-        this.forgotPasswordForm.classList.remove('active');
-        
-        // Remove signup-active class from form section
+        // Get all forms and remove active class
+        [this.signInForm, this.signUpForm, this.forgotPasswordForm].forEach(form => {
+            if (form) {
+                form.classList.remove('active');
+                form.style.display = 'none';
+            }
+        });
+
+        // Update form section for spacing
         const formSection = document.querySelector('.auth-form-section');
         if (formSection) {
-            formSection.classList.remove('signup-active');
+            formSection.classList.remove('signup-active', 'signin-active', 'forgot-active');
         }
 
-        // Small delay to ensure clean transition
-        setTimeout(() => {
-            // Show selected form
-            switch (formType) {
-                case 'signup':
-                    this.signUpForm.classList.add('active');
-                    this.currentForm = 'signup';
-                    // Add signup-active class to form section for reduced padding
-                    if (formSection) {
-                        formSection.classList.add('signup-active');
-                    }
-                    break;
-                case 'forgot':
-                    this.forgotPasswordForm.classList.add('active');
-                    this.currentForm = 'forgot';
-                    break;
-                default:
-                    this.signInForm.classList.add('active');
-                    this.currentForm = 'signin';
-            }
+        // Show selected form
+        let targetForm;
+        switch (formType) {
+            case 'signup':
+                targetForm = this.signUpForm;
+                if (formSection) formSection.classList.add('signup-active');
+                break;
+            case 'forgot':
+                targetForm = this.forgotPasswordForm;
+                if (formSection) formSection.classList.add('forgot-active');
+                break;
+            default:
+                targetForm = this.signInForm;
+                if (formSection) formSection.classList.add('signin-active');
+        }
 
-            // Focus on first input after form is visible
+        // Show the target form
+        if (targetForm) {
+            targetForm.style.display = 'flex';
+            // Small delay to ensure display: flex is applied before adding active class
             setTimeout(() => {
-                const firstInput = this.getCurrentForm().querySelector('input[type="email"], input[type="text"]');
-                if (firstInput) {
-                    firstInput.focus();
-                }
-            }, 50);
-        }, 10);
+                targetForm.classList.add('active');
+            }, 10);
+        }
+
+        this.currentForm = formType;
+
+        // Focus on first input after form is visible
+        setTimeout(() => {
+            const firstInput = targetForm?.querySelector('input[type="email"], input[type="text"]');
+            if (firstInput) {
+                firstInput.focus();
+            }
+        }, 50);
     }getCurrentForm() {
         switch (this.currentForm) {
             case 'signup': return this.signUpForm;

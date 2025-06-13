@@ -26,10 +26,9 @@
     .sidebar .custom-text {
         opacity: 0;
     }
-    
-    .page-header,
+      .page-header,
     .main-header {
-        padding: 20px 25px;
+        padding: 20px 20px; /* Equal left and right padding */
     }
 }
 
@@ -38,7 +37,54 @@
     /* Hide desktop sidebar completely */
     .sidebar {
         display: none !important;
-    }    /* Show mobile bottom navigation */
+    }    /* Adjust page header for mobile */
+    .page-header {
+        padding: 15px 15px !important; /* Equal left and right padding */
+        flex-direction: column !important;
+        gap: 15px !important;
+    }
+    
+    .header-left h1.page-title {
+        font-size: 1.5rem !important;
+        margin-bottom: 5px !important;
+    }
+    
+    .header-left p.page-subtitle {
+        font-size: 0.9rem !important;
+        opacity: 0.8;
+    }
+    
+    .header-right {
+        width: 100% !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
+    }
+    
+    .search-box {
+        flex: 1 !important;
+        min-width: 200px !important;
+    }
+    
+    .search-box input {
+        padding: 8px 12px !important;
+        font-size: 0.9rem !important;
+    }
+    
+    .btn.btn-primary {
+        padding: 8px 16px !important;
+        font-size: 0.9rem !important;
+        white-space: nowrap;
+    }
+    
+    .btn.btn-primary span {
+        display: none !important;
+    }
+    
+    .btn.btn-primary i {
+        margin-right: 0 !important;
+    }
+
+    /* Show mobile bottom navigation */
     .mobile-bottom-nav {
         display: flex !important;
         position: fixed !important;
@@ -79,7 +125,82 @@
         min-height: calc(100vh - 85px);
         box-sizing: border-box;
     }
-      /* Mobile navigation items */
+    
+    /* Mobile inventory specific styles */
+    .page-content {
+        padding: 0 15px !important;
+        margin-bottom: 80px !important; /* Account for mobile nav height */
+    }
+    
+    .page-content .container,
+    .page-content .card_container,
+    .page-content .pos-layout {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    
+    .pos-tabs {
+        margin-top: 1rem !important;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    .pos-tabs::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .tab-btn {
+        min-width: 100px !important;
+        padding: 8px 16px !important;
+        font-size: 0.9rem !important;
+    }
+    
+    /* Mobile card grid */
+    .card_container {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
+        gap: 15px !important;
+        padding: 15px 0 !important;
+    }
+    
+    .card_article {
+        max-width: none !important;
+        margin: 0 !important;
+    }
+    
+    .card_img {
+        height: 180px !important;
+    }
+    
+    .card_content {
+        padding: 12px !important;
+    }
+    
+    .card_title {
+        font-size: 0.9rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    .card_price {
+        font-size: 0.85rem !important;
+    }
+    
+    .card_code {
+        font-size: 0.75rem !important;
+    }
+    
+    /* Mobile action buttons */
+    .card_actions {
+        padding: 5px !important;
+    }
+    
+    .card_action_btn {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 0.8rem !important;
+    }
+    
     .mobile-nav-item {
         display: flex !important;
         flex-direction: column;
@@ -236,6 +357,61 @@
     
     .search-box {
         padding: 8px 12px;
+    }
+}
+
+/* =============== SMALL MOBILE RESPONSIVENESS =============== */
+@media (max-width: 480px) {
+    /* Extra small screen adjustments */
+    .page-header {
+        padding: 10px 15px !important;
+    }
+    
+    .header-left h1.page-title {
+        font-size: 1.3rem !important;
+    }
+    
+    .header-right {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    
+    .search-box {
+        min-width: unset !important;
+    }
+    
+    /* Smaller card grid for very small screens */
+    .card_container {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+        gap: 12px !important;
+    }
+    
+    .card_img {
+        height: 160px !important;
+    }
+    
+    .card_content {
+        padding: 10px !important;
+    }
+    
+    .card_title {
+        font-size: 0.85rem !important;
+    }
+    
+    .mobile-nav-item .text {
+        font-size: 9px !important;
+    }
+    
+    .mobile-nav-item .icon {
+        font-size: 18px !important;
+    }
+    
+    .mobile-bottom-nav {
+        height: 65px !important;
+    }
+    
+    .main-content {
+        padding-bottom: 80px !important;
     }
 }
 

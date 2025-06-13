@@ -26,11 +26,10 @@ $(document).ready(function() {
     
     // Make notyf globally available
     window.inventoryNotyf = notyf;
-    
-    // ===========================================
+      // ===========================================
     // EDIT BUTTON CLICK HANDLER
     // ===========================================
-    $(document).on('click', '.edit_btn', async function(e) {
+    $(document).on('click', '.edit-btn', async function(e) {
         e.preventDefault();
         e.stopPropagation();
         
@@ -96,9 +95,10 @@ $(document).ready(function() {
     });
     
     // ===========================================
+    // DELETE BUTTON CLICK HANDLER    // ===========================================
     // DELETE BUTTON CLICK HANDLER
     // ===========================================
-    $(document).on('click', '.delete_btn', async function(e) {
+    $(document).on('click', '.delete-btn', async function(e) {
         e.preventDefault();
         e.stopPropagation();
         
@@ -122,10 +122,42 @@ $(document).ready(function() {
         $deleteBtn.html('<i class="bx bx-loader bx-spin"></i>').prop('disabled', true);
         
         try {
+            console.log('🔄 Fetching product data...');
+            
+            // First get the product data to retrieve image IDs
+            const docRef = doc(chandriaDB, "products", productId);
+            const docSnap = await getDoc(docRef);
+            
+            if (!docSnap.exists()) {
+                notyf.error('Product not found');
+                return;
+            }
+            
+            const productData = docSnap.data();
+            console.log('📄 Product data:', productData);
+            
+            // Delete images if they exist
+            try {
+                if (productData.frontImageId) {
+                    console.log('🔄 Deleting front image...');
+                    await deleteImageFromCloudinary(productData.frontImageId);
+                    console.log('✅ Front image deleted');
+                }
+                
+                if (productData.backImageId) {
+                    console.log('🔄 Deleting back image...');
+                    await deleteImageFromCloudinary(productData.backImageId);
+                    console.log('✅ Back image deleted');
+                }
+            } catch (imageError) {
+                console.warn('⚠️ Image deletion failed, but continuing with product deletion:', imageError);
+                // Continue with product deletion even if image deletion fails
+            }
+            
             console.log('🔄 Deleting product from database...');
             
-            // Delete from Firebase
-            await deleteDoc(doc(chandriaDB, "products", productId));
+            // Delete the product document
+            await deleteDoc(docRef);
             
             console.log('✅ Product deleted from database');
             
@@ -139,7 +171,7 @@ $(document).ready(function() {
             
         } catch (error) {
             console.error('❌ Error deleting product:', error);
-            notyf.error('Failed to delete product');
+            notyf.error('Failed to delete product or images');
             
             // Reset button on error
             $deleteBtn.html(originalHtml).prop('disabled', false);
@@ -147,14 +179,76 @@ $(document).ready(function() {
     });
     
     // ===========================================
-    // HELPER FUNCTIONS
+    // CLOUDINARY IMAGE DELETE FUNCTION
     // ===========================================
     
-    function populateEditModal(productId, data) {
+    async function deleteImageFromCloudinary(publicId) {
+        if (!publicId) {
+            console.log('⚠️ No publicId provided for image deletion');
+            return;
+        }
+        
+        try {
+            const timestamp = Math.floor(Date.now() / 1000);
+            
+            // Generate signature using the globally available function
+            const signature = await window.generateLegacySignature(
+                publicId,
+                timestamp,
+                window.LEGACY_CLOUDINARY_CONFIG.apiSecret
+            );
+
+            const formData = new FormData();
+            formData.append("public_id", publicId);
+            formData.append("api_key", window.LEGACY_CLOUDINARY_CONFIG.apiKey);
+            formData.append("timestamp", timestamp);
+            formData.append("signature", signature);
+
+            const response = await fetch(window.getLegacyCloudinaryDeleteUrl(), {
+                method: "POST",
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error(`Cloudinary delete failed: ${response.status} ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            console.log('✅ Cloudinary delete result:', result);
+            
+            return result;
+        } catch (error) {
+            console.error('❌ Error deleting image from Cloudinary:', error);
+            throw error;
+        }
+    }
+    
+    // ===========================================
+    // HELPER FUNCTIONS
+    // ===========================================
+      function populateEditModal(productId, data) {
         console.log('🔄 Populating edit modal...');
         
         // Set product ID
         $('#update-product-id').val(productId);
+        
+        // Set image previews
+        if (data.frontImageUrl) {
+            $("#update-dropzone-front").css({
+                "background-image": `url(${data.frontImageUrl})`,
+                "background-size": "cover",
+                "background-position": "center"
+            });
+            $("#update-upload-label-front").css("opacity", "0");
+        }
+        if (data.backImageUrl) {
+            $("#update-dropzone-back").css({
+                "background-image": `url(${data.backImageUrl})`,
+                "background-size": "cover",
+                "background-position": "center"
+            });
+            $("#update-upload-label-back").css("opacity", "0");
+        }
         
         // Set basic fields
         $('#update-product-name').val(data.name || '');
@@ -165,6 +259,8 @@ $(document).ready(function() {
         // Set dropdowns
         $('#update-product-category').val(data.category || '');
         $('#update-product-sleeve').val(data.sleeve || '');
+        
+        // Set color using text value (simpler approach)
         $('#update-product-color').val(data.color || '');
         
         // Handle sizes and quantities
@@ -194,12 +290,11 @@ $(document).ready(function() {
         
         console.log('✅ Modal populated successfully');
     }
-    
-    // ===========================================
+      // ===========================================
     // UPDATE FORM SUBMISSION
     // ===========================================
     
-    $(document).on('submit', '#updateProductForm', async function(e) {
+    $(document).on('click', '#update-product-btn', async function(e) {
         e.preventDefault();
         
         const productId = $('#update-product-id').val();
@@ -208,7 +303,7 @@ $(document).ready(function() {
             return;
         }
         
-        const $submitBtn = $(this).find('button[type="submit"]');
+        const $submitBtn = $(this);
         const originalBtnText = $submitBtn.html();
         $submitBtn.html('<i class="bx bx-loader bx-spin"></i> Updating...').prop('disabled', true);
         
@@ -249,12 +344,14 @@ $(document).ready(function() {
                 'position': '',
                 'width': ''
             });
-            
-            // Refresh products if possible
-            if (window.ComprehensiveLoader && typeof window.ComprehensiveLoader.loadProducts === 'function') {
-                window.ComprehensiveLoader.loadProducts();
-            } else if (typeof window.loadProducts === 'function') {
+              // Refresh products if possible
+            if (typeof window.loadProducts === 'function') {
+                console.log('🔄 Refreshing product list...');
                 window.loadProducts();
+            } else if (window.ComprehensiveLoader && typeof window.ComprehensiveLoader.loadProducts === 'function') {
+                window.ComprehensiveLoader.loadProducts();
+            } else {
+                console.warn('⚠️ No loadProducts function found');
             }
             
         } catch (error) {
