@@ -1171,11 +1171,12 @@
 .add-product-modal-content {
     position: relative;
     background: white;
-    width: 90%;
-    max-width: 650px;
+    width: 95%;
+    max-width: 900px;
+    max-height: 90vh;
     border-radius: 16px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
+    overflow-y: auto;
     animation: modalSlideIn 0.3s ease-out;
 }
 
@@ -1315,8 +1316,8 @@
 /* ================ STEP CONTENT STYLING ================ */
 .add-product-step-content {
     display: none;
-    padding: 24px 32px 32px 32px;
-    min-height: 400px;
+    padding: 32px 40px 40px 40px;
+    min-height: 500px;
 }
 
 .add-product-step-content.active {
@@ -1431,9 +1432,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem 2rem;
+    padding: 24px 40px;
     border-top: 1px solid #eee;
     background: #fafafa;
+    min-height: 80px;
 }
 
 .modal-footer-left,
@@ -1443,16 +1445,19 @@
 }
 
 .btn-modal {
-    padding: 12px 24px;
+    padding: 16px 32px;
     border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: 500;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 8px;
+    min-height: 48px;
+    min-width: 120px;
+    justify-content: center;
 }
 
 .btn-modal.btn-primary {
@@ -1886,6 +1891,28 @@
     box-shadow: 0 0 0 2px rgba(250, 77, 133, 0.1);
 }
 
+/* ================ FORM GRID LAYOUTS ================ */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.form-grid-single {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.form-grid-triple {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
 /* Review Step Styling */
 .review-section {
     margin-bottom: 2rem;
@@ -2041,4 +2068,95 @@
     border-radius: 4px;
     font-size: 0.875rem;
     font-weight: 500;
+}
+
+/* ================ RESPONSIVE MODAL STYLES ================ */
+@media (max-width: 768px) {
+    .add-product-modal-content {
+        width: 95%;
+        max-width: none;
+        margin: 10px;
+        max-height: 95vh;
+    }
+    
+    .add-product-steps {
+        padding: 24px 20px 16px 20px;
+        gap: 12px;
+    }
+    
+    .step-circle {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .step-number {
+        font-size: 12px;
+    }
+    
+    .step-label {
+        font-size: 11px;
+    }
+    
+    .add-product-step-content {
+        padding: 24px 20px 32px 20px;
+        min-height: 400px;
+    }
+    
+    .add-product-modal-footer {
+        padding: 20px;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .modal-footer-left,
+    .modal-footer-right {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .btn-modal {
+        flex: 1;
+        min-width: 140px;
+    }
+    
+    .image-upload-section {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+      .form-grid,
+    .form-grid-triple {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .step-content-header h3 {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .add-product-modal-content {
+        width: 98%;
+        margin: 5px;
+        border-radius: 12px;
+    }
+    
+    .add-product-step-content {
+        padding: 20px 16px 28px 16px;
+        min-height: 350px;
+    }
+    
+    .add-product-modal-header {
+        padding: 20px 16px 12px 16px;
+    }
+    
+    .add-product-modal-footer {
+        padding: 16px;
+    }
+    
+    .btn-modal {
+        padding: 14px 24px;
+        font-size: 14px;
+        min-height: 44px;
+    }
 }

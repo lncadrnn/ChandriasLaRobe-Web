@@ -394,6 +394,48 @@
             </div>
         </div>
 
+        <!--=============== ADDITIONAL FEE MODAL ===============-->
+        <div id="additional-fee-modal" class="modal-overlay">
+            <div class="modal-container">
+                <div class="modal-icon">
+                    <i class="fi fi-rs-info"></i>
+                </div>
+                <div class="modal-content">
+                    <h3 class="modal-title">Additional Fee Notice</h3>
+                    <p class="modal-message">
+                        You are booking more than 3 products. There will be an additional fee of <strong>₱100 per product</strong> above 3 items.
+                    </p>
+                    <div class="fee-details">
+                        <div class="fee-detail-item">
+                            <span>Total Items:</span>
+                            <strong id="total-items-count">0</strong>
+                        </div>
+                        <div class="fee-detail-item">
+                            <span>Additional Items:</span>
+                            <strong id="additional-items-count">0</strong>
+                        </div>
+                        <div class="fee-detail-item">
+                            <span>Additional Fee:</span>
+                            <strong class="fee-amount" id="additional-fee-amount">₱0</strong>
+                        </div>
+                    </div>
+                    <p class="modal-message">
+                        For more details about our booking policies, please check our About page.
+                    </p>
+                    <div class="modal-actions">
+                        <button id="view-about-page" class="btn btn-secondary">
+                            <i class="fi fi-rs-document"></i>
+                            View About Page
+                        </button>
+                        <button id="proceed-with-booking" class="btn btn-primary">
+                            <i class="fi fi-rs-check"></i>
+                            Proceed with Booking
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!--=============== SWIPER JS ===============-->
         <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 

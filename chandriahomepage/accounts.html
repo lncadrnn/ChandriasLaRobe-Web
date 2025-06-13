@@ -420,6 +420,8 @@
         <div class="del-acc-modal-container">
             <div class="del-acc-modal-box">
                 <div class="del-acc-modal-content" id="del-acc-regular-content">
+                    <h3>Delete Account</h3>
+                    <p>This action cannot be undone. Please enter your password to confirm.</p>
                     <label for="del-acc-password">Enter Current Password:</label>
                     <input type="password" id="del-acc-password" value="" />
                     <div class="btn-group">
@@ -432,13 +434,27 @@
                 </div>
                 <div class="del-acc-modal-content" id="del-acc-google-content" style="display: none;">
                     <h3>Delete Account</h3>
-                    <p>Are you sure you want to delete your account?</p>
+                    <p>This action cannot be undone. All your data including bookings, wishlist, and profile information will be permanently deleted.</p>
                     <div class="btn-group">
                         <button class="btn-cancel" id="del-acc-google-cancel">Cancel</button>
                         <button class="btn-submit" id="del-acc-google-confirm">
                             <span id="btn-google-text">Confirm</span>
                             <span id="btn-google-spinner" class="btn-spinner" style="display: none"></span>
                         </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CLEAR FILTERS CONFIRMATION MODAL -->
+        <div class="clear-filters-modal-container" id="clear-filters-modal">
+            <div class="clear-filters-modal-box">
+                <div class="clear-filters-modal-content">
+                    <h3>Clear All Filters</h3>
+                    <p>Are you sure you want to clear all active filters? This will reset the booking history view.</p>
+                    <div class="btn-group">
+                        <button class="btn-cancel" id="clear-filters-cancel">Cancel</button>
+                        <button class="btn-submit" id="clear-filters-confirm">Clear Filters</button>
                     </div>
                 </div>
             </div>

@@ -21,7 +21,7 @@ class ChandriasChatbot {    constructor() {
                 keywords: ['rent', 'rental', 'price', 'cost', 'fee', 'expensive', 'cheap', 'rate', 'pricing'],
                 phrases: ['how much', 'rental fee', 'rental cost', 'rental price', 'how to rent', 'rent a gown', 'how do i rent'],
                 priority: ['how to rent', 'rental fee', 'rental cost', 'rental price', 'how much'],
-                response: "Here's how to rent from us:\n\n🔍 Step 1: Browse our collection online or visit our store\n📅 Step 2: Book a fitting appointment\n✨ Step 3: Try on items during your fitting\n💰 Step 4: Pay rental fee + security deposit\n📋 Step 5: Sign rental agreement\n🎉 Step 6: Take your items!\n\n💵 Rental Fees:\n• Gowns: ₱2,000 - ₱8,000\n• Suits: ₱1,500 - ₱5,000\n• Accessories: ₱500 - ₱2,000\n\n✅ Included: Free fitting, alterations, cleaning, garment bag"
+                response: "Here's how to rent from us:\n\n🔍 Step 1: Browse our collection online or visit our store\n📅 Step 2: Book a fitting appointment\n✨ Step 3: Try on items during your fitting\n💰 Step 4: Pay rental fee + security deposit\n📋 Step 5: Sign rental agreement\n🎉 Step 6: Take your items!\n\n💵 Rental Fees:\n• Gowns: ₱2,000 - ₱8,000\n• Suits: ₱1,500 - ₱5,000\n• Accessories: ₱500 - ₱2,000\n\n✅ Included: Free fitting for up to 3 products"
             },
             'hours': {
                 keywords: ['hours', 'time', 'open', 'close', 'operating', 'business hours', 'schedule'],
@@ -93,7 +93,6 @@ class ChandriasChatbot {    constructor() {
                         <img src="/chandriahomepage/assets/img/icon-chatbot-img.png" alt="Chatbot Avatar" class="chatbot-avatar">
                         <div class="chatbot-title">
                             <h3>Chandria's Chatbot</h3>
-                            <p>typically replies within a minute</p>
                         </div>
                     </div>
                     <div class="chatbot-controls">

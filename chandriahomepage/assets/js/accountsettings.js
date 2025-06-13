@@ -755,11 +755,20 @@ $(document).ready(function () {
             $("#btn-google-spinner").show();
 
             const user = auth.currentUser;
+            
+            // For Google users, try direct deletion first, handle reauthentication if needed
             await deleteUserData(user);
         } catch (error) {
             console.error("Account deletion failed:", error);
             if (error.code === "auth/requires-recent-login") {
-                notyf.error("Please sign out and sign in again with Google to delete your account");
+                // If recent login is required, ask user to sign out and back in
+                notyf.error("For security, please sign out and sign back in with Google, then try deleting your account again.");
+                setTimeout(async () => {
+                    await signOut(auth);
+                    window.location.href = "../index.html";
+                }, 2000);
+            } else if (error.code === "auth/popup-closed-by-user") {
+                notyf.error("Google sign-in was cancelled. Please try again.");
             } else {
                 notyf.error("Failed to delete account. Please try again.");
             }
@@ -771,31 +780,64 @@ $(document).ready(function () {
 
     // Helper function to delete user data
     async function deleteUserData(user) {
-        const userRef = doc(chandriaDB, "userAccounts", user.uid);
-        const userSnap = await getDoc(userRef);
-
-        if (userSnap.exists()) {
-            const userData = userSnap.data();
-            // Delete profile image if exists
-            if (userData.profileImageId) {
-                try {
-                    await deleteImageFromCloudinary(userData.profileImageId);
-                } catch (err) {
-                    console.warn("Failed to delete profile image:", err);
-                }
-            }
+        try {
+            const userEmail = user.email;
             
-            // Delete user document
-            await deleteDoc(userRef);
-        }
+            // Step 1: Delete user document from Firestore
+            const userRef = doc(chandriaDB, "userAccounts", user.uid);
+            const userSnap = await getDoc(userRef);
 
-        // Delete user account
-        await deleteUser(user);
-        
-        notyf.success("Account deleted successfully");
-        setTimeout(() => {
-            window.location.href = "../index.html";
-        }, 1500);
+            if (userSnap.exists()) {
+                const userData = userSnap.data();
+                
+                // Delete profile image if exists
+                if (userData.profileImageId) {
+                    try {
+                        await deleteImageFromCloudinary(userData.profileImageId);
+                    } catch (err) {
+                        console.warn("Failed to delete profile image:", err);
+                    }
+                }
+                
+                // Delete user document
+                await deleteDoc(userRef);
+                console.log("User document deleted from Firestore");
+            }
+
+            // Step 2: Delete all appointments associated with this user's email
+            const appointmentsQuery = query(
+                collection(chandriaDB, "appointments"),
+                where("customerEmail", "==", userEmail)
+            );
+            const appointmentsSnapshot = await getDocs(appointmentsQuery);
+            
+            const deletePromises = appointmentsSnapshot.docs.map(appointmentDoc => 
+                deleteDoc(doc(chandriaDB, "appointments", appointmentDoc.id))
+            );
+            
+            if (deletePromises.length > 0) {
+                await Promise.all(deletePromises);
+                console.log(`Deleted ${deletePromises.length} appointments`);
+            }
+
+            // Step 3: Delete user from Firebase Authentication
+            await deleteUser(user);
+            console.log("User deleted from Firebase Authentication");
+            
+            notyf.success("Account and all associated data deleted successfully");
+            
+            // Clear any stored data and redirect
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            setTimeout(() => {
+                window.location.href = "../index.html";
+            }, 1500);
+            
+        } catch (error) {
+            console.error("Error in deleteUserData:", error);
+            throw error; // Re-throw to be handled by the calling function
+        }
     }
 
     // Modal close handlers
@@ -939,11 +981,63 @@ $(document).ready(function () {
         const clearFiltersBtn = document.getElementById('clear-filters-btn');
         if (clearFiltersBtn) {
             clearFiltersBtn.addEventListener('click', function() {
+                // Check if any filters are active
+                const hasActiveFilters = 
+                    (statusFilter && statusFilter.value !== 'all') ||
+                    (dateFilter && dateFilter.value !== '') ||
+                    (searchFilter && searchFilter.value.trim() !== '');
+
+                if (hasActiveFilters) {
+                    // Show confirmation modal
+                    showClearFiltersModal();
+                } else {
+                    notyf.info('No active filters to clear');
+                }
+            });
+        }
+
+        // Clear filters modal functionality
+        function showClearFiltersModal() {
+            const modal = document.getElementById('clear-filters-modal');
+            if (modal) {
+                modal.classList.add('show');
+            }
+        }
+
+        function hideClearFiltersModal() {
+            const modal = document.getElementById('clear-filters-modal');
+            if (modal) {
+                modal.classList.remove('show');
+            }
+        }
+
+        // Clear filters modal event listeners
+        const clearFiltersModal = document.getElementById('clear-filters-modal');
+        const clearFiltersCancel = document.getElementById('clear-filters-cancel');
+        const clearFiltersConfirm = document.getElementById('clear-filters-confirm');
+
+        if (clearFiltersCancel) {
+            clearFiltersCancel.addEventListener('click', hideClearFiltersModal);
+        }
+
+        if (clearFiltersConfirm) {
+            clearFiltersConfirm.addEventListener('click', function() {
+                // Actually clear the filters
                 if (statusFilter) statusFilter.value = 'all';
                 if (dateFilter) dateFilter.value = '';
                 if (searchFilter) searchFilter.value = '';
                 filterBookings();
-                notyf.success('Filters cleared');
+                hideClearFiltersModal();
+                notyf.success('All filters cleared successfully');
+            });
+        }
+
+        // Close modal when clicking outside
+        if (clearFiltersModal) {
+            clearFiltersModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    hideClearFiltersModal();
+                }
             });
         }
 

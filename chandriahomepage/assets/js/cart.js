@@ -376,8 +376,7 @@ $(document).ready(function () {
         $("#cart-total-items").text(totalItems);
     }
 
-    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
-    // CHECKOUT FUNCTION
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#    // CHECKOUT FUNCTION
     $("#btn-checkout").on("click", async function () {
         const btnCheckOut = $(this);
         const btnText = btnCheckOut.find("#btn-text");
@@ -392,16 +391,12 @@ $(document).ready(function () {
         const userRef = doc(chandriaDB, "userAccounts", user.uid);
 
         try {
-            // DISABLING BUTTON
-            btnCheckOut.addClass("disabled");
-            btnText.hide();
-            btnSpinner.show();
-
             const snap = await getDoc(userRef);
             if (!snap.exists()) return alert("User not found.");
 
             const currentCart = snap.data().added_to_cart || [];
 
+            // Update cart quantities from current form inputs
             $(".quantity").each(function () {
                 const input = $(this);
                 const productId = input.data("id");
@@ -417,6 +412,41 @@ $(document).ready(function () {
                 }
             });
 
+            // Calculate total number of items (sum of quantities)
+            const totalItems = currentCart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            // Check if more than 3 items and show additional fee modal
+            if (totalItems > 3) {
+                const additionalItems = totalItems - 3;
+                const additionalFee = additionalItems * 100;
+                
+                // Populate modal with details
+                $("#additional-items-count").text(additionalItems);
+                $("#additional-fee-amount").text(`₱${additionalFee.toLocaleString()}`);
+                $("#total-items-count").text(totalItems);
+                
+                // Show the additional fee modal
+                showAdditionalFeeModal();
+                return;
+            }
+
+            // Proceed with normal checkout if 3 or fewer items
+            await proceedToCheckout(userRef, currentCart, btnCheckOut, btnText, btnSpinner);
+
+        } catch (error) {
+            console.error("Checkout update failed:", error);
+            alert("Failed to update cart.");
+        }
+    });
+
+    // Separate function to handle the actual checkout process
+    async function proceedToCheckout(userRef, currentCart, btnCheckOut, btnText, btnSpinner) {
+        try {
+            // DISABLING BUTTON
+            btnCheckOut.addClass("disabled");
+            btnText.hide();
+            btnSpinner.show();
+
             await updateDoc(userRef, { added_to_cart: currentCart });
 
             // Redirect after successful update
@@ -430,7 +460,8 @@ $(document).ready(function () {
             btnText.show();
             btnSpinner.hide();
         }
-    }); // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#    // DELETE CART ITEM FUNCTION
+    } // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+    // DELETE CART ITEM FUNCTION
     let itemToRemove = null;
 
     // Show modal with animation
@@ -539,6 +570,91 @@ $(document).ready(function () {
         if (e.key === "Escape" && $("#remove-modal").is(":visible")) {
             hideRemoveModal();
             itemToRemove = null;
+        }
+    });
+
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+    // ADDITIONAL FEE MODAL FUNCTIONS
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
+
+    // Show additional fee modal with animation
+    function showAdditionalFeeModal() {
+        const modal = $("#additional-fee-modal");
+        modal.css("display", "flex");
+        setTimeout(() => {
+            modal.addClass("show");
+        }, 10);
+    }
+
+    // Hide additional fee modal with animation
+    function hideAdditionalFeeModal() {
+        const modal = $("#additional-fee-modal");
+        modal.removeClass("show");
+        setTimeout(() => {
+            modal.css("display", "none");
+        }, 300);
+    }
+
+    // Handle "Proceed with Booking" button
+    $("#proceed-with-booking").on("click", async function () {
+        hideAdditionalFeeModal();
+        
+        // Get the current cart data and proceed with checkout
+        const user = auth.currentUser;
+        if (!user) return;
+
+        const userRef = doc(chandriaDB, "userAccounts", user.uid);
+        const btnCheckOut = $("#btn-checkout");
+        const btnText = btnCheckOut.find("#btn-text");
+        const btnSpinner = btnCheckOut.find(".spinner");
+
+        try {
+            const snap = await getDoc(userRef);
+            if (!snap.exists()) return;
+
+            const currentCart = snap.data().added_to_cart || [];
+
+            // Update cart quantities
+            $(".quantity").each(function () {
+                const input = $(this);
+                const productId = input.data("id");
+                const size = input.data("size");
+                const quantity = parseInt(input.val(), 10);
+
+                const itemIndex = currentCart.findIndex(
+                    item => item.productId === productId && item.size === size
+                );
+
+                if (itemIndex !== -1) {
+                    currentCart[itemIndex].quantity = quantity;
+                }
+            });
+
+            // Proceed to checkout
+            await proceedToCheckout(userRef, currentCart, btnCheckOut, btnText, btnSpinner);
+        } catch (error) {
+            console.error("Error proceeding with booking:", error);
+            alert("Failed to proceed with booking.");
+        }
+    });
+
+    // Handle "View About Page" button
+    $("#view-about-page").on("click", function () {
+        // Navigate to about-policy.html page (assuming that's where the booking policies are)
+        window.open("about-policy.html", "_blank");
+    });
+
+    // Close additional fee modal when clicking outside
+    $(document).on("click", "#additional-fee-modal", function (e) {
+        if (e.target === this) {
+            hideAdditionalFeeModal();
+        }
+    });
+
+    // Close additional fee modal on escape key
+    $(document).on("keydown", function (e) {
+        if (e.key === "Escape" && $("#additional-fee-modal").is(":visible")) {
+            hideAdditionalFeeModal();
         }
     });
 

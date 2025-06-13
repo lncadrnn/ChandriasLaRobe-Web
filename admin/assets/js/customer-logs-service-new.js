@@ -806,8 +806,7 @@ async function showTransactionDetails(transactionId) {
                         ${lastUpdated ? `<p><strong>Last Updated:</strong> ${lastUpdated}</p>` : ''}
                     </div>
                 </div>
-                
-                <div class="payment-info">
+                  <div class="payment-info">
                     <h3><i class='bx bx-credit-card'></i> Payment Information</h3>
                     <div class="info-grid">
                         <p><strong>Payment Method:</strong> ${transaction.paymentMethod || 'N/A'}</p>
@@ -818,6 +817,52 @@ async function showTransactionDetails(transactionId) {
                         <p><strong>Reference Number:</strong> ${transaction.referenceNo || 'N/A'}</p>
                     </div>
                 </div>
+            </div>
+            
+            <div class="additional-fees-section">
+                <h3><i class='bx bx-receipt'></i> Additional Fees</h3>
+                <div class="fees-grid">
+                    <div class="fee-item">
+                        <p><strong>Overdue Fee:</strong> 
+                            <span class="fee-amount">${transaction.overdueFee?.overdueAmount ? '₱' + parseFloat(transaction.overdueFee.overdueAmount).toLocaleString() : '-'}</span>
+                        </p>
+                        ${transaction.overdueFee?.overdueReason ? `<p class="fee-reason"><em>Reason: ${transaction.overdueFee.overdueReason}</em></p>` : ''}
+                    </div>
+                    
+                    <div class="fee-item">
+                        <p><strong>Repair Fee:</strong> 
+                            <span class="fee-amount">${transaction.repairFee?.amount ? '₱' + parseFloat(transaction.repairFee.amount).toLocaleString() : '-'}</span>
+                        </p>
+                        ${transaction.repairFee?.reason ? `<p class="fee-reason"><em>Reason: ${transaction.repairFee.reason}</em></p>` : ''}
+                    </div>
+                    
+                    <div class="fee-item">
+                        <p><strong>Deposit Fee:</strong> 
+                            <span class="fee-amount">${transaction.depositFee?.amount ? '₱' + parseFloat(transaction.depositFee.amount).toLocaleString() : '-'}</span>
+                        </p>
+                        ${transaction.depositFee?.reason ? `<p class="fee-reason"><em>Reason: ${transaction.depositFee.reason}</em></p>` : ''}
+                    </div>
+                    
+                    <div class="fee-item">
+                        <p><strong>Other Fee:</strong> 
+                            <span class="fee-amount">${transaction.otherFee?.amount ? '₱' + parseFloat(transaction.otherFee.amount).toLocaleString() : '-'}</span>
+                        </p>
+                        ${transaction.otherFee?.reason ? `<p class="fee-reason"><em>Reason: ${transaction.otherFee.reason}</em></p>` : ''}
+                    </div>
+                </div>
+                
+                ${(transaction.overdueFee?.overdueAmount || transaction.repairFee?.amount || transaction.depositFee?.amount || transaction.otherFee?.amount) ? `
+                <div class="total-additional-fees">
+                    <p><strong>Total Additional Fees:</strong> 
+                        <span class="total-fee-amount">₱${(
+                            (parseFloat(transaction.overdueFee?.overdueAmount) || 0) +
+                            (parseFloat(transaction.repairFee?.amount) || 0) +
+                            (parseFloat(transaction.depositFee?.amount) || 0) +
+                            (parseFloat(transaction.otherFee?.amount) || 0)
+                        ).toLocaleString()}</span>
+                    </p>
+                </div>
+                ` : ''}
             </div>
             
             <div class="rental-items">
