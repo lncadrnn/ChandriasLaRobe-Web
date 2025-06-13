@@ -2044,21 +2044,20 @@ $(document).ready(function () {
             console.log(`Additional details: ${additionalName} (${additionalCode})`);
         }
     });
-      
-    // Add additional to Rental List
+        // Add additional to Rental List
     function addAdditionalToCart(id, name, code, price) {
         const productCount = cart.products.length;
         
-        // Check if there are any products in the Rental List first
-        if (productCount === 0) {
+        // Check if there are any products in the Rental List first (but allow fees to be added without products)
+        if (productCount === 0 && !name.toLowerCase().includes("fee")) {
             notyf.error("You must add at least one product before adding additional items.");
             return;
         }
         
         const countOfThis = cart.accessories.filter(item => item.name === name).length;
         
-        // Check if we already have this additional item (limit one per product)
-        if (countOfThis >= productCount) {
+        // Check if we already have this additional item (limit one per product, but allow unlimited fees)
+        if (!name.toLowerCase().includes("fee") && countOfThis >= productCount) {
             notyf.error(`You can only add as many '${name}' as products selected. You currently have ${productCount} product(s) and ${countOfThis} '${name}' item(s).`);
             return;
         }
