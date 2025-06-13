@@ -207,229 +207,303 @@ document.addEventListener("DOMContentLoaded", () => {
             renderRentals();
         });
     }    // Show rental details modal
-    async function showRentalDetails(id) {        try {
+    async function showRentalDetails(id) {
+        try {
+            // Show spinner while loading
+            adminSpinners.showActionSpinner('Loading rental details...');
+            
             const docSnap = await db.collection("transaction").doc(id).get();
-            if (!docSnap.exists) return;        const data = docSnap.data();
-            
-        const modal = document.getElementById('rental-modal');
-        const details = document.getElementById('rental-details');
-
-        // Format dates
-        const eventStartDate = data.eventStartDate ? new Date(data.eventStartDate).toLocaleDateString() : 'N/A';
-        const eventEndDate = data.eventEndDate ? new Date(data.eventEndDate).toLocaleDateString() : 'N/A';
-        const transactionDate = data.timestamp ? new Date(data.timestamp).toLocaleDateString() : 'N/A';
-
-        // Fetch detailed product information from Firebase
-        let productsContent = '';
-        if (data.products && Array.isArray(data.products)) {
-            const productDetails = await Promise.all(data.products.map(async product => {
-                try {
-                    if (!product.id) return null;
-                    
-                    const productDoc = await db.collection("products").doc(product.id).get();
-                    if (!productDoc.exists) return null;
-                    
-                    const productData = productDoc.data();
-                    
-                    // Convert sizes object to display format
-                    const sizesDisplay = Object.entries(product.sizes || {})
-                        .map(([size, quantity]) => `${size} (×${quantity})`)
-                        .join(', ') || 'N/A';
-                        
-                    return {
-                        name: productData.name || product.name || 'Unknown Product',
-                        code: productData.code || product.code || 'N/A',
-                        image: productData.frontImageUrl || productData.imageUrl || '',
-                        sizes: sizesDisplay,
-                        price: product.price || productData.price || 0,
-                        totalQuantity: Object.values(product.sizes || {}).reduce((sum, qty) => sum + qty, 0)
-                    };
-                } catch (error) {
-                    console.error('Error fetching product details:', error);
-                    return null;
-                }
-            }));
-
-            const validProducts = productDetails.filter(Boolean);
-            
-            if (validProducts.length > 0) {
-                productsContent = validProducts.map(product => `
-                    <tr>
-                        <td><img src="${product.image}" alt="${product.name}" class="modal-product-img" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; background: #fafafa;"></td>
-                        <td>
-                            <div class="modal-product-name" style="font-weight: 600; color: #222;">${product.name}</div>
-                            <div class="modal-product-code" style="font-size: 0.9em; color: #666;">Code: ${product.code}</div>
-                            <div class="modal-product-size" style="font-size: 0.95em; color: #888;">Sizes: ${product.sizes}</div>
-                        </td>
-                        <td class="modal-product-price" style="font-weight: 500; color: #222; text-align: right;">₱ ${(product.price * product.totalQuantity).toLocaleString()}</td>
-                    </tr>
-                `).join('');
-            } else {
-                productsContent = '<tr><td colspan="3" style="text-align:center;color:#888;">No products found</td></tr>';
+            if (!docSnap.exists) {
+                adminSpinners.hideActionSpinner();
+                alert('Rental transaction not found');
+                return;
             }
-        } else {
-            productsContent = '<tr><td colspan="3" style="text-align:center;color:#888;">No products found</td></tr>';
-        }
 
-            // Fetch detailed accessory information from Firebase
-            let accessoriesContent = '';
-            if (data.accessories && Array.isArray(data.accessories)) {
-                const accessoryDetails = await Promise.all(data.accessories.map(async accessory => {
+            const data = docSnap.data();
+            
+            // Hide spinner once data is loaded
+            adminSpinners.hideActionSpinner();
+            
+            const modal = document.getElementById('rental-modal');
+            
+            // Format dates
+            const eventStartDate = data.eventStartDate ? new Date(data.eventStartDate).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }) : 'Not specified';
+            
+            const eventEndDate = data.eventEndDate ? new Date(data.eventEndDate).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }) : 'Not specified';
+            
+            const transactionDate = data.timestamp ? new Date(data.timestamp).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit'
+            }) : 'Not available';
+
+            // Populate customer information
+            document.getElementById('customer-name').textContent = data.customerName || 'Not provided';
+            document.getElementById('customer-contact').textContent = data.customerContactNumber || 'Not provided';
+            document.getElementById('customer-email').textContent = data.customerEmail || 'Not provided';
+            document.getElementById('customer-address').textContent = data.customerAddress || 'Not provided';
+
+            // Populate transaction details
+            document.getElementById('transaction-code').textContent = data.transactionCode || 'Not assigned';
+            
+            const statusElement = document.getElementById('transaction-status');
+            statusElement.textContent = data.status || 'Unknown';
+            statusElement.className = `status-badge ${getStatusClass(data.status)}`;
+            
+            document.getElementById('rental-date').textContent = eventStartDate;
+            document.getElementById('return-date').textContent = eventEndDate;
+
+            // Calculate payment information
+            const totalAmount = parseFloat(data.totalPayment || 0);
+            const downPayment = parseFloat(data.downPayment || 0);
+            const securityDeposit = parseFloat(data.securityDeposit || 0);
+            const paidAmount = parseFloat(data.paidAmount || 0);
+            const remainingBalance = Math.max(0, totalAmount - paidAmount);
+
+            document.getElementById('payment-subtotal').textContent = `₱${(totalAmount - securityDeposit).toLocaleString()}`;
+            document.getElementById('payment-down').textContent = `₱${downPayment.toLocaleString()}`;
+            document.getElementById('payment-deposit').textContent = `₱${securityDeposit.toLocaleString()}`;
+            document.getElementById('payment-total').textContent = `₱${totalAmount.toLocaleString()}`;
+            document.getElementById('payment-remaining').textContent = `₱${remainingBalance.toLocaleString()}`;
+
+            // Populate rented items
+            await populateRentedItems(data);
+
+            // Populate notes
+            const notesElement = document.getElementById('rental-notes');
+            notesElement.textContent = data.notes || data.additionalNotes || 'No additional notes provided.';
+
+            // Setup modal action buttons
+            setupModalActions(id, data);
+
+            // Show modal
+            modal.classList.add('visible');
+
+        } catch (error) {
+            adminSpinners.hideActionSpinner();
+            console.error('Error loading rental details:', error);
+            alert('Error loading rental details. Please try again.');
+        }
+    }
+
+    // Helper function to get status CSS class
+    function getStatusClass(status) {
+        switch (status?.toLowerCase()) {
+            case 'active':
+            case 'ongoing':
+                return 'active';
+            case 'completed':
+            case 'returned':
+                return 'completed';
+            case 'overdue':
+                return 'overdue';
+            case 'cancelled':
+                return 'cancelled';
+            default:
+                return 'active';
+        }
+    }
+
+    // Populate rented items section
+    async function populateRentedItems(data) {
+        const itemsContainer = document.getElementById('rented-items');
+        itemsContainer.innerHTML = '<div class="loading-items"><i class="fas fa-spinner fa-spin"></i> Loading items...</div>';
+
+        try {
+            let itemsHtml = '';
+
+            // Process products
+            if (data.products && Array.isArray(data.products)) {
+                const productDetails = await Promise.all(data.products.map(async product => {
                     try {
-                        if (!accessory.id) return {
-                            name: accessory.name || 'Unknown Accessory',
-                            code: accessory.code || 'N/A',
-                            image: '',
-                            quantity: accessory.quantity || 1,
-                            price: accessory.price || 0
-                        };
+                        if (!product.id) return null;
                         
-                        const accessoryDoc = await db.collection("additionals").doc(accessory.id).get();
-                        if (!accessoryDoc.exists) return {
-                            name: accessory.name || 'Unknown Accessory',
-                            code: accessory.code || 'N/A',
-                            image: '',
-                            quantity: accessory.quantity || 1,
-                            price: accessory.price || 0
-                        };
+                        const productDoc = await db.collection("products").doc(product.id).get();
+                        if (!productDoc.exists) return null;
                         
-                        const accessoryData = accessoryDoc.data();
+                        const productData = productDoc.data();
+                        
+                        // Convert sizes object to display format
+                        const sizesDisplay = Object.entries(product.sizes || {})
+                            .map(([size, quantity]) => `${size} (×${quantity})`)
+                            .join(', ') || 'N/A';
+                            
+                        const totalQuantity = Object.values(product.sizes || {}).reduce((sum, qty) => sum + qty, 0);
+                        
                         return {
-                            name: accessoryData.name || accessory.name || 'Unknown Accessory',
-                            code: accessoryData.code || accessory.code || 'N/A',
-                            image: accessoryData.imageUrl || '',
-                            quantity: accessory.quantity || 1,
-                            price: accessory.price || accessoryData.price || 0
+                            type: 'Product',
+                            name: productData.name || product.name || 'Unknown Product',
+                            code: productData.code || product.code || 'N/A',
+                            image: productData.frontImageUrl || productData.imageUrl || './assets/images/placeholder.png',
+                            sizes: sizesDisplay,
+                            price: product.price || productData.price || 0,
+                            quantity: totalQuantity,
+                            color: productData.color || 'N/A',
+                            category: productData.category || 'N/A'
                         };
                     } catch (error) {
-                        console.error('Error fetching accessory details:', error);
-                        return {
-                            name: accessory.name || 'Unknown Accessory',
-                            code: accessory.code || 'N/A',
-                            image: '',
-                            quantity: accessory.quantity || 1,
-                            price: accessory.price || 0
-                        };
+                        console.error('Error fetching product details:', error);
+                        return null;
                     }
                 }));
 
-                if (accessoryDetails.length > 0) {
-                    accessoriesContent = accessoryDetails.map(accessory => `
-                        <tr>
-                            <td><img src="${accessory.image}" alt="${accessory.name}" class="modal-product-img" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; background: #fafafa;"></td>
-                            <td>
-                                <div class="modal-product-name" style="font-weight: 600; color: #222;">${accessory.name}</div>
-                                <div class="modal-product-code" style="font-size: 0.9em; color: #666;">Code: ${accessory.code}</div>
-                                <div class="modal-product-size" style="font-size: 0.95em; color: #888;">Quantity: ${accessory.quantity}</div>
-                            </td>
-                            <td class="modal-product-price" style="font-weight: 500; color: #222; text-align: right;">₱ ${(accessory.price * accessory.quantity).toLocaleString()}</td>
-                        </tr>
-                    `).join('');
-                }
-            }
-
-            const totalPayment = parseFloat(data.totalPayment) || 0;
-            const remainingBalance = parseFloat(data.remainingBalance) || 0;
-            const paidAmount = totalPayment - remainingBalance;
-
-            details.innerHTML = `
-                <div class="rental-modal-grid">
-                    <div class="rental-modal-form" style="gap:1.2rem;">
-                        <div><b>Customer Name:</b> ${data.fullName || 'N/A'}</div>
-                        <div><b>Contact Number:</b> ${data.contactNumber || 'N/A'}</div>
-                        <div><b>Transaction Code:</b> ${data.transactionCode || 'N/A'}</div>
-                        <div><b>Rental Type:</b> ${data.rentalType || 'N/A'}</div>
-                        <div><b>Event Start Date:</b> ${eventStartDate}</div>
-                        <div><b>Event End Date:</b> ${eventEndDate}</div>
-                        <div><b>Transaction Date:</b> ${transactionDate}</div>
-                        <div><b>Payment Method:</b> ${data.paymentMethod || 'N/A'}</div>
-                        <div><b>Payment Type:</b> ${data.paymentType || 'N/A'}</div>
-                    </div>
-                    <div class="rental-modal-table">
-                        <h4>Products</h4>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Product Details</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${productsContent}
-                            </tbody>
-                        </table>
-                        
-                        ${accessoriesContent ? `
-                        <h4 style="margin-top: 20px;">Accessories</h4>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Accessory Details</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${accessoriesContent}
-                            </tbody>
-                        </table>
-                        ` : ''}                        <div class="payment-summary" style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                <span><b>Total Amount:</b></span>
-                                <span><b>₱ ${totalPayment.toLocaleString()}</b></span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                <span>Paid Amount:</span>
-                                <span>₱ ${paidAmount.toLocaleString()}</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; color: ${remainingBalance > 0 ? '#e74c3c' : '#27ae60'};">
-                                <span><b>Remaining Balance:</b></span>
-                                <span><b>₱ ${remainingBalance.toLocaleString()}</b></span>
-                            </div>
-                        </div>
-                          <div class="rental-modal-actions" style="margin-top: 20px; text-align: center;">
-                            <button id="proceed-to-calendar-btn" style="
-                                background: var(--primary-color);
-                                color: white;
-                                border: none;
-                                padding: 12px 24px;
-                                border-radius: 6px;
-                                cursor: pointer;
-                                font-size: 16px;
-                                font-weight: 600;
-                                transition: background-color 0.3s ease;
-                            " onmouseover="this.style.backgroundColor='#e63975'" onmouseout="this.style.backgroundColor='var(--primary-color)'">
-                                Proceed to Calendar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;            modal.classList.add('visible');
-            
-            // Add click handler for Proceed to Calendar button
-            const proceedBtn = document.getElementById('proceed-to-calendar-btn');
-            if (proceedBtn) {
-                proceedBtn.addEventListener('click', () => {
-                    // Store rental data for calendar use
-                    sessionStorage.setItem('rentalData', JSON.stringify({
-                        transactionId: id,
-                        customerName: data.fullName,
-                        transactionCode: data.transactionCode,
-                        eventStartDate: data.eventStartDate,
-                        eventEndDate: data.eventEndDate,
-                        totalPayment: totalPayment,
-                        remainingBalance: remainingBalance
-                    }));
-                    
-                    // Navigate to calendar page (adjust URL as needed)
-                    window.location.href = './calendar.html';
+                productDetails.filter(item => item !== null).forEach(item => {
+                    itemsHtml += createItemHtml(item);
                 });
             }
+
+            // Process accessories
+            if (data.accessories && Array.isArray(data.accessories)) {
+                const accessoryDetails = await Promise.all(data.accessories.map(async accessory => {
+                    try {
+                        if (!accessory.id) return null;
+                        
+                        const accessoryDoc = await db.collection("accessories").doc(accessory.id).get();
+                        if (!accessoryDoc.exists) return null;
+                        
+                        const accessoryData = accessoryDoc.data();
+                        
+                        return {
+                            type: 'Accessory',
+                            name: accessoryData.name || accessory.name || 'Unknown Accessory',
+                            code: accessoryData.code || accessory.code || 'N/A',
+                            image: accessoryData.imageUrl || './assets/images/placeholder.png',
+                            price: accessory.price || accessoryData.price || 0,
+                            quantity: accessory.quantity || 1,
+                            inclusions: accessoryData.inclusions || []
+                        };
+                    } catch (error) {
+                        console.error('Error fetching accessory details:', error);
+                        return null;
+                    }
+                }));
+
+                accessoryDetails.filter(item => item !== null).forEach(item => {
+                    itemsHtml += createItemHtml(item);
+                });
+            }
+
+            if (itemsHtml) {
+                itemsContainer.innerHTML = itemsHtml;
+            } else {
+                itemsContainer.innerHTML = '<div class="empty-state"><i class="fas fa-box-open"></i><p>No items found for this rental.</p></div>';
+            }
+
         } catch (error) {
-            console.error("Error showing rental details:", error);
+            console.error('Error loading rental items:', error);
+            itemsContainer.innerHTML = '<div class="error-state"><i class="fas fa-exclamation-triangle"></i><p>Error loading rental items.</p></div>';
         }
-    }    // Load and render rentals
+    }
+
+    // Create HTML for individual rental item
+    function createItemHtml(item) {
+        const inclusionsHtml = item.inclusions && item.inclusions.length > 0 
+            ? `<span><strong>Inclusions:</strong> ${item.inclusions.join(', ')}</span>`
+            : '';
+
+        return `
+            <div class="rental-item">
+                <img src="${item.image}" alt="${item.name}" class="item-image" 
+                     onerror="this.src='./assets/images/placeholder.png'">
+                <div class="item-details">
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-info">
+                        <span><strong>Code:</strong> ${item.code}</span>
+                        ${item.sizes ? `<span><strong>Sizes:</strong> ${item.sizes}</span>` : ''}
+                        ${item.color ? `<span><strong>Color:</strong> ${item.color}</span>` : ''}
+                        ${item.category ? `<span><strong>Category:</strong> ${item.category}</span>` : ''}
+                        ${item.quantity ? `<span><strong>Quantity:</strong> ${item.quantity}</span>` : ''}
+                        ${inclusionsHtml}
+                    </div>
+                </div>
+                <div class="item-price">₱${parseFloat(item.price || 0).toLocaleString()}</div>
+            </div>
+        `;
+    }
+
+    // Setup modal action buttons
+    function setupModalActions(transactionId, transactionData) {
+        // Update Status button
+        const updateStatusBtn = document.getElementById('update-status-btn');
+        updateStatusBtn.onclick = () => {
+            // You can implement status update functionality here
+            console.log('Update status for transaction:', transactionId);
+            // For now, just show an alert
+            alert('Status update functionality coming soon!');
+        };
+
+        // Print Receipt button
+        const printReceiptBtn = document.getElementById('print-receipt-btn');
+        printReceiptBtn.onclick = () => {
+            printRentalReceipt(transactionData);
+        };
+    }
+
+    // Print rental receipt
+    function printRentalReceipt(data) {
+        const printWindow = window.open('', '_blank');
+        const receiptHtml = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Rental Receipt - ${data.transactionCode}</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; }
+                    .header { text-align: center; margin-bottom: 20px; }
+                    .section { margin-bottom: 15px; }
+                    .section h3 { margin-bottom: 5px; border-bottom: 1px solid #ccc; }
+                    .info-row { display: flex; justify-content: space-between; margin: 5px 0; }
+                    .total { font-weight: bold; border-top: 1px solid #ccc; padding-top: 5px; }
+                    @media print { body { margin: 0; } }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>Chandria's La Robe</h1>
+                    <h2>Rental Receipt</h2>
+                    <p>Transaction Code: ${data.transactionCode}</p>
+                </div>
+                
+                <div class="section">
+                    <h3>Customer Information</h3>
+                    <div class="info-row"><span>Name:</span><span>${data.customerName}</span></div>
+                    <div class="info-row"><span>Contact:</span><span>${data.customerContactNumber}</span></div>
+                    <div class="info-row"><span>Email:</span><span>${data.customerEmail}</span></div>
+                </div>
+                
+                <div class="section">
+                    <h3>Rental Period</h3>
+                    <div class="info-row"><span>Start Date:</span><span>${new Date(data.eventStartDate).toLocaleDateString()}</span></div>
+                    <div class="info-row"><span>End Date:</span><span>${new Date(data.eventEndDate).toLocaleDateString()}</span></div>
+                </div>
+                
+                <div class="section">
+                    <h3>Payment Summary</h3>
+                    <div class="info-row"><span>Total Amount:</span><span>₱${parseFloat(data.totalPayment || 0).toLocaleString()}</span></div>
+                    <div class="info-row"><span>Paid Amount:</span><span>₱${parseFloat(data.paidAmount || 0).toLocaleString()}</span></div>
+                    <div class="info-row total"><span>Remaining Balance:</span><span>₱${Math.max(0, parseFloat(data.totalPayment || 0) - parseFloat(data.paidAmount || 0)).toLocaleString()}</span></div>
+                </div>
+            </body>
+            </html>
+        `;
+          printWindow.document.write(receiptHtml);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();    }
+
+    // Load and render rentals
     async function loadRentals() {
         console.log("Loading rentals...");
         
@@ -720,6 +794,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.querySelector('.close-rental-modal')?.addEventListener('click', () => {
         document.getElementById('rental-modal').classList.remove('visible');
+    });
+
+    // Rental view button event listener (using event delegation)
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('rental-view')) {
+            const rentalId = e.target.getAttribute('data-id');
+            if (rentalId) {
+                console.log('🔍 Opening rental details for ID:', rentalId);
+                showRentalDetails(rentalId);
+            }
+        }
+    });
+
+    // Close rental modal event listeners
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('close-rental-modal') || 
+            (e.target.closest('.close-rental-modal'))) {
+            document.getElementById('rental-modal').classList.remove('visible');
+        }
+        
+        // Close modal when clicking the backdrop
+        if (e.target.classList.contains('modal-backdrop')) {
+            document.getElementById('rental-modal').classList.remove('visible');
+        }
     });
 
     // View All button functionality to navigate to customer-logs.html

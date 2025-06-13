@@ -468,6 +468,10 @@ tr:hover {
     display: flex;
 }
 
+.modal.visible {
+    display: flex;
+}
+
 .modal-backdrop {
     position: absolute;
     top: 0;
@@ -855,4 +859,361 @@ tr:hover {
 .empty-state p {
     font-size: 0.875rem;
     margin: 0;
+}
+
+/* =============== RENTAL MODAL STYLES =============== */
+.rental-modal-content {
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: white;
+    border-radius: 12px;
+}
+
+.rental-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 24px 0 24px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 24px;
+}
+
+.rental-modal-header .modal-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.rental-modal-header .modal-title i {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+}
+
+.close-rental-modal {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-light);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.close-rental-modal:hover {
+    background: var(--hover-color);
+    color: var(--text-dark);
+}
+
+.rental-modal-body {
+    padding: 0 24px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.rental-section {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0 0 16px 0;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.section-title i {
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.info-item label {
+    font-weight: 600;
+    color: var(--text-light);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-item span {
+    color: var(--text-dark);
+    font-size: 1rem;
+    padding: 8px 12px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.status-badge {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px !important;
+    border-radius: 20px !important;
+    font-size: 0.875rem !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none !important;
+    width: fit-content;
+}
+
+.status-badge.active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.completed {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.status-badge.overdue {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-badge.cancelled {
+    background: #f1f3f4;
+    color: #5f6368;
+}
+
+.payment-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.payment-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.payment-row span:first-child {
+    font-weight: 500;
+    color: var(--text-light);
+}
+
+.payment-row span:last-child {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.payment-row.total {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.payment-row.total span {
+    color: white !important;
+    font-weight: 700;
+}
+
+.payment-row.remaining {
+    background: #fff3cd;
+    border-color: #ffeaa7;
+}
+
+.payment-row.remaining span:last-child {
+    color: #856404;
+    font-weight: 700;
+}
+
+.items-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.rental-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.rental-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.item-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid var(--border-color);
+}
+
+.item-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.item-name {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 1rem;
+}
+
+.item-info {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.item-info span {
+    font-size: 0.875rem;
+    color: var(--text-light);
+}
+
+.item-price {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 1.125rem;
+}
+
+.loading-items {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 32px;
+    color: var(--text-light);
+    font-style: italic;
+}
+
+.notes-content {
+    padding: 16px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    color: var(--text-dark);
+    line-height: 1.6;
+    font-style: italic;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.rental-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 24px;
+    background: #f8f9fa;
+    border-top: 1px solid var(--border-color);
+    border-radius: 0 0 12px 12px;
+}
+
+.rental-modal-actions .btn {
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.rental-modal-actions .btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.rental-modal-actions .btn-secondary:hover {
+    background: #5a6268;
+}
+
+.rental-modal-actions .btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.rental-modal-actions .btn-primary:hover {
+    background: #e63976;
+}
+
+.rental-modal-actions .btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.rental-modal-actions .btn-success:hover {
+    background: #218838;
+}
+
+/* Responsive design for rental modal */
+@media (max-width: 768px) {
+    .rental-modal-content {
+        margin: 20px;
+        max-height: calc(100vh - 40px);
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .rental-modal-actions {
+        flex-direction: column;
+    }
+    
+    .rental-modal-actions .btn {
+        justify-content: center;
+    }
+    
+    .rental-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .item-info {
+        justify-content: center;
+    }
 }

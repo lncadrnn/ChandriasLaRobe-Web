@@ -313,8 +313,7 @@
                             </button>
                         </div>
                     </div>
-                </div>
-                <!-- Rental Modal -->
+                </div>                <!-- Rental Modal -->
                 <div id="rental-modal" class="modal">
                     <div class="modal-backdrop"></div>
                     <div class="modal-content rental-modal-content">
@@ -330,10 +329,131 @@
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
-                        <div
-                            id="rental-details"
-                            class="rental-modal-body"
-                        ></div>                    </div>
+                        <div class="rental-modal-body">
+                            <!-- Customer Information -->
+                            <div class="rental-section">
+                                <h4 class="section-title">
+                                    <i class="fas fa-user"></i>
+                                    Customer Information
+                                </h4>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label>Full Name:</label>
+                                        <span id="customer-name">Loading...</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Contact Number:</label>
+                                        <span id="customer-contact">Loading...</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Email:</label>
+                                        <span id="customer-email">Loading...</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Address:</label>
+                                        <span id="customer-address">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Transaction Information -->
+                            <div class="rental-section">
+                                <h4 class="section-title">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                    Transaction Details
+                                </h4>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label>Transaction Code:</label>
+                                        <span id="transaction-code">Loading...</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Status:</label>
+                                        <span id="transaction-status" class="status-badge">Loading...</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Rental Date:</label>
+                                        <span id="rental-date">Loading...</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Return Date:</label>
+                                        <span id="return-date">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Information -->
+                            <div class="rental-section">
+                                <h4 class="section-title">
+                                    <i class="fas fa-credit-card"></i>
+                                    Payment Information
+                                </h4>
+                                <div class="payment-breakdown">
+                                    <div class="payment-row">
+                                        <span>Subtotal:</span>
+                                        <span id="payment-subtotal">₱0.00</span>
+                                    </div>
+                                    <div class="payment-row">
+                                        <span>Down Payment:</span>
+                                        <span id="payment-down">₱0.00</span>
+                                    </div>
+                                    <div class="payment-row">
+                                        <span>Security Deposit:</span>
+                                        <span id="payment-deposit">₱0.00</span>
+                                    </div>
+                                    <div class="payment-row total">
+                                        <span>Total Amount:</span>
+                                        <span id="payment-total">₱0.00</span>
+                                    </div>
+                                    <div class="payment-row remaining">
+                                        <span>Remaining Balance:</span>
+                                        <span id="payment-remaining">₱0.00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Rented Items -->
+                            <div class="rental-section">
+                                <h4 class="section-title">
+                                    <i class="fas fa-shopping-bag"></i>
+                                    Rented Items
+                                </h4>
+                                <div class="items-container" id="rented-items">
+                                    <div class="loading-items">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        Loading items...
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Additional Notes -->
+                            <div class="rental-section">
+                                <h4 class="section-title">
+                                    <i class="fas fa-sticky-note"></i>
+                                    Additional Notes
+                                </h4>
+                                <div class="notes-content" id="rental-notes">
+                                    No additional notes provided.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal Actions -->
+                        <div class="rental-modal-actions">
+                            <button class="btn btn-secondary close-rental-modal">
+                                <i class="fas fa-times"></i>
+                                Close
+                            </button>
+                            <button class="btn btn-primary" id="update-status-btn">
+                                <i class="fas fa-edit"></i>
+                                Update Status
+                            </button>
+                            <button class="btn btn-success" id="print-receipt-btn">
+                                <i class="fas fa-print"></i>
+                                Print Receipt
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
             </div>        </main>        <!-- Mobile Bottom Navigation (hidden on desktop) -->
