@@ -1477,17 +1477,31 @@ function showCancelRentalModal(transactionId) {
         return;
     }
 
-    currentCancelTransaction = transaction;
-
-    // Format event date
+    currentCancelTransaction = transaction;    // Format event date
     const eventDateDisplay = formatEventDate(transaction);
-    const totalPayment = parseFloat(transaction.totalPayment) || 0;
-
-    // Populate modal with transaction details
-    document.getElementById('cancel-customer-name').textContent = transaction.fullName || 'Unknown';
-    document.getElementById('cancel-transaction-code').textContent = transaction.transactionCode || transaction.id.substring(0, 8);
-    document.getElementById('cancel-event-date').textContent = eventDateDisplay;
-    document.getElementById('cancel-total-amount').textContent = `₱${totalPayment.toLocaleString()}`;    // Show modal
+    const totalAmount = transaction.totalAmount || transaction.totalPayment || transaction.amount || 0;    // Populate modal with transaction details
+    const customerNameEl = document.getElementById('cancel-customer-name');
+    if (customerNameEl) {
+        customerNameEl.textContent = transaction.fullName || 'Unknown';
+    }
+    
+    const transactionCodeEl = document.getElementById('cancel-transaction-code');
+    if (transactionCodeEl) {
+        transactionCodeEl.textContent = transaction.transactionCode || transaction.id.substring(0, 8);
+    }
+    
+    const eventDateEl = document.getElementById('cancel-event-date');
+    if (eventDateEl) {
+        eventDateEl.textContent = eventDateDisplay;
+    }
+    
+    const totalAmountEl = document.getElementById('cancel-total-amount');
+    if (totalAmountEl) {
+        totalAmountEl.textContent = `₱${parseFloat(totalAmount).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })}`;
+    }// Show modal
     const modal = document.getElementById('cancel-rental-modal');
     if (modal) {
         modal.classList.add('show');
@@ -1510,6 +1524,13 @@ async function confirmCancelRental() {
     if (!currentCancelTransaction) return;
 
     try {
+        // Disable the confirm button to prevent double-clicks
+        const confirmBtn = document.getElementById('confirm-cancel-rental-btn');
+        if (confirmBtn) {
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Cancelling...';
+        }
+
         // Show loading
         document.querySelector('.admin-action-spinner').style.display = 'flex';
 
@@ -1545,22 +1566,46 @@ async function confirmCancelRental() {
         }
 
         // Close modal
-        closeCancelRentalModal();
-
-        // Hide loading
+        closeCancelRentalModal();        // Hide loading
         document.querySelector('.admin-action-spinner').style.display = 'none';
 
-        // Show success notification
-        showSuccessToast('Rental cancelled successfully!');
-
-    } catch (error) {
+        // Show success notification with Notyf
+        if (window.notyf) {
+            window.notyf.success({
+                message: 'Rental cancelled successfully!',
+                duration: 4000,
+                background: '#dc3545',
+                icon: {
+                    className: 'bx bx-x-circle',
+                    tagName: 'i'
+                }
+            });
+        } else if (showSuccessToast) {
+            showSuccessToast('Rental cancelled successfully!');
+        } else {
+            alert('Rental cancelled successfully!');
+        }    } catch (error) {
         console.error('Error cancelling rental:', error);
         
         // Hide loading
         document.querySelector('.admin-action-spinner').style.display = 'none';
         
-        // Show error notification
-        alert('Error cancelling rental. Please try again.');
+        // Re-enable button
+        const confirmBtn = document.getElementById('confirm-cancel-rental-btn');
+        if (confirmBtn) {
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = '<i class="bx bx-x-circle"></i> Cancel Rental';
+        }
+        
+        // Show error notification with Notyf
+        if (window.notyf) {
+            window.notyf.error({
+                message: 'Error cancelling rental. Please try again.',
+                duration: 5000
+            });
+        } else {
+            alert('Error cancelling rental. Please try again.');
+        }
     }
 }
 
@@ -1890,3 +1935,7 @@ window.closeMarkCompleteModal = closeMarkCompleteModal;
 window.renderTransactionCards = renderTransactionCards;
 window.renderTransactionTable = renderTransactionTable;
 window.showSuccessToast = showSuccessToast;
+
+// Export cancel rental functions
+window.showCancelRentalModal = showCancelRentalModal;
+window.confirmCancelRental = confirmCancelRental;

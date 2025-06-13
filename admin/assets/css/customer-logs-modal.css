@@ -337,6 +337,12 @@
     box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
 }
 
+.status-badge.status-cancelled {
+    background: linear-gradient(135deg, #ffc107, #e0a800);
+    color: #212529;
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+}
+
 /* Form Actions */
 .undo-form-actions {
     display: flex;

@@ -22,6 +22,20 @@ function calculateRentalStatusFallback(transaction) {
     let rentalStatus = 'Upcoming';
     let statusClass = 'status-upcoming';
     
+    // Check if rental has been cancelled - this takes priority over other statuses
+    if (transaction.rentalStatus === 'Cancelled') {
+        rentalStatus = 'Cancelled';
+        statusClass = 'status-cancelled';
+        return { rentalStatus, statusClass };
+    }
+    
+    // If rental has been marked as returned, it's completed
+    if (transaction.returnConfirmed) {
+        rentalStatus = 'Completed';
+        statusClass = 'status-completed';
+        return { rentalStatus, statusClass };
+    }
+    
     if (eventStartDate) {
         if (eventEndDate) {
             // Open rental with end date
@@ -271,13 +285,21 @@ async function confirmUndoCancel() {
                     window.renderTransactionTable();
                 }
             }
-        }
-
-        // Show success notification
-        if (window.showSuccessToast) {
+        }        // Show success notification with Notyf (green)
+        if (window.notyf) {
+            window.notyf.success({
+                message: `Cancellation undone! Status changed to "${originalStatus}".`,
+                duration: 4000,
+                background: '#28a745',
+                icon: {
+                    className: 'bx bx-check-circle',
+                    tagName: 'i'
+                }
+            });
+        } else if (window.showSuccessToast) {
             window.showSuccessToast(`Cancellation undone! Status changed to "${originalStatus}".`);
         } else {
-            // Fallback to alert if toast function not available
+            // Fallback to alert if no notification system available
             alert(`Cancellation undone! Status changed to "${originalStatus}".`);
         }
 
