@@ -2484,5 +2484,51 @@ $(document).ready(function () {
     
     console.log('Rental subscript initialization complete - date fields initially disabled');
 
+    // --- Add Fee Modal Logic ---
+    const $addFeeModal = $("#add-fee-modal");
+    const $addFeeBtn = $("#add-fee-btn");
+    const $addFeeClose = $(".add-fee-close");
+    const $addFeeForm = $("#add-fee-form");
+    const $cancelAddFeeBtn = $("#cancel-add-fee-btn");
+
+    // Open Add Fee Modal
+    $addFeeBtn.on("click", function () {
+        $addFeeModal.show();
+        $addFeeForm[0].reset();
+        $addFeeModal.find("#fee-amount").removeClass("input-error");
+    });
+
+    // Close Add Fee Modal
+    function closeAddFeeModal() {
+        $addFeeModal.hide();
+    }
+    $addFeeClose.on("click", closeAddFeeModal);
+    $cancelAddFeeBtn.on("click", closeAddFeeModal);
+    $(window).on("click", function (e) {
+        if ($(e.target).is($addFeeModal)) {
+            closeAddFeeModal();
+        }
+    });
+
+    // Add Fee Form Submission
+    $addFeeForm.on("submit", function (e) {
+        e.preventDefault();
+        const feeType = $("#fee-type").val();
+        const feeAmount = parseFloat($("#fee-amount").val());
+        if (!feeType || isNaN(feeAmount) || feeAmount <= 0) {
+            $addFeeModal.find("#fee-amount").addClass("input-error");
+            notyf.error("Please select a fee type and enter a valid amount greater than 0.");
+            return;
+        }
+        $addFeeModal.find("#fee-amount").removeClass("input-error");
+        // Add fee to cart as a special accessory/fee item
+        cart.accessories.push({
+            name: feeType,
+            price: feeAmount,
+            isFee: true
+        });
+        updateCartSummary();
+        closeAddFeeModal();
+    });
 });
 

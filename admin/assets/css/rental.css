@@ -2151,7 +2151,7 @@
     border: 1px solid #ced4da;
     border-radius: 6px;
     font-size: 0.9rem;
-    background: white;
+    background: #f8f9fa;
     color: #495057;
     transition: border-color 0.2s ease;
     font-family: inherit;
@@ -2177,7 +2177,6 @@
     background: #f8f9fa;
     color: #6c757d;
     cursor: not-allowed;
-    border-color: #dee2e6;
 }
 
 /* Disabled inputs */
@@ -2515,4 +2514,124 @@ input[type="date"].invalid-date {
 
 #additional-fee-modal .add-btn:active {
   transform: translateY(0);
+}
+
+/* Add Fee Modal Styles */
+#add-fee-modal.modal {
+  display: none;
+  position: fixed;
+  z-index: 10010;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(3px);
+  justify-content: center;
+  align-items: flex-start;
+  animation: fadeIn 0.25s ease;
+  padding: 1rem 0;
+  padding-top: 2vh;
+  overflow-y: auto;
+}
+#add-fee-modal .modal-content {
+  background: var(--sidebar-color);
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  border-radius: 14px;
+  max-width: 360px;
+  min-width: 300px;
+  height: auto;
+  max-height: 520px;
+  box-shadow: 0 10px 40px rgba(44,62,80,0.18);
+  position: relative;
+  border: none;
+  animation: popIn 0.2s;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0;
+  overflow: hidden;
+}
+#add-fee-modal .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+#add-fee-modal .modal-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+#add-fee-modal .close-modal {
+  cursor: pointer;
+  color: var(--primary-color);
+   font-size: 1.5em;
+  background: none;
+  border: none;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+#add-fee-modal .close-modal:hover {
+  color: #e74c3c;
+  background-color: rgba(255, 126, 172, 0.1);
+}
+#add-fee-modal .modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+#add-fee-modal .form-group {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+#add-fee-modal label {
+  font-weight: 500;
+  margin-bottom: 0.3em;
+}
+#add-fee-modal input[type="number"],
+#add-fee-modal select {
+  padding: 0.5em;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1em;
+}
+#add-fee-modal .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7em;
+}
+#add-fee-modal .add-btn {
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5em 1.2em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#add-fee-modal .add-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+#add-fee-modal .cancel-btn {
+  background: #eee;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5em 1.2em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#add-fee-modal .cancel-btn:hover {
+  background: #ddd;
 }
