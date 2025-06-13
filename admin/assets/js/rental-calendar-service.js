@@ -468,10 +468,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         overdueFeesPaid: []
                     };
                     
-                    return processedData;
-                }).filter(rental => {
-                    // Filter out completed rentals from calendar display
-                    return rental.status !== 'completed';
+                    return processedData;                }).filter(rental => {
+                    // Filter out completed and cancelled rentals from calendar display
+                    return rental.status !== 'completed' && rental.status !== 'cancelled';
                 });
                 
                 // Process overdue fee data and associate with transactions
@@ -489,7 +488,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         rental.overdueFeeAmount = associatedFees.reduce((total, fee) => total + (fee.overdueFee || 0), 0);
                         rental.overdueFeesPaid = associatedFees;
                     }
-                });                console.log('✅ Successfully processed rental data (completed rentals filtered out):', {
+                });                console.log('✅ Successfully processed rental data (completed and cancelled rentals filtered out):', {
                     totalTransactions: rentalsData.length,
                     withOverdueFees: rentalsData.filter(r => r.hasOverdueFee).length,
                     statusBreakdown: {
@@ -509,12 +508,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 hideLoading();
                 showError('Failed to load rental data. Please check your connection and try again.');
             }
-        }
-          function calculateRentalStatus(rental) {
+        }          function calculateRentalStatus(rental) {
             const currentDate = new Date();
             const eventStartDate = rental.eventStartDate ? new Date(rental.eventStartDate) : null;
             const eventEndDate = rental.eventEndDate ? new Date(rental.eventEndDate) : null;
             const eventDate = rental.eventDate ? new Date(rental.eventDate) : null;
+            
+            // Check if rental has been cancelled - this takes priority over other statuses
+            if (rental.rentalStatus === 'Cancelled') {
+                return 'cancelled';
+            }
             
             // If rental has been marked as returned, it's completed
             if (rental.returnConfirmed) {
