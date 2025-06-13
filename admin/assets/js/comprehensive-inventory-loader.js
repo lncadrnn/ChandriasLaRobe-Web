@@ -5,7 +5,9 @@ import {
     getDocs,
     query,
     orderBy,
-    where
+    where,
+    deleteDoc,
+    doc
 } from "./sdk/chandrias-sdk.js";
 
 // Enhanced product loader with filtering and sorting
@@ -331,15 +333,188 @@ class ComprehensiveInventoryLoader {
         this.sortBy = sortBy;
         this.sortOrder = sortOrder;
         console.log("🔧 Sorting updated:", { sortBy, sortOrder });
-    }
-
-    // Refresh with current filters
+    }    // Refresh with current filters
     async refresh() {
         console.log("🔄 Refreshing with current filters and sorting...");
         await this.loadProducts({
             category: this.filters.category,
             sortBy: this.sortBy,
             sortOrder: this.sortOrder
+        });
+    }
+
+    // Delete product functionality
+    async deleteProduct(productId) {
+        try {
+            console.log(`🗑️ Deleting product with ID: ${productId}`);
+            
+            // Show action spinner
+            this.showActionSpinner('Deleting product...');
+            
+            // Delete from Firebase
+            await deleteDoc(doc(chandriaDB, "products", productId));
+            
+            console.log(`✅ Product ${productId} deleted successfully from Firebase`);
+            
+            // Show success notification
+            if (window.notyf) {
+                window.notyf.success('Product deleted successfully!');
+            }
+            
+            // Remove from local array
+            this.products = this.products.filter(p => p.id !== productId);
+            
+            // Remove card from DOM
+            const card = document.querySelector(`[data-id="${productId}"]`);
+            if (card) {
+                card.remove();
+            }
+            
+            // Hide action spinner
+            this.hideActionSpinner();
+            
+            return true;
+            
+        } catch (error) {
+            console.error(`❌ Error deleting product ${productId}:`, error);
+            
+            // Show error notification
+            if (window.notyf) {
+                window.notyf.error(`Failed to delete product: ${error.message}`);
+            }
+            
+            // Hide action spinner
+            this.hideActionSpinner();
+            
+            return false;
+        }
+    }
+
+    // Show action spinner
+    showActionSpinner(message = 'Processing...') {
+        const spinner = document.querySelector('.admin-action-spinner');
+        const text = document.querySelector('.admin-action-spinner .admin-spinner-text');
+        
+        if (spinner) {
+            if (text) text.textContent = message;
+            spinner.style.display = 'flex';
+        }
+    }
+
+    // Hide action spinner
+    hideActionSpinner() {
+        const spinner = document.querySelector('.admin-action-spinner');
+        if (spinner) {
+            spinner.style.display = 'none';
+        }
+    }
+
+    // Confirm delete with centered modal
+    confirmDelete(productId, productName) {
+        // Create confirmation modal with perfect centering
+        const modalHtml = `
+            <div class="delete-confirmation-overlay" id="deleteConfirmationModal">
+                <div class="delete-modal-container">
+                    <div class="delete-modal-content">
+                        <div class="delete-modal-header">
+                            <h3>⚠️ Confirm Delete</h3>
+                            <button class="delete-modal-close" type="button">&times;</button>
+                        </div>
+                        <div class="delete-modal-body">
+                            <div class="delete-warning-content">
+                                <p>Are you sure you want to delete</p>
+                                <p class="delete-product-name">"${productName}"</p>
+                                <p class="delete-warning-text">This action cannot be undone.</p>
+                            </div>
+                        </div>
+                        <div class="delete-modal-footer">
+                            <button class="delete-btn-cancel" type="button">Cancel</button>
+                            <button class="delete-btn-confirm" type="button" data-id="${productId}">Delete Product</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add modal to page
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        
+        const modal = document.getElementById('deleteConfirmationModal');
+        const closeBtn = modal.querySelector('.delete-modal-close');
+        const cancelBtn = modal.querySelector('.delete-btn-cancel');
+        const confirmBtn = modal.querySelector('.delete-btn-confirm');
+        
+        // Show modal with animation
+        requestAnimationFrame(() => {
+            modal.classList.add('active');
+        });
+        
+        // Prevent body scroll and interaction
+        document.body.style.overflow = 'hidden';
+        document.body.style.pointerEvents = 'none';
+        modal.style.pointerEvents = 'auto';
+        
+        // Close modal function
+        const closeModal = () => {
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.remove();
+                document.body.style.overflow = '';
+                document.body.style.pointerEvents = '';
+            }, 300);
+        };
+        
+        // Event listeners
+        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+        
+        confirmBtn.addEventListener('click', async () => {
+            const success = await this.deleteProduct(productId);
+            if (success) {
+                closeModal();
+            }
+        });
+        
+        // Close on overlay click (not modal content)
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Prevent clicks on modal content from closing
+        modal.querySelector('.delete-modal-container').addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+        
+        // ESC key to close
+        const handleEsc = (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                document.removeEventListener('keydown', handleEsc);
+            }
+        };
+        document.addEventListener('keydown', handleEsc);
+    }
+
+    // Initialize event listeners for delete buttons
+    initializeDeleteListeners() {
+        // Use event delegation to handle dynamically created delete buttons
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.delete_btn')) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const button = e.target.closest('.delete_btn');
+                const productId = button.getAttribute('data-id');
+                const card = button.closest('.card_article');
+                const productName = card ? card.getAttribute('data-name') : 'this product';
+                
+                console.log(`🗑️ Delete button clicked for product: ${productId}`);
+                
+                // Show confirmation modal
+                this.confirmDelete(productId, productName);
+            }
         });
     }
 }
@@ -353,6 +528,9 @@ window.ComprehensiveLoader = comprehensiveLoader;
 // Auto-initialize
 document.addEventListener('DOMContentLoaded', function() {
     console.log("✅ Comprehensive inventory loader ready");
+    
+    // Initialize delete listeners
+    comprehensiveLoader.initializeDeleteListeners();
     
     // Auto-load products
     comprehensiveLoader.loadProducts();
