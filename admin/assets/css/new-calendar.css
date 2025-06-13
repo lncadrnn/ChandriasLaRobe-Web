@@ -484,6 +484,37 @@
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
+    transition: all 0.2s ease;
+}
+
+/* Positioned modal content (when positioned relative to clicked element) */
+.event-modal .modal-content[style*="position: absolute"] {
+    width: 500px;
+    max-width: 90vw;
+}
+
+/* Arrow indicator for positioned modals */
+.event-modal .modal-content::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: 8px solid transparent;
+    display: none;
+}
+
+.event-modal .modal-content[data-position="right"]::before {
+    display: block;
+    border-right-color: var(--white);
+    left: -16px;
+    top: 20px;
+}
+
+.event-modal .modal-content[data-position="left"]::before {
+    display: block;
+    border-left-color: var(--white);
+    right: -16px;
+    top: 20px;
 }
 
 .event-modal .modal-header {
@@ -1169,6 +1200,21 @@
         order: 1;
         width: 100%;
         max-width: 300px;
+    }
+}
+
+/* Mobile responsiveness for positioned modals */
+@media (max-width: 767px) {
+    .event-modal .modal-content[style*="position: absolute"] {
+        position: relative !important;
+        left: auto !important;
+        top: auto !important;
+        width: 90% !important;
+        margin: auto !important;
+    }
+    
+    .event-modal .modal-content::before {
+        display: none !important;
     }
 }
 

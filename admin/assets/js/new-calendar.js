@@ -448,20 +448,19 @@ function createEventElement(transaction) {
     } else {
         eventElement.textContent = transaction.transactionCode || 'No Code';
     }
-    
-    eventElement.title = `${transaction.transactionCode || 'No Code'} - ${transaction.fullName || 'Unknown'}`;
+      eventElement.title = `${transaction.transactionCode || 'No Code'} - ${transaction.fullName || 'Unknown'}`;
     
     // Add click event for event details
     eventElement.addEventListener('click', (e) => {
         e.stopPropagation();
-        showEventDetails(transaction);
+        showEventDetails(transaction, e.currentTarget);
     });
     
     return eventElement;
 }
 
 // Show event details
-function showEventDetails(transaction) {
+function showEventDetails(transaction, clickedElement) {
     const modal = document.getElementById('eventModal');
     const modalBody = document.getElementById('eventModalBody');
     
@@ -518,20 +517,103 @@ function showEventDetails(transaction) {
         <div class="event-detail-item">
             <div class="event-detail-label">Notes:</div>
             <div class="event-detail-value">${transaction.notes}</div>
-        </div>
-        ` : ''}
-    `;
+        </div>        ` : ''}
+    `;    // Position modal relative to clicked element if provided
+    if (clickedElement) {
+        const rect = clickedElement.getBoundingClientRect();
+        const modalContent = modal.querySelector('.modal-content');
+        
+        // Check if screen is mobile (width < 768px)
+        const isMobile = window.innerWidth < 768;
+        
+        if (isMobile) {
+            // On mobile, use centered positioning for better UX
+            modal.style.alignItems = 'center';
+            modal.style.justifyContent = 'center';
+            modalContent.style.position = 'relative';
+            modalContent.style.left = 'auto';
+            modalContent.style.top = 'auto';
+            modalContent.style.margin = 'auto';
+            modalContent.removeAttribute('data-position');
+        } else {
+            // Desktop positioning logic
+            modal.style.alignItems = 'flex-start';
+            modal.style.justifyContent = 'flex-start';
+            
+            // Calculate position
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const modalWidth = 500; // max-width from CSS
+            const modalHeight = 400; // estimated height
+            
+            let left = rect.right + 10; // 10px gap from element
+            let top = rect.top;
+            let position = 'right'; // Track which side we're positioning on
+            
+            // Check if modal would go off-screen horizontally
+            if (left + modalWidth > viewportWidth - 20) {
+                left = rect.left - modalWidth - 10; // Position to the left of element
+                position = 'left';
+            }
+            
+            // Ensure modal doesn't go off left edge
+            if (left < 20) {
+                left = 20;
+                position = 'center';
+            }
+            
+            // Check if modal would go off-screen vertically
+            if (top + modalHeight > viewportHeight - 20) {
+                top = viewportHeight - modalHeight - 20;
+            }
+            
+            // Ensure modal doesn't go off top edge
+            if (top < 20) {
+                top = 20;
+            }
+            
+            // Apply positioning
+            modalContent.style.position = 'absolute';
+            modalContent.style.left = left + 'px';
+            modalContent.style.top = top + 'px';
+            modalContent.style.margin = '0';
+            
+            // Add arrow indicator
+            modalContent.setAttribute('data-position', position);
+        }
+    } else {
+        // Fallback to center positioning
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
+        const modalContent = modal.querySelector('.modal-content');
+        modalContent.style.position = 'relative';
+        modalContent.style.left = 'auto';
+        modalContent.style.top = 'auto';
+        modalContent.style.margin = 'auto';
+        modalContent.removeAttribute('data-position');
+    }
+      modal.style.display = 'flex';
     
-    modal.style.display = 'flex';
-    
-    // Setup close functionality
+    // Setup close functionality with positioning reset
     const closeBtn = modal.querySelector('.close-modal');
-    closeBtn.onclick = () => modal.style.display = 'none';
+    const closeModal = () => {
+        modal.style.display = 'none';
+        // Reset modal positioning
+        const modalContent = modal.querySelector('.modal-content');
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
+        modalContent.style.position = 'relative';
+        modalContent.style.left = 'auto';
+        modalContent.style.top = 'auto';
+        modalContent.style.margin = 'auto';
+        modalContent.removeAttribute('data-position');
+    };
+      closeBtn.onclick = closeModal;
     
     // Close on outside click
     modal.onclick = (e) => {
         if (e.target === modal) {
-            modal.style.display = 'none';
+            closeModal();
         }
     };
 }
@@ -625,12 +707,11 @@ function createWeekDayElement(date) {
 function createWeekEventElement(transaction) {
     const eventElement = document.createElement('div');
     eventElement.classList.add('week-event', transaction.rentalStatus);
-    eventElement.textContent = transaction.transactionCode || 'No Code';
-    eventElement.title = `${transaction.transactionCode || 'No Code'} - ${transaction.fullName || 'Unknown'}`;
+    eventElement.textContent = transaction.transactionCode || 'No Code';    eventElement.title = `${transaction.transactionCode || 'No Code'} - ${transaction.fullName || 'Unknown'}`;
     
     eventElement.addEventListener('click', (e) => {
         e.stopPropagation();
-        showEventDetails(transaction);
+        showEventDetails(transaction, e.currentTarget);
     });
     
     return eventElement;
@@ -710,13 +791,12 @@ function createDayEventElement(transaction) {
         <div class="day-event-details">
             <div>${transaction.fullName || 'Unknown Customer'}</div>
             <div>${transaction.eventType || 'Unknown Event'}</div>
-            <div class="status-badge ${transaction.rentalStatus}">${formatStatus(transaction.rentalStatus)}</div>
-        </div>
+            <div class="status-badge ${transaction.rentalStatus}">${formatStatus(transaction.rentalStatus)}</div>        </div>
     `;
     
     eventElement.addEventListener('click', (e) => {
         e.stopPropagation();
-        showEventDetails(transaction);
+        showEventDetails(transaction, e.currentTarget);
     });
     
     return eventElement;
@@ -821,12 +901,20 @@ function setupEventListeners() {
                     e.preventDefault();
                     nextMonthBtn.click();
                     break;
-            }
-        } else if (e.key === 'Escape') {
+            }        } else if (e.key === 'Escape') {
             // Close modal on ESC key
             const modal = document.getElementById('eventModal');
             if (modal && modal.style.display === 'flex') {
+                const modalContent = modal.querySelector('.modal-content');
                 modal.style.display = 'none';
+                // Reset modal positioning
+                modal.style.alignItems = 'center';
+                modal.style.justifyContent = 'center';
+                modalContent.style.position = 'relative';
+                modalContent.style.left = 'auto';
+                modalContent.style.top = 'auto';
+                modalContent.style.margin = 'auto';
+                modalContent.removeAttribute('data-position');
             }
         }
     });
