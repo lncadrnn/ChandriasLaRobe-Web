@@ -593,9 +593,8 @@ $(document).ready(function () {
         return result;
     }
 
-    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
-    // DELETE CARD FUNCTION
-    $(document).on("click", ".delete-btn", async function () {
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#    // DELETE CARD FUNCTION
+    $(document).on("click", ".delete_btn", async function () {
         const productId = $(this).data("id");
         const card = $(this).closest(".card");
 
@@ -673,9 +672,8 @@ $(document).ready(function () {
         }
     });
 
-    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#
-    // VIEW DETAILS FUNCTION
-    $(document).on("click", ".edit-btn", async function () {
+    // #@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#    // VIEW DETAILS FUNCTION
+    $(document).on("click", ".edit_btn", async function () {
         const productId = $(this).data("id");
 
         try {
@@ -747,6 +745,9 @@ $(document).ready(function () {
                         input.val(sizeData[size]);
                     }
                 });
+
+                // Show the edit modal
+                $("#viewProductModal").addClass("show");
             } else {
                 showErrorModal("Product not found.");
             }
@@ -1275,8 +1276,7 @@ $(document).ready(function () {
                         "background-image": `url(${data.imageUrl})`,
                         "background-size": "cover",
                         "background-position": "center"
-                    });
-                    $("#update-additional-upload-label-img").css(
+                    });                    $("#update-additional-upload-label-img").css(
                         "opacity",
                         "0"
                     );
@@ -1284,4 +1284,19 @@ $(document).ready(function () {
 
                 // Fill inputs
                 $("#update-additional-name").val(data.name || "");
-                // (Removed incomplete/unterminated line to fix syntax error)
+                $("#update-additional-price").val(data.price || "");
+                $("#update-additional-description").val(data.description || "");
+
+                // Store the current additional ID for updating
+                $("#updateAdditionalModal").attr("data-current-id", additionalId);
+            } else {
+                console.log("No such additional product!");
+                notyf.error("Additional product not found");
+            }
+        } catch (error) {
+            console.error("Error getting additional product:", error);
+            notyf.error("Error loading additional product details");
+        }
+    });
+
+});
