@@ -518,6 +518,12 @@ tr:hover {
     flex-direction: column;
 }
 
+/* Make appointment modal wider */
+.appointment-modal-content {
+    max-width: 900px; /* Increased from default 600px to 900px */
+    width: 95%; /* Use more of the available width */
+}
+
 .modal-title {
     font-size: 1.25rem;
     font-weight: 600;
@@ -551,6 +557,198 @@ tr:hover {
     border-top: 1px solid var(--border-color);
     display: flex;
     justify-content: flex-end;
+}
+
+/* Appointment Modal Content Styles */
+.appointment-modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    height: 100%;
+}
+
+.appointment-customer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.appointment-customer-info h4 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0 0 16px 0;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.appointment-customer-info h4 i {
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+.appointment-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.appointment-info-label {
+    font-weight: 600;
+    color: var(--text-light);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.appointment-info-value {
+    color: var(--text-dark);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.appointment-products-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.appointment-products-header h4 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0 0 16px 0;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.appointment-products-header h4 i {
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+.appointment-products-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.appointment-products-table thead {
+    background: var(--primary-color);
+    color: white;
+}
+
+.appointment-products-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.appointment-products-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.875rem;
+    color: var(--text-dark);
+    vertical-align: middle;
+}
+
+.appointment-products-table tr:last-child td {
+    border-bottom: none;
+}
+
+.appointment-product-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.appointment-product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.appointment-product-name {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.875rem;
+}
+
+.appointment-product-details {
+    font-size: 0.75rem;
+    color: var(--text-light);
+}
+
+.appointment-product-price {
+    font-weight: 600;
+    color: var(--primary-color);
+    text-align: right;
+}
+
+.appointment-total-section {
+    margin-top: 16px;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.appointment-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.appointment-total-row span:last-child {
+    color: var(--primary-color);
+}
+
+/* Responsive design for appointment modal */
+@media (max-width: 768px) {
+    .appointment-modal-content {
+        max-width: none;
+        width: calc(100% - 20px);
+        margin: 10px;
+    }
+    
+    .appointment-modal-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .appointment-products-table {
+        font-size: 0.75rem;
+    }
+    
+    .appointment-product-img {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .appointment-info-item {
+        padding: 10px;
+    }
 }
 
 /* Rental Modal */
