@@ -1179,13 +1179,38 @@ $(document).ready(function () {
             // Show the customer modal
             $customerModal.show();
         });
-    }
-
-    // --- Restrict Client Contact to Numbers Only ---
+    }    // --- Restrict Client Contact to Numbers Only and Enforce 09 Format ---
     $("#client-contact").on("input", function () {
-        // Replace any non-numeric character with an empty string
-        this.value = this.value.replace(/[^0-9]/g, "");
-    });    // --- Payment Type Logic ---
+        let value = this.value;
+        
+        // Remove any non-numeric characters
+        value = value.replace(/[^0-9]/g, "");
+        
+        // Ensure it starts with 09
+        if (value.length > 0 && !value.startsWith("09")) {
+            // If user starts typing but doesn't start with 09, prepend 09
+            if (value.length === 1 && value !== "0") {
+                value = "09" + value;
+            } else if (value.length >= 2 && value.substring(0, 2) !== "09") {
+                // If first two digits are not 09, replace them
+                value = "09" + value.substring(2);
+            }
+        }
+        
+        // Limit to 11 digits maximum
+        if (value.length > 11) {
+            value = value.substring(0, 11);
+        }
+        
+        this.value = value;
+    });
+
+    // Auto-fill 09 when contact field gets focus and is empty
+    $("#client-contact").on("focus", function () {
+        if (this.value === "") {
+            this.value = "09";
+        }
+    });// --- Payment Type Logic ---
     const $paymentType = $("#payment-status");
     const $totalPayment = $("#total-payment");
     const $remainingBalance = $("#remaining-balance");
@@ -1373,13 +1398,15 @@ $(document).ready(function () {
         "client-full-name": {
             ...commonValidationRules,
             minLength: 3
-        },
-        "client-contact": {
+        },        "client-contact": {
             ...commonValidationRules,
             // Custom validation function for contact number
             validate: function(value) {
-                const regex = /^[0-9]{10}$/;
-                return regex.test(value) || "Contact number must be 10 digits.";
+                const regex = /^09[0-9]{9}$/;
+                if (!regex.test(value)) {
+                    return "Contact number must be 11 digits starting with 09.";
+                }
+                return true;
             }
         },
         "fixed-event-date": {
