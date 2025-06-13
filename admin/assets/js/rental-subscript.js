@@ -1434,32 +1434,83 @@ $(document).ready(function () {
                 );
             }
         }
-    };
-
-    // Apply validation rules to the form fields
+    };    // Apply validation rules to the form fields
     Object.keys(specificFieldRules).forEach(fieldId => {
         const rules = specificFieldRules[fieldId];
 
-        $(`#${fieldId}`).on("input change", function() {
-            const $this = $(this);
-            const value = $this.val();
+        // Special handling for contact field with debounce delay
+        if (fieldId === "client-contact") {
+            let contactValidationTimeout;
+            
+            // Validate only on blur (when user finishes typing)
+            $(`#${fieldId}`).on("blur", function() {
+                const $this = $(this);
+                const value = $this.val();
 
-            // Trim whitespace if rule is set
-            let trimmedValue = rules.trim ? value.trim() : value;
+                // Trim whitespace if rule is set
+                let trimmedValue = rules.trim ? value.trim() : value;
 
-            // Run custom validation if provided
-            if (rules.validate) {
-                const validationResult = rules.validate(trimmedValue);
-                if (validationResult !== true) {
-                    // Show error message
-                    notyf.error(validationResult);
-                    $this.addClass("invalid");
-                    return;
+                // Only validate if field has content
+                if (trimmedValue && rules.validate) {
+                    const validationResult = rules.validate(trimmedValue);
+                    if (validationResult !== true) {
+                        // Show error message only on blur
+                        notyf.error(validationResult);
+                        $this.addClass("invalid");
+                        return;
+                    }
                 }
-            }
 
-            $this.removeClass("invalid");
-        });
+                $this.removeClass("invalid");
+            });
+            
+            // Also validate with debounce on input for real-time feedback (but no errors)
+            $(`#${fieldId}`).on("input", function() {
+                const $this = $(this);
+                clearTimeout(contactValidationTimeout);
+                
+                // Remove invalid class immediately on typing
+                $this.removeClass("invalid");
+                
+                // Set a 2-second delay before validation (no error messages, just styling)
+                contactValidationTimeout = setTimeout(function() {
+                    const value = $this.val();
+                    let trimmedValue = rules.trim ? value.trim() : value;
+                    
+                    if (trimmedValue && rules.validate) {
+                        const validationResult = rules.validate(trimmedValue);
+                        if (validationResult !== true) {
+                            $this.addClass("invalid");
+                            // Don't show notyf error on input, only visual feedback
+                        } else {
+                            $this.removeClass("invalid");
+                        }
+                    }
+                }, 2000); // 2 second delay
+            });
+        } else {
+            // For other fields, keep original validation behavior
+            $(`#${fieldId}`).on("input change", function() {
+                const $this = $(this);
+                const value = $this.val();
+
+                // Trim whitespace if rule is set
+                let trimmedValue = rules.trim ? value.trim() : value;
+
+                // Run custom validation if provided
+                if (rules.validate) {
+                    const validationResult = rules.validate(trimmedValue);
+                    if (validationResult !== true) {
+                        // Show error message
+                        notyf.error(validationResult);
+                        $this.addClass("invalid");
+                        return;
+                    }
+                }
+
+                $this.removeClass("invalid");
+            });
+        }
     });
 
     // FORM (CUSTOMER INFO) SUBMIT FUNCTION
@@ -2394,3 +2445,4 @@ $(document).ready(function () {
     
     console.log('Rental subscript initialization complete - date fields initially disabled');
 });
+
