@@ -316,6 +316,26 @@ tr:hover {
     color: var(--info-color);
 }
 
+.status-badge.cancelled {
+    background: #f1f3f4;
+    color: #5f6368;
+}
+
+.status-badge.fixed-date {
+    background: #e1f5fe;
+    color: #0277bd;
+}
+
+.status-badge.open-rental {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.status-badge.default {
+    background: #e8f5e8;
+    color: #2e7d32;
+}
+
 /* Table detail buttons */
 .btn-details {
     background: var(--primary-color);
@@ -950,6 +970,11 @@ tr:hover {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 16px;
+    margin-bottom: 16px;
+}
+
+.info-grid:last-child {
+    margin-bottom: 0;
 }
 
 .info-item {
@@ -1007,6 +1032,21 @@ tr:hover {
 .status-badge.cancelled {
     background: #f1f3f4;
     color: #5f6368;
+}
+
+.status-badge.fixed-date {
+    background: #e1f5fe;
+    color: #0277bd;
+}
+
+.status-badge.open-rental {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.status-badge.default {
+    background: #e8f5e8;
+    color: #2e7d32;
 }
 
 .payment-breakdown {

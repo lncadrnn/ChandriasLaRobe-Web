@@ -247,9 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 day: 'numeric',
                 hour: 'numeric',
                 minute: '2-digit'
-            }) : 'Not available';
-
-            // Populate customer information
+            }) : 'Not available';            // Populate customer information
             document.getElementById('customer-name').textContent = data.customerName || 'Not provided';
             document.getElementById('customer-contact').textContent = data.customerContactNumber || 'Not provided';
             document.getElementById('customer-email').textContent = data.customerEmail || 'Not provided';
@@ -258,12 +256,14 @@ document.addEventListener("DOMContentLoaded", () => {
             // Populate transaction details
             document.getElementById('transaction-code').textContent = data.transactionCode || 'Not assigned';
             
-            const statusElement = document.getElementById('transaction-status');
-            statusElement.textContent = data.status || 'Unknown';
-            statusElement.className = `status-badge ${getStatusClass(data.status)}`;
+            // Handle rental type and dates
+            const rentalType = data.status || 'Unknown';
+            const rentalTypeElement = document.getElementById('rental-type');
+            rentalTypeElement.textContent = rentalType;
+            rentalTypeElement.className = `status-badge ${getRentalTypeClass(rentalType)}`;
             
-            document.getElementById('rental-date').textContent = eventStartDate;
-            document.getElementById('return-date').textContent = eventEndDate;
+            // Set up date fields based on rental type
+            setupRentalDates(data, rentalType);
 
             // Calculate payment information
             const totalAmount = parseFloat(data.totalPayment || 0);
@@ -296,14 +296,13 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error('Error loading rental details:', error);
             alert('Error loading rental details. Please try again.');
         }
-    }
-
-    // Helper function to get status CSS class
-    function getStatusClass(status) {
-        switch (status?.toLowerCase()) {
-            case 'active':
-            case 'ongoing':
-                return 'active';
+    }    // Helper function to get rental type CSS class
+    function getRentalTypeClass(rentalType) {
+        switch (rentalType?.toLowerCase()) {
+            case 'fixed date':
+                return 'fixed-date';
+            case 'open rental':
+                return 'open-rental';
             case 'completed':
             case 'returned':
                 return 'completed';
@@ -312,8 +311,78 @@ document.addEventListener("DOMContentLoaded", () => {
             case 'cancelled':
                 return 'cancelled';
             default:
-                return 'active';
+                return 'default';
         }
+    }
+
+    // Setup rental dates based on rental type
+    function setupRentalDates(data, rentalType) {
+        const rentalDatesSection = document.getElementById('rental-dates-section');
+        
+        // Format dates
+        const eventDate = data.eventDate ? new Date(data.eventDate).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }) : 'Not specified';
+        
+        const eventStartDate = data.eventStartDate ? new Date(data.eventStartDate).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }) : 'Not specified';
+        
+        const eventEndDate = data.eventEndDate ? new Date(data.eventEndDate).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }) : 'Not specified';
+
+        let datesHtml = '';
+        
+        if (rentalType?.toLowerCase() === 'fixed date') {
+            // Show single event date for fixed date rentals
+            datesHtml = `
+                <div class="info-item">
+                    <label>Event Date:</label>
+                    <span id="event-date">${eventDate}</span>
+                </div>
+            `;
+        } else if (rentalType?.toLowerCase() === 'open rental') {
+            // Show start and end dates for open rentals
+            datesHtml = `
+                <div class="info-item">
+                    <label>Start Date:</label>
+                    <span id="start-date">${eventStartDate}</span>
+                </div>
+                <div class="info-item">
+                    <label>End Date:</label>
+                    <span id="end-date">${eventEndDate}</span>
+                </div>
+            `;
+        } else {
+            // Default to showing start and end dates
+            datesHtml = `
+                <div class="info-item">
+                    <label>Start Date:</label>
+                    <span id="start-date">${eventStartDate}</span>
+                </div>
+                <div class="info-item">
+                    <label>End Date:</label>
+                    <span id="end-date">${eventEndDate}</span>
+                </div>
+            `;
+        }
+        
+        rentalDatesSection.innerHTML = datesHtml;
+    }
+
+    // Helper function to get status CSS class (keeping for backwards compatibility)
+    function getStatusClass(status) {
+        return getRentalTypeClass(status);
     }
 
     // Populate rented items section
