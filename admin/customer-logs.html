@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />    <title>Chandria's La Robe - Rental History</title>
-      <!-- EXTERNAL CSS -->
-    <link rel="stylesheet" href="./assets/css/admin-layout.css" />
+      <!-- EXTERNAL CSS -->    <link rel="stylesheet" href="./assets/css/admin-layout.css" />
     <link rel="stylesheet" href="./assets/css/admin-layout-mob.css" />
     <link rel="stylesheet" href="./assets/css/customer-logs.css" />
+    <link rel="stylesheet" href="./assets/css/customer-logs-modal.css" />
     <link rel="stylesheet" href="./assets/css/spinners-admin.css" />
 
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -446,9 +446,12 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
       <!-- EXTERNAL SCRIPT -->
-    <script src="./assets/js/spinners-admin.js"></script>
-    <script src="./assets/js/admin-layout.js"></script>
+    <script src="./assets/js/spinners-admin.js"></script>    <script src="./assets/js/admin-layout.js"></script>
     <script src="./assets/js/admin-layout-mob.js"></script>
+    
+    <!-- Modal Script (load before main service) -->
+    <script type="module" src="./assets/js/customer-logs-modal.js"></script>
+    
     <script type="module" src="./assets/js/customer-logs-service-new.js"></script>
 
     <!-- Cancel Rental Confirmation Modal -->
@@ -546,7 +549,59 @@
                         <i class='bx bx-x'></i> Cancel
                     </button>
                     <button type="button" class="btn-primary" id="confirm-mark-complete-btn" onclick="confirmMarkComplete()">
-                        <i class='bx bx-check'></i> Mark as Complete
+                        <i class='bx bx-check'></i> Mark as Complete                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Undo Cancellation Modal -->
+    <div id="undo-cancel-modal" class="undo-modal-overlay">
+        <div class="undo-modal-content">
+            <div class="undo-modal-header">
+                <h2><i class='bx bx-undo'></i> Undo Cancellation</h2>
+                <button class="undo-modal-close" onclick="closeUndoCancelModal()">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="undo-modal-body">
+                <div class="undo-confirmation-section">
+                    <div class="undo-confirmation-icon">
+                        <i class='bx bx-refresh'></i>
+                    </div>
+                    <div class="undo-confirmation-content">
+                        <h3>🔄 Restore this cancelled rental?</h3>
+                        <p>This action will:</p>
+                        <ul class="undo-confirmation-list">
+                            <li>Remove the "Cancelled" status</li>
+                            <li>Restore the rental to its appropriate status based on event dates</li>
+                            <li>Make the rental active again in the system</li>
+                            <li>Update customer rental history</li>
+                        </ul>
+                        <div class="undo-status-prediction">
+                            <h4>New Status Preview:</h4>
+                            <p>The rental will be changed to: <span id="predicted-status" class="status-badge">-</span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="undo-transaction-summary">
+                    <h4>Rental to restore:</h4>
+                    <div class="undo-summary-content">
+                        <p><strong>Customer:</strong> <span id="undo-customer-name">-</span></p>
+                        <p><strong>Transaction Code:</strong> <span id="undo-transaction-code">-</span></p>
+                        <p><strong>Event Start Date:</strong> <span id="undo-event-start-date">-</span></p>
+                        <p><strong>Event End Date:</strong> <span id="undo-event-end-date">-</span></p>
+                        <p><strong>Total Amount:</strong> <span id="undo-total-amount">-</span></p>
+                    </div>
+                </div>
+                
+                <div class="undo-form-actions">
+                    <button type="button" class="undo-btn-secondary" onclick="closeUndoCancelModal()">
+                        <i class='bx bx-x'></i> Cancel
+                    </button>
+                    <button type="button" class="undo-btn-primary" id="confirm-undo-cancel-btn" onclick="confirmUndoCancel()">
+                        <i class='bx bx-undo'></i> Restore Rental
                     </button>
                 </div>
             </div>

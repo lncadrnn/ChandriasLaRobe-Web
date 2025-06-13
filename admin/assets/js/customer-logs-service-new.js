@@ -24,6 +24,11 @@ const transactionCount = document.getElementById('transaction-count');
 let currentView = 'cards'; // Default to cards view
 let currentSort = 'recent'; // Default sort by recent
 
+// Export variables and functions to global scope for modal access
+window.allTransactions = allTransactions;
+window.filteredTransactions = filteredTransactions;
+window.currentView = currentView;
+
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     // Sidebar functionality
@@ -143,6 +148,7 @@ async function loadTransactions() {
         const snapshot = await getDocs(transactionRef);
         
         allTransactions = [];
+        window.allTransactions = allTransactions; // Update global reference
         snapshot.forEach(doc => {
             const data = doc.data();
             allTransactions.push({
@@ -183,6 +189,7 @@ function updateTransactionCount() {
 // Switch between card and table views
 function switchView(view) {
     currentView = view;
+    window.currentView = currentView; // Update global reference
       if (view === 'cards') {
         cardsContainer.style.display = 'block';
         tableContainer.classList.remove('show');
@@ -1029,10 +1036,13 @@ async function confirmDelete() {
         
         // Delete document from Firebase
         await deleteDoc(doc(chandriaDB, 'transaction', currentDeletingTransaction.id));
-        
-        // Remove from local arrays
+          // Remove from local arrays
         allTransactions = allTransactions.filter(t => t.id !== currentDeletingTransaction.id);
         filteredTransactions = filteredTransactions.filter(t => t.id !== currentDeletingTransaction.id);
+        
+        // Update global references
+        window.allTransactions = allTransactions;
+        window.filteredTransactions = filteredTransactions;
         
         // Close modal and refresh view
         closeDeleteModal();
@@ -1706,14 +1716,19 @@ function calculateOriginalRentalStatus(transaction) {
                     rentalStatus = 'Completed';
                     statusClass = 'status-completed';
                 }
-            }
-        }
+            }        }
     }
     
     return { rentalStatus, statusClass };
 }
 
-// Undo cancellation (revert cancelled rental back to original status)
+// Export function to global scope for modal access
+window.calculateOriginalRentalStatus = calculateOriginalRentalStatus;
+
+// Undo cancellation - Now handled by customer-logs-modal.js
+// The modal-based undo cancellation function is imported from the modal script
+/*
+// Original undo cancellation (revert cancelled rental back to original status)
 async function undoCancellation(transactionId) {
     try {
         const transaction = allTransactions.find(t => t.id === transactionId);
@@ -1785,6 +1800,7 @@ async function undoCancellation(transactionId) {
         alert('Error undoing cancellation. Please try again.');
     }
 }
+*/
 
 // Hide page loader
 function hidePageLoader() {
@@ -1869,3 +1885,8 @@ window.closeEditModal = closeEditModal;
 window.closeDeleteModal = closeDeleteModal;
 window.closeCancelRentalModal = closeCancelRentalModal;
 window.closeMarkCompleteModal = closeMarkCompleteModal;
+
+// Export functions needed by the undo cancellation modal
+window.renderTransactionCards = renderTransactionCards;
+window.renderTransactionTable = renderTransactionTable;
+window.showSuccessToast = showSuccessToast;
