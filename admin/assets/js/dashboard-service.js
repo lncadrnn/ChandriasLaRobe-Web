@@ -262,21 +262,25 @@ document.addEventListener("DOMContentLoaded", () => {
             const rentalTypeElement = document.getElementById('rental-type');
             rentalTypeElement.textContent = getRentalTypeDisplayName(rentalType);
             rentalTypeElement.className = `status-badge ${getRentalTypeClass(rentalType)}`;
-            
-            // Set up date fields based on rental type
-            setupRentalDates(data, rentalType);            // Calculate payment information - updated field mapping
-            const rentalFee = parseFloat(data.totalPayment || data.totalAmount || data.total || 0);
-            const totalPayment = parseFloat(data.paidAmount || data.amountPaid || data.paid || 0);
-            const remainingBalance = Math.max(0, rentalFee - totalPayment);
-            
-            console.log('Payment Info:', {
-                totalPayment: data.totalPayment,
-                totalAmount: data.totalAmount,
-                total: data.total,
-                paidAmount: data.paidAmount,
-                amountPaid: data.amountPaid,
-                paid: data.paid,
-                calculated: { rentalFee, totalPayment, remainingBalance }
+              // Set up date fields based on rental type
+            setupRentalDates(data, rentalType);            // Calculate payment information - use correct Firebase field names
+            const rentalFee = parseFloat(data.rentalFee || data.totalPayment || 0);
+            const totalPayment = parseFloat(data.totalPayment || 0);
+            const remainingBalance = parseFloat(data.remainingBalance || 0);
+
+            // Debug logging to see available fields and calculated values
+            console.log('Payment Info Debug:', {
+                availableFields: Object.keys(data),
+                calculatedValues: {
+                    rentalFee: rentalFee,
+                    totalPayment: totalPayment,
+                    remainingBalance: remainingBalance
+                },
+                rawFieldValues: {
+                    rentalFee: data.rentalFee,
+                    totalPayment: data.totalPayment,
+                    remainingBalance: data.remainingBalance
+                }
             });
 
             document.getElementById('rental-fee').textContent = `₱${rentalFee.toLocaleString()}`;
@@ -284,14 +288,9 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('payment-remaining').textContent = `₱${remainingBalance.toLocaleString()}`;
 
             // Populate rented items
-            await populateRentedItems(data);
-
-            // Populate notes
+            await populateRentedItems(data);            // Populate notes
             const notesElement = document.getElementById('rental-notes');
             notesElement.textContent = data.notes || data.additionalNotes || 'No additional notes provided.';
-
-            // Setup modal action buttons
-            setupModalActions(id, data);
 
             // Show modal
             modal.classList.add('visible');
@@ -519,47 +518,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
                 <div class="item-price">₱${parseFloat(item.price || 0).toLocaleString()}</div>
             </div>
-        `;
-    }// Setup modal action buttons
-    function setupModalActions(transactionId, transactionData) {
-        // Update Status button
-        const updateStatusBtn = document.getElementById('update-status-btn');
-        updateStatusBtn.onclick = () => {
-            // You can implement status update functionality here
-            console.log('Update status for transaction:', transactionId);
-            // For now, just show an alert
-            alert('Status update functionality coming soon!');
-        };
-
-        // Setup close modal functionality
-        const modal = document.getElementById('rental-modal');
-        const closeButtons = document.querySelectorAll('.close-rental-modal');
-        const modalBackdrop = modal.querySelector('.modal-backdrop');
-
-        // Close modal function
-        const closeModal = () => {
-            modal.classList.remove('visible');
-            document.body.style.overflow = '';
-        };
-
-        // Add event listeners for close buttons
-        closeButtons.forEach(btn => {
-            btn.onclick = closeModal;
-        });
-
-        // Close modal when clicking backdrop
-        if (modalBackdrop) {
-            modalBackdrop.onclick = closeModal;
-        }
-
-        // Close modal with Escape key
-        const handleEscape = (e) => {
-            if (e.key === 'Escape' && modal.classList.contains('visible')) {
-                closeModal();
-                document.removeEventListener('keydown', handleEscape);
-            }
-        };
-        document.addEventListener('keydown', handleEscape);    }
+        `;    }
 
     // Load and render rentals
     async function loadRentals() {

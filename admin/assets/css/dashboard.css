@@ -575,6 +575,12 @@ tr:hover {
     padding: 8px;
     border-radius: 6px;
     transition: var(--transition);
+    min-width: 40px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .close-modal:hover,
@@ -603,6 +609,15 @@ tr:hover {
 .btn:hover {
     background: #ff4d7a;
     transform: translateY(-1px);
+}
+
+.btn.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn.btn-secondary:hover {
+    background: #5a6268;
 }
 
 .btn i {
