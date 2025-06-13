@@ -21,7 +21,7 @@ const tableViewBtn = document.getElementById('table-view-btn');
 const transactionCount = document.getElementById('transaction-count');
 
 // View state
-let currentView = 'cards'; // Cards only view
+let currentView = 'cards'; // Default view is cards
 let currentSort = 'recent'; // Default sort by recent
 
 // Initialize
@@ -47,13 +47,12 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput?.addEventListener('input', handleSearch);
     refreshBtn?.addEventListener('click', loadTransactions);
     
-    // Hide view toggle and table container - cards only
-    if (tableContainer) tableContainer.style.display = 'none';
-    if (cardsContainer) cardsContainer.style.display = 'block';
+    // View toggle functionality
+    cardViewBtn?.addEventListener('click', () => switchView('cards'));
+    tableViewBtn?.addEventListener('click', () => switchView('table'));
     
-    // Hide view toggle buttons
-    const viewToggle = document.querySelector('.view-toggle');
-    if (viewToggle) viewToggle.style.display = 'none';
+    // Initialize with cards view
+    switchView('cards');
     
     // Sort functionality
     sortBtn?.addEventListener('click', toggleSortOptions);
@@ -144,11 +143,10 @@ async function loadTransactions() {
                 id: doc.id,
                 ...data
             });
-        });
-          filteredTransactions = [...allTransactions];
+        });        filteredTransactions = [...allTransactions];
         applySorting(); // Apply current sort
         updateTransactionCount();
-        renderTransactionCards(); // Always render cards only
+        renderCurrentView(); // Render current view
         
     } catch (error) {
         console.error('Error loading transactions:', error);
@@ -169,13 +167,34 @@ function updateTransactionCount() {
     }
 }
 
-// Switch between card and table views - Cards only now
+// Render current view
+function renderCurrentView() {
+    if (currentView === 'cards') {
+        renderTransactionCards();
+    } else {
+        renderTransactionTable();
+    }
+}
+
+// Switch between card and table views
 function switchView(view) {
-    // Always use cards view
-    currentView = 'cards';
-    cardsContainer.style.display = 'block';
-    tableContainer.style.display = 'none';
-    renderTransactionCards();
+    currentView = view;
+    
+    // Update button states
+    cardViewBtn?.classList.toggle('active', view === 'cards');
+    tableViewBtn?.classList.toggle('active', view === 'table');
+    
+    // Show/hide containers
+    if (view === 'cards') {
+        cardsContainer.style.display = 'block';
+        tableContainer.style.display = 'none';
+    } else {
+        cardsContainer.style.display = 'none';
+        tableContainer.style.display = 'flex';
+    }
+    
+    // Render current view
+    renderCurrentView();
 }
 
 // Fetch product details from Firebase
@@ -623,8 +642,7 @@ function handleSearch() {
             return customerMatch || codeMatch || contactMatch || eventMatch || rentalMatch || productMatch || accessoryMatch;
         });
     }
-    
-    updateTransactionCount();
+      updateTransactionCount();
     applySorting(); // Apply current sort after filtering
 }
 
@@ -742,10 +760,9 @@ async function handleEditSubmit(e) {
         if (index !== -1) {
             allTransactions[index] = { ...allTransactions[index], ...updatedData };
             filteredTransactions = [...allTransactions];
-        }
-          // Close modal and refresh view
+        }        // Close modal and refresh view
         closeEditModal();
-        renderTransactionCards(); // Always render cards
+        renderCurrentView(); // Render current view
         
         // Show success message
         showSuccessMessage('Transaction updated successfully!');
@@ -835,11 +852,10 @@ async function confirmDelete() {
         
         // Remove from local arrays
         allTransactions = allTransactions.filter(t => t.id !== currentDeletingTransaction.id);
-        filteredTransactions = filteredTransactions.filter(t => t.id !== currentDeletingTransaction.id);
-          // Close modal and refresh view
+        filteredTransactions = filteredTransactions.filter(t => t.id !== currentDeletingTransaction.id);        // Close modal and refresh view
         closeDeleteModal();
         updateTransactionCount();
-        renderTransactionCards(); // Always render cards
+        renderCurrentView(); // Render current view
         
         // Show success message
         showSuccessMessage('Transaction deleted successfully!');
@@ -1014,9 +1030,8 @@ function applySorting() {
                 const dateB = new Date(b.timestamp || 0);
                 return dateB - dateA;
             });
-    }
-      // Re-render current view with sorted data
-    renderTransactionCards(); // Always render cards
+    }    // Re-render current view with sorted data
+    renderCurrentView(); // Render current view
 }
 
 // Make functions globally available

@@ -163,59 +163,50 @@ select:disabled {
     top: 100%;
     right: 0;
     background: #ffffff;
-    border: 2px solid rgba(255, 105, 180, 0.1);
-    border-radius: 16px;
-    padding: 0.75rem;
-    min-width: 220px;
-    box-shadow: 0 12px 40px rgba(255, 105, 180, 0.15);
+    border: 1px solid rgba(255, 105, 180, 0.2);
+    border-radius: 8px;
+    padding: 0.5rem 0;
+    min-width: 200px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-15px) scale(0.95);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
     margin-top: 0.5rem;
 }
 
 .sort-options.show {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
 }
 
 .sort-option {
-    padding: 0.875rem 1.25rem;
-    border-radius: 12px;
+    padding: 0.75rem 1rem;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: background-color 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 0.875rem;
+    gap: 0.75rem;
     color: #2c3e50;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 500;
-    margin-bottom: 0.25rem;
-}
-
-.sort-option:last-child {
-    margin-bottom: 0;
 }
 
 .sort-option:hover {
-    background: rgba(255, 105, 180, 0.12);
+    background: rgba(255, 105, 180, 0.08);
     color: var(--primary-color);
-    transform: translateX(4px);
 }
 
 .sort-option.active {
-    background: linear-gradient(135deg, var(--primary-color), rgba(255, 105, 180, 0.8));
-    color: white;
+    background: rgba(255, 105, 180, 0.12);
+    color: var(--primary-color);
     font-weight: 600;
-    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
 }
 
 .sort-option.active:hover {
-    background: linear-gradient(135deg, var(--primary-color), rgba(255, 105, 180, 0.9));
-    transform: translateX(4px);
+    background: rgba(255, 105, 180, 0.15);
 }
 
 /* Remove duplicate sort styles - keeping only the first set */
@@ -254,10 +245,10 @@ select:disabled {
 .view-toggle {
     display: flex;
     background: var(--white-color);
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 0.25rem;
-    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.1);
-    border: 1px solid var(--secondary-color);
+    box-shadow: 0 2px 8px rgba(255, 105, 180, 0.1);
+    border: 1px solid rgba(255, 105, 180, 0.2);
 }
 
 .view-btn {
@@ -285,14 +276,9 @@ select:disabled {
     background: rgba(255, 105, 180, 0.1);
 }
 
-.view-toggle {
-    display: none !important; /* Hidden - cards only view */
-}
+/* View toggle is now enabled */
 
-/* Hide table container for cards-only view */
-.table-container {
-    display: none !important;
-}
+/* Table container can now be shown/hidden dynamically */
 
 /* === CARDS CONTAINER === */
 .cards-container {
@@ -546,8 +532,8 @@ select:disabled {
 
 /* === IMPROVED TABLE STYLES === */
 .table-container {
-    display: none !important; /* Hidden - cards only view */
     flex: 1;
+    display: none; /* Hidden by default, shown when table view is selected */
     flex-direction: column;
     min-height: 0;
 }
@@ -562,6 +548,7 @@ select:disabled {
     display: flex;
     flex-direction: column;
     background: var(--white-color);
+    max-height: calc(60px + 10 * 80px); /* Header (60px) + 10 rows * estimated row height (80px) */
 }
 
 #rental-history-table {
@@ -569,7 +556,14 @@ select:disabled {
     border-collapse: collapse;
     font-size: 0.9rem;
     background: var(--white-color);
-    display: table;
+    display: block;
+    overflow: hidden;
+}
+
+#rental-history-table thead,
+#rental-history-table tbody {
+    display: block;
+    width: 100%;
 }
 
 #rental-history-table thead {
@@ -577,6 +571,19 @@ select:disabled {
     position: sticky;
     top: 0;
     z-index: 10;
+}
+
+#rental-history-table tbody {
+    background: var(--white-color);
+    overflow-y: auto;
+    max-height: calc(10 * 80px); /* Maximum height for 10 rows */
+}
+
+#rental-history-table thead tr,
+#rental-history-table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
 }
 
 #rental-history-table thead th {
@@ -603,9 +610,7 @@ select:disabled {
     background: rgba(255, 255, 255, 0.3);
 }
 
-#rental-history-table tbody {
-    background: var(--white-color);
-}
+/* Table tbody with scrollbar styles already defined above */
 
 #rental-history-table tbody tr {
     transition: all 0.3s ease;
@@ -627,6 +632,25 @@ select:disabled {
     color: var(--text-color);
     border: none;
     font-weight: 500;
+}
+
+/* Custom scrollbar for table tbody */
+#rental-history-table tbody::-webkit-scrollbar {
+    width: 8px;
+}
+
+#rental-history-table tbody::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+#rental-history-table tbody::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+#rental-history-table tbody::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
 }
 
 .table-loading,
@@ -716,13 +740,17 @@ select:disabled {
         flex-direction: column;
         gap: 0.5rem;
     }
-    
-    .table-wrapper {
+      .table-wrapper {
         border-radius: 12px;
+        max-height: calc(50px + 8 * 70px); /* Smaller height on mobile: header + 8 rows */
     }
     
     #rental-history-table {
         font-size: 0.8rem;
+    }
+    
+    #rental-history-table tbody {
+        max-height: calc(8 * 70px); /* Maximum height for 8 rows on mobile */
     }
     
     #rental-history-table thead th {
