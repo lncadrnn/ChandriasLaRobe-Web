@@ -8,15 +8,15 @@
 .dashboard-layout {
     display: grid;
     grid-template-columns: 1fr 320px;
-    gap: 24px;
-    padding: 24px;
+    gap: 20px; /* Reduced from 24px to 20px */
+    padding: 20px; /* Reduced from 24px to 20px */
     min-height: auto;
 }
 
 .dashboard-main {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 18px; /* Reduced from 24px to 18px */
     max-width: 100%;
     overflow-x: hidden; /* Prevent horizontal overflow */
     box-sizing: border-box;
@@ -36,13 +36,16 @@
 .dashboard-card {
     background: white;
     border-radius: 12px;
-    padding: 20px;
+    padding: 12px 16px; /* Reduced padding from 20px to 12px/16px */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     transition: var(--transition);
     border: 1px solid var(--border-color);
     position: relative;
     overflow: hidden;
     min-width: 0; /* Allow cards to shrink below content size */
+    height: 120px; /* Set fixed height to make cards more compact */
+    display: flex;
+    flex-direction: column;
 }
 
 .dashboard-card::before {
@@ -69,18 +72,18 @@
 .card-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: 8px; /* Reduced gap from 12px to 8px */
+    margin-bottom: 8px; /* Reduced margin from 16px to 8px */
 }
 
 .card-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
+    width: 36px; /* Reduced from 44px to 36px */
+    height: 36px; /* Reduced from 44px to 36px */
+    border-radius: 10px; /* Slightly smaller border radius */
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.4rem;
+    font-size: 1.2rem; /* Reduced from 1.4rem to 1.2rem */
     color: white;
 }
 
@@ -107,14 +110,14 @@
 .card-content {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px; /* Reduced gap from 8px to 4px */
     flex: 1;
     justify-content: center;
     align-items: center;
 }
 
 .card-main {
-    font-size: 3.5rem;
+    font-size: 2.5rem; /* Reduced from 3.5rem to 2.5rem */
     font-weight: 700;
     color: var(--text-dark);
     display: flex;
@@ -122,6 +125,7 @@
     justify-content: center;
     text-align: center;
     width: 100%;
+    line-height: 1; /* Ensure tight line height */
 }
 
 .card-main span {
@@ -151,7 +155,7 @@
     border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    height: 365px; /* Match appointments section height exactly */
+    height: 300px; /* Reduced from 365px to 300px */
     margin-bottom: 0;
 }
 
@@ -359,8 +363,8 @@ tr:hover {
     background: white;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    height: 575px; /* Fixed height to match table height exactly */
-    max-height: 680px;
+    height: 440px; /* Reduced from 575px to 440px */
+    max-height: 480px; /* Reduced from 680px to 480px */
     border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
@@ -418,7 +422,7 @@ tr:hover {
     flex: 1;
     overflow-y: auto; /* Show scrollbar */
     padding: 16px 0;
-    max-height: 340px; /* Increased height to match table */
+    max-height: 280px; /* Reduced from 340px to 280px */
 }
 
 .appointments-list {
