@@ -701,6 +701,115 @@ $(document).ready(function () {
         }
     });
 
+    // DELETE ACCOUNT CLICK HANDLER
+    $("#del-acc").on("click", async function(e) {
+        e.preventDefault();
+        const user = auth.currentUser;
+        if (!user) {
+            notyf.error("Please sign in to delete your account");
+            return;
+        }
+
+        // Check if user is Google-signed-in
+        const isGoogle = isGoogleUser(user);
+        
+        // Show appropriate modal content
+        $(".del-acc-modal-container").css("display", "flex");
+        $("#del-acc-regular-content").css("display", isGoogle ? "none" : "block");
+        $("#del-acc-google-content").css("display", isGoogle ? "block" : "none");
+    });
+
+    // Regular account delete confirmation
+    $("#del-acc-confirm").on("click", async function() {
+        const password = $("#del-acc-password").val().trim();
+        if (!password) {
+            notyf.error("Please enter your password");
+            return;
+        }
+
+        try {
+            disablingDelAccBtn();
+            const user = auth.currentUser;
+            
+            // Reauthenticate user
+            const credential = EmailAuthProvider.credential(user.email, password);
+            await reauthenticateWithCredential(user, credential);
+            
+            await deleteUserData(user);
+        } catch (error) {
+            console.error("Account deletion failed:", error);
+            if (error.code === "auth/wrong-password") {
+                notyf.error("Incorrect password");
+            } else {
+                notyf.error("Failed to delete account. Please try again.");
+            }
+            enablingDelAccBtn();
+        }
+    });
+
+    // Google account delete confirmation
+    $("#del-acc-google-confirm").on("click", async function() {
+        try {
+            $(this).addClass("disabled");
+            $("#btn-google-text").hide();
+            $("#btn-google-spinner").show();
+
+            const user = auth.currentUser;
+            await deleteUserData(user);
+        } catch (error) {
+            console.error("Account deletion failed:", error);
+            if (error.code === "auth/requires-recent-login") {
+                notyf.error("Please sign out and sign in again with Google to delete your account");
+            } else {
+                notyf.error("Failed to delete account. Please try again.");
+            }
+            $(this).removeClass("disabled");
+            $("#btn-google-text").show();
+            $("#btn-google-spinner").hide();
+        }
+    });
+
+    // Helper function to delete user data
+    async function deleteUserData(user) {
+        const userRef = doc(chandriaDB, "userAccounts", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+            const userData = userSnap.data();
+            // Delete profile image if exists
+            if (userData.profileImageId) {
+                try {
+                    await deleteImageFromCloudinary(userData.profileImageId);
+                } catch (err) {
+                    console.warn("Failed to delete profile image:", err);
+                }
+            }
+            
+            // Delete user document
+            await deleteDoc(userRef);
+        }
+
+        // Delete user account
+        await deleteUser(user);
+        
+        notyf.success("Account deleted successfully");
+        setTimeout(() => {
+            window.location.href = "../index.html";
+        }, 1500);
+    }
+
+    // Modal close handlers
+    $(".del-acc-modal-container").on("click", function(e) {
+        if (e.target === this) {
+            $(this).css("display", "none");
+        }
+    });
+
+    $("#del-acc-cancel, #del-acc-google-cancel").on("click", function() {
+        $(".del-acc-modal-container").css("display", "none");
+        $("#del-acc-password").val(""); // Clear password field
+    });
+
     function disablingDelAccBtn() {
         $("#del-acc-confirm").addClass("disabled");
         $("#btn-text").hide();
@@ -712,89 +821,6 @@ $(document).ready(function () {
         $("#btn-text").show();
         $("#btn-spinner").hide();
     }
-
-    // DELETE ACCOUNT FUNCTION [MAIN]
-    $("#del-acc-confirm").on("click", async function () {
-        const password = $("#del-acc-password").val().trim();
-
-        disablingDelAccBtn();
-
-        if (!password) {
-            notyf.error("Please enter your current password.");
-            enablingDelAccBtn();
-            return;
-        }
-
-        const user = auth.currentUser;
-        if (!user) {
-            notyf.error("User not signed in.");
-            return;
-        }
-
-        try {
-            // Step 1: Re-authenticate
-            const credential = EmailAuthProvider.credential(
-                user.email,
-                password
-            );
-            await reauthenticateWithCredential(user, credential);
-
-            // Step 2: Get user's Firestore data
-            const userRef = doc(chandriaDB, "userAccounts", user.uid);
-            const userSnap = await getDoc(userRef);
-
-            if (userSnap.exists()) {
-                const userData = userSnap.data();
-
-                // Step 3: Delete profile image from Cloudinary (if it exists)
-                if (userData.profileImageId) {
-                    try {
-                        await deleteImageFromCloudinary(
-                            userData.profileImageId
-                        );
-                        console.log("Profile image deleted from Cloudinary.");
-                    } catch (cloudErr) {
-                        console.warn(
-                            "Failed to delete image from Cloudinary:",
-                            cloudErr
-                        );
-                    }
-                }
-
-                // Step 4: Delete user document from Firestore
-                await deleteDoc(userRef);
-            }
-
-            // Step 5: Delete from Firebase Auth
-            await deleteUser(user);
-
-            notyf.success("Your account has been Successfully Deleted!");
-            setTimeout(() => {
-                window.location.href = "../index.html";
-            }, 2000);
-        } catch (error) {
-            console.error("Account deletion failed:", error);
-
-            if (error.code === "auth/invalid-credential") {
-                notyf.error("Incorrect password. Account not deleted.");
-            } else if (error.code === "auth/requires-recent-login") {
-                notyf.error("Please log in again to delete your account.");
-            } else {
-                notyf.error("Failed to delete account.");
-            }
-
-            enablingDelAccBtn();
-        }
-    });
-
-    // DELETE ACCOUNT MODAL CLOSE TOGGLER
-    $(".del-acc-modal-container, #del-acc-cancel").on("click", function () {
-        $(this).removeClass("show");
-    });
-    $(".del-acc-modal-box").on("click", function (e) {
-        e.stopPropagation();
-    });
-    // --====== END OF DELETE ACCOUNT FUNCTION ======--
 
     // SIDEBAR NAVIGATION FUNCTIONALITY
     function initializeSidebarNavigation() {

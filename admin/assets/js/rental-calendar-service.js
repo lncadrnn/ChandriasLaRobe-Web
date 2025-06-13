@@ -757,10 +757,52 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             
             return 'Date not specified';
-        }
-          function showRentalQuickView(rental, targetElement) {
+        }        function showRentalQuickView(rental, targetElement) {
             // Close any existing quick view
             closeQuickView();
+              // Function to get rental types from products
+            function getRentalTypes(rental) {
+                const types = new Set();
+                
+                // First, get the rental type from Firebase (Fixed Rental or Open Rental)
+                let rentalTypeInfo = '';
+                if (rental.rentalType) {
+                    rentalTypeInfo = rental.rentalType;
+                }
+                
+                // Get product categories from products
+                if (rental.products && Array.isArray(rental.products)) {
+                    rental.products.forEach(product => {
+                        if (product.details && product.details.category) {
+                            types.add(product.details.category);
+                        } else if (product.category) {
+                            types.add(product.category);
+                        }
+                    });
+                }
+                
+                // Get types from accessories (they might also have categories)
+                if (rental.accessories && Array.isArray(rental.accessories)) {
+                    rental.accessories.forEach(accessory => {
+                        if (accessory.details && accessory.details.category) {
+                            types.add(accessory.details.category);
+                        } else if (accessory.category) {
+                            types.add(accessory.category);
+                        }
+                    });
+                }
+                
+                const productCategories = Array.from(types).join(', ') || 'Mixed Items';
+                
+                // Combine rental type with product categories
+                if (rentalTypeInfo && productCategories) {
+                    return `${rentalTypeInfo} • ${productCategories}`;
+                } else if (rentalTypeInfo) {
+                    return rentalTypeInfo;
+                } else {
+                    return productCategories;
+                }
+            }
             
             // Create a quick view popup with rental details
             const quickView = document.createElement('div');
@@ -772,6 +814,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <span class="quick-view-status ${rental.status}">${rental.status.toUpperCase()}</span>
                     </div>
                     <div class="quick-view-body">
+                        <p><strong>Rental Type:</strong> ${getRentalTypes(rental)}</p>
                         <p><strong>Duration:</strong> ${calculateRentalDuration(rental)} day(s)</p>
                         <p><strong>Dates:</strong> ${getEventDateInfo(rental)}</p>
                         <p><strong>Transaction:</strong> ${rental.transactionCode || 'N/A'}</p>
@@ -786,7 +829,7 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
             
             // Add a unique identifier
-            quickView.id = 'active-quick-view';            // Calculate optimal position relative to page content
+            quickView.id = 'active-quick-view';// Calculate optimal position relative to page content
             const rect = targetElement.getBoundingClientRect();
             const pageContent = document.querySelector('.page-content');
             const pageContentRect = pageContent.getBoundingClientRect();
