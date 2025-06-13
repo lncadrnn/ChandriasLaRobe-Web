@@ -1848,6 +1848,19 @@
     min-height: 38px;
 }
 
+/* Cash change display */
+.cash-change-text {
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+    color: #155724;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+}
+
 /* Conditional field visibility */
 .payment-field-hidden {
     display: none !important;

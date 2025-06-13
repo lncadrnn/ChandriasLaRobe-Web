@@ -1276,15 +1276,28 @@ $(document).ready(function () {
         } else if ($paymentType.val() === "Full Payment") {
              $totalPayment[0].setCustomValidity(""); // Clear any previous validation
         }
-    });
-
-    // --- Payment Method and Status Logic ---
+    });    // --- Payment Method and Status Logic ---
     const $paymentMethod = $("#payment-method");
-    const $cashPaymentFields = $("#cash-payment-fields");
     const $digitalPaymentFields = $("#digital-payment-fields");
-    const $cashReceived = $("#cash-received");
-    const $changeDisplay = $("#change-display");
-    const $referenceNo = $("#reference-no");    // Payment method change handler
+    const $referenceNo = $("#reference-no");
+    const $cashChangeDisplay = $("#cash-change-display");
+
+    // Function to calculate and display change for cash payments
+    function calculateCashChange() {
+        if ($paymentMethod.val() === "Cash") {
+            const totalPayment = parseFloat($totalPayment.val()) || 0;
+            const rentalFee = parseFloat($rentalFeeInput.val().replace(/[^\d.]/g, "")) || 0;
+            
+            if (totalPayment > rentalFee) {
+                const change = totalPayment - rentalFee;
+                $cashChangeDisplay.text(`₱${change.toLocaleString()} Change`).show();
+            } else {
+                $cashChangeDisplay.hide();
+            }
+        }
+    }
+
+    // Payment method change handler
     $paymentMethod.on("change", function() {
         const method = $(this).val();
         
@@ -1294,37 +1307,28 @@ $(document).ready(function () {
         } else {
             $totalPayment.prop("disabled", true).val("");
             $remainingBalance.val("");
+            $cashChangeDisplay.hide();
         }
         
         if (method === "Cash") {
-            $cashPaymentFields.show();
             $digitalPaymentFields.hide();
             $referenceNo.val("CASH").prop("readonly", true);
+            // Show change display for cash payments
+            $cashChangeDisplay.show();
+            // Calculate change if total payment has value
+            calculateCashChange();
         } else if (method === "Gcash" || method === "Maya" || method === "GoTyme") {
-            $cashPaymentFields.hide();
             $digitalPaymentFields.show();
             $referenceNo.val("").prop("readonly", false);
+            $cashChangeDisplay.hide();
         } else {
-            $cashPaymentFields.hide();
             $digitalPaymentFields.hide();
             $referenceNo.val("").prop("readonly", false);
+            $cashChangeDisplay.hide();
         }
-    });
-
-    // Cash received calculation for change
-    $cashReceived.on("input", function() {
-        const received = parseFloat($(this).val()) || 0;
-        const totalPayment = parseFloat($totalPayment.val()) || 0;
-        const change = Math.max(received - totalPayment, 0);
-        $changeDisplay.text(`₱${change.toLocaleString()}`);
-    });    // Update change when total payment changes
+    });    // Update change when total payment changes for cash payments
     $totalPayment.on("input", function() {
-        if ($paymentMethod.val() === "Cash") {
-            const received = parseFloat($cashReceived.val()) || 0;
-            const totalPayment = parseFloat($(this).val()) || 0;
-            const change = Math.max(received - totalPayment, 0);
-            $changeDisplay.text(`₱${change.toLocaleString()}`);
-        }
+        calculateCashChange();
     });
 
     // Prevent total payment input when no payment method is selected
