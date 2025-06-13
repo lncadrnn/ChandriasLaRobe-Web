@@ -11,8 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let currentYear = currentDate.getFullYear();
         let rentalsData = [];
         let filteredStatus = 'all';
-        
-        // DOM elements
+          // DOM elements
         const calendarDays = document.getElementById('calendar-days');
         const currentMonthYear = document.getElementById('current-month-year');
         const prevMonthBtn = document.getElementById('prev-month');
@@ -23,6 +22,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const modalTitle = document.getElementById('modal-date-title');
         const rentalDetailsList = document.getElementById('rental-details-list');
         const closeModalBtn = document.querySelector('.close-modal');
+        
+        // Validate critical DOM elements
+        if (!modal) console.error('❌ Modal element not found: rental-details-modal');
+        if (!modalTitle) console.error('❌ Modal title element not found: modal-date-title');
+        if (!rentalDetailsList) console.error('❌ Rental details list element not found: rental-details-list');
+        if (!closeModalBtn) console.error('❌ Close modal button not found: .close-modal');
         
         // Month names
         const monthNames = [
@@ -130,10 +135,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 calendarContainer.appendChild(errorOverlay);
             }
         }
-        
-        function closeModal() {
-            modal.classList.remove('visible');
-            document.body.style.overflow = '';
+          function closeModal() {
+            console.log('🔒 closeModal called');
+            if (modal) {
+                modal.classList.remove('visible');
+                document.body.style.overflow = '';
+                console.log('✅ Modal closed');
+            }
         }
 
         // =============== TRANSACTION DATA FETCHING UTILITIES ===============
@@ -964,10 +972,9 @@ document.addEventListener("DOMContentLoaded", () => {
             quickView.querySelector('.btn-close-quick').addEventListener('click', (e) => {
                 e.stopPropagation();
                 closeQuickView();
-            });
-              quickView.querySelector('.btn-view-full').addEventListener('click', (e) => {
+            });              quickView.querySelector('.btn-view-full').addEventListener('click', (e) => {
                 e.stopPropagation();
-                closeQuickView();
+                console.log('🔍 View Full Details clicked');
                 
                 // Get the rental's event date
                 const rentalDate = rental.eventDate || new Date();
@@ -975,7 +982,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 const month = rentalDate.getMonth();
                 const year = rentalDate.getFullYear();
                 
-                showDayDetails(day, month, year, [rental]);
+                // Close quick view first, then show modal after a brief delay
+                closeQuickView();
+                
+                setTimeout(() => {
+                    showDayDetails(day, month, year, [rental]);
+                }, 200); // Small delay to ensure quick view is fully closed
             });
             
             // Prevent click events from bubbling up from the quick view
@@ -1006,8 +1018,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 }, 150);
             }
         }
-        
-        function showDayDetails(day, month, year, rentals) {
+          function showDayDetails(day, month, year, rentals) {
+            console.log('🔍 showDayDetails called:', { day, month, year, rentalsCount: rentals.length });
+            
+            // Ensure modal is found
+            if (!modal) {
+                console.error('❌ Modal element not found!');
+                return;
+            }
+            
+            // Close any existing quick view first
+            closeQuickView();
+            
             const dateStr = `${monthNames[month]} ${day}, ${year}`;
             modalTitle.textContent = `Rentals for ${dateStr}`;
             
@@ -1023,7 +1045,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
             
-            modal.classList.add('visible');
+            // Force remove any existing visible class first
+            modal.classList.remove('visible');
+            
+            // Use requestAnimationFrame to ensure the removal is processed
+            requestAnimationFrame(() => {
+                modal.classList.add('visible');
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+                console.log('✅ Modal should now be visible');
+            });
         }
         
         function createRentalDetailItem(rental) {
