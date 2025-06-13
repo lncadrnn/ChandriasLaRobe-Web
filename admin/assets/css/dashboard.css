@@ -658,6 +658,7 @@ tr:hover {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    color: white !important; /* Ensure white text color for headers */
 }
 
 .appointment-products-table td {
