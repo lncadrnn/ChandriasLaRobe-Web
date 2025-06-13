@@ -791,16 +791,17 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     });
                 }
-                
-                const productCategories = Array.from(types).join(', ') || 'Mixed Items';
+                  const productCategories = Array.from(types).join(', ');
                 
                 // Combine rental type with product categories
                 if (rentalTypeInfo && productCategories) {
                     return `${rentalTypeInfo} • ${productCategories}`;
                 } else if (rentalTypeInfo) {
                     return rentalTypeInfo;
-                } else {
+                } else if (productCategories) {
                     return productCategories;
+                } else {
+                    return 'Rental';
                 }
             }
             
@@ -898,16 +899,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.stopPropagation();
                 closeQuickView();
             });
-            
-            quickView.querySelector('.btn-view-full').addEventListener('click', (e) => {
+              quickView.querySelector('.btn-view-full').addEventListener('click', (e) => {
                 e.stopPropagation();
                 closeQuickView();
-                showDayDetails(
-                    new Date().getDate(),
-                    new Date().getMonth(),
-                    new Date().getFullYear(),
-                    [rental]
-                );
+                
+                // Get the rental's event date
+                const rentalDate = rental.eventDate || new Date();
+                const day = rentalDate.getDate();
+                const month = rentalDate.getMonth();
+                const year = rentalDate.getFullYear();
+                
+                showDayDetails(day, month, year, [rental]);
             });
             
             // Prevent click events from bubbling up from the quick view
