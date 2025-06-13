@@ -724,6 +724,10 @@ select:disabled {
     overflow-x: hidden; /* Prevent horizontal scrollbar */
 }
 
+.table-container.show {
+    display: flex;
+}
+
 .table-wrapper {
     flex: 1;
     border-radius: 16px;
@@ -2343,6 +2347,22 @@ select:disabled {
   0% { transform: scale(0.95); opacity: 0; }
   70% { transform: scale(1.02); }
   100% { transform: scale(1); opacity: 1; }
+}
+
+/* Confirmation Icon Styles */
+.confirmation-icon i {
+    font-size: 3rem;
+    color: #28a745;
+    margin-bottom: 1rem;
+}
+
+/* Modal display styles */
+.modal-overlay {
+    display: none;
+}
+
+.modal-overlay.show {
+    display: flex;
 }
 
 /* Cancel Rental Button */

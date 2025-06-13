@@ -90,6 +90,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 closeCancelRentalModal();
             } else if (e.target.id === 'mark-complete-modal') {
                 closeMarkCompleteModal();
+            } else if (e.target.id === 'add-fee-modal') {
+                if (window.closeAddFeeModal) {
+                    closeAddFeeModal();
+                }
             }
         }
         
@@ -173,16 +177,15 @@ function updateTransactionCount() {
 // Switch between card and table views
 function switchView(view) {
     currentView = view;
-    
-    if (view === 'cards') {
+      if (view === 'cards') {
         cardsContainer.style.display = 'block';
-        tableContainer.style.display = 'none';
+        tableContainer.classList.remove('show');
         cardViewBtn.classList.add('active');
         tableViewBtn.classList.remove('active');
         renderTransactionCards();
     } else {
         cardsContainer.style.display = 'none';
-        tableContainer.style.display = 'block';
+        tableContainer.classList.add('show');
         cardViewBtn.classList.remove('active');
         tableViewBtn.classList.add('active');
         renderTransactionTable();
@@ -769,10 +772,9 @@ async function showTransactionDetails(transactionId) {
             </div>
         `;
     }
-    
-    const modal = document.getElementById('transaction-details-modal');
+      const modal = document.getElementById('transaction-details-modal');
     if (modal) {
-        modal.style.display = 'flex';
+        modal.classList.add('show');
         document.body.style.overflow = 'hidden';
     }
 }
@@ -781,7 +783,7 @@ async function showTransactionDetails(transactionId) {
 function closeTransactionDetailsModal() {
     const modal = document.getElementById('transaction-details-modal');
     if (modal) {
-        modal.style.display = 'none';
+        modal.classList.remove('show');
         document.body.style.overflow = '';
     }
 }
@@ -879,14 +881,14 @@ function editTransaction(transactionId) {
 // Show edit modal
 function showEditModal() {
     const modal = document.getElementById('edit-modal');
-    modal.style.display = 'flex';
+    modal.classList.add('show');
     document.body.style.overflow = 'hidden';
 }
 
 // Close edit modal
 function closeEditModal() {
     const modal = document.getElementById('edit-modal');
-    modal.style.display = 'none';
+    modal.classList.remove('show');
     document.body.style.overflow = '';
     currentEditingTransaction = null;
 }
@@ -992,7 +994,7 @@ function deleteTransaction(transactionId) {
 // Show delete modal
 function showDeleteModal() {
     const modal = document.getElementById('delete-modal');
-    modal.style.display = 'flex';
+    modal.classList.add('show');
     document.body.style.overflow = 'hidden';
     
     // Reset confirmation input
@@ -1004,7 +1006,7 @@ function showDeleteModal() {
 // Close delete modal
 function closeDeleteModal() {
     const modal = document.getElementById('delete-modal');
-    modal.style.display = 'none';
+    modal.classList.remove('show');
     document.body.style.overflow = '';
     currentDeletingTransaction = null;
 }
@@ -1499,12 +1501,10 @@ function showCancelRentalModal(transactionId) {
     document.getElementById('cancel-customer-name').textContent = transaction.fullName || 'Unknown';
     document.getElementById('cancel-transaction-code').textContent = transaction.transactionCode || transaction.id.substring(0, 8);
     document.getElementById('cancel-event-date').textContent = eventDateDisplay;
-    document.getElementById('cancel-total-amount').textContent = `₱${totalPayment.toLocaleString()}`;
-
-    // Show modal
+    document.getElementById('cancel-total-amount').textContent = `₱${totalPayment.toLocaleString()}`;    // Show modal
     const modal = document.getElementById('cancel-rental-modal');
     if (modal) {
-        modal.style.display = 'flex';
+        modal.classList.add('show');
         document.body.style.overflow = 'hidden';
     }
 }
@@ -1513,7 +1513,7 @@ function showCancelRentalModal(transactionId) {
 function closeCancelRentalModal() {
     const modal = document.getElementById('cancel-rental-modal');
     if (modal) {
-        modal.style.display = 'none';
+        modal.classList.remove('show');
         document.body.style.overflow = '';
     }
     currentCancelTransaction = null;
@@ -1600,12 +1600,10 @@ function showMarkCompleteModal(transactionId) {
     document.getElementById('complete-customer-name').textContent = transaction.fullName || 'Unknown';
     document.getElementById('complete-transaction-code').textContent = transaction.transactionCode || transaction.id.substring(0, 8);
     document.getElementById('complete-event-date').textContent = eventDateDisplay;
-    document.getElementById('complete-total-amount').textContent = `₱${totalPayment.toLocaleString()}`;
-
-    // Show modal
+    document.getElementById('complete-total-amount').textContent = `₱${totalPayment.toLocaleString()}`;    // Show modal
     const modal = document.getElementById('mark-complete-modal');
     if (modal) {
-        modal.style.display = 'flex';
+        modal.classList.add('show');
         document.body.style.overflow = 'hidden';
     }
 }
@@ -1614,7 +1612,7 @@ function showMarkCompleteModal(transactionId) {
 function closeMarkCompleteModal() {
     const modal = document.getElementById('mark-complete-modal');
     if (modal) {
-        modal.style.display = 'none';
+        modal.classList.remove('show');
         document.body.style.overflow = '';
     }
     currentCompleteTransaction = null;
@@ -1885,8 +1883,41 @@ async function undoCompletion(transactionId) {
     }
 }
 
-// Make functions globally accessible for HTML onclick handlers
+// Add click-outside-to-close functionality for all modals
+document.addEventListener('click', function(event) {
+    // Check if the click is on a modal overlay (not the modal content)
+    if (event.target.classList.contains('modal-overlay')) {
+        const modalId = event.target.id;
+        
+        // Close the appropriate modal based on its ID
+        switch(modalId) {
+            case 'transaction-details-modal':
+                closeTransactionDetailsModal();
+                break;
+            case 'edit-modal':
+                closeEditModal();
+                break;
+            case 'delete-modal':
+                closeDeleteModal();
+                break;
+            case 'cancel-rental-modal':
+                closeCancelRentalModal();
+                break;
+            case 'mark-complete-modal':
+                closeMarkCompleteModal();
+                break;
+            case 'add-fee-modal':
+                if (window.closeAddFeeModal) {
+                    closeAddFeeModal();
+                }
+                break;
+        }
+    }
+});
+
+// Make sure all modal close functions are globally accessible
+window.closeTransactionDetailsModal = closeTransactionDetailsModal;
+window.closeEditModal = closeEditModal;
+window.closeDeleteModal = closeDeleteModal;
 window.closeCancelRentalModal = closeCancelRentalModal;
-window.confirmCancelRental = confirmCancelRental;
 window.closeMarkCompleteModal = closeMarkCompleteModal;
-window.confirmMarkComplete = confirmMarkComplete;

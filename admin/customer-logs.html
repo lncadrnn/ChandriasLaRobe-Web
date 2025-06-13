@@ -212,7 +212,7 @@
                 </div>
                 
                 <!-- Table View -->
-                <div class="table-container" id="table-container" style="display: none;">
+                <div class="table-container" id="table-container">
                     <div class="table-wrapper">
                         <table id="rental-history-table">
                             <thead>
@@ -239,7 +239,7 @@
         </div>
     
     <!-- Transaction Details Modal -->
-    <div id="transaction-details-modal" class="modal-overlay" style="display: none;">
+    <div id="transaction-details-modal" class="modal-overlay">
         <div class="modal-content transaction-details-content">
             <div class="modal-header">
                 <h2><i class='bx bx-receipt'></i> Transaction Details</h2>
@@ -254,7 +254,7 @@
     </div>
     
     <!-- Edit Transaction Modal -->
-    <div id="edit-modal" class="modal-overlay" style="display: none;">
+    <div id="edit-modal" class="modal-overlay">
         <div class="modal-content edit-modal-content">
             <div class="modal-header">
                 <h2>Edit Transaction</h2>
@@ -373,7 +373,7 @@
     </div>
     
     <!-- Delete Confirmation Modal -->
-    <div id="delete-modal" class="modal-overlay" style="display: none;">
+    <div id="delete-modal" class="modal-overlay">
         <div class="modal-content delete-modal-content">
             <div class="modal-header delete-header">
                 <h2><i class='bx bx-error-circle'></i> Confirm Deletion</h2>
@@ -459,32 +459,33 @@
       <!-- EXTERNAL SCRIPT -->
     <script src="./assets/js/spinners-admin.js"></script>
     <script src="./assets/js/admin-layout.js"></script>
-    <script src="./assets/js/admin-layout-mob.js"></script>    <script type="module" src="./assets/js/customer-logs-service-new.js"></script>
+    <script src="./assets/js/admin-layout-mob.js"></script>
+    <script type="module" src="./assets/js/customer-logs-service-new.js"></script>
 
     <!-- Cancel Rental Confirmation Modal -->
-    <div id="cancel-rental-modal" class="modal-overlay" style="display: none;">
+    <div id="cancel-rental-modal" class="modal-overlay">
         <div class="modal-content delete-modal-content">
-            <div class="modal-header delete-header" style="background: #ffc107;">
+            <div class="modal-header cancel-header">
                 <h2><i class='bx bx-error-circle'></i> Cancel Rental</h2>
                 <button class="close-btn" onclick="closeCancelRentalModal()">
                     <i class='bx bx-x'></i>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="warning-section" style="background: #fff3cd; border-color: #ffeaa7;">
+                <div class="warning-section cancel-warning">
                     <div class="warning-icon">
-                        <i class='bx bx-error-circle' style="color: #856404;"></i>
+                        <i class='bx bx-error-circle cancel-warning-icon'></i>
                     </div>
                     <div class="warning-content">
-                        <h3 style="color: #856404;">⚠️ Are you sure you want to cancel this rental?</h3>
-                        <p style="color: #856404;">This action will:</p>
-                        <ul class="warning-list" style="color: #856404;">
+                        <h3 class="cancel-warning-title">⚠️ Are you sure you want to cancel this rental?</h3>
+                        <p class="cancel-warning-text">This action will:</p>
+                        <ul class="warning-list cancel-warning-list">
                             <li>Cancel the upcoming rental booking</li>
                             <li>Free up the reserved items for other customers</li>
                             <li>Change the rental status to "Cancelled"</li>
                             <li>Record the cancellation date</li>
                         </ul>
-                        <p class="final-warning" style="background: #f8d7da; color: #721c24 !important;">
+                        <p class="final-warning cancel-final-warning">
                             <strong>This action can be undone later if needed!</strong>
                         </p>
                     </div>
@@ -504,7 +505,7 @@
                     <button type="button" class="btn-secondary" onclick="closeCancelRentalModal()">
                         <i class='bx bx-x'></i> Keep Rental
                     </button>
-                    <button type="button" class="btn-danger" id="confirm-cancel-rental-btn" onclick="confirmCancelRental()" style="background: #ffc107; color: #212529;">
+                    <button type="button" class="btn-cancel" id="confirm-cancel-rental-btn" onclick="confirmCancelRental()">
                         <i class='bx bx-x-circle'></i> Cancel Rental
                     </button>
                 </div>
@@ -513,7 +514,7 @@
     </div>
 
     <!-- Mark as Complete Confirmation Modal -->
-    <div id="mark-complete-modal" class="modal-overlay" style="display: none;">
+    <div id="mark-complete-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
                 <h2><i class='bx bx-check-circle'></i> Mark as Complete</h2>
@@ -524,7 +525,7 @@
             <div class="modal-body">
                 <div class="confirmation-section">
                     <div class="confirmation-icon">
-                        <i class='bx bx-check-circle' style="font-size: 3rem; color: #28a745; margin-bottom: 1rem;"></i>
+                        <i class='bx bx-check-circle'></i>
                     </div>
                     <div class="confirmation-content">
                         <h3>✅ Mark this rental as completed?</h3>
