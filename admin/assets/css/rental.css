@@ -2602,11 +2602,19 @@ input[type="date"].invalid-date {
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 1em;
+  transition: border-color 0.2s ease;
+}
+#add-fee-modal input[type="number"]:focus,
+#add-fee-modal select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(255, 126, 172, 0.2);
 }
 #add-fee-modal .modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: 0.7em;
+  padding-bottom: 1rem;
 }
 #add-fee-modal .add-btn {
   background: var(--primary-color);
@@ -2616,22 +2624,33 @@ input[type="date"].invalid-date {
   padding: 0.5em 1.2em;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
+  transform: translateY(0);
+}
+#add-fee-modal .add-btn:hover {
+  background: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 126, 172, 0.3);
 }
 #add-fee-modal .add-btn:disabled {
   background: #ccc;
   cursor: not-allowed;
+  transform: translateY(0);
+  box-shadow: none;
 }
 #add-fee-modal .cancel-btn {
-  background: #eee;
-  color: #333;
+  background: #f8a5c2;
+  color: #fff;
   border: none;
   border-radius: 6px;
   padding: 0.5em 1.2em;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
+  transform: translateY(0);
 }
 #add-fee-modal .cancel-btn:hover {
-  background: #ddd;
+  background: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 126, 172, 0.3);
 }
