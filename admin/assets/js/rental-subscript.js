@@ -2483,5 +2483,6 @@ $(document).ready(function () {
     $('#fixed-event-date').prop('disabled', true);
     
     console.log('Rental subscript initialization complete - date fields initially disabled');
+
 });
 

@@ -824,7 +824,6 @@
   font-size: 1rem;
   font-weight: 500;
   color: #333;
-  letter-spacing: 0.2px;
 }
 
 /* Selected state */
@@ -2352,4 +2351,168 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
 input[type="date"].invalid-date {
     border-color: #ff4757 !important;
     background-color: #fff5f5;
+}
+
+.order-header-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.add-fee-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.add-fee-btn:hover {
+    background: hsl(346, 100%, 68%);
+    transform: translateY(-1px);
+}
+
+.add-fee-btn i {
+    font-size: 1rem;
+}
+
+/* ====== ADDITIONAL FEE MODAL STYLES ====== */
+#additional-fee-modal .modal-content {
+  width: 100%;
+  max-width: 450px;
+  height: auto;
+  max-height: 90vh;
+  padding: 0;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  border: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#additional-fee-modal .modal-header {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color) 100%);
+  color: white;
+  padding: 2rem 2rem 1.5rem;
+  position: relative;
+  text-align: center;
+}
+
+#additional-fee-modal h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  position: relative;
+  z-index: 1;
+}
+
+#additional-fee-modal .close-modal {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  z-index: 2;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+#additional-fee-modal .close-modal:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+#additional-fee-modal .modal-body {
+  padding: 2rem;
+  background: white;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+#additional-fee-modal .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+#additional-fee-modal .form-group label {
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+}
+
+#additional-fee-modal .form-group input {
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: #f8f9fa;
+}
+
+#additional-fee-modal .form-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(255, 126, 172, 0.1);
+}
+
+#additional-fee-modal .modal-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+#additional-fee-modal .cancel-btn {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#additional-fee-modal .cancel-btn:hover {
+  background: #5a6268;
+  transform: translateY(-1px);
+}
+
+#additional-fee-modal .add-btn {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color) 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 12px rgba(255, 126, 172, 0.25);
+}
+
+#additional-fee-modal .add-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(255, 126, 172, 0.3);
+}
+
+#additional-fee-modal .add-btn:active {
+  transform: translateY(0);
 }
