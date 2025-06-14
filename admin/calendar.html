@@ -236,11 +236,14 @@
                 <span class="text">Settings</span>
             </a>
         </nav>
-        
-        <!-- Firebase Scripts -->
+          <!-- Firebase Scripts -->
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
         <script src="./firebase-config.js"></script>
+        
+        <!-- Auth Guard - Must be loaded early -->
+        <script type="module" src="./assets/js/auth-guard.js"></script>
+        
           <!-- JQUERY CDN -->
         <script
             src="https://code.jquery.com/jquery-3.7.1.js"
