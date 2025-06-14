@@ -35,15 +35,15 @@
 
 .dashboard-card {
     background: white;
-    border-radius: 12px;
-    padding: 12px 16px; /* Reduced padding from 20px to 12px/16px */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    transition: var(--transition);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
     border: 1px solid var(--border-color);
     position: relative;
     overflow: hidden;
     min-width: 0; /* Allow cards to shrink below content size */
-    height: 120px; /* Set fixed height to make cards more compact */
+    height: 140px; /* Slightly taller for better spacing */
     display: flex;
     flex-direction: column;
 }
@@ -55,14 +55,25 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, var(--primary-color), #ff6b9d);
     opacity: 0;
     transition: var(--transition);
 }
 
+.total-rentals::before {
+    background: linear-gradient(90deg, #4e54c8, #8f94fb);
+}
+
+.total-appointments::before {
+    background: linear-gradient(90deg, #11998e, #38ef7d);
+}
+
+.total-products::before {
+    background: linear-gradient(90deg, #f857a6, #ff5858);
+}
+
 .dashboard-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-hover);
+    transform: translateY(-6px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
 }
 
 .dashboard-card:hover::before {
@@ -72,60 +83,108 @@
 .card-header {
     display: flex;
     align-items: center;
-    gap: 8px; /* Reduced gap from 12px to 8px */
-    margin-bottom: 8px; /* Reduced margin from 16px to 8px */
+    gap: 12px;
+    margin-bottom: 12px;
+    transition: transform 0.3s ease;
+}
+
+.dashboard-card:hover .card-header {
+    transform: translateY(-3px);
 }
 
 .card-icon {
-    width: 36px; /* Reduced from 44px to 36px */
-    height: 36px; /* Reduced from 44px to 36px */
-    border-radius: 10px; /* Slightly smaller border radius */
+    width: 48px; /* Increased size for more impact */
+    height: 48px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem; /* Reduced from 1.4rem to 1.2rem */
+    font-size: 1.6rem; /* Larger icon size */
     color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.active-rentals .card-icon {
-    background: var(--primary-color);
+.card-icon::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transform: scale(0);
+    transition: transform 0.5s ease;
 }
 
-.active-appointments .card-icon {
-    background: var(--primary-color);
+.dashboard-card:hover .card-icon::before {
+    transform: scale(1);
+}
+
+.total-rentals .card-icon {
+    background: linear-gradient(135deg, #4e54c8, #8f94fb);
+}
+
+.total-appointments .card-icon {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
 }
 
 .total-products .card-icon {
-    background: var(--primary-color);
+    background: linear-gradient(135deg, #f857a6, #ff5858);
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.8rem; /* Slightly larger icon specifically for products */
 }
 
 .card-title {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-light);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #6b7280;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
 }
 
 .card-content {
     display: flex;
     flex-direction: column;
-    gap: 4px; /* Reduced gap from 8px to 4px */
     flex: 1;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 .card-main {
-    font-size: 2.5rem; /* Reduced from 3.5rem to 2.5rem */
+    font-size: 2.8rem;
     font-weight: 700;
-    color: var(--text-dark);
+    color: #2d3748;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     width: 100%;
-    line-height: 1; /* Ensure tight line height */
+    line-height: 1;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.dashboard-card:hover .card-main {
+    transform: scale(1.05);
+}
+
+.total-rentals .card-main {
+    color: #4e54c8;
+}
+
+.total-appointments .card-main {
+    color: #11998e;
+}
+
+.total-products .card-main {
+    color: #f857a6;
 }
 
 .card-main span {
