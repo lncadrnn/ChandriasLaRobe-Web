@@ -47,15 +47,17 @@
 
 /* Status-specific colors */
 .stat-upcoming .stat-value { 
-    color: #3b82f6; 
+    color: #f59e0b; 
+
 }
 
 .stat-ongoing .stat-value { 
-    color: #f59e0b; 
+    color: #10b981; 
+
 }
 
 .stat-completed .stat-value { 
-    color: #10b981; 
+    color: #3b82f6; 
 }
 
 .stat-overdue .stat-value { 

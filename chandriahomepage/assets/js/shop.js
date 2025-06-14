@@ -35,6 +35,7 @@ $(document).ready(function () {
     let currentSort = 'default';
     let searchQuery = '';
     let dateFilter = '';
+    let categoryFilter = '';
       // Initialize shop
     init();
     
@@ -183,6 +184,9 @@ $(document).ready(function () {
         $("#clear-search").on("click", clearSearch);        // Date filter functionality
         $("#date-filter").on("change", handleDateFilter);
         $("#clear-date").on("click", clearDateFilter);
+
+        // Category filter functionality
+        $("#category-filter").on("change", handleCategoryFilter);
 
         // Sort dropdown
         $("#sort-filter-btn").on("click", toggleSortDropdown);
@@ -449,6 +453,12 @@ $(document).ready(function () {
         dateFilter = "";
         applyFiltersAndSort();
     }
+    
+    // Category filter functionality
+    function handleCategoryFilter(e) {
+        categoryFilter = $(this).val().toLowerCase().trim();
+        applyFiltersAndSort();
+    }
 
     // Initialize date filter with restrictions
     function initializeDateFilter() {
@@ -530,6 +540,14 @@ $(document).ready(function () {
             // Example: productsToShow = productsToShow.filter(product => 
             //     product.created_date && product.created_date.includes(dateFilter)
             // );
+        }
+        
+        // Apply category filter
+        if (categoryFilter) {
+            console.log(`Category filter applied: ${categoryFilter}`);
+            productsToShow = productsToShow.filter(product => 
+                (product.category && product.category.toLowerCase().includes(categoryFilter))
+            );
         }
         
         // Apply sorting
