@@ -37,6 +37,7 @@
         <link rel="stylesheet" href="chandriahomepage/assets/css/index-quick-view-override.css" />
         <link rel="stylesheet" href="chandriahomepage/assets/css/footer-fixes.css" />
         <link rel="stylesheet" href="chandriahomepage/assets/css/chatbot.css" />
+        <link rel="stylesheet" href="chandriahomepage/assets/css/size-chart.css" />
 
         <!-- Firebase SDK -->
         <script type="module" src="admin/firebase-config.js"></script>
@@ -88,6 +89,9 @@
                         </li>
                         <li class="nav-item">
                             <a href="#products" class="nav-link smooth-scroll">Products</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#size-chart" class="nav-link smooth-scroll">Size Charts</a>
                         </li>
                         <li class="nav-item">
                             <a href="#contact" class="nav-link smooth-scroll">About</a>
@@ -527,6 +531,200 @@
                 </div>
             </section>
 
+            <!-------------------------------- SIZE CHART SECTION -------------------------------->
+            <section class="size-chart-section section" id="size-chart">
+                <div class="container">
+                    <!-- Section Header -->
+                    <div class="size-chart-header">
+                        <h2 class="size-chart-title">Size <span>Charts</span></h2>
+                        <p class="size-chart-subtitle">Find your perfect fit with our comprehensive size guides for gowns and accessories</p>
+                    </div>
+
+                    <!-- Size Chart Tabs -->
+                    <div class="size-chart-tabs">
+                        <button class="size-chart-tab active" data-target="gowns-chart">Gowns</button>
+                        <button class="size-chart-tab" data-target="evening-wear-chart">Evening Wear</button>
+                        <button class="size-chart-tab" data-target="accessories-chart">Accessories</button>
+                    </div>
+
+                    <!-- Size Chart Content -->
+                    <div class="size-chart-content">
+                        <!-- Gowns Chart -->
+                        <div id="gowns-chart" class="size-chart-tab-content active">
+                            <div class="size-chart-table-container">
+                                <table class="size-chart-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Size</th>
+                                            <th>Bust (inches)</th>
+                                            <th>Waist (inches)</th>
+                                            <th>Hips (inches)</th>
+                                            <th>US Size Equivalent</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>XS</td>
+                                            <td>31-32</td>
+                                            <td>23-24</td>
+                                            <td>33-34</td>
+                                            <td>0-2</td>
+                                        </tr>
+                                        <tr>
+                                            <td>S</td>
+                                            <td>33-34</td>
+                                            <td>25-26</td>
+                                            <td>35-36</td>
+                                            <td>4-6</td>
+                                        </tr>
+                                        <tr>
+                                            <td>M</td>
+                                            <td>35-36</td>
+                                            <td>27-28</td>
+                                            <td>37-38</td>
+                                            <td>8-10</td>
+                                        </tr>
+                                        <tr>
+                                            <td>L</td>
+                                            <td>37-39</td>
+                                            <td>29-31</td>
+                                            <td>39-41</td>
+                                            <td>12-14</td>
+                                        </tr>
+                                        <tr>
+                                            <td>XL</td>
+                                            <td>40-42</td>
+                                            <td>32-34</td>
+                                            <td>42-44</td>
+                                            <td>16-18</td>
+                                        </tr>
+                                        <tr>
+                                            <td>XXL</td>
+                                            <td>43-45</td>
+                                            <td>35-37</td>
+                                            <td>45-47</td>
+                                            <td>20-22</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="size-chart-measurement-note">
+                                <h4>How to Measure</h4>
+                                <p><strong>Bust:</strong> Measure around the fullest part of your bust, keeping the tape level.</p>
+                                <p><strong>Waist:</strong> Measure around your natural waistline, keeping the tape comfortably loose.</p>
+                                <p><strong>Hips:</strong> Measure around the fullest part of your hips, approximately 8" below your waistline.</p>
+                            </div>
+                        </div>
+
+                        <!-- Evening Wear Chart -->
+                        <div id="evening-wear-chart" class="size-chart-tab-content">
+                            <div class="size-chart-table-container">
+                                <table class="size-chart-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Size</th>
+                                            <th>Bust (inches)</th>
+                                            <th>Waist (inches)</th>
+                                            <th>Hips (inches)</th>
+                                            <th>Length (inches)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>XS</td>
+                                            <td>31-32</td>
+                                            <td>23-24</td>
+                                            <td>33-34</td>
+                                            <td>58-60</td>
+                                        </tr>
+                                        <tr>
+                                            <td>S</td>
+                                            <td>33-34</td>
+                                            <td>25-26</td>
+                                            <td>35-36</td>
+                                            <td>60-62</td>
+                                        </tr>
+                                        <tr>
+                                            <td>M</td>
+                                            <td>35-36</td>
+                                            <td>27-28</td>
+                                            <td>37-38</td>
+                                            <td>62-64</td>
+                                        </tr>
+                                        <tr>
+                                            <td>L</td>
+                                            <td>37-39</td>
+                                            <td>29-31</td>
+                                            <td>39-41</td>
+                                            <td>64-66</td>
+                                        </tr>
+                                        <tr>
+                                            <td>XL</td>
+                                            <td>40-42</td>
+                                            <td>32-34</td>
+                                            <td>42-44</td>
+                                            <td>66-68</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="size-chart-measurement-note">
+                                <h4>Evening Wear Fitting Tips</h4>
+                                <p>For formal evening wear, we recommend selecting a size based on your largest measurement (bust, waist, or hips). Our in-store alterations can then tailor the garment to your exact measurements for a perfect fit.</p>
+                                <p>For floor-length gowns, please also consider your height and planned heel height.</p>
+                            </div>
+                        </div>
+
+                        <!-- Accessories Chart -->
+                        <div id="accessories-chart" class="size-chart-tab-content">
+                            <div class="size-chart-table-container">
+                                <table class="size-chart-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Accessory Type</th>
+                                            <th>Small</th>
+                                            <th>Medium</th>
+                                            <th>Large</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Gloves (Hand Circumference)</td>
+                                            <td>6-7 inches</td>
+                                            <td>7-8 inches</td>
+                                            <td>8-9 inches</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Headpieces (Head Circumference)</td>
+                                            <td>21-22 inches</td>
+                                            <td>22-23 inches</td>
+                                            <td>23-24 inches</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Necklaces (Length)</td>
+                                            <td>16 inches</td>
+                                            <td>18 inches</td>
+                                            <td>20 inches</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Belts (Waist)</td>
+                                            <td>23-27 inches</td>
+                                            <td>28-32 inches</td>
+                                            <td>33-37 inches</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="size-chart-measurement-note">
+                                <h4>Accessory Sizing Notes</h4>
+                                <p>Most of our accessories are adjustable to ensure a comfortable fit. For custom accessories or specific sizing questions, please contact our styling team.</p>
+                                <p>For belts, measure where you plan to wear the belt (natural waist, low waist, or hips).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-------------------------------- MODERN CONTACT & BOOKING SECTION -------------------------------->
             <section class="contact-booking section" id="contact">
                 <div class="container">
@@ -870,7 +1068,8 @@
         <script type="module" src="chandriahomepage/assets/js/auth-modal.js"></script>
         <script type="module" src="./chandriahomepage/assets/js/wishlist-firebase.js"></script>
         <script type="module" src="./chandriahomepage/assets/js/index.js"></script>
-                <script type="module" src="./chandriahomepage/assets/js/chatbot/chatbot-init.js"></script>
+        <script type="module" src="./chandriahomepage/assets/js/chatbot/chatbot-init.js"></script>
+        <script src="./chandriahomepage/assets/js/size-chart.js"></script>
 
     </body>
 </html>
