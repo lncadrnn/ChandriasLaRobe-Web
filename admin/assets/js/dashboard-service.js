@@ -78,9 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Update time every minute
     updateDateTime();
-    setInterval(updateDateTime, 60000);
-
-    // Fetch transactions from Firebase
+    setInterval(updateDateTime, 60000);    // Fetch transactions from Firebase
     async function fetchTransactions() {
         try {
             console.log("Fetching transactions from Firebase...");
@@ -143,6 +141,30 @@ document.addEventListener("DOMContentLoaded", () => {
                 };
             });        } catch (error) {
             console.error("Error fetching transactions:", error);
+            return [];
+        }
+    }
+
+    // Fetch all transactions from Firebase for counting purposes
+    async function fetchAllTransactions() {
+        try {
+            console.log("Fetching all transactions for counting...");
+            
+            // Check if Firebase is available
+            if (!db) {
+                throw new Error("Firebase database not initialized");
+            }
+            
+            const snapshot = await db.collection("transaction").get();
+            
+            console.log("Found", snapshot.docs.length, "total transactions");
+            
+            return snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+        } catch (error) {
+            console.error("Error fetching all transactions:", error);
             return [];
         }
     }
@@ -618,42 +640,37 @@ document.addEventListener("DOMContentLoaded", () => {
     async function updateDashboardCards() {
         try {
             // Show loading state for cards
-            document.getElementById('active-rentals-count').innerHTML = '<i class="bx bx-loader-alt bx-spin"></i>';
-            document.getElementById('active-appointments-count').innerHTML = '<i class="bx bx-loader-alt bx-spin"></i>';
-            document.getElementById('total-products-count').innerHTML = '<i class="bx bx-loader-alt bx-spin"></i>';
-
-            // Ensure rentals data is loaded first
+            document.getElementById('total-rentals-count').innerHTML = '<i class="bx bx-loader-alt bx-spin"></i>';
+            document.getElementById('total-appointments-count').innerHTML = '<i class="bx bx-loader-alt bx-spin"></i>';
+            document.getElementById('total-products-count').innerHTML = '<i class="bx bx-loader-alt bx-spin"></i>';            // Ensure rentals data is loaded first
             if (!rentals || rentals.length === 0) {
                 console.log("Loading rentals for dashboard cards...");
                 rentals = await fetchTransactions();
             }
 
-            // Update Active Rentals count (Ongoing and Upcoming transactions)
-            const activeRentalsCount = rentals.filter(rental => 
-                rental.status === 'Ongoing' || rental.status === 'Upcoming'
-            ).length;
-            document.getElementById('active-rentals-count').textContent = activeRentalsCount;
+            // Update Total Rentals count (all transactions in the system)
+            const allTransactions = await fetchAllTransactions();
+            const totalRentalsCount = allTransactions.length;
+            document.getElementById('total-rentals-count').textContent = totalRentalsCount;// Update Total Appointments count (all appointments in the system)
+            const allAppointments = await fetchAllAppointments();
+            const totalAppointmentsCount = allAppointments.length;
+            document.getElementById('total-appointments-count').textContent = totalAppointmentsCount;
 
-            // Update Active Appointments count
-            const appointments = await fetchAppointments();
-            const activeAppointmentsCount = appointments.length;
-            document.getElementById('active-appointments-count').textContent = activeAppointmentsCount;
-
-            // Update Total Products count
+            // Update Total Products count (all products in inventory)
             const productsSnapshot = await db.collection("products").get();
             const totalProductsCount = productsSnapshot.size;
             document.getElementById('total-products-count').textContent = totalProductsCount;
 
             console.log(`✅ Dashboard Cards Updated:`);
-            console.log(`📦 Active Rentals: ${activeRentalsCount}`);
-            console.log(`📅 Active Appointments: ${activeAppointmentsCount}`);
+            console.log(`📦 Total Rentals: ${totalRentalsCount}`);
+            console.log(`📅 Total Appointments: ${totalAppointmentsCount}`);
             console.log(`👔 Total Products: ${totalProductsCount}`);
 
         } catch (error) {
             console.error("Error updating dashboard cards:", error);
             // Set default values if there's an error
-            document.getElementById('active-rentals-count').textContent = '0';
-            document.getElementById('active-appointments-count').textContent = '0';
+            document.getElementById('total-rentals-count').textContent = '0';
+            document.getElementById('total-appointments-count').textContent = '0';
             document.getElementById('total-products-count').textContent = '0';
         }
     }    // Appointments Functions
@@ -675,6 +692,26 @@ document.addEventListener("DOMContentLoaded", () => {
             }));
         } catch (error) {
             console.error("Error fetching appointments:", error);
+            return [];
+        }
+    }
+
+    // Fetch all appointments for counting purposes
+    async function fetchAllAppointments() {
+        try {
+            // Check if Firebase is available
+            if (!db) {
+                throw new Error("Firebase database not initialized");
+            }
+            
+            const snapshot = await db.collection("appointments").get();
+            
+            return snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+        } catch (error) {
+            console.error("Error fetching all appointments:", error);
             return [];
         }
     }async function renderAppointments() {
