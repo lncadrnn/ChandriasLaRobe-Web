@@ -713,11 +713,9 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('total-rentals-count').textContent = totalRentalsCount;// Update Total Appointments count (all appointments in the system)
             const allAppointments = await fetchAllAppointments();
             const totalAppointmentsCount = allAppointments.length;
-            document.getElementById('total-appointments-count').textContent = totalAppointmentsCount;
-
-            // Update Total Products count (all products in inventory)
+            document.getElementById('total-appointments-count').textContent = totalAppointmentsCount;            // Update Total Products count (all products in inventory)
             const productsSnapshot = await db.collection("products").get();
-            const totalProductsCount = productsSnapshot.size;
+            const totalProductsCount = productsSnapshot.size - 1; // Subtracting 1 from total count as requested
             document.getElementById('total-products-count').textContent = totalProductsCount;
 
             console.log(`✅ Dashboard Cards Updated:`);
