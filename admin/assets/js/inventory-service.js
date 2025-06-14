@@ -132,10 +132,9 @@ $(document).ready(function () {
                         data
                     );
                     return;
-                }
-                // Create the card HTML
+                }                // Create the card HTML
                 const card = $(`
-                  <article class="card_article card">
+                  <article class="card_article card" data-category="${data.category.toLowerCase()}">
                     <div class="card_data">
                         <span
                             class="card_color"
@@ -971,11 +970,9 @@ $(document).ready(function () {
                         data
                     );
                     return;
-                }
-
-                // Create card HTML
+                }                // Create card HTML
                 const card = $(`
-                <article class="card_article card">
+                <article class="card_article card" data-category="accessory">
                     <div class="card_data">
                         <img
                             src="${data.imageUrl}"
