@@ -92,12 +92,20 @@ document.addEventListener('DOMContentLoaded', function() {
     if (editForm) {
         editForm.addEventListener('submit', handleEditSubmit);
     }
-    
-    // Delete confirmation input event listener
+      // Delete confirmation input event listener
     const deleteConfirmInput = document.getElementById('delete-confirmation-input');
     if (deleteConfirmInput) {
         deleteConfirmInput.addEventListener('input', handleDeleteConfirmation);
     }
+      // Delete confirmation button event listener (as backup to onclick)
+    const deleteConfirmBtn = document.getElementById('confirm-delete-btn');
+    if (deleteConfirmBtn) {
+        deleteConfirmBtn.addEventListener('click', confirmDelete);
+    }
+    
+    // Immediately expose the function to global scope for HTML onclick
+    window.confirmDelete = confirmDelete;
+    window.closeDeleteModal = closeDeleteModal;
       // Modal click outside to close
     document.addEventListener('click', (e) => {
         if (e.target.classList.contains('modal-overlay')) {
@@ -1194,6 +1202,20 @@ function closeDeleteModal() {
     const modal = document.getElementById('delete-modal');
     modal.classList.remove('show');
     document.body.style.overflow = '';
+    
+    // Reset the confirmation input and button state
+    const confirmInput = document.getElementById('delete-confirmation-input');
+    const confirmBtn = document.getElementById('confirm-delete-btn');
+    
+    if (confirmInput) {
+        confirmInput.value = '';
+    }
+    
+    if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<i class="bx bx-trash"></i> DELETE FOREVER';
+    }
+    
     currentDeletingTransaction = null;
 }
 
@@ -1224,17 +1246,38 @@ function handleDeleteConfirmation() {
 
 // Confirm and execute deletion
 async function confirmDelete() {
-    if (!currentDeletingTransaction) return;
+    console.log('confirmDelete called');
+    
+    if (!currentDeletingTransaction) {
+        console.error('No transaction to delete');
+        return;
+    }
+    
+    // Check if the button is disabled
+    const deleteBtn = document.getElementById('confirm-delete-btn');
+    if (deleteBtn.disabled) {
+        console.log('Delete button is disabled, not proceeding');
+        return;
+    }
+    
+    // Verify the input confirmation
+    const input = document.getElementById('delete-confirmation-input');
+    if (input.value.toUpperCase() !== 'DELETE') {
+        console.log('Confirmation text is not correct');
+        return;
+    }
     
     try {
+        console.log('Starting deletion process for:', currentDeletingTransaction.id);
+        
         // Show loading state
-        const deleteBtn = document.getElementById('confirm-delete-btn');
         const originalText = deleteBtn.innerHTML;
         deleteBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Deleting...';
         deleteBtn.disabled = true;
-        
-        // Delete document from Firebase
+          // Delete document from Firebase
+        console.log('Deleting document from Firebase...');
         await deleteDoc(doc(chandriaDB, 'transaction', currentDeletingTransaction.id));
+        console.log('Document deleted successfully');
           // Remove from local arrays
         allTransactions = allTransactions.filter(t => t.id !== currentDeletingTransaction.id);
         filteredTransactions = filteredTransactions.filter(t => t.id !== currentDeletingTransaction.id);
@@ -1254,15 +1297,15 @@ async function confirmDelete() {
         
         // Show success message
         showSuccessMessage('Transaction deleted successfully!');
+        console.log('Deletion process completed successfully');
         
     } catch (error) {
         console.error('Error deleting transaction:', error);
         alert('Error deleting transaction. Please try again.');
         
         // Restore button state
-        const deleteBtn = document.getElementById('confirm-delete-btn');
-        deleteBtn.innerHTML = originalText;
-        deleteBtn.disabled = false;
+        deleteBtn.innerHTML = '<i class="bx bx-trash"></i> DELETE FOREVER';
+        deleteBtn.disabled = true; // Keep disabled until confirmation is re-entered
     }
 }
 
@@ -2091,6 +2134,9 @@ window.closeEditModal = closeEditModal;
 window.closeDeleteModal = closeDeleteModal;
 window.closeCancelRentalModal = closeCancelRentalModal;
 window.closeMarkCompleteModal = closeMarkCompleteModal;
+
+// Export delete function needed by HTML onclick
+window.confirmDelete = confirmDelete;
 
 // Export functions needed by the undo cancellation modal
 window.renderTransactionCards = renderTransactionCards;

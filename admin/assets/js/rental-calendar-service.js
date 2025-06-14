@@ -478,8 +478,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     };
                     
                     return processedData;                }).filter(rental => {
-                    // Filter out completed and cancelled rentals from calendar display
-                    return rental.status !== 'completed' && rental.status !== 'cancelled';
+                    // Only show ongoing, upcoming, and overdue rentals in calendar
+                    return ['ongoing', 'upcoming', 'overdue'].includes(rental.status);
                 });
                 
                 // Process overdue fee data and associate with transactions
@@ -517,11 +517,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 hideLoading();
                 showError('Failed to load rental data. Please check your connection and try again.');
             }
-        }          function calculateRentalStatus(rental) {
+        }        function calculateRentalStatus(rental) {
             const currentDate = new Date();
+            // Set current date to start of day for accurate comparison
+            currentDate.setHours(0, 0, 0, 0);
+            
             const eventStartDate = rental.eventStartDate ? new Date(rental.eventStartDate) : null;
             const eventEndDate = rental.eventEndDate ? new Date(rental.eventEndDate) : null;
             const eventDate = rental.eventDate ? new Date(rental.eventDate) : null;
+            const rentalType = rental.rentalType || '';
             
             // Check if rental has been cancelled - this takes priority over other statuses
             if (rental.rentalStatus === 'Cancelled') {
@@ -533,42 +537,34 @@ document.addEventListener("DOMContentLoaded", () => {
                 return 'completed';
             }
             
-            // If there's a specific status in the data, use it (but respect return confirmation)
-            if (rental.status && ['upcoming', 'ongoing', 'completed', 'overdue'].includes(rental.status.toLowerCase())) {
-                const status = rental.status.toLowerCase();
-                
-                // Double-check overdue status based on dates
-                if (status === 'completed' && !rental.returnConfirmed) {
-                    const endDate = eventEndDate || eventDate;
-                    if (endDate && currentDate > endDate) {
-                        // Grace period check (1 day after end date)
-                        const gracePeriod = new Date(endDate);
-                        gracePeriod.setDate(gracePeriod.getDate() + 1);
-                        
-                        if (currentDate > gracePeriod) {
-                            return 'overdue';
-                        }
-                    }
-                }
-                
-                return status;
-            }
-            
             // Calculate status based on dates
-            if (eventStartDate || eventDate) {
-                const startDate = eventStartDate || eventDate;
-                const endDate = eventEndDate || eventDate;
+            let startDate = eventStartDate || eventDate;
+            let endDate = eventEndDate;
+            
+            if (startDate) {
+                startDate = new Date(startDate);
+                startDate.setHours(0, 0, 0, 0);
                 
-                if (currentDate < startDate) {
+                // If no end date specified, use the 3-day rule (start + 2 more days)
+                if (!endDate) {
+                    endDate = new Date(startDate);
+                    endDate.setDate(endDate.getDate() + 2); // +2 because start date is day 1 (total 3 days)
+                } else {
+                    endDate = new Date(endDate);
+                }
+                endDate.setHours(0, 0, 0, 0);
+                
+                // Status logic:
+                // - upcoming: current date is before start date
+                // - ongoing: current date is between start date and end date (inclusive)
+                // - overdue: current date is after end date and item not returned
+                
+                if (currentDate.getTime() < startDate.getTime()) {
                     return 'upcoming';
-                } else if (currentDate >= startDate && currentDate <= endDate) {
+                } else if (currentDate.getTime() >= startDate.getTime() && currentDate.getTime() <= endDate.getTime()) {
                     return 'ongoing';
-                } else if (currentDate > endDate) {
-                    // Check if it's overdue (1 day grace period)
-                    const gracePeriod = new Date(endDate);
-                    gracePeriod.setDate(gracePeriod.getDate() + 1);
-                    
-                    if (currentDate > gracePeriod && !rental.returnConfirmed) {
+                } else if (currentDate.getTime() > endDate.getTime()) {
+                    if (!rental.returnConfirmed) {
                         return 'overdue';
                     } else {
                         return 'completed';
@@ -632,13 +628,26 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!isOtherMonth && dayNum === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
                 dayElement.classList.add('today');
             }
-            
-            // Get rentals for this day
+              // Get rentals for this day
             const dayRentals = getRentalsForDay(dayNum, month, year);
             const filteredRentals = filterRentalsByStatus(dayRentals);
             
             if (filteredRentals.length > 0) {
                 dayElement.classList.add('has-rentals');
+                
+                // Add status classes based on rental priorities
+                // Priority: overdue > ongoing > upcoming
+                const hasOverdue = filteredRentals.some(rental => rental.status === 'overdue');
+                const hasOngoing = filteredRentals.some(rental => rental.status === 'ongoing');
+                const hasUpcoming = filteredRentals.some(rental => rental.status === 'upcoming');
+                
+                if (hasOverdue) {
+                    dayElement.classList.add('has-overdue');
+                } else if (hasOngoing) {
+                    dayElement.classList.add('has-ongoing');
+                } else if (hasUpcoming) {
+                    dayElement.classList.add('has-upcoming');
+                }
             }
             
             // Adjust height based on number of rentals
@@ -707,7 +716,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             
             return dayElement;
-        }          function getRentalsForDay(day, month, year) {
+        }        function getRentalsForDay(day, month, year) {
             const targetDate = new Date(year, month, day);
             // Normalize target date to start of day
             targetDate.setHours(0, 0, 0, 0);
@@ -716,60 +725,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 const eventStartDate = rental.eventStartDate ? new Date(rental.eventStartDate) : null;
                 const eventEndDate = rental.eventEndDate ? new Date(rental.eventEndDate) : null;
                 const eventDate = rental.eventDate ? new Date(rental.eventDate) : null;
-                const rentalType = rental.rentalType || '';
                 
                 // Normalize all dates to start of day for accurate comparison
-                if (eventStartDate) {
-                    eventStartDate.setHours(0, 0, 0, 0);
-                }
-                if (eventEndDate) {
-                    eventEndDate.setHours(0, 0, 0, 0);
-                }
-                if (eventDate) {
-                    eventDate.setHours(0, 0, 0, 0);
-                }
+                let startDate = eventStartDate || eventDate;
+                let endDate = eventEndDate;
                 
-                // Check if the rental falls on this day based on rental type
-                if (rentalType.toLowerCase().includes('open rental') || rentalType.toLowerCase().includes('open')) {
-                    // Open Rental: Use start date to end date range (inclusive)
-                    if (eventStartDate && eventEndDate) {
-                        return targetDate.getTime() >= eventStartDate.getTime() && targetDate.getTime() <= eventEndDate.getTime();
-                    } else if (eventStartDate) {
-                        // If only start date, assume it's a single day
-                        return targetDate.getTime() === eventStartDate.getTime();
-                    } else if (eventDate) {
-                        // Fallback to event date for open rentals
-                        return targetDate.getTime() === eventDate.getTime();
-                    }
-                } else if (rentalType.toLowerCase().includes('fixed rental') || rentalType.toLowerCase().includes('fixed')) {
-                    // Fixed Rental: Start date + 3 days (inclusive)
-                    if (eventStartDate) {
-                        const fixedEndDate = new Date(eventStartDate);
-                        fixedEndDate.setDate(fixedEndDate.getDate() + 2); // +2 because we include start date (total 3 days)
-                        fixedEndDate.setHours(0, 0, 0, 0);
-                        return targetDate.getTime() >= eventStartDate.getTime() && targetDate.getTime() <= fixedEndDate.getTime();
-                    } else if (eventDate) {
-                        // If using eventDate for fixed rental, also apply 3-day rule
-                        const fixedEndDate = new Date(eventDate);
-                        fixedEndDate.setDate(fixedEndDate.getDate() + 2);
-                        fixedEndDate.setHours(0, 0, 0, 0);
-                        return targetDate.getTime() >= eventDate.getTime() && targetDate.getTime() <= fixedEndDate.getTime();
-                    }
+                if (!startDate) return false; // Skip rentals without valid start date
+                
+                startDate = new Date(startDate);
+                startDate.setHours(0, 0, 0, 0);
+                
+                // If no end date specified, use the 3-day rule (start + 2 more days)
+                if (!endDate) {
+                    endDate = new Date(startDate);
+                    endDate.setDate(endDate.getDate() + 2); // +2 because start date is day 1 (total 3 days: june14, june15, june16)
                 } else {
-                    // Fallback logic for rentals without specific type or unknown types
-                    if (eventDate) {
-                        // Single day rental
-                        return targetDate.getTime() === eventDate.getTime();
-                    } else if (eventStartDate && eventEndDate) {
-                        // Multi-day rental with defined range
-                        return targetDate.getTime() >= eventStartDate.getTime() && targetDate.getTime() <= eventEndDate.getTime();
-                    } else if (eventStartDate) {
-                        // Start date only - assume single day
-                        return targetDate.getTime() === eventStartDate.getTime();
-                    }
+                    endDate = new Date(endDate);
                 }
+                endDate.setHours(0, 0, 0, 0);
                 
-                return false;
+                // Check if the rental falls on this day (inclusive range)
+                return targetDate.getTime() >= startDate.getTime() && targetDate.getTime() <= endDate.getTime();
             });
             
             // Sort rentals by duration (longest to shortest)
@@ -778,47 +754,38 @@ document.addEventListener("DOMContentLoaded", () => {
                 const durationB = calculateRentalDuration(b);
                 return durationB - durationA; // Descending order (longest first)
             });
-        }
-          function calculateRentalDuration(rental) {
+        }        function calculateRentalDuration(rental) {
             const eventStartDate = rental.eventStartDate ? new Date(rental.eventStartDate) : null;
             const eventEndDate = rental.eventEndDate ? new Date(rental.eventEndDate) : null;
             const eventDate = rental.eventDate ? new Date(rental.eventDate) : null;
-            const rentalType = rental.rentalType || '';
             
-            if (rentalType.toLowerCase().includes('fixed rental') || rentalType.toLowerCase().includes('fixed')) {
-                // Fixed Rental: Always 3 days
-                return 3;
-            } else if (rentalType.toLowerCase().includes('open rental') || rentalType.toLowerCase().includes('open')) {
-                // Open Rental: Use actual date range
-                if (eventStartDate && eventEndDate) {
-                    const timeDiff = eventEndDate.getTime() - eventStartDate.getTime();
-                    return Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 to include both start and end days
-                } else if (eventStartDate || eventDate) {
-                    return 1; // Single day if only one date is available
-                }
-            } else {
-                // Fallback logic for unknown rental types
-                if (eventStartDate && eventEndDate) {
-                    // Multi-day rental - calculate duration in days
-                    const timeDiff = eventEndDate.getTime() - eventStartDate.getTime();
-                    return Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 to include both start and end days
-                } else if (eventDate || eventStartDate) {
-                    // Single day rental
-                    return 1;
-                }
+            let startDate = eventStartDate || eventDate;
+            let endDate = eventEndDate;
+            
+            if (!startDate) return 1; // Default to 1 day if no dates
+            
+            startDate = new Date(startDate);
+            startDate.setHours(0, 0, 0, 0);
+            
+            // If no end date specified, use the 3-day rule
+            if (!endDate) {
+                return 3; // Default 3 days when no end date            } else {
+                endDate = new Date(endDate);
+                endDate.setHours(0, 0, 0, 0);
+                
+                // Calculate actual duration (inclusive of both start and end dates)
+                const timeDiff = endDate.getTime() - startDate.getTime();
+                return Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 to include both start and end days
             }
-            
-            // Default duration for rentals without proper dates
-            return 0;
         }
         
         function filterRentalsByStatus(rentals) {
             if (filteredStatus === 'all') {
                 return rentals;
-            }
-            return rentals.filter(rental => rental.status === filteredStatus);
+            }            return rentals.filter(rental => rental.status === filteredStatus);
         }
-          function getEventDateInfo(rental) {
+          
+        function getEventDateInfo(rental) {
             const eventStartDate = rental.eventStartDate ? new Date(rental.eventStartDate) : null;
             const eventEndDate = rental.eventEndDate ? new Date(rental.eventEndDate) : null;
             const eventDate = rental.eventDate ? new Date(rental.eventDate) : null;
@@ -842,9 +809,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Only event date exists
                 return eventDate.toLocaleDateString();
             }
-            
-            return 'Date not specified';
-        }function showRentalQuickView(rental, targetElement) {
+              return 'Date not specified';
+        }
+        
+        function showRentalQuickView(rental, targetElement) {
             // Close any existing quick view
             closeQuickView();
               // Function to get rental types from products
