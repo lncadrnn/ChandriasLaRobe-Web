@@ -674,640 +674,756 @@ body.quick-view-active .rental-quick-view {
     transform: translateY(-1px);
 }
 
-/* Quick View Mobile Responsive */
-@media (max-width: 768px) {
-    .rental-quick-view {
-        min-width: 280px;
-        max-width: calc(100vw - 40px);
-        font-size: 0.9rem;
+/* =============== ENHANCED MOBILE RESPONSIVE STYLES =============== */
+
+/* =============== MOBILE PORTRAIT MODE =============== */
+@media (max-width: 768px) and (orientation: portrait) {
+    .page-content {
+        padding: 10px 15px;
     }
     
-    .quick-view-header h4 {
+    .calendar-container {
+        max-width: 100vw;
+        margin: 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Compact header for portrait */
+    .calendar-header {
+        padding: 12px 16px;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .calendar-title h2 {
+        font-size: 1.25rem;
+        min-width: auto;
+        margin-bottom: 8px;
+    }
+    
+    .calendar-nav {
+        gap: 12px;
+        justify-content: center;
+    }
+    
+    .nav-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
+    }
+    
+    /* Minimize legend in portrait */
+    .calendar-legend {
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    
+    .legend-item {
+        font-size: 0.75rem;
+        gap: 4px;
+    }
+    
+    .legend-color {
+        width: 8px;
+        height: 8px;
+    }
+    
+    /* Optimize calendar grid for portrait */
+    .day-header {
+        padding: 8px 4px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+    
+    .calendar-day {
+        min-height: 80px;
+        padding: 4px;
+    }
+    
+    .day-number {
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+    }
+    
+    /* Minimize rental items in portrait */
+    .rental-item {
+        font-size: 0.65rem;
+        padding: 2px 4px;
+        margin-bottom: 2px;
+        border-radius: 3px;
+        line-height: 1.2;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .more-rentals {
+        font-size: 0.6rem;
+        padding: 1px 3px;
+    }
+}
+
+/* =============== MOBILE LANDSCAPE MODE =============== */
+@media (max-width: 1024px) and (orientation: landscape) and (max-height: 768px) {
+    .page-content {
+        padding: 8px 12px;
+    }
+    
+    .calendar-container {
+        max-width: 100vw;
+        margin: 0;
+        border-radius: 6px;
+        height: calc(100vh - 120px);
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* Optimized header for landscape */
+    .calendar-header {
+        padding: 8px 16px;
+        flex-shrink: 0;
+    }
+    
+    .calendar-title h2 {
+        font-size: 1.2rem;
+        min-width: auto;
+    }
+    
+    .nav-btn {
+        width: 32px;
+        height: 32px;
         font-size: 1rem;
     }
     
-    .quick-view-actions {
-        flex-direction: column;
-        gap: 8px;
+    /* Compact legend for landscape */
+    .calendar-legend {
+        gap: 10px;
     }
     
-    .btn-view-full,
-    .btn-close-quick {
-        width: 100%;
-        padding: 10px 14px;
+    .legend-item {
+        font-size: 0.7rem;
+        gap: 3px;
+    }
+    
+    .legend-color {
+        width: 8px;
+        height: 8px;
+    }
+    
+    /* Optimize calendar grid for landscape */
+    .calendar-grid {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    
+    .calendar-days-header {
+        flex-shrink: 0;
+    }
+    
+    .day-header {
+        padding: 6px 4px;
+        font-size: 0.7rem;
+        font-weight: 700;
+    }
+    
+    .calendar-days {
+        flex: 1;
+        overflow-y: auto;
+    }
+    
+    .calendar-day {
+        min-height: 70px;
+        padding: 3px;
+    }
+    
+    .day-number {
+        font-size: 0.8rem;
+        margin-bottom: 3px;
+    }
+    
+    /* Compact rental items for landscape */
+    .rental-item {
+        font-size: 0.6rem;
+        padding: 1px 3px;
+        margin-bottom: 1px;
+        border-radius: 2px;
+        line-height: 1.1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .more-rentals {
+        font-size: 0.55rem;
+        padding: 1px 2px;
     }
 }
 
+/* =============== SMALL MOBILE DEVICES =============== */
 @media (max-width: 480px) {
-    .rental-quick-view {
-        min-width: 260px;
-        max-width: calc(100vw - 20px);
+    .calendar-container {
+        border-radius: 4px;
     }
     
-    .quick-view-content {
-        padding: 14px;
+    .calendar-header {
+        padding: 8px 12px;
     }
     
-    .quick-view-body p {
+    .calendar-title h2 {
+        font-size: 1.1rem;
+    }
+    
+    .nav-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+    }
+    
+    .day-header {
+        padding: 6px 2px;
+        font-size: 0.65rem;
+    }
+    
+    .calendar-day {
+        min-height: 60px;
+        padding: 2px;
+    }
+    
+    .day-number {
+        font-size: 0.75rem;
+        margin-bottom: 2px;
+    }
+    
+    .rental-item {
+        font-size: 0.55rem;
+        padding: 1px 2px;
+        margin-bottom: 1px;
+    }
+    
+    /* Hide legend on very small screens to save space */
+    .calendar-legend {
+        display: none;
+    }
+}
+
+/* =============== LANDSCAPE SPECIFIC MOBILE =============== */
+@media (max-width: 768px) and (orientation: landscape) and (max-height: 500px) {
+    .page-content {
+        padding: 5px 8px;
+    }
+    
+    .calendar-header {
+        padding: 5px 12px;
+    }
+    
+    .calendar-title h2 {
+        font-size: 1rem;
+    }
+    
+    .nav-btn {
+        width: 28px;
+        height: 28px;
         font-size: 0.85rem;
     }
+    
+    .day-header {
+        padding: 4px 2px;
+        font-size: 0.6rem;
+    }
+    
+    .calendar-day {
+        min-height: 50px;
+        padding: 2px;
+    }
+    
+    .day-number {
+        font-size: 0.7rem;
+        margin-bottom: 1px;
+    }
+    
+    .rental-item {
+        font-size: 0.5rem;
+        padding: 1px;
+        margin-bottom: 1px;
+        line-height: 1;
+    }
+    
+    /* Further minimize legend */
+    .calendar-legend {
+        gap: 6px;
+    }
+    
+    .legend-item {
+        font-size: 0.6rem;
+    }
+    
+    .legend-color {
+        width: 6px;
+        height: 6px;
+    }
 }
 
-/* =============== ADAPTIVE ROW HEIGHTS =============== */
-.calendar-day.has-many-rentals {
-    min-height: 160px;
-}
-
-.calendar-day.has-lots-rentals {
-    min-height: 200px;
-}
-
-.calendar-day.has-tons-rentals {
-    min-height: 240px;
-}
-
-/* =============== RENTAL DETAILS MODAL =============== */
 /* =============== MODAL STYLES =============== */
 .modal {
     display: none;
     position: fixed;
-    z-index: 9999;
+    z-index: 10000;
     left: 0;
     top: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(3px);
-    justify-content: center;
-    align-items: center;
-    animation: fadeIn 0.25s ease;
-    padding: 1rem;
-    overflow-y: auto;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    overflow: auto;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
-.modal.visible {
+.modal.show {
     display: flex !important;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-content {
-    background: var(--sidebar-color, #fff);
-    margin: 0 auto;
+    background-color: white;
+    margin: auto;
     padding: 0;
-    border-radius: 16px;
-    max-width: 800px;
-    min-width: 300px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     width: 90%;
-    max-height: 80vh;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    position: relative;
-    border: none;
-    animation: modalSlideIn 0.3s ease;
-    display: flex;
-    flex-direction: column;
+    max-width: 600px;
+    max-height: 90vh;
     overflow: hidden;
-}
-
-@keyframes modalSlideIn {
-    0% { transform: scale(0.95) translateY(-20px); opacity: 0; }
-    100% { transform: scale(1) translateY(0); opacity: 1; }
+    position: relative;
+    animation: slideIn 0.3s ease-out;
 }
 
 .modal-header {
-    background: linear-gradient(135deg, var(--primary-color, #ff4757), #ff6b9d);
+    background: linear-gradient(135deg, var(--primary-color), #ff6b9d);
     color: white;
-    padding: 1.5rem 2rem;
-    border-radius: 16px 16px 0 0;
+    padding: 20px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: relative;
+    border-bottom: none;
 }
 
 .modal-header h3 {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 600;
 }
 
 .close-modal {
-    position: absolute;
-    top: 50%;
-    right: 1.5rem;
-    transform: translateY(-50%);
-    font-size: 1.5rem;
-    color: white;
     background: rgba(255, 255, 255, 0.2);
     border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
 }
 
 .close-modal:hover {
     background: rgba(255, 255, 255, 0.3);
-    transform: translateY(-50%) scale(1.1);
+    transform: scale(1.1);
 }
 
 .modal-body {
-    padding: 2rem;
+    padding: 24px;
+    max-height: calc(90vh - 120px);
     overflow-y: auto;
-    flex: 1;
-    max-height: calc(80vh - 120px);
 }
 
-/* Rental Details List Styles */
 .rental-details-list {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 16px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 8px;
 }
 
 .rental-detail-item {
     background: #f8f9fa;
-    border-radius: 12px;
-    padding: 1.5rem;
-    border-left: 4px solid var(--primary-color, #ff4757);
-    transition: all 0.2s ease;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 16px;
+    transition: all 0.3s ease;
 }
 
 .rental-detail-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-}
-
-.rental-detail-item.confirmed {
-    border-left-color: #10b981;
-}
-
-.rental-detail-item.ongoing {
-    border-left-color: #f59e0b;
-}
-
-.rental-detail-item.completed {
-    border-left-color: #6366f1;
-}
-
-.rental-detail-item.overdue {
-    border-left-color: #ef4444;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
 }
 
 .rental-detail-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
-.rental-customer {
-    font-size: 1.25rem;
+.rental-customer-name {
     font-weight: 600;
-    color: #1f2937;
+    font-size: 1.1rem;
+    color: #333;
+    flex: 1;
 }
 
-.rental-status {
-    background: var(--primary-color, #ff4757);
-    color: white;
-    padding: 0.5rem 1rem;
+.rental-status-badge {
+    padding: 4px 12px;
     border-radius: 20px;
-    font-size: 0.875rem;
+    font-size: 0.85rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-.rental-status.confirmed {
-    background: #10b981;
-}
-
-.rental-status.ongoing {
-    background: #f59e0b;
-}
-
-.rental-status.completed {
-    background: #6366f1;
-}
-
-.rental-status.overdue {
-    background: #ef4444;
-}
-
 .rental-detail-info {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #666;
 }
 
 .rental-info-item {
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
 }
 
 .rental-info-label {
-    font-size: 0.875rem;
     font-weight: 600;
-    color: #6b7280;
-    margin-bottom: 0.5rem;
+    color: #333;
+    margin-bottom: 2px;
+    font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .rental-info-value {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #1f2937;
+    color: #555;
 }
 
+/* Rental products section */
 .rental-products {
-    margin-bottom: 1.5rem;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e9ecef;
 }
 
 .rental-products h4 {
-    margin: 0 0 1rem 0;
-    color: #374151;
-    font-size: 1.1rem;
+    margin: 0 0 8px 0;
+    font-size: 0.9rem;
     font-weight: 600;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .product-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 6px;
 }
 
 .product-tag {
-    background: linear-gradient(135deg, var(--primary-color, #ff4757), #ff6b9d);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.875rem;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 4px 8px;
+    border-radius: 16px;
+    font-size: 0.8rem;
+    color: #495057;
     font-weight: 500;
-    display: inline-block;
 }
 
-.rental-actions {
-    border-top: 1px solid #e5e7eb;
-    padding-top: 1rem;
+/* Apply status colors to rental detail items */
+.rental-detail-item.upcoming {
+    border-left: 4px solid var(--status-upcoming-color, #ffc107);
 }
 
-.action-buttons {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
+.rental-detail-item.ongoing {
+    border-left: 4px solid var(--status-ongoing-color, #17a2b8);
 }
 
-.btn-action {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
+.rental-detail-item.overdue {
+    border-left: 4px solid var(--status-overdue-color, #dc3545);
 }
 
-.btn-complete {
-    background: #10b981;
-    color: white;
+.rental-status.upcoming {
+    background: var(--status-upcoming-bg, #fff3cd);
+    color: var(--status-upcoming-text, #856404);
+    border: 1px solid var(--status-upcoming-border, #ffeaa7);
 }
 
-.btn-complete:hover {
-    background: #059669;
-    transform: translateY(-1px);
+.rental-status.ongoing {
+    background: var(--status-ongoing-bg, #d1ecf1);
+    color: var(--status-ongoing-text, #0c5460);
+    border: 1px solid var(--status-ongoing-border, #bee5eb);
 }
 
-.btn-overdue {
-    background: #ef4444;
-    color: white;
+.rental-status.overdue {
+    background: var(--status-overdue-bg, #f8d7da);
+    color: var(--status-overdue-text, #721c24);
+    border: 1px solid var(--status-overdue-border, #f5c6cb);
 }
 
-.btn-overdue:hover {
-    background: #dc2626;
-    transform: translateY(-1px);
+/* Modal animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-/* =============== SUCCESS MESSAGE =============== */
-.success-message {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: #27ae60;
-    color: white;
-    padding: 16px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    z-index: 3000;
-    animation: slideInRight 0.3s ease;
-}
-
-.success-message.fade-out {
-    animation: fadeOut 0.3s ease forwards;
-}
-
-@keyframes slideInRight {
+@keyframes slideIn {
     from {
-        transform: translateX(100%);
         opacity: 0;
+        transform: translateY(-50px) scale(0.95);
     }
     to {
-        transform: translateX(0);
         opacity: 1;
+        transform: translateY(0) scale(1);
     }
 }
 
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
-}
-
-.success-content {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.success-content i {
-    font-size: 1.2rem;
-}
-
-/* =============== MOBILE RESPONSIVE FOR ACTIONS =============== */
+/* =============== MODAL MOBILE RESPONSIVENESS =============== */
 @media (max-width: 768px) {
-    .action-buttons {
-        flex-direction: column;
+    .modal {
+        padding: 8px;
+        align-items: flex-start;
+        padding-top: 20px;
     }
     
-    .btn-action {
-        justify-content: center;
-        padding: 12px;
-    }
-    
-    .overdue-fee-modal .modal-content {
+    .modal-content {
         width: 95%;
-        margin: 10px;
+        max-width: none;
+        margin: 0;
+        border-radius: 12px;
+        max-height: 85vh;
     }
     
-    .payment-methods {
+    .modal-header {
+        padding: 16px 20px;
+    }
+    
+    .modal-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .modal-body {
+        padding: 16px 20px;
+        max-height: calc(85vh - 80px);
+    }
+    
+    .rental-details-list {
+        max-height: calc(85vh - 120px);
+        gap: 12px;
+    }
+    
+    .rental-detail-item {
+        padding: 12px;
+        margin-bottom: 0;
+    }
+    
+    .rental-detail-header {
         flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
     }
     
-    .modal-footer {
-        flex-direction: column;
+    .rental-customer-name {
+        font-size: 1rem;
+        width: 100%;
     }
     
-    /* Status-based day numbers mobile responsive */
-    .day-number {
-        font-size: 0.8rem;
+    .rental-detail-info {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+      .close-modal {
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
     }
     
-    .calendar-day.has-upcoming .day-number,
-    .calendar-day.has-ongoing .day-number,
-    .calendar-day.has-completed .day-number,
-    .calendar-day.has-overdue .day-number,
-    .calendar-day.has-cancelled .day-number,
-    .calendar-day.has-pending .day-number {
-        font-weight: 700;
+    /* Mobile specific modal content styles */
+    .rental-products h4 {
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+    }
+    
+    .product-list {
+        gap: 4px;
+    }
+    
+    .product-tag {
+        font-size: 0.75rem;
+        padding: 3px 6px;
+    }
+    
+    .rental-info-label {
+        font-size: 0.75rem;
+    }
+    
+    .rental-info-value {
         font-size: 0.85rem;
     }
+}
+
+/* =============== MODAL LANDSCAPE MOBILE =============== */
+@media (max-width: 768px) and (orientation: landscape) {
+    .modal {
+        padding: 4px;
+        padding-top: 10px;
+    }
     
-    .calendar-day.today .day-number {
+    .modal-content {
+        width: 98%;
+        max-height: 92vh;
+    }
+    
+    .modal-header {
+        padding: 12px 16px;
+    }
+    
+    .modal-header h3 {
+        font-size: 1rem;
+    }
+    
+    .modal-body {
+        padding: 12px 16px;
+        max-height: calc(92vh - 60px);
+    }
+    
+    .rental-details-list {
+        max-height: calc(92vh - 80px);
+        gap: 8px;
+    }
+    
+    .rental-detail-item {
+        padding: 8px 12px;
+    }
+    
+    .rental-detail-info {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 8px;
+        font-size: 0.85rem;
+    }
+      .close-modal {
+        width: 24px;
+        height: 24px;
         font-size: 0.9rem;
     }
-}
-
-@media (max-width: 480px) {
-    .rental-quick-view {
-        min-width: 260px;
-        max-width: calc(100vw - 20px);
+    
+    /* Landscape mobile specific modal content styles */
+    .rental-products {
+        margin-top: 12px;
+        padding-top: 12px;
     }
     
-    .quick-view-content {
-        padding: 14px;
+    .rental-products h4 {
+        font-size: 0.8rem;
+        margin-bottom: 4px;
     }
     
-    .quick-view-body p {
-        font-size: 0.85rem;
+    .product-list {
+        gap: 3px;
+    }
+    
+    .product-tag {
+        font-size: 0.7rem;
+        padding: 2px 5px;
+    }
+    
+    .rental-customer-name {
+        font-size: 0.9rem;
+    }
+    
+    .rental-status-badge {
+        font-size: 0.75rem;
+        padding: 2px 8px;
     }
 }
 
-/* =============== TRANSACTION LOADING AND ERROR STATES =============== */
-.calendar-loading-overlay,
-.calendar-error-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(5px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    border-radius: 12px;
-}
-
-.loading-content,
-.error-content {
-    text-align: center;
-    padding: 2rem;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e5e7eb;
-}
-
-.loading-spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid #f3f4f6;
-    border-top: 4px solid #3b82f6;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.loading-content p {
-    margin: 0;
-    color: #6b7280;
-    font-weight: 500;
-}
-
-.error-content i {
-    font-size: 3rem;
-    color: #ef4444;
-    margin-bottom: 1rem;
-}
-
-.error-content h3 {
-    margin: 0 0 0.5rem;
-    color: #1f2937;
-    font-size: 1.25rem;
-}
-
-.error-content p {
-    margin: 0 0 1.5rem;
-    color: #6b7280;
-}
-
-.btn-retry {
-    background: #3b82f6;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-retry:hover {
-    background: #2563eb;
-    transform: translateY(-1px);
-}
-
-.btn-retry:active {
-    transform: translateY(0);
-}
-
-/* Transaction Statistics Panel */
-.transaction-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding: 1rem;
-    background: #f8fafc;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
-}
-
-.stat-item {
-    text-align: center;
-    padding: 1rem;
-    background: white;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-}
-
-.stat-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-color: #d1d5db;
-}
-
-.stat-value {
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin-bottom: 0.25rem;
-    line-height: 1;
-}
-
-.stat-label {
-    font-size: 0.875rem;
-    color: #6b7280;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 500;
-}
-
-.stat-upcoming .stat-value { color: #3b82f6; }
-.stat-ongoing .stat-value { color: #f59e0b; }
-.stat-completed .stat-value { color: #10b981; }
-.stat-overdue .stat-value { color: #ef4444; }
-
-/* Enhanced Calendar Positioning */
-#calendar-container {
-    position: relative;
-}
-
-/* Transaction Data Debug Panel (Development) */
-.transaction-debug {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 1rem;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    max-width: 300px;
-    z-index: 10000;
-    font-family: 'Courier New', monospace;
-}
-
-.transaction-debug.hidden {
-    display: none;
-}
-
-.debug-toggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #3b82f6;
-    color: white;
-    border: none;
-    padding: 0.5rem;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    z-index: 10001;
-    font-size: 1.2rem;
-}
-
-/* Enhanced Mobile Responsiveness for Transaction Loading */
+/* Touch and interaction improvements for mobile */
 @media (max-width: 768px) {
-    .loading-content,
-    .error-content {
-        padding: 1.5rem;
-        margin: 1rem;
+    .modal {
+        -webkit-overflow-scrolling: touch;
     }
     
-    .transaction-stats {
-        grid-template-columns: repeat(2, 1fr);
-        padding: 0.75rem;
-        gap: 0.75rem;
+    .modal-content {
+        -webkit-overflow-scrolling: touch;
     }
     
-    .stat-item {
-        padding: 0.5rem;
+    .rental-details-list {
+        -webkit-overflow-scrolling: touch;
     }
     
-    .stat-value {
-        font-size: 1.25rem;
+    .rental-detail-item {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition: all 0.2s ease;
+    }
+    
+    .rental-detail-item:active {
+        background: #e9ecef;
+        transform: scale(0.98);
+    }
+    
+    .close-modal {
+        -webkit-tap-highlight-color: transparent;
+        transition: all 0.2s ease;
+    }
+    
+    .close-modal:active {
+        transform: scale(0.9);
     }
 }
+
+/* =============== ACCESSIBILITY IMPROVEMENTS =============== */
+@media (max-width: 768px) {
+    /* Ensure touch targets are at least 44px */
+    .nav-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    .calendar-day {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .rental-item {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+}
+
+/* =============== HIDE SIDEBAR ON MOBILE =============== */
+@media (max-width: 768px) {
+    .sidebar.close ~ .main-content .calendar-container,
+    .main-content .calendar-container {
+        max-width: 100vw;
+        margin-left: 0;
+    }
+    
+    .page-content {
+        margin-left: 0;
+    }
+}
+
+/* ===============================================
+   END OF RENTAL CALENDAR STYLES
+   =============================================== */

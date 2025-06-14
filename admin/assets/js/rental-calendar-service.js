@@ -137,14 +137,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }        function closeModal() {
             console.log('🔒 closeModal called');
             if (modal) {
-                // Enhanced modal closing logic
-                modal.classList.remove('visible');
+                // Enhanced modal closing logic with correct CSS class
+                modal.classList.remove('show');
                 modal.style.display = 'none';
                 document.body.style.overflow = '';
                 
                 // Clear any lingering content to prevent issues
                 setTimeout(() => {
-                    if (!modal.classList.contains('visible')) {
+                    if (!modal.classList.contains('show')) {
                         rentalDetailsList.innerHTML = '';
                     }
                 }, 300);
@@ -1036,23 +1036,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     rentalDetailsList.appendChild(detailItem);
                 });
             }
-            
-            // Enhanced modal opening logic with multiple fallbacks
-            modal.classList.remove('visible');
+              // Enhanced modal opening logic with multiple fallbacks
+            modal.classList.remove('show');
             modal.style.display = 'none';
             
             // Force DOM update and then show modal
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     modal.style.display = 'flex';
-                    modal.classList.add('visible');
+                    modal.classList.add('show');
                     document.body.style.overflow = 'hidden';
                     
                     // Additional backup to ensure visibility
                     setTimeout(() => {
-                        if (!modal.classList.contains('visible')) {
+                        if (!modal.classList.contains('show')) {
                             console.warn('⚠️ Modal visibility backup triggered');
-                            modal.classList.add('visible');
+                            modal.classList.add('show');
                             modal.style.display = 'flex';
                         }
                     }, 100);
