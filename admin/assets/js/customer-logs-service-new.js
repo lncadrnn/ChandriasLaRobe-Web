@@ -11,6 +11,7 @@ let currentDeletingTransaction = null;
 const tableBody = document.getElementById('rental-history-tbody');
 const searchInput = document.getElementById('search-input');
 const refreshBtn = document.getElementById('refresh-btn');
+const refreshBtnMobile = document.getElementById('refresh-btn-mobile');
 const sortBtn = document.getElementById('sort-btn');
 const sortOptions = document.getElementById('sort-options');
 const transactionCards = document.getElementById('transaction-cards');
@@ -53,22 +54,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Load transactions on page load
-    loadTransactions();
-      // Add event listeners
+    loadTransactions();      // Add event listeners
     searchInput?.addEventListener('input', handleSearch);
-    refreshBtn?.addEventListener('click', async () => {
+    
+    // Refresh functionality for both desktop and mobile buttons
+    const handleRefresh = async (button) => {
         // Show button loading state
-        if (window.adminSpinners && refreshBtn) {
-            window.adminSpinners.showButtonSpinner(refreshBtn, 'Refreshing...');
+        if (window.adminSpinners && button) {
+            window.adminSpinners.showButtonSpinner(button, 'Refreshing...');
         }
         
         await loadTransactions();
         
         // Hide button loading state
-        if (window.adminSpinners && refreshBtn) {
-            window.adminSpinners.hideButtonSpinner(refreshBtn);
+        if (window.adminSpinners && button) {
+            window.adminSpinners.hideButtonSpinner(button);
         }
-    });
+    };
+    
+    refreshBtn?.addEventListener('click', () => handleRefresh(refreshBtn));
+    refreshBtnMobile?.addEventListener('click', () => handleRefresh(refreshBtnMobile));
     
     // View toggle listeners
     cardViewBtn?.addEventListener('click', () => switchView('cards'));
