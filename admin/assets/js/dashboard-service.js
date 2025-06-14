@@ -94,36 +94,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 .get();
             
             console.log("Found", snapshot.docs.length, "transactions");
-            
-            return snapshot.docs.map(doc => {
+              return snapshot.docs.map(doc => {
                 const data = doc.data();
-                const currentDate = new Date();
-                const eventStartDate = data.eventStartDate ? new Date(data.eventStartDate) : null;
-                const eventEndDate = data.eventEndDate ? new Date(data.eventEndDate) : null;
                 
-                // Calculate rental status based on dates
-                let rentalStatus = 'Upcoming';
-                if (eventStartDate) {
-                    if (eventEndDate) {
-                        // Open rental with end date
-                        if (currentDate < eventStartDate) {
-                            rentalStatus = 'Upcoming';
-                        } else if (currentDate >= eventStartDate && currentDate <= eventEndDate) {
-                            rentalStatus = 'Ongoing';
-                        } else if (currentDate > eventEndDate) {
-                            rentalStatus = 'Completed';
-                        }
-                    } else {
-                        // Fixed rental (single day)
-                        if (currentDate < eventStartDate) {
-                            rentalStatus = 'Upcoming';
-                        } else if (currentDate.toDateString() === eventStartDate.toDateString()) {
-                            rentalStatus = 'Ongoing';
-                        } else if (currentDate > eventStartDate) {
-                            rentalStatus = 'Completed';
-                        }
-                    }
-                }
+                // Calculate rental status using the same logic as customer logs
+                const { rentalStatus } = calculateRentalStatus(data);
                 
                 // Calculate payment status
                 const totalPayment = parseFloat(data.totalPayment) || 0;
@@ -139,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     details: 'View',
                     ...data
                 };
-            });        } catch (error) {
+            });} catch (error) {
             console.error("Error fetching transactions:", error);
             return [];
         }
@@ -167,6 +142,90 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error fetching all transactions:", error);
             return [];
         }
+    }
+
+    // Helper function to calculate rental status (matches customer-logs logic)
+    function calculateRentalStatus(transaction) {
+        const currentDate = new Date();
+        
+        // Get all possible date fields
+        const eventStartDate = transaction.eventStartDate ? new Date(transaction.eventStartDate) : null;
+        const eventEndDate = transaction.eventEndDate ? new Date(transaction.eventEndDate) : null;
+        const eventDate = transaction.eventDate ? new Date(transaction.eventDate) : null;
+        
+        // Normalize current date to ignore time components
+        const today = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+        
+        let rentalStatus = 'Upcoming';
+        
+        // Priority 1: Check if rental has been cancelled
+        if (transaction.rentalStatus === 'Cancelled') {
+            return { rentalStatus: 'Cancelled' };
+        }
+        
+        // Priority 2: Check if rental has been marked as completed
+        if (transaction.returnConfirmed) {
+            return { rentalStatus: 'Completed' };
+        }
+        
+        // Priority 3: Calculate status based on dates
+        // Determine which date fields to use
+        let rentalStartDate = null;
+        let rentalEndDate = null;
+        
+        if (eventStartDate) {
+            rentalStartDate = new Date(eventStartDate.getFullYear(), eventStartDate.getMonth(), eventStartDate.getDate());
+            if (eventEndDate) {
+                rentalEndDate = new Date(eventEndDate.getFullYear(), eventEndDate.getMonth(), eventEndDate.getDate());
+            }
+        } else if (eventDate) {
+            rentalStartDate = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+        }
+        
+        if (!rentalStartDate) {
+            return { rentalStatus: 'Upcoming' };
+        }
+        
+        if (rentalEndDate) {
+            // MULTI-DAY RENTAL (has both start and end dates)
+            if (today < rentalStartDate) {
+                // Event hasn't started yet
+                rentalStatus = 'Upcoming';
+            } else if (today >= rentalStartDate && today <= rentalEndDate) {
+                // Currently within the event period
+                rentalStatus = 'Ongoing';
+            } else if (today > rentalEndDate) {
+                // Past end date - check if it's overdue (3 days after end date)
+                const overduePeriod = new Date(rentalEndDate);
+                overduePeriod.setDate(overduePeriod.getDate() + 3);
+                
+                if (today > overduePeriod) {
+                    rentalStatus = 'Overdue';
+                } else {
+                    rentalStatus = 'Ongoing';
+                }
+            }
+        } else {
+            // SINGLE-DAY RENTAL (only start date, no end date)
+            if (today < rentalStartDate) {
+                // Event is in the future
+                rentalStatus = 'Upcoming';
+            } else if (today.getTime() === rentalStartDate.getTime()) {
+                // Event is today
+                rentalStatus = 'Ongoing';
+            } else if (today > rentalStartDate) {
+                // Past event date - check if it's overdue (3+ days after event)
+                const daysDiff = Math.floor((today - rentalStartDate) / (1000 * 60 * 60 * 24));
+                
+                if (daysDiff >= 3) {
+                    rentalStatus = 'Overdue';
+                } else {
+                    rentalStatus = 'Ongoing';
+                }
+            }
+        }
+        
+        return { rentalStatus };
     }
 
     function renderRentals(filteredRentals = rentals) {
