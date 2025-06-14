@@ -1783,11 +1783,14 @@ $(document).ready(function () {
             // SHOW ERROR MESSAGE
             notyf.error(
                 "An error occurred while submitting the form. Please check the console for details."
-            );
-        } finally {
+            );        } finally {
             spinner.addClass("d-none");
             $customerModal.hide();
             $("#customer-form")[0].reset();
+            
+            // Clear additional fee fields
+            $("#additional-fee-description").val("");
+            $("#additional-fee-amount").val("");
             
             // CLEARING CART
             clearCart();
@@ -2250,11 +2253,15 @@ $(document).ready(function () {
         const accessory = cart.accessories[accessoryIdx];
         showAccessoryModal(accessoryIdx, accessory.id);
     });
-    
-    // Handle clear cart button
+      // Handle clear cart button
     $("#clear-cart-btn").on('click', function() {
         cart.products = [];
         cart.accessories = [];
+        
+        // Also clear additional fee form fields
+        $("#additional-fee-description").val("");
+        $("#additional-fee-amount").val("");
+        
         updateNewCartDisplay();
     });
 
@@ -2562,35 +2569,54 @@ $(document).ready(function () {
             $addFeeModal.find("#fee-amount").addClass("input-error");
             notyf.error("Please select a fee type and enter a valid amount greater than 0.");
             return;
+        }        $addFeeModal.find("#fee-amount").removeClass("input-error");
+        
+        // Check if fee already exists in cart and remove it
+        const existingFeeIndex = cart.accessories.findIndex(item => item.isFee === true);
+        if (existingFeeIndex !== -1) {
+            cart.accessories.splice(existingFeeIndex, 1);
         }
-          $addFeeModal.find("#fee-amount").removeClass("input-error");
+        
+        // Add fee to cart as an accessory item
+        const feeItem = {
+            name: feeType + " Fee",
+            price: feeAmount,
+            isFee: true,
+            types: []
+        };
+        cart.accessories.push(feeItem);
         
         // Populate the additional fee fields in the rental form
         $("#additional-fee-description").val(feeType + " Fee");
         $("#additional-fee-amount").val(feeAmount);
         
-        console.log("Fee populated in rental form:", { 
+        console.log("Fee added to cart and populated in rental form:", { 
             description: feeType + " Fee", 
             amount: feeAmount 
         });
         
+        // Update cart display to show the new fee
+        updateNewCartDisplay();
+        
         // Show success message
-        notyf.success(`${feeType} fee of ₱${feeAmount.toLocaleString()} added to rental form.`);
+        notyf.success(`${feeType} fee of ₱${feeAmount.toLocaleString()} added to order.`);
         
         // Close the modal
         closeAddFeeModal();
-        updateNewCartDisplay();
-        
-        // Close modal and show success
-        closeAddFeeModal();
-        notyf.success("Additional fee submitted successfully!");
     });
-    
-    // --- Clear Fee Button Logic ---
+      // --- Clear Fee Button Logic ---
     $("#clear-fee-btn").on("click", function () {
+        // Remove fee from cart
+        const existingFeeIndex = cart.accessories.findIndex(item => item.isFee === true);
+        if (existingFeeIndex !== -1) {
+            cart.accessories.splice(existingFeeIndex, 1);
+            updateNewCartDisplay();
+        }
+        
+        // Clear form fields
         $("#additional-fee-description").val("");
         $("#additional-fee-amount").val("");
-        notyf.success("Additional fee cleared from rental form.");
+        notyf.success("Additional fee removed from order.");
     });
 
     // === ADDITIONAL FEE FLOW FUNCTIONS ===
