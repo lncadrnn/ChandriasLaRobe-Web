@@ -1695,4 +1695,68 @@ a[href] {
     }
 }
 
-/*=============== END CIRCULAR CART BUTTON STYLES ===============*/
+/*=============== PAGINATION STYLES ===============*/
+.pagination-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+    gap: 0.5rem;
+}
+
+.pagination-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid #e5e5e5;
+    background-color: #fff;
+    color: var(--text-color);
+    font-size: var(--normal-font-size);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pagination-btn:hover {
+    background-color: var(--first-color-light);
+    color: #fff;
+    border-color: var(--first-color-light);
+}
+
+.pagination-btn.active {
+    background-color: var(--first-color);
+    color: #fff;
+    border-color: var(--first-color);
+}
+
+.pagination-info {
+    color: var(--text-color-light);
+    font-size: var(--small-font-size);
+}
+
+/* Pagination responsiveness */
+@media screen and (max-width: 768px) {
+    .pagination-container {
+        margin-top: 1.5rem;
+    }
+    
+    .pagination {
+        gap: 0.3rem;
+    }
+    
+    .pagination-btn {
+        width: 32px;
+        height: 32px;
+        font-size: var(--smaller-font-size);
+    }
+}
