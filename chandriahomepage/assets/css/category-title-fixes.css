@@ -1,0 +1,31 @@
+/* Category title fixes for long titles */
+
+/* Make the category titles smaller to fit on one line */
+.category-title {
+    font-size: var(--normal-font-size) !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    padding: 0 0.5rem;
+}
+
+/* Specific adjustments for long gown titles */
+.category-item[href*="long-gowns"] .category-title,
+.category-item[href*="wedding-gowns"] .category-title,
+.category-item[href*="fairy-gowns"] .category-title {
+    font-size: var(--small-font-size) !important;
+}
+
+/* Mobile adjustments */
+@media screen and (max-width: 768px) {
+    .category-title {
+        font-size: var(--small-font-size) !important;
+    }
+    
+    .category-item[href*="long-gowns"] .category-title,
+    .category-item[href*="wedding-gowns"] .category-title,
+    .category-item[href*="fairy-gowns"] .category-title {
+        font-size: var(--smaller-font-size) !important;
+    }
+}
