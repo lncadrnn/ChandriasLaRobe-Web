@@ -8,18 +8,65 @@
     padding: 20px 30px;
     max-width: 100%;
     overflow-x: auto;
+    overflow-y: auto;
     box-sizing: border-box;
+    /* Custom scrollbar styles */
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+/* Webkit scrollbar styles */
+.page-content::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.page-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.page-content::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.page-content::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
 }
 
 .calendar-container {
     background: white;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
+    overflow: auto;
     margin: 0 auto;
     max-width: calc(100vw - 320px); /* Account for sidebar width */
     width: 100%;
     box-sizing: border-box;
+    /* Custom scrollbar styles */
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+/* Webkit scrollbar styles for calendar container */
+.calendar-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.calendar-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.calendar-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.calendar-container::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
 }
 
 /* Adjust width when sidebar is closed */
@@ -173,6 +220,9 @@
     grid-template-columns: repeat(7, 1fr);
     background: #f8f9fa;
     border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 5;
 }
 
 .day-header {
@@ -182,6 +232,10 @@
     color: var(--text-secondary);
     font-size: 0.9rem;
     border-right: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
 }
 
 .day-header:last-child {
@@ -191,6 +245,34 @@
 .calendar-days {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    grid-auto-rows: minmax(120px, auto);
+    overflow: auto;
+    max-height: calc(100vh - 300px); /* Limit height to prevent overflow */
+    /* Custom scrollbar styles */
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
+    /* Ensure proper alignment with headers */
+    align-items: stretch;
+}
+
+/* Webkit scrollbar styles for calendar days */
+.calendar-days::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.calendar-days::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.calendar-days::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.calendar-days::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
 }
 
 /* =============== CALENDAR DAY CELLS =============== */
@@ -204,9 +286,12 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    /* Ensure proper alignment with headers */
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.calendar-day:last-child {
+.calendar-day:nth-child(7n) {
     border-right: none;
 }
 
@@ -222,6 +307,7 @@
 .calendar-day.today {
     background-color: rgba(166, 122, 99, 0.1);
     border: 2px solid var(--primary-color);
+    box-sizing: border-box;
 }
 
 .calendar-day.has-rentals {
@@ -306,7 +392,30 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: calc(100% - 25px); /* Leave space for day number */
+    /* Custom scrollbar styles */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(193, 193, 193, 0.7) transparent;
+}
+
+/* Webkit scrollbar styles for rental items */
+.rental-items::-webkit-scrollbar {
+    width: 4px;
+}
+
+.rental-items::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.rental-items::-webkit-scrollbar-thumb {
+    background: rgba(193, 193, 193, 0.7);
+    border-radius: 2px;
+}
+
+.rental-items::-webkit-scrollbar-thumb:hover {
+    background: rgba(161, 161, 161, 0.9);
 }
 
 .rental-item {
@@ -677,9 +786,10 @@ body.quick-view-active .rental-quick-view {
 /* =============== ENHANCED MOBILE RESPONSIVE STYLES =============== */
 
 /* =============== MOBILE PORTRAIT MODE =============== */
+/* =============== MOBILE PORTRAIT MODE =============== */
 @media (max-width: 768px) and (orientation: portrait) {
     .page-content {
-        padding: 10px 15px;
+        padding: 8px 10px;
     }
     
     .calendar-container {
@@ -687,119 +797,38 @@ body.quick-view-active .rental-quick-view {
         margin: 0;
         border-radius: 8px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
     }
     
     /* Compact header for portrait */
     .calendar-header {
-        padding: 12px 16px;
+        padding: 10px 12px;
         flex-direction: column;
-        gap: 12px;
-    }
-    
-    .calendar-title h2 {
-        font-size: 1.25rem;
-        min-width: auto;
-        margin-bottom: 8px;
-    }
-    
-    .calendar-nav {
-        gap: 12px;
-        justify-content: center;
-    }
-    
-    .nav-btn {
-        width: 36px;
-        height: 36px;
-        font-size: 1.1rem;
-    }
-    
-    /* Minimize legend in portrait */
-    .calendar-legend {
-        justify-content: center;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-    
-    .legend-item {
-        font-size: 0.75rem;
-        gap: 4px;
-    }
-    
-    .legend-color {
-        width: 8px;
-        height: 8px;
-    }
-    
-    /* Optimize calendar grid for portrait */
-    .day-header {
-        padding: 8px 4px;
-        font-size: 0.75rem;
-        font-weight: 700;
-    }
-    
-    .calendar-day {
-        min-height: 80px;
-        padding: 4px;
-    }
-    
-    .day-number {
-        font-size: 0.85rem;
-        margin-bottom: 4px;
-    }
-    
-    /* Minimize rental items in portrait */
-    .rental-item {
-        font-size: 0.65rem;
-        padding: 2px 4px;
-        margin-bottom: 2px;
-        border-radius: 3px;
-        line-height: 1.2;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    
-    .more-rentals {
-        font-size: 0.6rem;
-        padding: 1px 3px;
-    }
-}
-
-/* =============== MOBILE LANDSCAPE MODE =============== */
-@media (max-width: 1024px) and (orientation: landscape) and (max-height: 768px) {
-    .page-content {
-        padding: 8px 12px;
-    }
-    
-    .calendar-container {
-        max-width: 100vw;
-        margin: 0;
-        border-radius: 6px;
-        height: calc(100vh - 120px);
-        display: flex;
-        flex-direction: column;
-    }
-    
-    /* Optimized header for landscape */
-    .calendar-header {
-        padding: 8px 16px;
-        flex-shrink: 0;
+        gap: 10px;
     }
     
     .calendar-title h2 {
         font-size: 1.2rem;
         min-width: auto;
+        margin-bottom: 6px;
+    }
+    
+    .calendar-nav {
+        gap: 10px;
+        justify-content: center;
     }
     
     .nav-btn {
-        width: 32px;
-        height: 32px;
+        width: 34px;
+        height: 34px;
         font-size: 1rem;
     }
     
-    /* Compact legend for landscape */
+    /* Minimize legend in portrait */
     .calendar-legend {
-        gap: 10px;
+        justify-content: center;
+        gap: 6px;
+        flex-wrap: wrap;
     }
     
     .legend-item {
@@ -811,41 +840,59 @@ body.quick-view-active .rental-quick-view {
         width: 8px;
         height: 8px;
     }
-    
-    /* Optimize calendar grid for landscape */
-    .calendar-grid {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
-    
+      /* Optimize calendar grid for portrait */
     .calendar-days-header {
-        flex-shrink: 0;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: #f8f9fa;
     }
     
     .day-header {
-        padding: 6px 4px;
+        padding: 6px 2px;
         font-size: 0.7rem;
         font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        border-right: 1px solid var(--border-color);
+    }
+    
+    .day-header:nth-child(7) {
+        border-right: none;
     }
     
     .calendar-days {
-        flex: 1;
-        overflow-y: auto;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        grid-auto-rows: minmax(70px, auto);
+        gap: 0;
+        align-items: stretch;
     }
     
     .calendar-day {
         min-height: 70px;
         padding: 3px;
+        border-right: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .calendar-day:nth-child(7n) {
+        border-right: none;
     }
     
     .day-number {
         font-size: 0.8rem;
         margin-bottom: 3px;
+        font-weight: 600;
     }
     
-    /* Compact rental items for landscape */
+    /* Minimize rental items in portrait */
     .rental-item {
         font-size: 0.6rem;
         padding: 1px 3px;
@@ -855,12 +902,156 @@ body.quick-view-active .rental-quick-view {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        max-width: 100%;
     }
     
     .more-rentals {
         font-size: 0.55rem;
         padding: 1px 2px;
     }
+    
+    .rental-items {        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        overflow: hidden;
+    }
+}
+
+/* =============== MOBILE LANDSCAPE MODE =============== */
+@media (max-width: 1024px) and (orientation: landscape) and (max-height: 768px) {
+    .page-content {
+        padding: 6px 10px;
+    }
+    
+    .calendar-container {
+        max-width: 100vw;
+        margin: 0;
+        border-radius: 6px;
+        height: calc(100vh - 100px);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    
+    /* Optimized header for landscape */
+    .calendar-header {
+        padding: 6px 12px;
+        flex-shrink: 0;
+        gap: 8px;
+    }
+    
+    .calendar-title h2 {
+        font-size: 1.1rem;
+        min-width: auto;
+        margin: 0;
+    }
+    
+    .nav-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+    }
+    
+    /* Compact legend for landscape */
+    .calendar-legend {
+        gap: 8px;
+    }
+    
+    .legend-item {
+        font-size: 0.65rem;
+        gap: 2px;
+    }
+    
+    .legend-color {
+        width: 6px;
+        height: 6px;
+    }
+    
+    /* Optimize calendar grid for landscape */
+    .calendar-grid {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+      .calendar-days-header {
+        flex-shrink: 0;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        /* Ensure perfect alignment */
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .day-header {
+        padding: 4px 2px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        /* Ensure header alignment */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 30px;
+        border-right: 1px solid var(--border-color);
+    }
+    
+    .day-header:nth-child(7) {
+        border-right: none;
+    }
+      .calendar-days {
+        flex: 1;
+        overflow-y: auto;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        grid-auto-rows: minmax(60px, auto);
+        /* Ensure perfect alignment with headers */
+        align-items: stretch;
+    }
+    
+    .calendar-day {
+        /* Ensure day cells align with headers */
+        width: 100%;
+        box-sizing: border-box;
+        border-right: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+    }
+      .calendar-day:nth-child(7n) {
+        border-right: none;
+        min-height: 60px;
+        padding: 2px;
+    }
+    
+    .day-number {
+        font-size: 0.75rem;
+        margin-bottom: 2px;
+        font-weight: 600;
+    }
+    
+    /* Compact rental items for landscape */
+    .rental-item {
+        font-size: 0.55rem;
+        padding: 1px 2px;
+        margin-bottom: 1px;
+        border-radius: 2px;
+        line-height: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
+    }
+    
+    .more-rentals {
+        font-size: 0.5rem;
+        padding: 0px 1px;
+    }
+    
+    .rental-items {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        overflow: hidden;
+        max-height: calc(60px - 20px);    }
 }
 
 /* =============== SMALL MOBILE DEVICES =============== */
