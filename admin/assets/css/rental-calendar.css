@@ -94,19 +94,33 @@
 }
 
 .legend-color.upcoming {
-    background: #3498db;
+    background: #ffeaa7;
+    border: 1px solid #856404;
 }
 
 .legend-color.ongoing {
-    background: #f39c12;
+    background: #a7f3d0;
+    border: 1px solid #155724;
 }
 
 .legend-color.completed {
-    background: #27ae60;
+    background: #a7d8e7;
+    border: 1px solid #0c5460;
 }
 
 .legend-color.overdue {
-    background: #e74c3c;
+    background: #fca5a5;
+    border: 1px solid #721c24;
+}
+
+.legend-color.cancelled {
+    background: #d1d5db;
+    border: 1px solid #374151;
+}
+
+.legend-color.pending {
+    background: #fef3c7;
+    border: 1px solid #92400e;
 }
 
 /* =============== CALENDAR FILTERS =============== */

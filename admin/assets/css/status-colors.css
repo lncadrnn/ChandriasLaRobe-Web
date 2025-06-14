@@ -1,0 +1,176 @@
+/* ===============================================
+   SHARED STATUS COLORS CSS
+   Consistent status styling across all admin pages
+   =============================================== */
+
+/* === STATUS BADGES === */
+.status-badge {
+    display: inline-block;
+    padding: 0.3rem 0.6rem;
+    border-radius: 15px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin: 0;
+    line-height: 1.2;
+}
+
+/* Status Colors - Customer Logs Style */
+.status-upcoming {
+    background: #ffeaa7;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.status-ongoing {
+    background: #a7f3d0;
+    color: #155724;
+    border: 1px solid #a7f3d0;
+}
+
+.status-completed {
+    background: #a7d8e7;
+    color: #0c5460;
+    border: 1px solid #a7d8e7;
+}
+
+.status-overdue {
+    background: #fca5a5;
+    color: #721c24;
+    border: 1px solid #fca5a5;
+}
+
+.status-cancelled {
+    background: #d1d5db;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fef3c7;
+}
+
+/* === CALENDAR LEGEND COLORS === */
+.legend-color {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.legend-color.upcoming {
+    background: #ffeaa7;
+    border: 1px solid #856404;
+}
+
+.legend-color.ongoing {
+    background: #a7f3d0;
+    border: 1px solid #155724;
+}
+
+.legend-color.completed {
+    background: #a7d8e7;
+    border: 1px solid #0c5460;
+}
+
+.legend-color.overdue {
+    background: #fca5a5;
+    border: 1px solid #721c24;
+}
+
+.legend-color.cancelled {
+    background: #d1d5db;
+    border: 1px solid #374151;
+}
+
+.legend-color.pending {
+    background: #fef3c7;
+    border: 1px solid #92400e;
+}
+
+/* === CALENDAR EVENT COLORS === */
+.calendar-event {
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    margin: 1px 0;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.calendar-event:hover {
+    opacity: 0.8;
+}
+
+.calendar-event.upcoming {
+    background: #ffeaa7;
+    color: #856404;
+    border-left: 3px solid #856404;
+}
+
+.calendar-event.ongoing {
+    background: #a7f3d0;
+    color: #155724;
+    border-left: 3px solid #155724;
+}
+
+.calendar-event.completed {
+    background: #a7d8e7;
+    color: #0c5460;
+    border-left: 3px solid #0c5460;
+}
+
+.calendar-event.overdue {
+    background: #fca5a5;
+    color: #721c24;
+    border-left: 3px solid #721c24;
+}
+
+.calendar-event.cancelled {
+    background: #d1d5db;
+    color: #374151;
+    border-left: 3px solid #374151;
+}
+
+.calendar-event.pending {
+    background: #fef3c7;
+    color: #92400e;
+    border-left: 3px solid #92400e;
+}
+
+/* === PAYMENT STATUS === */
+.payment-status {
+    font-weight: 600;
+}
+
+.payment-fully-paid {
+    color: #155724;
+}
+
+.payment-balance {
+    color: #e74c3c;
+}
+
+/* === MOBILE RESPONSIVE === */
+@media (max-width: 768px) {
+    .status-badge {
+        font-size: 0.6rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .legend-color {
+        width: 10px;
+        height: 10px;
+        margin-right: 6px;
+    }
+    
+    .calendar-event {
+        font-size: 0.6rem;
+        padding: 1px 4px;
+    }
+}

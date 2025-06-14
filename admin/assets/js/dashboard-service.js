@@ -178,21 +178,26 @@ document.addEventListener("DOMContentLoaded", () => {
         
         filteredRentals.forEach(rental => {
             const tr = document.createElement('tr');
-            
-            // Map status to proper CSS classes for the existing UI
+              // Map status to proper CSS classes for the status-colors.css
             let statusClass = '';
             switch(rental.status.toLowerCase()) {
                 case 'upcoming':
-                    statusClass = 'status-pending';
+                    statusClass = 'status-upcoming';
                     break;
                 case 'ongoing':
-                    statusClass = 'status-active';
+                    statusClass = 'status-ongoing';
                     break;
                 case 'completed':
                     statusClass = 'status-completed';
                     break;
                 case 'overdue':
                     statusClass = 'status-overdue';
+                    break;
+                case 'cancelled':
+                    statusClass = 'status-cancelled';
+                    break;
+                case 'pending':
+                    statusClass = 'status-pending';
                     break;
                 default:
                     statusClass = 'status-pending';
