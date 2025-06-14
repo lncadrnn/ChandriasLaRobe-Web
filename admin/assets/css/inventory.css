@@ -592,21 +592,13 @@ header .custom-image-text .custom-header-text {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 10px 0; /* Remove left/right padding for consistent spacing */
     flex-direction: row;
     gap: 1rem;
-    margin-left: 10px;
+    margin-left: 0; /* Consistent left margin */
     width: 100%;
-    margin-left: 2.5%;
-    padding: 0;
     background: transparent;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
     margin-right: 0;
-    margin-left: 0;
-    padding-right: 2.5rem;
-    padding-left: 2.5%;
 }
 
 .button-container {
@@ -686,8 +678,10 @@ header .custom-image-text .custom-header-text {
     flex-wrap: wrap;
     flex-direction: row;
     z-index: 2;
-    margin-left: 32px;
+    margin-left: 0;
     margin-right: 0;
+    padding-left: 0; /* Remove left padding for equal spacing */
+    padding-right: 0; /* Remove right padding for equal spacing */
     justify-items: start;
 }
 

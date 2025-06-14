@@ -34,6 +34,12 @@
 
 /* =============== MOBILE RESPONSIVENESS =============== */
 @media (max-width: 768px) {
+    /* Prevent horizontal scroll globally */
+    html, body {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+    }
+    
     /* Hide desktop sidebar completely */
     .sidebar {
         display: none !important;
@@ -50,14 +56,23 @@
     }
     
     .header-left p.page-subtitle {
-        font-size: 0.9rem !important;
-        opacity: 0.8;
+        font-size: 0.85rem !important;
+        opacity: 0.8 !important;
     }
     
+    /* Fix header right section for mobile */
     .header-right {
         width: 100% !important;
-        justify-content: space-between !important;
+        justify-content: center !important;
+        align-items: center !important;
+        flex-direction: column !important;
         gap: 10px !important;
+    }
+    
+    .header-right .search-box {
+        width: 100% !important;
+        max-width: 300px !important;
+        margin: 0 auto !important;
     }
     
     .search-box {
@@ -130,6 +145,7 @@
     .page-content {
         padding: 0 15px !important;
         margin-bottom: 80px !important; /* Account for mobile nav height */
+        margin-left: 0 !important; /* Ensure proper left alignment */
     }
     
     .page-content .container,
@@ -137,6 +153,14 @@
     .page-content .pos-layout {
         padding-left: 0 !important;
         padding-right: 0 !important;
+        margin-left: 0 !important; /* Ensure proper left alignment */
+    }
+    
+    /* Fix card container on mobile */
+    .card_container {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0 !important;
     }
     
     .pos-tabs {
@@ -162,11 +186,44 @@
         grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
         gap: 15px !important;
         padding: 15px 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        overflow-x: hidden !important;
     }
     
     .card_article {
         max-width: none !important;
         margin: 0 !important;
+    }
+    
+    /* Fix add product button for mobile */
+    #add-item-btn {
+        min-width: auto !important;
+        width: 100% !important;
+        max-width: 200px !important;
+        padding: 12px 20px !important;
+        font-size: 0.9rem !important;
+        margin: 0 auto !important;
+    }
+    
+    #add-item-btn span {
+        display: inline !important;
+        font-size: 0.9rem !important;
+    }
+    
+    /* Remove horizontal scroll from page content */
+    .page-content {
+        overflow-x: hidden !important;
+        padding: 15px 15px !important;
+        margin: 0 !important;
+    }
+    
+    /* Fix main content area */
+    .main-content {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        margin-left: 0 !important;
+        padding: 0 !important;
     }
     
     .card_img {
@@ -412,6 +469,41 @@
     
     .main-content {
         padding-bottom: 80px !important;
+    }
+}
+
+/* =============== VERY SMALL SCREENS =============== */
+@media (max-width: 480px) {
+    /* Even tighter spacing for very small screens */
+    .page-header {
+        padding: 10px 10px !important;
+    }
+    
+    .page-content {
+        padding: 10px 10px !important;
+    }
+    
+    .card_container {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+        gap: 10px !important;
+        padding: 10px 0 !important;
+    }
+    
+    #add-item-btn {
+        padding: 10px 16px !important;
+        font-size: 0.85rem !important;
+    }
+    
+    #add-item-btn span {
+        font-size: 0.85rem !important;
+    }
+    
+    .header-left h1.page-title {
+        font-size: 1.3rem !important;
+    }
+    
+    .page-subtitle {
+        font-size: 0.8rem !important;
     }
 }
 
