@@ -32,7 +32,7 @@ $(document).ready(function () {
             },
             {
                 type: 'booking-success',
-                background: 'hsl(346, 100%, 74%)',
+                background: '#3dc763',
                 icon: {
                     className: 'fi fi-rs-check',
                     tagName: 'i'
