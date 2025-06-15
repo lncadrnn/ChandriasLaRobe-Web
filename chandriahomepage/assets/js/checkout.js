@@ -20,7 +20,23 @@ $(document).ready(function () {
         position: {
             x: "center",
             y: "top"
-        }
+        },
+        types: [
+            {
+                type: 'success',
+                background: 'hsl(346, 100%, 74%)',
+                icon: {
+                    className: 'fi fi-rs-check',
+                    tagName: 'i'
+                },
+                duration: 4000
+            },
+            {
+                type: 'error',
+                background: '#ff4d4d',
+                duration: 4000
+            }
+        ]
     });
 
     // Check if user signed in with Google
@@ -415,10 +431,6 @@ $(document).ready(function () {
                 added_to_cart: [] // Clear the cart by setting it to empty array
             });
 
-            notyf.success(
-                "Appointment booked successfully! Your cart has been cleared."
-            );
-
             // RESET FORM
             $("form")[0].reset();
 
@@ -432,10 +444,10 @@ $(document).ready(function () {
             // UPDATE WISHLIST COUNT AS WELL FOR CONSISTENCY
             await wishlistService.updateWishlistCountUI();
 
-            // REDIRECT TO CART PAGE AFTER A SHORT DELAY TO SHOW EMPTY CART
+            // REDIRECT TO CART PAGE AFTER A SHORT DELAY WITH SUCCESS PARAMETER
             setTimeout(() => {
-                window.location.href = "./cart.html";
-            }, 2000); // 2 second delay to let user see the success message
+                window.location.href = "./cart.html?booking=success";
+            }, 1000); // 1 second delay to ensure data is processed
         } catch (err) {
             console.error("Appointment creation failed:", err);
             notyf.error("There was an error creating your appointment. Please try again.");

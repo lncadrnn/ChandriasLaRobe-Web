@@ -29,6 +29,15 @@ $(document).ready(function () {
                     className: "notyf__icon--success",
                     tagName: "i"
                 }
+            },
+            {
+                type: 'booking-success',
+                background: 'hsl(346, 100%, 74%)',
+                icon: {
+                    className: 'fi fi-rs-check',
+                    tagName: 'i'
+                },
+                duration: 5000
             }
         ]
     });    onAuthStateChanged(auth, async user => {
@@ -95,6 +104,22 @@ $(document).ready(function () {
                 hideSpinner('cart-loader');
             } else {
                 hideSpinner('cart-loader');
+            }
+            
+            // Check if we came from a successful booking and show notification
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('booking') === 'success') {
+                // Show success notification after a short delay to ensure the page is fully loaded
+                setTimeout(() => {
+                    notyf.open({
+                        type: 'booking-success',
+                        message: 'Booking submitted successfully! Your cart has been cleared.',
+                        ripple: true,
+                        dismissible: true
+                    });
+                    // Clean up the URL parameter without reloading the page
+                    history.replaceState(null, '', window.location.pathname);
+                }, 500);
             }
         }
     }); // DISPLAY CART ITEMS IN TABLE
