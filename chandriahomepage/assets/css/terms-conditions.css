@@ -1,0 +1,256 @@
+/* Terms and Conditions Popup Styles */
+.terms-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.terms-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Add body class to prevent background scrolling when modal is open */
+body.terms-modal-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+.terms-modal-container {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 700px;
+    max-height: 85vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.terms-modal-overlay.active .terms-modal-container {
+    transform: translateY(0);
+}
+
+.terms-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e1e1e1;
+    background-color: #f9f9f9;
+}
+
+.terms-modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.terms-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    color: #777;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.terms-modal-close:hover {
+    color: #ff4d5a;
+}
+
+.terms-modal-content {
+    padding: 28px;
+    overflow-y: auto;
+    max-height: 60vh;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.terms-modal-content p {
+    margin-bottom: 16px;
+    line-height: 1.6;
+    color: #333;
+    text-align: justify;
+}
+
+.terms-modal-content h3 {
+    font-weight: 700;
+    margin: 24px 0 12px;
+    color: #222;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.terms-modal-content ul, .terms-modal-content ol {
+    margin: 15px 0;
+    padding-left: 30px;
+}
+
+.terms-modal-content li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+    color: #333;
+}
+
+.terms-modal-content .section-title {
+    font-weight: 700;
+    margin: 25px 0 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e1e1e1;
+    color: hsl(346, 100%, 74%);
+}
+
+.terms-modal-content .highlight {
+    background-color: #fffaeb;
+    padding: 15px;
+    border-left: 3px solid hsl(346, 100%, 74%);
+    margin: 20px 0;
+}
+
+.terms-modal-content .legal-notice {
+    font-style: italic;
+    color: #555;
+    margin: 20px 0;
+    font-size: 0.9rem;
+}
+
+.terms-modal-content .date {
+    margin-top: 25px;
+    font-style: italic;
+    color: #555;
+}
+
+.terms-agreement {
+    display: flex;
+    align-items: flex-start;
+    margin: 25px 0;
+    gap: 10px;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e1e1e1;
+}
+
+.terms-agreement input[type="checkbox"] {
+    margin-top: 5px;
+    width: 18px;
+    height: 18px;
+    accent-color: hsl(346, 100%, 74%);
+}
+
+.terms-agreement label {
+    flex: 1;
+    font-size: 15px;
+    color: #333;
+    font-weight: 500;
+}
+
+.terms-modal-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 24px 24px;
+    border-top: 1px solid #e1e1e1;
+    background-color: #f9f9f9;
+}
+
+.terms-modal-actions button {
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.terms-btn-cancel {
+    background-color: #f5f5f5;
+    color: #555;
+    border: 1px solid #ddd;
+}
+
+.terms-btn-cancel:hover {
+    background-color: #eee;
+}
+
+.terms-btn-agree {
+    background-color: hsl(346, 100%, 74%);
+    color: white;
+    border: none;
+}
+
+.terms-btn-agree:hover {
+    background-color: hsl(346, 100%, 69%);
+}
+
+.terms-btn-agree:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.terms-scroll-indicator {
+    height: 4px;
+    background-color: #f1f1f1;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.terms-scroll-progress {
+    height: 100%;
+    background-color: hsl(346, 100%, 74%);
+    width: 0%;
+    transition: width 0.1s;
+}
+
+@media (max-width: 767px) {
+    .terms-modal-container {
+        width: 95%;
+        max-height: 90vh;
+    }
+    
+    .terms-modal-title {
+        font-size: 1.25rem;
+    }
+    
+    .terms-modal-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .terms-modal-actions button {
+        width: 100%;
+    }
+}
+
+/* Print styles for terms and conditions */
+@media print {
+    .terms-modal-container {
+        box-shadow: none;
+        margin: 0;
+        width: 100%;
+        max-width: none;
+    }
+    
+    .terms-modal-close, .terms-modal-actions {
+        display: none;
+    }
+}

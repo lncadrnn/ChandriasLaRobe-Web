@@ -282,6 +282,73 @@ $(document).ready(function () {
             }
         }
 
+        // Show terms and conditions modal instead of proceeding immediately
+        $("#terms-modal").addClass("active");
+        // Add class to body to prevent background scrolling
+        $("body").addClass("terms-modal-open");
+        
+        // Reset checkbox state
+        $("#terms-checkbox").prop("checked", false);
+        $("#terms-agree").prop("disabled", true);
+        
+        // Store form data for later use if terms are accepted
+        window.bookingData = {
+            customerName,
+            customerEmail,
+            customerContact,
+            checkoutDateStr,
+            checkoutTimeStr,
+            customerRequest,
+            checkoutStatus
+        };
+    });
+
+    // Terms and Conditions Modal functionality
+    $("#terms-checkbox").on("change", function() {
+        // Enable/disable the agree button based on checkbox state
+        $("#terms-agree").prop("disabled", !$(this).prop("checked"));
+    });
+
+    // Close terms modal on cancel or X button
+    $("#terms-close, #terms-cancel").on("click", function() {
+        $("#terms-modal").removeClass("active");
+        // Remove class from body to re-enable background scrolling
+        $("body").removeClass("terms-modal-open");
+    });
+    
+    // Scroll progress indicator for terms modal
+    $(".terms-modal-content").on("scroll", function() {
+        const scrollPosition = $(this).scrollTop();
+        const totalHeight = $(this)[0].scrollHeight - $(this).outerHeight();
+        const scrollPercentage = (scrollPosition / totalHeight) * 100;
+        $(".terms-scroll-progress").css("width", scrollPercentage + "%");
+    });
+    
+    // Escape key to close terms modal
+    $(document).keydown(function(e) {
+        if (e.key === "Escape" && $("#terms-modal").hasClass("active")) {
+            $("#terms-modal").removeClass("active");
+            // Remove class from body to re-enable background scrolling
+            $("body").removeClass("terms-modal-open");
+        }
+    });
+
+    // Process booking when terms are agreed to
+    $("#terms-agree").on("click", async function() {
+        // Show spinner for better UX during processing
+        if (typeof window.showSpinner === 'function') {
+            window.showSpinner();
+        }
+        
+        // Hide terms modal
+        $("#terms-modal").removeClass("active");
+        // Remove class from body to re-enable background scrolling
+        $("body").removeClass("terms-modal-open");
+        
+        // Retrieve the stored form data
+        const { customerName, customerEmail, customerContact, checkoutDateStr, 
+                checkoutTimeStr, customerRequest, checkoutStatus } = window.bookingData;
+
         // --- COLLECT CART ITEMS ---
         const user = auth.currentUser;
         let cartItems = [];

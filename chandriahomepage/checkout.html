@@ -29,6 +29,7 @@
         <link rel="stylesheet" href="assets/css/auth-modal.css" />
         <link rel="stylesheet" href="assets/css/spinner.css" />
         <link rel="stylesheet" href="assets/css/chatbot.css" />
+        <link rel="stylesheet" href="assets/css/terms-conditions.css" />
         
         <title>Chandria's La Robe</title>
     </head>
@@ -223,6 +224,76 @@
                 </div>
             </section>
         </main>
+
+        <!--=============== TERMS AND CONDITIONS MODAL ===============-->
+        <div id="terms-modal" class="terms-modal-overlay">
+            <div class="terms-modal-container">
+                <div class="terms-modal-header">
+                    <h2 class="terms-modal-title">TERMS AND CONDITIONS OF SERVICE</h2>
+                    <button class="terms-modal-close" id="terms-close">&times;</button>
+                </div>
+                
+                <div class="terms-scroll-indicator">
+                    <div class="terms-scroll-progress"></div>
+                </div>
+                
+                <div class="terms-modal-content">
+                    <p class="legal-notice">Last Updated: June 15, 2025</p>
+                    
+                    <p>This Agreement ("Agreement") constitutes a legally binding contract between you ("Customer", "you", or "your") and Chandria's La Robe ("Company", "we", "our", or "us") regarding your rental of products through our booking service. Please read these terms carefully before confirming your appointment.</p>
+                    
+                    <h3 class="section-title">1. APPOINTMENT BOOKING</h3>
+                    <p>1.1. This appointment booking is for fitting and reservation purposes only. No payment is required at the time of online booking.</p>
+                    <p>1.2. By confirming this appointment, you are expressing interest in renting the selected items, which will be prepared for you to try on at our physical location.</p>
+                    <p>1.3. The Company reserves the right to reschedule or cancel appointments due to unforeseen circumstances, with reasonable notice provided to the Customer.</p>
+                    
+                    <h3 class="section-title">2. RENTAL POLICIES</h3>
+                    <p>2.1. <strong>Late Returns:</strong> For each day an item is returned after the agreed-upon return date, a late fee equal to the daily rental price of the item will be automatically charged.</p>
+                    <p>2.2. <strong>Rental Period:</strong> The rental period begins on the day the items are collected from our store and ends on the agreed return date specified in the rental agreement signed at our physical location.</p>
+                    <p>2.3. <strong>Extensions:</strong> Extensions to the rental period must be requested and approved at least 24 hours before the original return date and are subject to availability.</p>
+                    
+                    <h3 class="section-title">3. PAYMENT TERMS</h3>
+                    <p>3.1. <strong>Down Payment:</strong> Any down payment made at our physical store is strictly non-refundable under any circumstances.</p>
+                    <p>3.2. <strong>Security Deposit:</strong> A security deposit of 50% of the total rental price is required to ensure the safety and return of all items. This deposit will be refunded upon the timely return of undamaged items in their original condition.</p>
+                    <p>3.3. <strong>Payment Methods:</strong> We accept cash, credit cards, and approved digital payment methods at our physical location.</p>
+                    
+                    <div class="highlight">
+                        <p>IMPORTANT: All financial transactions including payment collection and security deposits will occur only at our physical store location. No online payment is required at the time of booking an appointment.</p>
+                    </div>
+                    
+                    <h3 class="section-title">4. DAMAGES AND LIABILITY</h3>
+                    <p>4.1. <strong>Additional Fees:</strong> The Customer will be responsible for additional fees for any items that are damaged, broken, stained, or lost during the rental period. These fees may include:</p>
+                    <ul>
+                        <li>Repair costs for minor damages</li>
+                        <li>Full replacement value for major damages or lost items</li>
+                        <li>Cleaning fees for stains or soiling beyond normal wear</li>
+                    </ul>
+                    <p>4.2. <strong>Assessment:</strong> The Company reserves the sole right to determine the condition of returned items and assess any applicable damage fees.</p>
+                    <p>4.3. <strong>Insurance:</strong> Customers are advised to check if their personal insurance policies might cover damage to rented items.</p>
+                    
+                    <h3 class="section-title">5. CANCELLATION POLICY</h3>
+                    <p>5.1. Appointments may be cancelled or rescheduled at least 24 hours in advance without penalty.</p>
+                    <p>5.2. Repeated no-shows may result in restrictions on future bookings.</p>
+                    
+                    <h3 class="section-title">6. GENERAL PROVISIONS</h3>
+                    <p>6.1. <strong>Alterations:</strong> Customers shall not make any alterations to the rented items without prior written consent from the Company.</p>
+                    <p>6.2. <strong>Care Instructions:</strong> Customers agree to follow all care instructions provided for the rented items.</p>
+                    <p>6.3. <strong>Limitation of Liability:</strong> The Company's liability shall be limited to the rental fee paid by the Customer.</p>
+                    
+                    <p class="date">By checking the box below, you acknowledge that you have read, understood, and agree to be bound by all the terms and conditions outlined in this Agreement.</p>
+                    
+                    <div class="terms-agreement">
+                        <input type="checkbox" id="terms-checkbox">
+                        <label for="terms-checkbox">I have read, understood, and agree to the Terms and Conditions of Chandria's La Robe rental services.</label>
+                    </div>
+                </div>
+                
+                <div class="terms-modal-actions">
+                    <button class="terms-btn-cancel" id="terms-cancel">Cancel</button>
+                    <button class="terms-btn-agree" id="terms-agree" disabled>Confirm Booking</button>
+                </div>
+            </div>
+        </div>
 
         <!-------------------------------- MODERN AUTHENTICATION MODAL -------------------------------->
         <div id="auth-modal" class="auth-modal-container">
