@@ -76,11 +76,7 @@ class ChandriasChatbot {    constructor() {
         this.loadChatHistory();
         this.attachEventListeners();
         
-        // Add drag functionality to the bubble
-        setTimeout(() => {
-            this.makeChatbotBubbleDraggable();
-            console.log('Chatbot drag functionality initialized');
-        }, 100); // Small delay to ensure DOM is ready
+        // Chatbot is fixed in lower right corner - no dragging functionality needed
         
         this.initialized = true;
         console.log('Chatbot initialization complete');
@@ -142,7 +138,7 @@ class ChandriasChatbot {    constructor() {
 
         closeBtn.addEventListener('click', () => this.closeChatbot());
         
-        // Store reference to the maximize function for the draggable functionality
+        // Store reference to the maximize function
         this.maximizeChatbotHandler = () => this.maximizeChatbot();
         chatbotBubble.addEventListener('click', this.maximizeChatbotHandler);
 
@@ -499,178 +495,6 @@ class ChandriasChatbot {    constructor() {
 
     closeChatbot() {
         this.minimizeChatbot();
-    }    makeChatbotBubbleDraggable() {
-        const bubble = document.getElementById('chatbotBubble');
-        if (!bubble) return;        let isDragging = false;
-        let startX, startY, initialX, initialY;
-        let currentX = 0, currentY = 0;
-
-        // Store reference to this class instance for use in nested functions
-        const chatbotInstance = this;
-
-        // Add draggable class
-        bubble.classList.add('draggable');
-
-        // Mouse events
-        bubble.addEventListener('mousedown', dragStart);
-        document.addEventListener('mousemove', drag);
-        document.addEventListener('mouseup', dragEnd);
-
-        // Touch events for mobile
-        bubble.addEventListener('touchstart', dragStart, { passive: false });
-        document.addEventListener('touchmove', drag, { passive: false });
-        document.addEventListener('touchend', dragEnd);        function dragStart(e) {
-            e.preventDefault();
-            
-            // Get initial positions
-            const event = e.type.includes('touch') ? e.touches[0] : e;
-            startX = event.clientX;
-            startY = event.clientY;
-
-            // Get current bubble position
-            const rect = bubble.getBoundingClientRect();
-            initialX = rect.left;
-            initialY = rect.top;
-
-            isDragging = true;
-            bubble.classList.add('dragging');
-            
-            // Add a small delay before considering it a drag on mobile
-            if (e.type.includes('touch')) {
-                setTimeout(() => {
-                    if (isDragging && (Math.abs(currentX) < 3 && Math.abs(currentY) < 3)) {
-                        // If we haven't moved much, it's likely a tap
-                        isDragging = false;
-                        bubble.classList.remove('dragging');
-                    }
-                }, 100);
-            }
-        }function drag(e) {
-            if (!isDragging) return;
-            e.preventDefault();
-
-            const event = e.type.includes('touch') ? e.touches[0] : e;
-            currentX = event.clientX - startX;
-            currentY = event.clientY - startY;
-
-            // Calculate new position
-            let newX = initialX + currentX;
-            let newY = initialY + currentY;
-
-            const bubbleSize = bubble.offsetWidth;
-            const margin = 10;
-
-            // Constrain to viewport bounds without edge snapping during drag
-            newX = Math.max(margin, Math.min(window.innerWidth - bubbleSize - margin, newX));
-            newY = Math.max(margin, Math.min(window.innerHeight - bubbleSize - margin, newY));
-
-            // Apply new position immediately for smooth dragging
-            bubble.style.position = 'fixed';
-            bubble.style.left = newX + 'px';
-            bubble.style.top = newY + 'px';
-            bubble.style.right = 'auto';
-            bubble.style.bottom = 'auto';
-            
-            // Update speech bubble position in real-time during drag
-            chatbotInstance.updateSpeechBubblePosition();
-        }        function dragEnd(e) {
-            if (!isDragging) return;
-            
-            isDragging = false;
-            bubble.classList.remove('dragging');
-
-            // Save position to localStorage for persistence
-            const rect = bubble.getBoundingClientRect();
-            if (window.ChatbotPersistence) {
-                window.ChatbotPersistence.savePosition(rect.left, rect.top);
-            }
-
-            // Snap to edges for better UX
-            snapToEdges();
-            
-            // Update speech bubble position after snapping
-            setTimeout(() => {
-                chatbotInstance.updateSpeechBubblePosition();
-            }, 100); // Small delay to ensure bubble position is finalized
-        }function snapToEdges() {
-            const rect = bubble.getBoundingClientRect();
-            const bubbleSize = bubble.offsetWidth;
-            const margin = 20;
-            
-            let newX = rect.left;
-            let newY = rect.top;
-
-            // Calculate distances to each edge
-            const distanceToLeft = rect.left;
-            const distanceToRight = window.innerWidth - rect.right;
-            const distanceToTop = rect.top;
-            const distanceToBottom = window.innerHeight - rect.bottom;
-
-            // Find the closest edge
-            const minDistance = Math.min(distanceToLeft, distanceToRight, distanceToTop, distanceToBottom);
-
-            // Snap to the closest edge
-            if (minDistance === distanceToLeft) {
-                // Snap to left edge
-                newX = margin;
-            } else if (minDistance === distanceToRight) {
-                // Snap to right edge
-                newX = window.innerWidth - bubbleSize - margin;
-            } else if (minDistance === distanceToTop) {
-                // Snap to top edge
-                newY = margin;
-            } else {
-                // Snap to bottom edge
-                newY = window.innerHeight - bubbleSize - margin;
-            }
-
-            // Ensure it stays within bounds
-            newX = Math.max(margin, Math.min(window.innerWidth - bubbleSize - margin, newX));
-            newY = Math.max(margin, Math.min(window.innerHeight - bubbleSize - margin, newY));
-
-            // Animate to final position
-            bubble.style.transition = 'all 0.3s ease';
-            bubble.style.left = newX + 'px';
-            bubble.style.top = newY + 'px';            // Save final position after animation
-            setTimeout(() => {
-                if (window.ChatbotPersistence) {
-                    window.ChatbotPersistence.savePosition(newX, newY);
-                }
-                // Update speech bubble position after snapping
-                chatbotInstance.updateSpeechBubblePosition();
-            }, 300);
-
-            // Remove transition after animation completes
-            setTimeout(() => {
-                bubble.style.transition = '';
-            }, 300);
-        }        // Replace the existing click handler with one that handles dragging
-        bubble.removeEventListener('click', this.maximizeChatbotHandler);
-        bubble.addEventListener('click', (e) => {
-            // If the user dragged more than 5px in any direction, don't trigger chat opening
-            if (Math.abs(currentX) > 5 || Math.abs(currentY) > 5) {
-                e.preventDefault();
-                e.stopPropagation();
-                currentX = 0;
-                currentY = 0;
-                return;
-            }
-            // Otherwise, trigger the maximize function
-            this.maximizeChatbot();
-        });
-
-        // Add additional touch event for better mobile support
-        bubble.addEventListener('touchstart', (e) => {
-            // Prevent default touch behavior that might interfere
-            if (e.touches.length === 1) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-
-        // Add window resize listener to update speech bubble position
-        window.addEventListener('resize', () => {
-            chatbotInstance.updateSpeechBubblePosition();
-        });
     }
 
     loadChatHistory() {

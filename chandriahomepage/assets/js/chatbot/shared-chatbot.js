@@ -14,30 +14,15 @@ export function addChatbotToPage() {
 
 // Chatbot persistence management
 export const ChatbotPersistence = {
-    // Save chatbot position to localStorage
+    // Save chatbot position - disabled for fixed position
     savePosition(x, y) {
-        try {
-            const position = { x, y, timestamp: Date.now() };
-            localStorage.setItem('chandria-chatbot-position', JSON.stringify(position));
-        } catch (error) {
-            console.log('Could not save chatbot position');
-        }
+        // Position saving disabled - chatbot is fixed in lower right corner
+        return;
     },
 
-    // Load chatbot position from localStorage
+    // Load chatbot position - disabled for fixed position
     loadPosition() {
-        try {
-            const saved = localStorage.getItem('chandria-chatbot-position');
-            if (saved) {
-                const position = JSON.parse(saved);
-                // Return position if it was saved within the last 24 hours
-                if (Date.now() - position.timestamp < 24 * 60 * 60 * 1000) {
-                    return { x: position.x, y: position.y };
-                }
-            }
-        } catch (error) {
-            console.log('Could not load chatbot position');
-        }
+        // Position loading disabled - chatbot is fixed in lower right corner
         return null;
     },    // Save chatbot state (open/closed)
     saveState(isMinimized) {
@@ -65,62 +50,37 @@ export const ChatbotPersistence = {
         }
         // Default to minimized if no recent state found
         return { isMinimized: true };
-    },    // Apply saved position to chatbot bubble - restrict to edges only
+    },    // Clear any saved position data to ensure fixed position
+    clearSavedPosition() {
+        try {
+            localStorage.removeItem('chandria-chatbot-position');
+        } catch (error) {
+            console.log('Could not clear saved position');
+        }
+    },
+
+    // Apply fixed position to chatbot bubble - always lower right corner
     applyPosition() {
         const bubble = document.getElementById('chatbotBubble');
         if (!bubble) return;
 
-        const savedPosition = this.loadPosition();
-        if (savedPosition) {
-            const bubbleSize = bubble.offsetWidth || 60;
-            const margin = 20;
-            
-            let x = savedPosition.x;
-            let y = savedPosition.y;
-            
-            // Ensure position is within current viewport bounds
-            x = Math.max(margin, Math.min(window.innerWidth - bubbleSize - margin, x));
-            y = Math.max(margin, Math.min(window.innerHeight - bubbleSize - margin, y));
-            
-            // Determine which edge this position is closest to and snap to it
-            const distanceToLeft = x;
-            const distanceToRight = window.innerWidth - x - bubbleSize;
-            const distanceToTop = y;
-            const distanceToBottom = window.innerHeight - y - bubbleSize;
-            
-            const minDistance = Math.min(distanceToLeft, distanceToRight, distanceToTop, distanceToBottom);
-            
-            // Snap to the closest edge
-            if (minDistance === distanceToLeft) {
-                x = margin; // Left edge
-            } else if (minDistance === distanceToRight) {
-                x = window.innerWidth - bubbleSize - margin; // Right edge
-            } else if (minDistance === distanceToTop) {
-                y = margin; // Top edge
-            } else {
-                y = window.innerHeight - bubbleSize - margin; // Bottom edge
-            }
-            
-            bubble.style.position = 'fixed';
-            bubble.style.left = x + 'px';
-            bubble.style.top = y + 'px';
-            bubble.style.right = 'auto';
-            bubble.style.bottom = 'auto';
-        } else {
-            // Default position: right edge, middle of screen
-            const bubbleSize = bubble.offsetWidth || 60;
-            const margin = 20;
-            bubble.style.position = 'fixed';
-            bubble.style.left = (window.innerWidth - bubbleSize - margin) + 'px';
-            bubble.style.top = (window.innerHeight / 2 - bubbleSize / 2) + 'px';
-            bubble.style.right = 'auto';
-            bubble.style.bottom = 'auto';
-        }
-    },// Initialize persistence for a chatbot instance
+        // Always position in lower right corner
+        const bubbleSize = bubble.offsetWidth || 60;
+        const margin = 20;
+        
+        bubble.style.position = 'fixed';
+        bubble.style.right = margin + 'px';
+        bubble.style.bottom = margin + 'px';
+        bubble.style.left = 'auto';
+        bubble.style.top = 'auto';
+    },    // Initialize persistence for a chatbot instance
     initializePersistence(chatbotInstance) {
         if (!chatbotInstance) return;
 
-        // Apply saved position and restore state after a short delay
+        // Clear any saved position data to ensure fixed position
+        this.clearSavedPosition();
+
+        // Apply fixed position and restore state after a short delay
         setTimeout(() => {
             this.applyPosition();
               // Load and apply saved state

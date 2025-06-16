@@ -215,8 +215,10 @@
     bottom: 20px;
     right: 20px;
     width: 60px;
-    height: 60px;    background: #ffffff;
-    border-radius: 50%;    box-shadow: 0 5px 25px rgba(251, 173, 181, 0.4);
+    height: 60px;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 5px 25px rgba(251, 173, 181, 0.4);
     cursor: pointer;
     z-index: 1001;
     transition: all 0.3s ease;
@@ -225,43 +227,24 @@
     justify-content: center;
     animation: pulse 2s infinite;
     border: 3px solid hsl(346, 100%, 74%);
-    /* Add will-change for better performance during dragging */
-    will-change: transform;
-}
-
-/* Draggable styles */
-.chatbot-bubble.draggable {
-    cursor: grab;
+    /* Fixed position - no dragging */
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
 }
 
-.chatbot-bubble.dragging {
-    cursor: grabbing;
-    z-index: 1002;
-    animation: none; /* Disable pulse animation while dragging */
-    transition: none; /* Disable transitions while dragging */
-}
-
+/* Mobile responsive styles */
 @media screen and (max-width: 480px) {
     .chatbot-bubble {
         width: 55px;
         height: 55px;
         bottom: 15px;
         right: 15px;
-        /* Enhanced mobile touch support */
-        touch-action: none;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;        /* Improved mobile interaction */
+        /* Mobile touch support */
         -webkit-tap-highlight-color: transparent;
-        /* Better z-index for mobile */
-        z-index: 1002;
+        /* Fixed z-index */
+        z-index: 1001;
     }
     
     .chatbot-bubble:active {
@@ -275,8 +258,6 @@
         bottom: 10px;
         right: 10px;
         left: 10px;
-        /* Ensure proper touch handling */
-        touch-action: manipulation;
     }
 }
 
