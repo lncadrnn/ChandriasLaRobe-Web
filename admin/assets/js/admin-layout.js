@@ -47,13 +47,27 @@ function initSidebarToggle() {
         
         // Ensure toggle is visible and properly styled
         toggle.style.display = 'flex';
-        
-        // Restore sidebar state from localStorage
+          // Restore sidebar state from localStorage
         const sidebarClosed = localStorage.getItem('sidebarClosed');
-        if (sidebarClosed === 'true') {
+        const adminSidebarClosed = localStorage.getItem('admin-sidebar-closed');
+        
+        // Check both possible localStorage keys (for backward compatibility)
+        if (sidebarClosed === 'true' || adminSidebarClosed === 'true') {
             sidebar.classList.add('close');
-        } else if (sidebarClosed === 'false') {
+            // Standardize on one localStorage key
+            localStorage.setItem('sidebarClosed', 'true');
+            // Remove the old key to avoid conflicts
+            if (adminSidebarClosed) {
+                localStorage.removeItem('admin-sidebar-closed');
+            }
+        } else if (sidebarClosed === 'false' || adminSidebarClosed === 'false') {
             sidebar.classList.remove('close');
+            // Standardize on one localStorage key
+            localStorage.setItem('sidebarClosed', 'false');
+            // Remove the old key to avoid conflicts
+            if (adminSidebarClosed) {
+                localStorage.removeItem('admin-sidebar-closed');
+            }
         }
     } else {
         console.warn('Sidebar toggle elements not found in the DOM');

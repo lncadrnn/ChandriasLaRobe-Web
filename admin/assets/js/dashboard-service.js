@@ -1,9 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     // Initialize Firebase
     firebase.initializeApp(window.firebaseConfig);
-    const db = firebase.firestore();
-
-    // Helper function to get image URL from product data
+    const db = firebase.firestore();    // Helper function to get image URL from product data
     function getImageUrl(product, type = 'front') {
         // Try new structure first (using frontImageId/backImageId)
         if (type === 'front' && product.frontImageId) {
@@ -35,19 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return product.imageUrl || './assets/images/placeholder.png';
     }
 
-    // Sidebar toggle logic
-    const body = document.querySelector("body"),
-        sidebar = body.querySelector(".sidebar"),
-        toggle = body.querySelector(".toggle");
-    if (toggle && sidebar) {
-        if (localStorage.getItem("admin-sidebar-closed") === "true") {
-            sidebar.classList.add("close");
-        }
-        toggle.addEventListener("click", () => {
-            const isClosed = sidebar.classList.toggle("close");
-            localStorage.setItem("admin-sidebar-closed", isClosed);
-        });
-    }    // Rentals data - now fetched from Firebase
+    // Rentals data - now fetched from Firebase
     let rentals = [];
 
     const statusClass = {

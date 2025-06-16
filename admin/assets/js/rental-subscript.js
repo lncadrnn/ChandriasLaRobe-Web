@@ -61,34 +61,13 @@ $(document).ready(function () {
                 type: 'error',
                 background: '#ff4757',
                 duration: 4000,
-                dismissible: true
-            }
+                dismissible: true            }
         ]
     });
     
     const $body = $("body"),
-        $sidebar = $body.find(".sidebar"),
-        $toggle = $body.find(".toggle"),
         $modeSwitch = $body.find(".toggle-switch"),
         $modeText = $body.find(".mode-text");
-
-    // --- Restore sidebar state from localStorage ---
-    // If 'admin-sidebar-closed' is "true", add the 'close' class to the sidebar
-    if (localStorage.getItem("admin-sidebar-closed") === "true") {
-        $sidebar.addClass("close");
-    }
-
-    // --- Sidebar toggle (chevron button) ---
-    // When the toggle button is clicked...
-    if ($toggle.length && $sidebar.length) {
-        $toggle.on("click", function () {
-            // Toggle the 'close' class on the sidebar
-            const isClosed = $sidebar.toggleClass("close").hasClass("close");
-
-            // Save the state (true or false) in localStorage
-            localStorage.setItem("admin-sidebar-closed", isClosed);
-        });
-    }
 
     // --- Tab switching ---
     $(".tab-btn").on("click", function () {
