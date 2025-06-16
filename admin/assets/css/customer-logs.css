@@ -466,34 +466,11 @@ select:disabled {
 }
 
 .card-status {
-    display: flex;
-    align-items: center;
+    display: flex;    align-items: center;
     gap: 0.5rem;
 }
 
-.status-badge {
-    padding: 0.4rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.status-upcoming {
-    background: rgba(52, 152, 219, 0.1);
-    color: #3498db;
-}
-
-.status-ongoing {
-    background: rgba(241, 196, 15, 0.1);
-    color: #f1c40f;
-}
-
-.status-completed {
-    background: rgba(46, 204, 113, 0.1);
-    color: #2ecc71;
-}
+/* Status badge styling moved to status-colors.css for consistency across admin pages */
 
 .card-details {
     display: grid;
@@ -1129,16 +1106,15 @@ select:disabled {
         overflow-y: auto;
         border-radius: 12px;
     }
-    
-    .transaction-details-content {
+      .transaction-details-content {
         max-width: none;
         width: calc(100vw - 2rem);
     }
-    
-    /* Status badges mobile */
+      /* Mobile status badge adjustments - keep just size overrides */
     .status-badge {
-        font-size: 0.65rem;
-        padding: 0.25rem 0.5rem;
+        font-size: 0.65rem !important;
+        padding: 0.25rem 0.5rem !important;
+        box-shadow: none !important;
     }
 }
 
@@ -1168,51 +1144,10 @@ select:disabled {
     
     .action-buttons button {
         font-size: 0.75rem;
-        padding: 0.45rem 0.65rem;
-    }
+        padding: 0.45rem 0.65rem;    }
 }
 
-/* === STATUS BADGES === */
-.status-badge {
-    display: inline-block;
-    padding: 0.3rem 0.6rem;
-    border-radius: 15px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    margin: 0;
-}
-
-.status-upcoming {
-    background: #ffeaa7;
-    color: #856404;
-    border: 1px solid #ffeaa7;
-}
-
-.status-ongoing {
-    background: #a7f3d0;
-    color: #155724;
-    border: 1px solid #a7f3d0;
-}
-
-.status-completed {
-    background: #a7d8e7;
-    color: #0c5460;
-    border: 1px solid #a7d8e7;
-}
-
-.status-overdue {
-    background: #fca5a5;
-    color: #721c24;
-    border: 1px solid #fca5a5;
-}
-
-.status-cancelled {
-    background: #d1d5db;
-    color: #374151;
-    border: 1px solid #d1d5db;
-}
+/* Status badge styling moved to status-colors.css for consistency across admin pages */
 
 /* === PAYMENT STATUS === */
 .payment-status {
@@ -2620,4 +2555,32 @@ table .action-buttons-long {
     color: inherit;
     font-weight: normal;
     margin-top: 3px;
+}
+
+/* === ENHANCED STATUS BADGE STYLES === */
+/* Additional styling for status badges in customer logs */
+
+/* Enhanced status badge alignment in table cells */
+.transactions-table td .status-badge {
+    vertical-align: middle !important;
+    box-shadow: none !important;
+}
+
+/* Ensure status badges have consistent size in cards */
+.transaction-card .card-status .status-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 90px !important;
+    text-align: center !important;
+    box-shadow: none !important;
+}
+
+/* Responsive styling for status badges */
+@media (max-width: 768px) {
+    /* More compact badges on mobile */
+    .transaction-card .card-status .status-badge {
+        min-width: 80px !important;
+        box-shadow: none !important;
+    }
 }

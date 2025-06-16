@@ -7,12 +7,34 @@
       <!-- EXTERNAL CSS -->    <link rel="stylesheet" href="./assets/css/admin-layout.css" />
     <link rel="stylesheet" href="./assets/css/admin-layout-mob.css" />
     <link rel="stylesheet" href="./assets/css/customer-logs.css" />
-    <link rel="stylesheet" href="./assets/css/customer-logs-modal.css" />    <link rel="stylesheet" href="./assets/css/spinners-admin.css" />
+    <link rel="stylesheet" href="./assets/css/customer-logs-modal.css" />
+    <link rel="stylesheet" href="./assets/css/status-colors.css" />
+    <link rel="stylesheet" href="./assets/css/spinners-admin.css" />
 
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    
-    <!-- Aggressive CSS overrides for cancel rental modal buttons -->
+      <!-- Aggressive CSS overrides for cancel rental modal buttons -->
     <style>
+        /* Additional overrides for status badges to ensure no box shadow */
+        .status-badge, 
+        span[class*="status-"],
+        .status-upcoming, 
+        .status-pending, 
+        .status-badge.pending,
+        .status-ongoing, 
+        .status-active, 
+        .status-badge.active,
+        .status-completed, 
+        .status-badge.completed,
+        .status-overdue, 
+        .status-badge.overdue,
+        .status-cancelled, 
+        .status-badge.cancelled,
+        .status-badge.fixed-date,
+        .status-badge.open-rental,
+        .status-badge.default {
+            box-shadow: none !important;
+        }
+        
         /* Cancel Rental Modal Button Overrides */
         #cancel-rental-modal .form-actions {
             display: flex !important;

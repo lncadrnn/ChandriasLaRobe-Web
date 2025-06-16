@@ -5,52 +5,78 @@
 
 /* === STATUS BADGES === */
 .status-badge {
-    display: inline-block;
-    padding: 0.3rem 0.6rem;
-    border-radius: 15px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    margin: 0;
-    line-height: 1.2;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 6px 12px !important;
+    border-radius: 20px !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    margin: 0 !important;
+    line-height: 1.2 !important;
+    border: none !important;
+    width: fit-content !important;
+    box-shadow: none !important; /* Explicitly remove any box shadow */
 }
 
-/* Status Colors - Customer Logs Style */
-.status-upcoming {
-    background: #ffeaa7;
-    color: #856404;
-    border: 1px solid #ffeaa7;
+/* Status Colors - Dashboard Style */
+.status-upcoming, .status-pending, .status-badge.pending {
+    background: #fff3cd !important;
+    color: #856404 !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
-.status-ongoing {
-    background: #a7f3d0;
-    color: #155724;
-    border: 1px solid #a7f3d0;
+.status-ongoing, .status-active, .status-badge.active {
+    background: #d4edda !important;
+    color: #155724 !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
-.status-completed {
-    background: #a7d8e7;
-    color: #0c5460;
-    border: 1px solid #a7d8e7;
+.status-completed, .status-badge.completed {
+    background: #cce5ff !important;
+    color: #004085 !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
-.status-overdue {
-    background: #fca5a5;
-    color: #721c24;
-    border: 1px solid #fca5a5;
+.status-overdue, .status-badge.overdue {
+    background: #f8d7da !important;
+    color: #721c24 !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
-.status-cancelled {
-    background: #d1d5db;
-    color: #374151;
-    border: 1px solid #d1d5db;
+.status-cancelled, .status-badge.cancelled {
+    background: #f1f3f4 !important;
+    color: #5f6368 !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
-.status-pending {
-    background: #fef3c7;
-    color: #92400e;
-    border: 1px solid #fef3c7;
+/* Additional status types from dashboard */
+.status-badge.fixed-date {
+    background: #e1f5fe !important;
+    color: #0277bd !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.status-badge.open-rental {
+    background: #f3e5f5 !important;
+    color: #7b1fa2 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.status-badge.default {
+    background: #e8f5e8 !important;
+    color: #2e7d32 !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 /* === CALENDAR LEGEND COLORS === */
