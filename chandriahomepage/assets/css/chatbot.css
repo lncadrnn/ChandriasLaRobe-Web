@@ -106,6 +106,19 @@
     color: hsl(346, 100%, 74%);
 }
 
+/* Specific styling for minimize and close buttons */
+.minimize-btn {
+    font-size: 24px !important;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.close-btn {
+    font-size: 20px !important;
+    font-weight: normal;
+    line-height: 1;
+}
+
 .chatbot-body {
     flex: 1;
     padding: 0;

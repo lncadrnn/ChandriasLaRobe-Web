@@ -74,6 +74,7 @@ class ChandriasChatbot {    constructor() {
         
         this.createChatbotHTML();
         this.loadChatHistory();
+        this.restoreMessagesToUI();
         this.attachEventListeners();
         
         // Chatbot is fixed in lower right corner - no dragging functionality needed
@@ -92,6 +93,7 @@ class ChandriasChatbot {    constructor() {
                         </div>
                     </div>
                     <div class="chatbot-controls">
+                        <button class="minimize-btn" id="minimizeChatbot">−</button>
                         <button class="close-btn" id="closeChatbot">×</button>
                     </div>
                 </div>
@@ -130,6 +132,7 @@ class ChandriasChatbot {    constructor() {
         const input = document.getElementById('chatbotInput');
         const sendBtn = document.getElementById('sendMessage');
         const closeBtn = document.getElementById('closeChatbot');
+        const minimizeBtn = document.getElementById('minimizeChatbot');
 
         sendBtn.addEventListener('click', () => this.handleSendMessage());
         input.addEventListener('keypress', (e) => {
@@ -137,6 +140,7 @@ class ChandriasChatbot {    constructor() {
         });
 
         closeBtn.addEventListener('click', () => this.closeChatbot());
+        minimizeBtn.addEventListener('click', () => this.minimizeChatbot());
         
         // Store reference to the maximize function
         this.maximizeChatbotHandler = () => this.maximizeChatbot();
@@ -333,7 +337,7 @@ class ChandriasChatbot {    constructor() {
         }
         
         return `I'm not sure I understand your question completely. ${suggestion}\n\nYou can also:\n• Browse our FAQ suggestions below\n• Call us at +63 000 000 000 for direct assistance\n• Visit us at B42 L13 Bilbao Street, Imus, Cavite`;
-    }    addMessage(message, sender) {
+    }    addMessage(message, sender, skipSave = false) {
         const messagesContainer = document.getElementById('chatbotMessages');
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${sender}-message`;
@@ -350,13 +354,15 @@ class ChandriasChatbot {    constructor() {
         messageDiv.appendChild(timestamp);
         messagesContainer.appendChild(messageDiv);
         
-        // Save to chat history
-        this.chatHistory.push({
-            message,
-            sender,
-            timestamp: new Date().toISOString()
-        });
-        this.saveChatHistory();
+        // Save to chat history only if not restoring from saved data
+        if (!skipSave) {
+            this.chatHistory.push({
+                message,
+                sender,
+                timestamp: new Date().toISOString()
+            });
+            this.saveChatHistory();
+        }
         
         // Scroll to bottom
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -494,29 +500,148 @@ class ChandriasChatbot {    constructor() {
     }
 
     closeChatbot() {
-        this.minimizeChatbot();
+        // Clear all conversation data
+        this.clearAllData();
+        
+        // Hide the chatbot and show the bubble
+        const chatbot = document.getElementById('chandriasChatbot');
+        const bubble = document.getElementById('chatbotBubble');
+        
+        chatbot.classList.add('hidden');
+        bubble.classList.remove('hidden');
+        this.isMinimized = true;
+        
+        // Show speech bubble after a delay when closing
+        setTimeout(() => {
+            this.showSpeechBubble();
+        }, 500);
+        
+        // Save minimized state for persistence across pages
+        if (window.ChatbotPersistence) {
+            window.ChatbotPersistence.saveState(true);
+        }
+    }
+
+    clearAllData() {
+        // Clear chat history
+        this.chatHistory = [];
+        
+        // Remove from localStorage
+        try {
+            localStorage.removeItem('chandria-chatbot-history');
+            console.log('Chat history cleared');
+        } catch (error) {
+            console.log('Could not clear chat history from localStorage');
+        }
+        
+        // Reset the chat messages to initial state
+        const messagesContainer = document.getElementById('chatbotMessages');
+        if (messagesContainer) {
+            messagesContainer.innerHTML = `
+                <div class="message bot-message">
+                    <p>Hello! I am Chandria's Personal Chatbot, feel free to ask if you have questions!</p>
+                    <span class="timestamp">${this.getTimestamp()}</span>
+                </div>
+            `;
+        }
+        
+        // Reset FAQ suggestions and make them visible again
+        this.updateFAQSuggestions();
+        const faqContainer = document.getElementById('faqSuggestions');
+        if (faqContainer) {
+            faqContainer.style.display = 'flex';
+        }
+        
+        // Clear input field
+        const input = document.getElementById('chatbotInput');
+        if (input) {
+            input.value = '';
+        }
     }
 
     loadChatHistory() {
         try {
             const saved = localStorage.getItem('chandria-chatbot-history');
             if (saved) {
-                this.chatHistory = JSON.parse(saved);
+                const parsedHistory = JSON.parse(saved);
+                // Validate that it's an array
+                if (Array.isArray(parsedHistory)) {
+                    this.chatHistory = parsedHistory;
+                    console.log(`Loaded ${this.chatHistory.length} chat messages from localStorage`);
+                } else {
+                    console.log('Invalid chat history format, starting fresh');
+                    this.chatHistory = [];
+                }
+            } else {
+                console.log('No previous chat history found');
+                this.chatHistory = [];
             }
         } catch (error) {
-            console.log('No previous chat history found');
+            console.log('Error loading chat history, starting fresh:', error);
+            this.chatHistory = [];
         }
     }
 
     saveChatHistory() {
         try {
             localStorage.setItem('chandria-chatbot-history', JSON.stringify(this.chatHistory));
+            console.log(`Saved ${this.chatHistory.length} chat messages to localStorage`);
         } catch (error) {
-            console.log('Could not save chat history');
+            console.log('Could not save chat history:', error);
         }
     }
 
-    // ...existing code...
+    restoreMessagesToUI() {
+        const messagesContainer = document.getElementById('chatbotMessages');
+        if (!messagesContainer) return;
+
+        // Clear existing messages first
+        messagesContainer.innerHTML = '';
+
+        // If no chat history, show the default welcome message
+        if (this.chatHistory.length === 0) {
+            messagesContainer.innerHTML = `
+                <div class="message bot-message">
+                    <p>Hello! I am Chandria's Personal Chatbot, feel free to ask if you have questions!</p>
+                    <span class="timestamp">${this.getTimestamp()}</span>
+                </div>
+            `;
+        } else {
+            // Restore all messages from chat history
+            this.chatHistory.forEach(entry => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${entry.sender}-message`;
+                
+                const messageContent = document.createElement('p');
+                // Handle line breaks properly
+                messageContent.innerHTML = entry.message.replace(/\n/g, '<br>');
+                
+                const timestamp = document.createElement('span');
+                timestamp.className = 'timestamp';
+                // Use saved timestamp or create new one
+                const savedTime = entry.timestamp ? new Date(entry.timestamp) : new Date();
+                timestamp.textContent = savedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                messageDiv.appendChild(messageContent);
+                messageDiv.appendChild(timestamp);
+                messagesContainer.appendChild(messageDiv);
+            });
+        }
+
+        // Update FAQ suggestions based on current state
+        this.updateFAQSuggestions();
+        
+        // If there's conversation history, hide FAQ suggestions
+        if (this.chatHistory.length > 0) {
+            const faqContainer = document.getElementById('faqSuggestions');
+            if (faqContainer) {
+                faqContainer.style.display = 'none';
+            }
+        }
+        
+        // Scroll to bottom
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
 }
 
 // Export the chatbot class
