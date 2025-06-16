@@ -28,13 +28,25 @@ function initSidebarToggle() {
     const toggle = document.querySelector('.toggle');
     
     if (toggle && sidebar) {
-        toggle.addEventListener('click', function() {
+        // Make sure the toggle is clickable and properly bound
+        toggle.style.cursor = 'pointer';
+        
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent any default behavior
+            e.stopPropagation(); // Stop event propagation
+            
             sidebar.classList.toggle('close');
             
             // Store sidebar state in localStorage
             const isClose = sidebar.classList.contains('close');
             localStorage.setItem('sidebarClosed', isClose);
+            
+            // Log for debugging
+            console.log('Sidebar toggle clicked. Sidebar is now:', isClose ? 'closed' : 'open');
         });
+        
+        // Ensure toggle is visible and properly styled
+        toggle.style.display = 'flex';
         
         // Restore sidebar state from localStorage
         const sidebarClosed = localStorage.getItem('sidebarClosed');
@@ -43,6 +55,8 @@ function initSidebarToggle() {
         } else if (sidebarClosed === 'false') {
             sidebar.classList.remove('close');
         }
+    } else {
+        console.warn('Sidebar toggle elements not found in the DOM');
     }
 }
 

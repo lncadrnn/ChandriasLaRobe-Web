@@ -52,11 +52,17 @@
 
             <div class="menu-bar">
                 <div class="menu">
-                    <ul class="menu-links">
-                        <li class="nav-link">
+                    <ul class="menu-links">                        <li class="nav-link">
                             <a href="./dashboard.html">
                                 <i class="bx bxs-dashboard icon"></i>
                                 <span class="text nav-text">Dashboard</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-link">
+                            <a href="./analytics.html">
+                                <i class="bx bxs-bar-chart-alt-2 icon"></i>
+                                <span class="text nav-text">Analytics</span>
                             </a>
                         </li>
 
@@ -78,12 +84,10 @@
                                 <i class="bx bxs-package icon"></i>
                                 <span class="text nav-text">Rental</span>
                             </a>
-                        </li>
-
-                        <li class="nav-link">
+                        </li>                        <li class="nav-link">
                             <a href="./customer-logs.html">
                                 <i class="bx bxs-user icon"></i>
-                                <span class="text nav-text">Rental History</span>
+                                <span class="text nav-text">Logs History</span>
                             </a>
                         </li>
 
@@ -508,11 +512,14 @@
             </div>
         </div>
 
-        <!-- Mobile Bottom Navigation (hidden on desktop) -->
-        <nav class="mobile-bottom-nav">
+        <!-- Mobile Bottom Navigation (hidden on desktop) -->        <nav class="mobile-bottom-nav">
             <a href="./dashboard.html" class="mobile-nav-item">
                 <i class="bx bxs-dashboard icon"></i>
                 <span class="text">Dashboard</span>
+            </a>
+            <a href="./analytics.html" class="mobile-nav-item">
+                <i class="bx bxs-bar-chart-alt-2 icon"></i>
+                <span class="text">Analytics</span>
             </a>
             <a href="./inventory.html" class="mobile-nav-item">
                 <i class="bx bxs-t-shirt icon"></i>
@@ -543,8 +550,7 @@
         <script
             src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-            crossorigin="anonymous"        ></script>        
-        <!-- Auth Guard - Must be loaded early -->
+            crossorigin="anonymous"        ></script>          <!-- Auth Guard - Must be loaded early -->
         <script type="module" src="./assets/js/auth-guard.js"></script>
         
         <!-- EXTERNAL SCRIPT -->
