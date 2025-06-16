@@ -115,10 +115,6 @@ class ChandriasChatbot {    constructor() {
             <div class="chatbot-bubble hidden" id="chatbotBubble">
                 <img src="/chandriahomepage/assets/img/icon-chatbot-img.png" alt="Chatbot">
             </div>
-            <div class="chatbot-speech-bubble hidden" id="chatbotSpeechBubble">
-                <button class="close-speech" id="closeSpeechBubble">×</button>
-                Hello! I am Chandria's Personal Chatbot, feel free to ask if you have questions!
-            </div>
         `;
 
         const chatbotContainer = document.createElement('div');
@@ -127,8 +123,6 @@ class ChandriasChatbot {    constructor() {
     }    attachEventListeners() {
         const chatbot = document.getElementById('chandriasChatbot');
         const chatbotBubble = document.getElementById('chatbotBubble');
-        const speechBubble = document.getElementById('chatbotSpeechBubble');
-        const closeSpeechBtn = document.getElementById('closeSpeechBubble');
         const input = document.getElementById('chatbotInput');
         const sendBtn = document.getElementById('sendMessage');
         const closeBtn = document.getElementById('closeChatbot');
@@ -146,15 +140,6 @@ class ChandriasChatbot {    constructor() {
         this.maximizeChatbotHandler = () => this.maximizeChatbot();
         chatbotBubble.addEventListener('click', this.maximizeChatbotHandler);
 
-        // Speech bubble event listeners
-        closeSpeechBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.hideSpeechBubble();
-        });
-
-        // Show speech bubble when clicking on it
-        speechBubble.addEventListener('click', () => this.maximizeChatbot());
-
         // FAQ suggestion clicks
         document.getElementById('faqSuggestions').addEventListener('click', (e) => {
             if (e.target.classList.contains('faq-suggestion')) {
@@ -162,12 +147,7 @@ class ChandriasChatbot {    constructor() {
                 document.getElementById('chatbotInput').value = question;
                 this.handleSendMessage();
             }
-        });        // Show speech bubble after a delay when page loads - only on index.html
-        setTimeout(() => {
-            if (this.isIndexPage()) {
-                this.showSpeechBubble();
-            }
-        }, 2000);
+        });
     }
 
     handleSendMessage() {
@@ -403,7 +383,6 @@ class ChandriasChatbot {    constructor() {
         console.log('Maximizing chatbot...');
         const chatbot = document.getElementById('chandriasChatbot');
         const bubble = document.getElementById('chatbotBubble');
-        const speechBubble = document.getElementById('chatbotSpeechBubble');
         
         if (!chatbot || !bubble) {
             console.error('Chatbot elements not found');
@@ -412,91 +391,14 @@ class ChandriasChatbot {    constructor() {
         
         chatbot.classList.remove('hidden');
         bubble.classList.add('hidden');
-        this.hideSpeechBubble(); // Hide speech bubble when opening chat
         this.isMinimized = false;
         
         console.log('Chatbot maximized successfully');
         
         // Save state for persistence across pages
         if (window.ChatbotPersistence) {
-            window.ChatbotPersistence.saveState(false);        }
-    }
-
-    isIndexPage() {
-        // Check if we're on index.html by looking at the current URL
-        const currentPath = window.location.pathname;
-        return currentPath === '/' || 
-               currentPath === '/index.html' || 
-               currentPath.endsWith('/index.html') ||
-               currentPath === '' ||
-               currentPath.includes('index.html');    }showSpeechBubble() {
-        // Only show speech bubble on index.html
-        if (!this.isIndexPage()) {
-            return;
+            window.ChatbotPersistence.saveState(false);
         }
-        
-        const speechBubble = document.getElementById('chatbotSpeechBubble');
-        const bubble = document.getElementById('chatbotBubble');
-        
-        // Only show if chatbot is minimized (bubble is visible)
-        if (speechBubble && !bubble.classList.contains('hidden')) {
-            speechBubble.classList.remove('hidden');
-            // Update position before showing
-            this.updateSpeechBubblePosition();
-            // Add show class for animation
-            setTimeout(() => {
-                speechBubble.classList.add('show');
-            }, 10);
-            
-            // Auto-hide after 8 seconds
-            setTimeout(() => {
-                this.hideSpeechBubble();
-            }, 8000);
-        }
-    }
-
-    hideSpeechBubble() {
-        const speechBubble = document.getElementById('chatbotSpeechBubble');
-        if (speechBubble) {
-            speechBubble.classList.remove('show');
-            setTimeout(() => {
-                speechBubble.classList.add('hidden');
-            }, 300);
-        }
-    }
-
-    updateSpeechBubblePosition() {
-        const bubble = document.getElementById('chatbotBubble');
-        const speechBubble = document.getElementById('chatbotSpeechBubble');
-        
-        if (!bubble || !speechBubble) return;
-        
-        const bubbleRect = bubble.getBoundingClientRect();
-        const bubbleSize = bubble.offsetWidth || 60;
-        const speechWidth = speechBubble.offsetWidth || 250;
-        const margin = 10;
-        
-        // Calculate position relative to bubble
-        let speechLeft = bubbleRect.left - speechWidth - margin;
-        let speechTop = bubbleRect.top + (bubbleSize / 2) - (speechBubble.offsetHeight / 2);
-        
-        // Handle edge cases - if bubble is too close to left edge, position speech bubble on the right
-        if (speechLeft < margin) {
-            speechLeft = bubbleRect.right + margin;
-            // Update arrow direction for right-side positioning
-            speechBubble.classList.add('speech-right');
-        } else {
-            speechBubble.classList.remove('speech-right');
-        }
-        
-        // Ensure speech bubble stays within viewport
-        speechLeft = Math.max(margin, Math.min(window.innerWidth - speechWidth - margin, speechLeft));
-        speechTop = Math.max(margin, Math.min(window.innerHeight - speechBubble.offsetHeight - margin, speechTop));
-        
-        speechBubble.style.left = speechLeft + 'px';
-        speechBubble.style.top = speechTop + 'px';
-        speechBubble.style.right = 'auto';
-        speechBubble.style.bottom = 'auto';
     }
 
     closeChatbot() {
@@ -510,11 +412,6 @@ class ChandriasChatbot {    constructor() {
         chatbot.classList.add('hidden');
         bubble.classList.remove('hidden');
         this.isMinimized = true;
-        
-        // Show speech bubble after a delay when closing
-        setTimeout(() => {
-            this.showSpeechBubble();
-        }, 500);
         
         // Save minimized state for persistence across pages
         if (window.ChatbotPersistence) {

@@ -87,25 +87,14 @@ export const ChatbotPersistence = {
             const savedState = this.loadState();
             const chatbot = document.getElementById('chandriasChatbot');
             const bubble = document.getElementById('chatbotBubble');
-            const speechBubble = document.getElementById('chatbotSpeechBubble');
             
             if (chatbot && bubble) {
                 if (savedState.isMinimized) {
                     chatbot.classList.add('hidden');
                     bubble.classList.remove('hidden');
-                    // Show speech bubble after chatbot is minimized
-                    if (speechBubble && chatbotInstance.showSpeechBubble) {
-                        setTimeout(() => {
-                            chatbotInstance.showSpeechBubble();
-                        }, 1000);
-                    }
                 } else {
                     chatbot.classList.remove('hidden');
                     bubble.classList.add('hidden');
-                    // Hide speech bubble when chatbot is open
-                    if (speechBubble) {
-                        speechBubble.classList.add('hidden');
-                    }
                 }
                 chatbotInstance.isMinimized = savedState.isMinimized;
             }
