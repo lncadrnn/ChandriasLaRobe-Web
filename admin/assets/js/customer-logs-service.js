@@ -616,7 +616,11 @@ function formatEventDate(transaction) {
     if (eventEndDate && transaction.rentalType === 'Open Rental') {
         return `${eventStartDate.toLocaleDateString()} - ${eventEndDate.toLocaleDateString()}`;
     } else {
-        return eventStartDate.toLocaleDateString();
+        // For fixed rentals, display date and label with consistent styling
+        return `<div class="event-date-fixed">
+                    <div>${eventStartDate.toLocaleDateString()}</div>
+                    <div class="fixed-rental-label">(Fixed Rental)</div>
+                </div>`;
     }
 }
 

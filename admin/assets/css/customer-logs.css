@@ -2587,3 +2587,37 @@ table .action-buttons-long {
     flex: 1 1 auto;
     min-width: auto;
 }
+
+/* Fixed Rental Date Styling */
+.event-date-fixed {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.4;
+}
+
+.fixed-rental-label {
+    font-size: inherit;
+    color: inherit;
+    font-weight: normal;
+    margin-top: 3px;
+}
+
+/* Ensure the date cell in the table has enough space */
+.transactions-table td:nth-child(3) {
+    min-width: 140px;
+    padding-right: 10px;
+}
+
+/* Styling for fixed rental date in cards */
+.transaction-card .detail-value .event-date-fixed {
+    display: flex;
+    flex-direction: column;
+}
+
+.transaction-card .detail-value .fixed-rental-label {
+    font-size: inherit;
+    color: inherit;
+    font-weight: normal;
+    margin-top: 3px;
+}
