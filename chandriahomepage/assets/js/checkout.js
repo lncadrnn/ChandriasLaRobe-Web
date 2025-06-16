@@ -6,6 +6,7 @@ import {
     chandriaDB,
     collection,
     getDoc,
+    getDocs,
     addDoc,
     doc,
     updateDoc,
@@ -13,6 +14,219 @@ import {
     signOut
 } from "./sdk/chandrias-sdk.js";
 import wishlistService from "./wishlist-firebase.js";
+
+// Check product availability for a specific date and quantity
+async function checkProductAvailability(productId, productName, requestedQuantity, checkoutDate) {
+    try {
+        console.log(`Checking availability for ${productName} (${productId}) on ${checkoutDate} for quantity ${requestedQuantity}`);
+        
+        // Get product stock information
+        const productRef = doc(chandriaDB, "products", productId);
+        const productSnap = await getDoc(productRef);
+        
+        if (!productSnap.exists()) {
+            return { available: false, message: `${productName} not found in inventory.` };
+        }
+        
+        const productData = productSnap.data();
+        // Calculate total stock across all sizes
+        const totalStock = productData.size ? Object.values(productData.size).reduce((sum, stock) => sum + (stock || 0), 0) : 0;
+        
+        console.log(`Total stock for ${productName}: ${totalStock}`);
+        
+        if (totalStock < requestedQuantity) {
+            return { 
+                available: false, 
+                message: `${productName} has insufficient stock. Only ${totalStock} available.` 
+            };
+        }
+        
+        // Count how many units are booked for this date
+        let bookedQuantity = 0;
+        const dateToCheck = new Date(checkoutDate).toLocaleDateString();
+        
+        // Check appointments collection
+        const appointmentsRef = collection(chandriaDB, 'appointments');
+        const appointmentsSnapshot = await getDocs(appointmentsRef);
+        
+        appointmentsSnapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            
+            // Skip cancelled/completed appointments
+            if (data.checkoutStatus && (data.checkoutStatus.toLowerCase() === 'cancelled' || data.checkoutStatus.toLowerCase() === 'completed')) {
+                return;
+            }
+            
+            // Check if appointment is for the same date
+            const appointmentDate = data.checkoutDate || data.eventDate || data.eventStartDate;
+            if (appointmentDate) {
+                const apptDateStr = new Date(appointmentDate).toLocaleDateString();
+                
+                if (apptDateStr === dateToCheck) {
+                    // Check if this appointment contains the product
+                    if (Array.isArray(data.cartItems)) {
+                        data.cartItems.forEach(item => {
+                            if (item.productId === productId) {
+                                bookedQuantity += parseInt(item.quantity || 1, 10);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+        
+        // Check transaction collection for confirmed bookings
+        const possibleCollections = ['transaction', 'transactions', 'calendar', 'events'];
+        
+        for (const collectionName of possibleCollections) {
+            try {
+                const transactionRef = collection(chandriaDB, collectionName);
+                const transactionSnapshot = await getDocs(transactionRef);
+                
+                transactionSnapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    
+                    // Skip cancelled transactions
+                    if (data.status && data.status.toLowerCase() === 'cancelled') {
+                        return;
+                    }
+                    
+                    // Check transaction dates based on rental type
+                    const rentalType = (data.rentalType || '').toLowerCase();
+                    const eventDate = data.eventDate;
+                    const eventStartDate = data.eventStartDate;
+                    const eventEndDate = data.eventEndDate;
+                    const checkoutDate = data.checkoutDate;
+                    
+                    let transactionDates = [];
+                    
+                    if (rentalType.includes('fixed')) {
+                        // Fixed Rental: 3 consecutive days
+                        const startDate = eventStartDate || eventDate || checkoutDate;
+                        if (startDate) {
+                            const start = new Date(startDate);
+                            for (let i = 0; i < 3; i++) {
+                                const date = new Date(start);
+                                date.setDate(start.getDate() + i);
+                                transactionDates.push(date.toLocaleDateString());
+                            }
+                        }
+                    } else if (rentalType.includes('open')) {
+                        // Open Rental: date range
+                        if (eventStartDate && eventEndDate) {
+                            const start = new Date(eventStartDate);
+                            const end = new Date(eventEndDate);
+                            const current = new Date(start);
+                            
+                            while (current <= end) {
+                                transactionDates.push(current.toLocaleDateString());
+                                current.setDate(current.getDate() + 1);
+                            }
+                        }
+                    } else {
+                        // Single date
+                        const dateToUse = eventDate || eventStartDate || checkoutDate;
+                        if (dateToUse) {
+                            transactionDates.push(new Date(dateToUse).toLocaleDateString());
+                        }
+                    }
+                    
+                    // If the transaction affects our date, count the quantity
+                    if (transactionDates.includes(dateToCheck)) {
+                        // Check products array
+                        if (Array.isArray(data.products)) {
+                            data.products.forEach(item => {
+                                if (item.id === productId || item.productId === productId) {
+                                    bookedQuantity += parseInt(item.quantity || 1, 10);
+                                }
+                            });
+                        }
+                        
+                        // Check accessories array
+                        if (Array.isArray(data.accessories)) {
+                            data.accessories.forEach(item => {
+                                if (item.id === productId || item.productId === productId) {
+                                    bookedQuantity += parseInt(item.quantity || 1, 10);
+                                }
+                            });
+                        }
+                        
+                        // Check cartItems array
+                        if (Array.isArray(data.cartItems)) {
+                            data.cartItems.forEach(item => {
+                                if (item.id === productId || item.productId === productId) {
+                                    bookedQuantity += parseInt(item.quantity || 1, 10);
+                                }
+                            });
+                        }
+                    }
+                });
+            } catch (collError) {
+                console.log(`Collection '${collectionName}' not accessible:`, collError.message);
+            }
+        }
+        
+        console.log(`${productName} - Total stock: ${totalStock}, Booked quantity: ${bookedQuantity}, Requested: ${requestedQuantity}`);
+        
+        // Calculate available quantity
+        const availableQuantity = totalStock - bookedQuantity;
+        
+        if (availableQuantity < requestedQuantity) {
+            if (availableQuantity <= 0) {
+                return { 
+                    available: false, 
+                    message: `'${productName}' is unavailable on this date. Please check availability in the Products section.` 
+                };
+            } else {
+                return { 
+                    available: false, 
+                    message: `'${productName}' has only ${availableQuantity} unit(s) available on this date. Please check availability in the Products section.` 
+                };
+            }
+        }
+        
+        return { available: true, message: `${productName} is available.` };
+        
+    } catch (error) {
+        console.error('Error checking product availability:', error);
+        return { 
+            available: false, 
+            message: `Error checking availability for '${productName}'. Please try again.` 
+        };
+    }
+}
+
+// Check availability for all cart items
+async function checkCartAvailability(cartItems, checkoutDate) {
+    const unavailableItems = [];
+    
+    for (const item of cartItems) {
+        const productRef = doc(chandriaDB, "products", item.productId);
+        const productSnap = await getDoc(productRef);
+        
+        if (!productSnap.exists()) {
+            unavailableItems.push(`Product not found`);
+            continue;
+        }
+        
+        const productData = productSnap.data();
+        const productName = productData.name || 'Unknown Product';
+        const requestedQuantity = parseInt(item.quantity || 1, 10);
+        
+        const availabilityCheck = await checkProductAvailability(
+            item.productId, 
+            productName, 
+            requestedQuantity, 
+            checkoutDate
+        );
+        
+        if (!availabilityCheck.available) {
+            unavailableItems.push(availabilityCheck.message);
+        }
+    }
+    
+    return unavailableItems;
+}
 
 $(document).ready(function () {
     // INITIALIZING NOTYF
@@ -294,6 +508,38 @@ $(document).ready(function () {
             } else {
                 // Handles cases where format is not HH:MM, e.g., "123" or "10:10:10"
                 notyf.error("Invalid time format. Please use HH:MM format.");
+                return;
+            }
+        }
+
+        // Check product availability before proceeding
+        const user = auth.currentUser;
+        if (user) {
+            try {
+                // Get user's cart items
+                const userRef = doc(chandriaDB, "userAccounts", user.uid);
+                const userSnap = await getDoc(userRef);
+                
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    const cartItems = userData.added_to_cart || [];
+                    
+                    if (cartItems.length > 0) {
+                        // Check availability for all items
+                        const unavailableItems = await checkCartAvailability(cartItems, checkoutDateStr);
+                        
+                        if (unavailableItems.length > 0) {
+                            // Show error messages for unavailable items
+                            unavailableItems.forEach(message => {
+                                notyf.error(message);
+                            });
+                            return; // Stop the booking process
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking availability:', error);
+                notyf.error('Error checking product availability. Please try again.');
                 return;
             }
         }
