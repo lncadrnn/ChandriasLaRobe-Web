@@ -11,126 +11,7 @@
     <link rel="stylesheet" href="./assets/css/status-colors.css" />
     <link rel="stylesheet" href="./assets/css/spinners-admin.css" />
 
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-      <!-- Aggressive CSS overrides for cancel rental modal buttons -->
-    <style>
-        /* Additional overrides for status badges to ensure no box shadow */
-        .status-badge, 
-        span[class*="status-"],
-        .status-upcoming, 
-        .status-pending, 
-        .status-badge.pending,
-        .status-ongoing, 
-        .status-active, 
-        .status-badge.active,
-        .status-completed, 
-        .status-badge.completed,
-        .status-overdue, 
-        .status-badge.overdue,
-        .status-cancelled, 
-        .status-badge.cancelled,
-        .status-badge.fixed-date,
-        .status-badge.open-rental,
-        .status-badge.default {
-            box-shadow: none !important;
-        }
-        
-        /* Cancel Rental Modal Button Overrides */
-        #cancel-rental-modal .form-actions {
-            display: flex !important;
-            gap: 1rem !important;
-            justify-content: flex-end !important;
-            padding-top: 1.5rem !important;
-            border-top: 1px solid #e9ecef !important;
-        }
-        
-        /* Keep Rental Button (Secondary) */
-        #cancel-rental-modal .btn-secondary {
-            background: #6c757d !important;
-            border: 2px solid #6c757d !important;
-            color: white !important;
-            padding: 0.75rem 1.5rem !important;
-            border-radius: 8px !important;
-            font-weight: 600 !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.5px !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            gap: 0.5rem !important;
-            cursor: pointer !important;
-            transition: all 0.3s ease !important;
-            text-decoration: none !important;
-            font-size: 0.9rem !important;
-        }
-        
-        #cancel-rental-modal .btn-secondary:hover {
-            background: #5a6268 !important;
-            border-color: #5a6268 !important;
-            transform: translateY(-1px) !important;
-            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3) !important;
-        }
-        
-        #cancel-rental-modal .btn-secondary:active {
-            transform: translateY(0) !important;
-        }
-        
-        /* Cancel Rental Button (Danger) */
-        #cancel-rental-modal .btn-cancel {
-            background: linear-gradient(135deg, #dc3545, #c82333) !important;
-            border: 2px solid #dc3545 !important;
-            color: white !important;
-            padding: 0.75rem 1.5rem !important;
-            border-radius: 8px !important;
-            font-weight: 600 !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.5px !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            gap: 0.5rem !important;
-            cursor: pointer !important;
-            transition: all 0.3s ease !important;
-            text-decoration: none !important;
-            font-size: 0.9rem !important;
-            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3) !important;
-        }
-        
-        #cancel-rental-modal .btn-cancel:hover {
-            background: linear-gradient(135deg, #c82333, #bd2130) !important;
-            border-color: #c82333 !important;
-            transform: translateY(-1px) !important;
-            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4) !important;
-        }
-        
-        #cancel-rental-modal .btn-cancel:active {
-            transform: translateY(0) !important;
-        }
-        
-        #cancel-rental-modal .btn-cancel:disabled {
-            background: #6c757d !important;
-            border-color: #6c757d !important;
-            cursor: not-allowed !important;
-            transform: none !important;
-            box-shadow: none !important;
-        }
-        
-        /* Icon styling */
-        #cancel-rental-modal .form-actions button i {
-            font-size: 1.1rem !important;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            #cancel-rental-modal .form-actions {
-                flex-direction: column !important;
-                gap: 0.75rem !important;
-            }
-            
-            #cancel-rental-modal .form-actions button {
-                width: 100% !important;
-                justify-content: center !important;
-            }        }
-    </style>
-      <!-- Notyf CSS and JS for notifications -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>    <!-- Notyf CSS and JS for notifications -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     <script>
@@ -686,7 +567,7 @@
                                 </label>
                             </div>                        </div>
                           <!-- Late Fee Section -->
-                        <div id="late-fee-section" class="fee-section" style="display: none;">
+                        <div id="late-fee-section" class="fee-section fee-section-hidden">
                             <h4>Late Fee Details</h4>
                             <div class="fee-input-group">
                                 <label for="late-fee-amount">Fee Amount (₱)</label>
@@ -729,7 +610,7 @@
     </div>
 
     <!-- Success Modal -->
-    <div id="success-modal" class="modal-overlay" style="display: none;">
+    <div id="success-modal" class="modal-overlay modal-hidden">
         <div class="success-modal-content">
             <div class="success-modal-header">
                 <i class='bx bx-check-circle success-icon'></i>
@@ -819,7 +700,7 @@
     </div>
 
     <!-- Cancellation Undone Modal -->
-    <div id="cancellation-undone-modal" class="modal-overlay" style="display: none;">
+    <div id="cancellation-undone-modal" class="modal-overlay modal-hidden">
         <div class="success-modal-content">
             <div class="success-modal-header">
                 <i class='bx bx-undo success-icon'></i>
@@ -887,7 +768,7 @@
     </div>
 
     <!-- Mark as Complete Success Modal -->
-    <div id="mark-complete-success-modal" class="modal-overlay" style="display: none;">
+    <div id="mark-complete-success-modal" class="modal-overlay modal-hidden">
         <div class="success-modal-content">
             <div class="success-modal-header">
                 <i class='bx bx-check-circle success-icon'></i>

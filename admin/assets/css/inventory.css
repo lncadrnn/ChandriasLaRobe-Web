@@ -1580,4 +1580,111 @@ select:disabled {
   cursor: not-allowed !important;
 }
 
+/* === INVENTORY SPECIFIC STYLES === */
+.pos-tabs-margin {
+    margin-top: 1.5rem !important;
+}
+
+.add-product-title {
+    color: var(--secondary-text-color) !important;
+    transition: var(--tran-04) !important;
+}
+
+.color-option-red {
+    color: #ff0000 !important;
+}
+.color-option-blue {
+    color: #0000ff !important;
+}
+
+.color-option-yellow {
+    color: #daa520 !important;
+}
+
+.color-option-green {
+    color: #008000 !important;
+}
+
+.color-option-black {
+    color: #000000 !important;
+}
+
+.color-option-white {
+    color: #ffffff !important;
+    background-color: #f0f0f0 !important;
+}
+
+.color-option-pink {
+    color: #ff69b4 !important;
+}
+
+.color-option-purple {
+    color: #800080 !important;
+}
+
+.color-option-brown {
+    color: #a52a2a !important;
+}
+
+.color-option-gray {
+    color: #808080 !important;
+}
+
+.color-option-orange {
+    color: #ff8c00 !important;
+}
+
+/*=============== CURSOR POINTER STYLES ===============*/
+/* All buttons and interactive elements */
+button,
+.btn,
+.action-btn,
+.filter-btn,
+.add-btn,
+.edit-btn,
+.delete-btn,
+.save-btn,
+.cancel-btn,
+.search-btn,
+.pagination-btn,
+.sort-btn,
+input[type="submit"],
+input[type="button"],
+input[type="file"] {
+  cursor: pointer;
+}
+
+/* All links with href */
+a[href] {
+  cursor: pointer;
+}
+
+/* Inventory specific interactive elements */
+.inventory-card,
+.product-item,
+.product-actions,
+.category-filter,
+.size-filter,
+.color-picker,
+.table-row,
+.table-header,
+.modal-trigger,
+.dropdown-toggle,
+.tab-button,
+.image-upload,
+.form-control,
+select,
+.checkbox,
+.radio {
+  cursor: pointer;
+}
+
+/* Disabled elements */
+button:disabled,
+.btn:disabled,
+input:disabled,
+select:disabled {
+  cursor: not-allowed !important;
+}
+
 /*=============== GOOGLE FONTS ===============*/

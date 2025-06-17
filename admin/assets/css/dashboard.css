@@ -25,6 +25,12 @@
 
 
 /* =============== DASHBOARD CARDS =============== */
+.loading-cell {
+    text-align: center !important;
+    color: #999 !important;
+    padding: 20px !important;
+}
+
 .dashboard-cards-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -947,7 +953,7 @@ tr:hover {
         font-size: 1.125rem;
     }
     
-    .rental-modal-body {
+    .rental-modal_body {
         padding: 0 12px 12px 12px !important;
         gap: 12px !important;
     }
@@ -978,7 +984,6 @@ tr:hover {
     .payment-row {
         font-size: 0.8rem;
         padding: 6px 0;
-        padding-right: 80px;
     }
     
     .payment-row.total {
@@ -1322,11 +1327,8 @@ tr:hover {
     }
     
     .card-main {
-        font-size: 1.4rem;
-        font-weight: 700;
-    }
-      .card-main {
         font-size: 2.5rem;
+        font-weight: 700;
     }
     
     th,

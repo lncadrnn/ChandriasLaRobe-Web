@@ -1,5 +1,10 @@
 /* Analytics Dashboard Styles */
 
+/* === UTILITY CLASSES === */
+.hidden {
+    display: none !important;
+}
+
 /* === CSS VARIABLES === */
 :root {
     --primary-color: hsl(346, 100%, 74%);

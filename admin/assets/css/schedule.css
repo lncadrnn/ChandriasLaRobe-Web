@@ -1,61 +1,3 @@
-
-/*=============== CURSOR POINTER STYLES ===============*/
-/* All buttons and interactive elements */
-button,
-.btn,
-.schedule-btn,
-.add-schedule-btn,
-.edit-schedule-btn,
-.delete-schedule-btn,
-.save-schedule-btn,
-.cancel-schedule-btn,
-.time-slot-btn,
-.date-btn,
-.filter-btn,
-.view-toggle-btn,
-input[type="submit"],
-input[type="button"] {
-  cursor: pointer;
-}
-
-/* All links with href */
-a[href] {
-  cursor: pointer;
-}
-
-/* Schedule specific interactive elements */
-.schedule-item,
-.time-slot,
-.appointment-card,
-.calendar-day,
-.schedule-grid,
-.time-picker,
-.date-picker,
-.duration-selector,
-.status-indicator,
-.customer-selector,
-.service-selector,
-.table-row,
-.table-header,
-.modal-trigger,
-.dropdown-toggle,
-select,
-.checkbox-wrapper,
-.radio-wrapper {
-  cursor: pointer;
-}
-
-/* Disabled elements */
-.time-slot.disabled,
-.calendar-day.disabled,
-button:disabled,
-.btn:disabled,
-input:disabled,
-select:disabled {
-  cursor: not-allowed !important;
-}
-
-
 /*=============== CURSOR POINTER STYLES ===============*/
 /* All buttons and interactive elements */
 button,
@@ -318,6 +260,34 @@ button:hover {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* =============== MODAL UTILITY CLASSES =============== */
+.modal-hidden {
+    display: none !important;
+}
+
+.modal-centered {
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.modal-title-centered {
+    text-align: center !important;
+    margin-bottom: 1.2em !important;
+}
+
+.product-view-details {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 1.2em !important;
+}
+
+.product-id-display {
+    font-size: 1.1em !important;
+    font-weight: 600 !important;
+    letter-spacing: 1px !important;
 }
 
 /*=============== CURSOR POINTER STYLES ===============*/

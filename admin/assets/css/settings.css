@@ -1,5 +1,10 @@
 /* Settings specific styles - uses unified admin layout from admin-layout.css */
 
+/* Utility Classes */
+.password-fields-hidden {
+    display: none !important;
+}
+
 /* Override page header padding for settings page */
 
 /* Settings Content Layout */

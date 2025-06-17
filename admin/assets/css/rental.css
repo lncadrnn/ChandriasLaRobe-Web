@@ -2567,7 +2567,7 @@ input[type="date"].invalid-date {
 #add-fee-modal .close-modal {
   cursor: pointer;
   color: var(--primary-color);
-   font-size: 1.5em;
+         font-size: 1.5em;
   background: none;
   border: none;
   width: 28px;
@@ -2653,4 +2653,43 @@ input[type="date"].invalid-date {
   background: var(--primary-color);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 126, 172, 0.3);
+}
+
+/* === MODAL UTILITIES === */
+.modal-hidden {
+    display: none !important;
+}
+
+.storing-details {
+    display: none !important;
+}
+
+.close-modal {
+    cursor: pointer !important;
+    float: right !important;
+    font-size: 1.5em !important;
+}
+
+.error-modal-content {
+    max-width: 350px !important;
+    text-align: center !important;
+}
+
+.error-modal-title {
+    color: #e74c3c !important;
+    margin-bottom: 1em !important;
+}
+
+.error-modal-message {
+    margin-bottom: 1.5em !important;
+    color: #c0392b !important;
+}
+
+.error-modal-ok-btn {
+    padding: 0.5em 1.5em !important;
+    background: #e74c3c !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
 }
