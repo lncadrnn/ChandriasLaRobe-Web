@@ -112,12 +112,25 @@ $(document).ready(async function () {
       if (isAdditional) {
         // For additionals, use single image for both front and back
         const singleImage = data.imageUrl || data.frontImageUrl || 'assets/img/placeholder.jpg';
+        $('#main-product-image').attr("src", singleImage);
         $('.frontImage').attr("src", singleImage);
         $('.backImage').attr("src", singleImage);
+        
+        // Set the first thumbnail as active
+        $('.details-small-img').removeClass('active');
+        $('.details-small-img.frontImage').first().addClass('active');
       } else {
-        // For regular products, use separate front and back images
-        $('.frontImage').attr("src", data.frontImageUrl);
-        $('.backImage').attr("src", data.backImageUrl);
+        // For regular products, use separate front and back images with fallbacks
+        const frontImage = data.frontImageUrl || data.imageUrl || 'assets/img/placeholder.jpg';
+        const backImage = data.backImageUrl || data.imageUrl || 'assets/img/placeholder.jpg';
+        
+        $('#main-product-image').attr("src", frontImage);
+        $('.frontImage').attr("src", frontImage);
+        $('.backImage').attr("src", backImage);
+        
+        // Set the first thumbnail as active
+        $('.details-small-img').removeClass('active');
+        $('.details-small-img.frontImage').first().addClass('active');
       }
 
       // Text and values

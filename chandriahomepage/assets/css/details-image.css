@@ -1,0 +1,129 @@
+/* =============== DETAILS PAGE IMAGE STYLES =============== */
+
+/* Default styling for product images (desktop) */
+.details-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  padding: 0 1rem;
+}
+
+.details-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main image container for better control */
+.details-main-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 1rem;
+  max-height: 480px;
+  border-radius: 12px;
+}
+
+/* Main product image */
+.details-img {
+  width: 100%;
+  height: auto;
+  max-height: 450px;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+}
+
+/* Small thumbnails row */
+.details-small-images {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-top: 15px;
+  justify-content: center;
+  place-items: center;
+  max-width: 280px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.details-small-img {
+  width: 120px;
+  height: 120px;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  margin: 0 auto;
+}
+
+.details-small-img.active {
+  border: 2px solid hsl(346, 100%, 68%);
+}
+
+.details-small-img:hover {
+  transform: scale(1.05);
+  border: 2px solid hsl(346, 100%, 68%);
+}
+
+/* Zoom effect on hover for main image */
+.details-main-image-container:hover .details-img {
+  transform: scale(1.05);
+}
+
+/* Visual feedback for active thumbnail */
+.details-small-img.active {
+  border-color: hsl(346, 100%, 68%);
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 992px) {
+  .details-container {
+    gap: 2rem;
+  }
+  
+  .details-main-image-container {
+    max-height: 420px;
+  }
+  
+  .details-img {
+    max-height: 420px;
+  }
+    .details-small-img {
+    width: 80px;
+    height: 80px;
+    aspect-ratio: 1/1;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .details-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .details-main-image-container {
+    max-height: 350px;
+  }
+  
+  .details-img {
+    max-height: 350px;
+  }
+    .details-small-img {
+    width: 100px;
+    height: 100px;
+    aspect-ratio: 1/1;
+  }
+  
+  .details-small-images {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 80%;
+    margin: 15px auto 0;
+  }
+}

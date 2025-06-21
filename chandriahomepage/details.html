@@ -34,6 +34,7 @@
         <link rel="stylesheet" href="./assets/css/auth-modal.css" />
         <link rel="stylesheet" href="./assets/css/product-cards.css" />
         <link rel="stylesheet" href="./assets/css/details.css" />
+        <link rel="stylesheet" href="./assets/css/details-image.css" />
         <link rel="stylesheet" href="./assets/css/details-mobile.css" />
         <link rel="stylesheet" href="./assets/css/force-override.css" />
         <link rel="stylesheet" href="./assets/css/quick-view.css" />
@@ -129,28 +130,27 @@
             <section class="details section-lg">
                 <div class="details-container container grid">
                     <div class="details-group">
-                        
-                        <img
-                            src="assets/img/product-6-1.jpg"
-                            alt=""
-                            class="details-img frontImage"
-                        />
-
-                        <div class="details-small-images grid">
-                            <img
-                                src="assets/img/product-6-2.jpg"
-                                alt=""
-                                class="details-small-img backImage"
-                            />
+                        <div class="details-main-image-container">
                             <img
                                 src="assets/img/product-6-1.jpg"
                                 alt=""
-                                class="details-small-img frontImage"
+                                class="details-img main-product-image frontImage"
+                                id="main-product-image"
+                            />
+                        </div>
+
+                        <div class="details-small-images grid">
+                            <img
+                                src="assets/img/product-6-1.jpg"
+                                alt=""
+                                class="details-small-img frontImage thumbnail active"
+                                onclick="switchMainImage(this.src)"
                             />
                             <img
                                 src="assets/img/product-6-2.jpg"
                                 alt=""
-                                class="details-small-img backImage"
+                                class="details-small-img backImage thumbnail"
+                                onclick="switchMainImage(this.src)"
                             />
                         </div>
                     </div>
@@ -465,5 +465,31 @@
         <script type="module" src="./assets/js/details.js"></script>
         <script src="./assets/js/details-mobile.js"></script>
         <script type="module" src="./assets/js/chatbot/chatbot-init.js"></script>
+        
+        <script>
+            // Function to switch the main image when clicking on thumbnails
+            function switchMainImage(imgSrc) {
+                // Update main image source
+                document.getElementById('main-product-image').src = imgSrc;
+                
+                // Remove active class from all thumbnails
+                const thumbnails = document.querySelectorAll('.details-small-img');
+                thumbnails.forEach(thumb => thumb.classList.remove('active'));
+                
+                // Add active class to the clicked thumbnail
+                const clickedThumb = Array.from(thumbnails).find(thumb => thumb.src === imgSrc);
+                if (clickedThumb) {
+                    clickedThumb.classList.add('active');
+                }
+            }
+            
+            // Set the first thumbnail as active on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                const firstThumb = document.querySelector('.details-small-img');
+                if (firstThumb) {
+                    firstThumb.classList.add('active');
+                }
+            });
+        </script>
     </body>
 </html>

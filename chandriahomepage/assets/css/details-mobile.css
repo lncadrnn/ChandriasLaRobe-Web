@@ -33,14 +33,19 @@
   /* Improve small images layout */
   .details-small-images {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
     margin-top: 10px;
+    place-items: center;
+    max-width: 170px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .details-small-img {
-    width: 100%;
+    width: 70px;
     height: 70px;
+    aspect-ratio: 1/1;
     object-fit: cover;
     border-radius: 8px;
     cursor: pointer;
