@@ -96,9 +96,7 @@ $(document).ready(function () {
             </div>
         </div>
     `;
-    }
-
-    // Function to load fresh products (most recent)
+    }    // Function to load fresh products (most recent)
     async function loadFreshProducts() {
         try {
             const $freshContainer = $("#fresh-products-container");
@@ -111,10 +109,10 @@ $(document).ready(function () {
                 </div>
             `);
 
+            // Query all products ordered by createdAt desc
             const productsQuery = query(
                 collection(chandriaDB, "products"),
-                orderBy("createdAt", "desc"),
-                limit(4)
+                orderBy("createdAt", "desc")
             );
 
             const querySnapshot = await getDocs(productsQuery);
@@ -130,26 +128,46 @@ $(document).ready(function () {
                 return;
             }
 
-            let productsHTML = "";
+            // Filter out products without required data and get the most recent 4
+            const validProducts = [];
             querySnapshot.forEach(doc => {
                 const productData = doc.data();
                 if (productData.frontImageUrl && productData.name) {
-                    productsHTML += createProductHTML(productData, doc.id);
+                    validProducts.push({
+                        id: doc.id,
+                        data: productData
+                    });
                 }
             });
 
-            if (productsHTML === "") {
+            // Sort by createdAt in descending order (most recent first)
+            validProducts.sort((a, b) => {
+                const dateA = a.data.createdAt ? new Date(a.data.createdAt.seconds * 1000) : new Date(0);
+                const dateB = b.data.createdAt ? new Date(b.data.createdAt.seconds * 1000) : new Date(0);
+                return dateB - dateA;
+            });
+
+            // Take only the first 4 products
+            const recentProducts = validProducts.slice(0, 4);
+
+            if (recentProducts.length === 0) {
                 $freshContainer.html(
                     createNoProductsCard(
                         "No Fresh Products", 
                         "We're currently updating our fresh collection. Check back soon for new arrivals!",
                         "Explore All Products"
                     )
-                );            } else {
+                );
+            } else {
+                let productsHTML = "";
+                recentProducts.forEach(product => {
+                    productsHTML += createProductHTML(product.data, product.id);                });
+                
                 $freshContainer.html(productsHTML);
                 // Update heart button states after products are loaded
                 setTimeout(() => updateHeartButtonStates(), 100);
-            }} catch (error) {
+            }
+        } catch (error) {
             console.error("Error loading fresh products:", error);
             $("#fresh-products-container").html(`
                 <div class="products-error">
@@ -158,7 +176,9 @@ $(document).ready(function () {
             `);
         }
         // Note: Spinner hiding is now coordinated centrally
-    }// Function to load hot products (price range based)
+    }
+    
+    // Function to load hot products (price range based)
     async function loadHotProducts() {
         try {
             const $hotContainer = $("#hot-products-container");
