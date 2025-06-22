@@ -99,8 +99,14 @@ $(document).ready(function () {
                 wishlistService.updateWishlistCountUI(), // Add wishlist count update
                 initializeEventListeners()
             ]);
-              // Initialize with all products
-            applyFiltersAndSort();
+              
+            // Check URL parameters for any filters
+            checkUrlParameters();
+            
+            // Initialize with all products (if no URL parameters)
+            if (!categoryFilter) {
+                applyFiltersAndSort();
+            }
             
             // Provide product data to centralized quick view system
             if (typeof setQuickViewData === 'function') {
@@ -1509,4 +1515,30 @@ $(document).ready(function () {
         // Apply filters and refresh product display
         applyFiltersAndSort();
     };
+
+    // Function to get URL parameters
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        const results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    // Check URL parameters for category
+    function checkUrlParameters() {
+        const urlCategory = getUrlParameter('category');
+        if (urlCategory) {
+            categoryFilter = urlCategory.toLowerCase().trim();
+            console.log(`Category filter from URL: ${categoryFilter}`);
+            
+            // Update the category dropdown to match the URL parameter
+            $("#category-filter").val(categoryFilter);
+            
+            // Apply the filters
+            applyFiltersAndSort();
+        }
+    }
+
+    // Call checkUrlParameters on page load
+    checkUrlParameters();
 });
