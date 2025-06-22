@@ -450,6 +450,7 @@
 /* Reviews Actions */
 .reviews-actions {
     text-align: center;
+    padding: 0 1rem;
 }
 
 .see-all-reviews-btn {
@@ -460,6 +461,11 @@
     background: transparent;
     font-weight: 500;
     transition: all 0.3s ease;
+    max-width: 100%;
+    word-wrap: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .see-all-reviews-btn:hover {
@@ -479,12 +485,35 @@
     box-shadow: none !important;
 }
 
+/* Show Less Reviews Button */
+.show-less-reviews-btn {
+    padding: 1rem 2rem;
+    border: none;
+    background: transparent;
+    color: hsl(346, 100%, 74%);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.show-less-reviews-btn:hover {
+    text-decoration: underline;
+}
+
 /* New review cards animation */
 .review-card {
     transition: all 0.3s ease, opacity 0.5s ease, transform 0.5s ease;
 }
 
 /* Mobile Responsiveness */
+@media screen and (max-width: 768px) {
+    /* Hide reviews beyond the first 2 on mobile initially */
+    .customer-reviews-grid .review-card:nth-child(n+3) {
+        display: none;
+    }
+}
+
 @media screen and (max-width: 480px) {
     .reviews {
         padding: 60px 0;
@@ -518,8 +547,34 @@
         flex-direction: column;
         gap: 0.75rem;
     }
-      .review-actions {
+    
+    .review-actions {
         justify-content: center;
+    }
+    
+    /* Mobile button adjustments */
+    .reviews-actions {
+        padding: 0 0.5rem;
+    }
+    
+    .see-all-reviews-btn {
+        padding: 0.875rem 1.5rem;
+        font-size: 0.875rem;
+        white-space: normal;
+        text-align: center;
+        width: 100%;
+        max-width: 280px;
+        margin: 0 auto;
+        display: block;
+    }
+    
+    .show-less-reviews-btn {
+        padding: 0.875rem 1.5rem;
+        font-size: 0.875rem;
+        max-width: 200px;
+        margin: 0 auto;
+        display: block;
+        text-align: center;
     }
 }
 

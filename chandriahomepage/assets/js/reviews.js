@@ -1,23 +1,82 @@
 /*=============== REVIEWS FUNCTIONALITY ===============*/
 
 // Reviews Section JavaScript
-class ReviewsManager {
-    constructor() {
+class ReviewsManager {    constructor() {
         this.currentFilter = 'all';
         this.currentSort = 'newest';
         this.userRating = 0;
-        this.reviewsLoaded = 6; // Initially 6 reviews shown
+        this.isMobile = window.innerWidth <= 768;
+        this.initialReviewsCount = this.isMobile ? 2 : 6;
+        this.loadBatchSize = this.isMobile ? 2 : 6;
+        this.reviewsLoaded = this.initialReviewsCount;
         this.totalReviews = 127;
         this.allReviews = this.generateMoreReviews(); // Generate additional reviews
         this.init();
-    }
-
-    init() {
+        this.handleResize();
+    }    init() {
         this.initStarRating();
         this.initFilterTabs();
         this.initSortSelect();
         this.initReviewActions();
         this.initWriteReviewButton();
+        this.initMobileDisplay();
+    }
+
+    // Handle resize events
+    handleResize() {
+        window.addEventListener('resize', () => {
+            const wasMobile = this.isMobile;
+            this.isMobile = window.innerWidth <= 768;
+            
+            if (wasMobile !== this.isMobile) {
+                this.initialReviewsCount = this.isMobile ? 2 : 6;
+                this.loadBatchSize = this.isMobile ? 2 : 6;
+                this.updateMobileDisplay();
+            }
+        });
+    }
+
+    // Initialize mobile display
+    initMobileDisplay() {
+        if (this.isMobile) {
+            this.hideMobileReviews();
+        }
+    }
+
+    // Hide reviews beyond mobile limit
+    hideMobileReviews() {
+        const reviewCards = document.querySelectorAll('.review-card');
+        reviewCards.forEach((card, index) => {
+            if (index >= this.initialReviewsCount) {
+                card.style.display = 'none';
+            }
+        });
+        this.updateSeeAllButton();
+    }
+
+    // Update display when switching between mobile/desktop
+    updateMobileDisplay() {
+        const reviewCards = document.querySelectorAll('.review-card');
+        
+        if (this.isMobile) {
+            // Hide extra reviews if switching to mobile
+            reviewCards.forEach((card, index) => {
+                if (index >= this.initialReviewsCount) {
+                    card.style.display = 'none';
+                }
+            });
+            this.reviewsLoaded = Math.min(this.reviewsLoaded, this.initialReviewsCount);
+        } else {
+            // Show more reviews if switching to desktop
+            const visibleCount = Math.min(6, reviewCards.length);
+            reviewCards.forEach((card, index) => {
+                if (index < visibleCount) {
+                    card.style.display = 'block';
+                }
+            });
+            this.reviewsLoaded = visibleCount;
+        }
+        this.updateSeeAllButton();
     }
 
     // Initialize star rating for writing reviews
@@ -302,14 +361,12 @@ class ReviewsManager {
             helpful: Math.floor(Math.random() * 20) + 1,
             category: Math.random() > 0.5 ? 'fitting' : 'service'
         }));
-    }
-
-    // Load more reviews when button is clicked
+    }    // Load more reviews when button is clicked
     loadMoreReviews() {
         const container = document.querySelector('.customer-reviews-grid');
-        const reviewsToLoad = Math.min(6, this.allReviews.length);
+        const reviewsToLoad = Math.min(this.loadBatchSize, this.allReviews.length);
           for (let i = 0; i < reviewsToLoad && this.reviewsLoaded < this.totalReviews; i++) {
-            const reviewIndex = (this.reviewsLoaded - 6) % this.allReviews.length;
+            const reviewIndex = (this.reviewsLoaded - this.initialReviewsCount) % this.allReviews.length;
             const review = this.allReviews[reviewIndex];
             
             const reviewCard = this.createReviewCard(review);
@@ -394,9 +451,7 @@ class ReviewsManager {
                 card.style.transform = 'translateY(0)';
             }, index * 100);
         });
-    }
-
-    // Update see all button
+    }    // Update see all button
     updateSeeAllButton() {
         const seeAllBtn = document.querySelector('.see-all-reviews-btn');
         const remaining = this.totalReviews - this.reviewsLoaded;
@@ -409,12 +464,102 @@ class ReviewsManager {
             seeAllBtn.disabled = true;
             seeAllBtn.style.opacity = '0.6';
             seeAllBtn.style.cursor = 'not-allowed';
+            
+            // Show the "Show Less" button
+            this.showCollapseButton();
         } else {
             seeAllBtn.innerHTML = `
                 <i class="fi fi-rs-eye"></i>
                 Load More Reviews (${remaining} remaining)
             `;
         }
+        
+        // Show collapse button if we have more than 6 reviews
+        if (this.reviewsLoaded > 6) {
+            this.showCollapseButton();
+        }
+    }
+
+    // Show collapse button
+    showCollapseButton() {
+        let collapseBtn = document.querySelector('.collapse-reviews-btn');
+        
+        if (!collapseBtn) {
+            const reviewsActions = document.querySelector('.reviews-actions');
+            collapseBtn = document.createElement('button');
+            collapseBtn.className = 'btn btn-outline collapse-reviews-btn';
+            collapseBtn.innerHTML = `
+                <i class="fi fi-rs-angle-up"></i>
+                Show Less Reviews
+            `;
+            collapseBtn.style.marginLeft = '1rem';
+            
+            collapseBtn.addEventListener('click', () => {
+                this.collapseReviews();
+            });
+            
+            reviewsActions.appendChild(collapseBtn);
+        }
+        
+        collapseBtn.style.display = 'inline-flex';
+    }
+
+    // Hide collapse button
+    hideCollapseButton() {
+        const collapseBtn = document.querySelector('.collapse-reviews-btn');
+        if (collapseBtn) {
+            collapseBtn.style.display = 'none';
+        }
+    }    // Collapse reviews back to original count
+    collapseReviews() {
+        const container = document.querySelector('.customer-reviews-grid');
+        const allCards = container.querySelectorAll('.review-card');
+        
+        // Animate out the extra cards first
+        const cardsToRemove = Array.from(allCards).slice(this.initialReviewsCount);
+        
+        cardsToRemove.forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(-20px)';
+            }, index * 50);
+        });
+        
+        // Remove the cards after animation
+        setTimeout(() => {
+            cardsToRemove.forEach(card => card.remove());
+            
+            // Reset state
+            this.reviewsLoaded = this.initialReviewsCount;
+            
+            // Update button
+            const remaining = this.totalReviews - this.reviewsLoaded;
+            const seeAllBtn = document.querySelector('.see-all-reviews-btn');
+            seeAllBtn.innerHTML = `
+                <i class="fi fi-rs-eye"></i>
+                Load More Reviews (${remaining} remaining)
+            `;
+            seeAllBtn.disabled = false;
+            seeAllBtn.style.opacity = '1';
+            seeAllBtn.style.cursor = 'pointer';
+              // Hide collapse button
+            this.hideCollapseButton();
+            
+            // Smooth scroll to reviews filter section instead of top
+            const filterSection = document.querySelector('.reviews-filter-section');
+            if (filterSection) {
+                filterSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            } else {
+                // Fallback to reviews section if filter section not found
+                document.querySelector('#reviews').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }, cardsToRemove.length * 50 + 200);
     }
 
     // Initialize see all reviews button
