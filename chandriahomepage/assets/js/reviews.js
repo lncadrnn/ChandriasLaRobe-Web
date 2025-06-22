@@ -1,13 +1,12 @@
 /*=============== REVIEWS FUNCTIONALITY ===============*/
 
 // Reviews Section JavaScript
-class ReviewsManager {    constructor() {
-        this.currentFilter = 'all';
+class ReviewsManager {    constructor() {        this.currentFilter = 'all';
         this.currentSort = 'newest';
         this.userRating = 0;
         this.isMobile = window.innerWidth <= 768;
-        this.initialReviewsCount = this.isMobile ? 2 : 6;
-        this.loadBatchSize = this.isMobile ? 2 : 6;
+        this.initialReviewsCount = this.isMobile ? 2 : 3;
+        this.loadBatchSize = this.isMobile ? 2 : 3;
         this.reviewsLoaded = this.initialReviewsCount;
         this.totalReviews = 127;
         this.allReviews = this.generateMoreReviews(); // Generate additional reviews
@@ -19,8 +18,7 @@ class ReviewsManager {    constructor() {
         this.initSortSelect();
         this.initReviewActions();
         this.initWriteReviewButton();
-        this.initMobileDisplay();
-    }
+        this.initMobileDisplay();    }
 
     // Handle resize events
     handleResize() {
@@ -29,14 +27,14 @@ class ReviewsManager {    constructor() {
             this.isMobile = window.innerWidth <= 768;
             
             if (wasMobile !== this.isMobile) {
-                this.initialReviewsCount = this.isMobile ? 2 : 6;
-                this.loadBatchSize = this.isMobile ? 2 : 6;
+                this.initialReviewsCount = this.isMobile ? 2 : 3;
+                this.loadBatchSize = this.isMobile ? 2 : 3;
                 this.updateMobileDisplay();
             }
         });
     }
 
-    // Initialize mobile display    // Initialize mobile display
+    // Initialize mobile display// Initialize mobile display
     initMobileDisplay() {
         this.hideMobileReviews();
     }
@@ -64,17 +62,17 @@ class ReviewsManager {    constructor() {
                     card.style.display = 'none';
                 }
             });
-            this.reviewsLoaded = Math.min(this.reviewsLoaded, this.initialReviewsCount);
-        } else {
+            this.reviewsLoaded = Math.min(this.reviewsLoaded, this.initialReviewsCount);        } else {
             // Show more reviews if switching to desktop
-            const visibleCount = Math.min(6, reviewCards.length);
+            const desktopCount = 3; // Desktop initial count
+            const visibleCount = Math.min(desktopCount, reviewCards.length);
             reviewCards.forEach((card, index) => {
                 if (index < visibleCount) {
                     card.style.display = 'block';
                 }
             });
             this.reviewsLoaded = visibleCount;
-        }        // Update show less button visibility based on review count
+        }// Update show less button visibility based on review count
         const collapseBtn = document.querySelector('.show-less-reviews-btn');
         if (collapseBtn) {
             if (this.reviewsLoaded > this.initialReviewsCount) {
@@ -469,15 +467,15 @@ class ReviewsManager {    constructor() {
             e.preventDefault();
             this.toggleHelpful(helpfulBtn);
         });
-        
-        return card;
+          return card;
     }
 
     // Animate new cards in
     animateNewCards() {
         const allCards = document.querySelectorAll('.review-card');
-        const newCards = Array.from(allCards).slice(-6); // Last 6 cards
-          newCards.forEach((card, index) => {
+        const newCards = Array.from(allCards).slice(-this.loadBatchSize); // Last batch of cards
+        
+        newCards.forEach((card, index) => {
             setTimeout(() => {
                 card.style.opacity = '1';
                 card.style.transform = 'translateY(0)';
