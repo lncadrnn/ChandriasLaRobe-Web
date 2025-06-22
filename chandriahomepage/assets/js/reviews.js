@@ -53,9 +53,7 @@ class ReviewsManager {    constructor() {
         });
         this.reviewsLoaded = this.initialReviewsCount;
         this.updateSeeAllButton();
-    }
-
-    // Update display when switching between mobile/desktop
+    }    // Update display when switching between mobile/desktop
     updateMobileDisplay() {
         const reviewCards = document.querySelectorAll('.review-card');
         
@@ -76,7 +74,16 @@ class ReviewsManager {    constructor() {
                 }
             });
             this.reviewsLoaded = visibleCount;
+        }        // Update show less button visibility based on review count
+        const collapseBtn = document.querySelector('.show-less-reviews-btn');
+        if (collapseBtn) {
+            if (this.reviewsLoaded > this.initialReviewsCount) {
+                collapseBtn.style.display = 'inline-flex';
+            } else {
+                collapseBtn.style.display = 'none';
+            }
         }
+        
         this.updateSeeAllButton();
     }
 
@@ -485,8 +492,7 @@ class ReviewsManager {    constructor() {
         
         var desktopText = seeAllBtn.querySelector('.btn-text-desktop');
         var mobileText = seeAllBtn.querySelector('.btn-text-mobile');
-        
-        if (remaining <= 0) {
+          if (remaining <= 0) {
             if (desktopText) desktopText.textContent = 'All Reviews Loaded';
             if (mobileText) mobileText.textContent = 'All Loaded';
             seeAllBtn.disabled = true;
@@ -496,7 +502,7 @@ class ReviewsManager {    constructor() {
             // Show the "Show Less" button
             this.showCollapseButton();
         } else {
-            if (desktopText) desktopText.textContent = 'Load More Reviews (' + remaining + ' remaining)';
+            if (desktopText) desktopText.textContent = 'Load More';
             if (mobileText) mobileText.textContent = 'Load More';
             seeAllBtn.disabled = false;
             seeAllBtn.style.opacity = '1';
@@ -507,21 +513,14 @@ class ReviewsManager {    constructor() {
         if (this.reviewsLoaded > this.initialReviewsCount) {
             this.showCollapseButton();
         }
-    }
-
-    // Show collapse button
+    }    // Show collapse button
     showCollapseButton() {
-        let collapseBtn = document.querySelector('.collapse-reviews-btn');
+        let collapseBtn = document.querySelector('.show-less-reviews-btn');
         
         if (!collapseBtn) {
             const reviewsActions = document.querySelector('.reviews-actions');
             collapseBtn = document.createElement('button');
-            collapseBtn.className = 'btn btn-outline collapse-reviews-btn';
-            collapseBtn.innerHTML = `
-                <i class="fi fi-rs-angle-up"></i>
-                Show Less Reviews
-            `;
-            collapseBtn.style.marginLeft = '1rem';
+            collapseBtn.className = 'show-less-reviews-btn';            collapseBtn.innerHTML = `Show Less`;
             
             collapseBtn.addEventListener('click', () => {
                 this.collapseReviews();
@@ -529,17 +528,15 @@ class ReviewsManager {    constructor() {
             
             reviewsActions.appendChild(collapseBtn);
         }
-        
+          // Show on both mobile and desktop when there are more reviews than initial
         collapseBtn.style.display = 'inline-flex';
-    }
-
-    // Hide collapse button
+    }    // Hide collapse button
     hideCollapseButton() {
-        const collapseBtn = document.querySelector('.collapse-reviews-btn');
+        const collapseBtn = document.querySelector('.show-less-reviews-btn');
         if (collapseBtn) {
-            collapseBtn.style.display = 'none';
+            collapseBtn.style.setProperty('display', 'none', 'important');
         }
-    }    // Collapse reviews back to original count
+    }// Collapse reviews back to original count
     collapseReviews() {
         const container = document.querySelector('.customer-reviews-grid');
         const allCards = container.querySelectorAll('.review-card');
@@ -565,8 +562,7 @@ class ReviewsManager {    constructor() {
             const seeAllBtn = document.querySelector('.see-all-reviews-btn');
             const desktopText = seeAllBtn.querySelector('.btn-text-desktop');
             const mobileText = seeAllBtn.querySelector('.btn-text-mobile');
-            
-            if (desktopText) desktopText.textContent = 'Load More Reviews (' + remaining + ' remaining)';
+              if (desktopText) desktopText.textContent = 'Load More';
             if (mobileText) mobileText.textContent = 'Load More';
             
             seeAllBtn.disabled = false;

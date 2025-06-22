@@ -451,6 +451,11 @@
 .reviews-actions {
     text-align: center;
     padding: 0 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .see-all-reviews-btn {
@@ -487,19 +492,23 @@
 
 /* Show Less Reviews Button */
 .show-less-reviews-btn {
-    padding: 1rem 2rem;
+    padding: 1.25rem 2.5rem;
     border: none;
     background: transparent;
     color: hsl(346, 100%, 74%);
     font-weight: 500;
+    font-size: 1rem;
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
-    display: none; /* Hidden by default, shown only on mobile */
+    display: none; /* Hidden by default, controlled by JavaScript */
 }
 
-.show-less-reviews-btn:hover {
+.show-less-reviews-btn:hover,
+.show-less-reviews-btn:focus {
     text-decoration: underline;
+    background: transparent;
+    outline: none;
 }
 
 /* Button text visibility */
@@ -560,10 +569,11 @@
     
     .review-actions {
         justify-content: center;
-    }
-      /* Mobile button adjustments */
+    }    /* Mobile button adjustments */
     .reviews-actions {
         padding: 0 0.5rem;
+        flex-direction: column;
+        gap: 0;
     }
     
     .see-all-reviews-btn {
@@ -584,14 +594,20 @@
     
     .see-all-reviews-btn .btn-text-mobile {
         display: inline;
-    }
-      .show-less-reviews-btn {
-        padding: 0.875rem 1.5rem;
-        font-size: 0.875rem;
-        max-width: 200px;
-        margin: 0 auto;
-        display: block; /* Show on mobile */
+    }    .show-less-reviews-btn {
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        max-width: 220px;
+        margin: 1rem auto 0 !important; /* Reduced top margin from 2rem to 1rem */
+        display: block !important; /* Override inline-flex for mobile */
         text-align: center;
+    }
+    
+    .show-less-reviews-btn:hover,
+    .show-less-reviews-btn:focus {
+        text-decoration: underline;
+        background: transparent !important;
+        outline: none;
     }
 }
 
