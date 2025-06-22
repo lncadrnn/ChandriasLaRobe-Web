@@ -118,3 +118,12 @@ body {
     visibility: visible !important;
     opacity: 1 !important;
 }
+
+/* Mobile specific fix to reduce space above Premium Fitting Experience section */
+@media screen and (max-width: 768px) {
+
+    .hero-image {
+        margin-bottom: -10rem !important;
+        margin-top: 3.5rem !important;
+    }
+}
