@@ -383,6 +383,19 @@ function initCalendarModal() {    // Only create the modal if it doesn't exist y
 // Show the calendar modal
 function showCalendarModal() {
     const modal = $('#calendar-availability-modal');
+    
+    // Reset calendar area to prevent duplicate elements
+    const calendarEl = document.getElementById('availability-calendar');
+    if (calendarEl) {
+        calendarEl.innerHTML = '';
+    }
+    
+    // Remove any existing navigation buttons
+    const existingNavigation = document.querySelector('.calendar-month-navigation');
+    if (existingNavigation) {
+        existingNavigation.remove();
+    }
+    
     modal.css('display', 'flex');
     setTimeout(() => modal.addClass('show'), 10);
 }
@@ -391,31 +404,59 @@ function showCalendarModal() {
 function hideCalendarModal() {
     const modal = $('#calendar-availability-modal');
     modal.removeClass('show');
-    setTimeout(() => modal.css('display', 'none'), 300);
+    
+    // Schedule cleanup after animation completes
+    setTimeout(() => {
+        modal.css('display', 'none');
+        
+        // Clean up calendar when modal is hidden to prevent memory leaks
+        const calendarEl = document.getElementById('availability-calendar');
+        if (calendarEl && calendarEl._calendar) {
+            // If FullCalendar has a destroy method, use it
+            if (typeof calendarEl._calendar.destroy === 'function') {
+                calendarEl._calendar.destroy();
+            }
+            // Remove the reference
+            delete calendarEl._calendar;
+        }
+    }, 300);
 }
 
 // Initialize and render the product calendar
 async function initProductCalendar(productId, productName) {
     const calendarEl = document.getElementById('availability-calendar');
     
-    // Clear any existing calendar
-    if (calendarEl._calendar) {
-        calendarEl._calendar.destroy();
+    // Clear any previous calendar content and navigation elements
+    calendarEl.innerHTML = '';
+    
+    // Remove any existing navigation buttons to prevent duplicates
+    const existingNavigation = document.querySelector('.calendar-month-navigation');
+    if (existingNavigation) {
+        existingNavigation.remove();
     }
     
-    // Show loading state in calendar area
-    $(calendarEl).html(`
-        <div class="text-center py-5">
-            <div class="spinner-border" style="color: hsl(346, 100%, 74%);" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <p class="mt-3" style="color: #666;">Loading calendar...</p>
+    // Add loading spinner
+    const loadingSpinner = document.createElement('div');
+    loadingSpinner.className = 'd-flex flex-column align-items-center justify-content-center py-5';
+    loadingSpinner.innerHTML = `
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
         </div>
-    `);
+        <p class="mt-3" style="color: #666;">Loading calendar...</p>
+    `;
+    calendarEl.appendChild(loadingSpinner);
     
     try {
         // Fetch unavailable dates
-        const unavailableDates = await fetchUnavailableDates(productId);        // Initialize the FullCalendar
+        const unavailableDates = await fetchUnavailableDates(productId);
+        
+        // Remove loading spinner once data is fetched
+        calendarEl.innerHTML = '';
+        
+        // Small delay to ensure DOM is ready for calendar rendering
+        await new Promise(resolve => setTimeout(resolve, 50));
+        
+        // Initialize the FullCalendar
         const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             headerToolbar: {
@@ -548,19 +589,25 @@ async function initProductCalendar(productId, productName) {
         // Render the calendar
         calendar.render();
         
-        // Add month name display below the calendar title
-        addMonthDisplay(calendar);
+        // Ensure all loading indicators are removed after rendering
+        const remainingLoaders = calendarEl.querySelectorAll('.spinner-border, .d-flex.flex-column.align-items-center');
+        remainingLoaders.forEach(loader => loader.remove());
         
         // Set up month navigation
         setupMonthNavigation(calendar);
     } catch (error) {
         console.error('Error initializing calendar:', error);
-        $(calendarEl).html(`
-            <div class="alert alert-danger">
-                <i class="fi fi-rs-exclamation"></i>
-                Failed to load availability calendar. Please try again.
-            </div>
-        `);
+        // Clear the calendar element to remove any loading spinner
+        calendarEl.innerHTML = '';
+        
+        // Add error message
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'alert alert-danger';
+        errorDiv.innerHTML = `
+            <i class="fi fi-rs-exclamation"></i>
+            Failed to load availability calendar. Please try again.
+        `;
+        calendarEl.appendChild(errorDiv);
     }
 }
 
@@ -591,6 +638,12 @@ function addMonthDisplay(calendar) {
 
 // Set up additional month navigation buttons
 function setupMonthNavigation(calendar) {
+    // Remove any existing navigation to prevent duplicates
+    const existingNavigation = document.querySelector('.calendar-month-navigation');
+    if (existingNavigation) {
+        existingNavigation.remove();
+    }
+    
     // Add quick month navigation below the calendar
     const monthNav = document.createElement('div');
     monthNav.className = 'calendar-month-navigation';
