@@ -6,6 +6,9 @@ class ReviewsManager {
         this.currentFilter = 'all';
         this.currentSort = 'newest';
         this.userRating = 0;
+        this.reviewsLoaded = 6; // Initially 6 reviews shown
+        this.totalReviews = 127;
+        this.allReviews = this.generateMoreReviews(); // Generate additional reviews
         this.init();
     }
 
@@ -249,22 +252,169 @@ class ReviewsManager {
         writeBtn.addEventListener('click', () => {
             this.openReviewModal();
         });
-    }
-
-    // Open review modal (placeholder)
+    }    // Open review modal (placeholder)
     openReviewModal() {
-        const notyf = new Notyf({
-            duration: 4000,
-            position: { x: 'right', y: 'top' }
-        });
-        
         if (this.userRating === 0) {
-            notyf.error('Please select a rating first!');
+            alert('Please select a rating first!');
             return;
         }
         
         // In a real application, this would open a modal with a full review form
-        notyf.success(`Review form for ${this.userRating} stars would open here!`);
+        alert(`Review form for ${this.userRating} stars would open here!`);
+    }
+
+    // Generate more reviews data
+    generateMoreReviews() {
+        const names = [
+            'Sarah Johnson', 'Michael Davis', 'Emma Wilson', 'David Brown', 'Olivia Garcia',
+            'James Miller', 'Sophia Anderson', 'Robert Taylor', 'Isabella Martinez', 'William Jones',
+            'Mia Thomas', 'Alexander White', 'Charlotte Lopez', 'Benjamin Clark', 'Amelia Rodriguez',
+            'Lucas Lewis', 'Harper Walker', 'Henry Hall', 'Evelyn Young', 'Sebastian Allen'
+        ];
+        
+        const comments = [
+            "Outstanding service! The fitting was perfect and the staff was incredibly helpful.",
+            "Beautiful gowns and excellent customer service. Highly recommend!",
+            "The quality exceeded my expectations. Perfect for my special day.",
+            "Professional staff and gorgeous selection. Will definitely come back.",
+            "Amazing experience from start to finish. The alterations were flawless.",
+            "Great variety and the fitting consultation was very thorough.",
+            "Loved the personalized attention and the final result was stunning.",
+            "Excellent quality and the staff made me feel so comfortable.",
+            "Perfect fit and beautiful designs. Couldn't be happier!",
+            "The team went above and beyond to make sure everything was perfect."
+        ];
+        
+        const tags = [
+            ['Wedding Gown', 'Excellent Service'], ['Ball Gown', 'Quality'], ['Formal Wear', 'Professional'],
+            ['Evening Wear', 'Beautiful'], ['Fairy Gown', 'Magical'], ['Suits', 'Perfect Fit'],
+            ['Accessories', 'Stylish'], ['Long Gown', 'Elegant'], ['Custom Fit', 'Amazing'],
+            ['Bridal', 'Dream Come True']
+        ];
+
+        return names.map((name, index) => ({
+            name: name,
+            initial: name.charAt(0),
+            rating: Math.random() > 0.3 ? 5 : 4, // Mostly 5 and 4 star reviews
+            comment: comments[index % comments.length],
+            tags: tags[index % tags.length],
+            date: `${Math.floor(Math.random() * 6) + 1} months ago`,
+            helpful: Math.floor(Math.random() * 20) + 1,
+            category: Math.random() > 0.5 ? 'fitting' : 'service'
+        }));
+    }
+
+    // Load more reviews when button is clicked
+    loadMoreReviews() {
+        const container = document.querySelector('.customer-reviews-grid');
+        const reviewsToLoad = Math.min(6, this.allReviews.length);
+          for (let i = 0; i < reviewsToLoad && this.reviewsLoaded < this.totalReviews; i++) {
+            const reviewIndex = (this.reviewsLoaded - 6) % this.allReviews.length;
+            const review = this.allReviews[reviewIndex];
+            
+            const reviewCard = this.createReviewCard(review);
+            container.appendChild(reviewCard);
+            this.reviewsLoaded++;
+        }
+        
+        // Update button text
+        this.updateSeeAllButton();
+        
+        // Animate new cards in
+        this.animateNewCards();
+    }
+
+    // Create a review card element
+    createReviewCard(review) {
+        const card = document.createElement('div');
+        card.className = 'review-card';
+        card.setAttribute('data-rating', review.rating);
+        card.setAttribute('data-category', review.category);
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        const stars = Array(5).fill(0).map((_, index) => 
+            `<i class="fi fi-rs-star review-star ${index < review.rating ? 'filled' : ''}"></i>`
+        ).join('');
+        
+        const tags = review.tags.map(tag => 
+            `<span class="review-tag">${tag}</span>`
+        ).join('');
+        
+        card.innerHTML = `
+            <div class="review-header">
+                <div class="reviewer-info">
+                    <div class="reviewer-avatar">
+                        <span class="reviewer-initial">${review.initial}</span>
+                    </div>
+                    <div class="reviewer-details">
+                        <h4 class="reviewer-name">${review.name}</h4>
+                        <div class="review-rating">
+                            ${stars}
+                        </div>
+                    </div>
+                </div>
+                <span class="review-date">${review.date}</span>
+            </div>
+            <div class="review-content">
+                <p class="review-text">"${review.comment}"</p>
+                <div class="review-tags">
+                    ${tags}
+                </div>
+            </div>
+            <div class="review-bottom">
+                <div class="review-divider"></div>
+                <div class="review-actions">
+                    <button class="review-action-btn">
+                        <i class="fi fi-rs-thumbs-up"></i>
+                        Helpful (${review.helpful})
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Add event listener for helpful button
+        const helpfulBtn = card.querySelector('.review-action-btn');
+        helpfulBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.toggleHelpful(helpfulBtn);
+        });
+        
+        return card;
+    }
+
+    // Animate new cards in
+    animateNewCards() {
+        const allCards = document.querySelectorAll('.review-card');
+        const newCards = Array.from(allCards).slice(-6); // Last 6 cards
+        
+        newCards.forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    }
+
+    // Update see all button
+    updateSeeAllButton() {
+        const seeAllBtn = document.querySelector('.see-all-reviews-btn');
+        const remaining = this.totalReviews - this.reviewsLoaded;
+        
+        if (remaining <= 0) {
+            seeAllBtn.innerHTML = `
+                <i class="fi fi-rs-check"></i>
+                All Reviews Loaded
+            `;
+            seeAllBtn.disabled = true;
+            seeAllBtn.style.opacity = '0.6';
+            seeAllBtn.style.cursor = 'not-allowed';
+        } else {
+            seeAllBtn.innerHTML = `
+                <i class="fi fi-rs-eye"></i>
+                Load More Reviews (${remaining} remaining)
+            `;
+        }
     }
 
     // Initialize see all reviews button
@@ -273,21 +423,14 @@ class ReviewsManager {
         
         if (seeAllBtn) {
             seeAllBtn.addEventListener('click', () => {
-                // In a real application, this would navigate to a full reviews page
-                // or load more reviews
-                const notyf = new Notyf({
-                    duration: 3000,
-                    position: { x: 'right', y: 'top' }
-                });
-                
-                notyf.success('Loading more reviews...');
-                
-                // Mock loading more reviews
-                setTimeout(() => {
-                    notyf.success('All reviews loaded!');
-                }, 1500);
+                this.loadMoreReviews();
             });
         }
+    }
+
+    // Show all reviews functionality (removed, replaced with loadMoreReviews)
+    showAllReviews() {
+        // This method is no longer used
     }
 }
 

@@ -455,13 +455,33 @@
 .see-all-reviews-btn {
     padding: 1rem 2rem;
     border-radius: 12px;
+    border: 2px solid hsl(346, 100%, 74%);
+    color: hsl(346, 100%, 74%);
+    background: transparent;
     font-weight: 500;
     transition: all 0.3s ease;
 }
 
 .see-all-reviews-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    background: hsl(346, 100%, 74%);
+    color: white;
+    box-shadow: 0 6px 20px hsla(346, 100%, 74%, 0.3);
+}
+
+.see-all-reviews-btn:disabled {
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+    transform: none !important;
+    background: #f3f4f6 !important;
+    color: #9ca3af !important;
+    border-color: #e5e7eb !important;
+    box-shadow: none !important;
+}
+
+/* New review cards animation */
+.review-card {
+    transition: all 0.3s ease, opacity 0.5s ease, transform 0.5s ease;
 }
 
 /* Mobile Responsiveness */
@@ -536,4 +556,29 @@
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* Custom Notyf Styling for Reviews */
+.notyf__toast {
+    border: 2px solid hsl(346, 100%, 74%) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+}
+
+.notyf__wrapper {
+    margin-top: 20px !important;
+}
+
+.notyf__toast--success {
+    background: hsl(346, 100%, 74%) !important;
+}
+
+.notyf__toast--error {
+    background: hsl(0, 65%, 60%) !important;
+    border-color: hsl(0, 65%, 60%) !important;
+}
+
+.notyf__message {
+    font-weight: 500 !important;
+    font-size: 0.9rem !important;
 }
