@@ -1435,6 +1435,94 @@ a[href] {
     opacity: 1;
 }
 
+/* =============== PAGINATION STYLES ===============*/
+.pagination-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+    gap: 0.5rem;
+    justify-content: flex-start;
+}
+
+.pagination li {
+    display: inline-block;
+}
+
+.pagination-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid #e5e5e5;
+    background-color: #fff;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pagination-btn:hover {
+    background-color: hsl(346, 85%, 95%);
+    color: hsl(346, 100%, 74%);
+    border-color: hsl(346, 100%, 74%);
+}
+
+.pagination-btn.active {
+    background-color: hsl(346, 100%, 74%);
+    color: #fff;
+    border-color: hsl(346, 100%, 74%);
+}
+
+.prev-btn i, 
+.next-btn i {
+    font-size: 12px;
+}
+
+.pagination-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    color: #999;
+}
+
+.pagination-info {
+    color: #777;
+    font-size: 13px;
+    text-align: left;
+    margin-left: 5px;
+}
+
+/* Pagination responsiveness */
+@media screen and (max-width: 768px) {
+    .pagination-container {
+        margin-top: 1.5rem;
+        align-items: flex-start;
+    }
+    
+    .pagination {
+        gap: 0.3rem;
+    }
+    
+    .pagination-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 13px;
+    }
+}
+
 /* =============== AVAILABILITY MODAL =============== */
 #availability-modal {
     display: none;
