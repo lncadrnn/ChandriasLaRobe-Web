@@ -495,10 +495,20 @@
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
+    display: none; /* Hidden by default, shown only on mobile */
 }
 
 .show-less-reviews-btn:hover {
     text-decoration: underline;
+}
+
+/* Button text visibility */
+.btn-text-mobile {
+    display: none;
+}
+
+.btn-text-desktop {
+    display: inline;
 }
 
 /* New review cards animation */
@@ -508,10 +518,10 @@
 
 /* Mobile Responsiveness */
 @media screen and (max-width: 768px) {
-    /* Hide reviews beyond the first 2 on mobile initially */
-    .customer-reviews-grid .review-card:nth-child(n+3) {
+    /* This rule is disabled as we handle visibility through JavaScript */
+    /* .customer-reviews-grid .review-card:nth-child(n+3) {
         display: none;
-    }
+    } */
 }
 
 @media screen and (max-width: 480px) {
@@ -551,8 +561,7 @@
     .review-actions {
         justify-content: center;
     }
-    
-    /* Mobile button adjustments */
+      /* Mobile button adjustments */
     .reviews-actions {
         padding: 0 0.5rem;
     }
@@ -568,12 +577,20 @@
         display: block;
     }
     
-    .show-less-reviews-btn {
+    /* Hide desktop text, show mobile text */
+    .see-all-reviews-btn .btn-text-desktop {
+        display: none;
+    }
+    
+    .see-all-reviews-btn .btn-text-mobile {
+        display: inline;
+    }
+      .show-less-reviews-btn {
         padding: 0.875rem 1.5rem;
         font-size: 0.875rem;
         max-width: 200px;
         margin: 0 auto;
-        display: block;
+        display: block; /* Show on mobile */
         text-align: center;
     }
 }
