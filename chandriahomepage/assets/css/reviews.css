@@ -125,7 +125,7 @@
 
 .rating-fill {
     height: 100%;
-    background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);
+    background: linear-gradient(90deg, hsl(346, 100%, 74%) 0%, hsl(346, 90%, 70%) 100%);
     border-radius: 3px;
     transition: width 0.3s ease;
 }
