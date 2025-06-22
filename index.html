@@ -36,8 +36,8 @@
         <link rel="stylesheet" href="chandriahomepage/assets/css/index-fixes.css" />
         <link rel="stylesheet" href="chandriahomepage/assets/css/index-quick-view-override.css" />
         <link rel="stylesheet" href="chandriahomepage/assets/css/footer-fixes.css" />
-        <link rel="stylesheet" href="chandriahomepage/assets/css/chatbot.css" />
-        <link rel="stylesheet" href="chandriahomepage/assets/css/size-chart.css" />
+        <link rel="stylesheet" href="chandriahomepage/assets/css/chatbot.css" />        <link rel="stylesheet" href="chandriahomepage/assets/css/size-chart.css" />
+        <link rel="stylesheet" href="chandriahomepage/assets/css/reviews.css" />
         <link rel="stylesheet" href="chandriahomepage/assets/css/category-title-fixes.css" />
 
         <!-- Firebase SDK -->
@@ -87,9 +87,11 @@
                         </li>
                         <li class="nav-item">
                             <a href="#categories" class="nav-link smooth-scroll">Categories</a>
+                        </li>                        <li class="nav-item">
+                            <a href="#products" class="nav-link smooth-scroll">Products</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#products" class="nav-link smooth-scroll">Products</a>
+                            <a href="#reviews" class="nav-link smooth-scroll">Reviews</a>
                         </li>
                         <li class="nav-item">
                             <a href="#contact" class="nav-link smooth-scroll">About</a>
@@ -120,9 +122,11 @@
                         <a href="#home" class="mobile-nav-link smooth-scroll">Home</a>
                     </li>
                     <li class="mobile-nav-item">
-                        <a href="#categories" class="mobile-nav-link smooth-scroll">Categories</a>
-                    </li>                    <li class="mobile-nav-item">
+                        <a href="#categories" class="mobile-nav-link smooth-scroll">Categories</a>                    </li>                    <li class="mobile-nav-item">
                         <a href="#products" class="mobile-nav-link smooth-scroll">Products</a>
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="#reviews" class="mobile-nav-link smooth-scroll">Reviews</a>
                     </li>
                     <li class="mobile-nav-item">
                         <a href="#contact" class="mobile-nav-link smooth-scroll">About</a>
@@ -723,6 +727,290 @@
                 </div>
             </section>
 
+            <!-------------------------------- MODERN REVIEWS SECTION -------------------------------->
+            <section class="reviews section" id="reviews">
+                <div class="container">
+                    <!-- Section Header -->
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            Customer <span>Reviews</span>
+                        </h2>
+                        <p class="section-subtitle">
+                            See what our customers say about their fitting experience
+                        </p>
+                    </div>
+
+                    <!-- Reviews Overview & Write Review Cards -->
+                    <div class="reviews-top-section">
+                        <!-- Reviews Overview Card -->
+                        <div class="reviews-overview-card">
+                            <div class="reviews-overview-header">
+                                <h3 class="reviews-overview-title">Customer Satisfaction</h3>
+                                <div class="reviews-overall-rating">
+                                    <div class="reviews-rating-number">4.8</div>
+                                    <div class="reviews-rating-stars">
+                                        <i class="fi fi-rs-star review-star filled"></i>
+                                        <i class="fi fi-rs-star review-star filled"></i>
+                                        <i class="fi fi-rs-star review-star filled"></i>
+                                        <i class="fi fi-rs-star review-star filled"></i>
+                                        <i class="fi fi-rs-star review-star filled"></i>
+                                    </div>
+                                    <span class="reviews-total-count">Based on 127 reviews</span>
+                                </div>
+                            </div>
+                            <div class="reviews-rating-breakdown">
+                                <div class="rating-bar-item">
+                                    <span class="rating-label">5 stars</span>
+                                    <div class="rating-bar">
+                                        <div class="rating-fill" style="width: 85%"></div>
+                                    </div>
+                                    <span class="rating-count">108</span>
+                                </div>
+                                <div class="rating-bar-item">
+                                    <span class="rating-label">4 stars</span>
+                                    <div class="rating-bar">
+                                        <div class="rating-fill" style="width: 12%"></div>
+                                    </div>
+                                    <span class="rating-count">15</span>
+                                </div>
+                                <div class="rating-bar-item">
+                                    <span class="rating-label">3 stars</span>
+                                    <div class="rating-bar">
+                                        <div class="rating-fill" style="width: 2%"></div>
+                                    </div>
+                                    <span class="rating-count">3</span>
+                                </div>
+                                <div class="rating-bar-item">
+                                    <span class="rating-label">2 stars</span>
+                                    <div class="rating-bar">
+                                        <div class="rating-fill" style="width: 1%"></div>
+                                    </div>
+                                    <span class="rating-count">1</span>
+                                </div>
+                                <div class="rating-bar-item">
+                                    <span class="rating-label">1 star</span>
+                                    <div class="rating-bar">
+                                        <div class="rating-fill" style="width: 0%"></div>
+                                    </div>
+                                    <span class="rating-count">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Write Review Card -->
+                        <div class="write-review-card">
+                            <div class="write-review-header">
+                                <h3 class="write-review-title">Share Your Experience</h3>
+                                <p class="write-review-subtitle">Help others by writing a review</p>
+                            </div>
+                            <div class="write-review-content">
+                                <div class="write-review-rating">
+                                    <label class="write-review-label">Your Rating</label>
+                                    <div class="write-review-stars">
+                                        <i class="fi fi-rs-star write-star" data-rating="1"></i>
+                                        <i class="fi fi-rs-star write-star" data-rating="2"></i>
+                                        <i class="fi fi-rs-star write-star" data-rating="3"></i>
+                                        <i class="fi fi-rs-star write-star" data-rating="4"></i>
+                                        <i class="fi fi-rs-star write-star" data-rating="5"></i>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary write-review-btn">
+                                    <i class="fi fi-rs-edit"></i>
+                                    Write a Review
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reviews Filter -->
+                    <div class="reviews-filter-section">
+                        <div class="reviews-filter-tabs">
+                            <button class="review-filter-tab active" data-filter="all">All Reviews</button>
+                            <button class="review-filter-tab" data-filter="5">5 Stars</button>
+                            <button class="review-filter-tab" data-filter="4">4 Stars</button>
+                            <button class="review-filter-tab" data-filter="3">3 Stars</button>
+                            <button class="review-filter-tab" data-filter="fitting">Fitting Experience</button>
+                            <button class="review-filter-tab" data-filter="service">Customer Service</button>
+                        </div>
+                        <div class="reviews-sort">
+                            <select class="reviews-sort-select">
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="highest">Highest Rating</option>
+                                <option value="lowest">Lowest Rating</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Customer Reviews Grid -->
+                    <div class="customer-reviews-grid" id="customer-reviews-container">
+                        <!-- Review Card 1 -->
+                        <div class="review-card" data-rating="5" data-category="fitting">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="reviewer-avatar">
+                                        <span class="reviewer-initial">M</span>
+                                    </div>
+                                    <div class="reviewer-details">
+                                        <h4 class="reviewer-name">Maria Santos</h4>
+                                        <div class="review-rating">
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="review-date">2 weeks ago</span>
+                            </div>                            <div class="review-content">
+                                <p class="review-text">
+                                    "Absolutely amazing experience! The fitting session was thorough and professional. The staff helped me find the perfect wedding gown, and the alterations were flawless. Highly recommend for any special occasion!"
+                                </p>
+                                <div class="review-tags">
+                                    <span class="review-tag">Wedding Gown</span>
+                                    <span class="review-tag">Professional Service</span>
+                                </div>
+                            </div>
+                            <div class="review-bottom">
+                                <div class="review-divider"></div>
+                                <div class="review-actions">
+                                    <button class="review-action-btn">
+                                        <i class="fi fi-rs-thumbs-up"></i>
+                                        Helpful (12)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Review Card 2 -->
+                        <div class="review-card" data-rating="5" data-category="service">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="reviewer-avatar">
+                                        <span class="reviewer-initial">A</span>
+                                    </div>
+                                    <div class="reviewer-details">
+                                        <h4 class="reviewer-name">Anna Rodriguez</h4>
+                                        <div class="review-rating">
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="review-date">1 month ago</span>
+                            </div>                            <div class="review-content">
+                                <p class="review-text">
+                                    "The customer service here is exceptional. They were patient with my indecisiveness and helped me choose the perfect ball gown for my debut. The free fitting service is a game-changer!"
+                                </p>
+                                <div class="review-tags">
+                                    <span class="review-tag">Ball Gown</span>
+                                    <span class="review-tag">Excellent Service</span>
+                                </div>
+                            </div>
+                            <div class="review-bottom">
+                                <div class="review-divider"></div>
+                                <div class="review-actions">
+                                    <button class="review-action-btn">
+                                        <i class="fi fi-rs-thumbs-up"></i>
+                                        Helpful (8)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Review Card 3 -->
+                        <div class="review-card" data-rating="4" data-category="fitting">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="reviewer-avatar">
+                                        <span class="reviewer-initial">L</span>
+                                    </div>
+                                    <div class="reviewer-details">
+                                        <h4 class="reviewer-name">Lisa Chen</h4>
+                                        <div class="review-rating">
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                            <i class="fi fi-rs-star review-star"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="review-date">3 weeks ago</span>
+                            </div>                            <div class="review-content">
+                                <p class="review-text">
+                                    "Great selection of formal wear! The fitting process was smooth, though I had to wait a bit longer than expected. Overall, very satisfied with the quality and the final result."
+                                </p>
+                                <div class="review-tags">
+                                    <span class="review-tag">Formal Wear</span>
+                                    <span class="review-tag">Quality Products</span>
+                                </div>
+                            </div>
+                            <div class="review-bottom">
+                                <div class="review-divider"></div>
+                                <div class="review-actions">
+                                    <button class="review-action-btn">
+                                        <i class="fi fi-rs-thumbs-up"></i>
+                                        Helpful (5)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Review Card 4 -->
+                        <div class="review-card" data-rating="5" data-category="service">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="reviewer-avatar">
+                                        <span class="reviewer-initial">J</span>
+                                    </div>
+                                    <div class="reviewer-details">
+                                        <h4 class="reviewer-name">Jessica Torres</h4>
+                                        <div class="review-rating">
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                            <i class="fi fi-rs-star review-star filled"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="review-date">2 months ago</span>
+                            </div>                            <div class="review-content">
+                                <p class="review-text">
+                                    "I love how they handle appointments! Very organized and professional. The staff knows their craft well and gave excellent styling advice. Will definitely come back for future events."
+                                </p>
+                                <div class="review-tags">
+                                    <span class="review-tag">Professional</span>
+                                    <span class="review-tag">Styling Advice</span>
+                                </div>
+                            </div>
+                            <div class="review-bottom">
+                                <div class="review-divider"></div>
+                                <div class="review-actions">
+                                    <button class="review-action-btn">
+                                        <i class="fi fi-rs-thumbs-up"></i>
+                                        Helpful (15)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- See All Reviews Button -->
+                    <div class="reviews-actions">
+                        <button class="btn btn-outline see-all-reviews-btn">
+                            <i class="fi fi-rs-eye"></i>
+                            See All 127 Reviews
+                        </button>
+                    </div>
+                </div>
+            </section>
+
             <!-------------------------------- MODERN CONTACT & BOOKING SECTION -------------------------------->
             <section class="contact-booking section" id="contact">
                 <div class="container">
@@ -1023,9 +1311,9 @@
         <script src="chandriahomepage/assets/js/main.js"></script>
         <script type="module" src="chandriahomepage/assets/js/auth-modal.js"></script>
         <script type="module" src="./chandriahomepage/assets/js/wishlist-firebase.js"></script>
-        <script type="module" src="./chandriahomepage/assets/js/index.js"></script>
-        <script type="module" src="./chandriahomepage/assets/js/chatbot/chatbot-init.js"></script>
+        <script type="module" src="./chandriahomepage/assets/js/index.js"></script>        <script type="module" src="./chandriahomepage/assets/js/chatbot/chatbot-init.js"></script>
         <script src="./chandriahomepage/assets/js/size-chart.js"></script>
+        <script src="./chandriahomepage/assets/js/reviews.js"></script>
 
     </body>
 </html>
