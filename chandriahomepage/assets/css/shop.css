@@ -847,6 +847,7 @@ a[href] {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    margin-top: -2rem !important;
     margin-bottom: 2rem;
     padding: 1.5rem;
     background: #ffffff;
@@ -1695,68 +1696,89 @@ a[href] {
     }
 }
 
-/*=============== PAGINATION STYLES ===============*/
-.pagination-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 2.5rem;
-    margin-bottom: 2rem;
+/* Empty products grid state */
+.products-empty-state {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  grid-column: 1 / -1; /* Span all columns in the grid */
+  padding: 2rem 0;
 }
 
-.pagination {
-    display: flex;
-    list-style: none;
-    padding: 0;
-    margin: 0 0 1rem 0;
-    gap: 0.5rem;
+/* =============== No Products Found Styling =============== */
+.no-products-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 2rem auto;
+  max-width: 380px;
+  width: 100%;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-.pagination-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 1px solid #e5e5e5;
-    background-color: #fff;
-    color: var(--text-color);
-    font-size: var(--normal-font-size);
-    cursor: pointer;
-    transition: all 0.3s ease;
+.no-products-icon {
+  font-size: 3rem;
+  color: hsl(346, 100%, 74%);
+  margin-bottom: 1rem;
 }
 
-.pagination-btn:hover {
-    background-color: var(--first-color-light);
-    color: #fff;
-    border-color: var(--first-color-light);
+.no-products-found h3 {
+  font-size: 1.3rem;
+  color: #333;
+  margin-bottom: 0.5rem;
 }
 
-.pagination-btn.active {
-    background-color: var(--first-color);
-    color: #fff;
-    border-color: var(--first-color);
+.no-products-found p {
+  color: #666;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
 }
 
-.pagination-info {
-    color: var(--text-color-light);
-    font-size: var(--small-font-size);
+.no-products-found button {
+  background-color: hsl(346, 100%, 74%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
 }
 
-/* Pagination responsiveness */
-@media screen and (max-width: 768px) {
-    .pagination-container {
-        margin-top: 1.5rem;
-    }
-    
-    .pagination {
-        gap: 0.3rem;
-    }
-    
-    .pagination-btn {
-        width: 32px;
-        height: 32px;
-        font-size: var(--smaller-font-size);
-    }
+.no-products-found button:hover {
+  background-color: hsl(346, 100%, 68%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments for No Products Found */
+@media (max-width: 576px) {
+  .no-products-found {
+    margin: 2rem auto;
+    padding: 1.5rem;
+    max-width: 300px;
+  }
+  
+  .no-products-icon {
+    font-size: 2.5rem;
+  }
+  
+  .no-products-found h3 {
+    font-size: 1.1rem;
+  }
+  
+  .no-products-found p {
+    font-size: 0.9rem;
+  }
+  
+  .no-products-found button {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+  }
 }

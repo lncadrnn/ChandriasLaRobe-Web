@@ -587,14 +587,17 @@ $(document).ready(function () {
         container.empty();
         
         if (filteredProducts.length === 0) {
+            // Add a wrapper div to ensure proper grid centering
             container.html(`
-                <div class="no-products-found">
-                    <div class="no-products-icon">
-                        <i class="fi fi-rs-shopping-bag"></i>
+                <div class="products-empty-state">
+                    <div class="no-products-found">
+                        <div class="no-products-icon">
+                            <i class="fi fi-rs-shopping-bag"></i>
+                        </div>
+                        <h3>No products found</h3>
+                        <p>Try adjusting your search or filter criteria</p>
+                        <button onclick="clearAllFilters()">Clear All Filters</button>
                     </div>
-                    <h3>No products found</h3>
-                    <p>Try adjusting your search or filter criteria</p>
-                    <button class="btn btn-primary" onclick="location.reload()">Clear All Filters</button>
                 </div>
             `);
             return;
@@ -1478,4 +1481,32 @@ $(document).ready(function () {
     $(document).on('mouseleave', '.action-btn', function() {
         $('.action-tooltip').remove();
     });
+    
+    // Function to clear all filters and reload products
+    window.clearAllFilters = function() {
+        // Reset all filter selections
+        $('#product-search').val('');
+        $('#category-filter').val('');
+        $('#date-filter').val('');
+        
+        // Reset sort to default
+        $('.sort-option').removeClass('active');
+        $('.sort-option[data-sort="default"]').addClass('active');
+        $('#sort-filter-btn .sort-text').text('Sort by: Default');
+        
+        // Reset product tabs
+        $('.product-tab').removeClass('active-tab');
+        $('.product-tab[data-tab="all"]').addClass('active-tab');
+        
+        // Reset global variables
+        searchQuery = '';
+        dateFilter = '';
+        categoryFilter = '';
+        currentSort = 'default';
+        currentActiveTab = 'all';
+        currentPage = 1;
+        
+        // Apply filters and refresh product display
+        applyFiltersAndSort();
+    };
 });
