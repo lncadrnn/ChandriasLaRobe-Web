@@ -51,15 +51,15 @@ function initCalendarModal() {    // Only create the modal if it doesn't exist y
         `);
         
         // Add calendar CSS
-        $('head').append(`            <style>                /* Calendar Availability Modal Styles */
-                #calendar-availability-modal .modal-container {
-                    max-width: 800px;
+        $('head').append(`            <style>                /* Calendar Availability Modal Styles */                #calendar-availability-modal .modal-container {
+                    max-width: 750px; /* Reduced from 800px */
                     width: 95%;
                     max-height: 95vh;
-                    padding: 15px;
+                    padding: 10px; /* Reduced from 15px */
                     overflow: hidden;
                     display: flex;
                     flex-direction: column;
+                    margin: 0 auto; /* Center the modal */
                 }
                 
                 #calendar-availability-modal .modal-body {
@@ -67,23 +67,67 @@ function initCalendarModal() {    // Only create the modal if it doesn't exist y
                     flex-direction: column;
                     flex: 1;
                     min-height: 0;
-                }
-                
-                #availability-calendar {
+                    overflow: hidden; /* Prevent overflow */
+                }                  #availability-calendar {
                     flex: 1;
-                    min-height: 480px;
+                    min-height: 380px; /* Further reduced from 420px */
                     margin: 0;
+                    overflow: hidden; /* Prevent overflow */
                 }
                 
                 /* Ensure navigation buttons stay at bottom */
                 .calendar-month-navigation {
                     margin-top: auto;
                     flex-shrink: 0;
+                }                /* For months with 6 rows - adjust calendar size but keep navigation visible */
+                .fc-dayGridMonth-view.fc-view.six-rows .fc-daygrid-body {
+                    /* Further reduced to prevent overflow */
+                    min-height: 380px !important; 
+                }
+                  /* When calendar has 6 rows, make the content smaller */
+                .fc .fc-daygrid-day-frame {
+                    min-height: 55px !important; /* Further reduced from 65px */
+                    padding: 0 !important;
+                }
+                  /* Calendar with 6 rows - make font smaller */
+                .fc-dayGridMonth-view.fc-view.six-rows .fc-daygrid-day-number {
+                    font-size: 0.8em; /* Smaller font size */
                 }
                 
-                /* For months with 6 rows - adjust calendar size but keep navigation visible */
-                .fc-dayGridMonth-view.fc-view.six-rows .fc-daygrid-body {
-                    min-height: 520px !important;
+                /* Adjust today circle for 6-row months */
+                .fc-dayGridMonth-view.fc-view.six-rows .fc-day-today .fc-daygrid-day-number {
+                    width: 22px;
+                    height: 22px;
+                }
+                  /* Make all calendar cells more compact */
+                .fc .fc-daygrid-day {
+                    padding: 0 !important;
+                }
+                
+                /* Reduce spacing between calendar elements */
+                .fc .fc-header-toolbar {
+                    margin-bottom: 0.3em !important;
+                }
+                
+                /* Make all calendar content more compact */
+                .fc-theme-standard .fc-scrollgrid {
+                    border-collapse: collapse;
+                    font-size: 0.9em;
+                }
+                
+                /* Reduce cell border width */
+                .fc-theme-standard td, .fc-theme-standard th {
+                    border-width: 1px !important;
+                }
+                
+                /* Remove extra padding in cells */
+                .fc .fc-daygrid-day-top {
+                    padding: 0 !important;
+                }
+                
+                /* Reduce header row height */
+                .fc .fc-col-header-cell {
+                    padding: 2px 0 !important;
                 }
                 
                 /* Responsive adjustments */                @media (max-width: 768px) {
@@ -92,13 +136,28 @@ function initCalendarModal() {    // Only create the modal if it doesn't exist y
                         max-height: 95vh;
                         padding: 10px;
                     }
-                    
-                    #availability-calendar {
-                        min-height: 400px;
+                      #availability-calendar {
+                        min-height: 350px;
                     }
                     
                     .fc-dayGridMonth-view.fc-view.six-rows .fc-daygrid-body {
-                        min-height: 460px !important;
+                        min-height: 380px !important;
+                    }
+                      /* Even smaller for mobile */
+                    .fc .fc-daygrid-day-frame {
+                        min-height: 45px !important; /* Further reduced from 55px */
+                    }
+                      /* Smaller fonts on mobile */
+                    .fc-dayGridMonth-view.fc-view.six-rows .fc-daygrid-day-number {
+                        font-size: 0.7em; /* Further reduced font size */
+                        padding: 1px !important;
+                    }
+                    
+                    /* Smaller today circle for mobile */
+                    .fc .fc-day-today .fc-daygrid-day-number {
+                        width: 20px;
+                        height: 20px;
+                        font-size: 0.75em;
                     }
                     
                     .fc .fc-toolbar-title {
@@ -120,26 +179,25 @@ function initCalendarModal() {    // Only create the modal if it doesn't exist y
                         font-size: 0.95rem;
                         margin: -3px 0 8px 0;
                     }
-                }
-                  .calendar-legend {
+                }                .calendar-legend {
                     display: flex;
                     justify-content: center;
-                    margin-top: 10px;
-                    margin-bottom: 5px;
-                    gap: 30px;
+                    margin-top: 5px; /* Reduced from 10px */
+                    margin-bottom: 3px; /* Reduced from 5px */
+                    gap: 20px; /* Reduced from 30px */
                 }
                 
                 .calendar-legend-item {
                     display: flex;
                     align-items: center;
-                    font-size: 14px;
+                    font-size: 12px; /* Reduced from 14px */
                     color: #666;
                 }
                 
                 .calendar-box {
-                    width: 16px;
-                    height: 16px;
-                    margin-right: 6px;
+                    width: 14px; /* Reduced from 16px */
+                    height: 14px; /* Reduced from 16px */
+                    margin-right: 5px; /* Reduced from 6px */
                     border: 1px solid #ddd;
                 }
                 
@@ -175,21 +233,19 @@ function initCalendarModal() {    // Only create the modal if it doesn't exist y
                     width: 100%;
                     text-align: center;
                 }
-                
-                /* Month display styles */
+                  /* Month display styles */
                 .calendar-month-display {
                     text-align: center;
-                    font-size: 1.1rem;
+                    font-size: 0.95rem; /* Reduced from 1.1rem */
                     color: #666;
-                    margin: -5px 0 10px 0;
+                    margin: -3px 0 8px 0; /* Reduced margin */
                     font-weight: 500;
                 }
-                  /* Month navigation buttons */
-                .calendar-month-navigation {
+                  /* Month navigation buttons */                .calendar-month-navigation {
                     display: flex;
                     justify-content: space-between;
-                    margin-top: 15px;
-                    padding: 10px;
+                    margin-top: 10px; /* Reduced from 15px */
+                    padding: 8px; /* Reduced from 10px */
                     background-color: #f8f9fa;
                     border-radius: 6px;
                     position: sticky;
@@ -202,8 +258,8 @@ function initCalendarModal() {    // Only create the modal if it doesn't exist y
                     color: hsl(346, 100%, 45%);
                     border: none;
                     border-radius: 4px;
-                    padding: 8px 16px;
-                    font-size: 14px;
+                    padding: 6px 14px; /* Reduced from 8px 16px */
+                    font-size: 13px; /* Reduced from 14px */
                     cursor: pointer;
                     transition: all 0.2s;
                     display: flex;
@@ -222,10 +278,11 @@ function initCalendarModal() {    // Only create the modal if it doesn't exist y
                 .month-nav-btn i {
                     font-size: 12px;
                 }
-                
-                .fc .fc-button-primary {
+                  .fc .fc-button-primary {
                     background-color: hsl(346, 100%, 74%);
                     border-color: hsl(346, 100%, 74%);
+                    font-size: 0.9em;
+                    padding: 0.3em 0.65em;
                 }
                 
                 .fc .fc-button-primary:hover {
@@ -235,10 +292,43 @@ function initCalendarModal() {    // Only create the modal if it doesn't exist y
                 
                 .fc .fc-col-header-cell {
                     background-color: #f8f9fa;
+                }                
+                /* Smaller header text */
+                .fc .fc-toolbar-title {
+                    font-size: 1.1em;
+                    line-height: 1.2;
+                }
+                  /* Smaller day cells and text */
+                .fc .fc-daygrid-day-top {
+                    justify-content: center;
+                    margin-top: 1px; /* Further reduced from 2px */
+                }
+                  .fc .fc-daygrid-day-number {
+                    font-size: 0.85em;
+                    padding: 1px; /* Further reduced from 2px */
+                }                  .fc .fc-day-today {
+                    background-color: transparent !important; /* Remove yellow background */
                 }
                 
-                .fc .fc-day-today {
-                    background-color: rgba(255, 220, 240, 0.3) !important;
+                /* Also ensure all child elements of today cell have no background */
+                .fc .fc-day-today > * {
+                    background-color: transparent !important;
+                }
+                  /* Style the current date number with a pink circle */
+                .fc .fc-day-today .fc-daygrid-day-number {
+                    background-color: hsl(346, 100%, 85%);
+                    color: hsl(346, 100%, 45%);
+                    border-radius: 50%;
+                    width: 25px;
+                    height: 25px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto;
+                    font-weight: 600;
+                    /* Ensure no other styles affect this */
+                    box-shadow: none;
+                    border: none;
                 }
                 
                 .fc-day-unavailable {
@@ -344,12 +434,20 @@ async function initProductCalendar(productId, productName) {
                 // Full product name without truncation
                 return productName;
             },
-            
-            // Style unavailable dates
+                  // Style unavailable dates
             dayCellDidMount: function(info) {
                 const dateStr = info.date.toLocaleDateString();
                 if (unavailableDates.includes(dateStr)) {
                     info.el.classList.add('fc-day-unavailable');
+                }
+                
+                // Force remove background from today's cell
+                if (info.isToday) {
+                    info.el.style.setProperty('background-color', 'transparent', 'important');
+                    const cellContent = info.el.querySelector('.fc-daygrid-day-frame');
+                    if (cellContent) {
+                        cellContent.style.setProperty('background-color', 'transparent', 'important');
+                    }
                 }
             },
               // Highlight today
@@ -371,14 +469,23 @@ async function initProductCalendar(productId, productName) {
                 
                 // Calculate rows needed
                 const rowsNeeded = Math.ceil((firstDayOfWeek + totalDays) / 7);
-                
-                // Add/remove class for six-row months
+                  // Add/remove class for six-row months
                 const calendarElement = document.querySelector('.fc-dayGridMonth-view');
-                if (calendarElement) {
-                    if (rowsNeeded > 5) {
+                if (calendarElement) {                    if (rowsNeeded > 5) {
                         calendarElement.classList.add('six-rows');
+                          // Reduce the day cell height to fit the 6 rows
+                        const dayCells = document.querySelectorAll('.fc-daygrid-day-frame');
+                        dayCells.forEach(cell => {
+                            cell.style.minHeight = '50px'; // Further reduced from 65px
+                        });
                     } else {
                         calendarElement.classList.remove('six-rows');
+                        
+                        // Restore normal day cell height
+                        const dayCells = document.querySelectorAll('.fc-daygrid-day-frame');
+                        dayCells.forEach(cell => {
+                            cell.style.minHeight = '70px'; // Slightly reduced
+                        });
                     }
                 }
                 
@@ -386,13 +493,50 @@ async function initProductCalendar(productId, productName) {
                 setTimeout(() => {
                     const modal = document.querySelector('#calendar-availability-modal .modal-container');
                     const navigation = document.querySelector('.calendar-month-navigation');
-                    if (modal && navigation) {
+                    const calendarView = document.querySelector('.fc-view-harness');
+                    
+                    if (modal && navigation && calendarView) {
                         const rect = navigation.getBoundingClientRect();
                         const modalRect = modal.getBoundingClientRect();
                         
-                        // If navigation is outside modal, adjust modal height
-                        if (rect.bottom > modalRect.bottom) {
-                            modal.style.maxHeight = '98vh';
+                        // If navigation is outside modal or close to the bottom, adjust
+                        if (rect.bottom > modalRect.bottom - 10) {                            // First try adjusting the calendar height
+                            if (rowsNeeded > 5) {
+                                calendarView.style.height = (calendarView.offsetHeight - 50) + 'px';                                // Make day cells even smaller if needed
+                                const dayCells = document.querySelectorAll('.fc-daygrid-day-frame');
+                                dayCells.forEach(cell => {
+                                    cell.style.minHeight = '45px'; // Further reduced from 55px
+                                });
+                                
+                                // Adjust today circle size for extreme compactness
+                                const todayNumber = document.querySelector('.fc-day-today .fc-daygrid-day-number');
+                                if (todayNumber) {
+                                    todayNumber.style.width = '20px';
+                                    todayNumber.style.height = '20px';
+                                    todayNumber.style.fontSize = '0.7em';
+                                }
+                                
+                                // Also make the toolbar even smaller
+                                const toolbarTitle = document.querySelector('.fc-toolbar-title');
+                                if (toolbarTitle) {
+                                    toolbarTitle.style.fontSize = '1em';
+                                    toolbarTitle.style.padding = '0';
+                                }
+                                
+                                // Reduce the space taken by header cells
+                                const headerCells = document.querySelectorAll('.fc-col-header-cell');
+                                headerCells.forEach(cell => {
+                                    cell.style.padding = '1px 0';
+                                });
+                            }
+                            
+                            // If still not fitting, adjust modal height as last resort
+                            setTimeout(() => {
+                                const updatedRect = navigation.getBoundingClientRect();
+                                if (updatedRect.bottom > modalRect.bottom - 5) {
+                                    modal.style.maxHeight = '98vh';
+                                }
+                            }, 50);
                         }
                     }
                 }, 100);
