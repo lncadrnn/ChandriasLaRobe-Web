@@ -135,21 +135,8 @@
                 <button id="refresh-analytics" class="refresh-btn">
                     <i class='bx bx-refresh'></i> Refresh Data
                 </button>
-            </div>
-            
-            <!-- Analytics Overview Cards -->
+            </div>              <!-- Analytics Overview Cards -->
             <div class="analytics-overview">
-                <div class="analytics-card total-revenue">
-                    <div class="card-icon">
-                        <i class='bx bx-money'></i>
-                    </div>
-                    <div class="card-content">
-                        <h3>Total Revenue</h3>
-                        <p class="card-value">₱<span id="total-revenue">0.00</span></p>
-                        <p class="card-trend positive"><i class='bx bx-up-arrow-alt'></i> <span id="revenue-trend">0%</span> vs. previous period</p>
-                    </div>
-                </div>
-                
                 <div class="analytics-card total-rentals">
                     <div class="card-icon">
                         <i class='bx bx-package'></i>
@@ -161,55 +148,34 @@
                     </div>
                 </div>
                 
-                <div class="analytics-card conversion-rate">
+                <div class="analytics-card total-revenue">
                     <div class="card-icon">
-                        <i class='bx bx-transfer'></i>
+                        <i class='bx bx-money'></i>
                     </div>
                     <div class="card-content">
-                        <h3>Conversion Rate</h3>
-                        <p class="card-value"><span id="conversion-rate">0</span>%</p>
-                        <p class="card-trend negative"><i class='bx bx-down-arrow-alt'></i> <span id="conversion-trend">0%</span> vs. previous period</p>
-                    </div>
-                </div>
-                
-                <div class="analytics-card avg-rental-value">
-                    <div class="card-icon">
-                        <i class='bx bx-line-chart'></i>
-                    </div>
-                    <div class="card-content">
-                        <h3>Avg. Rental Value</h3>
-                        <p class="card-value">₱<span id="avg-rental-value">0.00</span></p>
-                        <p class="card-trend positive"><i class='bx bx-up-arrow-alt'></i> <span id="avg-value-trend">0%</span> vs. previous period</p>
+                        <h3>Total Rental Revenue</h3>
+                        <p class="card-value">₱<span id="total-revenue">0.00</span></p>
+                        <p class="card-trend positive"><i class='bx bx-up-arrow-alt'></i> <span id="revenue-trend">0%</span> vs. previous period</p>
                     </div>
                 </div>
             </div>
-            
-            <!-- Charts Section -->
+              <!-- Charts Section -->
             <div class="analytics-charts">
-                <div class="chart-container revenue-chart-container">
+                <div class="chart-container monthly-income-container">
                     <div class="chart-header">
-                        <h3>Revenue Over Time</h3>
-                        <div class="chart-actions">
-                            <button class="chart-view-btn active" data-view="daily">Daily</button>
-                            <button class="chart-view-btn" data-view="weekly">Weekly</button>
-                            <button class="chart-view-btn" data-view="monthly">Monthly</button>
-                        </div>
+                        <h3>Monthly Income Breakdown</h3>
                     </div>
                     <div class="chart-body">
-                        <canvas id="revenue-chart"></canvas>
+                        <canvas id="monthly-income-chart"></canvas>
                     </div>
                 </div>
                 
-                <div class="chart-container product-chart-container">
+                <div class="chart-container customer-growth-container">
                     <div class="chart-header">
-                        <h3>Top Products by Revenue</h3>
-                        <div class="chart-actions">
-                            <button class="chart-view-btn active" data-view="category">By Category</button>
-                            <button class="chart-view-btn" data-view="product">By Product</button>
-                        </div>
+                        <h3>Monthly Customer Growth</h3>
                     </div>
                     <div class="chart-body">
-                        <canvas id="product-chart"></canvas>
+                        <canvas id="customer-growth-chart"></canvas>
                     </div>
                 </div>
             </div>
@@ -218,33 +184,19 @@
             <div class="analytics-metrics">
                 <div class="metrics-container">
                     <div class="metrics-header">
-                        <h3>Rental Status Distribution</h3>
+                        <h3>Rented Products by Category</h3>
                     </div>
                     <div class="metrics-body">
-                        <canvas id="status-chart"></canvas>
+                        <canvas id="category-chart"></canvas>
                     </div>
                 </div>
                 
                 <div class="metrics-container">
                     <div class="metrics-header">
-                        <h3>Customer Retention</h3>
+                        <h3>Rental Distribution by Event</h3>
                     </div>
                     <div class="metrics-body">
-                        <div class="retention-stats">
-                            <div class="retention-stat">
-                                <h4>New Customers</h4>
-                                <p><span id="new-customers">0</span> <span class="percentage">(<span id="new-customers-pct">0</span>%)</span></p>
-                            </div>
-                            <div class="retention-stat">
-                                <h4>Returning Customers</h4>
-                                <p><span id="returning-customers">0</span> <span class="percentage">(<span id="returning-customers-pct">0</span>%)</span></p>
-                            </div>
-                            <div class="retention-stat">
-                                <h4>Retention Rate</h4>
-                                <p><span id="retention-rate">0</span>%</p>
-                            </div>
-                        </div>
-                        <canvas id="retention-chart"></canvas>
+                        <canvas id="event-distribution-chart"></canvas>
                     </div>
                 </div>
             </div>
@@ -279,9 +231,7 @@
             <i class="bx bxs-bar-chart-alt-2 icon"></i>
             <span class="text">Analytics</span>
         </a>
-    </nav>
-
-    <!-- Firebase SDK -->
+    </nav>    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     
@@ -293,7 +243,8 @@
     <script src="./assets/js/admin-layout.js"></script>
     <script src="./assets/js/admin-layout-mob.js"></script>
     
-    <!-- Analytics Script -->
+    <!-- Analytics Scripts - Firebase and Frontend separated -->
     <script type="module" src="./assets/js/analytics.js"></script>
+    <script type="module" src="./assets/js/analytics-subscript.js"></script>
 </body>
 </html>
