@@ -1170,6 +1170,24 @@ tr:hover {
     font-size: 1rem;
 }
 
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+}
+
 /* =============== RESPONSIVE DESIGN =============== */
 @media screen and (max-width: 1200px) {
     .dashboard-layout {
@@ -1826,6 +1844,15 @@ tr:hover {
 
 .rental-modal-actions .btn-success:hover {
     background: #218838;
+}
+
+.rental-modal-actions .btn-warning {
+    background: #ffc107;
+    color: #212529;
+}
+
+.rental-modal-actions .btn-warning:hover {
+    background: #e0a800;
 }
 
 /* Confirmation Modals */

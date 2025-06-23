@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="./assets/css/dashboard.css" />
         <link rel="stylesheet" href="./assets/css/status-colors.css" />
         <link rel="stylesheet" href="./assets/css/appointment-modal.css" />
+        <link rel="stylesheet" href="./assets/css/confirmation-modal.css" />
         
         <!-- Notyf Toast Notifications -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
@@ -488,6 +489,36 @@
                                 <i class="fas fa-check"></i>
                                 YES
                             </button>                        </div>
+                    </div>
+                </div>
+
+                <!-- Undo Confirmation Modal -->
+                <div id="undo-confirmation-modal" class="modal">
+                    <div class="modal-backdrop"></div>
+                    <div class="modal-content confirmation-modal-content">
+                        <div class="confirmation-modal-header">
+                            <h3 class="modal-title">
+                                <i class="fas fa-undo"></i>
+                                Undo Confirmation
+                            </h3>
+                            <button class="close-confirmation-modal" aria-label="Close modal">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="confirmation-modal-body">
+                            <p>Are you sure you want to undo the confirmation for this appointment?</p>
+                            <p>This will change the appointment status back to pending.</p>
+                        </div>
+                        <div class="confirmation-modal-actions">
+                            <button class="btn btn-secondary cancel-action">
+                                <i class="fas fa-times"></i>
+                                NO
+                            </button>
+                            <button class="btn btn-warning confirm-undo-action">
+                                <i class="fas fa-check"></i>
+                                YES
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -18,10 +18,13 @@
 
 /* Style for the undo confirmation button */
 .undo-confirmation {
-    background-color: #6c757d;
-    color: white;
+    background-color: #ffc107;
+    color: #212529;
+    border: 1px solid #ffc107;
 }
 
 .undo-confirmation:hover {
-    background-color: #5a6268;
+    background-color: #e0a800;
+    border-color: #d39e00;
+    color: #212529;
 }

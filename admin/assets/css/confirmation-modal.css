@@ -1,0 +1,430 @@
+/* Confirmation Modal Styles */
+
+/* General confirmation modal padding to prevent button cutoff */
+.confirmation-modal-content {
+    padding: 20px;
+    box-sizing: border-box;
+    margin: 20px;
+    min-height: 200px;
+    height: auto;
+    max-height: 400px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    background: white;
+    border-radius: 8px;
+}
+
+.confirmation-modal-header {
+    position: relative;
+    padding-right: 45px;
+    margin-bottom: 15px;
+}
+
+.confirmation-modal-body {
+    min-height: 60px;
+    padding: 10px 0 20px 0;
+    text-align: center;
+}
+
+.confirmation-modal-actions {
+    padding: 15px 0 0 0;
+    margin-top: 15px;
+    display: flex !important;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100% !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    min-height: 50px;
+}
+
+.confirmation-modal-actions .btn {
+    min-width: 100px;
+    padding: 10px 20px;
+    white-space: nowrap;
+}
+
+/* Mobile responsive for confirmation modal */
+@media (max-width: 768px) {
+    .confirmation-modal-content {
+        margin: 10px;
+        padding: 15px;
+    }
+    
+    .confirmation-modal-actions .btn {
+        min-width: 80px;
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+}
+
+/* Button styles for confirmation modal to ensure visibility */
+.confirmation-modal-actions .btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    opacity: 1 !important;
+    visibility: visible !important;
+    position: relative !important;
+    min-width: 100px;
+    padding: 10px 20px;
+    white-space: nowrap;
+}
+
+.confirmation-modal-actions .btn i {
+    margin-right: 5px;
+}
+
+/* Button color variations */
+.confirmation-modal-actions .btn-secondary {
+    background-color: #6c757d !important;
+    color: white !important;
+    border: 1px solid #6c757d !important;
+}
+
+.confirmation-modal-actions .btn-secondary:hover {
+    background-color: #5a6268 !important;
+    border-color: #5a6268 !important;
+}
+
+.confirmation-modal-actions .btn-success {
+    background-color: #28a745 !important;
+    color: white !important;
+    border: 1px solid #28a745 !important;
+}
+
+.confirmation-modal-actions .btn-success:hover {
+    background-color: #218838 !important;
+    border-color: #218838 !important;
+}
+
+.confirmation-modal-actions .btn-danger {
+    background-color: #dc3545 !important;
+    color: white !important;
+    border: 1px solid #dc3545 !important;
+}
+
+.confirmation-modal-actions .btn-danger:hover {
+    background-color: #c82333 !important;
+    border-color: #c82333 !important;
+}
+
+.confirmation-modal-actions .btn-warning {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+    border: 1px solid #ffc107 !important;
+}
+
+.confirmation-modal-actions .btn-warning:hover {
+    background-color: #e0a800 !important;
+    border-color: #e0a800 !important;
+}
+
+/* Specific styling for each confirmation modal type */
+
+/* Cancel Booking Modal */
+#cancel-booking-modal .confirmation-modal-content {
+    min-height: 220px;
+}
+
+#cancel-booking-modal .cancel-action {
+    background-color: #6c757d !important;
+    color: white !important;
+    border: 1px solid #6c757d !important;
+}
+
+#cancel-booking-modal .confirm-cancel-booking {
+    background-color: #dc3545 !important;
+    color: white !important;
+    border: 1px solid #dc3545 !important;
+}
+
+/* Confirm Booking Modal */
+#confirm-booking-modal .confirmation-modal-content {
+    min-height: 220px;
+}
+
+#confirm-booking-modal .cancel-action {
+    background-color: #6c757d !important;
+    color: white !important;
+    border: 1px solid #6c757d !important;
+}
+
+#confirm-booking-modal .confirm-booking-action {
+    background-color: #28a745 !important;
+    color: white !important;
+    border: 1px solid #28a745 !important;
+}
+
+/* Undo Confirmation Modal */
+#undo-confirmation-modal .confirmation-modal-content {
+    min-height: 250px;
+}
+
+#undo-confirmation-modal .confirmation-modal-body {
+    min-height: 80px;
+    padding: 20px 0;
+}
+
+#undo-confirmation-modal .confirmation-modal-actions {
+    min-height: 60px;
+    padding: 20px 0;
+    margin-top: 20px;
+}
+
+#undo-confirmation-modal .cancel-action {
+    background-color: #6c757d !important;
+    color: white !important;
+    border: 1px solid #6c757d !important;
+}
+
+#undo-confirmation-modal .confirm-undo-action {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+    border: 1px solid #ffc107 !important;
+}
+
+/* Fallback button styling for all confirmation modals */
+.confirmation-modal .confirmation-modal-actions button,
+#cancel-booking-modal .confirmation-modal-actions button,
+#confirm-booking-modal .confirmation-modal-actions button,
+#undo-confirmation-modal .confirmation-modal-actions button {
+    display: inline-block !important;
+    padding: 10px 20px !important;
+    margin: 0 5px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    font-weight: 500 !important;
+    text-align: center !important;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    #undo-confirmation-modal .confirmation-modal-content {
+        min-height: 200px;
+        width: 95%;
+        margin: 10px auto;
+    }
+}
+
+/* Close button styling for all confirmation modals */
+.confirmation-modal .close-confirmation-modal,
+#cancel-booking-modal .close-confirmation-modal,
+#confirm-booking-modal .close-confirmation-modal,
+#undo-confirmation-modal .close-confirmation-modal {
+    position: absolute !important;
+    top: 15px !important;
+    right: 15px !important;
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    font-size: 14px !important;
+    color: #9ca3af !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    z-index: 1003 !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 6px !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    font-family: "Font Awesome 5 Free", sans-serif !important;
+}
+
+/* If FontAwesome is not loaded, show × symbol */
+.confirmation-modal .close-confirmation-modal::after,
+#cancel-booking-modal .close-confirmation-modal::after,
+#confirm-booking-modal .close-confirmation-modal::after,
+#undo-confirmation-modal .close-confirmation-modal::after {
+    content: "×" !important;
+    font-size: 18px !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+    color: #9ca3af !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+}
+
+.confirmation-modal .close-confirmation-modal:hover,
+#cancel-booking-modal .close-confirmation-modal:hover,
+#confirm-booking-modal .close-confirmation-modal:hover,
+#undo-confirmation-modal .close-confirmation-modal:hover {
+    background-color: #f9fafb !important;
+    color: #6b7280 !important;
+    border-color: #d1d5db !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.confirmation-modal .close-confirmation-modal:hover::after,
+#cancel-booking-modal .close-confirmation-modal:hover::after,
+#confirm-booking-modal .close-confirmation-modal:hover::after,
+#undo-confirmation-modal .close-confirmation-modal:hover::after {
+    color: #6b7280 !important;
+}
+
+.confirmation-modal .close-confirmation-modal:active,
+#cancel-booking-modal .close-confirmation-modal:active,
+#confirm-booking-modal .close-confirmation-modal:active,
+#undo-confirmation-modal .close-confirmation-modal:active {
+    background-color: #f3f4f6 !important;
+    color: #4b5563 !important;
+    border-color: #d1d5db !important;
+    transform: scale(0.95) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+.confirmation-modal .close-confirmation-modal:active::after,
+#cancel-booking-modal .close-confirmation-modal:active::after,
+#confirm-booking-modal .close-confirmation-modal:active::after,
+#undo-confirmation-modal .close-confirmation-modal:active::after {
+    color: #4b5563 !important;
+}
+
+/* Ensure the modal header has relative positioning for absolute close button */
+.confirmation-modal .confirmation-modal-header,
+#cancel-booking-modal .confirmation-modal-header,
+#confirm-booking-modal .confirmation-modal-header,
+#undo-confirmation-modal .confirmation-modal-header {
+    position: relative;
+    padding-right: 45px;
+    padding-top: 0;
+    margin-bottom: 15px;
+}
+
+/* Make sure the close button is clickable */
+.confirmation-modal .close-confirmation-modal i,
+#cancel-booking-modal .close-confirmation-modal i,
+#confirm-booking-modal .close-confirmation-modal i,
+#undo-confirmation-modal .close-confirmation-modal i {
+    pointer-events: none !important;
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
+    color: inherit !important;
+    display: block !important;
+}
+
+/* Fallback for close button without icon - show × symbol */
+.confirmation-modal .close-confirmation-modal:empty::before,
+#cancel-booking-modal .close-confirmation-modal:empty::before,
+#confirm-booking-modal .close-confirmation-modal:empty::before,
+#undo-confirmation-modal .close-confirmation-modal:empty::before {
+    content: "×" !important;
+    font-size: 20px !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+    color: #9ca3af !important;
+}
+
+.confirmation-modal .close-confirmation-modal:hover:empty::before,
+#cancel-booking-modal .close-confirmation-modal:hover:empty::before,
+#confirm-booking-modal .close-confirmation-modal:hover:empty::before,
+#undo-confirmation-modal .close-confirmation-modal:hover:empty::before {
+    color: #6b7280 !important;
+}
+
+/* Ensure close button functionality with specific selectors */
+.modal .close-confirmation-modal,
+.modal-content .close-confirmation-modal {
+    position: absolute !important;
+    top: 10px !important;
+    right: 10px !important;
+    cursor: pointer !important;
+    z-index: 1003 !important;
+    pointer-events: all !important;
+}
+
+/* Additional close button fixes for better positioning and functionality */
+.modal .confirmation-modal-content .close-confirmation-modal {
+    position: absolute !important;
+    top: 15px !important;
+    right: 15px !important;
+    z-index: 1002 !important;
+    background: #fff !important;
+    border: 1px solid #e9ecef !important;
+    width: 28px !important;
+    height: 28px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Mobile responsive adjustments for close button */
+@media (max-width: 768px) {
+    .confirmation-modal .close-confirmation-modal,
+    #cancel-booking-modal .close-confirmation-modal,
+    #confirm-booking-modal .close-confirmation-modal,
+    #undo-confirmation-modal .close-confirmation-modal {
+        top: 15px;
+        right: 15px;
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+    }
+    
+    .confirmation-modal .confirmation-modal-header,
+    #cancel-booking-modal .confirmation-modal-header,
+    #confirm-booking-modal .confirmation-modal-header,
+    #undo-confirmation-modal .confirmation-modal-header {
+        padding-right: 50px;
+    }
+}
+
+/* Ensure proper modal state transitions for all confirmation modals */
+.confirmation-modal,
+#cancel-booking-modal,
+#confirm-booking-modal,
+#undo-confirmation-modal {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.confirmation-modal:not(.show),
+#cancel-booking-modal:not(.show),
+#confirm-booking-modal:not(.show),
+#undo-confirmation-modal:not(.show) {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.confirmation-modal.show,
+#cancel-booking-modal.show,
+#confirm-booking-modal.show,
+#undo-confirmation-modal.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+}
+
+/* Ensure modal content animates properly for all confirmation modals */
+.confirmation-modal .confirmation-modal-content,
+#cancel-booking-modal .confirmation-modal-content,
+#confirm-booking-modal .confirmation-modal-content,
+#undo-confirmation-modal .confirmation-modal-content {
+    transition: transform 0.3s ease;
+    transform: scale(0.9);
+}
+
+.confirmation-modal.show .confirmation-modal-content,
+#cancel-booking-modal.show .confirmation-modal-content,
+#confirm-booking-modal.show .confirmation-modal-content,
+#undo-confirmation-modal.show .confirmation-modal-content {
+    transform: scale(1);
+}
