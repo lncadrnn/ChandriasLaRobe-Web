@@ -966,36 +966,38 @@ function showNoDataMessage() {
     const noDataDiv = document.createElement('div');
     noDataDiv.id = 'no-data-message';
     noDataDiv.style.cssText = `
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, hsl(346, 100%, 74%) 0%, hsl(346, 95%, 65%) 100%);
         color: white;
-        padding: 30px;
-        border-radius: 15px;
+        padding: 40px;
+        border-radius: 12px;
         text-align: center;
         margin: 20px 0;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    `;
-      noDataDiv.innerHTML = `
-        <h3 style="margin: 0 0 15px 0; font-size: 24px;">📊 No Analytics Data Found</h3>
-        <p style="margin: 0 0 20px 0; font-size: 16px; opacity: 0.9;">
-            Your analytics dashboard is ready, but there are no rental transactions yet to display meaningful insights.
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    `;      noDataDiv.innerHTML = `
+        <h3 style="margin: 0 0 15px 0; font-size: 24px; font-weight: 600;"><i class='bx bx-bar-chart-alt-2' style="margin-right: 8px;"></i>No Analytics Data Available</h3>
+        <p style="margin: 0 0 25px 0; font-size: 16px; opacity: 0.95; line-height: 1.5;">
+            Your analytics dashboard is ready! Start processing rental transactions to see meaningful business insights.
         </p>
         <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
             <button onclick="window.open('./rental.html', '_blank')" 
-                    style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; 
-                           padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px; 
-                           transition: all 0.3s;">
-                � Add Rental Transactions
+                    style="background: rgba(255,255,255,0.15); color: white; border: 2px solid rgba(255,255,255,0.8); 
+                           padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 500;
+                           transition: all 0.3s; backdrop-filter: blur(10px);"
+                    onmouseover="this.style.background='rgba(255,255,255,0.25)'"
+                    onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+                <i class='bx bx-plus-circle' style="margin-right: 8px;"></i>Process New Rental
             </button>
             <button onclick="window.location.reload()" 
-                    style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; 
-                           padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px;
-                           transition: all 0.3s;">
-                � Refresh Dashboard
+                    style="background: rgba(255,255,255,0.15); color: white; border: 2px solid rgba(255,255,255,0.8); 
+                           padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 500;
+                           transition: all 0.3s; backdrop-filter: blur(10px);"
+                    onmouseover="this.style.background='rgba(255,255,255,0.25)'"
+                    onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+                <i class='bx bx-refresh' style="margin-right: 8px;"></i>Refresh Analytics
             </button>
         </div>
-        <p style="margin: 20px 0 0 0; font-size: 14px; opacity: 0.8;">
-            Once you process rental transactions, this dashboard will automatically display:<br>
-            📈 Monthly revenue trends • 👥 Customer growth • 📊 Category analytics • 🎉 Event distribution
+        <p style="margin: 25px 0 0 0; font-size: 14px; opacity: 0.85; line-height: 1.4;">
+            <strong>Coming Soon:</strong> <i class='bx bx-trending-up' style="margin: 0 4px;"></i>Revenue trends • <i class='bx bx-group' style="margin: 0 4px;"></i>Customer growth • <i class='bx bx-category' style="margin: 0 4px;"></i>Product analytics • <i class='bx bx-calendar-event' style="margin: 0 4px;"></i>Event insights
         </p>
     `;
     
