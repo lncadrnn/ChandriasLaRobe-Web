@@ -837,6 +837,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Store the appointment ID in the modal for later use with confirmation modals
             $(modal).data('appointmentId', id);
+            
+            // Get appointment status or set default
+            const appointmentStatus = data.status || 'pending';
+            
+            // Store the status in the modal for button visibility logic
+            $(modal).data('appointmentStatus', appointmentStatus);
 
             console.log('🔍 Modal element found:', !!modal);
             console.log('🔍 Modal current classes:', modal.className);
@@ -971,7 +977,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 modal.classList.add('visible');
                 modal.classList.add('show');
                 
-                console.log('✅ Real appointment modal displayed for ID:', id);
+                // For sample data, assume pending status (show all buttons)
+                const cancelBtn = modal.querySelector('.cancel-booking');
+                const confirmBtn = modal.querySelector('.confirm-booking');
+                if (cancelBtn) cancelBtn.style.display = 'flex';
+                if (confirmBtn) confirmBtn.style.display = 'flex';
+                
+                console.log('✅ Sample appointment modal should be visible');
                 console.log('🔍 Modal classes after show:', modal.className);
             }, 10);
 
@@ -1102,6 +1114,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Add classes
                 modal.classList.add('visible');
                 modal.classList.add('show');
+                
+                // For sample data, assume pending status (show all buttons)
+                const cancelBtn = modal.querySelector('.cancel-booking');
+                const confirmBtn = modal.querySelector('.confirm-booking');
+                if (cancelBtn) cancelBtn.style.display = 'flex';
+                if (confirmBtn) confirmBtn.style.display = 'flex';
                 
                 console.log('✅ Sample appointment modal should be visible');
                 console.log('🔍 Modal classes after show:', modal.className);
@@ -1299,11 +1317,19 @@ document.addEventListener("DOMContentLoaded", () => {
             notyf.error(message);
         }
     }
-    
-    // Handle cancel booking button click
+      // Handle cancel booking button click
     $(document).on('click', '.cancel-booking', function() {
-        // Store the appointment ID in a data attribute for later use
+        // Get the appointment ID and status
         const appointmentId = $(this).closest('.modal').data('appointmentId');
+        const status = $(this).closest('.modal').data('appointmentStatus');
+        
+        // Don't allow cancellation if already cancelled
+        if (status === 'cancelled') {
+            notyf.error("This booking is already cancelled");
+            return;
+        }
+        
+        // Store the appointment ID for the confirmation modal
         $('#cancel-booking-modal').data('appointmentId', appointmentId);
         
         // Hide appointment modal
@@ -1313,11 +1339,19 @@ document.addEventListener("DOMContentLoaded", () => {
         $('#cancel-booking-modal').addClass('visible');
         preventBackgroundInteraction();
     });
-    
-    // Handle confirm booking button click
+      // Handle confirm booking button click
     $(document).on('click', '.confirm-booking', function() {
-        // Store the appointment ID in a data attribute for later use
+        // Get the appointment ID and status
         const appointmentId = $(this).closest('.modal').data('appointmentId');
+        const status = $(this).closest('.modal').data('appointmentStatus');
+        
+        // Don't allow confirmation if already confirmed or completed
+        if (status === 'confirmed' || status === 'completed') {
+            notyf.error("This booking is already confirmed");
+            return;
+        }
+        
+        // Store the appointment ID for the confirmation modal
         $('#confirm-booking-modal').data('appointmentId', appointmentId);
         
         // Hide appointment modal
