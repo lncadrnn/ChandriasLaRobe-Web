@@ -737,8 +737,7 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
             name: 'No data available',
             count: 0
         };
-        
-        if (Object.keys(productRentals).length > 0) {
+          if (Object.keys(productRentals).length > 0) {
             let maxCount = 0;
             let topProductId = null;
             
@@ -757,7 +756,13 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
                 };
                 // Store globally for modal use
                 currentMostRentedProductId = topProductId;
+            } else {
+                // Reset if no valid product found
+                currentMostRentedProductId = null;
             }
+        } else {
+            // Reset if no products found
+            currentMostRentedProductId = null;
         }
         
         console.log('🏆 Most rented product:', mostRentedProduct);
@@ -831,13 +836,23 @@ function generateMockAnalyticsData(startDate, endDate) {
       // Mock event distribution data
     const events = ['Wedding', 'Prom', 'Debut', 'Formal Event', 'Graduation', 'Other'];
     const eventValues = events.map(() => Math.floor(Math.random() * 15) + 3);
-    
-    // Mock most rented product
-    const mockProducts = ['Elegant Wedding Gown', 'Classic Evening Dress', 'Royal Blue Gown', 'Vintage Lace Dress', 'Modern Mermaid Gown'];
+      // Mock most rented product
+    const mockProducts = [
+        { name: 'Elegant Wedding Gown', id: 'mock-product-1' },
+        { name: 'Classic Evening Dress', id: 'mock-product-2' },
+        { name: 'Royal Blue Gown', id: 'mock-product-3' },
+        { name: 'Vintage Lace Dress', id: 'mock-product-4' },
+        { name: 'Modern Mermaid Gown', id: 'mock-product-5' }
+    ];
+    const selectedMockProduct = mockProducts[Math.floor(Math.random() * mockProducts.length)];
     const mostRentedProduct = {
-        name: mockProducts[Math.floor(Math.random() * mockProducts.length)],
-        count: Math.floor(Math.random() * 25) + 5
+        name: selectedMockProduct.name,
+        count: Math.floor(Math.random() * 25) + 5,
+        id: selectedMockProduct.id
     };
+    
+    // Set the global product ID for mock data
+    currentMostRentedProductId = selectedMockProduct.id;
     
     return {
         summary: {
@@ -920,9 +935,14 @@ function aggregateLabels(labels, chunkSize) {
 function updateAnalyticsUI(data) {
     // Mark that data has been loaded
     isDataLoaded = true;
-    
-    // Store analytics data for export
+      // Store analytics data for export
     currentAnalyticsData = data;
+    
+    console.log('📊 Updating UI with data:', {
+        mostRentedProduct: data.mostRentedProduct,
+        currentMostRentedProductId: currentMostRentedProductId,
+        dataSource: data.mostRentedProduct.id ? 'Firebase' : 'Mock'
+    });
       // Update summary metrics
     document.getElementById('total-rentals').textContent = data.summary.totalRentals.toLocaleString();
     document.getElementById('total-revenue').textContent = data.summary.totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -1161,8 +1181,7 @@ async function loadMostRentedProductImage() {
     imageContainer.style.display = 'none';
     loadingIndicator.style.display = 'flex';
     placeholderIndicator.style.display = 'none';
-    
-    if (!currentMostRentedProductId) {
+      if (!currentMostRentedProductId) {
         console.log('⚠️ No most rented product ID available');
         loadingIndicator.style.display = 'none';
         placeholderIndicator.style.display = 'flex';
@@ -1171,26 +1190,70 @@ async function loadMostRentedProductImage() {
     
     try {
         console.log('🖼️ Loading image for product:', currentMostRentedProductId);
+          // Handle mock data with mock images
+        if (currentMostRentedProductId.startsWith('mock-product-')) {
+            console.log('🎭 Using mock data - loading mock image');
+            
+            // Mock product images from the existing website
+            const mockImages = {
+                'mock-product-1': '../chandriahomepage/assets/img/product-1-1.jpg', // Elegant Wedding Gown
+                'mock-product-2': '../chandriahomepage/assets/img/product-2-1.jpg', // Classic Evening Dress
+                'mock-product-3': '../chandriahomepage/assets/img/product-3-1.jpg', // Royal Blue Gown
+                'mock-product-4': '../chandriahomepage/assets/img/product-4-1.jpg', // Vintage Lace Dress
+                'mock-product-5': '../chandriahomepage/assets/img/product-5-1.jpg'  // Modern Mermaid Gown
+            };
+            
+            const mockImageUrl = mockImages[currentMostRentedProductId];
+            
+            if (mockImageUrl) {
+                console.log('🖼️ Loading mock image URL:', mockImageUrl);
+                
+                // Create new image to test loading
+                const img = new Image();
+                img.onload = function() {
+                    console.log('✅ Mock image loaded successfully');
+                    imageContainer.src = mockImageUrl;
+                    imageContainer.style.display = 'block';
+                    loadingIndicator.style.display = 'none';
+                    placeholderIndicator.style.display = 'none';
+                };
+                img.onerror = function() {
+                    console.log('❌ Mock image failed to load, using placeholder');
+                    loadingIndicator.style.display = 'none';
+                    placeholderIndicator.style.display = 'flex';
+                };
+                img.src = mockImageUrl;
+            } else {
+                console.log('📷 No mock image found for product');
+                loadingIndicator.style.display = 'none';
+                placeholderIndicator.style.display = 'flex';
+            }
+            return;
+        }
         
         // Fetch product details from Firebase
         const productDoc = await db.collection('products').doc(currentMostRentedProductId).get();
-        
-        if (productDoc.exists) {
+          if (productDoc.exists) {
             const productData = productDoc.data();
             console.log('📦 Product data retrieved:', productData);
             
-            // Try to get the front image first, then fallback to other images
+            // Try to get the front image URL first, then fallback to other images
             let imageUrl = null;
             
-            if (productData.frontImage && productData.frontImage.trim() !== '') {
+            if (productData.frontImageUrl && productData.frontImageUrl.trim() !== '') {
+                imageUrl = productData.frontImageUrl;
+                console.log('✅ Using frontImageUrl:', imageUrl);
+            } else if (productData.frontImage && productData.frontImage.trim() !== '') {
                 imageUrl = productData.frontImage;
+                console.log('✅ Using frontImage:', imageUrl);
             } else if (productData.images && Array.isArray(productData.images) && productData.images.length > 0) {
                 imageUrl = productData.images[0];
+                console.log('✅ Using first image from array:', imageUrl);
             } else if (productData.imageUrl && productData.imageUrl.trim() !== '') {
                 imageUrl = productData.imageUrl;
+                console.log('✅ Using imageUrl:', imageUrl);
             }
-            
-            if (imageUrl) {
+              if (imageUrl) {
                 console.log('🖼️ Loading image URL:', imageUrl);
                 
                 // Create new image to test loading
@@ -1203,13 +1266,13 @@ async function loadMostRentedProductImage() {
                     placeholderIndicator.style.display = 'none';
                 };
                 img.onerror = function() {
-                    console.log('❌ Image failed to load');
+                    console.log('❌ Image failed to load:', imageUrl);
                     loadingIndicator.style.display = 'none';
                     placeholderIndicator.style.display = 'flex';
                 };
                 img.src = imageUrl;
             } else {
-                console.log('📷 No image URL found for product');
+                console.log('📷 No image URL found for product. Available fields:', Object.keys(productData));
                 loadingIndicator.style.display = 'none';
                 placeholderIndicator.style.display = 'flex';
             }
@@ -1252,8 +1315,7 @@ async function showProductModal() {
     modalProductImage.style.display = 'none';
     modalImageLoading.style.display = 'flex';
     modalImageError.style.display = 'none';
-    
-    if (!currentMostRentedProductId) {
+      if (!currentMostRentedProductId) {
         modalImageLoading.style.display = 'none';
         modalImageError.style.display = 'flex';
         return;
@@ -1261,29 +1323,26 @@ async function showProductModal() {
     
     try {
         console.log('🖼️ Loading modal image for product:', currentMostRentedProductId);
-        
-        // Fetch product details from Firebase
-        const productDoc = await db.collection('products').doc(currentMostRentedProductId).get();
-        
-        if (productDoc.exists) {
-            const productData = productDoc.data();
+          // Handle mock data with mock images
+        if (currentMostRentedProductId.startsWith('mock-product-')) {
+            console.log('🎭 Loading mock image for modal');
             
-            // Try to get the front image first, then fallback to other images
-            let imageUrl = null;
+            // Mock product images from the existing website
+            const mockImages = {
+                'mock-product-1': '../chandriahomepage/assets/img/product-1-1.jpg', // Elegant Wedding Gown
+                'mock-product-2': '../chandriahomepage/assets/img/product-2-1.jpg', // Classic Evening Dress
+                'mock-product-3': '../chandriahomepage/assets/img/product-3-1.jpg', // Royal Blue Gown
+                'mock-product-4': '../chandriahomepage/assets/img/product-4-1.jpg', // Vintage Lace Dress
+                'mock-product-5': '../chandriahomepage/assets/img/product-5-1.jpg'  // Modern Mermaid Gown
+            };
             
-            if (productData.frontImage && productData.frontImage.trim() !== '') {
-                imageUrl = productData.frontImage;
-            } else if (productData.images && Array.isArray(productData.images) && productData.images.length > 0) {
-                imageUrl = productData.images[0];
-            } else if (productData.imageUrl && productData.imageUrl.trim() !== '') {
-                imageUrl = productData.imageUrl;
-            }
+            const mockImageUrl = mockImages[currentMostRentedProductId];
             
-            if (imageUrl) {
+            if (mockImageUrl) {
                 // Create new image to test loading
                 const img = new Image();
                 img.onload = function() {
-                    modalProductImage.src = imageUrl;
+                    modalProductImage.src = mockImageUrl;
                     modalProductImage.style.display = 'block';
                     modalImageLoading.style.display = 'none';
                 };
@@ -1291,8 +1350,54 @@ async function showProductModal() {
                     modalImageLoading.style.display = 'none';
                     modalImageError.style.display = 'flex';
                 };
+                img.src = mockImageUrl;
+            } else {
+                modalImageLoading.style.display = 'none';
+                modalImageError.style.display = 'flex';
+            }
+            return;
+        }
+        
+        // Fetch product details from Firebase
+        const productDoc = await db.collection('products').doc(currentMostRentedProductId).get();
+          if (productDoc.exists) {
+            const productData = productDoc.data();
+            console.log('📦 Modal: Product data retrieved:', productData);
+            
+            // Try to get the front image URL first, then fallback to other images
+            let imageUrl = null;
+            
+            if (productData.frontImageUrl && productData.frontImageUrl.trim() !== '') {
+                imageUrl = productData.frontImageUrl;
+                console.log('✅ Modal: Using frontImageUrl:', imageUrl);
+            } else if (productData.frontImage && productData.frontImage.trim() !== '') {
+                imageUrl = productData.frontImage;
+                console.log('✅ Modal: Using frontImage:', imageUrl);
+            } else if (productData.images && Array.isArray(productData.images) && productData.images.length > 0) {
+                imageUrl = productData.images[0];
+                console.log('✅ Modal: Using first image from array:', imageUrl);
+            } else if (productData.imageUrl && productData.imageUrl.trim() !== '') {
+                imageUrl = productData.imageUrl;
+                console.log('✅ Modal: Using imageUrl:', imageUrl);
+            }
+              if (imageUrl) {
+                console.log('🖼️ Modal: Loading image URL:', imageUrl);
+                // Create new image to test loading
+                const img = new Image();
+                img.onload = function() {
+                    console.log('✅ Modal: Image loaded successfully');
+                    modalProductImage.src = imageUrl;
+                    modalProductImage.style.display = 'block';
+                    modalImageLoading.style.display = 'none';
+                };
+                img.onerror = function() {
+                    console.log('❌ Modal: Image failed to load:', imageUrl);
+                    modalImageLoading.style.display = 'none';
+                    modalImageError.style.display = 'flex';
+                };
                 img.src = imageUrl;
             } else {
+                console.log('📷 Modal: No image URL found. Available fields:', Object.keys(productData));
                 modalImageLoading.style.display = 'none';
                 modalImageError.style.display = 'flex';
             }
