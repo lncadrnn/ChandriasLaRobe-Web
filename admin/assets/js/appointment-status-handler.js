@@ -55,11 +55,9 @@ $(document).on('click', '.confirm-undo-action', function(e) {
     try {
         // Update appointment status in Firestore
         db.collection('appointments').doc(appointmentId).update({
-            status: 'pending'
-        }).then(() => {
+            status: 'pending'        }).then(() => {
             // Show success notification
-            const notyf = new Notyf();
-            notyf.success('Appointment confirmation has been undone');
+            showSuccessNotification('Appointment confirmation has been undone');
             
             // Update UI to show cancel and confirm buttons
             const modal = document.getElementById('appointment-modal');
@@ -69,25 +67,23 @@ $(document).on('click', '.confirm-undo-action', function(e) {
             $(modal).data('appointmentStatus', 'pending');
             
             // Close the undo confirmation modal properly
-            closeUndoConfirmationModal();
+            closeModal('undo-confirmation-modal');
             
             // Update status icon in the appointment list if applicable
             updateAppointmentStatusIcon(appointmentId, 'pending');
         }).catch(error => {
             console.error('Error undoing confirmation:', error);
-            const notyf = new Notyf();
-            notyf.error('Failed to undo confirmation. Please try again.');
+            showErrorNotification('Failed to undo confirmation. Please try again.');
             
             // Close the undo confirmation modal
-            closeUndoConfirmationModal();
+            closeModal('undo-confirmation-modal');
         });
     } catch (error) {
         console.error('Error:', error);
-        const notyf = new Notyf();
-        notyf.error('An error occurred. Please try again.');
+        showErrorNotification('An error occurred. Please try again.');
         
         // Close the undo confirmation modal
-        closeUndoConfirmationModal();
+        closeModal('undo-confirmation-modal');
     }
 });
 
@@ -96,6 +92,19 @@ $(document).on('click', '#undo-confirmation-modal .cancel-action', function(e) {
     e.preventDefault();
     e.stopPropagation();
     closeUndoConfirmationModal();
+});
+
+// Handle cancel action for all confirmation modals
+$(document).on('click', '.cancel-action', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Get the parent modal
+    const modal = $(this).closest('.modal');
+    const modalId = modal.attr('id');
+    
+    // Close the appropriate modal
+    closeModal(modalId);
 });
 
 // Handle close button for undo confirmation modal
@@ -118,39 +127,87 @@ $(document).on('click', '.close-confirmation-modal', function(e) {
     if (modalId === 'undo-confirmation-modal') {
         closeUndoConfirmationModal();
     } else if (modalId === 'cancel-booking-modal') {
-        $('#cancel-booking-modal').removeClass('show');
+        closeModal('cancel-booking-modal');
     } else if (modalId === 'confirm-booking-modal') {
-        $('#confirm-booking-modal').removeClass('show');
+        closeModal('confirm-booking-modal');
     } else {
         // Generic close for any confirmation modal
-        modal.removeClass('show');
+        closeModal(modalId);
     }
 });
 
-// Handle backdrop click for undo confirmation modal
-$(document).on('click', '#undo-confirmation-modal .modal-backdrop', function(e) {
+// Handle backdrop click for all confirmation modals
+$(document).on('click', '.modal .modal-backdrop', function(e) {
     if (e.target === this) {
-        closeUndoConfirmationModal();
+        // Get the parent modal
+        const modal = $(this).closest('.modal');
+        const modalId = modal.attr('id');
+        
+        // Close the modal
+        closeModal(modalId);
     }
 });
 
-// Handle ESC key to close undo confirmation modal
+// Handle ESC key to close modals
 $(document).on('keydown', function(e) {
-    if (e.key === 'Escape' && $('#undo-confirmation-modal').hasClass('show')) {
-        closeUndoConfirmationModal();
+    if (e.key === 'Escape') {
+        // Find any visible modal
+        const visibleModal = $('.modal.show');
+        
+        if (visibleModal.length > 0) {
+            const modalId = visibleModal.attr('id');
+            closeModal(modalId);
+        }
     }
 });
 
 // Function to properly close and reset the undo confirmation modal
 function closeUndoConfirmationModal() {
-    const modal = $('#undo-confirmation-modal');
+    closeModal('undo-confirmation-modal');
+}
+
+// Function to properly close and reset any modal
+function closeModal(modalId) {
+    if (!modalId) return;
+    
+    console.log('Closing modal:', modalId);
+    
+    const modal = $('#' + modalId);
+    if (modal.length === 0) return;
+    
+    // Remove the show class which controls visibility
     modal.removeClass('show');
     
-    // Clear any data and reset state after animation
+    // Hide the modal explicitly as a fallback
+    modal.css('display', 'none');
+    
+    // Remove modal backdrop if it exists separately
+    modal.find('.modal-backdrop').css('display', 'none');
+    
+    // Reset any CSS transformations
+    modal.find('.modal-content').css({
+        'transform': 'none',
+        'transition': 'none'
+    });
+    
+    // Handle special cases
+    if (modalId === 'appointment-modal') {
+        // Reset any specific appointment modal state
+        $('#appointment-confirmed-tag').hide();
+    } else if (modalId === 'rental-modal') {
+        // Reset any specific rental modal state
+    }
+    
+    // Clear any data attributes after animation
     setTimeout(function() {
         modal.removeData('appointmentId');
         modal.removeAttr('style');
-        modal.find('.confirmation-modal-content').removeAttr('style');
+        modal.find('.modal-content').removeAttr('style');
+        modal.find('.modal-backdrop').removeAttr('style');
+        
+        // Ensure the body can scroll again if needed
+        $('body').removeClass('modal-open');
+        $('html').removeClass('modal-open');
     }, 300); // Wait for CSS transition to complete
 }
 
@@ -193,3 +250,54 @@ function updateAppointmentStatusIcon(appointmentId, status) {
         }
     });
 }
+
+// Initialize all modals on page load
+$(document).ready(function() {
+    // Reset all modals to ensure they're properly closed on page load
+    $('.modal').each(function() {
+        const modalId = $(this).attr('id');
+        if (modalId) {
+            // Make sure all modals start in a closed state
+            $(this).removeClass('show');
+            $(this).css('display', 'none');
+            $(this).find('.modal-content').css('transform', 'none');
+            
+            // Clean up any possible leftover modal-open classes
+            $('body').removeClass('modal-open');
+            $('html').removeClass('modal-open');
+        }
+    });
+    
+    // Ensure all close buttons work by manually attaching event handlers
+    $('.close-modal, .close-rental-modal, .close-confirmation-modal').each(function() {
+        $(this).off('click').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const modal = $(this).closest('.modal');
+            const modalId = modal.attr('id');
+            
+            console.log('Close button clicked for modal:', modalId);
+            closeModal(modalId);
+        });
+    });
+    
+    // Prevent default form submission in modals (to avoid page reload)
+    $('.modal form').on('submit', function(e) {
+        e.preventDefault();
+        return false;
+    });
+});
+
+// Handle all modal close buttons
+$(document).on('click', '.close-modal, .close-rental-modal, .close-confirmation-modal', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Get the parent modal
+    const modal = $(this).closest('.modal');
+    const modalId = modal.attr('id');
+    
+    // Close the modal
+    closeModal(modalId);
+});

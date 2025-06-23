@@ -526,3 +526,15 @@
     text-align: left !important;
     padding-left: 0 !important;
 }
+
+/* === MODAL STYLES === */
+
+/* Make sure modals are completely hidden when not shown */
+.modal:not(.show) {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transform: none !important;
+    transition: none !important;
+}

@@ -728,41 +728,7 @@ function closeModal(modalId)) {
     100% { transform: rotate(360deg); }
 }
 
-/* === NOTYF NOTIFICATION CUSTOMIZATION === */
-.notyf {
-    position: fixed !important;
-    top: 20px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    right: auto !important;
-    z-index: 9999 !important;
-    width: auto !important;
-}
+/* Analytics styles continue above... */
 
-.notyf__wrapper {
-    position: fixed !important;
-    top: 20px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    right: auto !important;
-    width: auto !important;
-}
+/* Note: Notyf notification styling has been moved to admin-notifications.css */
 
-.notyf__toast {
-    position: relative !important;
-    left: auto !important;
-    right: auto !important;
-    transform: none !important;
-    margin: 0 auto !important;
-    width: auto !important;
-    max-width: 400px !important;
-}
-
-.notyf__toast--success,
-.notyf__toast--error {
-    position: relative !important;
-    left: auto !important;
-    right: auto !important;
-    transform: none !important;
-    margin: 0 auto !important;
-}
