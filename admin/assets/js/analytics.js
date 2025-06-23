@@ -350,34 +350,52 @@ function initEventListeners() {
     timePeriodSelect.addEventListener('change', function() {
         const selectedPeriod = this.value;
         currentTimeRange = selectedPeriod;
-        
-        // Toggle custom date range inputs
+          // Toggle custom date range inputs
         const customDateRange = document.getElementById('custom-date-range');
         if (selectedPeriod === 'custom') {
+            customDateRange.classList.remove('hidden');
             customDateRange.style.display = 'flex';
         } else {
+            customDateRange.classList.add('hidden');
             customDateRange.style.display = 'none';
             loadAnalyticsData(selectedPeriod);
         }
     });
-    
-    // Apply custom date range
+      // Apply custom date range
     const applyDateRangeBtn = document.getElementById('apply-date-range');
     applyDateRangeBtn.addEventListener('click', function() {
         const startDate = document.getElementById('start-date').value;
         const endDate = document.getElementById('end-date').value;
         
+        console.log('🗓️ Custom date range selected:', {
+            startDateInput: startDate,
+            endDateInput: endDate
+        });
+        
         if (startDate && endDate) {
+            const startDateObj = new Date(startDate);
+            const endDateObj = new Date(endDate);
+            
+            // Set start date to beginning of day and end date to end of day for better range coverage
+            startDateObj.setHours(0, 0, 0, 0);
+            endDateObj.setHours(23, 59, 59, 999);
+            
+            console.log('📅 Converted date objects:', {
+                startDateObj: startDateObj,
+                endDateObj: endDateObj,
+                startISO: startDateObj.toISOString(),
+                endISO: endDateObj.toISOString()
+            });
+            
             loadAnalyticsData('custom', {
-                startDate: new Date(startDate),
-                endDate: new Date(endDate)
+                startDate: startDateObj,
+                endDate: endDateObj
             });
         } else {
             alert('Please select both start and end dates');
         }
     });
-    
-    // Refresh data
+      // Refresh data
     const refreshBtn = document.getElementById('refresh-analytics');
     refreshBtn.addEventListener('click', function() {
         if (currentTimeRange === 'custom') {
@@ -385,9 +403,16 @@ function initEventListeners() {
             const endDate = document.getElementById('end-date').value;
             
             if (startDate && endDate) {
+                const startDateObj = new Date(startDate);
+                const endDateObj = new Date(endDate);
+                
+                // Set start date to beginning of day and end date to end of day for better range coverage
+                startDateObj.setHours(0, 0, 0, 0);
+                endDateObj.setHours(23, 59, 59, 999);
+                
                 loadAnalyticsData('custom', {
-                    startDate: new Date(startDate),
-                    endDate: new Date(endDate)
+                    startDate: startDateObj,
+                    endDate: endDateObj
                 });
             } else {
                 alert('Please select both start and end dates');
@@ -435,10 +460,14 @@ async function loadAnalyticsData(timePeriod, customDates = null) {
             default:
                 startDate = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
         }
-    }
-      try {
+    }      try {
         console.log('🔍 Attempting to fetch Firebase data...');
-        console.log('📅 Date range:', startDate, 'to', endDate);
+        console.log('📅 Date range:', {
+            startDate: startDate,
+            endDate: endDate,
+            timePeriod: timePeriod,
+            isCustom: timePeriod === 'custom'
+        });
         
         // Fetch real data from Firebase
         const analyticsData = await fetchFirebaseAnalyticsData(startDate, endDate);
@@ -491,13 +520,22 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
         });
         
         console.log(`📋 Loaded ${Object.keys(productCategoryMap).length} products for category mapping`);
-        
-        // First, let's check if we can access the collection at all
+          // First, let's check if we can access the collection at all
         console.log('📡 Querying transaction collection...');
-          // Query rental transactions from Firebase
+        
+        // Ensure endDate includes the entire day (set to end of day)
+        const adjustedEndDate = new Date(endDate);
+        adjustedEndDate.setHours(23, 59, 59, 999);
+        
+        console.log('📅 Date range for query:', {
+            start: startDate.toISOString(),
+            end: adjustedEndDate.toISOString()
+        });
+        
+        // Query rental transactions from Firebase
         const rentalQuery = db.collection('transaction')
             .where('timestamp', '>=', startDate.toISOString())
-            .where('timestamp', '<=', endDate.toISOString());
+            .where('timestamp', '<=', adjustedEndDate.toISOString());
         
         console.log('🔍 Executing query...');
         const rentalSnapshot = await rentalQuery.get();
