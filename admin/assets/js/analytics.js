@@ -19,7 +19,7 @@ const app = firebase.initializeApp(window.firebaseConfig || {});
 const db = firebase.firestore();
 
 // Global Variables
-let monthlyIncomeChart, customerGrowthChart, categoryChart, eventDistributionChart;
+let monthlyIncomeChart, customerGrowthChart, categoryChart, eventDistributionChart, additionalRentalsChart;
 let currentTimeRange = '30days';
 let isDataLoaded = false;
 
@@ -271,6 +271,59 @@ function initCharts() {
                             return `${label}: ${value} (${percentage}%)`;
                         }
                     }
+                }            }
+        }
+    });
+
+    // Additional Rentals Chart (Donut Chart)
+    const additionalRentalsCtx = document.getElementById('additional-rentals-chart').getContext('2d');
+    additionalRentalsChart = new Chart(additionalRentalsCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['With Additional Items', 'No Additional Items'],
+            datasets: [{
+                data: [0, 0],
+                backgroundColor: [
+                    '#28a745', // Green for Yes
+                    '#dc3545'  // Red for No
+                ],
+                borderWidth: 2,
+                borderColor: '#ffffff',
+                hoverBorderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '60%', // Makes it a donut chart
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    titleColor: '#333',
+                    bodyColor: '#666',
+                    borderColor: 'rgba(0, 0, 0, 0.1)',
+                    borderWidth: 1,
+                    padding: 12,
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = Math.round((value / total) * 100);
+                            return `${label}: ${value} transactions (${percentage}%)`;
+                        }
+                    }
                 }
             }
         }
@@ -456,14 +509,17 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
                 });
             }
         }
-        
-        // Initialize data containers
+          // Initialize data containers
         let totalRentals = 0;
         let totalRevenue = 0;
         const monthlyIncome = {};
         const monthlyCustomers = {};
         const categoryRentals = {};
         const eventDistribution = {};
+        const additionalRentals = {
+            withAdditional: 0,
+            withoutAdditional: 0
+        };
           // Initialize monthly data for 2025 (January to December)
         const year2025 = 2025;
         for (let month = 1; month <= 12; month++) {
@@ -520,13 +576,23 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
                     }
                 });
             }
-            
-            // Rental distribution by event (eventType from transaction)
+              // Rental distribution by event (eventType from transaction)
             if (transaction.eventType) {
                 if (!eventDistribution[transaction.eventType]) {
                     eventDistribution[transaction.eventType] = 0;
                 }
                 eventDistribution[transaction.eventType]++;
+            }
+            
+            // Additional rentals tracking (check if transaction has accessories)
+            const hasAccessories = transaction.accessories && 
+                                 Array.isArray(transaction.accessories) && 
+                                 transaction.accessories.length > 0;
+            
+            if (hasAccessories) {
+                additionalRentals.withAdditional++;
+            } else {
+                additionalRentals.withoutAdditional++;
             }
         });
           // Convert Sets to counts for monthly customers
@@ -596,10 +662,13 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
             categoryData: {
                 labels: categoryNames,
                 data: categoryValues
-            },
-            eventData: {
+            },            eventData: {
                 labels: eventNames,
                 data: eventValues
+            },
+            additionalRentalsData: {
+                labels: ['With Additional Items', 'No Additional Items'],
+                data: [additionalRentals.withAdditional, additionalRentals.withoutAdditional]
             }
         };
         
@@ -660,10 +729,13 @@ function generateMockAnalyticsData(startDate, endDate) {
         categoryData: {
             labels: categories,
             data: categoryValues
-        },
-        eventData: {
+        },        eventData: {
             labels: events,
             data: eventValues
+        },
+        additionalRentalsData: {
+            labels: ['With Additional Items', 'No Additional Items'],
+            data: [Math.floor(totalRentals * 0.7), Math.floor(totalRentals * 0.3)] // Mock: 70% with additional, 30% without
         }
     };
 }
@@ -741,11 +813,15 @@ function updateAnalyticsUI(data) {
     categoryChart.data.labels = data.categoryData.labels;
     categoryChart.data.datasets[0].data = data.categoryData.data;
     categoryChart.update();
-    
-    // Update Event Distribution Chart (Pie Chart)
+      // Update Event Distribution Chart (Pie Chart)
     eventDistributionChart.data.labels = data.eventData.labels;
     eventDistributionChart.data.datasets[0].data = data.eventData.data;
     eventDistributionChart.update();
+    
+    // Update Additional Rentals Chart (Donut Chart)
+    additionalRentalsChart.data.labels = data.additionalRentalsData.labels;
+    additionalRentalsChart.data.datasets[0].data = data.additionalRentalsData.data;
+    additionalRentalsChart.update();
     
     // Add a visual indicator that data is loaded
     const pageTitle = document.querySelector('.page-title');
