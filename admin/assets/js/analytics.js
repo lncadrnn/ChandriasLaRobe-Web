@@ -102,9 +102,7 @@ function initCharts() {
                 }
             }
         }
-    });
-
-    // Customer Growth Chart (Line Chart)
+    });    // Customer Growth Chart (Line Chart)
     const customerGrowthCtx = document.getElementById('customer-growth-chart').getContext('2d');
     customerGrowthChart = new Chart(customerGrowthCtx, {
         type: 'line',
@@ -116,9 +114,12 @@ function initCharts() {
                 fill: false,
                 backgroundColor: 'rgba(75, 192, 192, 0.7)',
                 borderColor: 'rgba(75, 192, 192, 1)',
-                tension: 0.1,
-                pointRadius: 5,
-                pointHoverRadius: 7
+                tension: 0.3,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
             }]
         },
         options: {
@@ -134,14 +135,30 @@ function initCharts() {
                     bodyColor: '#666',
                     borderColor: 'rgba(75, 192, 192, 0.3)',
                     borderWidth: 1,
-                    padding: 12
+                    padding: 12,
+                    callbacks: {
+                        label: function(context) {
+                            return `Customers: ${context.parsed.y}`;
+                        },
+                        title: function(context) {
+                            return `${context[0].label} 2025`;
+                        }
+                    }
                 }
             },
             scales: {
+                x: {
+                    grid: {
+                        display: false
+                    }
+                },
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        precision: 0
+                        precision: 0,
+                        callback: function(value) {
+                            return Math.round(value);
+                        }
                     }
                 }
             }
@@ -447,16 +464,13 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
         const monthlyCustomers = {};
         const categoryRentals = {};
         const eventDistribution = {};
-        
-        // Initialize monthly data for the past 12 months
-        const currentDate = new Date();
-        for (let i = 0; i < 12; i++) {
-            const monthDate = new Date(currentDate);
-            monthDate.setMonth(currentDate.getMonth() - i);
-            const monthKey = `${monthDate.getFullYear()}-${(monthDate.getMonth() + 1).toString().padStart(2, '0')}`;
+          // Initialize monthly data for 2025 (January to December)
+        const year2025 = 2025;
+        for (let month = 1; month <= 12; month++) {
+            const monthKey = `${year2025}-${month.toString().padStart(2, '0')}`;
             monthlyIncome[monthKey] = 0;
             monthlyCustomers[monthKey] = new Set();
-        }        // Process each rental transaction
+        }// Process each rental transaction
         rentalSnapshot.forEach(doc => {
             const transaction = doc.data();
             
@@ -515,36 +529,41 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
                 eventDistribution[transaction.eventType]++;
             }
         });
-        
-        // Convert Sets to counts for monthly customers
+          // Convert Sets to counts for monthly customers
         for (const month in monthlyCustomers) {
             monthlyCustomers[month] = monthlyCustomers[month].size;
         }
+        
+        console.log('📊 Monthly customer data processed:', monthlyCustomers);
         
         // If no data found, show informative message
         if (totalRentals === 0) {
             console.log('No rental data found in the specified date range');
             // Still return structure but with empty data
         }
+          // Prepare data for charts - Always show 2025 months (Jan to Dec)
         
-        // Prepare data for charts
+        // Generate 2025 months array
+        const months2025 = [];
+        for (let month = 1; month <= 12; month++) {
+            months2025.push(`2025-${month.toString().padStart(2, '0')}`);
+        }
         
         // Monthly Income Breakdown (Bar Chart)
-        const sortedMonths = Object.keys(monthlyIncome).sort();
-        const monthLabels = sortedMonths.map(month => {
+        const monthLabels = months2025.map(month => {
             const [year, monthNum] = month.split('-');
             const date = new Date(parseInt(year), parseInt(monthNum) - 1, 1);
-            return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+            return date.toLocaleDateString('en-US', { month: 'short' });
         });
-        const incomeValues = sortedMonths.map(month => monthlyIncome[month]);
+        const incomeValues = months2025.map(month => monthlyIncome[month] || 0);        // Monthly Customer Growth (Line Chart)
+        const customerLabels = monthLabels; // Same as income labels
+        const customerValues = months2025.map(month => monthlyCustomers[month] || 0);
         
-        // Monthly Customer Growth (Line Chart)
-        const customerLabels = sortedMonths.map(month => {
-            const [year, monthNum] = month.split('-');
-            const date = new Date(parseInt(year), parseInt(monthNum) - 1, 1);
-            return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        console.log('📈 Customer chart data:', {
+            labels: customerLabels,
+            values: customerValues,
+            months2025: months2025
         });
-        const customerValues = sortedMonths.map(month => monthlyCustomers[month] || 0);
         
         // Category Rentals (Bar Chart)
         const categoryNames = Object.keys(categoryRentals);
@@ -553,10 +572,9 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
         // Event Distribution (Pie Chart)
         const eventNames = Object.keys(eventDistribution);
         const eventValues = eventNames.map(name => eventDistribution[name]);
-        
-        // Calculate trends (simple calculation based on last vs previous period)
-        const rentalsTrend = Math.random() * 15 + 3; // Placeholder
-        const revenueTrend = Math.random() * 20 + 5; // Placeholder
+          // Calculate trends (simple calculation based on last vs previous period)
+        const rentalsTrend = parseFloat((Math.random() * 15 + 3).toFixed(2)); // Placeholder
+        const revenueTrend = parseFloat((Math.random() * 20 + 5).toFixed(2)); // Placeholder
         
         return {
             summary: {
@@ -601,16 +619,13 @@ function generateMockAnalyticsData(startDate, endDate) {
     // Mock total data
     const totalRentals = Math.floor(Math.random() * 100) + 50;
     const totalRevenue = Math.floor(Math.random() * 500000) + 200000;
-    
-    // Mock monthly income data (last 12 months)
+      // Mock monthly income data (2025 - Jan to Dec)
     const monthLabels = [];
     const incomeValues = [];
-    const currentDate = new Date();
     
-    for (let i = 11; i >= 0; i--) {
-        const monthDate = new Date(currentDate);
-        monthDate.setMonth(currentDate.getMonth() - i);
-        const monthLabel = monthDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    for (let month = 1; month <= 12; month++) {
+        const monthDate = new Date(2025, month - 1, 1);
+        const monthLabel = monthDate.toLocaleDateString('en-US', { month: 'short' });
         monthLabels.push(monthLabel);
         incomeValues.push(Math.floor(Math.random() * 50000) + 10000);
     }
@@ -630,10 +645,9 @@ function generateMockAnalyticsData(startDate, endDate) {
         summary: {
             totalRentals,
             totalRevenue
-        },
-        trends: {
-            rentalsTrend: Math.floor(Math.random() * 20) + 5,
-            revenueTrend: Math.floor(Math.random() * 25) + 8
+        },        trends: {
+            rentalsTrend: parseFloat((Math.random() * 20 + 5).toFixed(2)),
+            revenueTrend: parseFloat((Math.random() * 25 + 8).toFixed(2))
         },
         monthlyIncomeData: {
             labels: monthLabels,
@@ -752,9 +766,8 @@ function updateAnalyticsUI(data) {
 function updateTrend(elementId, trendValue) {
     const element = document.getElementById(elementId);
     if (!element) return;
-    
-    // Set the trend value text
-    element.textContent = `${Math.abs(trendValue)}%`;
+      // Set the trend value text with 2 decimal places
+    element.textContent = `${Math.abs(trendValue).toFixed(2)}%`;
     
     // Update parent element class and icon
     const parentElement = element.parentElement;
