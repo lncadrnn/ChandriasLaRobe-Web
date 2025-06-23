@@ -622,6 +622,7 @@ tr:hover {
     border-top: 1px solid var(--border-color);
     display: flex;
     justify-content: flex-end;
+    gap: 12px;
 }
 
 /* Appointment Modal Content Styles */
@@ -881,6 +882,11 @@ tr:hover {
         overflow-y: auto !important;
     }
     
+    .appointment-modal_header {
+        padding: 0 12px 12px 12px !important;
+        gap: 12px !important;
+    }
+    
     .appointment-modal-header {
         padding: 12px !important;
         margin-bottom: 12px !important;
@@ -949,11 +955,7 @@ tr:hover {
         margin-bottom: 12px !important;
     }
     
-    .rental-modal-header .modal-title {
-        font-size: 1.125rem;
-    }
-    
-    .rental-modal_body {
+    .rental-modal_header {
         padding: 0 12px 12px 12px !important;
         gap: 12px !important;
     }
@@ -1826,362 +1828,186 @@ tr:hover {
     background: #218838;
 }
 
-/* Responsive design for rental modal */
-@media (max-width: 768px) {
-    .rental-modal-content {
-        margin: 20px 10px 90px 10px; /* Top: 20px, Left/Right: 10px, Bottom: 90px for mobile nav */
-        max-height: calc(100vh - 110px); /* Account for top margin and bottom nav */
-        width: calc(100% - 20px);
-        overflow-y: auto;
-    }
-    
-    .rental-modal-header {
-        padding: 16px 16px 0 16px !important;
-        margin-bottom: 16px !important;
-        min-height: auto !important;
-    }
-    
-    .rental-modal_header .modal-title {
-        font-size: 1.25rem;
-    }
-    
-    .rental-modal_body {
-        padding: 0 16px 16px 16px !important;
-        gap: 16px !important;
-    }
-    
-    .rental-section {
-        padding: 15px;
-        margin-bottom: 16px;
-    }
-    
-    .section-title {
-        font-size: 1rem;
-        margin-bottom: 12px;
-        padding-bottom: 8px;
-    }
-    
-    .section-title i {
-        font-size: 0.875rem;
-    }
-    
-    .info-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
-    
-    .info-item {
-        padding: 8px 0;
-        border-bottom: 1px solid #eee;
-    }
-    
-    .info-item:last-child {
-        border-bottom: none;
-    }
-    
-    .info-item label {
-        font-size: 0.875rem;
-        margin-bottom: 4px;
-    }
-    
-    .info-item span {
-        font-size: 0.875rem;
-    }
-    
-    .payment-breakdown {
-        gap: 8px;
-    }
-    
-    .payment-row {
-        padding: 8px 0;
-        font-size: 0.875rem;
-    }
-    
-    .payment-row.total {
-        padding: 12px 0;
-        font-size: 1rem;
-    }
-    
-    .payment-row.remaining {
-        padding: 10px 0;
-        font-size: 0.9rem;
-    }
-      .rental-item {
-        flex-direction: row !important; /* Keep row layout for better mobile visibility */
-        text-align: left !important;
-        padding: 14px;
-        gap: 12px;
-        background: white !important;
-        border: 1px solid var(--primary-color) !important;
-        align-items: center !important;
-    }
-    
-    .item-image {
-        flex-shrink: 0;
-        align-self: flex-start;
-        margin-bottom: 0 !important;
-    }
-    
-    .item-image img {
-        width: 60px;
-        height: 60px;
-        border-radius: 6px;
-        object-fit: cover;
-    }
-    
-    .item-details {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-    
-    .item-info {
-        justify-content: flex-start !important;
-        text-align: left !important;
-        gap: 12px;
-    }
-    
-    /* Make the rented items section more visible on mobile */
-    .rental-section:has(.items-container) {
-        background: #f8f9fa !important;
-        border: 1px solid var(--primary-color) !important;
-    }
-    
-    .items-container {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 10px !important;
-    }
-    
-    .item-name {
-        font-size: 0.875rem;
-    }
-    
-    .item-details {
-        font-size: 0.75rem;
-    }
-    
-    .notes-content {
-        font-size: 0.875rem;
-        line-height: 1.4;
-        padding: 12px;
-    }
-    
-    .close-rental-modal {
-        width: 36px !important;
-        height: 36px !important;
-        padding: 6px !important;
-        font-size: 1.25rem !important;
-    }
+/* Confirmation Modals */
+.confirmation-modal-content {
+    max-width: 500px;
+    max-height: 300px;
 }
 
-/* Extra small screens (phones) - Enhanced mobile responsiveness */
-@media (max-width: 480px) {
-    /* Appointment Modal */
-    .appointment-modal-content {
-        margin: 15px 5px 85px 5px !important; /* Top: 15px, Left/Right: 5px, Bottom: 85px for mobile nav */
-        width: calc(100% - 10px) !important;
-        max-height: calc(100vh - 100px) !important; /* Account for margins and bottom nav */
-        overflow-y: auto !important;
+.confirmation-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.confirmation-modal-header .modal-title {
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.confirmation-modal-header .modal-title i.fa-exclamation-triangle {
+    color: var(--danger-color, #dc3545);
+}
+
+.confirmation-modal-header .modal-title i.fa-check-circle {
+    color: var(--success-color, #28a745);
+}
+
+.confirmation-modal-body {
+    padding: 24px;
+    text-align: center;
+}
+
+.confirmation-modal-body p {
+    margin-bottom: 12px;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.confirmation-modal-body p:last-child {
+    font-weight: 500;
+    opacity: 0.7;
+}
+
+.confirmation-modal-actions {
+    padding: 20px 24px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.confirmation-modal-actions .btn {
+    flex: 1;
+    padding: 10px 16px;
+    font-weight: 600;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+/* Modify appointment modal actions for multiple buttons */
+.appointment-modal-actions {
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.appointment-modal-actions .btn {
+    padding: 10px 16px;
+}
+
+.cancel-booking {
+    background-color: #dc3545;
+    color: white;
+}
+
+.cancel-booking:hover {
+    background-color: #c82333;
+}
+
+.confirm-booking {
+    background-color: #28a745;
+    color: white;
+}
+
+.confirm-booking:hover {
+    background-color: #218838;
+}
+
+@media (max-width: 768px) {
+    .confirmation-modal-content {
+        max-width: 90%;
     }
     
-    .appointment-modal-header {
-        padding: 12px !important;
-        margin-bottom: 12px !important;
-    }
-    
-    .appointment-modal-header .modal-title {
-        font-size: 1.125rem;
-    }
-    
-    .appointment-modal-body {
-        padding: 0 12px 12px 12px !important;
+    .confirmation-modal-actions {
+        flex-direction: column;
     }
     
     .appointment-modal-actions {
-        padding: 12px !important;
-    }
-    
-    .appointment-info-section {
-        padding: 12px;
-    }
-    
-    .appointment-info-section h4 {
-        font-size: 0.9rem;
-    }
-    
-    .appointment-info-item {
-        padding: 6px 10px;
-        font-size: 0.8rem;
-    }
-    
-    .appointment-products-table {
-        font-size: 0.7rem;
-    }
-    
-    .appointment-products-table th,
-    .appointment-products-table td {
-        padding: 6px 4px;
-    }
-    
-    .appointment-product-img {
-        width: 30px;
-        height: 30px;
-    }
-    
-    .appointment-product-name {
-        font-size: 0.7rem;
-        max-width: 80px;
-    }
-    
-    .close-modal {
-        width: 32px !important;
-        height: 32px !important;
-        font-size: 1.125rem !important;
-    }
-    
-    /* Rental Modal */
-    .rental-modal-content {
-        margin: 15px 5px 85px 5px !important; /* Top: 15px, Left/Right: 5px, Bottom: 85px for mobile nav */
-        width: calc(100% - 10px) !important;
-        max-height: calc(100vh - 100px) !important; /* Account for margins and bottom nav */
-        overflow-y: auto !important;
-    }
-    
-    .rental-modal-header {
-        padding: 12px 12px 0 12px !important;
-        margin-bottom: 12px !important;
-    }
-    
-    .rental-modal-header .modal-title {
-        font-size: 1.125rem;
-    }
-    
-    .rental-modal_body {
-        padding: 0 12px 12px 12px !important;
-        gap: 12px !important;
-    }
-    
-    .rental-section {
-        padding: 12px;
-        margin-bottom: 12px;
-    }
-    
-    .section-title {
-        font-size: 0.9rem;
-        margin-bottom: 10px;
-        padding-bottom: 6px;
-    }
-    
-    .info-item {
-        padding: 6px 0;
-    }
-    
-    .info-item label {
-        font-size: 0.8rem;
-    }
-    
-    .info-item span {
-        font-size: 0.8rem;
-    }
-    
-    .payment-row {
-        font-size: 0.8rem;
-        padding: 6px 0;
-    }
-    
-    .payment-row.total {
-        font-size: 0.9rem;
-        padding: 10px 0;
-    }
-    
-    /* IMPORTANT: Make rental items section more visible on mobile */
-    .rental-item {
-        padding: 12px;
-        background: white !important;
-        border: 2px solid var(--primary-color) !important;
-        border-radius: 8px !important;
-        margin-bottom: 8px !important;
-        flex-direction: row !important; /* Change back to row for better mobile layout */
-        text-align: left !important;
-        align-items: center !important;
-        gap: 12px !important;
-    }
-    
-    .item-image {
-        flex-shrink: 0;
-        align-self: flex-start;
-        margin-bottom: 0 !important;
-    }
-    
-    .item-image img {
-        width: 50px;
-        height: 50px;
-        border-radius: 6px;
-        object-fit: cover;
-    }
-    
-    .item-details {
-        flex: 1;
-        display: flex;
         flex-direction: column;
-        gap: 4px;
     }
     
-    .item-name {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 4px;
+    .appointment-modal-actions .btn {
+        width: 100%;
+        margin-bottom: 10px;
     }
-    
-    .item-info {
-        justify-content: flex-start !important;
-        text-align: left !important;
-        gap: 8px !important;
-        flex-wrap: wrap;
-    }
-    
-    .item-info span {
-        font-size: 0.75rem;
-        color: var(--text-light);
-    }
-    
-    .item-price {
-        font-weight: 600;
-        color: var(--primary-color);
-        font-size: 0.9rem;
-        margin-top: 2px;
-    }
-    
-    /* Make the rented items section more prominent */
-    .rental-section:has(.items-container) {
-        background: #f0f8ff !important;
-        border: 2px solid var(--primary-color) !important;
-        border-radius: 10px !important;
-    }
-    
-    .rental-section:has(.items-container) .section-title {
-        color: var(--primary-color) !important;
-        font-weight: 700 !important;
-        font-size: 1rem !important;
-    }
-    
-    .items-container {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 8px !important;
-    }
-    
-    .notes-content {
-        font-size: 0.8rem;
-        padding: 10px;
-    }
-    
-    .close-rental-modal {
-        width: 32px !important;
-        height: 32px !important;
-        font-size: 1.125rem !important;
-    }
+}
+
+/* Close button for confirmation modals */
+.close-confirmation-modal {
+    background: #ffffff !important;
+    border: 2px solid #e0e0e0 !important;
+    font-size: 1.5rem !important;
+    color: #666666 !important;
+    cursor: pointer !important;
+    padding: 10px !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+    min-width: 44px !important;
+    width: 44px !important;
+    height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    z-index: 10 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.close-confirmation-modal:hover {
+    background: #f5f5f5 !important;
+    color: #333333 !important;
+    border-color: #cccccc !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.close-confirmation-modal:active {
+    transform: scale(0.95) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Notyf custom styles to match app theme */
+.notyf__toast {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-family: inherit;
+}
+
+.notyf__icon {
+    height: 24px;
+    width: 24px;
+}
+
+.notyf__message {
+    font-weight: 500;
+    padding: 0 12px;
 }

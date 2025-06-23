@@ -835,6 +835,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const modal = document.getElementById('appointment-modal');
             const details = document.getElementById('appointment-details');
 
+            // Store the appointment ID in the modal for later use with confirmation modals
+            $(modal).data('appointmentId', id);
+
             console.log('🔍 Modal element found:', !!modal);
             console.log('🔍 Modal current classes:', modal.className);
             
@@ -1261,4 +1264,185 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     initializeDashboard();
+
+    // Initialize Notyf toast notifications
+    const notyf = new Notyf({
+        duration: 3000,
+        position: {
+            x: 'right',
+            y: 'top',
+        },
+        types: [
+            {
+                type: 'success',
+                background: '#28a745',
+                icon: {
+                    className: 'fas fa-check-circle',
+                    tagName: 'i'
+                }
+            },
+            {
+                type: 'error',
+                background: '#dc3545',
+                icon: {
+                    className: 'fas fa-exclamation-circle',
+                    tagName: 'i'
+                }
+            }
+        ]
+    });
+      // Function to show toast notification (wrapper for Notyf)
+    function showToast(message, type) {
+        if (type === 'success') {
+            notyf.success(message);
+        } else if (type === 'error') {
+            notyf.error(message);
+        }
+    }
+    
+    // Handle cancel booking button click
+    $(document).on('click', '.cancel-booking', function() {
+        // Store the appointment ID in a data attribute for later use
+        const appointmentId = $(this).closest('.modal').data('appointmentId');
+        $('#cancel-booking-modal').data('appointmentId', appointmentId);
+        
+        // Hide appointment modal
+        $('#appointment-modal').removeClass('visible');
+        
+        // Show cancel confirmation modal
+        $('#cancel-booking-modal').addClass('visible');
+        preventBackgroundInteraction();
+    });
+    
+    // Handle confirm booking button click
+    $(document).on('click', '.confirm-booking', function() {
+        // Store the appointment ID in a data attribute for later use
+        const appointmentId = $(this).closest('.modal').data('appointmentId');
+        $('#confirm-booking-modal').data('appointmentId', appointmentId);
+        
+        // Hide appointment modal
+        $('#appointment-modal').removeClass('visible');
+        
+        // Show confirm confirmation modal
+        $('#confirm-booking-modal').addClass('visible');
+        preventBackgroundInteraction();
+    });
+    
+    // Handle cancel action (go back button) for confirmation modals
+    $(document).on('click', '.cancel-action', function() {
+        // Hide confirmation modal
+        $(this).closest('.modal').removeClass('visible');
+        
+        // Show original appointment modal again
+        $('#appointment-modal').addClass('visible');
+        preventBackgroundInteraction();
+    });    // Handle final cancel booking confirmation
+    $(document).on('click', '.confirm-cancel-booking', function() {
+        const appointmentId = $('#cancel-booking-modal').data('appointmentId');
+        
+        // Here you would add the actual cancellation logic with Firebase
+        console.log('Cancelling appointment:', appointmentId);
+        
+        // Example implementation (replace with your actual implementation):
+        /*
+        const appointmentRef = doc(chandriaDB, "appointments", appointmentId);
+        updateDoc(appointmentRef, {
+            status: "cancelled",
+            cancelledAt: serverTimestamp()
+        }).then(() => {
+            console.log("Appointment cancelled successfully");
+            // Update UI as needed
+            
+            // Close all modals
+            $('.modal').removeClass('visible');
+            allowBackgroundInteraction();
+            
+            // Show Notyf notification
+            notyf.error("Booking cancelled");
+            
+            // Refresh appointments list
+            fetchAppointments();
+        }).catch(error => {
+            console.error("Error cancelling appointment:", error);
+            // Show error message to user
+        });
+        */
+        
+        // Temporary mock implementation (remove in production)
+        setTimeout(() => {
+            // Close all modals
+            $('.modal').removeClass('visible');
+            allowBackgroundInteraction();
+            
+            // Show Notyf notification
+            notyf.error("Booking cancelled");
+        }, 1000);
+    });    // Handle final confirm booking confirmation
+    $(document).on('click', '.confirm-booking-action', function() {
+        const appointmentId = $('#confirm-booking-modal').data('appointmentId');
+        
+        // Here you would add the actual confirmation logic with Firebase
+        console.log('Confirming appointment:', appointmentId);
+        
+        // Example implementation (replace with your actual implementation):
+        /*
+        const appointmentRef = doc(chandriaDB, "appointments", appointmentId);
+        updateDoc(appointmentRef, {
+            status: "confirmed",
+            confirmedAt: serverTimestamp()
+        }).then(() => {
+            console.log("Appointment confirmed successfully");
+            // Update UI as needed
+            
+            // Close all modals
+            $('.modal').removeClass('visible');
+            allowBackgroundInteraction();
+            
+            // Show Notyf notification
+            notyf.success("Booking confirmed");
+            
+            // Refresh appointments list
+            fetchAppointments();
+        }).catch(error => {
+            console.error("Error confirming appointment:", error);
+            // Show error message to user
+        });
+        */
+        
+        // Temporary mock implementation (remove in production)
+        setTimeout(() => {
+            // Close all modals
+            $('.modal').removeClass('visible');
+            allowBackgroundInteraction();
+            
+            // Show Notyf notification
+            notyf.success("Booking confirmed");
+        }, 1000);
+    });
+      // Close confirmation modals when clicking the X button
+    $(document).on('click', '.close-confirmation-modal', function() {
+        // Hide the confirmation modal
+        $(this).closest('.modal').removeClass('visible');
+        
+        // Show the original appointment modal again
+        $('#appointment-modal').addClass('visible');
+        preventBackgroundInteraction();
+    });
+      // Close confirmation modals when clicking outside
+    $(document).on('click', '.modal-backdrop', function(e) {
+        if ($(e.target).hasClass('modal-backdrop')) {
+            const clickedInConfirmationModal = $(this).closest('#cancel-booking-modal, #confirm-booking-modal').length > 0;
+            
+            if (clickedInConfirmationModal) {
+                // If clicking outside a confirmation modal, return to the appointment modal
+                $('#cancel-booking-modal, #confirm-booking-modal').removeClass('visible');
+                $('#appointment-modal').addClass('visible');
+                preventBackgroundInteraction();
+            } else {
+                // If clicking outside any other modal, close all modals
+                $('.modal').removeClass('visible');
+                allowBackgroundInteraction();
+            }
+        }
+    });
 });
