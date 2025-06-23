@@ -14,9 +14,15 @@
 
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    
-    <!-- Chart.js for analytics -->
+      <!-- Chart.js for analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- Notyf for notifications -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 </head>
 
 <body>
@@ -130,11 +136,19 @@
                     </div>
                     <button id="apply-date-range" class="apply-btn">Apply</button>
                 </div>
-                
-                <button id="refresh-analytics" class="refresh-btn">
+                  <button id="refresh-analytics" class="refresh-btn">
                     <i class='bx bx-refresh'></i> Refresh Data
                 </button>
-            </div>            <!-- Analytics Overview Cards -->
+                
+                <div class="export-buttons">
+                    <button id="export-csv" class="export-btn csv-btn">
+                        <i class='bx bx-download'></i> Export CSV
+                    </button>
+                    <button id="export-excel" class="export-btn excel-btn">
+                        <i class='bx bx-spreadsheet'></i> Export Excel
+                    </button>
+                </div>
+            </div><!-- Analytics Overview Cards -->
             <div class="analytics-overview">
                 <div class="analytics-card total-rentals">
                     <div class="card-icon">
@@ -157,10 +171,15 @@
                         <p class="card-trend positive"><i class='bx bx-up-arrow-alt'></i> <span id="revenue-trend">0%</span> vs. previous period</p>
                     </div>
                 </div>
-                
-                <div class="analytics-card most-rented-product">
-                    <div class="card-icon">
-                        <i class='bx bx-trophy'></i>
+                  <div class="analytics-card most-rented-product clickable" onclick="showProductModal()">
+                    <div class="card-image-container">
+                        <img id="most-rented-product-image" src="" alt="Most Rented Product" style="display: none;">
+                        <div id="most-rented-image-loading" class="card-image-loading">
+                            <i class='bx bx-loader-alt bx-spin'></i>
+                        </div>
+                        <div id="most-rented-image-placeholder" class="card-image-placeholder">
+                            <i class='bx bx-image-alt'></i>
+                        </div>
                     </div>
                     <div class="card-content">
                         <h3>Most Rented Product</h3>
@@ -215,9 +234,38 @@
                         <canvas id="additional-rentals-chart"></canvas>
                     </div>
                 </div>
+            </div>        </div>
+    </main>
+
+    <!-- Product Details Modal -->
+    <div id="product-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-product-name">Product Details</h3>
+                <button class="modal-close" onclick="hideProductModal()">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-image-container">
+                    <img id="modal-product-image" src="" alt="Product Image" style="display: none;">
+                    <div id="modal-image-loading" class="modal-loading">
+                        <div class="modal-spinner"></div>
+                        <p>Loading image...</p>
+                    </div>
+                    <div id="modal-image-error" class="modal-error" style="display: none;">
+                        <i class='bx bx-image-alt'></i>
+                        <p>No image available</p>
+                    </div>
+                </div>
+                <div class="modal-details">
+                    <p><strong>Rental Count:</strong> <span id="modal-rental-count">0</span></p>
+                </div>
             </div>
         </div>
-    </main>    <!-- Mobile Bottom Navigation (hidden on desktop) -->
+    </div>
+
+    <!-- Mobile Bottom Navigation (hidden on desktop) -->
     <nav class="mobile-bottom-nav">
         <a href="./dashboard.html" class="mobile-nav-item">
             <i class="bx bxs-dashboard icon"></i>

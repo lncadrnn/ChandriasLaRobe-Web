@@ -22,9 +22,34 @@ const db = firebase.firestore();
 let monthlyIncomeChart, customerGrowthChart, categoryChart, eventDistributionChart, additionalRentalsChart;
 let currentTimeRange = '30days';
 let isDataLoaded = false;
+let currentAnalyticsData = null; // Store current analytics data for export
+let currentMostRentedProductId = null; // Store the current most rented product ID
+let notyf; // Notification instance
 
 // Wait for DOM to be fully loaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {    // Initialize notification system
+    notyf = new Notyf({
+        duration: 4000,
+        position: {
+            x: 'center',
+            y: 'top'
+        },
+        types: [
+            {
+                type: 'success',
+                className: 'notyf__toast--success',
+                duration: 4000,
+                icon: false
+            },
+            {
+                type: 'error',
+                className: 'notyf__toast--error',
+                duration: 4000,
+                icon: false
+            }
+        ]
+    });
+    
     // Initialize page elements
     initPageLoader();
     initCharts();
@@ -416,10 +441,21 @@ function initEventListeners() {
                 });
             } else {
                 alert('Please select both start and end dates');
-            }
-        } else {
+            }        } else {
             loadAnalyticsData(currentTimeRange);
         }
+    });
+    
+    // Export CSV button
+    const exportCsvBtn = document.getElementById('export-csv');
+    exportCsvBtn.addEventListener('click', function() {
+        exportToCSV();
+    });
+    
+    // Export Excel button
+    const exportExcelBtn = document.getElementById('export-excel');
+    exportExcelBtn.addEventListener('click', function() {
+        exportToExcel();
     });
 }
 
@@ -696,8 +732,7 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
           // Event Distribution (Pie Chart)
         const eventNames = Object.keys(eventDistribution);
         const eventValues = eventNames.map(name => eventDistribution[name]);
-        
-        // Find most rented product
+          // Find most rented product
         let mostRentedProduct = {
             name: 'No data available',
             count: 0
@@ -717,8 +752,11 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
             if (topProductId) {
                 mostRentedProduct = {
                     name: productRentals[topProductId].name,
-                    count: productRentals[topProductId].count
+                    count: productRentals[topProductId].count,
+                    id: topProductId // Store the product ID
                 };
+                // Store globally for modal use
+                currentMostRentedProductId = topProductId;
             }
         }
         
@@ -882,6 +920,9 @@ function aggregateLabels(labels, chunkSize) {
 function updateAnalyticsUI(data) {
     // Mark that data has been loaded
     isDataLoaded = true;
+    
+    // Store analytics data for export
+    currentAnalyticsData = data;
       // Update summary metrics
     document.getElementById('total-rentals').textContent = data.summary.totalRentals.toLocaleString();
     document.getElementById('total-revenue').textContent = data.summary.totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -889,6 +930,9 @@ function updateAnalyticsUI(data) {
     // Update most rented product
     document.getElementById('most-rented-product-name').textContent = data.mostRentedProduct.name;
     document.getElementById('most-rented-count').textContent = data.mostRentedProduct.count.toLocaleString();
+    
+    // Load and display most rented product image
+    loadMostRentedProductImage();
     
     // Update trend percentages
     updateTrend('rentals-trend', data.trends.rentalsTrend);
@@ -1104,3 +1148,373 @@ function showStatus(message, type = 'info') {
 }
 
 // Note: determineProductCategory function removed - now using direct product ID lookup
+
+/**
+ * Load and display the most rented product image
+ */
+async function loadMostRentedProductImage() {
+    const imageContainer = document.getElementById('most-rented-product-image');
+    const loadingIndicator = document.getElementById('most-rented-image-loading');
+    const placeholderIndicator = document.getElementById('most-rented-image-placeholder');
+    
+    // Reset display states
+    imageContainer.style.display = 'none';
+    loadingIndicator.style.display = 'flex';
+    placeholderIndicator.style.display = 'none';
+    
+    if (!currentMostRentedProductId) {
+        console.log('⚠️ No most rented product ID available');
+        loadingIndicator.style.display = 'none';
+        placeholderIndicator.style.display = 'flex';
+        return;
+    }
+    
+    try {
+        console.log('🖼️ Loading image for product:', currentMostRentedProductId);
+        
+        // Fetch product details from Firebase
+        const productDoc = await db.collection('products').doc(currentMostRentedProductId).get();
+        
+        if (productDoc.exists) {
+            const productData = productDoc.data();
+            console.log('📦 Product data retrieved:', productData);
+            
+            // Try to get the front image first, then fallback to other images
+            let imageUrl = null;
+            
+            if (productData.frontImage && productData.frontImage.trim() !== '') {
+                imageUrl = productData.frontImage;
+            } else if (productData.images && Array.isArray(productData.images) && productData.images.length > 0) {
+                imageUrl = productData.images[0];
+            } else if (productData.imageUrl && productData.imageUrl.trim() !== '') {
+                imageUrl = productData.imageUrl;
+            }
+            
+            if (imageUrl) {
+                console.log('🖼️ Loading image URL:', imageUrl);
+                
+                // Create new image to test loading
+                const img = new Image();
+                img.onload = function() {
+                    console.log('✅ Image loaded successfully');
+                    imageContainer.src = imageUrl;
+                    imageContainer.style.display = 'block';
+                    loadingIndicator.style.display = 'none';
+                    placeholderIndicator.style.display = 'none';
+                };
+                img.onerror = function() {
+                    console.log('❌ Image failed to load');
+                    loadingIndicator.style.display = 'none';
+                    placeholderIndicator.style.display = 'flex';
+                };
+                img.src = imageUrl;
+            } else {
+                console.log('📷 No image URL found for product');
+                loadingIndicator.style.display = 'none';
+                placeholderIndicator.style.display = 'flex';
+            }
+        } else {
+            console.log('❌ Product not found in database');
+            loadingIndicator.style.display = 'none';
+            placeholderIndicator.style.display = 'flex';
+        }
+    } catch (error) {
+        console.error('❌ Error loading product image:', error);
+        loadingIndicator.style.display = 'none';
+        placeholderIndicator.style.display = 'flex';
+    }
+}
+
+/**
+ * Show the product details modal
+ */
+async function showProductModal() {
+    const modal = document.getElementById('product-modal');
+    const modalProductName = document.getElementById('modal-product-name');
+    const modalRentalCount = document.getElementById('modal-rental-count');
+    const modalProductImage = document.getElementById('modal-product-image');
+    const modalImageLoading = document.getElementById('modal-image-loading');
+    const modalImageError = document.getElementById('modal-image-error');
+    
+    if (!currentAnalyticsData || !currentAnalyticsData.mostRentedProduct) {
+        notyf.error('No product data available');
+        return;
+    }
+    
+    // Show modal
+    modal.style.display = 'flex';
+    
+    // Set product details
+    modalProductName.textContent = currentAnalyticsData.mostRentedProduct.name;
+    modalRentalCount.textContent = currentAnalyticsData.mostRentedProduct.count.toLocaleString();
+    
+    // Reset image states
+    modalProductImage.style.display = 'none';
+    modalImageLoading.style.display = 'flex';
+    modalImageError.style.display = 'none';
+    
+    if (!currentMostRentedProductId) {
+        modalImageLoading.style.display = 'none';
+        modalImageError.style.display = 'flex';
+        return;
+    }
+    
+    try {
+        console.log('🖼️ Loading modal image for product:', currentMostRentedProductId);
+        
+        // Fetch product details from Firebase
+        const productDoc = await db.collection('products').doc(currentMostRentedProductId).get();
+        
+        if (productDoc.exists) {
+            const productData = productDoc.data();
+            
+            // Try to get the front image first, then fallback to other images
+            let imageUrl = null;
+            
+            if (productData.frontImage && productData.frontImage.trim() !== '') {
+                imageUrl = productData.frontImage;
+            } else if (productData.images && Array.isArray(productData.images) && productData.images.length > 0) {
+                imageUrl = productData.images[0];
+            } else if (productData.imageUrl && productData.imageUrl.trim() !== '') {
+                imageUrl = productData.imageUrl;
+            }
+            
+            if (imageUrl) {
+                // Create new image to test loading
+                const img = new Image();
+                img.onload = function() {
+                    modalProductImage.src = imageUrl;
+                    modalProductImage.style.display = 'block';
+                    modalImageLoading.style.display = 'none';
+                };
+                img.onerror = function() {
+                    modalImageLoading.style.display = 'none';
+                    modalImageError.style.display = 'flex';
+                };
+                img.src = imageUrl;
+            } else {
+                modalImageLoading.style.display = 'none';
+                modalImageError.style.display = 'flex';
+            }
+        } else {
+            modalImageLoading.style.display = 'none';
+            modalImageError.style.display = 'flex';
+        }
+    } catch (error) {
+        console.error('❌ Error loading modal image:', error);
+        modalImageLoading.style.display = 'none';
+        modalImageError.style.display = 'flex';
+    }
+}
+
+/**
+ * Hide the product details modal
+ */
+function hideProductModal() {
+    const modal = document.getElementById('product-modal');
+    modal.style.display = 'none';
+}
+
+/**
+ * Export analytics data to CSV format
+ */
+function exportToCSV() {
+    if (!currentAnalyticsData) {
+        notyf.error('No analytics data available to export');
+        return;
+    }
+    
+    notyf.open({
+        type: 'info',
+        message: 'Preparing CSV export...'
+    });
+    
+    try {
+        // Create CSV content
+        let csvContent = '';
+        
+        // Summary section
+        csvContent += 'ANALYTICS SUMMARY\n';
+        csvContent += `Report Generated,${new Date().toLocaleDateString()}\n`;
+        csvContent += `Time Period,${currentTimeRange}\n`;
+        csvContent += `Total Rentals,${currentAnalyticsData.summary.totalRentals}\n`;
+        csvContent += `Total Revenue,₱${currentAnalyticsData.summary.totalRevenue.toLocaleString()}\n`;
+        csvContent += `Most Rented Product,"${currentAnalyticsData.mostRentedProduct.name}"\n`;
+        csvContent += `Most Rented Count,${currentAnalyticsData.mostRentedProduct.count}\n\n`;
+        
+        // Monthly Income section
+        csvContent += 'MONTHLY INCOME\n';
+        csvContent += 'Month,Revenue\n';
+        for (let i = 0; i < currentAnalyticsData.monthlyIncomeData.labels.length; i++) {
+            csvContent += `${currentAnalyticsData.monthlyIncomeData.labels[i]},₱${currentAnalyticsData.monthlyIncomeData.data[i].toLocaleString()}\n`;
+        }
+        csvContent += '\n';
+        
+        // Customer Growth section
+        csvContent += 'CUSTOMER GROWTH\n';
+        csvContent += 'Month,New Customers\n';
+        for (let i = 0; i < currentAnalyticsData.customerGrowthData.labels.length; i++) {
+            csvContent += `${currentAnalyticsData.customerGrowthData.labels[i]},${currentAnalyticsData.customerGrowthData.data[i]}\n`;
+        }
+        csvContent += '\n';
+        
+        // Category Distribution section
+        if (currentAnalyticsData.categoryData.labels.length > 0) {
+            csvContent += 'CATEGORY DISTRIBUTION\n';
+            csvContent += 'Category,Rentals\n';
+            for (let i = 0; i < currentAnalyticsData.categoryData.labels.length; i++) {
+                csvContent += `"${currentAnalyticsData.categoryData.labels[i]}",${currentAnalyticsData.categoryData.data[i]}\n`;
+            }
+            csvContent += '\n';
+        }
+        
+        // Event Distribution section
+        if (currentAnalyticsData.eventData.labels.length > 0) {
+            csvContent += 'EVENT DISTRIBUTION\n';
+            csvContent += 'Event Type,Rentals\n';
+            for (let i = 0; i < currentAnalyticsData.eventData.labels.length; i++) {
+                csvContent += `"${currentAnalyticsData.eventData.labels[i]}",${currentAnalyticsData.eventData.data[i]}\n`;
+            }
+            csvContent += '\n';
+        }
+        
+        // Additional Rentals section
+        csvContent += 'ADDITIONAL RENTALS\n';
+        csvContent += 'Type,Count\n';
+        for (let i = 0; i < currentAnalyticsData.additionalRentalsData.labels.length; i++) {
+            csvContent += `"${currentAnalyticsData.additionalRentalsData.labels[i]}",${currentAnalyticsData.additionalRentalsData.data[i]}\n`;
+        }
+        
+        // Create and download file
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `analytics-${currentTimeRange}-${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        notyf.success('CSV export completed successfully!');
+        
+    } catch (error) {
+        console.error('❌ Error exporting CSV:', error);
+        notyf.error('Failed to export CSV. Please try again.');
+    }
+}
+
+/**
+ * Export analytics data to Excel format
+ */
+function exportToExcel() {    if (!currentAnalyticsData) {
+        notyf.error('No analytics data available to export');
+        return;
+    }
+    
+    try {
+        // Create workbook and worksheets
+        const workbook = XLSX.utils.book_new();
+        
+        // Summary worksheet
+        const summaryData = [
+            ['ANALYTICS SUMMARY'],
+            ['Report Generated', new Date().toLocaleDateString()],
+            ['Time Period', currentTimeRange],
+            ['Total Rentals', currentAnalyticsData.summary.totalRentals],
+            ['Total Revenue', `₱${currentAnalyticsData.summary.totalRevenue.toLocaleString()}`],
+            ['Most Rented Product', currentAnalyticsData.mostRentedProduct.name],
+            ['Most Rented Count', currentAnalyticsData.mostRentedProduct.count]
+        ];
+        const summaryWS = XLSX.utils.aoa_to_sheet(summaryData);
+        XLSX.utils.book_append_sheet(workbook, summaryWS, 'Summary');
+        
+        // Monthly Income worksheet
+        const monthlyIncomeData = [
+            ['Month', 'Revenue']
+        ];
+        for (let i = 0; i < currentAnalyticsData.monthlyIncomeData.labels.length; i++) {
+            monthlyIncomeData.push([
+                currentAnalyticsData.monthlyIncomeData.labels[i],
+                currentAnalyticsData.monthlyIncomeData.data[i]
+            ]);
+        }
+        const monthlyIncomeWS = XLSX.utils.aoa_to_sheet(monthlyIncomeData);
+        XLSX.utils.book_append_sheet(workbook, monthlyIncomeWS, 'Monthly Income');
+        
+        // Customer Growth worksheet
+        const customerGrowthData = [
+            ['Month', 'New Customers']
+        ];
+        for (let i = 0; i < currentAnalyticsData.customerGrowthData.labels.length; i++) {
+            customerGrowthData.push([
+                currentAnalyticsData.customerGrowthData.labels[i],
+                currentAnalyticsData.customerGrowthData.data[i]
+            ]);
+        }
+        const customerGrowthWS = XLSX.utils.aoa_to_sheet(customerGrowthData);
+        XLSX.utils.book_append_sheet(workbook, customerGrowthWS, 'Customer Growth');
+        
+        // Category Distribution worksheet
+        if (currentAnalyticsData.categoryData.labels.length > 0) {
+            const categoryData = [
+                ['Category', 'Rentals']
+            ];
+            for (let i = 0; i < currentAnalyticsData.categoryData.labels.length; i++) {
+                categoryData.push([
+                    currentAnalyticsData.categoryData.labels[i],
+                    currentAnalyticsData.categoryData.data[i]
+                ]);
+            }
+            const categoryWS = XLSX.utils.aoa_to_sheet(categoryData);
+            XLSX.utils.book_append_sheet(workbook, categoryWS, 'Categories');
+        }
+        
+        // Event Distribution worksheet
+        if (currentAnalyticsData.eventData.labels.length > 0) {
+            const eventData = [
+                ['Event Type', 'Rentals']
+            ];
+            for (let i = 0; i < currentAnalyticsData.eventData.labels.length; i++) {
+                eventData.push([
+                    currentAnalyticsData.eventData.labels[i],
+                    currentAnalyticsData.eventData.data[i]
+                ]);
+            }
+            const eventWS = XLSX.utils.aoa_to_sheet(eventData);
+            XLSX.utils.book_append_sheet(workbook, eventWS, 'Events');
+        }
+        
+        // Additional Rentals worksheet
+        const additionalRentalsData = [
+            ['Type', 'Count']
+        ];
+        for (let i = 0; i < currentAnalyticsData.additionalRentalsData.labels.length; i++) {
+            additionalRentalsData.push([
+                currentAnalyticsData.additionalRentalsData.labels[i],
+                currentAnalyticsData.additionalRentalsData.data[i]
+            ]);
+        }
+        const additionalRentalsWS = XLSX.utils.aoa_to_sheet(additionalRentalsData);
+        XLSX.utils.book_append_sheet(workbook, additionalRentalsWS, 'Additional Rentals');
+        
+        // Generate Excel file and download
+        const fileName = `analytics-${currentTimeRange}-${new Date().toISOString().split('T')[0]}.xlsx`;
+        XLSX.writeFile(workbook, fileName);
+        
+        notyf.success('Excel export completed successfully!');
+        
+    } catch (error) {
+        console.error('❌ Error exporting Excel:', error);
+        notyf.error('Failed to export Excel. Please try again.');
+    }
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('product-modal');
+    if (event.target === modal) {
+        hideProductModal();
+    }
+});
+
