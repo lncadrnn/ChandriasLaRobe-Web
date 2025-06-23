@@ -1304,8 +1304,13 @@ async function showProductModal() {
         return;
     }
     
-    // Show modal
+    // Show modal and prevent background interaction
     modal.style.display = 'flex';
+    document.documentElement.classList.add('modal-open');
+    document.body.classList.add('modal-open');
+    
+    // Save current scroll position
+    document.body.dataset.scrollY = window.scrollY;
     
     // Set product details
     modalProductName.textContent = currentAnalyticsData.mostRentedProduct.name;
@@ -1418,6 +1423,14 @@ async function showProductModal() {
 function hideProductModal() {
     const modal = document.getElementById('product-modal');
     modal.style.display = 'none';
+    
+    // Re-enable background interaction
+    document.documentElement.classList.remove('modal-open');
+    document.body.classList.remove('modal-open');
+    
+    // Restore scroll position
+    const scrollY = document.body.dataset.scrollY || 0;
+    window.scrollTo(0, parseInt(scrollY));
 }
 
 /**
