@@ -394,13 +394,24 @@ async function loadAnalyticsData(timePeriod, customDates = null) {
  * @returns {Object} - Analytics data from Firebase
  */
 async function fetchFirebaseAnalyticsData(startDate, endDate) {
-    try {
-        console.log('🔥 Starting Firebase data fetch...');
+    try {        console.log('🔥 Starting Firebase data fetch...');
         console.log('📊 Firebase app initialized:', !!firebase.apps.length);
         console.log('🗄️ Firestore database:', !!db);
         
+        // First, fetch all products to create a category lookup map
+        console.log('📦 Fetching products for category lookup...');
+        const productsSnapshot = await db.collection('products').get();
+        const productCategoryMap = {};
+        
+        productsSnapshot.forEach(doc => {
+            const product = doc.data();
+            productCategoryMap[doc.id] = product.category || 'Other';
+        });
+        
+        console.log(`📋 Loaded ${Object.keys(productCategoryMap).length} products for category mapping`);
+        
         // First, let's check if we can access the collection at all
-        console.log('📡 Querying rentals collection...');
+        console.log('📡 Querying transaction collection...');
           // Query rental transactions from Firebase
         const rentalQuery = db.collection('transaction')
             .where('timestamp', '>=', startDate.toISOString())
@@ -474,12 +485,12 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
                     monthlyCustomers[monthKey].add(transaction.fullName.toLowerCase().trim());
                 }
             }
-            
-            // Rented products by category (extract from products array)
+              // Rented products by category (lookup from products collection)
             if (transaction.products && Array.isArray(transaction.products)) {
                 transaction.products.forEach(product => {
-                    // Try to determine category from product name or use a mapping
-                    let category = determineProductCategory(product.name);
+                    // Use the product ID to lookup the actual category
+                    const productId = product.id;
+                    const category = productCategoryMap[productId] || 'Other';
                     
                     if (!categoryRentals[category]) {
                         categoryRentals[category] = 0;
@@ -906,39 +917,4 @@ function showStatus(message, type = 'info') {
     }, 5000);
 }
 
-/**
- * Determine product category from product name
- * @param {string} productName - The name of the product
- * @returns {string} - The determined category
- */
-function determineProductCategory(productName) {
-    if (!productName) return 'Other';
-    
-    const name = productName.toLowerCase();
-    
-    // Define category keywords
-    if (name.includes('wedding') || name.includes('bridal') || name.includes('bride')) {
-        return 'Wedding Gowns';
-    }
-    if (name.includes('evening') || name.includes('formal')) {
-        return 'Evening Dresses';
-    }
-    if (name.includes('gown') || name.includes('dress')) {
-        return 'Formal Wear';
-    }
-    if (name.includes('veil') || name.includes('tiara') || name.includes('crown')) {
-        return 'Veils & Headpieces';
-    }
-    if (name.includes('necklace') || name.includes('jewelry') || name.includes('earring') || 
-        name.includes('bracelet') || name.includes('accessory')) {
-        return 'Accessories';
-    }
-    if (name.includes('shoe') || name.includes('heel') || name.includes('sandal')) {
-        return 'Shoes';
-    }
-    if (name.includes('gloves') || name.includes('clutch') || name.includes('bag')) {
-        return 'Accessories';
-    }
-    
-    return 'Other';
-}
+// Note: determineProductCategory function removed - now using direct product ID lookup
