@@ -1,11 +1,14 @@
 // This code will be inserted into dashboard-service.js
 // Function to update modal buttons based on appointment status
 function updateAppointmentModalButtons(modal, status) {
+    if (!modal) return;
+    
     const cancelBtn = modal.querySelector('.cancel-booking');
     const confirmBtn = modal.querySelector('.confirm-booking');
     const undoBtn = modal.querySelector('.undo-confirmation');
     const statusTag = document.getElementById('appointment-confirmed-tag');
     
+    // Default visibility is controlled in CSS, we just override it based on status
     if (status === 'confirmed') {
         // Hide cancel and confirm buttons
         if (cancelBtn) cancelBtn.style.display = 'none';
@@ -15,6 +18,7 @@ function updateAppointmentModalButtons(modal, status) {
         // Show confirmed tag
         if (statusTag) statusTag.style.display = 'flex';
     } else {
+        // For pending status or any other non-confirmed status
         // Show cancel and confirm buttons
         if (cancelBtn) cancelBtn.style.display = 'flex';
         if (confirmBtn) confirmBtn.style.display = 'flex';
@@ -53,11 +57,49 @@ $(document).on('click', '.confirm-undo-action', function(e) {
     
     // Implement the logic to update the appointment status in the database
     try {
-        // Update appointment status in Firestore
-        db.collection('appointments').doc(appointmentId).update({
-            status: 'pending'        }).then(() => {
+        // First, close the undo confirmation modal
+        closeModal('undo-confirmation-modal');
+        
+        // For Firebase implementation
+        if (typeof firebase !== 'undefined' && firebase.firestore) {
+            // Update appointment status in Firestore
+            firebase.firestore().collection('appointments').doc(appointmentId).update({
+                status: 'pending'
+            }).then(() => {
+                // Show success notification
+                if (typeof notyf !== 'undefined') {
+                    notyf.success('Appointment confirmation has been undone');
+                } else if (typeof showSuccessNotification === 'function') {
+                    showSuccessNotification('Appointment confirmation has been undone');
+                }
+                
+                // Update UI to show cancel and confirm buttons
+                const modal = document.getElementById('appointment-modal');
+                updateAppointmentModalButtons(modal, 'pending');
+                
+                // Update the data attribute
+                $(modal).data('appointmentStatus', 'pending');
+                
+                // Update status icon in the appointment list if applicable
+                updateAppointmentStatusIcon(appointmentId, 'pending');
+            }).catch(error => {
+                console.error('Error undoing confirmation:', error);
+                if (typeof notyf !== 'undefined') {
+                    notyf.error('Failed to undo confirmation. Please try again.');
+                } else if (typeof showErrorNotification === 'function') {
+                    showErrorNotification('Failed to undo confirmation. Please try again.');
+                }
+            });
+        } else {
+            // Demo/mock implementation when Firebase is not available
+            console.log('Mock implementation: Appointment status changed to pending');
+            
             // Show success notification
-            showSuccessNotification('Appointment confirmation has been undone');
+            if (typeof notyf !== 'undefined') {
+                notyf.success('Appointment confirmation has been undone');
+            } else if (typeof showSuccessNotification === 'function') {
+                showSuccessNotification('Appointment confirmation has been undone');
+            }
             
             // Update UI to show cancel and confirm buttons
             const modal = document.getElementById('appointment-modal');
@@ -66,21 +108,16 @@ $(document).on('click', '.confirm-undo-action', function(e) {
             // Update the data attribute
             $(modal).data('appointmentStatus', 'pending');
             
-            // Close the undo confirmation modal properly
-            closeModal('undo-confirmation-modal');
-            
             // Update status icon in the appointment list if applicable
             updateAppointmentStatusIcon(appointmentId, 'pending');
-        }).catch(error => {
-            console.error('Error undoing confirmation:', error);
-            showErrorNotification('Failed to undo confirmation. Please try again.');
-            
-            // Close the undo confirmation modal
-            closeModal('undo-confirmation-modal');
-        });
+        }
     } catch (error) {
         console.error('Error:', error);
-        showErrorNotification('An error occurred. Please try again.');
+        if (typeof notyf !== 'undefined') {
+            notyf.error('An error occurred. Please try again.');
+        } else if (typeof showErrorNotification === 'function') {
+            showErrorNotification('An error occurred. Please try again.');
+        }
         
         // Close the undo confirmation modal
         closeModal('undo-confirmation-modal');
@@ -213,11 +250,9 @@ function closeModal(modalId) {
 
 // Function to update appointment status icon in the list
 function updateAppointmentStatusIcon(appointmentId, status) {
-    // This would be implemented if we were using real data
-    // For the sample data, we'll just reload the page
-    // location.reload();
+    console.log(`Updating status icon for appointment ${appointmentId} to ${status}`);
     
-    // For demonstration, just update icons in the UI
+    // For demonstration, update icons in the UI
     const appointments = document.querySelectorAll('.appointment-item');
     
     // Update for sample data based on closest matching appointment
@@ -226,27 +261,42 @@ function updateAppointmentStatusIcon(appointmentId, status) {
         const viewButton = item.querySelector('.appointment-view-details');
         if (viewButton && viewButton.dataset.clicked === 'true') {
             const icon = item.querySelector('.fa-check-circle, .fa-question-circle, .fa-times-circle');
-            if (icon) {
-                // Remove existing classes
-                icon.classList.remove('fa-check-circle', 'fa-question-circle', 'fa-times-circle');
-                // Remove existing style
-                icon.style.color = '';
+            
+            // If there's no icon yet, we need to create one
+            let iconElement = icon;
+            if (!iconElement) {
+                iconElement = document.createElement('i');
+                iconElement.classList.add('fas');
                 
-                // Add appropriate icon and color based on status
-                if (status === 'confirmed') {
-                    icon.classList.add('fa-check-circle');
-                    icon.style.color = '#28a745';
-                } else if (status === 'cancelled') {
-                    icon.classList.add('fa-times-circle');
-                    icon.style.color = '#dc3545';
-                } else {
-                    icon.classList.add('fa-question-circle');
-                    icon.style.color = '#ffc107';
+                // Insert at the beginning of the appointment text
+                const textElement = item.querySelector('.appointment-text');
+                if (textElement && textElement.firstChild) {
+                    textElement.insertBefore(iconElement, textElement.firstChild);
+                    // Add a space after the icon
+                    textElement.insertBefore(document.createTextNode(' '), iconElement.nextSibling);
                 }
             }
             
-            // Reset the clicked attribute
-            viewButton.dataset.clicked = 'false';
+            if (iconElement) {
+                // Remove existing classes
+                iconElement.classList.remove('fa-check-circle', 'fa-question-circle', 'fa-times-circle');
+                // Remove existing style
+                iconElement.style.color = '';
+                
+                // Add appropriate icon and color based on status
+                if (status === 'confirmed') {
+                    iconElement.classList.add('fa-check-circle');
+                    iconElement.style.color = '#28a745'; // Green
+                } else if (status === 'cancelled') {
+                    iconElement.classList.add('fa-times-circle');
+                    iconElement.style.color = '#dc3545'; // Red                } else {
+                    // Default to pending (question mark)
+                    iconElement.classList.add('fa-question-circle');
+                    iconElement.style.color = '#ffc107'; // Yellow
+                }
+            }
+            
+            // Reset the clicked attribute            viewButton.dataset.clicked = 'false';
         }
     });
 }

@@ -322,9 +322,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Restore body scroll
         document.body.style.overflow = '';
         document.body.classList.remove('modal-open');
-    }
-
-    // Show rental details modal
+    }    // Show rental details modal
     async function showRentalDetails(id) {
         try {
             const modal = document.getElementById('rental-modal');
@@ -333,13 +331,15 @@ document.addEventListener("DOMContentLoaded", () => {
             preventBackgroundInteraction();
             
             // Show modal with loading state
-            modal.classList.add('visible');
+            modal.classList.add('show');
+            modal.style.display = 'flex';
             showModalLoadingState();
             
             const docSnap = await db.collection("transaction").doc(id).get();
             if (!docSnap.exists) {
                 hideModalLoadingState();
-                modal.classList.remove('visible');
+                modal.classList.remove('show');
+                modal.style.display = 'none';
                 alert('Rental transaction not found');
                 return;
             }
@@ -413,13 +413,13 @@ document.addEventListener("DOMContentLoaded", () => {
             // Populate rented items
             await populateRentedItems(data);            // Populate notes
             const notesElement = document.getElementById('rental-notes');
-            notesElement.textContent = data.notes || data.additionalNotes || 'No additional notes provided.';
-
-            // Show modal
-            modal.classList.add('visible');        } catch (error) {
-            hideModalLoadingState();
+            notesElement.textContent = data.notes || data.additionalNotes || 'No additional notes provided.';            // Show modal
+            modal.classList.add('show');
+            modal.style.display = 'flex';
+        } catch (error) {hideModalLoadingState();
             const modal = document.getElementById('rental-modal');
-            modal.classList.remove('visible');
+            modal.classList.remove('show');
+            modal.style.display = 'none';
             console.error('Error loading rental details:', error);
             alert('Error loading rental details. Please try again.');
         }
@@ -1066,13 +1066,14 @@ document.addEventListener("DOMContentLoaded", () => {
             appointmentModal.style.visibility = 'hidden';
             appointmentModal.style.opacity = '0';
         }
-        
-        // Handle rental modal close
+          // Handle rental modal close
         if (e.target.classList.contains('close-rental-modal') || 
             (e.target.closest('.close-rental-modal'))) {
             console.log('🔄 Closing rental modal');
             restoreBackgroundInteraction();
-            document.getElementById('rental-modal').classList.remove('visible');
+            const rentalModal = document.getElementById('rental-modal');
+            rentalModal.classList.remove('show');
+            rentalModal.style.display = 'none';
         }
         
         // Handle rental view button clicks
