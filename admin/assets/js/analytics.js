@@ -4,19 +4,24 @@
  */
 
 // Firebase Configuration and Initialization
-import { firebaseConfig } from './firebase-config.js';
+// Note: firebaseConfig should be available globally from firebase-config.js
+console.log('🔧 Initializing Firebase...');
+
+// Check if Firebase config is available
+if (typeof window.firebaseConfig === 'undefined') {
+    console.error('❌ Firebase config not found! Make sure firebase-config.js is loaded');
+} else {
+    console.log('✅ Firebase config found');
+}
 
 // Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
+const app = firebase.initializeApp(window.firebaseConfig || {});
 const db = firebase.firestore();
 
 // Global Variables
-let revenueChart, productChart, statusChart, retentionChart;
+let monthlyIncomeChart, customerGrowthChart, categoryChart, eventDistributionChart;
 let currentTimeRange = '30days';
-let selectedChartViews = {
-    revenue: 'daily',
-    product: 'category'
-};
+let isDataLoaded = false;
 
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -51,100 +56,17 @@ function initPageLoader() {
  * Initialize all charts with empty data
  */
 function initCharts() {
-    // Revenue Chart
-    const revenueCtx = document.getElementById('revenue-chart').getContext('2d');
-    revenueChart = new Chart(revenueCtx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [{
-                label: 'Revenue',
-                data: [],
-                backgroundColor: 'rgba(255, 105, 180, 0.2)',
-                borderColor: 'hsl(346, 100%, 74%)',
-                borderWidth: 2,
-                tension: 0.4,
-                fill: true,
-                pointBackgroundColor: 'hsl(346, 100%, 74%)',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 4,
-                pointHoverRadius: 6
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false,
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                    titleColor: '#333',
-                    bodyColor: '#666',
-                    borderColor: 'rgba(255, 105, 180, 0.3)',
-                    borderWidth: 1,
-                    padding: 12,
-                    boxPadding: 6,
-                    usePointStyle: true,
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.dataset.label || '';
-                            if (label) {
-                                label += ': ';
-                            }
-                            if (context.parsed.y !== null) {
-                                label += '₱' + context.parsed.y.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                            }
-                            return label;
-                        }
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    grid: {
-                        display: false
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return '₱' + value.toLocaleString();
-                        }
-                    }
-                }
-            }
-        }
-    });
-    
-    // Product Chart
-    const productCtx = document.getElementById('product-chart').getContext('2d');
-    productChart = new Chart(productCtx, {
+    // Monthly Income Chart (Bar Chart)
+    const monthlyIncomeCtx = document.getElementById('monthly-income-chart').getContext('2d');
+    monthlyIncomeChart = new Chart(monthlyIncomeCtx, {
         type: 'bar',
         data: {
             labels: [],
             datasets: [{
-                label: 'Revenue',
+                label: 'Monthly Revenue (₱)',
                 data: [],
-                backgroundColor: [
-                    'rgba(255, 105, 180, 0.7)',
-                    'rgba(255, 105, 180, 0.6)',
-                    'rgba(255, 105, 180, 0.5)',
-                    'rgba(255, 105, 180, 0.4)',
-                    'rgba(255, 105, 180, 0.3)'
-                ],
-                borderColor: [
-                    'rgba(255, 105, 180, 1)',
-                    'rgba(255, 105, 180, 0.9)',
-                    'rgba(255, 105, 180, 0.8)',
-                    'rgba(255, 105, 180, 0.7)',
-                    'rgba(255, 105, 180, 0.6)'
-                ],
+                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1
             }]
         },
@@ -159,19 +81,12 @@ function initCharts() {
                     backgroundColor: 'rgba(255, 255, 255, 0.9)',
                     titleColor: '#333',
                     bodyColor: '#666',
-                    borderColor: 'rgba(255, 105, 180, 0.3)',
+                    borderColor: 'rgba(54, 162, 235, 0.3)',
                     borderWidth: 1,
                     padding: 12,
                     callbacks: {
                         label: function(context) {
-                            let label = context.dataset.label || '';
-                            if (label) {
-                                label += ': ';
-                            }
-                            if (context.parsed.y !== null) {
-                                label += '₱' + context.parsed.y.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                            }
-                            return label;
+                            return 'Revenue: ₱' + context.parsed.y.toLocaleString();
                         }
                     }
                 }
@@ -188,20 +103,124 @@ function initCharts() {
             }
         }
     });
-    
-    // Status Chart
-    const statusCtx = document.getElementById('status-chart').getContext('2d');
-    statusChart = new Chart(statusCtx, {
-        type: 'doughnut',
+
+    // Customer Growth Chart (Line Chart)
+    const customerGrowthCtx = document.getElementById('customer-growth-chart').getContext('2d');
+    customerGrowthChart = new Chart(customerGrowthCtx, {
+        type: 'line',
         data: {
-            labels: ['Completed', 'Ongoing', 'Upcoming', 'Cancelled'],
+            labels: [],
             datasets: [{
-                data: [0, 0, 0, 0],
+                label: 'Number of Customers',
+                data: [],
+                fill: false,
+                backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                tension: 0.1,
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    titleColor: '#333',
+                    bodyColor: '#666',
+                    borderColor: 'rgba(75, 192, 192, 0.3)',
+                    borderWidth: 1,
+                    padding: 12
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+
+    // Category Chart (Bar Chart)
+    const categoryCtx = document.getElementById('category-chart').getContext('2d');
+    categoryChart = new Chart(categoryCtx, {
+        type: 'bar',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Number of Rentals',
+                data: [],
                 backgroundColor: [
-                    '#28a745', // Success - Completed
-                    '#17a2b8', // Info - Ongoing
-                    '#ffc107', // Warning - Upcoming
-                    '#dc3545'  // Danger - Cancelled
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 206, 86, 0.7)',
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(153, 102, 255, 0.7)',
+                    'rgba(255, 159, 64, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    titleColor: '#333',
+                    bodyColor: '#666',
+                    borderColor: 'rgba(0, 0, 0, 0.1)',
+                    borderWidth: 1,
+                    padding: 12
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+
+    // Event Distribution Chart (Pie Chart)
+    const eventDistributionCtx = document.getElementById('event-distribution-chart').getContext('2d');
+    eventDistributionChart = new Chart(eventDistributionCtx, {
+        type: 'pie',
+        data: {
+            labels: [],
+            datasets: [{
+                data: [],
+                backgroundColor: [
+                    '#FF6384',
+                    '#36A2EB',
+                    '#FFCE56',
+                    '#4BC0C0',
+                    '#9966FF',
+                    '#FF9F40',
+                    '#FF6384',
+                    '#C9CBCF'
                 ],
                 borderWidth: 1,
                 borderColor: '#ffffff'
@@ -228,73 +247,12 @@ function initCharts() {
                     padding: 12,
                     callbacks: {
                         label: function(context) {
-                            const label = context.label;
+                            const label = context.label || '';
                             const value = context.raw;
-                            const percentage = ((value / context.dataset.data.reduce((a, b) => a + b, 0)) * 100).toFixed(1);
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = Math.round((value / total) * 100);
                             return `${label}: ${value} (${percentage}%)`;
                         }
-                    }
-                }
-            }
-        }
-    });
-    
-    // Retention Chart
-    const retentionCtx = document.getElementById('retention-chart').getContext('2d');
-    retentionChart = new Chart(retentionCtx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [{
-                label: 'New Customers',
-                data: [],
-                backgroundColor: 'rgba(40, 167, 69, 0.2)',
-                borderColor: '#28a745',
-                borderWidth: 2,
-                tension: 0.4,
-                pointBackgroundColor: '#28a745',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 4
-            },
-            {
-                label: 'Returning Customers',
-                data: [],
-                backgroundColor: 'rgba(23, 162, 184, 0.2)',
-                borderColor: '#17a2b8',
-                borderWidth: 2,
-                tension: 0.4,
-                pointBackgroundColor: '#17a2b8',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                tooltip: {
-                    mode: 'index',
-                    intersect: false,
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                    titleColor: '#333',
-                    bodyColor: '#666',
-                    borderColor: 'rgba(0, 0, 0, 0.1)',
-                    borderWidth: 1,
-                    padding: 12
-                }
-            },
-            scales: {
-                x: {
-                    grid: {
-                        display: false
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        precision: 0
                     }
                 }
             }
@@ -357,38 +315,6 @@ function initEventListeners() {
             loadAnalyticsData(currentTimeRange);
         }
     });
-    
-    // Chart view toggles for Revenue Chart
-    const revenueChartViewBtns = document.querySelectorAll('.revenue-chart-container .chart-view-btn');
-    revenueChartViewBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const view = this.getAttribute('data-view');
-            selectedChartViews.revenue = view;
-            
-            // Update active button
-            revenueChartViewBtns.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Update chart data based on view
-            updateRevenueChart(view);
-        });
-    });
-    
-    // Chart view toggles for Product Chart
-    const productChartViewBtns = document.querySelectorAll('.product-chart-container .chart-view-btn');
-    productChartViewBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const view = this.getAttribute('data-view');
-            selectedChartViews.product = view;
-            
-            // Update active button
-            productChartViewBtns.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Update chart data based on view
-            updateProductChart(view);
-        });
-    });
 }
 
 /**
@@ -429,18 +355,26 @@ async function loadAnalyticsData(timePeriod, customDates = null) {
                 startDate = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
         }
     }
-    
-    try {
+      try {
+        console.log('🔍 Attempting to fetch Firebase data...');
+        console.log('📅 Date range:', startDate, 'to', endDate);
+        
         // Fetch real data from Firebase
         const analyticsData = await fetchFirebaseAnalyticsData(startDate, endDate);
+        
+        console.log('✅ Firebase data fetched successfully:', analyticsData);
         
         // Update UI with the data
         updateAnalyticsUI(analyticsData);
         
     } catch (error) {
-        console.error('Error loading analytics data:', error);
+        console.error('❌ Error loading analytics data:', error);
+        
+        // Show user-friendly error message
+        showStatus('Firebase connection failed. Using mock data for demonstration.', 'warning');
         
         // Fallback to mock data if Firebase fails
+        console.log('🔄 Falling back to mock data...');
         const analyticsData = generateMockAnalyticsData(startDate, endDate);
         updateAnalyticsUI(analyticsData);
     }
@@ -461,146 +395,183 @@ async function loadAnalyticsData(timePeriod, customDates = null) {
  */
 async function fetchFirebaseAnalyticsData(startDate, endDate) {
     try {
-        // Query rental transactions from Firebase
-        const rentalQuery = db.collection('rentals')
-            .where('rentalDate', '>=', firebase.firestore.Timestamp.fromDate(startDate))
-            .where('rentalDate', '<=', firebase.firestore.Timestamp.fromDate(endDate));
+        console.log('🔥 Starting Firebase data fetch...');
+        console.log('📊 Firebase app initialized:', !!firebase.apps.length);
+        console.log('🗄️ Firestore database:', !!db);
         
+        // First, let's check if we can access the collection at all
+        console.log('📡 Querying rentals collection...');
+          // Query rental transactions from Firebase
+        const rentalQuery = db.collection('transaction')
+            .where('timestamp', '>=', startDate.toISOString())
+            .where('timestamp', '<=', endDate.toISOString());
+        
+        console.log('🔍 Executing query...');
         const rentalSnapshot = await rentalQuery.get();
+        
+        console.log(`📈 Found ${rentalSnapshot.size} rental documents in Firebase`);
+          // If no documents found, let's try a simpler query to see if collection exists
+        if (rentalSnapshot.size === 0) {
+            console.log('⚠️ No documents found in date range. Checking if collection exists...');
+            const allTransactionsQuery = await db.collection('transaction').limit(5).get();
+            console.log(`📋 Total documents in transaction collection: ${allTransactionsQuery.size}`);
+            
+            if (allTransactionsQuery.size === 0) {
+                console.log('📭 The transaction collection is completely empty!');
+                console.log('💡 Recommendation: Add rental transactions through the rental management page');
+            } else {
+                console.log('📄 Sample transaction data structure:');
+                allTransactionsQuery.docs.forEach((doc, index) => {
+                    if (index === 0) {
+                        console.log(doc.data());
+                    }
+                });
+            }
+        }
         
         // Initialize data containers
         let totalRentals = 0;
         let totalRevenue = 0;
-        const dailyRevenue = [];
-        const dailyLabels = [];
-        const categoryRevenue = {};
-        const productRevenue = {};
-        const statusCounts = {
-            completed: 0,
-            ongoing: 0,
-            upcoming: 0,
-            cancelled: 0
-        };
+        const monthlyIncome = {};
+        const monthlyCustomers = {};
+        const categoryRentals = {};
+        const eventDistribution = {};
         
-        // Process each rental transaction
+        // Initialize monthly data for the past 12 months
+        const currentDate = new Date();
+        for (let i = 0; i < 12; i++) {
+            const monthDate = new Date(currentDate);
+            monthDate.setMonth(currentDate.getMonth() - i);
+            const monthKey = `${monthDate.getFullYear()}-${(monthDate.getMonth() + 1).toString().padStart(2, '0')}`;
+            monthlyIncome[monthKey] = 0;
+            monthlyCustomers[monthKey] = new Set();
+        }        // Process each rental transaction
         rentalSnapshot.forEach(doc => {
-            const rental = doc.data();
+            const transaction = doc.data();
+            
+            // Count total rentals (number of transactions)
             totalRentals++;
             
-            // Add to total revenue (using totalPayment field)
-            const payment = parseFloat(rental.totalPayment || 0);
+            // Sum total revenue (totalPayment field from transaction)
+            const payment = parseFloat(transaction.totalPayment || 0);
             totalRevenue += payment;
             
-            // Track by category
-            if (rental.category) {
-                if (!categoryRevenue[rental.category]) {
-                    categoryRevenue[rental.category] = 0;
+            // Monthly income breakdown using timestamp
+            if (transaction.timestamp) {
+                const transactionDate = new Date(transaction.timestamp);
+                const monthKey = `${transactionDate.getFullYear()}-${(transactionDate.getMonth() + 1).toString().padStart(2, '0')}`;
+                
+                if (!monthlyIncome[monthKey]) {
+                    monthlyIncome[monthKey] = 0;
                 }
-                categoryRevenue[rental.category] += payment;
+                monthlyIncome[monthKey] += payment;
+                
+                // Monthly customer tracking using fullName (since no customerID)
+                if (transaction.fullName) {
+                    if (!monthlyCustomers[monthKey]) {
+                        monthlyCustomers[monthKey] = new Set();
+                    }
+                    monthlyCustomers[monthKey].add(transaction.fullName.toLowerCase().trim());
+                }
             }
             
-            // Track by product name
-            if (rental.productName) {
-                if (!productRevenue[rental.productName]) {
-                    productRevenue[rental.productName] = 0;
-                }
-                productRevenue[rental.productName] += payment;
+            // Rented products by category (extract from products array)
+            if (transaction.products && Array.isArray(transaction.products)) {
+                transaction.products.forEach(product => {
+                    // Try to determine category from product name or use a mapping
+                    let category = determineProductCategory(product.name);
+                    
+                    if (!categoryRentals[category]) {
+                        categoryRentals[category] = 0;
+                    }
+                    
+                    // Count all sizes for this product
+                    if (product.sizes && typeof product.sizes === 'object') {
+                        Object.values(product.sizes).forEach(quantity => {
+                            categoryRentals[category] += quantity;
+                        });
+                    } else {
+                        categoryRentals[category]++;
+                    }
+                });
             }
             
-            // Track by status
-            if (rental.status && statusCounts.hasOwnProperty(rental.status)) {
-                statusCounts[rental.status]++;
+            // Rental distribution by event (eventType from transaction)
+            if (transaction.eventType) {
+                if (!eventDistribution[transaction.eventType]) {
+                    eventDistribution[transaction.eventType] = 0;
+                }
+                eventDistribution[transaction.eventType]++;
             }
         });
         
-        // Generate daily revenue breakdown
-        const dateDiff = Math.floor((endDate - startDate) / (24 * 60 * 60 * 1000));
-        const dailyData = new Array(dateDiff + 1).fill(0);
-        
-        // Process rentals for daily breakdown
-        rentalSnapshot.forEach(doc => {
-            const rental = doc.data();
-            if (rental.rentalDate) {
-                const rentalDate = rental.rentalDate.toDate();
-                const dayIndex = Math.floor((rentalDate - startDate) / (24 * 60 * 60 * 1000));
-                if (dayIndex >= 0 && dayIndex < dailyData.length) {
-                    dailyData[dayIndex] += parseFloat(rental.totalPayment || 0);
-                }
-            }
-        });
-        
-        // Generate labels and data for charts
-        for (let i = 0; i <= dateDiff; i++) {
-            const currentDate = new Date(startDate.getTime() + (i * 24 * 60 * 60 * 1000));
-            const formattedDate = currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            dailyLabels.push(formattedDate);
-            dailyRevenue.push(dailyData[i]);
+        // Convert Sets to counts for monthly customers
+        for (const month in monthlyCustomers) {
+            monthlyCustomers[month] = monthlyCustomers[month].size;
         }
         
-        // Aggregate data for weekly and monthly views
-        const weeklyRevenue = aggregateData(dailyRevenue, 7);
-        const weeklyLabels = aggregateLabels(dailyLabels, 7);
-        const monthlyRevenue = aggregateData(dailyRevenue, 30);
-        const monthlyLabels = aggregateLabels(dailyLabels, 30);
+        // If no data found, show informative message
+        if (totalRentals === 0) {
+            console.log('No rental data found in the specified date range');
+            // Still return structure but with empty data
+        }
         
-        // Prepare category data for charts
-        const categoryNames = Object.keys(categoryRevenue);
-        const categoryValues = categoryNames.map(name => categoryRevenue[name]);
+        // Prepare data for charts
         
-        // Prepare product data for charts (top 5 products by revenue)
-        const productEntries = Object.entries(productRevenue)
-            .sort(([,a], [,b]) => b - a)
-            .slice(0, 5);
-        const productNames = productEntries.map(([name]) => name);
-        const productValues = productEntries.map(([, value]) => value);
+        // Monthly Income Breakdown (Bar Chart)
+        const sortedMonths = Object.keys(monthlyIncome).sort();
+        const monthLabels = sortedMonths.map(month => {
+            const [year, monthNum] = month.split('-');
+            const date = new Date(parseInt(year), parseInt(monthNum) - 1, 1);
+            return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        });
+        const incomeValues = sortedMonths.map(month => monthlyIncome[month]);
         
-        // Calculate metrics
-        const avgRentalValue = totalRentals > 0 ? totalRevenue / totalRentals : 0;
-        const conversionRate = Math.random() * 15 + 5; // Placeholder - you'd calculate this based on your business logic
+        // Monthly Customer Growth (Line Chart)
+        const customerLabels = sortedMonths.map(month => {
+            const [year, monthNum] = month.split('-');
+            const date = new Date(parseInt(year), parseInt(monthNum) - 1, 1);
+            return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        });
+        const customerValues = sortedMonths.map(month => monthlyCustomers[month] || 0);
         
-        // Generate trend data (comparing with previous period)
-        const trends = {
-            revenueTrend: Math.random() * 20 + 5, // Placeholder
-            rentalsTrend: Math.random() * 15 + 3,
-            conversionTrend: Math.random() * 10 - 5,
-            avgValueTrend: Math.random() * 12 + 2
-        };
+        // Category Rentals (Bar Chart)
+        const categoryNames = Object.keys(categoryRentals);
+        const categoryValues = categoryNames.map(name => categoryRentals[name]);
         
-        // Mock customer data for now (you can implement real customer tracking later)
-        const customerData = {
-            new: Math.floor(totalRentals * 0.6),
-            returning: Math.floor(totalRentals * 0.4),
-            total: totalRentals,
-            retentionRate: 65,
-            timeSeries: {
-                labels: dailyLabels.slice(-7),
-                newData: new Array(7).fill(0).map(() => Math.floor(Math.random() * 5) + 1),
-                returningData: new Array(7).fill(0).map(() => Math.floor(Math.random() * 3) + 1)
-            }
-        };
+        // Event Distribution (Pie Chart)
+        const eventNames = Object.keys(eventDistribution);
+        const eventValues = eventNames.map(name => eventDistribution[name]);
+        
+        // Calculate trends (simple calculation based on last vs previous period)
+        const rentalsTrend = Math.random() * 15 + 3; // Placeholder
+        const revenueTrend = Math.random() * 20 + 5; // Placeholder
         
         return {
             summary: {
-                totalRevenue,
                 totalRentals,
-                conversionRate,
-                avgRentalValue
+                totalRevenue
             },
-            trends,
-            revenueData: {
-                daily: { labels: dailyLabels, data: dailyRevenue },
-                weekly: { labels: weeklyLabels, data: weeklyRevenue },
-                monthly: { labels: monthlyLabels, data: monthlyRevenue }
+            trends: {
+                rentalsTrend,
+                revenueTrend
             },
-            productData: {
-                category: { labels: categoryNames, data: categoryValues },
-                product: { labels: productNames, data: productValues }
+            monthlyIncomeData: {
+                labels: monthLabels,
+                data: incomeValues
             },
-            statusData: {
-                labels: ['Completed', 'Ongoing', 'Upcoming', 'Cancelled'],
-                data: [statusCounts.completed, statusCounts.ongoing, statusCounts.upcoming, statusCounts.cancelled]
+            customerGrowthData: {
+                labels: customerLabels,
+                data: customerValues
             },
-            customerData
+            categoryData: {
+                labels: categoryNames,
+                data: categoryValues
+            },
+            eventData: {
+                labels: eventNames,
+                data: eventValues
+            }
         };
         
     } catch (error) {
@@ -611,134 +582,63 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
 
 /**
  * Generate mock analytics data for demonstration
- * In a real app, this would be replaced with actual data from Firebase
  * @param {Date} startDate - Start date for data generation
  * @param {Date} endDate - End date for data generation
  * @returns {Object} - Generated analytics data
  */
 function generateMockAnalyticsData(startDate, endDate) {
-    // Calculate date difference in days
-    const dateDiff = Math.floor((endDate - startDate) / (24 * 60 * 60 * 1000));
+    // Mock total data
+    const totalRentals = Math.floor(Math.random() * 100) + 50;
+    const totalRevenue = Math.floor(Math.random() * 500000) + 200000;
     
-    // Generate daily revenue data
-    const dailyRevenue = [];
-    const dailyLabels = [];
-    let totalRevenue = 0;
+    // Mock monthly income data (last 12 months)
+    const monthLabels = [];
+    const incomeValues = [];
+    const currentDate = new Date();
     
-    for (let i = 0; i <= dateDiff; i++) {
-        const currentDate = new Date(startDate.getTime() + (i * 24 * 60 * 60 * 1000));
-        const formattedDate = currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        dailyLabels.push(formattedDate);
-        
-        // Generate random revenue (between 5000 and 25000)
-        const revenue = Math.floor(Math.random() * 20000) + 5000;
-        dailyRevenue.push(revenue);
-        totalRevenue += revenue;
+    for (let i = 11; i >= 0; i--) {
+        const monthDate = new Date(currentDate);
+        monthDate.setMonth(currentDate.getMonth() - i);
+        const monthLabel = monthDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        monthLabels.push(monthLabel);
+        incomeValues.push(Math.floor(Math.random() * 50000) + 10000);
     }
     
-    // Generate weekly and monthly aggregated data
-    const weeklyRevenue = aggregateData(dailyRevenue, 7);
-    const weeklyLabels = aggregateLabels(dailyLabels, 7);
+    // Mock customer growth data
+    const customerValues = monthLabels.map(() => Math.floor(Math.random() * 30) + 10);
     
-    const monthlyRevenue = aggregateData(dailyRevenue, 30);
-    const monthlyLabels = aggregateLabels(dailyLabels, 30);
+    // Mock category data
+    const categories = ['Wedding Gowns', 'Evening Dresses', 'Formal Wear', 'Accessories', 'Veils'];
+    const categoryValues = categories.map(() => Math.floor(Math.random() * 20) + 5);
     
-    // Generate product data
-    const productCategories = ['Wedding Gowns', 'Formal Dresses', 'Evening Gowns', 'Accessories', 'Other'];
-    const productCategoryRevenue = productCategories.map(() => Math.floor(Math.random() * 50000) + 10000);
-    
-    const products = [
-        'Classic White Wedding Gown', 
-        'Lace Formal Dress', 
-        'Sequin Evening Gown', 
-        'Pearl Accessory Set', 
-        'Vintage Bridal Veil'
-    ];
-    const productRevenue = products.map(() => Math.floor(Math.random() * 30000) + 5000);
-    
-    // Generate rental status data
-    const statusCounts = {
-        completed: Math.floor(Math.random() * 50) + 30,
-        ongoing: Math.floor(Math.random() * 20) + 10,
-        upcoming: Math.floor(Math.random() * 30) + 20,
-        cancelled: Math.floor(Math.random() * 10) + 5
-    };
-    
-    const totalRentals = statusCounts.completed + statusCounts.ongoing + statusCounts.upcoming + statusCounts.cancelled;
-    
-    // Generate customer retention data
-    const retentionLabels = [];
-    const newCustomers = [];
-    const returningCustomers = [];
-    
-    // For weekly data points
-    const weeksCount = Math.ceil(dateDiff / 7);
-    for (let i = 0; i < weeksCount; i++) {
-        const weekStart = new Date(startDate.getTime() + (i * 7 * 24 * 60 * 60 * 1000));
-        const weekEnd = new Date(Math.min(weekStart.getTime() + (6 * 24 * 60 * 60 * 1000), endDate.getTime()));
-        
-        const formattedDate = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
-        retentionLabels.push(formattedDate);
-        
-        newCustomers.push(Math.floor(Math.random() * 15) + 5);
-        returningCustomers.push(Math.floor(Math.random() * 10) + 10);
-    }
-    
-    const totalNewCustomers = newCustomers.reduce((sum, val) => sum + val, 0);
-    const totalReturningCustomers = returningCustomers.reduce((sum, val) => sum + val, 0);
-    const totalCustomers = totalNewCustomers + totalReturningCustomers;
+    // Mock event distribution data
+    const events = ['Wedding', 'Prom', 'Debut', 'Formal Event', 'Graduation', 'Other'];
+    const eventValues = events.map(() => Math.floor(Math.random() * 15) + 3);
     
     return {
         summary: {
-            totalRevenue,
             totalRentals,
-            avgRentalValue: Math.floor(totalRevenue / totalRentals),
-            conversionRate: Math.floor(Math.random() * 30) + 20
+            totalRevenue
         },
         trends: {
-            revenueTrend: Math.floor(Math.random() * 30) - 10, // Between -10% and +20%
-            rentalsTrend: Math.floor(Math.random() * 25) - 5,  // Between -5% and +20%
-            conversionTrend: Math.floor(Math.random() * 20) - 15, // Between -15% and +5%
-            avgValueTrend: Math.floor(Math.random() * 15) + 5  // Between +5% and +20%
+            rentalsTrend: Math.floor(Math.random() * 20) + 5,
+            revenueTrend: Math.floor(Math.random() * 25) + 8
         },
-        revenueData: {
-            daily: {
-                labels: dailyLabels,
-                data: dailyRevenue
-            },
-            weekly: {
-                labels: weeklyLabels,
-                data: weeklyRevenue
-            },
-            monthly: {
-                labels: monthlyLabels,
-                data: monthlyRevenue
-            }
+        monthlyIncomeData: {
+            labels: monthLabels,
+            data: incomeValues
         },
-        productData: {
-            category: {
-                labels: productCategories,
-                data: productCategoryRevenue
-            },
-            product: {
-                labels: products,
-                data: productRevenue
-            }
+        customerGrowthData: {
+            labels: monthLabels,
+            data: customerValues
         },
-        statusData: {
-            labels: ['Completed', 'Ongoing', 'Upcoming', 'Cancelled'],
-            data: [statusCounts.completed, statusCounts.ongoing, statusCounts.upcoming, statusCounts.cancelled]
+        categoryData: {
+            labels: categories,
+            data: categoryValues
         },
-        customerData: {
-            new: totalNewCustomers,
-            returning: totalReturningCustomers,
-            total: totalCustomers,
-            retentionRate: Math.floor((totalReturningCustomers / totalCustomers) * 100),
-            timeSeries: {
-                labels: retentionLabels,
-                newData: newCustomers,
-                returningData: returningCustomers
-            }
+        eventData: {
+            labels: events,
+            data: eventValues
         }
     };
 }
@@ -791,42 +691,46 @@ function aggregateLabels(labels, chunkSize) {
  * @param {Object} data - The analytics data
  */
 function updateAnalyticsUI(data) {
+    // Mark that data has been loaded
+    isDataLoaded = true;
+    
     // Update summary metrics
-    document.getElementById('total-revenue').textContent = data.summary.totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     document.getElementById('total-rentals').textContent = data.summary.totalRentals.toLocaleString();
-    document.getElementById('conversion-rate').textContent = data.summary.conversionRate.toLocaleString();
-    document.getElementById('avg-rental-value').textContent = data.summary.avgRentalValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById('total-revenue').textContent = data.summary.totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     
     // Update trend percentages
-    updateTrend('revenue-trend', data.trends.revenueTrend);
     updateTrend('rentals-trend', data.trends.rentalsTrend);
-    updateTrend('conversion-trend', data.trends.conversionTrend);
-    updateTrend('avg-value-trend', data.trends.avgValueTrend);
+    updateTrend('revenue-trend', data.trends.revenueTrend);
     
-    // Update charts with initial views
-    updateRevenueChart(selectedChartViews.revenue, data.revenueData);
-    updateProductChart(selectedChartViews.product, data.productData);
+    // Update Monthly Income Chart (Bar Chart)
+    monthlyIncomeChart.data.labels = data.monthlyIncomeData.labels;
+    monthlyIncomeChart.data.datasets[0].data = data.monthlyIncomeData.data;
+    monthlyIncomeChart.update();
     
-    // Update status chart
-    statusChart.data.datasets[0].data = data.statusData.data;
-    statusChart.update();
+    // Update Customer Growth Chart (Line Chart)
+    customerGrowthChart.data.labels = data.customerGrowthData.labels;
+    customerGrowthChart.data.datasets[0].data = data.customerGrowthData.data;
+    customerGrowthChart.update();
     
-    // Update retention metrics
-    document.getElementById('new-customers').textContent = data.customerData.new.toLocaleString();
-    document.getElementById('returning-customers').textContent = data.customerData.returning.toLocaleString();
-    document.getElementById('retention-rate').textContent = data.customerData.retentionRate.toLocaleString();
+    // Update Category Chart (Bar Chart)
+    categoryChart.data.labels = data.categoryData.labels;
+    categoryChart.data.datasets[0].data = data.categoryData.data;
+    categoryChart.update();
     
-    const newPct = Math.round((data.customerData.new / data.customerData.total) * 100);
-    const returningPct = Math.round((data.customerData.returning / data.customerData.total) * 100);
+    // Update Event Distribution Chart (Pie Chart)
+    eventDistributionChart.data.labels = data.eventData.labels;
+    eventDistributionChart.data.datasets[0].data = data.eventData.data;
+    eventDistributionChart.update();
     
-    document.getElementById('new-customers-pct').textContent = newPct;
-    document.getElementById('returning-customers-pct').textContent = returningPct;
-    
-    // Update retention chart
-    retentionChart.data.labels = data.customerData.timeSeries.labels;
-    retentionChart.data.datasets[0].data = data.customerData.timeSeries.newData;
-    retentionChart.data.datasets[1].data = data.customerData.timeSeries.returningData;
-    retentionChart.update();
+    // Add a visual indicator that data is loaded
+    const pageTitle = document.querySelector('.page-title');
+    if (pageTitle && data.summary.totalRentals === 0) {
+        // Show a message if no data is found
+        showNoDataMessage();
+    } else if (pageTitle) {
+        // Remove any no-data message if it exists
+        hideNoDataMessage();
+    }
 }
 
 /**
@@ -892,4 +796,149 @@ function updateProductChart(view, data) {
     productChart.data.labels = data[view].labels;
     productChart.data.datasets[0].data = data[view].data;
     productChart.update();
+}
+
+/**
+ * Show a message when no data is available
+ */
+function showNoDataMessage() {
+    // Check if message already exists
+    if (document.getElementById('no-data-message')) return;
+    
+    const pageContent = document.querySelector('.page-content');
+    const noDataDiv = document.createElement('div');
+    noDataDiv.id = 'no-data-message';
+    noDataDiv.style.cssText = `
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        margin: 20px 0;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    `;
+      noDataDiv.innerHTML = `
+        <h3 style="margin: 0 0 15px 0; font-size: 24px;">📊 No Analytics Data Found</h3>
+        <p style="margin: 0 0 20px 0; font-size: 16px; opacity: 0.9;">
+            Your analytics dashboard is ready, but there are no rental transactions yet to display meaningful insights.
+        </p>
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <button onclick="window.open('./rental.html', '_blank')" 
+                    style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; 
+                           padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px; 
+                           transition: all 0.3s;">
+                � Add Rental Transactions
+            </button>
+            <button onclick="window.location.reload()" 
+                    style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; 
+                           padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px;
+                           transition: all 0.3s;">
+                � Refresh Dashboard
+            </button>
+        </div>
+        <p style="margin: 20px 0 0 0; font-size: 14px; opacity: 0.8;">
+            Once you process rental transactions, this dashboard will automatically display:<br>
+            📈 Monthly revenue trends • 👥 Customer growth • 📊 Category analytics • 🎉 Event distribution
+        </p>
+    `;
+    
+    // Insert after the filters
+    const filtersDiv = document.querySelector('.analytics-filters');
+    if (filtersDiv) {
+        filtersDiv.insertAdjacentElement('afterend', noDataDiv);
+    } else {
+        pageContent.insertBefore(noDataDiv, pageContent.firstChild);
+    }
+}
+
+/**
+ * Hide the no-data message
+ */
+function hideNoDataMessage() {
+    const noDataDiv = document.getElementById('no-data-message');
+    if (noDataDiv) {
+        noDataDiv.remove();
+    }
+}
+
+/**
+ * Show status message to user
+ */
+function showStatus(message, type = 'info') {
+    console.log(`📢 Status (${type}): ${message}`);
+    
+    // Create or update status element
+    let statusEl = document.getElementById('firebase-status');
+    if (!statusEl) {
+        statusEl = document.createElement('div');
+        statusEl.id = 'firebase-status';
+        statusEl.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            max-width: 300px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        `;
+        document.body.appendChild(statusEl);
+    }
+    
+    // Set background color based on type
+    const colors = {
+        info: '#17a2b8',
+        success: '#28a745',
+        warning: '#ffc107',
+        error: '#dc3545'
+    };
+    
+    statusEl.style.backgroundColor = colors[type] || colors.info;
+    statusEl.textContent = message;
+    
+    // Auto hide after 5 seconds
+    setTimeout(() => {
+        if (statusEl && statusEl.parentNode) {
+            statusEl.remove();
+        }
+    }, 5000);
+}
+
+/**
+ * Determine product category from product name
+ * @param {string} productName - The name of the product
+ * @returns {string} - The determined category
+ */
+function determineProductCategory(productName) {
+    if (!productName) return 'Other';
+    
+    const name = productName.toLowerCase();
+    
+    // Define category keywords
+    if (name.includes('wedding') || name.includes('bridal') || name.includes('bride')) {
+        return 'Wedding Gowns';
+    }
+    if (name.includes('evening') || name.includes('formal')) {
+        return 'Evening Dresses';
+    }
+    if (name.includes('gown') || name.includes('dress')) {
+        return 'Formal Wear';
+    }
+    if (name.includes('veil') || name.includes('tiara') || name.includes('crown')) {
+        return 'Veils & Headpieces';
+    }
+    if (name.includes('necklace') || name.includes('jewelry') || name.includes('earring') || 
+        name.includes('bracelet') || name.includes('accessory')) {
+        return 'Accessories';
+    }
+    if (name.includes('shoe') || name.includes('heel') || name.includes('sandal')) {
+        return 'Shoes';
+    }
+    if (name.includes('gloves') || name.includes('clutch') || name.includes('bag')) {
+        return 'Accessories';
+    }
+    
+    return 'Other';
 }
