@@ -5,8 +5,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />        <title>Chandria's La Robe - Dashboard</title>        <link rel="stylesheet" href="./assets/css/admin-layout.css" />
         <link rel="stylesheet" href="./assets/css/admin-layout-mob.css" />
-        <link rel="stylesheet" href="./assets/css/dashboard.css" />        <link rel="stylesheet" href="./assets/css/status-colors.css" />
-        <link rel="stylesheet" href="./assets/css/appointment-modal.css" />
+        <link rel="stylesheet" href="./assets/css/dashboard.css" />        <link rel="stylesheet" href="./assets/css/status-colors.css" />        <link rel="stylesheet" href="./assets/css/appointment-modal.css" />
+        <link rel="stylesheet" href="./assets/css/appointment-modal-actions.css" />
         <link rel="stylesheet" href="./assets/css/confirmation-modal.css" />
         
         <!-- Notyf Toast Notifications -->
@@ -309,20 +309,21 @@
                         <div id="appointment-confirmed-tag" class="appointment-status-tag" style="display: none;">
                             <i class="fas fa-check-circle"></i>
                             APPOINTMENT CONFIRMED
-                        </div>
-                        <div class="appointment-modal-actions">
-                            <button class="btn cancel-booking">
-                                <i class="fas fa-times"></i>
-                                CANCEL BOOKING
-                            </button>
-                            <button class="btn confirm-booking">
-                                <i class="fas fa-check"></i>
-                                CONFIRM BOOKING
-                            </button>
-                            <button class="btn undo-confirmation" style="display: none;">
-                                <i class="fas fa-undo"></i>
-                                UNDO CONFIRMATION
-                            </button>
+                        </div>                        <div class="appointment-modal-actions">
+                            <div class="left-buttons">
+                                <button class="btn cancel-booking">
+                                    <i class="fas fa-times"></i>
+                                    CANCEL BOOKING
+                                </button>
+                                <button class="btn confirm-booking">
+                                    <i class="fas fa-check"></i>
+                                    CONFIRM BOOKING
+                                </button>
+                                <button class="btn undo-confirmation" style="display: none;">
+                                    <i class="fas fa-undo"></i>
+                                    UNDO CONFIRMATION
+                                </button>
+                            </div>
                             <button class="btn proceed-transaction">
                                 <i class="fas fa-arrow-right"></i>
                                 PROCEED TO TRANSACTION

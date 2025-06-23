@@ -1,0 +1,43 @@
+.appointment-modal-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.appointment-modal-actions .left-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    flex-wrap: nowrap;
+}
+
+.appointment-modal-actions .btn {
+    padding: 10px 16px;
+    white-space: nowrap;
+    min-width: fit-content;
+}
+
+.cancel-booking {
+    background-color: #dc3545;
+    color: white;
+}
+
+.confirm-booking {
+    background-color: #28a745;
+    color: white;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 576px) {
+    .appointment-modal-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .appointment-modal-actions .left-buttons {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
