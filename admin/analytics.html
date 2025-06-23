@@ -135,7 +135,7 @@
                 <button id="refresh-analytics" class="refresh-btn">
                     <i class='bx bx-refresh'></i> Refresh Data
                 </button>
-            </div>              <!-- Analytics Overview Cards -->
+            </div>            <!-- Analytics Overview Cards -->
             <div class="analytics-overview">
                 <div class="analytics-card total-rentals">
                     <div class="card-icon">
@@ -158,8 +158,18 @@
                         <p class="card-trend positive"><i class='bx bx-up-arrow-alt'></i> <span id="revenue-trend">0%</span> vs. previous period</p>
                     </div>
                 </div>
-            </div>
-              <!-- Charts Section -->
+                
+                <div class="analytics-card most-rented-product">
+                    <div class="card-icon">
+                        <i class='bx bx-trophy'></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Most Rented Product</h3>
+                        <p class="card-value" id="most-rented-product-name">-</p>
+                        <p class="card-trend"><i class='bx bx-show'></i> <span id="most-rented-count">0</span> rentals</p>
+                    </div>
+                </div>
+            </div>            <!-- Charts Section -->
             <div class="analytics-charts">
                 <div class="chart-container monthly-income-container">
                     <div class="chart-header">
@@ -178,10 +188,9 @@
                         <canvas id="customer-growth-chart"></canvas>
                     </div>
                 </div>
-            </div>
-              <!-- Additional Metrics Section -->
+            </div><!-- Additional Metrics Section -->
             <div class="analytics-metrics">
-                <div class="metrics-container">
+                <div class="metrics-container category-chart-container">
                     <div class="metrics-header">
                         <h3>Rented Products by Category</h3>
                     </div>
@@ -190,7 +199,7 @@
                     </div>
                 </div>
                 
-                <div class="metrics-container">
+                <div class="metrics-container event-chart-container">
                     <div class="metrics-header">
                         <h3>Rental Distribution by Event</h3>
                     </div>
@@ -199,10 +208,9 @@
                     </div>
                 </div>
                 
-                <div class="metrics-container">
+                <div class="metrics-container additional-chart-container">
                     <div class="metrics-header">
-                        <h3>Additional Rentals: Yes vs No</h3>
-                        <p class="metrics-subtitle">Percentage of rentals that included accessories or additional items</p>
+                        <h3>Additional Items: With vs Without</h3>
                     </div>
                     <div class="metrics-body">
                         <canvas id="additional-rentals-chart"></canvas>

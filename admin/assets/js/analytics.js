@@ -163,16 +163,13 @@ function initCharts() {
                 }
             }
         }
-    });
-
-    // Category Chart (Bar Chart)
+    });    // Category Chart (Half Pie Chart)
     const categoryCtx = document.getElementById('category-chart').getContext('2d');
     categoryChart = new Chart(categoryCtx, {
-        type: 'bar',
+        type: 'doughnut',
         data: {
             labels: [],
             datasets: [{
-                label: 'Number of Rentals',
                 data: [],
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.7)',
@@ -190,16 +187,28 @@ function initCharts() {
                     'rgba(153, 102, 255, 1)',
                     'rgba(255, 159, 64, 1)'
                 ],
-                borderWidth: 1
+                borderWidth: 2,
+                borderRadius: 5,
+                hoverBorderWidth: 3
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            indexAxis: 'y',
+            rotation: -90, // Start from top
+            circumference: 180, // Half circle (180 degrees)
+            cutout: '60%', // Makes it a doughnut
             plugins: {
                 legend: {
-                    display: false
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: {
+                            size: 11
+                        }
+                    }
                 },
                 tooltip: {
                     backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -207,14 +216,15 @@ function initCharts() {
                     bodyColor: '#666',
                     borderColor: 'rgba(0, 0, 0, 0.1)',
                     borderWidth: 1,
-                    padding: 12
-                }
-            },
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    ticks: {
-                        precision: 0
+                    padding: 12,
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = Math.round((value / total) * 100);
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
                     }
                 }
             }
@@ -245,14 +255,16 @@ function initCharts() {
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
+            maintainAspectRatio: false,            plugins: {
                 legend: {
-                    position: 'right',
+                    position: 'bottom',
                     labels: {
-                        padding: 20,
+                        padding: 15,
                         usePointStyle: true,
-                        pointStyle: 'circle'
+                        pointStyle: 'circle',
+                        font: {
+                            size: 11
+                        }
                     }
                 },
                 tooltip: {
@@ -296,15 +308,14 @@ function initCharts() {
             responsive: true,
             maintainAspectRatio: false,
             cutout: '60%', // Makes it a donut chart
-            plugins: {
-                legend: {
+            plugins: {                legend: {
                     position: 'bottom',
                     labels: {
-                        padding: 20,
+                        padding: 15,
                         usePointStyle: true,
                         pointStyle: 'circle',
                         font: {
-                            size: 14
+                            size: 11
                         }
                     }
                 },
@@ -467,15 +478,16 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
     try {        console.log('🔥 Starting Firebase data fetch...');
         console.log('📊 Firebase app initialized:', !!firebase.apps.length);
         console.log('🗄️ Firestore database:', !!db);
-        
-        // First, fetch all products to create a category lookup map
+          // First, fetch all products to create a category lookup map
         console.log('📦 Fetching products for category lookup...');
         const productsSnapshot = await db.collection('products').get();
         const productCategoryMap = {};
+        const productNameMap = {}; // Map product IDs to names
         
         productsSnapshot.forEach(doc => {
             const product = doc.data();
             productCategoryMap[doc.id] = product.category || 'Other';
+            productNameMap[doc.id] = product.name || 'Unknown Product';
         });
         
         console.log(`📋 Loaded ${Object.keys(productCategoryMap).length} products for category mapping`);
@@ -508,14 +520,14 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
                     }
                 });
             }
-        }
-          // Initialize data containers
+        }        // Initialize data containers
         let totalRentals = 0;
         let totalRevenue = 0;
         const monthlyIncome = {};
         const monthlyCustomers = {};
         const categoryRentals = {};
         const eventDistribution = {};
+        const productRentals = {}; // Track individual product rentals
         const additionalRentals = {
             withAdditional: 0,
             withoutAdditional: 0
@@ -554,8 +566,7 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
                     }
                     monthlyCustomers[monthKey].add(transaction.fullName.toLowerCase().trim());
                 }
-            }
-              // Rented products by category (lookup from products collection)
+            }            // Rented products by category (lookup from products collection)
             if (transaction.products && Array.isArray(transaction.products)) {
                 transaction.products.forEach(product => {
                     // Use the product ID to lookup the actual category
@@ -566,13 +577,23 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
                         categoryRentals[category] = 0;
                     }
                     
+                    // Track individual product rentals for "Most Rented Product"
+                    if (!productRentals[productId]) {
+                        productRentals[productId] = {
+                            count: 0,
+                            name: product.name || productNameMap[productId] || 'Unknown Product'
+                        };
+                    }
+                    
                     // Count all sizes for this product
                     if (product.sizes && typeof product.sizes === 'object') {
                         Object.values(product.sizes).forEach(quantity => {
                             categoryRentals[category] += quantity;
+                            productRentals[productId].count += quantity;
                         });
                     } else {
                         categoryRentals[category]++;
+                        productRentals[productId].count++;
                     }
                 });
             }
@@ -634,15 +655,40 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
         // Category Rentals (Bar Chart)
         const categoryNames = Object.keys(categoryRentals);
         const categoryValues = categoryNames.map(name => categoryRentals[name]);
-        
-        // Event Distribution (Pie Chart)
+          // Event Distribution (Pie Chart)
         const eventNames = Object.keys(eventDistribution);
         const eventValues = eventNames.map(name => eventDistribution[name]);
+        
+        // Find most rented product
+        let mostRentedProduct = {
+            name: 'No data available',
+            count: 0
+        };
+        
+        if (Object.keys(productRentals).length > 0) {
+            let maxCount = 0;
+            let topProductId = null;
+            
+            for (const productId in productRentals) {
+                if (productRentals[productId].count > maxCount) {
+                    maxCount = productRentals[productId].count;
+                    topProductId = productId;
+                }
+            }
+            
+            if (topProductId) {
+                mostRentedProduct = {
+                    name: productRentals[topProductId].name,
+                    count: productRentals[topProductId].count
+                };
+            }
+        }
+        
+        console.log('🏆 Most rented product:', mostRentedProduct);
           // Calculate trends (simple calculation based on last vs previous period)
         const rentalsTrend = parseFloat((Math.random() * 15 + 3).toFixed(2)); // Placeholder
         const revenueTrend = parseFloat((Math.random() * 20 + 5).toFixed(2)); // Placeholder
-        
-        return {
+          return {
             summary: {
                 totalRentals,
                 totalRevenue
@@ -651,6 +697,7 @@ async function fetchFirebaseAnalyticsData(startDate, endDate) {
                 rentalsTrend,
                 revenueTrend
             },
+            mostRentedProduct: mostRentedProduct,
             monthlyIncomeData: {
                 labels: monthLabels,
                 data: incomeValues
@@ -705,10 +752,16 @@ function generateMockAnalyticsData(startDate, endDate) {
     // Mock category data
     const categories = ['Wedding Gowns', 'Evening Dresses', 'Formal Wear', 'Accessories', 'Veils'];
     const categoryValues = categories.map(() => Math.floor(Math.random() * 20) + 5);
-    
-    // Mock event distribution data
+      // Mock event distribution data
     const events = ['Wedding', 'Prom', 'Debut', 'Formal Event', 'Graduation', 'Other'];
     const eventValues = events.map(() => Math.floor(Math.random() * 15) + 3);
+    
+    // Mock most rented product
+    const mockProducts = ['Elegant Wedding Gown', 'Classic Evening Dress', 'Royal Blue Gown', 'Vintage Lace Dress', 'Modern Mermaid Gown'];
+    const mostRentedProduct = {
+        name: mockProducts[Math.floor(Math.random() * mockProducts.length)],
+        count: Math.floor(Math.random() * 25) + 5
+    };
     
     return {
         summary: {
@@ -718,6 +771,7 @@ function generateMockAnalyticsData(startDate, endDate) {
             rentalsTrend: parseFloat((Math.random() * 20 + 5).toFixed(2)),
             revenueTrend: parseFloat((Math.random() * 25 + 8).toFixed(2))
         },
+        mostRentedProduct: mostRentedProduct,
         monthlyIncomeData: {
             labels: monthLabels,
             data: incomeValues
@@ -790,10 +844,13 @@ function aggregateLabels(labels, chunkSize) {
 function updateAnalyticsUI(data) {
     // Mark that data has been loaded
     isDataLoaded = true;
-    
-    // Update summary metrics
+      // Update summary metrics
     document.getElementById('total-rentals').textContent = data.summary.totalRentals.toLocaleString();
     document.getElementById('total-revenue').textContent = data.summary.totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    
+    // Update most rented product
+    document.getElementById('most-rented-product-name').textContent = data.mostRentedProduct.name;
+    document.getElementById('most-rented-count').textContent = data.mostRentedProduct.count.toLocaleString();
     
     // Update trend percentages
     updateTrend('rentals-trend', data.trends.rentalsTrend);

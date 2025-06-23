@@ -171,6 +171,11 @@
     color: var(--success-color);
 }
 
+.most-rented-product .card-icon {
+    background: rgba(255, 193, 7, 0.1);
+    color: var(--warning-color);
+}
+
 .conversion-rate .card-icon {
     background: rgba(255, 193, 7, 0.1);
     color: var(--warning-color);
@@ -197,6 +202,15 @@
     font-weight: 700;
     color: var(--text1-color);
     margin: 0 0 0.5rem;
+}
+
+/* Special styling for product names in the most rented product card */
+.most-rented-product .card-value {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .card-trend {
@@ -284,8 +298,14 @@
 /* === ANALYTICS METRICS === */
 .analytics-metrics {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
+}
+
+@media (max-width: 1200px) {
+    .analytics-metrics {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
@@ -301,6 +321,21 @@
     overflow: hidden;
 }
 
+/* Special styling for pie/donut charts to make them more compact */
+.category-chart-container,
+.additional-chart-container {
+    min-height: 350px;
+}
+
+.category-chart-container .metrics-body,
+.additional-chart-container .metrics-body {
+    padding: 1rem;
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .metrics-header {
     padding: 1.25rem 1.5rem;
     border-bottom: 1px solid var(--border-color);
@@ -311,6 +346,12 @@
     font-weight: 600;
     color: var(--text1-color);
     margin: 0;
+}
+
+.metrics-subtitle {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    margin: 0.5rem 0 0 0;
 }
 
 .metrics-body {
