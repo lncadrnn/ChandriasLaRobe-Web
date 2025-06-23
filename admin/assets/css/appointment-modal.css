@@ -1,0 +1,27 @@
+/* Add custom CSS for the appointment status tag */
+.appointment-status-tag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #e8f5e9;
+    color: #28a745;
+    border-radius: 4px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.appointment-status-tag i {
+    margin-right: 8px;
+}
+
+/* Style for the undo confirmation button */
+.undo-confirmation {
+    background-color: #6c757d;
+    color: white;
+}
+
+.undo-confirmation:hover {
+    background-color: #5a6268;
+}

@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="./assets/css/admin-layout-mob.css" />
         <link rel="stylesheet" href="./assets/css/dashboard.css" />
         <link rel="stylesheet" href="./assets/css/status-colors.css" />
+        <link rel="stylesheet" href="./assets/css/appointment-modal.css" />
         
         <!-- Notyf Toast Notifications -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
@@ -303,6 +304,11 @@
                             id="appointment-details"
                             class="appointment-modal-body"
                         ></div>
+                        <!-- Appointment status tag -->
+                        <div id="appointment-confirmed-tag" class="appointment-status-tag" style="display: none;">
+                            <i class="fas fa-check-circle"></i>
+                            APPOINTMENT CONFIRMED
+                        </div>
                         <div class="appointment-modal-actions">
                             <button class="btn cancel-booking">
                                 <i class="fas fa-times"></i>
@@ -311,6 +317,10 @@
                             <button class="btn confirm-booking">
                                 <i class="fas fa-check"></i>
                                 CONFIRM BOOKING
+                            </button>
+                            <button class="btn undo-confirmation" style="display: none;">
+                                <i class="fas fa-undo"></i>
+                                UNDO CONFIRMATION
                             </button>
                             <button class="btn proceed-transaction">
                                 <i class="fas fa-arrow-right"></i>
@@ -535,8 +545,8 @@
         
         <!-- Notyf Toast Notifications -->
         <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-        
-        <script src="./assets/js/dashboard-service.js"></script>
+          <script src="./assets/js/dashboard-service.js"></script>
+        <script src="./assets/js/appointment-status-handler.js"></script>
         <script src="./assets/js/dashboard-subscript.js"></script>
     </body>
 </html>

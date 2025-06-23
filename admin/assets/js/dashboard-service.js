@@ -988,11 +988,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 modal.classList.add('visible');
                 modal.classList.add('show');
                 
-                // For sample data, assume pending status (show all buttons)
-                const cancelBtn = modal.querySelector('.cancel-booking');
-                const confirmBtn = modal.querySelector('.confirm-booking');
-                if (cancelBtn) cancelBtn.style.display = 'flex';
-                if (confirmBtn) confirmBtn.style.display = 'flex';
+                // Update buttons based on appointment status
+                updateAppointmentModalButtons(modal, appointmentStatus);
                 
                 console.log('✅ Sample appointment modal should be visible');
                 console.log('🔍 Modal classes after show:', modal.className);
@@ -1021,136 +1018,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("❌ Error showing appointment details:", error);
             restoreBackgroundInteraction();
         }
-    }// Show sample appointment details for hardcoded appointments
-    function showSampleAppointmentDetails(button) {
-        try {
-            console.log('📋 Showing sample appointment details');
-            
-            const appointmentItem = button.closest('.appointment-item');
-            const appointmentText = appointmentItem.querySelector('.appointment-text').textContent;
-            
-            // Extract customer name, date, and time from the text
-            const nameMatch = appointmentText.match(/^([^h]+) has booked/);
-            const dateMatch = appointmentText.match(/on ([^a]+) at/);
-            const timeMatch = appointmentText.match(/at ([^.]+)\./);
-            
-            const customerName = nameMatch ? nameMatch[1].trim() : 'Unknown Customer';
-            const appointmentDate = dateMatch ? dateMatch[1].trim() : 'Unknown Date';
-            const appointmentTime = timeMatch ? timeMatch[1].trim() : 'Unknown Time';
-            
-            const modal = document.getElementById('appointment-modal');
-            const details = document.getElementById('appointment-details');
-
-            console.log('🔍 Modal element found:', !!modal);
-            console.log('🔍 Modal current classes:', modal.className);
-            console.log('🔍 Modal current display style:', modal.style.display);
-            
-            // Forcefully reset modal state
-            modal.className = 'modal'; // Reset all classes
-            modal.style.display = 'none';
-            modal.style.visibility = 'hidden';
-            modal.style.opacity = '0';
-            
-            // Prevent background interaction
-            preventBackgroundInteraction();
-
-            // Show sample data for hardcoded appointments
-            details.innerHTML = `
-                <div class="appointment-modal-grid">
-                    <div class="appointment-customer-info">
-                        <h4><i class="fas fa-user"></i> Customer Information</h4>
-                        <div class="appointment-info-item">
-                            <span class="appointment-info-label">Name:</span>
-                            <span class="appointment-info-value">${customerName}</span>
-                        </div>
-                        <div class="appointment-info-item">
-                            <span class="appointment-info-label">Email:</span>
-                            <span class="appointment-info-value">Not available in sample data</span>
-                        </div>
-                        <div class="appointment-info-item">
-                            <span class="appointment-info-label">Phone:</span>
-                            <span class="appointment-info-value">Not available in sample data</span>
-                        </div>
-                        <div class="appointment-info-item">
-                            <span class="appointment-info-label">Date:</span>
-                            <span class="appointment-info-value">${appointmentDate}</span>
-                        </div>
-                        <div class="appointment-info-item">
-                            <span class="appointment-info-label">Time:</span>
-                            <span class="appointment-info-value">${appointmentTime}</span>
-                        </div>
-                        <div class="appointment-info-item">
-                            <span class="appointment-info-label">Notes:</span>
-                            <span class="appointment-info-value">No special requests</span>
-                        </div>
-                    </div>
-                    <div class="appointment-products-section">
-                        <div class="appointment-products-header">
-                            <h4><i class="fas fa-box"></i> Booked Items</h4>
-                        </div>
-                        <table class="appointment-products-table">
-                            <thead>
-                                <tr>
-                                    <th>Image</th>
-                                    <th>Product Details</th>
-                                    <th>Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="3" style="text-align:center;color:#888;">
-                                        <i class="fas fa-info-circle"></i> 
-                                        This is sample appointment data. Actual booked items will be displayed for real appointments from the database.
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div class="appointment-total-section">
-                            <div class="appointment-total-row">
-                                <span>Total Amount:</span>
-                                <span>Sample Data</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Force show modal using multiple approaches
-            setTimeout(() => {
-                // Reset styles
-                modal.style.display = 'flex';
-                modal.style.visibility = 'visible';
-                modal.style.opacity = '1';
-                
-                // Add classes
-                modal.classList.add('visible');
-                modal.classList.add('show');
-                
-                // For sample data, assume pending status (show all buttons)
-                const cancelBtn = modal.querySelector('.cancel-booking');
-                const confirmBtn = modal.querySelector('.confirm-booking');
-                if (cancelBtn) cancelBtn.style.display = 'flex';
-                if (confirmBtn) confirmBtn.style.display = 'flex';
-                
-                console.log('✅ Sample appointment modal should be visible');
-                console.log('🔍 Modal classes after show:', modal.className);
-                console.log('🔍 Modal display after show:', modal.style.display);
-                console.log('🔍 Modal computed style:', getComputedStyle(modal).display);
-            }, 10);
-
-            // For sample data, we can still show a proceed button but with a message
-            const proceedBtn = modal.querySelector('.proceed-transaction');
-            if (proceedBtn) {
-                // Remove any previous event listeners
-                proceedBtn.onclick = null;
-                proceedBtn.onclick = () => {
-                    alert('This is sample appointment data. Cannot proceed to transaction.');
-                };
-            }
-        } catch (error) {
-            console.error('❌ Error showing sample appointment details:', error);
-        }
-    }// Helper functions for modal loading state
+    }    // Helper functions for modal loading state
     function showModalLoadingState() {
         // Set all content to loading state
         document.getElementById('customer-name').textContent = 'Loading...';
@@ -1456,7 +1324,24 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // Temporary mock implementation (remove in production)
         setTimeout(() => {
-            // Close all modals
+            // Update status in the modal data
+            $('#appointment-modal').data('appointmentStatus', 'confirmed');
+            
+            // Close confirmation modal
+            $('#confirm-booking-modal').removeClass('visible');
+            
+            // Show the appointment modal with updated buttons
+            $('#appointment-modal').addClass('visible');
+            
+            // Update the buttons in the appointment modal
+            updateAppointmentModalButtons(document.getElementById('appointment-modal'), 'confirmed');
+            
+            // Update the status icon in the list
+            updateAppointmentStatusIcon(appointmentId, 'confirmed');
+            
+            // Show success notification
+            notyf.success("Booking confirmed successfully");
+        }, 1000);
             $('.modal').removeClass('visible');
             allowBackgroundInteraction();
             
@@ -1490,4 +1375,134 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
-});
+    
+    function showSampleAppointmentDetails(button) {
+        try {
+            console.log('📋 Showing sample appointment details');
+            
+            const appointmentItem = button.closest('.appointment-item');
+            const appointmentText = appointmentItem.querySelector('.appointment-text').textContent;
+            
+            // Extract customer name, date, and time from the text
+            const nameMatch = appointmentText.match(/^([^h]+) has booked/);
+            const dateMatch = appointmentText.match(/on ([^a]+) at/);
+            const timeMatch = appointmentText.match(/at ([^.]+)\./);
+            
+            const customerName = nameMatch ? nameMatch[1].trim() : 'Unknown Customer';
+            const appointmentDate = dateMatch ? dateMatch[1].trim() : 'Unknown Date';
+            const appointmentTime = timeMatch ? timeMatch[1].trim() : 'Unknown Time';
+            
+            const modal = document.getElementById('appointment-modal');
+            const details = document.getElementById('appointment-details');
+
+            // Mark this button as clicked for later reference
+            button.dataset.clicked = 'true';
+
+            console.log('🔍 Modal element found:', !!modal);
+            console.log('🔍 Modal current classes:', modal.className);
+            console.log('🔍 Modal current display style:', modal.style.display);
+            
+            // Forcefully reset modal state
+            modal.className = 'modal'; // Reset all classes
+            modal.style.display = 'none';
+            modal.style.visibility = 'hidden';
+            modal.style.opacity = '0';
+            
+            // Determine the appointment status based on the icon
+            let appointmentStatus = 'pending';
+            const statusIcon = appointmentItem.querySelector('.appointment-text i');
+            if (statusIcon) {
+                if (statusIcon.classList.contains('fa-check-circle')) {
+                    appointmentStatus = 'confirmed';
+                } else if (statusIcon.classList.contains('fa-times-circle')) {
+                    appointmentStatus = 'cancelled';
+                }
+            }
+            
+            // Store the status in the modal
+            $(modal).data('appointmentStatus', appointmentStatus);
+
+            // Populate customer information
+            document.getElementById('customer-name').textContent = customerName;
+            document.getElementById('customer-contact').textContent = 'N/A';
+            document.getElementById('customer-address').textContent = 'N/A';
+
+            // Populate transaction details
+            document.getElementById('transaction-code').textContent = 'N/A';
+            
+            // Handle rental type and dates - for sample, just show as "Sample Data"
+            const rentalType = 'fixed date';
+            const rentalTypeElement = document.getElementById('rental-type');
+            rentalTypeElement.textContent = 'Sample Data';
+            rentalTypeElement.className = `status-badge ${getRentalTypeClass(rentalType)}`;
+            
+            // Set sample date
+            const sampleDate = 'March 10, 2023';
+            document.getElementById('event-date').textContent = sampleDate;
+            document.getElementById('start-date').textContent = sampleDate;
+            document.getElementById('end-date').textContent = sampleDate;
+
+            // Sample payment information
+            document.getElementById('rental-fee').textContent = `₱${(Math.random() * 1000).toFixed(2)}`;
+            document.getElementById('payment-total').textContent = `₱${(Math.random() * 1000).toFixed(2)}`;
+            document.getElementById('payment-remaining').textContent = `₱${(Math.random() * 1000).toFixed(2)}`;
+
+            // Sample rented items - static content for demo
+            const sampleItems = `
+                <div class="rental-item">
+                    <img src="./assets/images/sample-product.png" alt="Sample Product" class="item-image">
+                    <div class="item-details">
+                        <div class="item-name">Sample Product</div>
+                        <div class="item-info">
+                            <span><strong>Code:</strong> SP12345</span>
+                            <span><strong>Sizes:</strong> M, L</span>
+                            <span><strong>Category:</strong> Apparel</span>
+                            <span><strong>Quantity:</strong> 1</span>
+                        </div>
+                    </div>
+                    <div class="item-price">₱500.00</div>
+                </div>
+            `;
+            document.getElementById('rented-items').innerHTML = sampleItems;
+            
+            // Force show modal using multiple approaches
+            setTimeout(() => {
+                // Reset styles
+                modal.style.display = 'flex';
+                modal.style.visibility = 'visible';
+                modal.style.opacity = '1';
+                
+                // Add classes
+                modal.classList.add('visible');
+                modal.classList.add('show');
+                
+                // Update buttons based on appointment status
+                updateAppointmentModalButtons(modal, appointmentStatus);
+                
+                console.log('✅ Sample appointment modal should be visible');
+                console.log('🔍 Modal classes after show:', modal.className);
+                console.log('🔍 Modal display after show:', modal.style.display);
+                console.log('🔍 Modal computed style:', getComputedStyle(modal).display);
+            }, 10);
+
+            // For sample data, we can still show a proceed button but with a message
+            const proceedBtn = modal.querySelector('.proceed-transaction');
+            if (proceedBtn) {
+                proceedBtn.style.display = 'block';
+                proceedBtn.textContent = 'Proceed to Sample Rental';
+                proceedBtn.onclick = () => {
+                    alert('This is a sample data. Proceeding to rental page...');
+                    // Here you can set sample data to sessionStorage if needed
+                    sessionStorage.setItem('appointmentData', JSON.stringify({
+                        customerName: customerName,
+                        eventDate: sampleDate,
+                        appointmentId: 'sample-id',                        cartItems: [],
+                        totalAmount: 0
+                    }));
+                    window.location.href = './rental.html';
+                };
+            }
+        } catch (error) {
+            console.error('❌ Error showing sample appointment details:', error);
+        }
+    }
