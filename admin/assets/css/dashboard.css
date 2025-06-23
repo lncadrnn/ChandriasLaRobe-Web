@@ -2019,33 +2019,3 @@ tr:hover {
     font-weight: 500;
     padding: 0 12px;
 }
-
-/* Status cards for booking confirmation/cancellation */
-.booking-status-card {
-    padding: 12px 16px;
-    margin-top: 12px;
-    border-radius: 8px;
-    font-weight: 600;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    animation: fadeIn 0.3s ease-out;
-}
-
-.booking-status-card i {
-    font-size: 1.2rem;
-}
-
-.booking-status-card.cancelled {
-    background-color: #ffebee;
-    color: #c62828;
-    border: 1px solid #ef9a9a;
-}
-
-.booking-status-card.confirmed {
-    background-color: #e8f5e9;
-    color: #2e7d32;
-    border: 1px solid #a5d6a7;
-}
