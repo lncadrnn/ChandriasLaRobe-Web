@@ -791,12 +791,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 const checkoutDate = app.checkoutDate || 'N/A';
                 const checkoutTime = app.checkoutTime || 'N/A';
                 const customerName = app.customerName || 'Unknown Customer';
+                const status = app.status || 'pending';
+                
+                // Create status icon based on appointment status
+                let statusIcon = '';
+                if (status === 'confirmed') {
+                    statusIcon = '<i class="fas fa-check-circle" style="color: #28a745; margin-right: 5px;"></i>';
+                } else if (status === 'cancelled') {
+                    statusIcon = '<i class="fas fa-times-circle" style="color: #dc3545; margin-right: 5px;"></i>';
+                } else {
+                    statusIcon = '<i class="fas fa-question-circle" style="color: #ffc107; margin-right: 5px;"></i>';
+                }
                 
                 const li = document.createElement('li');
                 li.className = 'appointment-item';
                 li.innerHTML = `
                     <div class="appointment-text">
-                        <strong>${customerName}</strong> has booked an appointment on <strong>${checkoutDate}</strong> at <strong>${checkoutTime}</strong>. 
+                        ${statusIcon}<strong>${customerName}</strong> has booked an appointment on <strong>${checkoutDate}</strong> at <strong>${checkoutTime}</strong>. 
                         <button class="appointment-view-details" data-id="${app.id}">View Details</button>
                     </div>
                 `;
