@@ -1691,6 +1691,23 @@ $(document).ready(function () {
     initializeSidebarNavigation();
     initializeBookingHistory();
     
+    // Handle URL parameters for direct tab navigation
+    function handleURLParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tabParam = urlParams.get('tab');
+        
+        if (tabParam === 'bookings') {
+            // Switch to bookings tab
+            const bookingsLink = document.querySelector('.sidebar-link[data-section="bookings"]');
+            if (bookingsLink) {
+                bookingsLink.click();
+            }
+        }
+    }
+    
+    // Call URL parameter handler after initialization
+    handleURLParameters();
+    
     // Load booking history if bookings section is active on page load
     const bookingsSection = document.getElementById('bookings-section');
     if (bookingsSection && bookingsSection.classList.contains('active')) {
