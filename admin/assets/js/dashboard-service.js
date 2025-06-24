@@ -716,7 +716,47 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('total-appointments-count').textContent = '0';
             document.getElementById('total-products-count').textContent = '0';
         }
-    }    // Appointments Functions
+    }    // Appointments Functions - Real-time listener
+    let appointmentsUnsubscribe = null;
+    
+    function setupAppointmentsRealTimeListener() {
+        try {
+            // Check if Firebase is available
+            if (!db) {
+                throw new Error("Firebase database not initialized");
+            }
+            
+            // Unsubscribe from previous listener if it exists
+            if (appointmentsUnsubscribe) {
+                appointmentsUnsubscribe();
+            }
+            
+            // Set up real-time listener for appointments
+            appointmentsUnsubscribe = db.collection("appointments")
+                .orderBy("createdAt", "desc")
+                .limit(10)
+                .onSnapshot((snapshot) => {
+                    console.log("📡 Real-time appointments update received");
+                    
+                    const appointments = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                    
+                    // Update the UI with new data
+                    renderAppointmentsFromData(appointments);
+                    
+                }, (error) => {
+                    console.error("Error in appointments real-time listener:", error);
+                });
+                
+            console.log("✅ Appointments real-time listener set up successfully");
+        } catch (error) {
+            console.error("Error setting up appointments real-time listener:", error);
+        }
+    }
+    
+    // Legacy function for backward compatibility
     async function fetchAppointments() {
         try {
             // Check if Firebase is available
@@ -755,83 +795,69 @@ document.addEventListener("DOMContentLoaded", () => {
             }));
         } catch (error) {
             console.error("Error fetching all appointments:", error);
-            return [];
-        }    }async function renderAppointments() {
+            return [];        }    }
+        
+    // Updated renderAppointments to use real-time data
+    async function renderAppointments() {
+        // Set up real-time listener instead of one-time fetch
+        setupAppointmentsRealTimeListener();
+    }
+    
+    // New function to render appointments from provided data
+    function renderAppointmentsFromData(appointments) {
         const ul = document.getElementById('appointments-list');
         if (!ul) return;
         
-        // Show loading state
-        ul.innerHTML = `
-            <li class="appointment-item">
-                <div class="appointment-text" style="text-align: center; color: #999; padding: 20px;">
-                    <i class="bx bx-loader-alt bx-spin"></i> Loading appointments...
-                </div>
-            </li>
-        `;
+        // Clear current content
+        ul.innerHTML = '';
         
-        try {
-            const appointments = await fetchAppointments();
-            
-            // Clear loading state
-            ul.innerHTML = '';
-            
-            if (!appointments || appointments.length === 0) {
-                ul.innerHTML = `
-                    <li class="appointment-item">
-                        <div class="appointment-text" style="text-align: center; color: #999;">
-                            No appointments available
-                        </div>
-                    </li>
-                `;
-                return;
-            }
-            
-            appointments.forEach(app => {
-                const checkoutDate = app.checkoutDate || 'N/A';
-                const checkoutTime = app.checkoutTime || 'N/A';
-                const customerName = app.customerName || 'Unknown Customer';
-                const status = app.status || 'pending';
-                
-                // Create status icon based on appointment status
-                let statusIcon = '';
-                if (status === 'confirmed') {
-                    statusIcon = '<i class="fas fa-check-circle" style="color: #28a745; margin-right: 5px;"></i>';
-                } else if (status === 'cancelled') {
-                    statusIcon = '<i class="fas fa-times-circle" style="color: #dc3545; margin-right: 5px;"></i>';
-                } else {
-                    statusIcon = '<i class="fas fa-question-circle" style="color: #ffc107; margin-right: 5px;"></i>';
-                }
-                
-                const li = document.createElement('li');
-                li.className = 'appointment-item';
-                li.innerHTML = `
-                    <div class="appointment-text">
-                        ${statusIcon}<strong>${customerName}</strong> has booked an appointment on <strong>${checkoutDate}</strong> at <strong>${checkoutTime}</strong>. 
-                        <button class="appointment-view-details" data-id="${app.id}">View Details</button>
-                    </div>
-                `;
-                ul.appendChild(li);
-            });
-
-            // Add view event listeners
-            document.querySelectorAll('.appointment-view-details').forEach(button => {
-                button.addEventListener('click', async (e) => {
-                    e.preventDefault();
-                    const id = e.target.getAttribute('data-id');
-                    showAppointmentDetails(id);
-                });
-            });
-        } catch (error) {
-            console.error("Error rendering appointments:", error);
+        if (!appointments || appointments.length === 0) {
             ul.innerHTML = `
                 <li class="appointment-item">
-                    <div class="appointment-text" style="text-align: center; color: #e74c3c;">
-                        Error loading appointments. Please refresh the page.
+                    <div class="appointment-text" style="text-align: center; color: #999;">
+                        No appointments available
                     </div>
                 </li>
             `;
+            return;
         }
-    }    async function showAppointmentDetails(id) {
+        
+        appointments.forEach(app => {
+            const checkoutDate = app.checkoutDate || 'N/A';
+            const checkoutTime = app.checkoutTime || 'N/A';
+            const customerName = app.customerName || 'Unknown Customer';
+            const status = app.status || 'pending';
+            
+            // Create status icon based on appointment status
+            let statusIcon = '';
+            if (status === 'confirmed') {
+                statusIcon = '<i class="fas fa-check-circle" style="color: #28a745; margin-right: 5px;"></i>';
+            } else if (status === 'cancelled') {
+                statusIcon = '<i class="fas fa-times-circle" style="color: #dc3545; margin-right: 5px;"></i>';
+            } else {
+                statusIcon = '<i class="fas fa-question-circle" style="color: #ffc107; margin-right: 5px;"></i>';
+            }
+            
+            const li = document.createElement('li');
+            li.className = 'appointment-item';
+            li.innerHTML = `
+                <div class="appointment-text">
+                    ${statusIcon}<strong>${customerName}</strong> has booked an appointment on <strong>${checkoutDate}</strong> at <strong>${checkoutTime}</strong>. 
+                    <button class="appointment-view-details" data-id="${app.id}">View Details</button>
+                </div>
+            `;
+            ul.appendChild(li);
+        });
+
+        // Add view event listeners
+        document.querySelectorAll('.appointment-view-details').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const id = e.target.getAttribute('data-id');
+                showAppointmentDetails(id);
+            });
+        });
+    }async function showAppointmentDetails(id) {
         try {
             console.log('📋 Loading appointment details for ID:', id);
             
