@@ -31,7 +31,6 @@
   width: 400px;
   max-width: 95%;
   position: relative;
-  margin: auto;
   overflow-x: hidden;
   overflow-y: auto;
   max-height: 90vh;
@@ -96,7 +95,6 @@
     width: 400px;
     max-width: 95%;
     position: relative;
-    margin: auto;
     overflow-x: hidden;
     overflow-y: auto;
     max-height: 90vh;
@@ -631,7 +629,6 @@
     min-height: 600px; /* Optimized minimum height */
     max-height: 75vh; /* Better constraint for viewport */
     aspect-ratio: 1.4/1; /* Maintain square-like aspect ratio */
-    margin-top: 3vh; /* Better top margin for desktop */
   }
   
   .auth-form-section {
@@ -655,7 +652,6 @@
     width: 95%;
     min-height: auto;
     max-height: 95vh;
-    margin: 1rem auto;
   }
 
   .auth-content {
@@ -697,7 +693,6 @@
 @media (min-width: 769px) and (max-width: 1024px) {
   .auth-modal {
     width: 85%;
-    margin: 2rem auto;
   }
   
   .auth-form-section {
