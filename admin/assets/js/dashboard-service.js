@@ -876,18 +876,33 @@ document.addEventListener("DOMContentLoaded", () => {
             
             // Get appointment status or set default
             const appointmentStatus = data.status || 'pending';
-            
-            // Store the status in the modal for button visibility logic
+              // Store the status in the modal for button visibility logic
             $(modal).data('appointmentStatus', appointmentStatus);
 
             console.log('🔍 Modal element found:', !!modal);
             console.log('🔍 Modal current classes:', modal.className);
-            
-            // Forcefully reset modal state
+            console.log('🔍 Appointment status from DB:', appointmentStatus);
+              // Forcefully reset modal state
             modal.className = 'modal'; // Reset all classes
             modal.style.display = 'none';
             modal.style.visibility = 'hidden';
             modal.style.opacity = '0';
+            
+            // CRITICAL: Ensure pointer-events and other properties are reset
+            modal.style.pointerEvents = '';
+            modal.style.transition = '';
+            
+            // Reset button states to ensure clean state
+            const cancelBtn = modal.querySelector('.cancel-booking');
+            const confirmBtn = modal.querySelector('.confirm-booking');
+            const undoBtn = modal.querySelector('.undo-confirmation');
+            const statusTag = document.getElementById('appointment-confirmed-tag');
+            
+            // Reset all button visibility
+            if (cancelBtn) cancelBtn.style.display = 'flex';
+            if (confirmBtn) confirmBtn.style.display = 'flex';
+            if (undoBtn) undoBtn.style.display = 'none';
+            if (statusTag) statusTag.style.display = 'none';
             
             // Prevent background interaction
             preventBackgroundInteraction();
@@ -1440,17 +1455,18 @@ document.addEventListener("DOMContentLoaded", () => {
             const details = document.getElementById('appointment-details');
 
             // Mark this button as clicked for later reference
-            button.dataset.clicked = 'true';
-
-            console.log('🔍 Modal element found:', !!modal);
+            button.dataset.clicked = 'true';            console.log('🔍 Modal element found:', !!modal);
             console.log('🔍 Modal current classes:', modal.className);
             console.log('🔍 Modal current display style:', modal.style.display);
-            
-            // Forcefully reset modal state
+              // Forcefully reset modal state
             modal.className = 'modal'; // Reset all classes
             modal.style.display = 'none';
             modal.style.visibility = 'hidden';
             modal.style.opacity = '0';
+            
+            // CRITICAL: Ensure pointer-events and other properties are reset
+            modal.style.pointerEvents = '';
+            modal.style.transition = '';
             
             // Determine the appointment status based on the icon
             let appointmentStatus = 'pending';
@@ -1462,9 +1478,27 @@ document.addEventListener("DOMContentLoaded", () => {
                     appointmentStatus = 'cancelled';
                 }
             }
+              console.log('🔍 Sample appointment status detected:', appointmentStatus);
             
-            // Store the status in the modal
+            // Store the status and ID in the modal
             $(modal).data('appointmentStatus', appointmentStatus);
+            
+            // Generate a unique ID for sample appointments based on the appointment details
+            const sampleAppointmentId = `sample-${customerName.replace(/\s+/g, '-').toLowerCase()}-${appointmentDate.replace(/\s+/g, '-').toLowerCase()}`;
+            $(modal).data('appointmentId', sampleAppointmentId);
+
+            // Reset button states to ensure clean state
+            const cancelBtn = modal.querySelector('.cancel-booking');
+            const confirmBtn = modal.querySelector('.confirm-booking');
+            const undoBtn = modal.querySelector('.undo-confirmation');
+            const statusTag = document.getElementById('appointment-confirmed-tag');
+            
+            // Reset all button visibility
+            if (cancelBtn) cancelBtn.style.display = 'flex';
+            if (confirmBtn) confirmBtn.style.display = 'flex';
+            if (undoBtn) undoBtn.style.display = 'none';
+            if (statusTag) statusTag.style.display = 'none';
+            if (statusTag) statusTag.style.display = 'none';
 
             // Populate customer information
             document.getElementById('customer-name').textContent = customerName;
@@ -1508,8 +1542,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             `;
             document.getElementById('rented-items').innerHTML = sampleItems;
-            
-            // Force show modal using multiple approaches
+              // Force show modal using multiple approaches
             setTimeout(() => {
                 // Reset styles
                 modal.style.display = 'flex';
@@ -1521,12 +1554,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 modal.classList.add('show');
                 
                 // Update buttons based on appointment status
+                console.log('🔄 Calling updateAppointmentModalButtons with status:', appointmentStatus);
                 updateAppointmentModalButtons(modal, appointmentStatus);
                 
                 console.log('✅ Sample appointment modal should be visible');
                 console.log('🔍 Modal classes after show:', modal.className);
                 console.log('🔍 Modal display after show:', modal.style.display);
                 console.log('🔍 Modal computed style:', getComputedStyle(modal).display);
+                
+                // Force a re-check of button visibility after a short delay
+                setTimeout(() => {
+                    console.log('🔄 Re-checking button states...');
+                    const currentStatus = $(modal).data('appointmentStatus');
+                    console.log('🔍 Current stored status:', currentStatus);
+                    updateAppointmentModalButtons(modal, currentStatus);
+                }, 100);
             }, 10);
 
             // For sample data, we can still show a proceed button but with a message

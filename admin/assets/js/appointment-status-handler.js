@@ -1,48 +1,83 @@
 // This code will be inserted into dashboard-service.js
 // Function to update modal buttons based on appointment status
 function updateAppointmentModalButtons(modal, status) {
-    if (!modal) return;
+    if (!modal) {
+        console.error('Modal element not found');
+        return;
+    }
+    
+    console.log('🔄 Updating modal buttons for status:', status);
     
     const cancelBtn = modal.querySelector('.cancel-booking');
     const confirmBtn = modal.querySelector('.confirm-booking');
     const undoBtn = modal.querySelector('.undo-confirmation');
     const statusTag = document.getElementById('appointment-confirmed-tag');
     
+    // Log current button elements
+    console.log('📋 Button elements found:', {
+        cancel: !!cancelBtn,
+        confirm: !!confirmBtn,
+        undo: !!undoBtn,
+        statusTag: !!statusTag
+    });
+    
     // Default visibility is controlled in CSS, we just override it based on status
     if (status === 'confirmed') {
+        console.log('✅ Setting buttons for confirmed status');
         // Hide cancel and confirm buttons
-        if (cancelBtn) cancelBtn.style.display = 'none';
-        if (confirmBtn) confirmBtn.style.display = 'none';
+        if (cancelBtn) {
+            cancelBtn.style.display = 'none';
+            console.log('🔄 Cancel button hidden');
+        }
+        if (confirmBtn) {
+            confirmBtn.style.display = 'none';
+            console.log('🔄 Confirm button hidden');
+        }
         // Show undo button
-        if (undoBtn) undoBtn.style.display = 'flex';
+        if (undoBtn) {
+            undoBtn.style.display = 'flex';
+            console.log('🔄 Undo button shown');
+        }
         // Show confirmed tag
-        if (statusTag) statusTag.style.display = 'flex';
+        if (statusTag) {
+            statusTag.style.display = 'flex';
+            console.log('🔄 Status tag shown');
+        }
     } else {
+        console.log('⏳ Setting buttons for pending/other status');
         // For pending status or any other non-confirmed status
         // Show cancel and confirm buttons
-        if (cancelBtn) cancelBtn.style.display = 'flex';
-        if (confirmBtn) confirmBtn.style.display = 'flex';
+        if (cancelBtn) {
+            cancelBtn.style.display = 'flex';
+            console.log('🔄 Cancel button shown');
+        }
+        if (confirmBtn) {
+            confirmBtn.style.display = 'flex';
+            console.log('🔄 Confirm button shown');
+        }
         // Hide undo button
-        if (undoBtn) undoBtn.style.display = 'none';
+        if (undoBtn) {
+            undoBtn.style.display = 'none';
+            console.log('🔄 Undo button hidden');
+        }
         // Hide confirmed tag
-        if (statusTag) statusTag.style.display = 'none';
+        if (statusTag) {
+            statusTag.style.display = 'none';
+            console.log('🔄 Status tag hidden');
+        }
     }
+    
+    console.log('✅ Modal buttons update completed');
 }
 
 // Handle undo confirmation button click
 $(document).on('click', '.undo-confirmation', function(e) {
     e.preventDefault();
     e.stopPropagation();
+      const appointmentId = $(this).closest('.modal').data('appointmentId');
     
-    const appointmentId = $(this).closest('.modal').data('appointmentId');
-    
-    // Immediately hide appointment modal but don't close it completely
-    $('#appointment-modal').css({
-        'visibility': 'hidden',
-        'opacity': '0',
-        'pointer-events': 'none',
-        'transition': 'none'
-    });
+    // Immediately hide appointment modal properly
+    $('#appointment-modal').removeClass('show').css('display', 'none');
     
     // Store a reference to the appointment modal so we can show it again if needed
     $('#undo-confirmation-modal').data('parentModal', 'appointment-modal');
@@ -76,24 +111,43 @@ $(document).on('click', '.confirm-undo-action', function(e) {
         if (typeof firebase !== 'undefined' && firebase.firestore) {
             // Update appointment status in Firestore
             firebase.firestore().collection('appointments').doc(appointmentId).update({
-                status: 'pending'
-            }).then(() => {
+                status: 'pending'            }).then(() => {
+                console.log('✅ Firebase: Appointment status updated to pending');
+                
                 // Show success notification
                 if (typeof notyf !== 'undefined') {
                     notyf.success('Appointment confirmation has been undone');
                 } else if (typeof showSuccessNotification === 'function') {
                     showSuccessNotification('Appointment confirmation has been undone');
                 }
-                
-                // Update status icon in the appointment list
+                  // Get the appointment modal to update its state
+                const appointmentModal = document.getElementById('appointment-modal');
+                if (appointmentModal) {
+                    // Update the data attribute for the modal
+                    $(appointmentModal).data('appointmentStatus', 'pending');
+                    
+                    // Update the modal buttons to reflect the new status
+                    updateAppointmentModalButtons(appointmentModal, 'pending');
+                    
+                    console.log('🔄 Modal state updated to pending');
+                }
+                  // Update status icon in the appointment list
                 updateAppointmentStatusIcon(appointmentId, 'pending');
                 
-                // Close the appointment modal too (parent modal)
+                // Close the appointment modal properly to allow fresh reopening
                 if (parentModalId) {
                     closeModal(parentModalId);
+                    // Perform comprehensive reset to ensure modal is completely clean
+                    setTimeout(() => {
+                        resetAppointmentModalCompletely();
+                    }, 350);
+                    
+                    // Restore background interaction
+                    if (typeof restoreBackgroundInteraction === 'function') {
+                        restoreBackgroundInteraction();
+                    }
                 }
-                  // Update the data attribute
-                $(modal).data('appointmentStatus', 'pending');                
+                
                 // Refresh the appointments list to show the updated status
                 if (typeof renderAppointments === 'function') {
                     console.log('Refreshing appointments list after undo confirmation...');
@@ -109,8 +163,7 @@ $(document).on('click', '.confirm-undo-action', function(e) {
                 } else if (typeof showErrorNotification === 'function') {
                     showErrorNotification('Failed to undo confirmation. Please try again.');
                 }
-            });
-        } else {
+            });        } else {
             // Demo/mock implementation when Firebase is not available
             console.log('Mock implementation: Appointment status changed to pending');
             
@@ -120,12 +173,27 @@ $(document).on('click', '.confirm-undo-action', function(e) {
             } else if (typeof showSuccessNotification === 'function') {
                 showSuccessNotification('Appointment confirmation has been undone');
             }
+              // Get the appointment modal to update its state
+            const appointmentModal = document.getElementById('appointment-modal');
+            if (appointmentModal) {
+                // Update the data attribute for the modal
+                $(appointmentModal).data('appointmentStatus', 'pending');
+                
+                // Update the modal buttons to reflect the new status
+                updateAppointmentModalButtons(appointmentModal, 'pending');
+                
+                console.log('🔄 Mock: Modal state updated to pending');
+            }
             
-            // Update UI to show cancel and confirm buttons
-            const modal = document.getElementById('appointment-modal');
-            updateAppointmentModalButtons(modal, 'pending');
-              // Update the data attribute
-            $(modal).data('appointmentStatus', 'pending');            
+            // Close the appointment modal properly to allow fresh reopening
+            if (parentModalId) {
+                closeModal(parentModalId);
+                // Restore background interaction
+                if (typeof restoreBackgroundInteraction === 'function') {
+                    restoreBackgroundInteraction();
+                }
+            }
+            
             // Refresh the appointments list to show the updated status
             if (typeof renderAppointments === 'function') {
                 console.log('Refreshing appointments list after mock undo confirmation...');
@@ -153,20 +221,34 @@ $(document).on('click', '#undo-confirmation-modal .cancel-action', function(e) {
     e.preventDefault();
     e.stopPropagation();
     
+    console.log('🔄 Undo confirmation cancelled, restoring appointment modal');
+    
     // Close only the undo confirmation modal
     const undoModal = $('#undo-confirmation-modal');
     undoModal.removeClass('show');
     undoModal.css('display', 'none');
     
-    // Get the parent modal (appointment modal) and show it again
+    // Get the parent modal (appointment modal) and show it again properly
     const parentModalId = undoModal.data('parentModal');
     if (parentModalId) {
-        $(`#${parentModalId}`).css({
-            'visibility': 'visible',
-            'opacity': '1',
-            'pointer-events': 'auto',
-            'transition': 'opacity 0.2s ease'
-        });
+        const appointmentModal = $(`#${parentModalId}`);
+        
+        // Restore the appointment modal properly without problematic CSS
+        appointmentModal.removeClass('show').removeAttr('style'); // Reset first
+        
+        setTimeout(() => {
+            appointmentModal.css({
+                'display': 'flex'
+            });
+            appointmentModal.addClass('show');
+            
+            // Re-enable background interaction prevention
+            if (typeof preventBackgroundInteraction === 'function') {
+                preventBackgroundInteraction();
+            }
+            
+            console.log('✅ Appointment modal restored after undo cancellation');
+        }, 50);
     }
 });
 
@@ -188,20 +270,34 @@ $(document).on('click', '#undo-confirmation-modal .close-confirmation-modal', fu
     e.preventDefault();
     e.stopPropagation();
     
+    console.log('🔄 Undo confirmation modal closed via X button, restoring appointment modal');
+    
     // Close only the undo confirmation modal
     const undoModal = $('#undo-confirmation-modal');
     undoModal.removeClass('show');
     undoModal.css('display', 'none');
     
-    // Get the parent modal (appointment modal) and show it again
+    // Get the parent modal (appointment modal) and show it again properly
     const parentModalId = undoModal.data('parentModal');
     if (parentModalId) {
-        $(`#${parentModalId}`).css({
-            'visibility': 'visible',
-            'opacity': '1',
-            'pointer-events': 'auto',
-            'transition': 'opacity 0.2s ease'
-        });
+        const appointmentModal = $(`#${parentModalId}`);
+        
+        // Restore the appointment modal properly without problematic CSS
+        appointmentModal.removeClass('show').removeAttr('style'); // Reset first
+        
+        setTimeout(() => {
+            appointmentModal.css({
+                'display': 'flex'
+            });
+            appointmentModal.addClass('show');
+            
+            // Re-enable background interaction prevention
+            if (typeof preventBackgroundInteraction === 'function') {
+                preventBackgroundInteraction();
+            }
+            
+            console.log('✅ Appointment modal restored after undo modal close');
+        }, 50);
     }
 });
 
@@ -233,24 +329,35 @@ $(document).on('click', '.modal .modal-backdrop', function(e) {
         // Get the parent modal
         const modal = $(this).closest('.modal');
         const modalId = modal.attr('id');
-        
-        // Special handling for undo confirmation modal
+          // Special handling for undo confirmation modal
         if (modalId === 'undo-confirmation-modal') {
+            console.log('🔄 Undo confirmation modal backdrop clicked, restoring appointment modal');
+            
             // Close only the undo confirmation modal
             modal.removeClass('show');
             modal.css('display', 'none');
-            
-            // Get the parent modal (appointment modal) and show it again
+              // Get the parent modal (appointment modal) and show it again properly
             const parentModalId = modal.data('parentModal');
             if (parentModalId) {
-                $(`#${parentModalId}`).css({
-                    'visibility': 'visible',
-                    'opacity': '1',
-                    'pointer-events': 'auto',
-                    'transition': 'opacity 0.2s ease'
-                });
-            }
-        } else {
+                const appointmentModal = $(`#${parentModalId}`);
+                
+                // Restore the appointment modal properly without problematic CSS
+                appointmentModal.removeClass('show').removeAttr('style'); // Reset first
+                
+                setTimeout(() => {
+                    appointmentModal.css({
+                        'display': 'flex'
+                    });
+                    appointmentModal.addClass('show');
+                    
+                    // Re-enable background interaction prevention
+                    if (typeof preventBackgroundInteraction === 'function') {
+                        preventBackgroundInteraction();
+                    }
+                    
+                    console.log('✅ Appointment modal restored after backdrop click');
+                }, 50);
+            }} else {
             // Close the modal normally
             closeModal(modalId);
         }
@@ -265,22 +372,34 @@ $(document).on('keydown', function(e) {
         
         if (visibleModal.length > 0) {
             const modalId = visibleModal.attr('id');
-            
-            // Special handling for undo confirmation modal
+              // Special handling for undo confirmation modal
             if (modalId === 'undo-confirmation-modal') {
+                console.log('🔄 Undo confirmation modal closed via ESC, restoring appointment modal');
+                
                 // Close only the undo confirmation modal
                 visibleModal.removeClass('show');
                 visibleModal.css('display', 'none');
-                
-                // Get the parent modal (appointment modal) and show it again
+                  // Get the parent modal (appointment modal) and show it again properly
                 const parentModalId = visibleModal.data('parentModal');
                 if (parentModalId) {
-                    $(`#${parentModalId}`).css({
-                        'visibility': 'visible',
-                        'opacity': '1',
-                        'pointer-events': 'auto',
-                        'transition': 'opacity 0.2s ease'
-                    });
+                    const appointmentModal = $(`#${parentModalId}`);
+                    
+                    // Restore the appointment modal properly without problematic CSS
+                    appointmentModal.removeClass('show').removeAttr('style'); // Reset first
+                    
+                    setTimeout(() => {
+                        appointmentModal.css({
+                            'display': 'flex'
+                        });
+                        appointmentModal.addClass('show');
+                        
+                        // Re-enable background interaction prevention
+                        if (typeof preventBackgroundInteraction === 'function') {
+                            preventBackgroundInteraction();
+                        }
+                        
+                        console.log('✅ Appointment modal restored after ESC key');
+                    }, 50);
                 }
             } else {
                 // Close the modal normally
@@ -323,6 +442,29 @@ function closeModal(modalId) {
     if (modalId === 'appointment-modal') {
         // Reset any specific appointment modal state
         $('#appointment-confirmed-tag').hide();
+        
+        // Reset button states to default
+        const modalElement = document.getElementById('appointment-modal');
+        if (modalElement) {
+            const cancelBtn = modalElement.querySelector('.cancel-booking');
+            const confirmBtn = modalElement.querySelector('.confirm-booking');
+            const undoBtn = modalElement.querySelector('.undo-confirmation');
+            
+            // Reset to default visibility (will be updated when modal is reopened)
+            if (cancelBtn) cancelBtn.style.display = 'flex';
+            if (confirmBtn) confirmBtn.style.display = 'flex';
+            if (undoBtn) undoBtn.style.display = 'none';
+        }
+        
+        // CRITICAL: Reset all CSS properties that might block interactions
+        modal.css({
+            'visibility': '',
+            'opacity': '',
+            'pointer-events': '',
+            'transition': ''
+        });
+        
+        console.log('🔄 Appointment modal fully reset including pointer-events');
     } else if (modalId === 'rental-modal') {
         // Reset any specific rental modal state
     }
@@ -330,6 +472,7 @@ function closeModal(modalId) {
     // Clear any data attributes after animation
     setTimeout(function() {
         modal.removeData('appointmentId');
+        modal.removeData('appointmentStatus');
         modal.removeAttr('style');
         modal.find('.modal-content').removeAttr('style');
         modal.find('.modal-backdrop').removeAttr('style');
@@ -337,68 +480,162 @@ function closeModal(modalId) {
         // Ensure the body can scroll again if needed
         $('body').removeClass('modal-open');
         $('html').removeClass('modal-open');
+        
+        console.log('✅ Modal', modalId, 'fully reset and ready for reuse');
     }, 300); // Wait for CSS transition to complete
+}
+
+// Comprehensive function to reset appointment modal to a clean state
+function resetAppointmentModalCompletely() {
+    const modal = document.getElementById('appointment-modal');
+    if (!modal) return;
+    
+    console.log('🔄 Performing comprehensive appointment modal reset');
+    
+    // Remove all classes except 'modal'
+    modal.className = 'modal';
+    
+    // Clear all inline styles that might interfere
+    modal.removeAttribute('style');
+    
+    // Reset all problematic CSS properties explicitly
+    modal.style.display = '';
+    modal.style.visibility = '';
+    modal.style.opacity = '';
+    modal.style.pointerEvents = '';
+    modal.style.transition = '';
+    modal.style.transform = '';
+    modal.style.zIndex = '';
+    
+    // Reset jQuery data
+    $(modal).removeData('appointmentId');
+    $(modal).removeData('appointmentStatus');
+    
+    // Reset button states
+    const cancelBtn = modal.querySelector('.cancel-booking');
+    const confirmBtn = modal.querySelector('.confirm-booking');
+    const undoBtn = modal.querySelector('.undo-confirmation');
+    const statusTag = document.getElementById('appointment-confirmed-tag');
+    
+    if (cancelBtn) {
+        cancelBtn.style.display = 'flex';
+        cancelBtn.disabled = false;
+    }
+    if (confirmBtn) {
+        confirmBtn.style.display = 'flex';
+        confirmBtn.disabled = false;
+    }
+    if (undoBtn) {
+        undoBtn.style.display = 'none';
+        undoBtn.disabled = false;
+    }
+    if (statusTag) {
+        statusTag.style.display = 'none';
+    }
+    
+    // Ensure background interaction is restored
+    if (typeof restoreBackgroundInteraction === 'function') {
+        restoreBackgroundInteraction();
+    }
+    
+    console.log('✅ Appointment modal completely reset and ready for use');
 }
 
 // Function to update appointment status icon in the list
 function updateAppointmentStatusIcon(appointmentId, status) {
-    console.log(`Updating status icon for appointment ${appointmentId} to ${status}`);
+    console.log(`🔄 Updating status icon for appointment ${appointmentId} to ${status}`);
     
-    // Instead of trying to update icons directly in the DOM,
-    // we'll refresh the entire appointments list to ensure consistency
+    // First try to refresh the entire appointments list
     if (typeof renderAppointments === 'function') {
-        console.log('Refreshing appointments list...');
+        console.log('🔄 Refreshing entire appointments list...');
         renderAppointments();
         return;
     }
     
-    console.warn('renderAppointments function not found, falling back to manual update');
+    if (typeof window.renderAppointments === 'function') {
+        console.log('🔄 Refreshing entire appointments list via window...');
+        window.renderAppointments();
+        return;
+    }
     
-    // Fallback logic if renderAppointments is not available
+    console.warn('⚠️ renderAppointments function not found, falling back to manual update');
+    
+    // Fallback logic for manual DOM update
     const appointments = document.querySelectorAll('.appointment-item');
+    let found = false;
     
     appointments.forEach(item => {
-        // For sample data, we try to find the button with matching appointmentId
+        // Try multiple ways to match the appointment
         const viewButton = item.querySelector('.appointment-view-details');
+        const appointmentText = item.querySelector('.appointment-text');
+        
+        // Check if this is the appointment we're looking for
+        let isMatch = false;
+        
+        // Method 1: Check data-id attribute
         if (viewButton && viewButton.getAttribute('data-id') === appointmentId) {
-            const icon = item.querySelector('.fa-check-circle, .fa-question-circle, .fa-times-circle');
+            isMatch = true;
+        }
+        
+        // Method 2: For sample appointments, check if the appointmentId contains customer info
+        if (!isMatch && appointmentText && appointmentId.includes('sample-')) {
+            const textContent = appointmentText.textContent.toLowerCase();
+            const idParts = appointmentId.toLowerCase().split('-');
+            if (idParts.length > 1) {
+                const customerNamePart = idParts[1];
+                if (textContent.includes(customerNamePart)) {
+                    isMatch = true;
+                }
+            }
+        }
+        
+        if (isMatch) {
+            found = true;
+            console.log(`🎯 Found matching appointment item`);
             
-            // If there's no icon yet, we need to create one
-            let iconElement = icon;
+            // Find existing icon or create new one
+            let iconElement = item.querySelector('.appointment-text i.fas');
+            
             if (!iconElement) {
+                // Create new icon
                 iconElement = document.createElement('i');
                 iconElement.classList.add('fas');
                 
                 // Insert at the beginning of the appointment text
-                const textElement = item.querySelector('.appointment-text');
-                if (textElement && textElement.firstChild) {
-                    textElement.insertBefore(iconElement, textElement.firstChild);
+                if (appointmentText && appointmentText.firstChild) {
+                    appointmentText.insertBefore(iconElement, appointmentText.firstChild);
                     // Add a space after the icon
-                    textElement.insertBefore(document.createTextNode(' '), iconElement.nextSibling);
+                    appointmentText.insertBefore(document.createTextNode(' '), iconElement.nextSibling);
                 }
             }
             
             if (iconElement) {
-                // Remove existing classes
+                // Remove existing classes and styles
                 iconElement.classList.remove('fa-check-circle', 'fa-question-circle', 'fa-times-circle');
-                // Remove existing style
                 iconElement.style.color = '';
                 
                 // Add appropriate icon and color based on status
                 if (status === 'confirmed') {
                     iconElement.classList.add('fa-check-circle');
                     iconElement.style.color = '#28a745'; // Green
+                    console.log('✅ Icon updated to confirmed (green check)');
                 } else if (status === 'cancelled') {
                     iconElement.classList.add('fa-times-circle');
                     iconElement.style.color = '#dc3545'; // Red
+                    console.log('❌ Icon updated to cancelled (red X)');
                 } else {
                     // Default to pending (question mark)
                     iconElement.classList.add('fa-question-circle');
                     iconElement.style.color = '#ffc107'; // Yellow
+                    console.log('⏳ Icon updated to pending (yellow question)');
                 }
             }
         }
     });
+    
+    if (!found) {
+        console.warn('⚠️ Could not find appointment item to update icon for ID:', appointmentId);
+    }
 }
 
 // Initialize all modals on page load
@@ -562,6 +799,8 @@ $(document).ready(function() {
         e.preventDefault();
         e.stopPropagation();
         
+        console.log('🔍 Appointment view details clicked');
+        
         // Mark this button as the one that was clicked
         $(this).attr('data-clicked', 'true');
         
@@ -581,18 +820,31 @@ $(document).ready(function() {
         // Generate a unique ID if we don't have one
         const appointmentId = appointmentItem.data('id') || `appointment-${Date.now()}`;
         
-        // Determine status based on icon
+        // Determine status based on icon - CRITICAL: Check current icon state
         let status = 'pending';
-        const icon = appointmentItem.find('.fas');
-        if (icon.hasClass('fa-check-circle')) {
-            status = 'confirmed';
-        } else if (icon.hasClass('fa-times-circle')) {
-            status = 'cancelled';
+        const statusIcon = appointmentItem.find('.appointment-text i');
+        if (statusIcon.length > 0) {
+            if (statusIcon.hasClass('fa-check-circle')) {
+                status = 'confirmed';
+                console.log('🔍 Detected confirmed status from icon');
+            } else if (statusIcon.hasClass('fa-times-circle')) {
+                status = 'cancelled';
+                console.log('🔍 Detected cancelled status from icon');
+            } else {
+                console.log('🔍 Detected pending status from icon');
+            }
+        } else {
+            console.log('🔍 No status icon found, defaulting to pending');
         }
         
+        console.log('🔍 Final detected status:', status);
+        
         // Store appointment ID and status in the modal
-        $('#appointment-modal').data('appointmentId', appointmentId);
-        $('#appointment-modal').data('appointmentStatus', status);
+        const modal = $('#appointment-modal');
+        modal.data('appointmentId', appointmentId);
+        modal.data('appointmentStatus', status);
+        
+        console.log('🔍 Stored in modal - ID:', appointmentId, 'Status:', status);
         
         // Populate appointment details
         const detailsHTML = `
