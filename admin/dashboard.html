@@ -255,11 +255,15 @@
                         <div
                             id="appointment-details"
                             class="appointment-modal-body"
-                        ></div>
-                        <!-- Appointment status tag -->
-                        <div id="appointment-confirmed-tag" class="appointment-status-tag" style="display: none;">
+                        >                        </div>
+                        <!-- Appointment status tags -->
+                        <div id="appointment-confirmed-tag" class="appointment-status-tag confirmed-tag" style="display: none;">
                             <i class="fas fa-check-circle"></i>
                             APPOINTMENT CONFIRMED
+                        </div>
+                        <div id="appointment-cancelled-tag" class="appointment-status-tag cancelled-tag" style="display: none;">
+                            <i class="fas fa-times-circle"></i>
+                            APPOINTMENT CANCELLED
                         </div>                        <div class="appointment-modal-actions">
                             <div class="left-buttons">
                                 <button class="btn cancel-booking">
@@ -273,6 +277,10 @@
                                 <button class="btn undo-confirmation" style="display: none;">
                                     <i class="fas fa-undo"></i>
                                     UNDO CONFIRMATION
+                                </button>
+                                <button class="btn undo-cancellation" style="display: none;">
+                                    <i class="fas fa-undo"></i>
+                                    UNDO CANCELLATION
                                 </button>
                             </div>
                             <button class="btn proceed-transaction">
@@ -466,8 +474,38 @@
                             <button class="btn btn-secondary cancel-action">
                                 <i class="fas fa-times"></i>
                                 NO
+                            </button>                            <button class="btn btn-warning confirm-undo-action">
+                                <i class="fas fa-check"></i>
+                                YES
                             </button>
-                            <button class="btn btn-warning confirm-undo-action">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Undo Cancellation Modal -->
+                <div id="undo-cancellation-modal" class="modal">
+                    <div class="modal-backdrop"></div>
+                    <div class="modal-content confirmation-modal-content">                        <div class="confirmation-modal-header undo-header">
+                            <div class="header-content">
+                                <h3 class="modal-title">
+                                    <i class="fas fa-undo"></i>
+                                    Undo Cancellation
+                                </h3>
+                                <button class="close-confirmation-modal" aria-label="Close modal">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="confirmation-modal-body">
+                            <p>Are you sure you want to undo the cancellation for this appointment?</p>
+                            <p>This will change the appointment status back to pending.</p>
+                        </div>
+                        <div class="confirmation-modal-actions">
+                            <button class="btn btn-secondary cancel-action">
+                                <i class="fas fa-times"></i>
+                                NO
+                            </button>
+                            <button class="btn btn-warning confirm-undo-cancellation-action">
                                 <i class="fas fa-check"></i>
                                 YES
                             </button>
@@ -475,7 +513,7 @@
                     </div>
                 </div>
             </div>
-            </div>        </main>        <!-- Mobile Bottom Navigation (hidden on desktop) -->        <nav class="mobile-bottom-nav">
+            </div></main>        <!-- Mobile Bottom Navigation (hidden on desktop) -->        <nav class="mobile-bottom-nav">
             <a href="./dashboard.html" class="mobile-nav-item active">
                 <i class="bx bxs-dashboard icon"></i>
                 <span class="text">Dashboard</span>

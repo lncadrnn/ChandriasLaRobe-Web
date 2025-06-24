@@ -10,43 +10,54 @@ function updateAppointmentModalButtons(modal, status) {
     
     const cancelBtn = modal.querySelector('.cancel-booking');
     const confirmBtn = modal.querySelector('.confirm-booking');
-    const undoBtn = modal.querySelector('.undo-confirmation');
-    const statusTag = document.getElementById('appointment-confirmed-tag');
+    const undoConfirmBtn = modal.querySelector('.undo-confirmation');
+    const undoCancelBtn = modal.querySelector('.undo-cancellation');
+    const confirmedTag = document.getElementById('appointment-confirmed-tag');
+    const cancelledTag = document.getElementById('appointment-cancelled-tag');
     
     // Log current button elements
     console.log('📋 Button elements found:', {
         cancel: !!cancelBtn,
         confirm: !!confirmBtn,
-        undo: !!undoBtn,
-        statusTag: !!statusTag
+        undoConfirm: !!undoConfirmBtn,
+        undoCancel: !!undoCancelBtn,
+        confirmedTag: !!confirmedTag,
+        cancelledTag: !!cancelledTag
     });
     
-    // Default visibility is controlled in CSS, we just override it based on status
+    // Hide all buttons and tags by default
+    [cancelBtn, confirmBtn, undoConfirmBtn, undoCancelBtn].forEach(btn => {
+        if (btn) btn.style.display = 'none';
+    });
+    [confirmedTag, cancelledTag].forEach(tag => {
+        if (tag) tag.style.display = 'none';
+    });
+    
     if (status === 'confirmed') {
         console.log('✅ Setting buttons for confirmed status');
-        // Hide cancel and confirm buttons
-        if (cancelBtn) {
-            cancelBtn.style.display = 'none';
-            console.log('🔄 Cancel button hidden');
+        // Show undo confirmation button and confirmed tag
+        if (undoConfirmBtn) {
+            undoConfirmBtn.style.display = 'flex';
+            console.log('🔄 Undo confirmation button shown');
         }
-        if (confirmBtn) {
-            confirmBtn.style.display = 'none';
-            console.log('🔄 Confirm button hidden');
+        if (confirmedTag) {
+            confirmedTag.style.display = 'flex';
+            console.log('🔄 Confirmed status tag shown');
         }
-        // Show undo button
-        if (undoBtn) {
-            undoBtn.style.display = 'flex';
-            console.log('🔄 Undo button shown');
+    } else if (status === 'cancelled') {
+        console.log('❌ Setting buttons for cancelled status');
+        // Show undo cancellation button and cancelled tag
+        if (undoCancelBtn) {
+            undoCancelBtn.style.display = 'flex';
+            console.log('🔄 Undo cancellation button shown');
         }
-        // Show confirmed tag
-        if (statusTag) {
-            statusTag.style.display = 'flex';
-            console.log('🔄 Status tag shown');
+        if (cancelledTag) {
+            cancelledTag.style.display = 'flex';
+            console.log('🔄 Cancelled status tag shown');
         }
     } else {
-        console.log('⏳ Setting buttons for pending/other status');
-        // For pending status or any other non-confirmed status
-        // Show cancel and confirm buttons
+        console.log('⏳ Setting buttons for pending status');
+        // For pending status - show cancel and confirm buttons
         if (cancelBtn) {
             cancelBtn.style.display = 'flex';
             console.log('🔄 Cancel button shown');
@@ -55,18 +66,7 @@ function updateAppointmentModalButtons(modal, status) {
             confirmBtn.style.display = 'flex';
             console.log('🔄 Confirm button shown');
         }
-        // Hide undo button
-        if (undoBtn) {
-            undoBtn.style.display = 'none';
-            console.log('🔄 Undo button hidden');
-        }
-        // Hide confirmed tag
-        if (statusTag) {
-            statusTag.style.display = 'none';
-            console.log('🔄 Status tag hidden');
-        }
-    }
-    
+    }    
     console.log('✅ Modal buttons update completed');
 }
 
@@ -184,10 +184,14 @@ $(document).on('click', '.confirm-undo-action', function(e) {
                 
                 console.log('🔄 Mock: Modal state updated to pending');
             }
-            
-            // Close the appointment modal properly to allow fresh reopening
+              // Close the appointment modal properly to allow fresh reopening
             if (parentModalId) {
                 closeModal(parentModalId);
+                // Perform comprehensive reset to ensure modal is completely clean
+                setTimeout(() => {
+                    resetAppointmentModalCompletely();
+                }, 350);
+                
                 // Restore background interaction
                 if (typeof restoreBackgroundInteraction === 'function') {
                     restoreBackgroundInteraction();
@@ -297,6 +301,77 @@ $(document).on('click', '#undo-confirmation-modal .close-confirmation-modal', fu
             }
             
             console.log('✅ Appointment modal restored after undo modal close');
+        }, 50);    }
+});
+
+// Handle close button for undo cancellation modal
+$(document).on('click', '#undo-cancellation-modal .close-confirmation-modal', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('🔄 Undo cancellation modal closed via X button, restoring appointment modal');
+    
+    // Close only the undo cancellation modal
+    const undoModal = $('#undo-cancellation-modal');
+    undoModal.removeClass('show');
+    undoModal.css('display', 'none');
+    
+    // Get the parent modal (appointment modal) and show it again properly
+    const parentModalId = undoModal.data('parentModal');
+    if (parentModalId) {
+        const appointmentModal = $(`#${parentModalId}`);
+        
+        // Restore the appointment modal properly without problematic CSS
+        appointmentModal.removeClass('show').removeAttr('style'); // Reset first
+        
+        setTimeout(() => {
+            appointmentModal.css({
+                'display': 'flex'
+            });
+            appointmentModal.addClass('show');
+            
+            // Re-enable background interaction prevention
+            if (typeof preventBackgroundInteraction === 'function') {
+                preventBackgroundInteraction();
+            }
+            
+            console.log('✅ Appointment modal restored after undo cancellation modal close');
+        }, 50);
+    }
+});
+
+// Handle cancel action for undo cancellation modal
+$(document).on('click', '#undo-cancellation-modal .cancel-action', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('🔄 Undo cancellation cancelled, restoring appointment modal');
+    
+    // Close only the undo cancellation modal
+    const undoModal = $('#undo-cancellation-modal');
+    undoModal.removeClass('show');
+    undoModal.css('display', 'none');
+    
+    // Get the parent modal (appointment modal) and show it again properly
+    const parentModalId = undoModal.data('parentModal');
+    if (parentModalId) {
+        const appointmentModal = $(`#${parentModalId}`);
+        
+        // Restore the appointment modal properly without problematic CSS
+        appointmentModal.removeClass('show').removeAttr('style'); // Reset first
+        
+        setTimeout(() => {
+            appointmentModal.css({
+                'display': 'flex'
+            });
+            appointmentModal.addClass('show');
+            
+            // Re-enable background interaction prevention
+            if (typeof preventBackgroundInteraction === 'function') {
+                preventBackgroundInteraction();
+            }
+            
+            console.log('✅ Appointment modal restored after undo cancellation cancelled');
         }, 50);
     }
 });
@@ -307,12 +382,13 @@ $(document).on('click', '.close-confirmation-modal', function(e) {
     e.stopPropagation();
     
     // Get the parent modal
-    const modal = $(this).closest('.modal');
-    const modalId = modal.attr('id');
+    const modal = $(this).closest('.modal');    const modalId = modal.attr('id');
     
     // Close the appropriate modal
     if (modalId === 'undo-confirmation-modal') {
         closeUndoConfirmationModal();
+    } else if (modalId === 'undo-cancellation-modal') {
+        closeUndoCancellationModal();
     } else if (modalId === 'cancel-booking-modal') {
         closeModal('cancel-booking-modal');
     } else if (modalId === 'confirm-booking-modal') {
@@ -328,8 +404,7 @@ $(document).on('click', '.modal .modal-backdrop', function(e) {
     if (e.target === this) {
         // Get the parent modal
         const modal = $(this).closest('.modal');
-        const modalId = modal.attr('id');
-          // Special handling for undo confirmation modal
+        const modalId = modal.attr('id');        // Special handling for undo confirmation modal
         if (modalId === 'undo-confirmation-modal') {
             console.log('🔄 Undo confirmation modal backdrop clicked, restoring appointment modal');
             
@@ -357,6 +432,34 @@ $(document).on('click', '.modal .modal-backdrop', function(e) {
                     
                     console.log('✅ Appointment modal restored after backdrop click');
                 }, 50);
+            }
+        } else if (modalId === 'undo-cancellation-modal') {
+            console.log('🔄 Undo cancellation modal backdrop clicked, restoring appointment modal');
+            
+            // Close only the undo cancellation modal
+            modal.removeClass('show');
+            modal.css('display', 'none');
+              // Get the parent modal (appointment modal) and show it again properly
+            const parentModalId = modal.data('parentModal');
+            if (parentModalId) {
+                const appointmentModal = $(`#${parentModalId}`);
+                
+                // Restore the appointment modal properly without problematic CSS
+                appointmentModal.removeClass('show').removeAttr('style'); // Reset first
+                
+                setTimeout(() => {
+                    appointmentModal.css({
+                        'display': 'flex'
+                    });
+                    appointmentModal.addClass('show');
+                    
+                    // Re-enable background interaction prevention
+                    if (typeof preventBackgroundInteraction === 'function') {
+                        preventBackgroundInteraction();
+                    }
+                    
+                    console.log('✅ Appointment modal restored after undo cancellation backdrop click');
+                }, 50);
             }} else {
             // Close the modal normally
             closeModal(modalId);
@@ -371,8 +474,7 @@ $(document).on('keydown', function(e) {
         const visibleModal = $('.modal.show');
         
         if (visibleModal.length > 0) {
-            const modalId = visibleModal.attr('id');
-              // Special handling for undo confirmation modal
+            const modalId = visibleModal.attr('id');            // Special handling for undo confirmation modal
             if (modalId === 'undo-confirmation-modal') {
                 console.log('🔄 Undo confirmation modal closed via ESC, restoring appointment modal');
                 
@@ -401,6 +503,34 @@ $(document).on('keydown', function(e) {
                         console.log('✅ Appointment modal restored after ESC key');
                     }, 50);
                 }
+            } else if (modalId === 'undo-cancellation-modal') {
+                console.log('🔄 Undo cancellation modal closed via ESC, restoring appointment modal');
+                
+                // Close only the undo cancellation modal
+                visibleModal.removeClass('show');
+                visibleModal.css('display', 'none');
+                  // Get the parent modal (appointment modal) and show it again properly
+                const parentModalId = visibleModal.data('parentModal');
+                if (parentModalId) {
+                    const appointmentModal = $(`#${parentModalId}`);
+                    
+                    // Restore the appointment modal properly without problematic CSS
+                    appointmentModal.removeClass('show').removeAttr('style'); // Reset first
+                    
+                    setTimeout(() => {
+                        appointmentModal.css({
+                            'display': 'flex'
+                        });
+                        appointmentModal.addClass('show');
+                        
+                        // Re-enable background interaction prevention
+                        if (typeof preventBackgroundInteraction === 'function') {
+                            preventBackgroundInteraction();
+                        }
+                        
+                        console.log('✅ Appointment modal restored after undo cancellation ESC key');
+                    }, 50);
+                }
             } else {
                 // Close the modal normally
                 closeModal(modalId);
@@ -412,6 +542,11 @@ $(document).on('keydown', function(e) {
 // Function to properly close and reset the undo confirmation modal
 function closeUndoConfirmationModal() {
     closeModal('undo-confirmation-modal');
+}
+
+// Function to properly close and reset the undo cancellation modal
+function closeUndoCancellationModal() {
+    closeModal('undo-cancellation-modal');
 }
 
 // Function to properly close and reset any modal
@@ -969,5 +1104,154 @@ $(document).on('click', '.confirm-cancel-booking', function(e) {
         
         // Close the confirmation modal
         closeModal('cancel-booking-modal');
+    }
+});
+
+// Handle undo cancellation button click
+$(document).on('click', '.undo-cancellation', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const appointmentId = $(this).closest('.modal').data('appointmentId');
+    
+    // Immediately hide appointment modal properly
+    $('#appointment-modal').removeClass('show').css('display', 'none');
+    
+    // Store a reference to the appointment modal so we can show it again if needed
+    $('#undo-cancellation-modal').data('parentModal', 'appointment-modal');
+    
+    // Clear any existing state and ensure modal is properly reset
+    $('#undo-cancellation-modal').removeClass('show').removeAttr('style');
+    
+    // Store the appointment ID for the confirmation modal
+    $('#undo-cancellation-modal').data('appointmentId', appointmentId);
+    
+    // Show the undo cancellation modal immediately
+    $('#undo-cancellation-modal').addClass('show');
+    
+    console.log('🔄 Undo cancellation modal shown for appointment:', appointmentId);
+});
+
+// Handle undo cancellation confirmation modal actions
+$(document).on('click', '.confirm-undo-cancellation-action', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const appointmentId = $('#undo-cancellation-modal').data('appointmentId');
+    
+    // Implement the logic to update the appointment status in the database
+    try {
+        // Get parent modal ID before closing the undo cancellation modal
+        const parentModalId = $('#undo-cancellation-modal').data('parentModal');
+        
+        // Close the undo cancellation modal
+        closeModal('undo-cancellation-modal');
+        
+        // For Firebase implementation
+        if (typeof firebase !== 'undefined' && firebase.firestore) {
+            // Update appointment status in Firestore
+            firebase.firestore().collection('appointments').doc(appointmentId).update({
+                status: 'pending'
+            }).then(() => {
+                console.log('✅ Firebase: Appointment status updated from cancelled to pending');
+                
+                // Show success notification
+                if (typeof notyf !== 'undefined') {
+                    notyf.success('Appointment cancellation has been undone');
+                } else if (typeof showSuccessNotification === 'function') {
+                    showSuccessNotification('Appointment cancellation has been undone');
+                }
+                
+                // Get the appointment modal to update its state
+                const appointmentModal = document.getElementById('appointment-modal');
+                if (appointmentModal) {
+                    // Update the data attribute for the modal
+                    $(appointmentModal).data('appointmentStatus', 'pending');
+                    
+                    // Update the modal buttons to reflect the new status
+                    updateAppointmentModalButtons(appointmentModal, 'pending');
+                    
+                    console.log('🔄 Modal state updated to pending from cancelled');
+                }
+                
+                // Update status icon in the appointment list
+                updateAppointmentStatusIcon(appointmentId, 'pending');
+                
+                // Close the appointment modal properly to allow fresh reopening
+                if (parentModalId) {
+                    closeModal(parentModalId);
+                    // Perform comprehensive reset to ensure modal is completely clean
+                    setTimeout(() => {
+                        resetAppointmentModalCompletely();
+                    }, 350);
+                    
+                    // Restore background interaction
+                    if (typeof restoreBackgroundInteraction === 'function') {
+                        restoreBackgroundInteraction();
+                    }
+                }
+                
+            }).catch((error) => {
+                console.error('❌ Firebase: Error updating appointment status from cancelled to pending:', error);
+                if (typeof notyf !== 'undefined') {
+                    notyf.error('Failed to undo cancellation. Please try again.');
+                } else if (typeof showErrorNotification === 'function') {
+                    showErrorNotification('Failed to undo cancellation. Please try again.');
+                }
+                
+                // Re-open parent modal if there was an error
+                const parentModalId = $('#undo-cancellation-modal').data('parentModal');
+                if (parentModalId) {
+                    setTimeout(() => {
+                        $(`#${parentModalId}`).addClass('show');
+                    }, 100);
+                }
+            });
+        } else {
+            // Mock implementation for testing without Firebase
+            console.log('Mock implementation: Appointment status changed from cancelled to pending');
+            
+            if (typeof notyf !== 'undefined') {
+                notyf.success('Appointment cancellation has been undone');
+            } else if (typeof showSuccessNotification === 'function') {
+                showSuccessNotification('Appointment cancellation has been undone');
+            }
+            
+            // Get the appointment modal to update its state
+            const appointmentModal = document.getElementById('appointment-modal');
+            if (appointmentModal) {
+                // Update the data attribute for the modal
+                $(appointmentModal).data('appointmentStatus', 'pending');
+                
+                // Update the modal buttons to reflect the new status
+                updateAppointmentModalButtons(appointmentModal, 'pending');
+            }
+            
+            // Update status icon in the appointment list (mock)
+            updateAppointmentStatusIcon(appointmentId, 'pending');
+            
+            // Close the appointment modal properly to allow fresh reopening
+            if (parentModalId) {
+                closeModal(parentModalId);
+                // Perform comprehensive reset to ensure modal is completely clean
+                setTimeout(() => {
+                    resetAppointmentModalCompletely();
+                }, 350);
+                
+                // Restore background interaction
+                if (typeof restoreBackgroundInteraction === 'function') {
+                    restoreBackgroundInteraction();
+                }
+            }
+        }
+    } catch (error) {
+        console.error('❌ Error in undo cancellation process:', error);
+        if (typeof notyf !== 'undefined') {
+            notyf.error('An error occurred. Please try again.');
+        } else if (typeof showErrorNotification === 'function') {
+            showErrorNotification('An error occurred. Please try again.');
+        }
+        
+        // Close the confirmation modal
+        closeModal('undo-cancellation-modal');
     }
 });

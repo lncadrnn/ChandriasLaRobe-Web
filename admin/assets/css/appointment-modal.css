@@ -5,11 +5,19 @@
     justify-content: center;
     margin: 10px 0;
     padding: 10px;
-    background-color: #e8f5e9;
-    color: #28a745;
     border-radius: 4px;
     font-weight: bold;
     text-align: center;
+}
+
+.appointment-status-tag.confirmed-tag {
+    background-color: #e8f5e9;
+    color: #28a745;
+}
+
+.appointment-status-tag.cancelled-tag {
+    background-color: #f8d7da;
+    color: #dc3545;
 }
 
 .appointment-status-tag i {
@@ -27,4 +35,17 @@
     background-color: #e0a800;
     border-color: #d39e00;
     color: #212529;
+}
+
+/* Style for the undo cancellation button */
+.undo-cancellation {
+    background-color: #17a2b8;
+    color: #fff;
+    border: 1px solid #17a2b8;
+}
+
+.undo-cancellation:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+    color: #fff;
 }

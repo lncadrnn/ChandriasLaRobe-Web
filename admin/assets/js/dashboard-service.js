@@ -887,22 +887,25 @@ document.addEventListener("DOMContentLoaded", () => {
             modal.style.display = 'none';
             modal.style.visibility = 'hidden';
             modal.style.opacity = '0';
-            
-            // CRITICAL: Ensure pointer-events and other properties are reset
+              // CRITICAL: Ensure pointer-events and other properties are reset
             modal.style.pointerEvents = '';
             modal.style.transition = '';
             
             // Reset button states to ensure clean state
             const cancelBtn = modal.querySelector('.cancel-booking');
             const confirmBtn = modal.querySelector('.confirm-booking');
-            const undoBtn = modal.querySelector('.undo-confirmation');
-            const statusTag = document.getElementById('appointment-confirmed-tag');
+            const undoConfirmBtn = modal.querySelector('.undo-confirmation');
+            const undoCancelBtn = modal.querySelector('.undo-cancellation');
+            const confirmedStatusTag = document.getElementById('appointment-confirmed-tag');
+            const cancelledStatusTag = document.getElementById('appointment-cancelled-tag');
             
             // Reset all button visibility
             if (cancelBtn) cancelBtn.style.display = 'flex';
             if (confirmBtn) confirmBtn.style.display = 'flex';
-            if (undoBtn) undoBtn.style.display = 'none';
-            if (statusTag) statusTag.style.display = 'none';
+            if (undoConfirmBtn) undoConfirmBtn.style.display = 'none';
+            if (undoCancelBtn) undoCancelBtn.style.display = 'none';
+            if (confirmedStatusTag) confirmedStatusTag.style.display = 'none';
+            if (cancelledStatusTag) cancelledStatusTag.style.display = 'none';
             
             // Prevent background interaction
             preventBackgroundInteraction();
@@ -1315,13 +1318,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const appointmentRef = doc(chandriaDB, "appointments", appointmentId);
         updateDoc(appointmentRef, {
             status: "cancelled",
-            cancelledAt: serverTimestamp()
-        }).then(() => {
+            cancelledAt: serverTimestamp()        }).then(() => {
             console.log("Appointment cancelled successfully");
             // Update UI as needed
               // Close all modals
             $('.modal').removeClass('show');
-            allowBackgroundInteraction();
+            restoreBackgroundInteraction();
             
             // Show Notyf notification
             notyf.error("Booking cancelled");
@@ -1332,12 +1334,11 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error cancelling appointment:", error);
             // Show error message to user
         });
-        */
-          // Temporary mock implementation (remove in production)
+        */        // Temporary mock implementation (remove in production)
         setTimeout(() => {
             // Close all modals
             $('.modal').removeClass('show');
-            allowBackgroundInteraction();
+            restoreBackgroundInteraction();
             
             // Show Notyf notification
             notyf.error("Booking cancelled");
@@ -1355,12 +1356,11 @@ document.addEventListener("DOMContentLoaded", () => {
         updateDoc(appointmentRef, {
             status: "confirmed",
             confirmedAt: serverTimestamp()
-        }).then(() => {
-            console.log("Appointment confirmed successfully");
+        }).then(() => {            console.log("Appointment confirmed successfully");
             // Update UI as needed
               // Close all modals
             $('.modal').removeClass('show');
-            allowBackgroundInteraction();
+            restoreBackgroundInteraction();
             
             // Show Notyf notification
             notyf.success("Booking confirmed");
@@ -1421,16 +1421,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });// Close confirmation modals when clicking outside
     $(document).on('click', '.modal-backdrop', function(e) {
         if ($(e.target).hasClass('modal-backdrop')) {
-            const clickedInConfirmationModal = $(this).closest('#cancel-booking-modal, #confirm-booking-modal').length > 0;
+            const clickedInConfirmationModal = $(this).closest('#cancel-booking-modal, #confirm-booking-modal, #undo-confirmation-modal, #undo-cancellation-modal').length > 0;
             
             if (clickedInConfirmationModal) {
                 // If clicking outside a confirmation modal, return to the appointment modal
-                $('#cancel-booking-modal, #confirm-booking-modal').removeClass('show');
+                $('#cancel-booking-modal, #confirm-booking-modal, #undo-confirmation-modal, #undo-cancellation-modal').removeClass('show');
                 $('#appointment-modal').addClass('show');
                 preventBackgroundInteraction();
             } else {                // If clicking outside any other modal, close all modals
                 $('.modal').removeClass('show');
-                allowBackgroundInteraction();
+                restoreBackgroundInteraction();
             }
         }
     });
@@ -1485,20 +1485,21 @@ document.addEventListener("DOMContentLoaded", () => {
             
             // Generate a unique ID for sample appointments based on the appointment details
             const sampleAppointmentId = `sample-${customerName.replace(/\s+/g, '-').toLowerCase()}-${appointmentDate.replace(/\s+/g, '-').toLowerCase()}`;
-            $(modal).data('appointmentId', sampleAppointmentId);
-
-            // Reset button states to ensure clean state
+            $(modal).data('appointmentId', sampleAppointmentId);            // Reset button states to ensure clean state
             const cancelBtn = modal.querySelector('.cancel-booking');
             const confirmBtn = modal.querySelector('.confirm-booking');
-            const undoBtn = modal.querySelector('.undo-confirmation');
-            const statusTag = document.getElementById('appointment-confirmed-tag');
+            const undoConfirmBtn = modal.querySelector('.undo-confirmation');
+            const undoCancelBtn = modal.querySelector('.undo-cancellation');
+            const confirmedStatusTag = document.getElementById('appointment-confirmed-tag');
+            const cancelledStatusTag = document.getElementById('appointment-cancelled-tag');
             
             // Reset all button visibility
             if (cancelBtn) cancelBtn.style.display = 'flex';
             if (confirmBtn) confirmBtn.style.display = 'flex';
-            if (undoBtn) undoBtn.style.display = 'none';
-            if (statusTag) statusTag.style.display = 'none';
-            if (statusTag) statusTag.style.display = 'none';
+            if (undoConfirmBtn) undoConfirmBtn.style.display = 'none';
+            if (undoCancelBtn) undoCancelBtn.style.display = 'none';
+            if (confirmedStatusTag) confirmedStatusTag.style.display = 'none';
+            if (cancelledStatusTag) cancelledStatusTag.style.display = 'none';
 
             // Populate customer information
             document.getElementById('customer-name').textContent = customerName;
@@ -1596,9 +1597,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initialize confirmation modals on document ready
 $(document).ready(function() {
     console.log('Initializing confirmation modals');
-    
-    // Make sure modals are properly hidden on page load
-    $('#confirm-booking-modal, #cancel-booking-modal').each(function() {
+      // Make sure modals are properly hidden on page load
+    $('#confirm-booking-modal, #cancel-booking-modal, #undo-confirmation-modal, #undo-cancellation-modal').each(function() {
         const modal = $(this)[0];
         modal.style.display = 'none';
         modal.style.visibility = 'hidden';
