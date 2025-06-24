@@ -424,6 +424,26 @@
     vertical-align: middle;
 }
 
+/* Ensure specific styling for confirmation modal headers */
+#cancel-booking-modal .modal-title i {
+    color: #dc3545 !important; /* Red color for cancel icon */
+}
+
+#confirm-booking-modal .modal-title i {
+    color: #28a745 !important; /* Green color for confirm icon */
+}
+
+/* Style the header background colors to match the action */
+#cancel-booking-modal .header-content {
+    background-color: #fff5f5 !important; /* Light red background */
+    border-bottom: 1px solid #ffcccc !important;
+}
+
+#confirm-booking-modal .header-content {
+    background-color: #f0fff4 !important; /* Light green background */
+    border-bottom: 1px solid #ccffcc !important;
+}
+
 /* Ensure all close buttons are vertically centered with the title */
 .confirmation-modal .close-confirmation-modal,
 #cancel-booking-modal .close-confirmation-modal,
@@ -466,7 +486,7 @@
 /* Ensure proper modal state transitions for all confirmation modals */
 .confirmation-modal,
 #cancel-booking-modal,
-#confirm-booking_modal,
+#confirm-booking-modal,
 #undo-confirmation-modal {
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
@@ -537,4 +557,29 @@
     pointer-events: none !important;
     transform: none !important;
     transition: none !important;
+}
+
+/* Additional CSS to ensure confirmation modal visibility */
+#confirm-booking-modal {
+    z-index: 1060 !important; /* Higher than other modals */
+}
+
+#cancel-booking-modal {
+    z-index: 1060 !important; /* Higher than other modals */
+}
+
+/* Apply force display for confirmation modals */
+#confirm-booking-modal.show, 
+#cancel-booking-modal.show {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Ensure modal content is visible */
+#confirm-booking-modal.show .confirmation-modal-content,
+#cancel-booking-modal.show .confirmation-modal-content {
+    transform: scale(1) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }

@@ -550,14 +550,21 @@ tr:hover {
     align-items: center;
     justify-content: center;
     padding: 20px;
+    visibility: hidden; /* Added */
+    opacity: 0; /* Added */
+    transition: visibility 0.2s, opacity 0.2s; /* Added */
 }
 
 .modal.show {
     display: flex;
+    visibility: visible; /* Added */
+    opacity: 1; /* Added */
 }
 
 .modal.visible {
     display: flex;
+    visibility: visible; /* Added */
+    opacity: 1; /* Added */
 }
 
 .modal-backdrop {

@@ -975,17 +975,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     </div>
                 </div>
-            `;
-
-            // Force show modal using multiple approaches
+            `;            // Force show modal using multiple approaches
             setTimeout(() => {
                 // Reset styles
                 modal.style.display = 'flex';
                 modal.style.visibility = 'visible';
                 modal.style.opacity = '1';
                 
-                // Add classes
-                modal.classList.add('visible');
+                // Add classes - only use 'show' for consistency
                 modal.classList.add('show');
                 
                 // Update buttons based on appointment status
@@ -1196,12 +1193,13 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (type === 'error') {
             notyf.error(message);
         }
-    }
-      // Handle cancel booking button click
+    }    // Handle cancel booking button click
     $(document).on('click', '.cancel-booking', function() {
         // Get the appointment ID and status
         const appointmentId = $(this).closest('.modal').data('appointmentId');
         const status = $(this).closest('.modal').data('appointmentStatus');
+        
+        console.log('Cancel booking clicked, appointmentId:', appointmentId, 'status:', status);
         
         // Don't allow cancellation if already cancelled
         if (status === 'cancelled') {
@@ -1213,17 +1211,26 @@ document.addEventListener("DOMContentLoaded", () => {
         $('#cancel-booking-modal').data('appointmentId', appointmentId);
         
         // Hide appointment modal
-        $('#appointment-modal').removeClass('visible');
+        $('#appointment-modal').removeClass('show');
         
-        // Show cancel confirmation modal
-        $('#cancel-booking-modal').addClass('visible');
+        // Show cancel confirmation modal with both methods to ensure visibility
+        const cancelModal = document.getElementById('cancel-booking-modal');
+        cancelModal.style.display = 'flex';
+        cancelModal.style.visibility = 'visible';
+        cancelModal.style.opacity = '1';
+        cancelModal.style.zIndex = '1050'; // Ensure it's on top
+        $('#cancel-booking-modal').addClass('show');
+        
+        console.log('Cancel booking modal should be visible now');
+        
         preventBackgroundInteraction();
-    });
-      // Handle confirm booking button click
+    });// Handle confirm booking button click
     $(document).on('click', '.confirm-booking', function() {
         // Get the appointment ID and status
         const appointmentId = $(this).closest('.modal').data('appointmentId');
         const status = $(this).closest('.modal').data('appointmentStatus');
+        
+        console.log('Confirm booking clicked, appointmentId:', appointmentId, 'status:', status);
         
         // Don't allow confirmation if already confirmed or completed
         if (status === 'confirmed' || status === 'completed') {
@@ -1235,22 +1242,28 @@ document.addEventListener("DOMContentLoaded", () => {
         $('#confirm-booking-modal').data('appointmentId', appointmentId);
         
         // Hide appointment modal
-        $('#appointment-modal').removeClass('visible');
+        $('#appointment-modal').removeClass('show');
         
-        // Show confirm confirmation modal
-        $('#confirm-booking-modal').addClass('visible');
+        // Show confirm confirmation modal with both methods to ensure visibility
+        const confirmModal = document.getElementById('confirm-booking-modal');
+        confirmModal.style.display = 'flex';
+        confirmModal.style.visibility = 'visible';
+        confirmModal.style.opacity = '1';
+        confirmModal.style.zIndex = '1050'; // Ensure it's on top
+        $('#confirm-booking-modal').addClass('show');
+        
+        console.log('Confirm booking modal should be visible now');
+        
         preventBackgroundInteraction();
-    });
-    
-    // Handle cancel action (go back button) for confirmation modals
+    });    // Handle cancel action (go back button) for confirmation modals
     $(document).on('click', '.cancel-action', function() {
         // Hide confirmation modal
-        $(this).closest('.modal').removeClass('visible');
+        $(this).closest('.modal').removeClass('show');
         
         // Show original appointment modal again
-        $('#appointment-modal').addClass('visible');
+        $('#appointment-modal').addClass('show');
         preventBackgroundInteraction();
-    });    // Handle final cancel booking confirmation
+    });// Handle final cancel booking confirmation
     $(document).on('click', '.confirm-cancel-booking', function() {
         const appointmentId = $('#cancel-booking-modal').data('appointmentId');
         
@@ -1266,9 +1279,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }).then(() => {
             console.log("Appointment cancelled successfully");
             // Update UI as needed
-            
-            // Close all modals
-            $('.modal').removeClass('visible');
+              // Close all modals
+            $('.modal').removeClass('show');
             allowBackgroundInteraction();
             
             // Show Notyf notification
@@ -1281,11 +1293,10 @@ document.addEventListener("DOMContentLoaded", () => {
             // Show error message to user
         });
         */
-        
-        // Temporary mock implementation (remove in production)
+          // Temporary mock implementation (remove in production)
         setTimeout(() => {
             // Close all modals
-            $('.modal').removeClass('visible');
+            $('.modal').removeClass('show');
             allowBackgroundInteraction();
             
             // Show Notyf notification
@@ -1307,9 +1318,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }).then(() => {
             console.log("Appointment confirmed successfully");
             // Update UI as needed
-            
-            // Close all modals
-            $('.modal').removeClass('visible');
+              // Close all modals
+            $('.modal').removeClass('show');
             allowBackgroundInteraction();
             
             // Show Notyf notification
@@ -1323,16 +1333,15 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         */
         
-        // Temporary mock implementation (remove in production)
-        setTimeout(() => {
+        // Temporary mock implementation (remove in production)        setTimeout(() => {
             // Update status in the modal data
             $('#appointment-modal').data('appointmentStatus', 'confirmed');
             
             // Close confirmation modal
-            $('#confirm-booking-modal').removeClass('visible');
+            $('#confirm-booking-modal').removeClass('show');
             
             // Show the appointment modal with updated buttons
-            $('#appointment-modal').addClass('visible');
+            $('#appointment-modal').addClass('show');
             
             // Update the buttons in the appointment modal
             updateAppointmentModalButtons(document.getElementById('appointment-modal'), 'confirmed');
@@ -1343,35 +1352,44 @@ document.addEventListener("DOMContentLoaded", () => {
             // Show success notification
             notyf.success("Booking confirmed successfully");
         }, 1000);
-            $('.modal').removeClass('visible');
-            allowBackgroundInteraction();
-            
-            // Show Notyf notification
-            notyf.success("Booking confirmed");
-        }, 1000);
-    });
-      // Close confirmation modals when clicking the X button
+    });    // Close confirmation modals when clicking the X button
     $(document).on('click', '.close-confirmation-modal', function() {
-        // Hide the confirmation modal
-        $(this).closest('.modal').removeClass('visible');
+        console.log('Close confirmation modal button clicked');
+        
+        // Get the modal ID
+        const modalId = $(this).closest('.modal').attr('id');
+        console.log('Modal ID:', modalId);
+        
+        // Hide the confirmation modal with both methods
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'none';
+            modal.style.visibility = 'hidden';
+            modal.style.opacity = '0';
+            $(modal).removeClass('show');
+            console.log('Modal should be hidden now');
+        }
         
         // Show the original appointment modal again
-        $('#appointment-modal').addClass('visible');
+        const appointmentModal = document.getElementById('appointment-modal');
+        appointmentModal.style.display = 'flex';
+        appointmentModal.style.visibility = 'visible';
+        appointmentModal.style.opacity = '1';
+        $('#appointment-modal').addClass('show');
+        
         preventBackgroundInteraction();
-    });
-      // Close confirmation modals when clicking outside
+    });// Close confirmation modals when clicking outside
     $(document).on('click', '.modal-backdrop', function(e) {
         if ($(e.target).hasClass('modal-backdrop')) {
             const clickedInConfirmationModal = $(this).closest('#cancel-booking-modal, #confirm-booking-modal').length > 0;
             
             if (clickedInConfirmationModal) {
                 // If clicking outside a confirmation modal, return to the appointment modal
-                $('#cancel-booking-modal, #confirm-booking-modal').removeClass('visible');
-                $('#appointment-modal').addClass('visible');
+                $('#cancel-booking-modal, #confirm-booking-modal').removeClass('show');
+                $('#appointment-modal').addClass('show');
                 preventBackgroundInteraction();
-            } else {
-                // If clicking outside any other modal, close all modals
-                $('.modal').removeClass('visible');
+            } else {                // If clicking outside any other modal, close all modals
+                $('.modal').removeClass('show');
                 allowBackgroundInteraction();
             }
         }
@@ -1507,3 +1525,28 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error('❌ Error showing sample appointment details:', error);
         }
     }
+
+    // Initialize confirmation modals on document ready
+$(document).ready(function() {
+    console.log('Initializing confirmation modals');
+    
+    // Make sure modals are properly hidden on page load
+    $('#confirm-booking-modal, #cancel-booking-modal').each(function() {
+        const modal = $(this)[0];
+        modal.style.display = 'none';
+        modal.style.visibility = 'hidden';
+        modal.style.opacity = '0';
+        $(modal).removeClass('show');
+        console.log('Modal reset:', modal.id);
+    });
+    
+    // Log when confirm-booking button is clicked
+    $('.confirm-booking').on('click', function() {
+        console.log('Confirm booking button clicked directly');
+    });
+    
+    // Log when cancel-booking button is clicked
+    $('.cancel-booking').on('click', function() {
+        console.log('Cancel booking button clicked directly');
+    });
+});
