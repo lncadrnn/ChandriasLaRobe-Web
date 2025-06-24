@@ -1320,13 +1320,9 @@ document.addEventListener("DOMContentLoaded", () => {
             status: "cancelled",
             cancelledAt: serverTimestamp()        }).then(() => {
             console.log("Appointment cancelled successfully");
-            // Update UI as needed
-              // Close all modals
+            // Update UI as needed            // Close all modals
             $('.modal').removeClass('show');
             restoreBackgroundInteraction();
-            
-            // Show Notyf notification
-            notyf.error("Booking cancelled");
             
             // Refresh appointments list
             fetchAppointments();
@@ -1339,9 +1335,6 @@ document.addEventListener("DOMContentLoaded", () => {
             // Close all modals
             $('.modal').removeClass('show');
             restoreBackgroundInteraction();
-            
-            // Show Notyf notification
-            notyf.error("Booking cancelled");
         }, 1000);
     });    // Handle final confirm booking confirmation
     $(document).on('click', '.confirm-booking-action', function() {

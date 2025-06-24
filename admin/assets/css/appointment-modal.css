@@ -39,13 +39,13 @@
 
 /* Style for the undo cancellation button */
 .undo-cancellation {
-    background-color: #17a2b8;
-    color: #fff;
-    border: 1px solid #17a2b8;
+    background-color: #ffc107;
+    color: #212529;
+    border: 1px solid #ffc107;
 }
 
 .undo-cancellation:hover {
-    background-color: #138496;
-    border-color: #117a8b;
-    color: #fff;
+    background-color: #e0a800;
+    border-color: #d39e00;
+    color: #212529;
 }
