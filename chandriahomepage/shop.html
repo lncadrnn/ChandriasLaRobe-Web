@@ -425,9 +425,51 @@
 
                     <a href="./cart.html" class="header-action-btn">
                         <img src="assets/img/icon-cart.svg" alt="" />
-                        <span class="count" id="cart-count">0</span>                    </a>                    <button onclick="window.profileNavService?.handleAccountClick() || showAuthModal()" class="header-action-btn" style="background: none; border: none; cursor: pointer;" id="account-btn">
+                        <span class="count" id="cart-count">0</span>                    </a>                    <button onclick="toggleAccountDropdown()" class="header-action-btn" style="background: none; border: none; cursor: pointer;" id="account-btn">
                         <img src="assets/img/icon-user.svg" alt="" />
                     </button>
+                    
+                    <!-- Account Dropdown Menu -->
+                    <div class="account-dropdown" id="account-dropdown">
+                        <div class="account-dropdown-content">
+                            <div class="account-dropdown-header">
+                                <div class="account-avatar">
+                                    <img src="assets/img/icon-user.svg" alt="Profile" />
+                                </div>
+                                <div class="account-info">
+                                    <span class="account-name" id="account-name">Guest User</span>
+                                    <span class="account-email" id="account-email">Please sign in</span>
+                                </div>
+                            </div>
+                            <div class="account-dropdown-divider"></div>
+                            <ul class="account-dropdown-menu">
+                                <li class="account-dropdown-item">
+                                    <a href="#" class="account-dropdown-link">
+                                        <i class="fi fi-rs-settings"></i>
+                                        <span>Settings</span>
+                                    </a>
+                                </li>
+                                <li class="account-dropdown-item">
+                                    <a href="#" class="account-dropdown-link">
+                                        <i class="fi fi-rs-calendar"></i>
+                                        <span>Appointments</span>
+                                    </a>
+                                </li>
+                                <li class="account-dropdown-item">
+                                    <a href="#" class="account-dropdown-link">
+                                        <i class="fi fi-rs-comment"></i>
+                                        <span>Messages</span>
+                                    </a>
+                                </li>
+                                <li class="account-dropdown-item">
+                                    <a href="#" class="account-dropdown-link" onclick="showAuthModal()">
+                                        <i class="fi fi-rs-sign-in"></i>
+                                        <span>Sign In</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </nav>
 

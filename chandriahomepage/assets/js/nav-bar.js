@@ -277,6 +277,82 @@ function updateWishlistCountDisplay(count = 0) {
     });
 }
 
+/**
+ * Account Dropdown Functionality
+ */
+let accountDropdownOpen = false;
+
+function toggleAccountDropdown() {
+    const dropdown = document.getElementById('account-dropdown');
+    const overlay = document.getElementById('account-dropdown-overlay');
+    
+    if (!dropdown) return;
+    
+    accountDropdownOpen = !accountDropdownOpen;
+    
+    if (accountDropdownOpen) {
+        dropdown.classList.add('show');
+        // Create overlay if it doesn't exist
+        if (!overlay) {
+            createDropdownOverlay();
+        } else {
+            overlay.classList.add('show');
+        }
+        // Add event listener for clicking outside
+        document.addEventListener('click', handleOutsideClick);
+    } else {
+        closeAccountDropdown();
+    }
+}
+
+function closeAccountDropdown() {
+    const dropdown = document.getElementById('account-dropdown');
+    const overlay = document.getElementById('account-dropdown-overlay');
+    
+    if (dropdown) {
+        dropdown.classList.remove('show');
+    }
+    if (overlay) {
+        overlay.classList.remove('show');
+    }
+    
+    accountDropdownOpen = false;
+    document.removeEventListener('click', handleOutsideClick);
+}
+
+function createDropdownOverlay() {
+    const overlay = document.createElement('div');
+    overlay.id = 'account-dropdown-overlay';
+    overlay.className = 'account-dropdown-overlay show';
+    overlay.addEventListener('click', closeAccountDropdown);
+    document.body.appendChild(overlay);
+}
+
+function handleOutsideClick(event) {
+    const dropdown = document.getElementById('account-dropdown');
+    const accountBtn = document.getElementById('account-btn');
+    
+    if (dropdown && accountBtn) {
+        if (!dropdown.contains(event.target) && !accountBtn.contains(event.target)) {
+            closeAccountDropdown();
+        }
+    }
+}
+
+// Initialize account dropdown functionality when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Make toggleAccountDropdown globally available
+    window.toggleAccountDropdown = toggleAccountDropdown;
+    window.closeAccountDropdown = closeAccountDropdown;
+    
+    // Close dropdown when escape key is pressed
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && accountDropdownOpen) {
+            closeAccountDropdown();
+        }
+    });
+});
+
 // Export utility functions for other scripts to use
 window.NavBar = {
     updateCartCount: updateCartCountDisplay,
