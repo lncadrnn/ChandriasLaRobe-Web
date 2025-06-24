@@ -289,14 +289,16 @@ function updateAppointmentStatusIcon(appointmentId, status) {
                     iconElement.style.color = '#28a745'; // Green
                 } else if (status === 'cancelled') {
                     iconElement.classList.add('fa-times-circle');
-                    iconElement.style.color = '#dc3545'; // Red                } else {
+                    iconElement.style.color = '#dc3545'; // Red
+                } else {
                     // Default to pending (question mark)
                     iconElement.classList.add('fa-question-circle');
                     iconElement.style.color = '#ffc107'; // Yellow
                 }
             }
             
-            // Reset the clicked attribute            viewButton.dataset.clicked = 'false';
+            // Reset the clicked attribute
+            viewButton.dataset.clicked = 'false';
         }
     });
 }
@@ -350,4 +352,169 @@ $(document).on('click', '.close-modal, .close-rental-modal, .close-confirmation-
     
     // Close the modal
     closeModal(modalId);
+});
+
+// Handle confirm booking button click
+$(document).on('click', '.confirm-booking', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const appointmentId = $(this).closest('.modal').data('appointmentId');
+    
+    // Clear any existing state and ensure modal is properly reset
+    $('#confirm-booking-modal').removeClass('show').removeAttr('style');
+    
+    // Store the appointment ID for the confirmation modal
+    $('#confirm-booking-modal').data('appointmentId', appointmentId);
+    
+    // Small delay to ensure modal is properly reset before showing
+    setTimeout(function() {
+        $('#confirm-booking-modal').addClass('show');
+    }, 50);
+});
+
+// Handle confirm booking confirmation modal action
+$(document).on('click', '.confirm-booking-action', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const appointmentId = $('#confirm-booking-modal').data('appointmentId');
+    
+    // Implement the logic to update the appointment status in the database
+    try {
+        // First, close the confirm booking modal
+        closeModal('confirm-booking-modal');
+        
+        // For Firebase implementation
+        if (typeof firebase !== 'undefined' && firebase.firestore) {
+            // Update appointment status in Firestore
+            firebase.firestore().collection('appointments').doc(appointmentId).update({
+                status: 'confirmed'
+            }).then(() => {
+                // Show success notification
+                if (typeof notyf !== 'undefined') {
+                    notyf.success('Appointment has been confirmed');
+                } else if (typeof showSuccessNotification === 'function') {
+                    showSuccessNotification('Appointment has been confirmed');
+                }
+                
+                // Update UI to show undo button and hide confirm/cancel buttons
+                const modal = document.getElementById('appointment-modal');
+                updateAppointmentModalButtons(modal, 'confirmed');
+                
+                // Update the data attribute
+                $(modal).data('appointmentStatus', 'confirmed');
+                
+                // Update status icon in the appointment list
+                updateAppointmentStatusIcon(appointmentId, 'confirmed');
+            }).catch(error => {
+                console.error('Error confirming appointment:', error);
+                if (typeof notyf !== 'undefined') {
+                    notyf.error('Failed to confirm appointment. Please try again.');
+                } else if (typeof showErrorNotification === 'function') {
+                    showErrorNotification('Failed to confirm appointment. Please try again.');
+                }
+            });
+        } else {
+            // Demo/mock implementation when Firebase is not available
+            console.log('Mock implementation: Appointment status changed to confirmed');
+            
+            // Show success notification
+            if (typeof notyf !== 'undefined') {
+                notyf.success('Appointment has been confirmed');
+            } else if (typeof showSuccessNotification === 'function') {
+                showSuccessNotification('Appointment has been confirmed');
+            }
+            
+            // Update UI to show undo button and hide confirm/cancel buttons
+            const modal = document.getElementById('appointment-modal');
+            updateAppointmentModalButtons(modal, 'confirmed');
+            
+            // Update the data attribute
+            $(modal).data('appointmentStatus', 'confirmed');
+            
+            // Update status icon in the appointment list
+            updateAppointmentStatusIcon(appointmentId, 'confirmed');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        if (typeof notyf !== 'undefined') {
+            notyf.error('An error occurred. Please try again.');
+        } else if (typeof showErrorNotification === 'function') {
+            showErrorNotification('An error occurred. Please try again.');
+        }
+        
+        // Close the confirmation modal
+        closeModal('confirm-booking-modal');
+    }
+});
+
+// Set up event handlers for appointment view details buttons
+$(document).ready(function() {
+    // Event handler for view details buttons
+    $(document).on('click', '.appointment-view-details', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Mark this button as the one that was clicked
+        $(this).attr('data-clicked', 'true');
+        
+        // Get appointment details from the parent element
+        const appointmentItem = $(this).closest('.appointment-item');
+        const appointmentText = appointmentItem.find('.appointment-text').text();
+        
+        // Extract name and date from the appointment text
+        const nameMatch = appointmentText.match(/\*\*([^*]+)\*\*/);
+        const dateMatch = appointmentText.match(/(\w+\s\d+,\s\d{4})/);
+        const timeMatch = appointmentText.match(/(\d{1,2}:\d{2}\s[AP]M)/);
+        
+        const name = nameMatch ? nameMatch[1] : 'Unknown Customer';
+        const date = dateMatch ? dateMatch[1] : 'Unknown Date';
+        const time = timeMatch ? timeMatch[1] : 'Unknown Time';
+        
+        // Generate a unique ID if we don't have one
+        const appointmentId = appointmentItem.data('id') || `appointment-${Date.now()}`;
+        
+        // Determine status based on icon
+        let status = 'pending';
+        const icon = appointmentItem.find('.fas');
+        if (icon.hasClass('fa-check-circle')) {
+            status = 'confirmed';
+        } else if (icon.hasClass('fa-times-circle')) {
+            status = 'cancelled';
+        }
+        
+        // Store appointment ID and status in the modal
+        $('#appointment-modal').data('appointmentId', appointmentId);
+        $('#appointment-modal').data('appointmentStatus', status);
+        
+        // Populate appointment details
+        const detailsHTML = `
+            <div class="appointment-detail-item">
+                <span class="detail-label">Customer:</span>
+                <span class="detail-value">${name}</span>
+            </div>
+            <div class="appointment-detail-item">
+                <span class="detail-label">Date:</span>
+                <span class="detail-value">${date}</span>
+            </div>
+            <div class="appointment-detail-item">
+                <span class="detail-label">Time:</span>
+                <span class="detail-value">${time}</span>
+            </div>
+            <div class="appointment-detail-item">
+                <span class="detail-label">Status:</span>
+                <span class="detail-value status-${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+            </div>
+        `;
+        
+        // Update the modal with the details
+        $('#appointment-details').html(detailsHTML);
+        
+        // Update modal buttons based on status
+        updateAppointmentModalButtons(document.getElementById('appointment-modal'), status);
+        
+        // Show the modal
+        $('#appointment-modal').addClass('show');
+    });
 });
