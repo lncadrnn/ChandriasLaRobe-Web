@@ -282,6 +282,99 @@ function updateWishlistCountDisplay(count = 0) {
  */
 let accountDropdownOpen = false;
 
+/**
+ * Update account dropdown menu based on authentication state
+ */
+function updateAccountDropdown(user = null) {
+    const accountName = document.getElementById('account-name');
+    const accountEmail = document.getElementById('account-email');
+    const signInItem = document.querySelector('.account-dropdown-item:last-child');
+    
+    if (!signInItem) return;
+    
+    const signInLink = signInItem.querySelector('.account-dropdown-link');
+    
+    if (user) {
+        // User is logged in - show logout option
+        if (accountName) {
+            accountName.textContent = user.displayName || user.email.split('@')[0];
+        }
+        if (accountEmail) {
+            accountEmail.textContent = user.email;
+        }
+        
+        // Update the last menu item to be logout
+        signInLink.innerHTML = `
+            <i class="fi fi-rs-sign-out"></i>
+            <span>Log Out</span>
+        `;
+        signInLink.onclick = handleLogout;
+        signInLink.removeAttribute('onclick');
+    } else {
+        // User is not logged in - show sign in option
+        if (accountName) {
+            accountName.textContent = 'Guest User';
+        }
+        if (accountEmail) {
+            accountEmail.textContent = 'Please sign in';
+        }
+        
+        // Update the last menu item to be sign in
+        signInLink.innerHTML = `
+            <i class="fi fi-rs-sign-in"></i>
+            <span>Sign In</span>
+        `;
+        signInLink.onclick = () => {
+            closeAccountDropdown();
+            if (typeof showAuthModal === 'function') {
+                showAuthModal();
+            }
+        };
+    }
+}
+
+/**
+ * Handle user logout
+ */
+async function handleLogout() {
+    try {
+        closeAccountDropdown();
+        
+        // Show loading state if available
+        if (typeof showNotification === 'function') {
+            showNotification('Signing out...', 'info');
+        }
+        
+        // Import signOut function and auth from the SDK
+        const { signOut, auth } = await import('./sdk/chandrias-sdk.js');
+        
+        // Sign out the user
+        await signOut(auth);
+        
+        // Clear local storage
+        localStorage.removeItem('userEmail');
+        
+        // Update the UI
+        updateAccountDropdown(null);
+        
+        // Show success message
+        if (typeof showNotification === 'function') {
+            showNotification('Successfully signed out', 'success');
+        }
+        
+        // Reload page after a short delay to reset all UI states
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500);
+        
+    } catch (error) {
+        console.error('Error signing out:', error);
+        if (typeof showNotification === 'function') {
+            showNotification('Error signing out. Please try again.', 'error');
+        }
+    }
+}
+
 function toggleAccountDropdown() {
     const dropdown = document.getElementById('account-dropdown');
     const overlay = document.getElementById('account-dropdown-overlay');
@@ -344,6 +437,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Make toggleAccountDropdown globally available
     window.toggleAccountDropdown = toggleAccountDropdown;
     window.closeAccountDropdown = closeAccountDropdown;
+    window.updateAccountDropdown = updateAccountDropdown;
+    
+    // Initialize authentication state
+    initializeAuthState();
     
     // Close dropdown when escape key is pressed
     document.addEventListener('keydown', function(event) {
@@ -352,6 +449,53 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+/**
+ * Initialize authentication state monitoring
+ */
+async function initializeAuthState() {
+    try {
+        // Import Firebase auth
+        const { auth, onAuthStateChanged } = await import('./sdk/chandrias-sdk.js');
+        
+        // Listen for auth state changes
+        onAuthStateChanged(auth, (user) => {
+            updateAccountDropdown(user);
+        });
+        
+    } catch (error) {
+        console.log('Firebase auth not available, using guest mode');
+        // If Firebase is not available, default to guest state
+        updateAccountDropdown(null);
+    }
+}
+
+/**
+ * Simple notification function fallback
+ */
+function showNotification(message, type = 'info') {
+    // Try to use Notyf if available
+    if (typeof Notyf !== 'undefined') {
+        const notyf = new Notyf({
+            duration: 3000,
+            position: { x: 'center', y: 'top' }
+        });
+        
+        if (type === 'success') {
+            notyf.success(message);
+        } else if (type === 'error') {
+            notyf.error(message);
+        } else {
+            notyf.open({ type: 'info', message: message });
+        }
+    } else {
+        // Fallback to console and alert if no notification library
+        console.log(`${type.toUpperCase()}: ${message}`);
+        if (type === 'error') {
+            alert(message);
+        }
+    }
+}
 
 // Export utility functions for other scripts to use
 window.NavBar = {
