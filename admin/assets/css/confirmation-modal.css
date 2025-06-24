@@ -219,13 +219,14 @@
     border: 1px solid #ffc107 !important;
 }
 
-/* Undo confirmation modal header layout for left-aligned title and vertically centered close button */
+/* Undo confirmation modal header layout for centered title and close button */
 .confirmation-modal-header.undo-header {
     display: flex;
     flex-direction: row;
     align-items: center;
     position: relative;
-    padding-right: 40px; /* Space for close button */
+    padding: 10px;
+    justify-content: space-between;
 }
 
 /* Undo Confirmation Modal header styling - consolidating styles from undo-modal-fix.css */
@@ -239,9 +240,9 @@
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     width: 100%;
-    padding: 10px 40px 10px 15px;
+    padding: 10px 10px;
     background-color: #f9fafb;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
@@ -252,10 +253,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto;
+    flex: 1;
     font-size: 18px;
     color: #333;
     padding: 0;
+    text-align: center;
+    padding-right: 32px; /* Account for close button width to keep text centered */
 }
 
 .undo-header .modal-title i {
@@ -344,13 +347,11 @@
 #confirm-booking-modal .close-confirmation-modal,
 #undo-confirmation-modal .close-confirmation-modal,
 #undo-cancellation-modal .close-confirmation-modal {
-    position: absolute !important;
-    top: 15px !important;
-    right: 15px !important;
+    position: relative !important;
     background: #ffffff !important;
     border: 1px solid #e5e7eb !important;
-    font-size: 14px !important;
-    color: #9ca3af !important;
+    font-size: 16px !important;
+    color: #6b7280 !important;
     cursor: pointer !important;
     padding: 0 !important;
     line-height: 1 !important;
@@ -365,24 +366,27 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
     opacity: 1 !important;
     visibility: visible !important;
-    font-family: "Font Awesome 5 Free", sans-serif !important;
+    text-align: center !important;
+    flex-shrink: 0 !important;
 }
 
-/* If FontAwesome is not loaded, show × symbol */
-.confirmation-modal .close-confirmation-modal::after,
-#cancel-booking-modal .close-confirmation-modal::after,
-#confirm-booking-modal .close-confirmation-modal::after,
-#undo-confirmation-modal .close-confirmation-modal::after,
-#undo-cancellation-modal .close-confirmation-modal::after {
+/* Only show the × symbol if FontAwesome is not loaded AND no icon is present */
+.confirmation-modal .close-confirmation-modal:empty::after,
+#cancel-booking-modal .close-confirmation-modal:empty::after,
+#confirm-booking-modal .close-confirmation-modal:empty::after,
+#undo-confirmation-modal .close-confirmation-modal:empty::after,
+#undo-cancellation-modal .close-confirmation-modal:empty::after {
     content: "×" !important;
-    font-size: 18px !important;
+    font-size: 20px !important;
     font-weight: 300 !important;
     line-height: 1 !important;
     color: #9ca3af !important;
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    text-align: center !important;
 }
 
 .confirmation-modal .close-confirmation-modal:hover,
@@ -421,20 +425,23 @@
 .confirmation-modal .close-confirmation-modal:active::after,
 #cancel-booking-modal .close-confirmation-modal:active::after,
 #confirm-booking-modal .close-confirmation-modal:active::after,
-#undo-confirmation-modal .close-confirmation-modal:active::after {
+#undo-confirmation-modal .close-confirmation-modal:active::after,
+#undo-cancellation-modal .close-confirmation-modal:active::after {
     color: #4b5563 !important;
 }
 
-/* Ensure the modal header has relative positioning for absolute close button */
+/* Modal header layout for title and close button alignment */
 .confirmation-modal .confirmation-modal-header,
 #cancel-booking-modal .confirmation-modal-header,
 #confirm-booking-modal .confirmation-modal-header,
 #undo-confirmation-modal .confirmation-modal-header,
 #undo-cancellation-modal .confirmation-modal-header {
     position: relative;
-    padding-right: 45px;
-    padding-top: 0;
+    padding: 10px 10px;
     margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 /* Ensure consistent styling for all confirmation modal headers */
@@ -446,12 +453,13 @@
     height: 40px; /* Fixed height for better alignment */
     display: flex;
     align-items: center;
-    padding-top: 0;
-    padding-bottom: 0;
+    justify-content: space-between;
+    padding: 5px 10px;
+    margin-bottom: 15px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-/* Ensure all confirmation modal title text is vertically aligned */
+/* Ensure all confirmation modal title text is properly aligned */
 .confirmation-modal .modal-title,
 #cancel-booking-modal .modal-title,
 #confirm-booking-modal .modal-title,
@@ -459,7 +467,11 @@
 #undo-cancellation-modal .modal-title {
     margin: 0;
     line-height: 1.2;
-    vertical-align: middle;
+    font-weight: 500;
+    font-size: 16px;
+    flex: 1;
+    text-align: center;
+    padding-right: 32px; /* To account for the close button width */
 }
 
 /* Ensure specific styling for confirmation modal headers */
@@ -482,15 +494,14 @@
     border-bottom: 1px solid #ccffcc !important;
 }
 
-/* Ensure all close buttons are positioned properly without transforms */
+/* Ensure all close buttons are positioned properly */
 .confirmation-modal .close-confirmation-modal,
 #cancel-booking-modal .close-confirmation-modal,
 #confirm-booking-modal .close-confirmation-modal,
 #undo-confirmation-modal .close-confirmation-modal,
 #undo-cancellation-modal .close-confirmation-modal {
-    top: 15px !important;
     transform: none !important;
-    margin-top: 0 !important;
+    margin: 0 !important;
 }
 
 /* Special overrides for active state to prevent movement */
@@ -629,4 +640,38 @@
     transform: scale(1) !important;
     opacity: 1 !important;
     visibility: visible !important;
+}
+
+/* Additional centering for Font Awesome icons in close buttons */
+.confirmation-modal .close-confirmation-modal i,
+#cancel-booking-modal .close-confirmation-modal i,
+#confirm-booking-modal .close-confirmation-modal i,
+#undo-confirmation-modal .close-confirmation-modal i,
+#undo-cancellation-modal .close-confirmation-modal i {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    text-align: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+}
+
+/* Prevent duplicate close button symbols - ensure only one X appears */
+.confirmation-modal .close-confirmation-modal i + i,
+#cancel-booking-modal .close-confirmation-modal i + i,
+#confirm-booking-modal .close-confirmation-modal i + i,
+#undo-confirmation-modal .close-confirmation-modal i + i,
+#undo-cancellation-modal .close-confirmation-modal i + i {
+    display: none !important;
+}
+
+.confirmation-modal .close-confirmation-modal:has(i)::after,
+#cancel-booking-modal .close-confirmation-modal:has(i)::after,
+#confirm-booking-modal .close-confirmation-modal:has(i)::after,
+#undo-confirmation-modal .close-confirmation-modal:has(i)::after,
+#undo-cancellation-modal .close-confirmation-modal:has(i)::after {
+    content: none !important;
 }
