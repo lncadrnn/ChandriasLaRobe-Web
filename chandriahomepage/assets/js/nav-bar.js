@@ -451,7 +451,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
- * Initialize authentication state monitoring
+ * Authentication check for dropdown links
+ */
+let currentAuthUser = null;
+
+/**
+ * Initialize authentication state listener
  */
 async function initializeAuthState() {
     try {
@@ -460,14 +465,84 @@ async function initializeAuthState() {
         
         // Listen for auth state changes
         onAuthStateChanged(auth, (user) => {
+            currentAuthUser = user;
             updateAccountDropdown(user);
+            updateDropdownLinksVisibility(user);
         });
         
+        // Set up click handlers for authentication-required links
+        setupAuthRequiredLinkHandlers();
+        
     } catch (error) {
-        console.log('Firebase auth not available, using guest mode');
-        // If Firebase is not available, default to guest state
-        updateAccountDropdown(null);
+        console.error('Error initializing auth state:', error);
     }
+}
+
+/**
+ * Update dropdown links visibility based on authentication state
+ */
+function updateDropdownLinksVisibility(user) {
+    const authRequiredLinks = document.querySelectorAll('.account-dropdown-link[data-auth-required="true"]');
+    
+    authRequiredLinks.forEach(link => {
+        const listItem = link.closest('.account-dropdown-item');
+        if (listItem) {
+            if (user) {
+                // User is authenticated - show the links
+                listItem.style.display = 'block';
+            } else {
+                // User is not authenticated - hide the links or show them grayed out
+                listItem.style.display = 'block'; // Keep visible but will show auth modal on click
+            }
+        }
+    });
+}
+
+/**
+ * Set up click handlers for links that require authentication
+ */
+function setupAuthRequiredLinkHandlers() {
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a[data-auth-required="true"]');
+        if (link) {
+            e.preventDefault();
+            
+            if (currentAuthUser) {
+                // User is authenticated, allow navigation
+                const navTo = link.getAttribute('data-nav-to');
+                
+                // Close dropdown first
+                closeAccountDropdown();
+                
+                if (navTo === 'settings') {
+                    window.location.href = link.getAttribute('href') || 'chandriahomepage/accounts.html';
+                } else if (navTo === 'appointments') {
+                    window.location.href = link.getAttribute('href') || 'chandriahomepage/accounts.html?tab=bookings';
+                } else if (navTo === 'notifications') {
+                    // For now, show a message since notifications aren't implemented
+                    if (typeof window.notyf !== 'undefined') {
+                        window.notyf.open({
+                            type: 'info',
+                            message: 'Notifications feature coming soon!'
+                        });
+                    } else {
+                        alert('Notifications feature coming soon!');
+                    }
+                }
+            } else {
+                // User is not authenticated, close dropdown and show auth modal
+                closeAccountDropdown();
+                
+                if (typeof showAuthModal === 'function') {
+                    showAuthModal();
+                } else {
+                    console.error('Auth modal function not available');
+                    // Fallback to redirect to accounts page which will handle auth
+                    window.location.href = 'chandriahomepage/accounts.html';
+                }
+            }
+        }
+    });
 }
 
 /**

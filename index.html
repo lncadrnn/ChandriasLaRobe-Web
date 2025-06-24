@@ -128,24 +128,24 @@
                             </div>
                             <div class="account-dropdown-divider"></div>                            <ul class="account-dropdown-menu">
                                 <li class="account-dropdown-item">
-                                    <a href="chandriahomepage/accounts.html" class="account-dropdown-link">
+                                    <a href="chandriahomepage/accounts.html" class="account-dropdown-link" data-auth-required="true" data-nav-to="settings">
                                         <i class="fi fi-rs-settings"></i>
                                         <span>Settings</span>
                                     </a>
                                 </li>
                                 <li class="account-dropdown-item">
-                                    <a href="chandriahomepage/accounts.html?tab=bookings" class="account-dropdown-link">
+                                    <a href="chandriahomepage/accounts.html?tab=bookings" class="account-dropdown-link" data-auth-required="true" data-nav-to="appointments">
                                         <i class="fi fi-rs-calendar"></i>
                                         <span>Appointments</span>
                                     </a>
                                 </li>
                                 <li class="account-dropdown-item">
-                                    <a href="#" class="account-dropdown-link">
+                                    <a href="#" class="account-dropdown-link" data-auth-required="true" data-nav-to="notifications">
                                         <i class="fi fi-rs-comment"></i>
                                         <span>Notifications</span>
                                     </a>
                                 </li>                                <li class="account-dropdown-item">
-                                    <a href="#" class="account-dropdown-link">
+                                    <a href="#" class="account-dropdown-link" onclick="showAuthModal()">
                                         <i class="fi fi-rs-sign-in"></i>
                                         <span>Sign In</span>
                                     </a>
@@ -1416,8 +1416,7 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
             crossorigin="anonymous"
         ></script>        <!-------------------------------- JS --------------------------------->        <script src="chandriahomepage/assets/js/spinner/spinner-core.js"></script>
-        <script src="chandriahomepage/assets/js/spinner/spinner-page.js"></script>
-        <script src="chandriahomepage/assets/js/spinner/spinner-utils.js"></script>
+        <script src="chandriahomepage/assets/js/spinner/spinner-page.js"></script>        <script src="chandriahomepage/assets/js/spinner/spinner-utils.js"></script>
         <script src="chandriahomepage/assets/js/hamburger-mob.js"></script>
         <script src="chandriahomepage/assets/js/quick-view/quick-view.js"></script>
         <script src="chandriahomepage/assets/js/nav-bar.js"></script>
