@@ -233,6 +233,9 @@ $(document).ready(function () {
                 } else {
                     $("body").addClass("loaded");
                 }
+                
+                // Handle URL parameters AFTER user is authenticated and profile is loaded
+                handleURLParameters();
             }
         });
     }
@@ -1104,6 +1107,18 @@ $(document).ready(function () {
         const user = auth.currentUser;
         if (!user) {
             console.log('No user logged in');
+            const bookingsList = document.getElementById('bookings-list');
+            if (bookingsList) {
+                bookingsList.innerHTML = `
+                    <div class="error-state" style="text-align: center; padding: 2rem;">
+                        <i class="fas fa-user-times" style="font-size: 2rem; color: #dc2626;"></i>
+                        <p style="margin-top: 1rem; color: var(--gray-600);">Please log in to view your appointment history.</p>
+                        <a href="accounts.html" style="margin-top: 1rem; padding: 0.5rem 1rem; background: var(--accent-pink); color: white; border: none; border-radius: 4px; text-decoration: none; display: inline-block;">
+                            Log In
+                        </a>
+                    </div>
+                `;
+            }
             return;
         }
 
@@ -1120,7 +1135,7 @@ $(document).ready(function () {
             bookingsList.innerHTML = `
                 <div class="loading-state" style="text-align: center; padding: 2rem;">
                     <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--accent-pink);"></i>
-                    <p style="margin-top: 1rem; color: var(--gray-600);">Loading your booking history...</p>
+                    <p style="margin-top: 1rem; color: var(--gray-600);">Loading your appointment history...</p>
                 </div>
             `;
 
@@ -1158,6 +1173,7 @@ $(document).ready(function () {
 
             for (const appointmentDoc of appointmentDocs) {
                 const appointmentData = appointmentDoc.data();
+                console.log('Processing appointment:', appointmentDoc.id, appointmentData);
                 
                 // Process cart items to get product details
                 const cartItems = appointmentData.cartItems || [];
@@ -1193,9 +1209,32 @@ $(document).ready(function () {
                                 size: item.size || 'N/A',
                                 type: item.type || 'product'
                             });
+                        } else {
+                            // Fallback: include item even if product data not found
+                            processedItems.push({
+                                id: item.productId,
+                                name: item.name || 'Unknown Product',
+                                code: 'N/A',
+                                image: 'assets/img/placeholder.jpg',
+                                price: item.price || 0,
+                                quantity: item.quantity || 1,
+                                size: item.size || 'N/A',
+                                type: item.type || 'product'
+                            });
                         }
                     } catch (error) {
                         console.error('Error fetching product data:', error);
+                        // Still include the item with basic info
+                        processedItems.push({
+                            id: item.productId,
+                            name: item.name || 'Unknown Product',
+                            code: 'N/A',
+                            image: 'assets/img/placeholder.jpg',
+                            price: item.price || 0,
+                            quantity: item.quantity || 1,
+                            size: item.size || 'N/A',
+                            type: item.type || 'product'
+                        });
                     }
                 }
 
@@ -1217,6 +1256,8 @@ $(document).ready(function () {
                 bookings.push(booking);
             }
 
+            console.log('Final processed bookings:', bookings);
+            
             // Display bookings
             displayBookings(bookings);
 
@@ -1233,7 +1274,7 @@ $(document).ready(function () {
                 bookingsList.innerHTML = `
                     <div class="error-state" style="text-align: center; padding: 2rem;">
                         <i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: #dc2626;"></i>
-                        <p style="margin-top: 1rem; color: var(--gray-600);">Error loading booking history.</p>
+                        <p style="margin-top: 1rem; color: var(--gray-600);">Error loading appointment history.</p>
                         <p style="color: var(--gray-500); font-size: 0.9rem;">${error.message}</p>
                         <button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: var(--accent-pink); color: white; border: none; border-radius: 4px; cursor: pointer;">
                             Try Again
@@ -1687,30 +1728,49 @@ $(document).ready(function () {
         }
     }
 
-    // Initialize all functionality
-    initializeSidebarNavigation();
-    initializeBookingHistory();
-    
     // Handle URL parameters for direct tab navigation
     function handleURLParameters() {
         const urlParams = new URLSearchParams(window.location.search);
         const tabParam = urlParams.get('tab');
         
+        console.log('Handling URL parameters, tab:', tabParam);
+        
         if (tabParam === 'bookings') {
-            // Switch to bookings tab
-            const bookingsLink = document.querySelector('.sidebar-link[data-section="bookings"]');
-            if (bookingsLink) {
-                bookingsLink.click();
-            }
+            // Switch to bookings tab with a small delay to ensure everything is loaded
+            setTimeout(() => {
+                const bookingsLink = document.querySelector('.sidebar-link[data-section="bookings"]');
+                if (bookingsLink) {
+                    console.log('Switching to bookings tab via URL parameter');
+                    bookingsLink.click();
+                    
+                    // Force load bookings after another small delay
+                    setTimeout(() => {
+                        if (auth.currentUser) {
+                            loadBookingHistory();
+                        }
+                    }, 500);
+                }
+            }, 100);
         }
     }
-    
-    // Call URL parameter handler after initialization
-    handleURLParameters();
+
+    // Initialize all functionality
+    initializeSidebarNavigation();
+    initializeBookingHistory();
     
     // Load booking history if bookings section is active on page load
     const bookingsSection = document.getElementById('bookings-section');
     if (bookingsSection && bookingsSection.classList.contains('active')) {
         loadBookingHistory();
     }
+    
+    // Force load booking history when user switches to bookings section (additional safety)
+    document.addEventListener('click', function(e) {
+        if (e.target.matches('.sidebar-link[data-section="bookings"]') || 
+            e.target.closest('.sidebar-link[data-section="bookings"]')) {
+            setTimeout(() => {
+                loadBookingHistory();
+            }, 100);
+        }
+    });
 });

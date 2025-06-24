@@ -166,7 +166,7 @@
                                     <li class="sidebar-item">
                                         <button class="sidebar-link" data-section="bookings">
                                             <i class="fas fa-calendar-alt"></i>
-                                            <span>Appointment History</span>
+                                            <span>Appointments</span>
                                         </button>
                                     </li>
                                 </ul>
@@ -338,82 +338,10 @@
 
                                     <!-- Bookings List -->
                                     <div class="bookings-list" id="bookings-list">
-                                        <!-- Sample Booking Items (will be populated dynamically) -->
-                                        <div class="booking-card">
-                                            <div class="booking-image">
-                                                <img src="assets/img/wedding-gown.jpg" alt="Wedding Gown" />
-                                            </div>
-                                            <div class="booking-details">
-                                                <h4 class="booking-title">Elegant Wedding Gown</h4>
-                                                <p class="booking-date">
-                                                    <i class="fas fa-calendar"></i>
-                                                    Rental Date: March 15, 2025
-                                                </p>
-                                                <p class="booking-duration">
-                                                    <i class="fas fa-clock"></i>
-                                                    Duration: 3 days
-                                                </p>
-                                                <p class="booking-price">
-                                                    <i class="fas fa-tag"></i>
-                                                    Total: ₱2,500.00
-                                                </p>
-                                            </div>
-                                            <div class="booking-status">
-                                                <span class="status-badge status-upcoming">Upcoming</span>
-                                            </div>
-                                            <div class="booking-actions">
-                                                <button class="btn-action btn-view">
-                                                    <i class="fas fa-eye"></i>
-                                                    View Details
-                                                </button>
-                                                <button class="btn-action btn-cancel">
-                                                    <i class="fas fa-times"></i>
-                                                    Cancel
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <div class="booking-card">
-                                            <div class="booking-image">
-                                                <img src="assets/img/long-gown.jpg" alt="Evening Gown" />
-                                            </div>
-                                            <div class="booking-details">
-                                                <h4 class="booking-title">Luxury Evening Gown</h4>
-                                                <p class="booking-date">
-                                                    <i class="fas fa-calendar"></i>
-                                                    Rental Date: February 20, 2025
-                                                </p>
-                                                <p class="booking-duration">
-                                                    <i class="fas fa-clock"></i>
-                                                    Duration: 2 days
-                                                </p>
-                                                <p class="booking-price">
-                                                    <i class="fas fa-tag"></i>
-                                                    Total: ₱1,800.00
-                                                </p>
-                                            </div>
-                                            <div class="booking-status">
-                                                <span class="status-badge status-completed">Completed</span>
-                                            </div>
-                                            <div class="booking-actions">
-                                                <button class="btn-action btn-view">
-                                                    <i class="fas fa-eye"></i>
-                                                    View Details
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <!-- Empty State -->
-                                        <div class="empty-bookings" style="display: none;">
-                                            <div class="empty-icon">
-                                                <i class="fas fa-calendar-times"></i>
-                                            </div>
-                                            <h3>No bookings found</h3>
-                                            <p>You haven't made any bookings yet. Start exploring our collection!</p>
-                                            <a href="shop.html" class="btn btn-primary">
-                                                <i class="fas fa-shopping-bag"></i>
-                                                Browse Collection
-                                            </a>
+                                        <!-- Loading state will be shown initially, then replaced with real data -->
+                                        <div class="loading-state" style="text-align: center; padding: 2rem;">
+                                            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--accent-pink);"></i>
+                                            <p style="margin-top: 1rem; color: var(--gray-600);">Loading your appointment history...</p>
                                         </div>
                                     </div>
                                 </div>
@@ -484,6 +412,32 @@
                 </div>
             </div>
         </div>
+
+        <!-- Check URL parameters and set initial tab state -->
+        <script>
+            // Set initial tab state based on URL parameters before the page fully loads
+            (function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const tabParam = urlParams.get('tab');
+                
+                if (tabParam === 'bookings') {
+                    // We'll set the bookings section as active initially
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // Remove active from settings
+                        const settingsItem = document.querySelector('.sidebar-item:first-child');
+                        const settingsSection = document.getElementById('settings-section');
+                        if (settingsItem) settingsItem.classList.remove('active');
+                        if (settingsSection) settingsSection.classList.remove('active');
+                        
+                        // Add active to bookings
+                        const bookingsItem = document.querySelector('.sidebar-link[data-section="bookings"]').closest('.sidebar-item');
+                        const bookingsSection = document.getElementById('bookings-section');
+                        if (bookingsItem) bookingsItem.classList.add('active');
+                        if (bookingsSection) bookingsSection.classList.add('active');
+                    });
+                }
+            })();
+        </script>
 
         <!--=============== SWIPER JS ===============-->
         <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
