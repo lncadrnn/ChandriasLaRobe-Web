@@ -36,16 +36,25 @@ $(document).on('click', '.undo-confirmation', function(e) {
     
     const appointmentId = $(this).closest('.modal').data('appointmentId');
     
+    // Immediately hide appointment modal but don't close it completely
+    $('#appointment-modal').css({
+        'visibility': 'hidden',
+        'opacity': '0',
+        'pointer-events': 'none',
+        'transition': 'none'
+    });
+    
+    // Store a reference to the appointment modal so we can show it again if needed
+    $('#undo-confirmation-modal').data('parentModal', 'appointment-modal');
+    
     // Clear any existing state and ensure modal is properly reset
     $('#undo-confirmation-modal').removeClass('show').removeAttr('style');
     
     // Store the appointment ID for the confirmation modal
     $('#undo-confirmation-modal').data('appointmentId', appointmentId);
     
-    // Small delay to ensure modal is properly reset before showing
-    setTimeout(function() {
-        $('#undo-confirmation-modal').addClass('show');
-    }, 50);
+    // Show the undo confirmation modal immediately
+    $('#undo-confirmation-modal').addClass('show');
 });
 
 // Handle undo confirmation modal actions
@@ -57,7 +66,10 @@ $(document).on('click', '.confirm-undo-action', function(e) {
     
     // Implement the logic to update the appointment status in the database
     try {
-        // First, close the undo confirmation modal
+        // Get parent modal ID before closing the undo confirmation modal
+        const parentModalId = $('#undo-confirmation-modal').data('parentModal');
+        
+        // Close the undo confirmation modal
         closeModal('undo-confirmation-modal');
         
         // For Firebase implementation
@@ -73,9 +85,13 @@ $(document).on('click', '.confirm-undo-action', function(e) {
                     showSuccessNotification('Appointment confirmation has been undone');
                 }
                 
-                // Update UI to show cancel and confirm buttons
-                const modal = document.getElementById('appointment-modal');
-                updateAppointmentModalButtons(modal, 'pending');
+                // Update status icon in the appointment list
+                updateAppointmentStatusIcon(appointmentId, 'pending');
+                
+                // Close the appointment modal too (parent modal)
+                if (parentModalId) {
+                    closeModal(parentModalId);
+                }
                 
                 // Update the data attribute
                 $(modal).data('appointmentStatus', 'pending');
@@ -128,7 +144,22 @@ $(document).on('click', '.confirm-undo-action', function(e) {
 $(document).on('click', '#undo-confirmation-modal .cancel-action', function(e) {
     e.preventDefault();
     e.stopPropagation();
-    closeUndoConfirmationModal();
+    
+    // Close only the undo confirmation modal
+    const undoModal = $('#undo-confirmation-modal');
+    undoModal.removeClass('show');
+    undoModal.css('display', 'none');
+    
+    // Get the parent modal (appointment modal) and show it again
+    const parentModalId = undoModal.data('parentModal');
+    if (parentModalId) {
+        $(`#${parentModalId}`).css({
+            'visibility': 'visible',
+            'opacity': '1',
+            'pointer-events': 'auto',
+            'transition': 'opacity 0.2s ease'
+        });
+    }
 });
 
 // Handle cancel action for all confirmation modals
@@ -148,7 +179,22 @@ $(document).on('click', '.cancel-action', function(e) {
 $(document).on('click', '#undo-confirmation-modal .close-confirmation-modal', function(e) {
     e.preventDefault();
     e.stopPropagation();
-    closeUndoConfirmationModal();
+    
+    // Close only the undo confirmation modal
+    const undoModal = $('#undo-confirmation-modal');
+    undoModal.removeClass('show');
+    undoModal.css('display', 'none');
+    
+    // Get the parent modal (appointment modal) and show it again
+    const parentModalId = undoModal.data('parentModal');
+    if (parentModalId) {
+        $(`#${parentModalId}`).css({
+            'visibility': 'visible',
+            'opacity': '1',
+            'pointer-events': 'auto',
+            'transition': 'opacity 0.2s ease'
+        });
+    }
 });
 
 // Handle close buttons for all confirmation modals
@@ -180,8 +226,26 @@ $(document).on('click', '.modal .modal-backdrop', function(e) {
         const modal = $(this).closest('.modal');
         const modalId = modal.attr('id');
         
-        // Close the modal
-        closeModal(modalId);
+        // Special handling for undo confirmation modal
+        if (modalId === 'undo-confirmation-modal') {
+            // Close only the undo confirmation modal
+            modal.removeClass('show');
+            modal.css('display', 'none');
+            
+            // Get the parent modal (appointment modal) and show it again
+            const parentModalId = modal.data('parentModal');
+            if (parentModalId) {
+                $(`#${parentModalId}`).css({
+                    'visibility': 'visible',
+                    'opacity': '1',
+                    'pointer-events': 'auto',
+                    'transition': 'opacity 0.2s ease'
+                });
+            }
+        } else {
+            // Close the modal normally
+            closeModal(modalId);
+        }
     }
 });
 
@@ -193,7 +257,27 @@ $(document).on('keydown', function(e) {
         
         if (visibleModal.length > 0) {
             const modalId = visibleModal.attr('id');
-            closeModal(modalId);
+            
+            // Special handling for undo confirmation modal
+            if (modalId === 'undo-confirmation-modal') {
+                // Close only the undo confirmation modal
+                visibleModal.removeClass('show');
+                visibleModal.css('display', 'none');
+                
+                // Get the parent modal (appointment modal) and show it again
+                const parentModalId = visibleModal.data('parentModal');
+                if (parentModalId) {
+                    $(`#${parentModalId}`).css({
+                        'visibility': 'visible',
+                        'opacity': '1',
+                        'pointer-events': 'auto',
+                        'transition': 'opacity 0.2s ease'
+                    });
+                }
+            } else {
+                // Close the modal normally
+                closeModal(modalId);
+            }
         }
     }
 });
@@ -517,4 +601,91 @@ $(document).ready(function() {
         // Show the modal
         $('#appointment-modal').addClass('show');
     });
+});
+
+// Handle cancel booking button click
+$(document).on('click', '.cancel-booking', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const appointmentId = $(this).closest('.modal').data('appointmentId');
+    
+    // Clear any existing state and ensure modal is properly reset
+    $('#cancel-booking-modal').removeClass('show').removeAttr('style');
+    
+    // Store the appointment ID for the confirmation modal
+    $('#cancel-booking-modal').data('appointmentId', appointmentId);
+    
+    // Small delay to ensure modal is properly reset before showing
+    setTimeout(function() {
+        $('#cancel-booking-modal').addClass('show');
+    }, 50);
+});
+
+// Handle cancel booking confirmation modal action
+$(document).on('click', '.confirm-cancel-booking', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const appointmentId = $('#cancel-booking-modal').data('appointmentId');
+    
+    // Implement the logic to update the appointment status in the database
+    try {
+        // First, close the cancel booking modal
+        closeModal('cancel-booking-modal');
+        
+        // For Firebase implementation
+        if (typeof firebase !== 'undefined' && firebase.firestore) {
+            // Update appointment status in Firestore
+            firebase.firestore().collection('appointments').doc(appointmentId).update({
+                status: 'cancelled'
+            }).then(() => {
+                // Show success notification
+                if (typeof notyf !== 'undefined') {
+                    notyf.success('Appointment has been cancelled');
+                } else if (typeof showSuccessNotification === 'function') {
+                    showSuccessNotification('Appointment has been cancelled');
+                }
+                
+                // Update status icon in the appointment list
+                updateAppointmentStatusIcon(appointmentId, 'cancelled');
+                
+                // Close all modals including the appointment modal
+                closeModal('appointment-modal');
+            }).catch(error => {
+                console.error('Error cancelling appointment:', error);
+                if (typeof notyf !== 'undefined') {
+                    notyf.error('Failed to cancel appointment. Please try again.');
+                } else if (typeof showErrorNotification === 'function') {
+                    showErrorNotification('Failed to cancel appointment. Please try again.');
+                }
+            });
+        } else {
+            // Demo/mock implementation when Firebase is not available
+            console.log('Mock implementation: Appointment status changed to cancelled');
+            
+            // Show success notification
+            if (typeof notyf !== 'undefined') {
+                notyf.success('Appointment has been cancelled');
+            } else if (typeof showSuccessNotification === 'function') {
+                showSuccessNotification('Appointment has been cancelled');
+            }
+            
+            // Update status icon in the appointment list
+            updateAppointmentStatusIcon(appointmentId, 'cancelled');
+            
+            // Close all modals including the appointment modal
+            closeModal('appointment-modal');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        if (typeof notyf !== 'undefined') {
+            notyf.error('An error occurred. Please try again.');
+        } else if (typeof showErrorNotification === 'function') {
+            showErrorNotification('An error occurred. Please try again.');
+        }
+        
+        // Close the confirmation modal
+        closeModal('cancel-booking-modal');
+    }
 });
