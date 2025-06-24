@@ -1145,14 +1145,13 @@ $(document).on('click', '.confirm-undo-cancellation-action', function(e) {
         
         // Close the undo cancellation modal
         closeModal('undo-cancellation-modal');
-        
-        // For Firebase implementation
+          // For Firebase implementation
         if (typeof firebase !== 'undefined' && firebase.firestore) {
             // Update appointment status in Firestore
             firebase.firestore().collection('appointments').doc(appointmentId).update({
-                status: 'pending'
+                status: 'confirmed'
             }).then(() => {
-                console.log('✅ Firebase: Appointment status updated from cancelled to pending');
+                console.log('✅ Firebase: Appointment status updated from cancelled to confirmed');
                 
                 // Show success notification
                 if (typeof notyf !== 'undefined') {
@@ -1163,18 +1162,16 @@ $(document).on('click', '.confirm-undo-cancellation-action', function(e) {
                 
                 // Get the appointment modal to update its state
                 const appointmentModal = document.getElementById('appointment-modal');
-                if (appointmentModal) {
-                    // Update the data attribute for the modal
-                    $(appointmentModal).data('appointmentStatus', 'pending');
+                if (appointmentModal) {                    // Update the data attribute for the modal
+                    $(appointmentModal).data('appointmentStatus', 'confirmed');
                     
                     // Update the modal buttons to reflect the new status
-                    updateAppointmentModalButtons(appointmentModal, 'pending');
-                    
-                    console.log('🔄 Modal state updated to pending from cancelled');
+                    updateAppointmentModalButtons(appointmentModal, 'confirmed');
+                      console.log('🔄 Modal state updated to confirmed from cancelled');
                 }
                 
                 // Update status icon in the appointment list
-                updateAppointmentStatusIcon(appointmentId, 'pending');
+                updateAppointmentStatusIcon(appointmentId, 'confirmed');
                 
                 // Close the appointment modal properly to allow fresh reopening
                 if (parentModalId) {
@@ -1189,9 +1186,8 @@ $(document).on('click', '.confirm-undo-cancellation-action', function(e) {
                         restoreBackgroundInteraction();
                     }
                 }
-                
-            }).catch((error) => {
-                console.error('❌ Firebase: Error updating appointment status from cancelled to pending:', error);
+                  }).catch((error) => {
+                console.error('❌ Firebase: Error updating appointment status from cancelled to confirmed:', error);
                 if (typeof notyf !== 'undefined') {
                     notyf.error('Failed to undo cancellation. Please try again.');
                 } else if (typeof showErrorNotification === 'function') {
@@ -1205,10 +1201,9 @@ $(document).on('click', '.confirm-undo-cancellation-action', function(e) {
                         $(`#${parentModalId}`).addClass('show');
                     }, 100);
                 }
-            });
-        } else {
+            });        } else {
             // Mock implementation for testing without Firebase
-            console.log('Mock implementation: Appointment status changed from cancelled to pending');
+            console.log('Mock implementation: Appointment status changed from cancelled to confirmed');
             
             if (typeof notyf !== 'undefined') {
                 notyf.success('Appointment cancellation has been undone');
@@ -1220,14 +1215,14 @@ $(document).on('click', '.confirm-undo-cancellation-action', function(e) {
             const appointmentModal = document.getElementById('appointment-modal');
             if (appointmentModal) {
                 // Update the data attribute for the modal
-                $(appointmentModal).data('appointmentStatus', 'pending');
+                $(appointmentModal).data('appointmentStatus', 'confirmed');
                 
                 // Update the modal buttons to reflect the new status
-                updateAppointmentModalButtons(appointmentModal, 'pending');
+                updateAppointmentModalButtons(appointmentModal, 'confirmed');
             }
             
             // Update status icon in the appointment list (mock)
-            updateAppointmentStatusIcon(appointmentId, 'pending');
+            updateAppointmentStatusIcon(appointmentId, 'confirmed');
             
             // Close the appointment modal properly to allow fresh reopening
             if (parentModalId) {
