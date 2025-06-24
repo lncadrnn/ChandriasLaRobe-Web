@@ -756,8 +756,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error("Error fetching all appointments:", error);
             return [];
-        }
-    }async function renderAppointments() {
+        }    }async function renderAppointments() {
         const ul = document.getElementById('appointments-list');
         if (!ul) return;
         
@@ -1544,9 +1543,11 @@ $(document).ready(function() {
     $('.confirm-booking').on('click', function() {
         console.log('Confirm booking button clicked directly');
     });
-    
-    // Log when cancel-booking button is clicked
+      // Log when cancel-booking button is clicked
     $('.cancel-booking').on('click', function() {
         console.log('Cancel booking button clicked directly');
     });
+    
+    // Make renderAppointments globally available for use in appointment-status-handler.js
+    window.renderAppointments = renderAppointments;
 });

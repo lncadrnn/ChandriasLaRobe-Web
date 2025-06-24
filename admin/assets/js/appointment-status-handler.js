@@ -92,12 +92,16 @@ $(document).on('click', '.confirm-undo-action', function(e) {
                 if (parentModalId) {
                     closeModal(parentModalId);
                 }
-                
-                // Update the data attribute
-                $(modal).data('appointmentStatus', 'pending');
-                
-                // Update status icon in the appointment list if applicable
-                updateAppointmentStatusIcon(appointmentId, 'pending');
+                  // Update the data attribute
+                $(modal).data('appointmentStatus', 'pending');                
+                // Refresh the appointments list to show the updated status
+                if (typeof renderAppointments === 'function') {
+                    console.log('Refreshing appointments list after undo confirmation...');
+                    renderAppointments();
+                } else {
+                    // Fallback to the icon update function if renderAppointments is not available
+                    updateAppointmentStatusIcon(appointmentId, 'pending');
+                }
             }).catch(error => {
                 console.error('Error undoing confirmation:', error);
                 if (typeof notyf !== 'undefined') {
@@ -120,12 +124,16 @@ $(document).on('click', '.confirm-undo-action', function(e) {
             // Update UI to show cancel and confirm buttons
             const modal = document.getElementById('appointment-modal');
             updateAppointmentModalButtons(modal, 'pending');
-            
-            // Update the data attribute
-            $(modal).data('appointmentStatus', 'pending');
-            
-            // Update status icon in the appointment list if applicable
-            updateAppointmentStatusIcon(appointmentId, 'pending');
+              // Update the data attribute
+            $(modal).data('appointmentStatus', 'pending');            
+            // Refresh the appointments list to show the updated status
+            if (typeof renderAppointments === 'function') {
+                console.log('Refreshing appointments list after mock undo confirmation...');
+                renderAppointments();
+            } else {
+                // Fallback to the icon update function if renderAppointments is not available
+                updateAppointmentStatusIcon(appointmentId, 'pending');
+            }
         }
     } catch (error) {
         console.error('Error:', error);
@@ -336,14 +344,23 @@ function closeModal(modalId) {
 function updateAppointmentStatusIcon(appointmentId, status) {
     console.log(`Updating status icon for appointment ${appointmentId} to ${status}`);
     
-    // For demonstration, update icons in the UI
+    // Instead of trying to update icons directly in the DOM,
+    // we'll refresh the entire appointments list to ensure consistency
+    if (typeof renderAppointments === 'function') {
+        console.log('Refreshing appointments list...');
+        renderAppointments();
+        return;
+    }
+    
+    console.warn('renderAppointments function not found, falling back to manual update');
+    
+    // Fallback logic if renderAppointments is not available
     const appointments = document.querySelectorAll('.appointment-item');
     
-    // Update for sample data based on closest matching appointment
     appointments.forEach(item => {
-        // For sample data, we just find the one that was clicked
+        // For sample data, we try to find the button with matching appointmentId
         const viewButton = item.querySelector('.appointment-view-details');
-        if (viewButton && viewButton.dataset.clicked === 'true') {
+        if (viewButton && viewButton.getAttribute('data-id') === appointmentId) {
             const icon = item.querySelector('.fa-check-circle, .fa-question-circle, .fa-times-circle');
             
             // If there's no icon yet, we need to create one
@@ -380,9 +397,6 @@ function updateAppointmentStatusIcon(appointmentId, status) {
                     iconElement.style.color = '#ffc107'; // Yellow
                 }
             }
-            
-            // Reset the clicked attribute
-            viewButton.dataset.clicked = 'false';
         }
     });
 }
@@ -485,12 +499,16 @@ $(document).on('click', '.confirm-booking-action', function(e) {
                 // Update UI to show undo button and hide confirm/cancel buttons
                 const modal = document.getElementById('appointment-modal');
                 updateAppointmentModalButtons(modal, 'confirmed');
-                
-                // Update the data attribute
-                $(modal).data('appointmentStatus', 'confirmed');
-                
-                // Update status icon in the appointment list
-                updateAppointmentStatusIcon(appointmentId, 'confirmed');
+                  // Update the data attribute
+                $(modal).data('appointmentStatus', 'confirmed');                  // Refresh the appointments list to show the updated status
+                if (typeof window.renderAppointments === 'function') {
+                    console.log('Refreshing appointments list after confirmation...');
+                    window.renderAppointments();
+                } else {
+                    console.warn('renderAppointments function not found globally');
+                    // Fallback to the icon update function if renderAppointments is not available
+                    updateAppointmentStatusIcon(appointmentId, 'confirmed');
+                }
             }).catch(error => {
                 console.error('Error confirming appointment:', error);
                 if (typeof notyf !== 'undefined') {
@@ -513,12 +531,16 @@ $(document).on('click', '.confirm-booking-action', function(e) {
             // Update UI to show undo button and hide confirm/cancel buttons
             const modal = document.getElementById('appointment-modal');
             updateAppointmentModalButtons(modal, 'confirmed');
-            
-            // Update the data attribute
-            $(modal).data('appointmentStatus', 'confirmed');
-            
-            // Update status icon in the appointment list
-            updateAppointmentStatusIcon(appointmentId, 'confirmed');
+              // Update the data attribute
+            $(modal).data('appointmentStatus', 'confirmed');            
+            // Refresh the appointments list to show the updated status
+            if (typeof renderAppointments === 'function') {
+                console.log('Refreshing appointments list after mock confirmation...');
+                renderAppointments();
+            } else {
+                // Fallback to the icon update function if renderAppointments is not available
+                updateAppointmentStatusIcon(appointmentId, 'confirmed');
+            }
         }
     } catch (error) {
         console.error('Error:', error);
@@ -639,16 +661,20 @@ $(document).on('click', '.confirm-cancel-booking', function(e) {
             // Update appointment status in Firestore
             firebase.firestore().collection('appointments').doc(appointmentId).update({
                 status: 'cancelled'
-            }).then(() => {
-                // Show success notification
+            }).then(() => {                // Show success notification
                 if (typeof notyf !== 'undefined') {
                     notyf.success('Appointment has been cancelled');
                 } else if (typeof showSuccessNotification === 'function') {
                     showSuccessNotification('Appointment has been cancelled');
+                }                
+                // Refresh the appointments list to show the updated status
+                if (typeof renderAppointments === 'function') {
+                    console.log('Refreshing appointments list after cancel...');
+                    renderAppointments();
+                } else {
+                    // Fallback to the icon update function if renderAppointments is not available
+                    updateAppointmentStatusIcon(appointmentId, 'cancelled');
                 }
-                
-                // Update status icon in the appointment list
-                updateAppointmentStatusIcon(appointmentId, 'cancelled');
                 
                 // Close all modals including the appointment modal
                 closeModal('appointment-modal');
@@ -663,16 +689,20 @@ $(document).on('click', '.confirm-cancel-booking', function(e) {
         } else {
             // Demo/mock implementation when Firebase is not available
             console.log('Mock implementation: Appointment status changed to cancelled');
-            
-            // Show success notification
+              // Show success notification
             if (typeof notyf !== 'undefined') {
                 notyf.success('Appointment has been cancelled');
             } else if (typeof showSuccessNotification === 'function') {
                 showSuccessNotification('Appointment has been cancelled');
+            }            
+            // Refresh the appointments list to show the updated status
+            if (typeof renderAppointments === 'function') {
+                console.log('Refreshing appointments list after mock cancel...');
+                renderAppointments();
+            } else {
+                // Fallback to the icon update function if renderAppointments is not available
+                updateAppointmentStatusIcon(appointmentId, 'cancelled');
             }
-            
-            // Update status icon in the appointment list
-            updateAppointmentStatusIcon(appointmentId, 'cancelled');
             
             // Close all modals including the appointment modal
             closeModal('appointment-modal');
