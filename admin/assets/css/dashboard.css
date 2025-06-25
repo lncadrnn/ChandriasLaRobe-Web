@@ -18,7 +18,6 @@
     flex-direction: column;
     gap: 18px; /* Reduced from 24px to 18px */
     max-width: 100%;
-    overflow-x: hidden; /* Prevent horizontal overflow */
     box-sizing: border-box;
 }
 
@@ -1213,10 +1212,10 @@ tr:hover {
         height: auto; /* Allow natural height on tablet */
         max-height: none;
     }
-      
-    .table-content {
+      .table-content {
         max-height: 250px; /* Keep reduced table scroll on tablet */
         overflow-y: auto; /* Enable scrollbar on tablet */
+        overflow-x: visible; /* Make horizontal overflow visible */
     }
 }
 
@@ -1232,7 +1231,7 @@ tr:hover {
         gap: 16px;
     }
       .dashboard-cards-row {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: 8px;
     }
     
@@ -1322,25 +1321,32 @@ tr:hover {
     .dashboard-layout {
         padding: 8px;
         gap: 12px;
+        overflow-x: visible;
+        display: flex;
+        flex-direction: column;
     }
     
     .dashboard-cards-row {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
+        grid-template-columns: 1fr;
+        gap: 12px;
         margin-bottom: 10px;
     }
     
     .dashboard-card {
-        padding: 8px 6px;
+        padding: 15px;
         margin: 0;
-        height: 85px;
+        height: auto;
+        min-height: 110px;
         min-width: 0;
     }
     
     .card-icon {
-        width: 24px;
-        height: 24px;
+        width: 32px;
+        height: 32px;
         font-size: 0.9rem;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
     
     .card-title {
@@ -1349,15 +1355,36 @@ tr:hover {
         text-align: center;
     }
     
+    .total-products .card-icon {
+        font-size: 1.2rem !important; /* Ensure proper icon size on mobile */
+    }
+    
     .card-main {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
         font-weight: 700;
+        margin-top: 8px;
     }
     
     th,
     td {
         padding: 8px 12px;
         font-size: 0.75rem;
+    }
+    
+    /* Ensure table content is visible on mobile */
+    .dashboard-table {
+        overflow-x: auto;
+        width: 100%;
+    }
+    
+    .table-container {
+        overflow-x: auto;
+        width: 100%;
+    }
+    
+    table {
+        min-width: 100%;
+        width: max-content;
     }
       .table-header {
         padding: 16px; /* Match smallest mobile appointments header padding */
