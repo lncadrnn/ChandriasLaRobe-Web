@@ -16,182 +16,245 @@ import {
 import wishlistService from "./wishlist-firebase.js";
 
 // Check product availability for a specific date and quantity
-async function checkProductAvailability(productId, productName, requestedQuantity, checkoutDate) {
+async function checkProductAvailability(
+    productId,
+    productName,
+    requestedQuantity,
+    checkoutDate
+) {
     try {
-        console.log(`Checking availability for ${productName} (${productId}) on ${checkoutDate} for quantity ${requestedQuantity}`);
-        
+        console.log(
+            `Checking availability for ${productName} (${productId}) on ${checkoutDate} for quantity ${requestedQuantity}`
+        );
+
         // Get product stock information
         const productRef = doc(chandriaDB, "products", productId);
         const productSnap = await getDoc(productRef);
-        
+
         if (!productSnap.exists()) {
-            return { available: false, message: `${productName} not found in inventory.` };
-        }
-        
-        const productData = productSnap.data();
-        // Calculate total stock across all sizes
-        const totalStock = productData.size ? Object.values(productData.size).reduce((sum, stock) => sum + (stock || 0), 0) : 0;
-        
-        console.log(`Total stock for ${productName}: ${totalStock}`);
-        
-        if (totalStock < requestedQuantity) {
-            return { 
-                available: false, 
-                message: `${productName} has insufficient stock. Only ${totalStock} available.` 
+            return {
+                available: false,
+                message: `${productName} not found in inventory.`
             };
         }
-        
+
+        const productData = productSnap.data();
+        // Calculate total stock across all sizes
+        const totalStock = productData.size
+            ? Object.values(productData.size).reduce(
+                  (sum, stock) => sum + (stock || 0),
+                  0
+              )
+            : 0;
+
+        console.log(`Total stock for ${productName}: ${totalStock}`);
+
+        if (totalStock < requestedQuantity) {
+            return {
+                available: false,
+                message: `${productName} has insufficient stock. Only ${totalStock} available.`
+            };
+        }
+
         // Count how many units are booked for this date
         let bookedQuantity = 0;
         const dateToCheck = new Date(checkoutDate).toLocaleDateString();
-        
+
         // Check appointments collection
-        const appointmentsRef = collection(chandriaDB, 'appointments');
+        const appointmentsRef = collection(chandriaDB, "appointments");
         const appointmentsSnapshot = await getDocs(appointmentsRef);
-        
+
         appointmentsSnapshot.forEach(docSnap => {
             const data = docSnap.data();
-            
+
             // Skip cancelled/completed appointments
-            if (data.checkoutStatus && (data.checkoutStatus.toLowerCase() === 'cancelled' || data.checkoutStatus.toLowerCase() === 'completed')) {
+            if (
+                data.checkoutStatus &&
+                (data.checkoutStatus.toLowerCase() === "cancelled" ||
+                    data.checkoutStatus.toLowerCase() === "completed")
+            ) {
                 return;
             }
-            
+
             // Check if appointment is for the same date
-            const appointmentDate = data.checkoutDate || data.eventDate || data.eventStartDate;
+            const appointmentDate =
+                data.checkoutDate || data.eventDate || data.eventStartDate;
             if (appointmentDate) {
-                const apptDateStr = new Date(appointmentDate).toLocaleDateString();
-                
+                const apptDateStr = new Date(
+                    appointmentDate
+                ).toLocaleDateString();
+
                 if (apptDateStr === dateToCheck) {
                     // Check if this appointment contains the product
                     if (Array.isArray(data.cartItems)) {
                         data.cartItems.forEach(item => {
                             if (item.productId === productId) {
-                                bookedQuantity += parseInt(item.quantity || 1, 10);
+                                bookedQuantity += parseInt(
+                                    item.quantity || 1,
+                                    10
+                                );
                             }
                         });
                     }
                 }
             }
         });
-        
+
         // Check transaction collection for confirmed bookings
-        const possibleCollections = ['transaction', 'transactions', 'calendar', 'events'];
-        
+        const possibleCollections = [
+            "transaction",
+            "transactions",
+            "calendar",
+            "events"
+        ];
+
         for (const collectionName of possibleCollections) {
             try {
                 const transactionRef = collection(chandriaDB, collectionName);
                 const transactionSnapshot = await getDocs(transactionRef);
-                
+
                 transactionSnapshot.forEach(docSnap => {
                     const data = docSnap.data();
-                    
+
                     // Skip cancelled transactions
-                    if (data.status && data.status.toLowerCase() === 'cancelled') {
+                    if (
+                        data.status &&
+                        data.status.toLowerCase() === "cancelled"
+                    ) {
                         return;
                     }
-                    
+
                     // Check transaction dates based on rental type
-                    const rentalType = (data.rentalType || '').toLowerCase();
+                    const rentalType = (data.rentalType || "").toLowerCase();
                     const eventDate = data.eventDate;
                     const eventStartDate = data.eventStartDate;
                     const eventEndDate = data.eventEndDate;
                     const checkoutDate = data.checkoutDate;
-                    
+
                     let transactionDates = [];
-                    
-                    if (rentalType.includes('fixed')) {
+
+                    if (rentalType.includes("fixed")) {
                         // Fixed Rental: 3 consecutive days
-                        const startDate = eventStartDate || eventDate || checkoutDate;
+                        const startDate =
+                            eventStartDate || eventDate || checkoutDate;
                         if (startDate) {
                             const start = new Date(startDate);
                             for (let i = 0; i < 3; i++) {
                                 const date = new Date(start);
                                 date.setDate(start.getDate() + i);
-                                transactionDates.push(date.toLocaleDateString());
+                                transactionDates.push(
+                                    date.toLocaleDateString()
+                                );
                             }
                         }
-                    } else if (rentalType.includes('open')) {
+                    } else if (rentalType.includes("open")) {
                         // Open Rental: date range
                         if (eventStartDate && eventEndDate) {
                             const start = new Date(eventStartDate);
                             const end = new Date(eventEndDate);
                             const current = new Date(start);
-                            
+
                             while (current <= end) {
-                                transactionDates.push(current.toLocaleDateString());
+                                transactionDates.push(
+                                    current.toLocaleDateString()
+                                );
                                 current.setDate(current.getDate() + 1);
                             }
                         }
                     } else {
                         // Single date
-                        const dateToUse = eventDate || eventStartDate || checkoutDate;
+                        const dateToUse =
+                            eventDate || eventStartDate || checkoutDate;
                         if (dateToUse) {
-                            transactionDates.push(new Date(dateToUse).toLocaleDateString());
+                            transactionDates.push(
+                                new Date(dateToUse).toLocaleDateString()
+                            );
                         }
                     }
-                    
+
                     // If the transaction affects our date, count the quantity
                     if (transactionDates.includes(dateToCheck)) {
                         // Check products array
                         if (Array.isArray(data.products)) {
                             data.products.forEach(item => {
-                                if (item.id === productId || item.productId === productId) {
-                                    bookedQuantity += parseInt(item.quantity || 1, 10);
+                                if (
+                                    item.id === productId ||
+                                    item.productId === productId
+                                ) {
+                                    bookedQuantity += parseInt(
+                                        item.quantity || 1,
+                                        10
+                                    );
                                 }
                             });
                         }
-                        
+
                         // Check accessories array
                         if (Array.isArray(data.accessories)) {
                             data.accessories.forEach(item => {
-                                if (item.id === productId || item.productId === productId) {
-                                    bookedQuantity += parseInt(item.quantity || 1, 10);
+                                if (
+                                    item.id === productId ||
+                                    item.productId === productId
+                                ) {
+                                    bookedQuantity += parseInt(
+                                        item.quantity || 1,
+                                        10
+                                    );
                                 }
                             });
                         }
-                        
+
                         // Check cartItems array
                         if (Array.isArray(data.cartItems)) {
                             data.cartItems.forEach(item => {
-                                if (item.id === productId || item.productId === productId) {
-                                    bookedQuantity += parseInt(item.quantity || 1, 10);
+                                if (
+                                    item.id === productId ||
+                                    item.productId === productId
+                                ) {
+                                    bookedQuantity += parseInt(
+                                        item.quantity || 1,
+                                        10
+                                    );
                                 }
                             });
                         }
                     }
                 });
             } catch (collError) {
-                console.log(`Collection '${collectionName}' not accessible:`, collError.message);
+                console.log(
+                    `Collection '${collectionName}' not accessible:`,
+                    collError.message
+                );
             }
         }
-        
-        console.log(`${productName} - Total stock: ${totalStock}, Booked quantity: ${bookedQuantity}, Requested: ${requestedQuantity}`);
-        
+
+        console.log(
+            `${productName} - Total stock: ${totalStock}, Booked quantity: ${bookedQuantity}, Requested: ${requestedQuantity}`
+        );
+
         // Calculate available quantity
         const availableQuantity = totalStock - bookedQuantity;
-        
+
         if (availableQuantity < requestedQuantity) {
             if (availableQuantity <= 0) {
-                return { 
-                    available: false, 
-                    message: `'${productName}' is unavailable on this date. Please check availability in the Products section.` 
+                return {
+                    available: false,
+                    message: `'${productName}' is unavailable on this date. Please check availability in the Products section.`
                 };
             } else {
-                return { 
-                    available: false, 
-                    message: `'${productName}' has only ${availableQuantity} unit(s) available on this date. Please check availability in the Products section.` 
+                return {
+                    available: false,
+                    message: `'${productName}' has only ${availableQuantity} unit(s) available on this date. Please check availability in the Products section.`
                 };
             }
         }
-        
+
         return { available: true, message: `${productName} is available.` };
-        
     } catch (error) {
-        console.error('Error checking product availability:', error);
-        return { 
-            available: false, 
-            message: `Error checking availability for '${productName}'. Please try again.` 
+        console.error("Error checking product availability:", error);
+        return {
+            available: false,
+            message: `Error checking availability for '${productName}'. Please try again.`
         };
     }
 }
@@ -199,32 +262,32 @@ async function checkProductAvailability(productId, productName, requestedQuantit
 // Check availability for all cart items
 async function checkCartAvailability(cartItems, checkoutDate) {
     const unavailableItems = [];
-    
+
     for (const item of cartItems) {
         const productRef = doc(chandriaDB, "products", item.productId);
         const productSnap = await getDoc(productRef);
-        
+
         if (!productSnap.exists()) {
             unavailableItems.push(`Product not found`);
             continue;
         }
-        
+
         const productData = productSnap.data();
-        const productName = productData.name || 'Unknown Product';
+        const productName = productData.name || "Unknown Product";
         const requestedQuantity = parseInt(item.quantity || 1, 10);
-        
+
         const availabilityCheck = await checkProductAvailability(
-            item.productId, 
-            productName, 
-            requestedQuantity, 
+            item.productId,
+            productName,
+            requestedQuantity,
             checkoutDate
         );
-        
+
         if (!availabilityCheck.available) {
             unavailableItems.push(availabilityCheck.message);
         }
     }
-    
+
     return unavailableItems;
 }
 
@@ -237,17 +300,17 @@ $(document).ready(function () {
         },
         types: [
             {
-                type: 'success',
-                background: 'hsl(346, 100%, 74%)',
+                type: "success",
+                background: "hsl(346, 100%, 74%)",
                 icon: {
-                    className: 'fi fi-rs-check',
-                    tagName: 'i'
+                    className: "fi fi-rs-check",
+                    tagName: "i"
                 },
                 duration: 4000
             },
             {
-                type: 'error',
-                background: '#ff4d4d',
+                type: "error",
+                background: "#ff4d4d",
                 duration: 4000
             }
         ]
@@ -256,7 +319,9 @@ $(document).ready(function () {
     // Check if user signed in with Google
     function isGoogleUser(user) {
         if (!user || !user.providerData) return false;
-        return user.providerData.some(provider => provider.providerId === 'google.com');
+        return user.providerData.some(
+            provider => provider.providerId === "google.com"
+        );
     }
 
     // Set min date for checkout date input to today
@@ -301,7 +366,7 @@ $(document).ready(function () {
     onAuthStateChanged(auth, async user => {
         try {
             // Show spinner using centralized system with fallback
-            if (typeof window.showSpinner === 'function') {
+            if (typeof window.showSpinner === "function") {
                 window.showSpinner();
             } else {
                 $("#checkout-loader").removeClass("hidden");
@@ -310,7 +375,8 @@ $(document).ready(function () {
             if (user) {
                 // Check if user is an admin
                 const adminDocRef = doc(chandriaDB, "adminAccounts", user.uid);
-                const adminDocSnap = await getDoc(adminDocRef);                if (adminDocSnap.exists()) {
+                const adminDocSnap = await getDoc(adminDocRef);
+                if (adminDocSnap.exists()) {
                     // If user is admin, redirect to admin panel
                     window.location.href = "../admin/dashboard.html";
                     return;
@@ -333,14 +399,17 @@ $(document).ready(function () {
                         if (userDoc.exists()) {
                             const userData = userDoc.data();
                             $("#customer-name").val(userData.fullname || "");
-                            
+
                             const contactValue = userData.contact || "";
                             $("#customer-contact").val(contactValue);
-                            
+
                             // If Google user and no contact info, allow editing
                             if (isGoogle && !contactValue.trim()) {
                                 $("#customer-contact").removeAttr("readonly");
-                                $("#customer-contact").attr("placeholder", "Phone No.");
+                                $("#customer-contact").attr(
+                                    "placeholder",
+                                    "Phone No."
+                                );
                             } else {
                                 // Keep readonly for non-Google users or Google users with existing contact
                                 $("#customer-contact").attr("readonly", true);
@@ -348,7 +417,10 @@ $(document).ready(function () {
                         } else if (isGoogle) {
                             // New Google user with no Firestore record
                             $("#customer-contact").removeAttr("readonly");
-                            $("#customer-contact").attr("placeholder", "Phone No.");
+                            $("#customer-contact").attr(
+                                "placeholder",
+                                "Phone No."
+                            );
                         }
                     })(),
                     loadCartItems(user.uid),
@@ -359,12 +431,11 @@ $(document).ready(function () {
                 // REDIRECT IF NO USER LOGGED-IN
                 window.location.href = "../index.html";
             }
-            
         } catch (error) {
             console.error("Error loading checkout data:", error);
         } finally {
             // Hide spinner using centralized system with fallback
-            if (typeof window.hideSpinner === 'function') {
+            if (typeof window.hideSpinner === "function") {
                 window.hideSpinner();
             } else {
                 $("#checkout-loader").addClass("hidden");
@@ -440,7 +511,9 @@ $(document).ready(function () {
             !checkoutDateStr ||
             !checkoutTimeStr
         ) {
-            notyf.error("Please fill in all required fields including phone number.");
+            notyf.error(
+                "Please fill in all required fields including phone number."
+            );
             return;
         }
 
@@ -519,15 +592,18 @@ $(document).ready(function () {
                 // Get user's cart items
                 const userRef = doc(chandriaDB, "userAccounts", user.uid);
                 const userSnap = await getDoc(userRef);
-                
+
                 if (userSnap.exists()) {
                     const userData = userSnap.data();
                     const cartItems = userData.added_to_cart || [];
-                    
+
                     if (cartItems.length > 0) {
                         // Check availability for all items
-                        const unavailableItems = await checkCartAvailability(cartItems, checkoutDateStr);
-                        
+                        const unavailableItems = await checkCartAvailability(
+                            cartItems,
+                            checkoutDateStr
+                        );
+
                         if (unavailableItems.length > 0) {
                             // Show error messages for unavailable items
                             unavailableItems.forEach(message => {
@@ -538,8 +614,10 @@ $(document).ready(function () {
                     }
                 }
             } catch (error) {
-                console.error('Error checking availability:', error);
-                notyf.error('Error checking product availability. Please try again.');
+                console.error("Error checking availability:", error);
+                notyf.error(
+                    "Error checking product availability. Please try again."
+                );
                 return;
             }
         }
@@ -548,11 +626,11 @@ $(document).ready(function () {
         $("#terms-modal").addClass("active");
         // Add class to body to prevent background scrolling
         $("body").addClass("terms-modal-open");
-        
+
         // Reset checkbox state
         $("#terms-checkbox").prop("checked", false);
         $("#terms-agree").prop("disabled", true);
-        
+
         // Store form data for later use if terms are accepted
         window.bookingData = {
             customerName,
@@ -566,28 +644,28 @@ $(document).ready(function () {
     });
 
     // Terms and Conditions Modal functionality
-    $("#terms-checkbox").on("change", function() {
+    $("#terms-checkbox").on("change", function () {
         // Enable/disable the agree button based on checkbox state
         $("#terms-agree").prop("disabled", !$(this).prop("checked"));
     });
 
     // Close terms modal on cancel or X button
-    $("#terms-close, #terms-cancel").on("click", function() {
+    $("#terms-close, #terms-cancel").on("click", function () {
         $("#terms-modal").removeClass("active");
         // Remove class from body to re-enable background scrolling
         $("body").removeClass("terms-modal-open");
     });
-    
+
     // Scroll progress indicator for terms modal
-    $(".terms-modal-content").on("scroll", function() {
+    $(".terms-modal-content").on("scroll", function () {
         const scrollPosition = $(this).scrollTop();
         const totalHeight = $(this)[0].scrollHeight - $(this).outerHeight();
         const scrollPercentage = (scrollPosition / totalHeight) * 100;
         $(".terms-scroll-progress").css("width", scrollPercentage + "%");
     });
-    
+
     // Escape key to close terms modal
-    $(document).keydown(function(e) {
+    $(document).keydown(function (e) {
         if (e.key === "Escape" && $("#terms-modal").hasClass("active")) {
             $("#terms-modal").removeClass("active");
             // Remove class from body to re-enable background scrolling
@@ -596,20 +674,27 @@ $(document).ready(function () {
     });
 
     // Process booking when terms are agreed to
-    $("#terms-agree").on("click", async function() {
+    $("#terms-agree").on("click", async function () {
         // Show spinner for better UX during processing
-        if (typeof window.showSpinner === 'function') {
+        if (typeof window.showSpinner === "function") {
             window.showSpinner();
         }
-        
+
         // Hide terms modal
         $("#terms-modal").removeClass("active");
         // Remove class from body to re-enable background scrolling
         $("body").removeClass("terms-modal-open");
-        
+
         // Retrieve the stored form data
-        const { customerName, customerEmail, customerContact, checkoutDateStr, 
-                checkoutTimeStr, customerRequest, checkoutStatus } = window.bookingData;
+        const {
+            customerName,
+            customerEmail,
+            customerContact,
+            checkoutDateStr,
+            checkoutTimeStr,
+            customerRequest,
+            checkoutStatus
+        } = window.bookingData;
 
         // --- COLLECT CART ITEMS ---
         const user = auth.currentUser;
@@ -622,6 +707,7 @@ $(document).ready(function () {
                 // Ensure each item has productId, quantity, size, and type (if needed)
                 cartItems = (userData.added_to_cart || []).map(item => ({
                     productId: item.productId,
+                    productName: item.productName,
                     quantity: item.quantity || 1,
                     size: item.size || "",
                     type: item.type || "product" // add type if you support accessories
@@ -649,11 +735,14 @@ $(document).ready(function () {
             if (isGoogleUser(user)) {
                 const userRef = doc(chandriaDB, "userAccounts", user.uid);
                 const userSnap = await getDoc(userRef);
-                
+
                 if (userSnap.exists()) {
                     const userData = userSnap.data();
                     // Only update if the contact is different or was empty
-                    if (!userData.contact || userData.contact !== customerContact) {
+                    if (
+                        !userData.contact ||
+                        userData.contact !== customerContact
+                    ) {
                         await updateDoc(userRef, {
                             contact: customerContact
                         });
@@ -661,12 +750,16 @@ $(document).ready(function () {
                     }
                 } else {
                     // Create user record if it doesn't exist (new Google user)
-                    await setDoc(userRef, {
-                        fullname: customerName,
-                        email: customerEmail,
-                        contact: customerContact,
-                        createdAt: new Date()
-                    }, { merge: true });
+                    await setDoc(
+                        userRef,
+                        {
+                            fullname: customerName,
+                            email: customerEmail,
+                            contact: customerContact,
+                            createdAt: new Date()
+                        },
+                        { merge: true }
+                    );
                     console.log("Created user profile for new Google user");
                 }
             }
@@ -696,7 +789,9 @@ $(document).ready(function () {
             }, 1000); // 1 second delay to ensure data is processed
         } catch (err) {
             console.error("Appointment creation failed:", err);
-            notyf.error("There was an error creating your appointment. Please try again.");
+            notyf.error(
+                "There was an error creating your appointment. Please try again."
+            );
         }
     });
 
@@ -734,16 +829,16 @@ $(document).ready(function () {
     }
 
     // HANDLE ACCOUNT ICON CLICK
-    window.handleAccountClick = function() {
-        const userEmail = localStorage.getItem('userEmail');
+    window.handleAccountClick = function () {
+        const userEmail = localStorage.getItem("userEmail");
         const currentUser = auth.currentUser;
-        
+
         if (userEmail && currentUser && currentUser.emailVerified) {
             // Redirect to accounts page if user is logged in
-            window.location.href = './accounts.html';
+            window.location.href = "./accounts.html";
         } else {
             // Show auth modal if user is not logged in
-            if (typeof window.showAuthModal === 'function') {
+            if (typeof window.showAuthModal === "function") {
                 window.showAuthModal();
             }
         }

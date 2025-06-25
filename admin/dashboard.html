@@ -3,15 +3,28 @@
     <head>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />        <title>Chandria's La Robe - Dashboard</title>        <link rel="stylesheet" href="./assets/css/admin-layout.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Chandria's La Robe - Dashboard</title>
+        <link rel="stylesheet" href="./assets/css/admin-layout.css" />
         <link rel="stylesheet" href="./assets/css/admin-layout-mob.css" />
-        <link rel="stylesheet" href="./assets/css/dashboard.css" />        <link rel="stylesheet" href="./assets/css/status-colors.css" />        <link rel="stylesheet" href="./assets/css/appointment-modal.css" />
-        <link rel="stylesheet" href="./assets/css/appointment-modal-actions.css" />
+        <link rel="stylesheet" href="./assets/css/dashboard.css" />
+        <link rel="stylesheet" href="./assets/css/status-colors.css" />
+        <link rel="stylesheet" href="./assets/css/appointment-modal.css" />
+        <link
+            rel="stylesheet"
+            href="./assets/css/appointment-modal-actions.css"
+        />
         <link rel="stylesheet" href="./assets/css/confirmation-modal.css" />
-        
+
         <!-- Notyf Toast Notifications -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
-        <link rel="stylesheet" href="./assets/css/admin-notifications.css" />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css"
+        />
+ 
+<!-- NAG BABUG YUNG NOTYF SA EMAIL SENDING KAYA CINOMMENT KO -->       
+<!--         <link rel="stylesheet" href="./assets/css/admin-notifications.css" />
+-->
 
         <link
             href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
@@ -21,7 +34,9 @@
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         />
-    </head>    <body>        <!-- Page Loader -->
+    </head>
+    <body>
+        <!-- Page Loader -->
         <div class="admin-page-loader">
             <div class="admin-spinner-with-text">
                 <div class="admin-page-spinner"></div>
@@ -45,7 +60,8 @@
 
             <div class="menu-bar">
                 <div class="menu">
-                    <ul class="menu-links">                        <li class="nav-link active">
+                    <ul class="menu-links">
+                        <li class="nav-link active">
                             <a href="#">
                                 <i class="bx bxs-dashboard icon"></i>
                                 <span class="text nav-text">Dashboard</span>
@@ -79,15 +95,14 @@
                                 <i class="bx bxs-package icon"></i>
                                 <span class="text nav-text">Rental</span>
                             </a>
-                        </li>                        <li class="nav-link">
+                        </li>
+                        <li class="nav-link">
                             <a href="./customer-logs.html">
                                 <i class="bx bxs-user icon"></i>
-                                <span class="text nav-text"
-                                    >Logs History</span
-                                >
+                                <span class="text nav-text">Logs History</span>
                             </a>
                         </li>
-                        
+
                         <li class="nav-link">
                             <a href="./settings.html">
                                 <i class="bx bxs-cog icon"></i>
@@ -106,412 +121,557 @@
 
                 <div class="bottom-content"></div>
             </div>
-        </nav>        <main class="main-content">            <header class="page-header dashboard-header">
+        </nav>
+        <main class="main-content">
+            <header class="page-header dashboard-header">
                 <div class="header-left">
                     <h1 class="page-title">Dashboard</h1>
                     <div class="dashboard-datetime">
                         <div class="current-date" id="currentDateTime"></div>
                     </div>
                 </div>
-
             </header>
             <div class="page-content">
-            <div class="dashboard-layout">
-                <div class="dashboard-main">                    <section class="dashboard-cards-row">                        <div class="dashboard-card total-rentals">
-                            <div class="card-header">
-                                <div class="card-icon">
-                                    <i class="bx bxs-shopping-bag"></i>
+                <div class="dashboard-layout">
+                    <div class="dashboard-main">
+                        <section class="dashboard-cards-row">
+                            <div class="dashboard-card total-rentals">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="bx bxs-shopping-bag"></i>
+                                    </div>
+                                    <div class="card-title-container">
+                                        <div class="card-sub">This Month's</div>
+                                        <div class="card-title">
+                                            TOTAL RENTALS
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="card-title-container">
-                                    <div class="card-sub">This Month's</div>
-                                    <div class="card-title">TOTAL RENTALS</div>
-                                </div>
-                            </div>
-                            <div class="card-content">
-                                <div class="card-main" id="total-rentals-count">
-                                    0
-                                </div>
-                            </div>
-                        </div>                        <div class="dashboard-card total-appointments">
-                            <div class="card-header">
-                                <div class="card-icon">
-                                    <i class="bx bxs-calendar-check"></i>
-                                </div>
-                                <div class="card-title-container">
-                                    <div class="card-sub">This Month's</div>
-                                    <div class="card-title">
-                                        TOTAL APPOINTMENTS
+                                <div class="card-content">
+                                    <div
+                                        class="card-main"
+                                        id="total-rentals-count"
+                                    >
+                                        0
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-content">
-                                <div class="card-main" id="total-appointments-count">
-                                    0
+                            <div class="dashboard-card total-appointments">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="bx bxs-calendar-check"></i>
+                                    </div>
+                                    <div class="card-title-container">
+                                        <div class="card-sub">This Month's</div>
+                                        <div class="card-title">
+                                            TOTAL APPOINTMENTS
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-content">
+                                    <div
+                                        class="card-main"
+                                        id="total-appointments-count"
+                                    >
+                                        0
+                                    </div>
                                 </div>
                             </div>
-                        </div><div class="dashboard-card total-products">
-                            <div class="card-header">
-                                <div class="card-icon">
-                                    <i class="bx bxs-cube"></i>
+                            <div class="dashboard-card total-products">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="bx bxs-cube"></i>
+                                    </div>
+                                    <div class="card-title">TOTAL PRODUCTS</div>
                                 </div>
-                                <div class="card-title">TOTAL PRODUCTS</div>
-                            </div>
-                            <div class="card-content">
-                                <div class="card-main" id="total-products-count">
-                                    0
+                                <div class="card-content">
+                                    <div
+                                        class="card-main"
+                                        id="total-products-count"
+                                    >
+                                        0
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </section>
-                    <section class="dashboard-table">
-                        <div class="table-header">
-                            <div class="table-title">
-                                <h3>Recent Rentals</h3>
-                                <p>
-                                    Latest rental transactions and their status
-                                </p>
+                        </section>
+                        <section class="dashboard-table">
+                            <div class="table-header">
+                                <div class="table-title">
+                                    <h3>Recent Rentals</h3>
+                                    <p>
+                                        Latest rental transactions and their
+                                        status
+                                    </p>
+                                </div>
+                                <div class="table-actions">
+                                    <div class="table-search">
+                                        <i class="bx bx-search"></i>
+                                        <input
+                                            type="text"
+                                            placeholder="Search rentals..."
+                                        />
+                                        <i class="bx bx-x clear-icon"></i>
+                                    </div>
+                                    <button class="view-all-btn">
+                                        <span>View All</span>
+                                        <i class="bx bx-chevron-right"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="table-actions">
-                                <div class="table-search">
+                            <div class="table-content">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Rentee Name</th>
+                                            <th>Transaction Code</th>
+                                            <th>Remaining Bal.</th>
+                                            <th>Status</th>
+                                            <th>Details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rentals-table-body">
+                                        <tr>
+                                            <td
+                                                colspan="5"
+                                                class="loading-cell"
+                                            >
+                                                <i
+                                                    class="bx bx-loader-alt bx-spin"
+                                                ></i>
+                                                Loading rentals...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+                    <section class="dashboard-appointments">
+                        <div class="appointments-header">
+                            <div class="appointments-title">
+                                <h3>Recent Appointments</h3>
+                                <p>Upcoming and recent booking appointments</p>
+                            </div>
+                            <div class="appointments-actions">
+                                <div class="appointments-search">
                                     <i class="bx bx-search"></i>
                                     <input
                                         type="text"
-                                        placeholder="Search rentals..."
+                                        id="appointment-search"
+                                        placeholder="Search appointments..."
                                     />
-                                    <i class="bx bx-x clear-icon"></i>
+                                    <i
+                                        class="bx bx-x clear-search"
+                                        id="clear-search"
+                                    ></i>
                                 </div>
-                                <button class="view-all-btn">
-                                    <span>View All</span>
-                                    <i class="bx bx-chevron-right"></i>
-                                </button>
                             </div>
                         </div>
-                        <div class="table-content">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Rentee Name</th>
-                                        <th>Transaction Code</th>
-                                        <th>Remaining Bal.</th>
-                                        <th>Status</th>
-                                        <th>Details</th>
-                                    </tr>
-                                </thead>                                <tbody id="rentals-table-body">
-                                    <tr>                                        <td colspan="5" class="loading-cell">
-                                            <i class="bx bx-loader-alt bx-spin"></i> Loading rentals...
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="appointments-content">
+                            <ul
+                                class="appointments-list"
+                                id="appointments-list"
+                            >
+                                <!-- Content will be loaded dynamically via JS -->
+                                <li class="appointment-item">
+                                    <div
+                                        class="appointment-text"
+                                        style="
+                                            text-align: center;
+                                            color: #999;
+                                            padding: 20px;
+                                        "
+                                    >
+                                        <i class="bx bx-loader-alt bx-spin"></i>
+                                        Loading appointments...
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
                     </section>
-                </div>
-                <section class="dashboard-appointments">
-                    <div class="appointments-header">
-                        <div class="appointments-title">
-                            <h3>Recent Appointments</h3>
-                            <p>Upcoming and recent booking appointments</p>
-                        </div>
-                        <div class="appointments-actions">
-                            <div class="appointments-search">
-                                <i class="bx bx-search"></i>
-                                <input
-                                    type="text"
-                                    id="appointment-search"
-                                    placeholder="Search appointments..."
-                                />
-                                <i
-                                    class="bx bx-x clear-search"
-                                    id="clear-search"
-                                ></i>
+                    <!-- Appointment Modal -->
+                    <div id="appointment-modal" class="modal">
+                        <div class="modal-backdrop"></div>
+                        <div class="modal-content appointment-modal-content">
+                            <div class="appointment-modal-header">
+                                <h3 class="modal-title">
+                                    <i class="fas fa-calendar-check"></i>
+                                    Appointment Details
+                                </h3>
+                                <button
+                                    class="close-modal"
+                                    aria-label="Close modal"
+                                >
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div
+                                id="appointment-details"
+                                class="appointment-modal-body"
+                            ></div>
+                            <!-- Appointment status tags -->
+                            <div
+                                id="appointment-confirmed-tag"
+                                class="appointment-status-tag confirmed-tag"
+                                style="display: none"
+                            >
+                                <i class="fas fa-check-circle"></i>
+                                APPOINTMENT CONFIRMED
+                            </div>
+                            <div
+                                id="appointment-cancelled-tag"
+                                class="appointment-status-tag cancelled-tag"
+                                style="display: none"
+                            >
+                                <i class="fas fa-times-circle"></i>
+                                APPOINTMENT CANCELLED
+                            </div>
+                            <div class="appointment-modal-actions">
+                                <div class="left-buttons">
+                                    <button class="btn cancel-booking">
+                                        <i class="fas fa-times"></i>
+                                        CANCEL BOOKING
+                                    </button>
+                                    <button class="btn confirm-booking">
+                                        <i class="fas fa-check"></i>
+                                        CONFIRM BOOKING
+                                    </button>
+                                    <button
+                                        class="btn undo-confirmation"
+                                        style="display: none"
+                                    >
+                                        <i class="fas fa-undo"></i>
+                                        UNDO CONFIRMATION
+                                    </button>
+                                    <button
+                                        class="btn undo-cancellation"
+                                        style="display: none"
+                                    >
+                                        <i class="fas fa-undo"></i>
+                                        UNDO CANCELLATION
+                                    </button>
+                                </div>
+                                <button class="btn proceed-transaction">
+                                    <i class="fas fa-arrow-right"></i>
+                                    PROCEED TO TRANSACTION
+                                </button>
                             </div>
                         </div>
-                    </div>                    <div class="appointments-content">                        <ul class="appointments-list" id="appointments-list">
-                            <!-- Content will be loaded dynamically via JS -->
-                            <li class="appointment-item">
-                                <div class="appointment-text" style="text-align: center; color: #999; padding: 20px;">
-                                    <i class="bx bx-loader-alt bx-spin"></i> Loading appointments...
-                                </div>
-                            </li>
-                        </ul>
                     </div>
-                </section>
-                <!-- Appointment Modal -->
-                <div id="appointment-modal" class="modal">
-                    <div class="modal-backdrop"></div>
-                    <div class="modal-content appointment-modal-content">
-                        <div class="appointment-modal-header">
-                            <h3 class="modal-title">
-                                <i class="fas fa-calendar-check"></i>
-                                Appointment Details
-                            </h3>
-                            <button
-                                class="close-modal"
-                                aria-label="Close modal"
-                            >
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div
-                            id="appointment-details"
-                            class="appointment-modal-body"
-                        >                        </div>
-                        <!-- Appointment status tags -->
-                        <div id="appointment-confirmed-tag" class="appointment-status-tag confirmed-tag" style="display: none;">
-                            <i class="fas fa-check-circle"></i>
-                            APPOINTMENT CONFIRMED
-                        </div>
-                        <div id="appointment-cancelled-tag" class="appointment-status-tag cancelled-tag" style="display: none;">
-                            <i class="fas fa-times-circle"></i>
-                            APPOINTMENT CANCELLED
-                        </div>                        <div class="appointment-modal-actions">
-                            <div class="left-buttons">
-                                <button class="btn cancel-booking">
+                    <!-- Rental Modal -->
+                    <div id="rental-modal" class="modal">
+                        <div class="modal-backdrop"></div>
+                        <div class="modal-content rental-modal-content">
+                            <div class="rental-modal-header">
+                                <h3 class="modal-title">
+                                    <i class="fas fa-receipt"></i>
+                                    Rental Transaction Details
+                                </h3>
+                                <button
+                                    class="close-rental-modal"
+                                    aria-label="Close modal"
+                                >
                                     <i class="fas fa-times"></i>
-                                    CANCEL BOOKING
                                 </button>
-                                <button class="btn confirm-booking">
+                            </div>
+                            <div class="rental-modal-body">
+                                <!-- Customer Information -->
+                                <div class="rental-section">
+                                    <h4 class="section-title">
+                                        <i class="fas fa-user"></i>
+                                        Customer Information
+                                    </h4>
+                                    <div class="info-grid">
+                                        <div class="info-item">
+                                            <label>Full Name:</label>
+                                            <span id="customer-name"
+                                                >Loading...</span
+                                            >
+                                        </div>
+                                        <div class="info-item">
+                                            <label>Contact Number:</label>
+                                            <span id="customer-contact"
+                                                >Loading...</span
+                                            >
+                                        </div>
+                                    </div>
+                                    <div class="info-grid">
+                                        <div class="info-item">
+                                            <label>Address:</label>
+                                            <span id="customer-address"
+                                                >Loading...</span
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Transaction Information -->
+                                <div class="rental-section">
+                                    <h4 class="section-title">
+                                        <i
+                                            class="fas fa-file-invoice-dollar"
+                                        ></i>
+                                        Transaction Details
+                                    </h4>
+                                    <div class="info-grid">
+                                        <div class="info-item">
+                                            <label>Transaction Code:</label>
+                                            <span id="transaction-code"
+                                                >Loading...</span
+                                            >
+                                        </div>
+                                        <div class="info-item">
+                                            <label>Rental Type:</label>
+                                            <span
+                                                id="rental-type"
+                                                class="status-badge"
+                                                >Loading...</span
+                                            >
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="info-grid"
+                                        id="rental-dates-section"
+                                    >
+                                        <!-- Dynamic date fields will be inserted here -->
+                                    </div>
+                                </div>
+                                <!-- Payment Information -->
+                                <div class="rental-section">
+                                    <h4 class="section-title">
+                                        <i class="fas fa-credit-card"></i>
+                                        Payment Information
+                                    </h4>
+                                    <div class="payment-breakdown">
+                                        <div class="payment-row">
+                                            <span>Rental Fee:</span>
+                                            <span id="rental-fee">₱0.00</span>
+                                        </div>
+                                        <div class="payment-row total">
+                                            <span>Total Payment:</span>
+                                            <span id="payment-total"
+                                                >₱0.00</span
+                                            >
+                                        </div>
+                                        <div class="payment-row remaining">
+                                            <span>Remaining Balance:</span>
+                                            <span id="payment-remaining"
+                                                >₱0.00</span
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Rented Items -->
+                                <div class="rental-section">
+                                    <h4 class="section-title">
+                                        <i class="fas fa-shopping-bag"></i>
+                                        Rented Items
+                                    </h4>
+                                    <div
+                                        class="items-container"
+                                        id="rented-items"
+                                    >
+                                        <div class="loading-items">
+                                            <i
+                                                class="fas fa-spinner fa-spin"
+                                            ></i>
+                                            Loading items...
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Additional Notes -->
+                                <div class="rental-section">
+                                    <h4 class="section-title">
+                                        <i class="fas fa-sticky-note"></i>
+                                        Additional Notes
+                                    </h4>
+                                    <div
+                                        class="notes-content"
+                                        id="rental-notes"
+                                    >
+                                        No additional notes provided.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cancel Booking Confirmation Modal -->
+                    <div id="cancel-booking-modal" class="modal">
+                        <div class="modal-backdrop"></div>
+                        <div class="modal-content confirmation-modal-content">
+                            <div class="confirmation-modal-header undo-header">
+                                <div class="header-content">
+                                    <h3 class="modal-title">
+                                        <i
+                                            class="fas fa-exclamation-triangle"
+                                        ></i>
+                                        Cancel Booking
+                                    </h3>
+                                    <button
+                                        class="close-confirmation-modal"
+                                        aria-label="Close modal"
+                                    >
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="confirmation-modal-body">
+                                <p>
+                                    Are you sure you want to cancel this
+                                    booking?
+                                </p>
+                                <p>This action cannot be undone.</p>
+                            </div>
+                            <div class="confirmation-modal-actions">
+                                <button class="btn btn-secondary cancel-action">
+                                    <i class="fas fa-times"></i>
+                                    NO
+                                </button>
+                                <button
+                                    class="btn btn-danger confirm-cancel-booking"
+                                >
                                     <i class="fas fa-check"></i>
-                                    CONFIRM BOOKING
-                                </button>
-                                <button class="btn undo-confirmation" style="display: none;">
-                                    <i class="fas fa-undo"></i>
-                                    UNDO CONFIRMATION
-                                </button>
-                                <button class="btn undo-cancellation" style="display: none;">
-                                    <i class="fas fa-undo"></i>
-                                    UNDO CANCELLATION
+                                    CANCEL
                                 </button>
                             </div>
-                            <button class="btn proceed-transaction">
-                                <i class="fas fa-arrow-right"></i>
-                                PROCEED TO TRANSACTION
-                            </button>
                         </div>
                     </div>
-                </div>                <!-- Rental Modal -->
-                <div id="rental-modal" class="modal">
-                    <div class="modal-backdrop"></div>
-                    <div class="modal-content rental-modal-content">
-                        <div class="rental-modal-header">
-                            <h3 class="modal-title">
-                                <i class="fas fa-receipt"></i>
-                                Rental Transaction Details
-                            </h3>
-                            <button
-                                class="close-rental-modal"
-                                aria-label="Close modal"
-                            >
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="rental-modal-body">
-                            <!-- Customer Information -->
-                            <div class="rental-section">
-                                <h4 class="section-title">
-                                    <i class="fas fa-user"></i>
-                                    Customer Information
-                                </h4>                                <div class="info-grid">
-                                    <div class="info-item">
-                                        <label>Full Name:</label>
-                                        <span id="customer-name">Loading...</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <label>Contact Number:</label>
-                                        <span id="customer-contact">Loading...</span>
-                                    </div>
-                                </div>
-                                <div class="info-grid">
-                                    <div class="info-item">
-                                        <label>Address:</label>
-                                        <span id="customer-address">Loading...</span>
-                                    </div>
+
+                    <!-- Confirm Booking Confirmation Modal -->
+                    <div id="confirm-booking-modal" class="modal">
+                        <div class="modal-backdrop"></div>
+                        <div class="modal-content confirmation-modal-content">
+                            <div class="confirmation-modal-header undo-header">
+                                <div class="header-content">
+                                    <h3 class="modal-title">
+                                        <i class="fas fa-check-circle"></i>
+                                        Confirm Booking
+                                    </h3>
+                                    <button
+                                        class="close-confirmation-modal"
+                                        aria-label="Close modal"
+                                    >
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
                             </div>
-
-                            <!-- Transaction Information -->
-                            <div class="rental-section">
-                                <h4 class="section-title">
-                                    <i class="fas fa-file-invoice-dollar"></i>
-                                    Transaction Details
-                                </h4>                                <div class="info-grid">
-                                    <div class="info-item">
-                                        <label>Transaction Code:</label>
-                                        <span id="transaction-code">Loading...</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <label>Rental Type:</label>
-                                        <span id="rental-type" class="status-badge">Loading...</span>
-                                    </div>
-                                </div>
-                                <div class="info-grid" id="rental-dates-section">
-                                    <!-- Dynamic date fields will be inserted here -->
-                                </div>
-                            </div>                            <!-- Payment Information -->
-                            <div class="rental-section">
-                                <h4 class="section-title">
-                                    <i class="fas fa-credit-card"></i>
-                                    Payment Information
-                                </h4>                                <div class="payment-breakdown">
-                                    <div class="payment-row">
-                                        <span>Rental Fee:</span>
-                                        <span id="rental-fee">₱0.00</span>
-                                    </div>
-                                    <div class="payment-row total">
-                                        <span>Total Payment:</span>
-                                        <span id="payment-total">₱0.00</span>
-                                    </div>
-                                    <div class="payment-row remaining">
-                                        <span>Remaining Balance:</span>
-                                        <span id="payment-remaining">₱0.00</span>
-                                    </div>
-                                </div>
+                            <div class="confirmation-modal-body">
+                                <p>
+                                    Are you sure you want to confirm this
+                                    booking?
+                                </p>
+                                <p>
+                                    This will mark the appointment as confirmed
+                                    in the system.
+                                </p>
                             </div>
-
-                            <!-- Rented Items -->
-                            <div class="rental-section">
-                                <h4 class="section-title">
-                                    <i class="fas fa-shopping-bag"></i>
-                                    Rented Items
-                                </h4>
-                                <div class="items-container" id="rented-items">
-                                    <div class="loading-items">
-                                        <i class="fas fa-spinner fa-spin"></i>
-                                        Loading items...
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Additional Notes -->
-                            <div class="rental-section">
-                                <h4 class="section-title">
-                                    <i class="fas fa-sticky-note"></i>
-                                    Additional Notes
-                                </h4>
-                                <div class="notes-content" id="rental-notes">
-                                    No additional notes provided.
-                                </div>                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cancel Booking Confirmation Modal -->
-                <div id="cancel-booking-modal" class="modal">
-                    <div class="modal-backdrop"></div>
-                    <div class="modal-content confirmation-modal-content">                        <div class="confirmation-modal-header undo-header">
-                            <div class="header-content">
-                                <h3 class="modal-title">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    Cancel Booking
-                                </h3>
-                                <button class="close-confirmation-modal" aria-label="Close modal">
+                            <div class="confirmation-modal-actions">
+                                <button class="btn btn-secondary cancel-action">
                                     <i class="fas fa-times"></i>
+                                    NO
+                                </button>
+                                <button
+                                    class="btn btn-success confirm-booking-action"
+                                >
+                                    <i class="fas fa-check"></i>
+                                    CONFIRM
                                 </button>
                             </div>
                         </div>
-                        <div class="confirmation-modal-body">
-                            <p>Are you sure you want to cancel this booking?</p>
-                            <p>This action cannot be undone.</p>
-                        </div>                        <div class="confirmation-modal-actions">
-                            <button class="btn btn-secondary cancel-action">
-                                <i class="fas fa-times"></i>
-                                NO
-                            </button>                            <button class="btn btn-danger confirm-cancel-booking">
-                                <i class="fas fa-check"></i>
-                                CANCEL
-                            </button>
-                        </div>
                     </div>
-                </div>
 
-                <!-- Confirm Booking Confirmation Modal -->
-                <div id="confirm-booking-modal" class="modal">
-                    <div class="modal-backdrop"></div>
-                    <div class="modal-content confirmation-modal-content">                        <div class="confirmation-modal-header undo-header">
-                            <div class="header-content">
-                                <h3 class="modal-title">
-                                    <i class="fas fa-check-circle"></i>
-                                    Confirm Booking
-                                </h3>
-                                <button class="close-confirmation-modal" aria-label="Close modal">
-                                    <i class="fas fa-times"></i>
-                                </button>
+                    <!-- Undo Confirmation Modal -->
+                    <div id="undo-confirmation-modal" class="modal">
+                        <div class="modal-backdrop"></div>
+                        <div class="modal-content confirmation-modal-content">
+                            <div class="confirmation-modal-header undo-header">
+                                <div class="header-content">
+                                    <h3 class="modal-title">
+                                        <i class="fas fa-undo"></i>
+                                        Undo Confirmation
+                                    </h3>
+                                    <button
+                                        class="close-confirmation-modal"
+                                        aria-label="Close modal"
+                                    >
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="confirmation-modal-body">
-                            <p>Are you sure you want to confirm this booking?</p>
-                            <p>This will mark the appointment as confirmed in the system.</p>
-                        </div>                        <div class="confirmation-modal-actions">
-                            <button class="btn btn-secondary cancel-action">
-                                <i class="fas fa-times"></i>
-                                NO
-                            </button>                            <button class="btn btn-success confirm-booking-action">
-                                <i class="fas fa-check"></i>
-                                CONFIRM
-                            </button></div>
-                    </div>
-                </div>
-
-                <!-- Undo Confirmation Modal -->
-                <div id="undo-confirmation-modal" class="modal">
-                    <div class="modal-backdrop"></div>
-                    <div class="modal-content confirmation-modal-content">                        <div class="confirmation-modal-header undo-header">
-                            <div class="header-content">
-                                <h3 class="modal-title">
+                            <div class="confirmation-modal-body">
+                                <p>
+                                    Are you sure you want to undo the
+                                    confirmation for this appointment?
+                                </p>
+                                <p>
+                                    This will change the appointment status back
+                                    to pending.
+                                </p>
+                            </div>
+                            <div class="confirmation-modal-actions">
+                                <button class="btn btn-secondary cancel-action">
+                                    <i class="fas fa-times"></i>
+                                    NO
+                                </button>
+                                <button
+                                    class="btn btn-warning confirm-undo-action"
+                                >
                                     <i class="fas fa-undo"></i>
-                                    Undo Confirmation
-                                </h3>
-                                <button class="close-confirmation-modal" aria-label="Close modal">
-                                    <i class="fas fa-times"></i>
+                                    UNDO
                                 </button>
                             </div>
-                        </div>
-                        <div class="confirmation-modal-body">
-                            <p>Are you sure you want to undo the confirmation for this appointment?</p>
-                            <p>This will change the appointment status back to pending.</p>
-                        </div>
-                        <div class="confirmation-modal-actions">
-                            <button class="btn btn-secondary cancel-action">
-                                <i class="fas fa-times"></i>
-                                NO
-                            </button>                            <button class="btn btn-warning confirm-undo-action">
-                                <i class="fas fa-undo"></i>
-                                UNDO
-                            </button>
                         </div>
                     </div>
-                </div>                <!-- Undo Cancellation Modal -->
-                <div id="undo-cancellation-modal" class="modal">
-                    <div class="modal-backdrop"></div>
-                    <div class="modal-content confirmation-modal-content">
-                        <div class="confirmation-modal-header undo-header">
-                            <div class="header-content">
-                                <h3 class="modal-title">
-                                    <i class="fas fa-undo"></i>
-                                    Undo Cancellation
-                                </h3>
-                                <button class="close-confirmation-modal" aria-label="Close modal">
+                    <!-- Undo Cancellation Modal -->
+                    <div id="undo-cancellation-modal" class="modal">
+                        <div class="modal-backdrop"></div>
+                        <div class="modal-content confirmation-modal-content">
+                            <div class="confirmation-modal-header undo-header">
+                                <div class="header-content">
+                                    <h3 class="modal-title">
+                                        <i class="fas fa-undo"></i>
+                                        Undo Cancellation
+                                    </h3>
+                                    <button
+                                        class="close-confirmation-modal"
+                                        aria-label="Close modal"
+                                    >
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="confirmation-modal-body">
+                                <p>
+                                    Are you sure you want to undo the
+                                    cancellation for this appointment?
+                                </p>
+                                <p>
+                                    This will change the appointment status back
+                                    to pending.
+                                </p>
+                            </div>
+                            <div class="confirmation-modal-actions">
+                                <button class="btn btn-secondary cancel-action">
                                     <i class="fas fa-times"></i>
+                                    NO
+                                </button>
+                                <button
+                                    class="btn btn-warning confirm-undo-cancellation-action"
+                                >
+                                    <i class="fas fa-undo"></i>
+                                    UNDO
                                 </button>
                             </div>
-                        </div>
-                        <div class="confirmation-modal-body">
-                            <p>Are you sure you want to undo the cancellation for this appointment?</p>
-                            <p>This will change the appointment status back to pending.</p>
-                        </div>
-                        <div class="confirmation-modal-actions">
-                            <button class="btn btn-secondary cancel-action">
-                                <i class="fas fa-times"></i>
-                                NO
-                            </button>                            <button class="btn btn-warning confirm-undo-cancellation-action">
-                                <i class="fas fa-undo"></i>
-                                UNDO
-                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-            </div></main>        <!-- Mobile Bottom Navigation (hidden on desktop) -->        <nav class="mobile-bottom-nav">
+        </main>
+        <!-- Mobile Bottom Navigation (hidden on desktop) -->
+        <nav class="mobile-bottom-nav">
             <a href="./dashboard.html" class="mobile-nav-item active">
                 <i class="bx bxs-dashboard icon"></i>
                 <span class="text">Dashboard</span>
@@ -545,28 +705,40 @@
         <!-- Firebase SDK -->
         <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-     
+
+        <!-- Notyf Toast Notifications -->
+        <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+
         <!-- JQUERY CDN -->
         <script
             src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
             crossorigin="anonymous"
-        ></script>        <!-- Firebase Config -->
+        ></script>
+
+        <!-- Firebase Config -->
         <script src="./firebase-config.js"></script>
-          <!-- Admin Layout - Must be loaded before page-specific scripts -->
+        <!-- Admin Layout - Must be loaded before page-specific scripts -->
         <script src="./assets/js/admin-layout.js"></script>
-        
+
         <!-- Auth Guard - Must be loaded early -->
         <script type="module" src="./assets/js/auth-guard.js"></script>
-        
+
         <script src="./assets/js/spinners-admin.js"></script>
         <script src="./assets/js/admin-layout-mob.js"></script>
-        <script src="./assets/js/admin-notifications.js"></script>
-        
-        <!-- Notyf Toast Notifications -->
-        <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-          <script src="./assets/js/dashboard-service.js"></script>
+
+<!-- NAG BABUG YUNG NOTYF SA EMAIL SENDING KAYA CINOMMENT KO -->
+<!--         <script src="./assets/js/admin-notifications.js"></script>
+ -->
+ 
+        <script type="module" src="./assets/js/dashboard-service.js"></script>
         <script src="./assets/js/appointment-status-handler.js"></script>
-        <script src="./assets/js/dashboard-subscript.js"></script>
+        <script type="module" src="./assets/js/dashboard-subscript.js"></script>
+
+        <!-- EMAIL SENDING JS -->
+        <script
+            type="module"
+            src="./assets/js/email-sending-sendgrid.js"
+        ></script>
     </body>
 </html>
