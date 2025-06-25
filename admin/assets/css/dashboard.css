@@ -66,19 +66,19 @@
 }
 
 .total-rentals::before {
-    background: linear-gradient(90deg, #4e54c8, #8f94fb);
+    background: var(--primary-color);
 }
 
 .total-appointments::before {
-    background: linear-gradient(90deg, #11998e, #38ef7d);
+    background: var(--primary-color);
 }
 
 .total-products::before {
-    background: linear-gradient(90deg, #f857a6, #ff5858);
+    background: var(--primary-color);
 }
 
 .dashboard-card:hover {
-    transform: translateY(-6px);
+    /* Removed translateY effect */
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
 }
 
@@ -94,9 +94,7 @@
     transition: transform 0.3s ease;
 }
 
-.dashboard-card:hover .card-header {
-    transform: translateY(-3px);
-}
+/* Removed header translateY effect on hover */
 
 .card-icon {
     width: 48px; /* Increased size for more impact */
@@ -131,15 +129,15 @@
 }
 
 .total-rentals .card-icon {
-    background: linear-gradient(135deg, #4e54c8, #8f94fb);
+    background: var(--primary-color);
 }
 
 .total-appointments .card-icon {
-    background: linear-gradient(135deg, #11998e, #38ef7d);
+    background: var(--primary-color);
 }
 
 .total-products .card-icon {
-    background: linear-gradient(135deg, #f857a6, #ff5858);
+    background: var(--primary-color);
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -177,20 +175,18 @@
     transition: all 0.3s ease;
 }
 
-.dashboard-card:hover .card-main {
-    transform: scale(1.05);
-}
+/* Removed scale effect on hover */
 
 .total-rentals .card-main {
-    color: #4e54c8;
+    color: var(--primary-color);
 }
 
 .total-appointments .card-main {
-    color: #11998e;
+    color: var(--primary-color);
 }
 
 .total-products .card-main {
-    color: #f857a6;
+    color: var(--primary-color);
 }
 
 .card-main span {
