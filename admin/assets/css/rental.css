@@ -2567,7 +2567,7 @@ input[type="date"].invalid-date {
 #add-fee-modal .close-modal {
   cursor: pointer;
   color: var(--primary-color);
-         font-size: 1.5em;
+                 font-size: 1.5em;
   background: none;
   border: none;
   width: 28px;
@@ -2655,41 +2655,57 @@ input[type="date"].invalid-date {
   box-shadow: 0 4px 12px rgba(255, 126, 172, 0.3);
 }
 
-/* === MODAL UTILITIES === */
-.modal-hidden {
-    display: none !important;
+/* Additional Fee Input Container */
+.additional-fee-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
-.storing-details {
-    display: none !important;
+.additional-fee-input {
+    flex: 1;
+    padding-right: 35px; /* Make space for the X button */
 }
 
-.close-modal {
-    cursor: pointer !important;
-    float: right !important;
-    font-size: 1.5em !important;
+/* Clear Fee Button Styling */
+.clear-fee-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #ff4757;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 1;
 }
 
-.error-modal-content {
-    max-width: 350px !important;
-    text-align: center !important;
+.clear-fee-btn:hover {
+    background: #ff3742;
+    transform: translateY(-50%) scale(1.1);
 }
 
-.error-modal-title {
-    color: #e74c3c !important;
-    margin-bottom: 1em !important;
+.clear-fee-btn:active {
+    transform: translateY(-50%) scale(0.95);
 }
 
-.error-modal-message {
-    margin-bottom: 1.5em !important;
-    color: #c0392b !important;
+/* Hide clear button when fee fields are empty */
+.clear-fee-btn.hidden {
+    display: none;
 }
 
-.error-modal-ok-btn {
-    padding: 0.5em 1.5em !important;
-    background: #e74c3c !important;
-    color: #fff !important;
-    border: none !important;
-    border-radius: 6px !important;
-    cursor: pointer !important;
+/* Fee input styling when readonly */
+.additional-fee-input[readonly] {
+    background-color: #f8f9fa;
+    border-color: #e9ecef;
+    cursor: default;
 }
