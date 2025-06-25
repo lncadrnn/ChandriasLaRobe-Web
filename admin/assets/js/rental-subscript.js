@@ -915,19 +915,19 @@ $(document).ready(function () {
     const $customerForm = $("#customer-form");
     const $rentalFeeField = $("#client-rental-fee");
     const $checkoutBtn = $("#cart-checkout-btn");
-    const $cartTotalAmount = $("#cart-total-amount");
-
-    // Close the modal when close button is clicked
+    const $cartTotalAmount = $("#cart-total-amount");    // Close the modal when close button is clicked
     if ($customerClose.length) {
         $customerClose.on("click", function () {
-            $customerModal.hide();
+            $customerModal.removeClass('show').addClass('modal-hidden');
+            $('body').removeClass('modal-open');
         });
     }
 
     // Close the modal when clicking outside of it
     $(window).on("click", function (e) {
         if ($(e.target).is($customerModal)) {
-            $customerModal.hide();
+            $customerModal.removeClass('show').addClass('modal-hidden');
+            $('body').removeClass('modal-open');
         }
     });
 
@@ -1197,43 +1197,88 @@ $(document).ready(function () {
         $("#client-rental-fee-display").text(cartTotal);
     }
 
-    // FUNCTION FOR CART PROCEED BUTTON
-    if ($checkoutBtn.length && $customerModal.length) {
-        $checkoutBtn.on("click", function (e) {            e.preventDefault();
-              // Prevent checkout if no items (products or fees) are in the Rental List
-            if (!cart.products.length && !cart.accessories.length) {
-                notyf.error(
-                    "Please add at least one item to the Rental List before proceeding."
-                );
-                return;
-            }// Set rental fee field with total amount (if exists)
-            if ($rentalFeeField.length && $cartTotalAmount.length) {
-                const cartTotal = $cartTotalAmount.text() || "";
-                $rentalFeeField.val(cartTotal);
-                $("#client-rental-fee-display").text(cartTotal);
-            }            // Optionally update other modal fields if needed
-            if (typeof updateCustomerModalFields === "function") {
-                updateCustomerModalFields();
-            }            // Initialize date restrictions when modal opens
+    // UPDATE CUSTOMER MODAL SUMMARY - Enhanced function for better modal display
+    function updateCustomerModalSummary() {
+        console.log('Updating customer modal summary...');
+        
+        // Update the existing updateCustomerModalFields function
+        if (typeof updateCustomerModalFields === "function") {
+            updateCustomerModalFields();
+        }
+        
+        // Calculate total amount
+        const total = [
+            ...cart.products.map(p => p.price * (p.quantity || 1)),
+            ...cart.accessories.map(a => a.price)
+        ].reduce((sum, val) => sum + val, 0);
+        
+        const formattedTotal = `₱${total.toLocaleString()}`;
+        
+        // Update all total displays in the modal
+        $("#client-rental-fee-display").text(formattedTotal);
+        $("#client-rental-fee").val(formattedTotal);
+        
+        console.log('Modal summary updated with total:', formattedTotal);
+    }    // FUNCTION FOR CART PROCEED BUTTON - Enhanced with better modal handling
+    $(document).on('click', '#cart-checkout-btn', function(e) {
+        e.preventDefault();
+        console.log('Proceed to Payment button clicked');
+        
+        // Get total items in cart (both products and accessories/fees)
+        const totalItems = cart.products.length + cart.accessories.length;
+        console.log('Total items in cart:', totalItems);
+        
+        // Prevent checkout if no items are in the Rental List
+        if (totalItems === 0) {
+            notyf.error("Please add at least one item to the Rental List before proceeding.");
+            return;
+        }
+
+        // Update customer modal with cart data
+        updateCustomerModalSummary();
+
+        // Set rental fee field with total amount (if exists)
+        if ($rentalFeeField.length && $cartTotalAmount.length) {
+            const cartTotal = $cartTotalAmount.text() || "";
+            $rentalFeeField.val(cartTotal);
+            $("#client-rental-fee-display").text(cartTotal);
+        }
+
+        // Optionally update other modal fields if needed
+        if (typeof updateCustomerModalFields === "function") {
+            updateCustomerModalFields();
+        }
+
+        // Initialize date restrictions when modal opens
+        if (typeof setFixedRentalDateRestrictions === "function") {
             setFixedRentalDateRestrictions();
-            
-            // Initially disable all date fields until rental type is selected
-            $('#event-start-date').prop('disabled', true);
-            $('#event-end-date').prop('disabled', true);
-            $('#fixed-event-date').prop('disabled', true);
-            
-            // Also set up Open Rental date restrictions in case it's selected
-            const today = new Date();
-            const minStartDate = new Date(today);
-            minStartDate.setDate(today.getDate() + 2); // Open Rental: current date + 2 days
-            const minStartDateString = minStartDate.toISOString().split('T')[0];
-            $("#event-start-date").attr('min', minStartDateString);
-            console.log('Modal opened - applied date restrictions (Open: +2 days, Fixed: +3 days) and disabled date fields');
-            
-            // Show the customer modal
-            $customerModal.show();
-        });
-    }    // --- Restrict Client Contact to Numbers Only and Enforce 09 Format ---
+        }
+        
+        // Initially disable all date fields until rental type is selected
+        $('#event-start-date').prop('disabled', true);
+        $('#event-end-date').prop('disabled', true);
+        $('#fixed-event-date').prop('disabled', true);
+        
+        // Also set up Open Rental date restrictions in case it's selected
+        const today = new Date();
+        const minStartDate = new Date(today);
+        minStartDate.setDate(today.getDate() + 2); // Open Rental: current date + 2 days
+        const minStartDateString = minStartDate.toISOString().split('T')[0];
+        $("#event-start-date").attr('min', minStartDateString);
+          // Show the customer modal with multiple methods to ensure it appears
+        const $modal = $("#customer-modal");
+        console.log('Customer modal element found:', $modal.length > 0);
+        
+        if ($modal.length) {
+            // Remove hidden class and add show class to display modal
+            $modal.removeClass('modal-hidden').addClass('show');
+            $('body').addClass('modal-open');
+            console.log('Customer modal should now be visible');
+        } else {
+            console.error('Customer modal element not found!');
+            notyf.error('Unable to open payment form. Please refresh the page.');
+        }
+    });// --- Restrict Client Contact to Numbers Only and Enforce 09 Format ---
     $("#client-contact").on("input", function () {
         let value = this.value;
         
@@ -2117,7 +2162,7 @@ $(document).ready(function () {
                 `);
                 
                 orderItems.append(cartItem);
-            });            // Add accessories to display
+            });                       // Add accessories to display
             cart.accessories.forEach((item, idx) => {
                 let detailsText = "Additional Item";
                 
