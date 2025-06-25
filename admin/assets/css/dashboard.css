@@ -1229,39 +1229,121 @@ tr:hover {
 @media screen and (max-width: 768px) {
     .dashboard-layout {
         gap: 16px;
+        padding: 16px;
     }
       .dashboard-cards-row {
         grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
+        gap: 16px;
+        margin-bottom: 16px;
     }
     
+    /* Semi-modern card design for tablet */
     .dashboard-card {
-        padding: 12px 8px;
-        height: 100px;
+        padding: 0;
+        height: 110px;
         min-width: 0;
+        display: grid;
+        grid-template-columns: 70px 1fr;
+        border-radius: 16px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    
+    /* Left area with icon */
+    .card-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--primary-color);
+        padding: 8px;
+        height: 100%;
     }
     
     .card-icon {
-        width: 28px;
-        height: 28px;
-        font-size: 1rem;
+        width: 36px;
+        height: 36px;
+        font-size: 1.2rem;
+        color: white;
+        background: transparent;
+        box-shadow: none;
+    }
+    
+    .card-title-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .card-sub {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.65rem;
     }
     
     .card-title {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
+        color: white;
+        text-align: center;
         line-height: 1.2;
     }
-      .card-main {
-        font-size: 1.8rem;
+    
+    /* Right area with number */
+    .card-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
     }
-      .dashboard-table {
-        height: auto; /* Allow natural height on mobile */
+    
+    .card-main {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #333;
+        text-align: center;
+    }
+    
+    /* Special styling for products card */
+    .total-products .card-header {
+        justify-content: center;
+    }
+    
+    .total-products .card-title {
+        margin-top: 5px;
+    }
+    /* Table styling for tablet */
+    .dashboard-table {
+        height: auto;
         max-height: none;
+        overflow-x: auto;
+        width: 100%;
+        margin-bottom: 16px;
+        border-radius: 12px;
     }
-        .table-content {
-        max-height: 300px; /* Increased from 200px to 300px for more content on mobile */
-        overflow-y: auto; /* Enable scrollbar on mobile */
-        overflow-x: scroll; /* Keep horizontal scroll for wide tables */
+    
+    .dashboard-table table {
+        width: 100%;
+        min-width: 600px;
+    }
+    
+    .table-content {
+        max-height: 350px;
+        overflow-y: auto;
+        overflow-x: visible;
+        padding-bottom: 5px;
+    }
+    
+    /* Table header styling */
+    .table-header {
+        padding: 12px 16px;
+    }
+    
+    .table-title h3 {
+        font-size: 1.1rem;
+    }
+    
+    .table-title p {
+        font-size: 0.8rem;
     }
     
     .dashboard-appointments {
@@ -1319,8 +1401,8 @@ tr:hover {
 
 @media screen and (max-width: 480px) {
     .dashboard-layout {
-        padding: 8px;
-        gap: 12px;
+        padding: 12px;
+        gap: 16px;
         overflow-x: visible;
         display: flex;
         flex-direction: column;
@@ -1328,41 +1410,147 @@ tr:hover {
     
     .dashboard-cards-row {
         grid-template-columns: 1fr;
-        gap: 12px;
-        margin-bottom: 10px;
+        gap: 16px;
+        margin-bottom: 16px;
     }
     
+    /* Completely redesigned mobile card layout */
     .dashboard-card {
-        padding: 15px;
+        padding: 0;
         margin: 0;
-        height: auto;
-        min-height: 110px;
+        height: 90px; /* Fixed height for all cards */
+        min-height: 90px;
         min-width: 0;
+        display: flex;
+        flex-direction: row;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border: none;
     }
     
+    /* Left area with icon and text (wider pink section) */
+    .card-header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+        margin-bottom: 0;
+        background-color: var(--primary-color);
+        width: 68%; /* Wider left section to fit text */
+        padding: 10px 14px;
+        position: relative; /* For potential decoration */
+    }
+    
+    /* Add subtle visual separation between header and content */
+    .card-header::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 15%;
+        height: 70%;
+        width: 1px;
+        background: rgba(255, 255, 255, 0.3);
+    }
+    
+    /* Icon styling */
     .card-icon {
-        width: 32px;
-        height: 32px;
-        font-size: 0.9rem;
+        width: 38px;
+        height: 38px;
+        min-width: 38px; /* Prevent icon from shrinking */
+        border-radius: 50%;
+        font-size: 1.4rem;
+        color: white;
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
     }
     
+    /* Card title styling */
+    .card-title-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        overflow: hidden;
+    }
+    
+    .card-sub {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.6rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+    
     .card-title {
         font-size: 0.65rem;
-        line-height: 1.1;
-        text-align: center;
+        color: white;
+        text-align: left;
+        margin: 0;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+    
+    /* Special styling for products card which has different structure */
+    .total-products .card-header {
+        align-items: center;
+        justify-content: flex-start;
+        flex-direction: row;
     }
     
     .total-products .card-icon {
-        font-size: 1.2rem !important; /* Ensure proper icon size on mobile */
+        font-size: 1.5rem !important;
+    }
+    
+    .total-products .card-title {
+        color: white;
+        font-size: 0.65rem;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    /* Right area with number */
+    .card-content {
+        display: flex;
+        align-items: center;
+        justify-content: center; /* Center number horizontally */
+        padding: 0;
+        flex-grow: 1;
+        background-color: white;
+        width: 32%; /* Fixed width to balance with left section */
     }
     
     .card-main {
-        font-size: 2.2rem;
+        font-size: 2.3rem;
         font-weight: 700;
-        margin-top: 8px;
+        color: var(--primary-color);
+        text-align: center; /* Center text */
+        line-height: 1;
+        width: 100%;
+    }
+    
+    /* Mobile hover and tap effects */
+    .dashboard-card:active {
+        transform: scale(0.98);
+    }
+    
+    /* Add subtle gradient to the card header for more modern look */
+    .dashboard-card .card-header {
+        background-image: linear-gradient(to right, var(--primary-color), #f06292);
+    }
+    
+    /* Add subtle hover effect for cards on mobile */
+    .dashboard-card:hover .card-main {
+        color: var(--primary-color);
     }
     
     th,
@@ -1374,6 +1562,20 @@ tr:hover {
     /* Ensure table content is visible on mobile */
     .dashboard-table {
         overflow-x: auto;
+        width: 100%;
+        margin-bottom: 16px;
+        border-radius: 12px;
+    }
+    
+    .dashboard-table table {
+        width: 100%;
+        min-width: 500px; /* Ensures tables can be scrolled horizontally */
+    }
+    
+    /* Table container styling */
+    .table-container {
+        overflow-x: auto;
+        padding-bottom: 5px; /* Space for the scrollbar */
         width: 100%;
     }
     
