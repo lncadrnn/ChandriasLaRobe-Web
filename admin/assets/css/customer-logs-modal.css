@@ -1887,3 +1887,467 @@ body.modal-open .modal-overlay.show .modal-content {
 #edit-modal .modal-body::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
 }
+
+/* =============== CONFIRMATION DELETION MODAL =============== */
+
+/* Delete Modal Content - Same width as transaction details and edit modals */
+.delete-modal-content {
+    max-width: 800px !important;
+    width: 95% !important;
+    max-height: 90vh !important;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.3s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#delete-modal.show .delete-modal-content {
+    transform: scale(1) translateY(0);
+}
+
+/* Delete Modal Header - Red theme */
+#delete-modal .modal-header {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    padding: 1.5rem 2rem;
+    border-radius: 16px 16px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    flex-shrink: 0;
+}
+
+#delete-modal .modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+}
+
+#delete-modal .modal-header h2 i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+#delete-modal .close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.5rem;
+    transition: all 0.2s ease;
+}
+
+#delete-modal .close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+/* Delete Modal Body */
+#delete-modal .modal-body {
+    padding: 2rem;
+    flex: 1;
+    overflow-y: auto;
+    background: #ffffff;
+}
+
+/* Delete Confirmation Section */
+.delete-confirmation-section {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    align-items: flex-start;
+}
+
+.delete-warning-icon {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    border: 3px solid #ef4444;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { 
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+    50% { 
+        box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
+    }
+}
+
+.delete-warning-icon i {
+    font-size: 2.5rem;
+    color: #dc2626;
+    z-index: 1;
+    position: relative;
+}
+
+.delete-confirmation-content {
+    flex: 1;
+}
+
+.delete-confirmation-content h3 {
+    margin: 0 0 1rem 0;
+    color: #dc2626;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.delete-confirmation-content p {
+    margin: 0 0 1rem 0;
+    color: #7f1d1d;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.delete-warning-list {
+    margin: 0 0 1.5rem 0;
+    padding-left: 1.2rem;
+    color: #991b1b;
+}
+
+.delete-warning-list li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    position: relative;
+    font-weight: 500;
+}
+
+.delete-warning-list li::marker {
+    color: #ef4444;
+}
+
+/* Transaction Summary for Delete Modal */
+.delete-transaction-summary {
+    background: #fef2f2;
+    border: 2px solid #fecaca;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1);
+}
+
+.delete-transaction-summary h4 {
+    margin: 0 0 1rem 0;
+    color: #dc2626;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #fecaca;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.delete-summary-content p {
+    margin: 0.75rem 0;
+    color: #7f1d1d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+.delete-summary-content strong {
+    color: #991b1b;
+    font-weight: 600;
+    min-width: 140px;
+}
+
+.delete-summary-content span {
+    text-align: right;
+    font-weight: 600;
+    color: #dc2626;
+}
+
+/* Final Warning Box */
+.delete-final-warning {
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.delete-final-warning::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1), transparent);
+    animation: slideInWarning 3s infinite;
+}
+
+@keyframes slideInWarning {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: 100%; }
+}
+
+.delete-final-warning h4 {
+    margin: 0 0 0.75rem 0;
+    color: #dc2626;
+    font-size: 1.1rem;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.delete-final-warning p {
+    margin: 0;
+    font-size: 1rem;
+    color: #991b1b;
+    position: relative;
+    z-index: 1;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+/* Delete Modal Actions */
+.delete-modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background: #fef2f2;
+    border-top: 2px solid #fecaca;
+    border-radius: 0 0 16px 16px;
+    flex-shrink: 0;
+}
+
+/* Delete Modal Buttons */
+#delete-modal .btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border: 2px solid #dc2626;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 140px;
+    justify-content: center;
+    text-decoration: none;
+}
+
+#delete-modal .btn-danger:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    border-color: #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+#delete-modal .btn-danger:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
+}
+
+#delete-modal .btn-secondary {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 2px solid #dee2e6;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 120px;
+    justify-content: center;
+    text-decoration: none;
+}
+
+#delete-modal .btn-secondary:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+    color: #495057;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Delete Button Loading State */
+#delete-modal .btn-danger.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+#delete-modal .btn-danger.loading i {
+    animation: spin 1s linear infinite;
+}
+
+/* Mobile Responsive Design for Delete Modal */
+@media (max-width: 768px) {
+    .delete-modal-content {
+        width: 95% !important;
+        max-width: none !important;
+        margin: 1rem !important;
+        max-height: calc(100vh - 2rem) !important;
+    }
+
+    #delete-modal .modal-header {
+        padding: 1rem 1.5rem;
+    }
+
+    #delete-modal .modal-header h2 {
+        font-size: 1.25rem;
+    }
+
+    #delete-modal .modal-body {
+        padding: 1.5rem;
+    }
+
+    .delete-confirmation-section {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+
+    .delete-warning-icon {
+        width: 60px;
+        height: 60px;
+        align-self: center;
+    }
+
+    .delete-warning-icon i {
+        font-size: 2rem;
+    }
+
+    .delete-transaction-summary,
+    .delete-final-warning {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .delete-summary-content p {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .delete-summary-content strong {
+        min-width: auto;
+        color: #991b1b;
+        font-size: 0.9rem;
+    }
+
+    .delete-summary-content span {
+        text-align: left;
+        font-size: 1rem;
+    }
+
+    .delete-modal-actions {
+        padding: 1rem 1.5rem;
+        flex-direction: column-reverse;
+        gap: 0.75rem;
+    }
+
+    #delete-modal .btn-danger,
+    #delete-modal .btn-secondary {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+        min-width: auto;
+    }
+}
+
+/* Small mobile adjustments */
+@media (max-width: 480px) {
+    .delete-modal-content {
+        width: 100% !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        max-height: 100vh !important;
+    }
+
+    #delete-modal .modal-header {
+        border-radius: 0;
+        padding: 1rem;
+    }
+
+    #delete-modal .modal-body {
+        padding: 1rem;
+    }
+
+    .delete-transaction-summary,
+    .delete-final-warning {
+        padding: 0.75rem;
+        border-radius: 8px;
+    }
+
+    .delete-modal-actions {
+        padding: 1rem;
+        border-radius: 0;
+    }
+}
+
+/* Animation for delete modal */
+.delete-modal-content {
+    animation: slideInUp 0.3s ease-out;
+}
+
+/* Custom scrollbar for delete modal body */
+#delete-modal .modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+#delete-modal .modal-body::-webkit-scrollbar-track {
+    background: #fef2f2;
+    border-radius: 4px;
+}
+
+#delete-modal .modal-body::-webkit-scrollbar-thumb {
+    background: #fecaca;
+    border-radius: 4px;
+}
+
+#delete-modal .modal-body::-webkit-scrollbar-thumb:hover {
+    background: #ef4444;
+}
+
+/* Remove any conflicting styles */
+#delete-modal .modal-content::before,
+#delete-modal .modal-content::after,
+#delete-modal::before,
+#delete-modal::after,
+.delete-modal-content::before,
+.delete-modal-content::after {
+    display: none !important;
+}
