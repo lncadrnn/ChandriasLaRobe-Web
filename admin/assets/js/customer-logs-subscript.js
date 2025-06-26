@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeTabNavigation() {
-    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabButtons = document.querySelectorAll('.tab-switch');
     const tabContents = document.querySelectorAll('.tab-content');
     
     tabButtons.forEach(button => {

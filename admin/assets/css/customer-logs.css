@@ -15,56 +15,61 @@
     --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
-/* === MODERN TAB NAVIGATION === */
-.modern-tabs {
+/* === RENTAL LOGS TAB NAVIGATION === */
+.rental-logs-tabs {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
-    background: var(--white-color);
-    border-radius: 16px;
-    padding: 1rem 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: var(--shadow-light);
-    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+    padding: 0;
 }
 
-.tab-nav {
+.tab-selector {
     display: flex;
-    background: #f8f9fa;
+    background: #ffffff;
     border-radius: 12px;
-    padding: 0.5rem;
-    gap: 0.25rem;
+    padding: 0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
 }
 
-.tab-button {
+.tab-switch {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 24px;
     border: none;
-    background: transparent;
-    color: var(--text-gray);
-    border-radius: 8px;
+    background: #ffffff;
+    color: #6b7280;
     font-weight: 500;
-    font-size: 0.95rem;
+    font-size: 14px;
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
+    white-space: nowrap;
+    flex: 1;
+    border-bottom: 3px solid transparent;
 }
 
-.tab-button:hover {
-    background: rgba(255, 107, 157, 0.1);
+.tab-switch:hover {
+    color: #374151;
+    background: rgba(249, 250, 251, 0.8);
+}
+
+.tab-switch.active {
+    background: #ffffff;
     color: var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+    font-weight: 600;
 }
 
-.tab-button.active {
-    background: var(--primary-color);
-    color: white;
-    box-shadow: 0 2px 8px rgba(255, 107, 157, 0.3);
-}
-
-.tab-button i {
-    font-size: 1.1rem;
+.tab-switch i {
+    font-size: 16px;
+    flex-shrink: 0;
 }
 
 /* Tab Content */
@@ -86,7 +91,8 @@
     text-align: center;
     background: var(--white-color);
     border-radius: 16px;
-    border: 2px dashed var(--border-color);
+    border: 2px dashed #e5e7eb;
+    margin: 2rem 0;
 }
 
 .empty-state-icon {
@@ -113,7 +119,7 @@
 }
 
 .empty-state p {
-    color: var(--text-gray);
+    color: #6b7280;
     font-size: 1rem;
     max-width: 500px;
     line-height: 1.6;
@@ -121,31 +127,32 @@
 
 /* Mobile responsive tabs */
 @media (max-width: 768px) {
-    .modern-tabs {
+    .rental-logs-tabs {
         flex-direction: column;
         gap: 1rem;
         margin: 0 0.75rem 1.5rem 0.75rem;
-        padding: 1rem;
+        padding: 0;
     }
     
-    .tab-nav {
+    .tab-selector {
         width: 100%;
         justify-content: center;
+        padding: 4px;
     }
     
-    .tab-button {
+    .tab-switch {
         flex: 1;
         justify-content: center;
-        padding: 0.75rem 1rem;
-        font-size: 0.9rem;
+        padding: 10px 16px;
+        font-size: 13px;
     }
     
-    .tab-button span {
+    .tab-switch span {
         display: none;
     }
     
-    .tab-button i {
-        font-size: 1.2rem;
+    .tab-switch i {
+        font-size: 18px;
     }
     
     .view-toggle {
@@ -154,7 +161,7 @@
     }
     
     .empty-state {
-        margin: 0 0.75rem;
+        margin: 1rem 0.75rem;
         padding: 3rem 1.5rem;
     }
     
