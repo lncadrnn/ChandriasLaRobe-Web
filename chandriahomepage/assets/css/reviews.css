@@ -646,114 +646,13 @@
     100% { transform: rotate(360deg); }
 }
 
-/*=============== SQUARE AGGRESSIVE NOTYF STYLES ===============*/
-.notyf__toast {
-    border: 2px solid transparent !important;
-    border-radius: 0px !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
-    font-weight: 600 !important;
-    transition: all 0.3s ease !important;
-    padding: 16px !important;
-    margin: 16px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    position: relative !important;
-    min-height: 60px !important;
-}
-
+/*=============== NOTYF TOP CENTER POSITIONING ===============*/
 .notyf__wrapper {
     position: fixed !important;
-    top: 50% !important;
+    top: 20px !important;
     left: 50% !important;
-    transform: translate(-50%, -50%) !important;
+    transform: translateX(-50%) !important;
     z-index: 9999 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-.notyf__toast--success {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
-    border-color: #059669 !important;
-}
-
-.notyf__toast--error {
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
-    border-color: #dc2626 !important;
-}
-
-.notyf__icon {
-    font-size: 1.4rem !important;
-    margin-right: 15px !important;
-    color: white !important;
-    flex-shrink: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: auto !important;
-    height: auto !important;
-    position: static !important;
-    transform: none !important;
-}
-
-.notyf__message {
-    font-weight: 600 !important;
-    font-size: 1rem !important;
-    color: white !important;
-    flex: 1 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    text-align: left !important;
-    line-height: 1.4 !important;
-}
-
-.notyf__dismiss {
-    position: absolute !important;
-    right: 15px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    width: 28px !important;
-    height: 28px !important;
-    background: transparent !important;
-    border: none !important;
-    cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    flex-shrink: 0 !important;
-    color: white !important;
-    font-size: 1.3rem !important;
-    font-weight: bold !important;
-    transition: background 0.2s ease !important;
-}
-
-/* Remove all default dismiss styling and content */
-.notyf__dismiss-btn {
-    display: none !important;
-}
-
-.notyf__dismiss * {
-    display: none !important;
-}
-
-.notyf__dismiss::before {
-    content: '✕' !important;
-    font-size: 1.3rem !important;
-    color: white !important;
-    font-weight: bold !important;
-    line-height: 1 !important;
-}
-
-.notyf__dismiss:hover {
-    background: rgba(255, 255, 255, 0.15) !important;
-    border-radius: 3px !important;
-}
-
-/* Fade out animation */
-.notyf__toast.notyf__toast--disappear {
-    opacity: 0 !important;
-    transform: translateY(-20px) !important;
-    transition: all 0.3s ease !important;
 }
 
 /*=============== REVIEW MODAL ===============*/

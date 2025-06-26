@@ -323,25 +323,14 @@ class ReviewsManager {    constructor() {        this.currentFilter = 'all';
     }    // Open review modal
     openReviewModal() {
         if (this.userRating === 0) {
-            // Create aggressive square Notyf notification
+            // Create Notyf notification with top center positioning
             const notyf = new Notyf({
                 duration: 3000,
                 position: {
                     x: 'center',
-                    y: 'center'
+                    y: 'top'
                 },
-                dismissible: true,
-                types: [
-                    {
-                        type: 'error',
-                        background: '#dc2626',
-                        icon: {
-                            className: 'fi fi-rs-triangle-warning',
-                            tagName: 'i',
-                            color: 'white'
-                        }
-                    }
-                ]
+                dismissible: true
             });
             
             notyf.error('Please select a rating first!');
@@ -422,22 +411,24 @@ class ReviewsManager {    constructor() {        this.currentFilter = 'all';
                 duration: 2500,
                 position: {
                     x: 'center',
-                    y: 'center'
+                    y: 'top'
                 },
-                dismissible: true,
-                types: [
-                    {
-                        type: 'error',
-                        background: '#dc2626',
-                        icon: {
-                            className: 'fi fi-rs-triangle-warning',
-                            tagName: 'i',
-                            color: 'white'
-                        }
-                    }
-                ]
+                dismissible: true
             });
             notyf.error('Please write at least 10 characters for your review.');
+            return;
+        }
+
+        if (reviewText.length > 250) {
+            const notyf = new Notyf({
+                duration: 2500,
+                position: {
+                    x: 'center',
+                    y: 'top'
+                },
+                dismissible: true
+            });
+            notyf.error('Review cannot exceed 250 characters.');
             return;
         }
 
@@ -446,20 +437,9 @@ class ReviewsManager {    constructor() {        this.currentFilter = 'all';
             duration: 3000,
             position: {
                 x: 'center',
-                y: 'center'
+                y: 'top'
             },
-            dismissible: true,
-            types: [
-                {
-                    type: 'success',
-                    background: '#059669',
-                    icon: {
-                        className: 'fi fi-rs-check',
-                        tagName: 'i',
-                        color: 'white'
-                    }
-                }
-            ]
+            dismissible: true
         });
         
         notyf.success('Thank you! Your review has been submitted successfully!');
@@ -482,14 +462,25 @@ class ReviewsManager {    constructor() {        this.currentFilter = 'all';
         
         if (reviewTextarea && charCount) {
             reviewTextarea.addEventListener('input', () => {
-                const currentLength = reviewTextarea.value.length;
+                let currentLength = reviewTextarea.value.length;
+                
+                // Prevent typing beyond 250 characters
+                if (currentLength > 250) {
+                    reviewTextarea.value = reviewTextarea.value.substring(0, 250);
+                    currentLength = 250;
+                }
+                
                 charCount.textContent = currentLength;
                 
                 // Change color based on length
-                if (currentLength >= 10) {
-                    charCount.style.color = '#059669';
+                if (currentLength >= 240) {
+                    charCount.style.color = '#dc2626'; // Red when approaching limit
+                } else if (currentLength >= 200) {
+                    charCount.style.color = '#f59e0b'; // Orange when getting close
+                } else if (currentLength >= 10) {
+                    charCount.style.color = '#059669'; // Green when valid
                 } else {
-                    charCount.style.color = '#dc2626';
+                    charCount.style.color = '#dc2626'; // Red when below minimum
                 }
             });
         }
