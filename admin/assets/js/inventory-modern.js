@@ -563,8 +563,17 @@ function setupImageUploadHandlers() {
     const frontInput = document.getElementById('add-front-image');
     const backInput = document.getElementById('add-back-image');
 
-    frontUpload?.addEventListener('click', () => frontInput.click());
-    backUpload?.addEventListener('click', () => backInput.click());
+    frontUpload?.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('remove-image')) {
+            frontInput.click();
+        }
+    });
+    
+    backUpload?.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('remove-image')) {
+            backInput.click();
+        }
+    });
 
     frontInput?.addEventListener('change', (e) => handleImagePreview(e, 'front-preview'));
     backInput?.addEventListener('change', (e) => handleImagePreview(e, 'back-preview'));
@@ -573,8 +582,63 @@ function setupImageUploadHandlers() {
     const additionalUpload = document.getElementById('additional-upload');
     const additionalInput = document.getElementById('add-additional-image');
 
-    additionalUpload?.addEventListener('click', () => additionalInput.click());
+    additionalUpload?.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('remove-image')) {
+            additionalInput.click();
+        }
+    });
+    
     additionalInput?.addEventListener('change', (e) => handleImagePreview(e, 'additional-preview'));
+
+    // Remove image handlers for add forms
+    setupRemoveImageHandlers();
+}
+
+/**
+ * Setup remove image button handlers
+ */
+function setupRemoveImageHandlers() {
+    // Add event listeners for remove buttons in add forms
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-image')) {
+            e.preventDefault();
+            e.stopPropagation();
+            const preview = e.target.closest('.image-preview');
+            if (preview) {
+                removeImage(preview);
+            }
+        }
+    });
+}
+
+/**
+ * Remove image from preview
+ */
+function removeImage(previewElement) {
+    const uploadBox = previewElement.parentElement;
+    const uploadContent = uploadBox.querySelector('.upload-content');
+    const img = previewElement.querySelector('img');
+    
+    // Find and clear the associated input
+    let input;
+    const previewId = previewElement.id;
+    
+    if (previewId === 'front-preview') {
+        input = document.getElementById('add-front-image');
+    } else if (previewId === 'back-preview') {
+        input = document.getElementById('add-back-image');
+    } else if (previewId === 'additional-preview') {
+        input = document.getElementById('add-additional-image');
+    }
+    
+    if (input) {
+        input.value = '';
+    }
+    
+    // Reset preview
+    img.src = '';
+    previewElement.style.display = 'none';
+    uploadContent.style.display = 'flex';
 }
 
 /**
@@ -1071,6 +1135,8 @@ function resetProductForm() {
     
     // Reset image previews
     document.querySelectorAll('.image-preview').forEach(preview => {
+        const img = preview.querySelector('img');
+        if (img) img.src = '';
         preview.style.display = 'none';
         preview.parentElement.querySelector('.upload-content').style.display = 'flex';
     });
@@ -1098,6 +1164,8 @@ function resetAdditionalForm() {
     
     // Reset image preview
     const preview = document.getElementById('additional-preview');
+    const img = preview.querySelector('img');
+    if (img) img.src = '';
     preview.style.display = 'none';
     preview.parentElement.querySelector('.upload-content').style.display = 'flex';
 }
