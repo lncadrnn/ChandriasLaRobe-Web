@@ -18,58 +18,111 @@
 /* === RENTAL LOGS TAB NAVIGATION === */
 .rental-logs-tabs {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     margin-bottom: 2rem;
     padding: 0;
 }
 
-.tab-selector {
+.tab-and-view-container {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
     background: #ffffff;
     border-radius: 12px;
-    padding: 0;
+    padding: 8px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     border: 1px solid #f0f0f0;
     width: 100%;
-    max-width: 100%;
-    overflow: hidden;
+    min-height: 56px;
+}
+
+.tab-selector {
+    display: flex;
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    border: none;
+    gap: 4px;
 }
 
 .tab-switch {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 16px 24px;
+    gap: 6px;
+    padding: 12px 24px;
     border: none;
-    background: #ffffff;
+    background: transparent;
     color: #6b7280;
     font-weight: 500;
     font-size: 14px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     position: relative;
     white-space: nowrap;
-    flex: 1;
-    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    min-width: 120px;
+    border-bottom: 2px solid transparent;
 }
 
 .tab-switch:hover {
     color: #374151;
-    background: rgba(249, 250, 251, 0.8);
+    background: transparent;
 }
 
 .tab-switch.active {
-    background: #ffffff;
+    background: transparent;
     color: var(--primary-color);
-    border-bottom: 3px solid var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
     font-weight: 600;
 }
 
 .tab-switch i {
     font-size: 16px;
     flex-shrink: 0;
+}
+
+.view-toggle {
+    display: flex;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 4px;
+    box-shadow: none;
+    border: 1px solid #e9ecef;
+    gap: 0;
+}
+
+.view-btn {
+    background: transparent;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 80px;
+    justify-content: center;
+    border-bottom: none;
+}
+
+.view-btn:hover:not(.active) {
+    background: rgba(108, 117, 125, 0.1);
+    color: #495057;
+}
+
+.view-btn.active {
+    background: #ffffff;
+    color: var(--primary-color);
+    border-bottom: none;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Tab Content */
@@ -134,17 +187,25 @@
         padding: 0;
     }
     
+    .tab-and-view-container {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px;
+        max-width: 100%;
+    }
+    
     .tab-selector {
         width: 100%;
         justify-content: center;
-        padding: 4px;
+        gap: 8px;
     }
     
     .tab-switch {
         flex: 1;
         justify-content: center;
-        padding: 10px 16px;
+        padding: 12px 16px;
         font-size: 13px;
+        min-width: auto;
     }
     
     .tab-switch span {
@@ -158,6 +219,33 @@
     .view-toggle {
         width: 100%;
         justify-content: center;
+        gap: 0;
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 4px;
+        border: 1px solid #e9ecef;
+    }
+    
+    .view-btn {
+        flex: 1;
+        min-width: auto;
+        padding: 10px 12px;
+        border-radius: 6px;
+        background: transparent;
+    }
+    
+    .view-btn.active {
+        background: #ffffff;
+        color: #495057;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .view-btn span {
+        display: none;
+    }
+    
+    .view-btn i {
+        font-size: 16px;
     }
     
     .empty-state {
@@ -303,9 +391,7 @@ select:disabled {
         justify-content: center;
     }
     
-    .view-toggle {
-        flex: 0 0 auto;
-    }
+    /* View toggle styling is now in the main tab navigation section */
     
     .desktop-controls .search-box {
         flex: 1;
@@ -495,41 +581,7 @@ select:disabled {
     font-weight: 600;
 }
 
-.view-toggle {
-    display: flex;
-    background: transparent; /* Remove white background */
-    border-radius: 8px;
-    padding: 0.25rem;
-    box-shadow: none; /* Remove shadow */
-    border: none; /* Remove border */
-}
-
-.view-btn {
-    background: rgba(255, 255, 255, 0.1); /* Subtle background */
-    border: 1px solid rgba(255, 105, 180, 0.2); /* Add subtle border */
-    padding: 0.75rem 1.25rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--text-color);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.view-btn.active {
-    background: var(--primary-color);
-    color: var(--white-color);
-    box-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
-    border-color: var(--primary-color);
-}
-
-.view-btn:hover:not(.active) {
-    background: rgba(255, 105, 180, 0.1);
-    border-color: var(--primary-color);
-}
+/* View toggle styles moved to main tab navigation section above */
 
 /* View toggle is now enabled */
 
@@ -1188,9 +1240,7 @@ select:disabled {
         text-align: center;
     }
     
-    .view-toggle {
-        display: none !important; /* Hide view toggle on mobile - cards only */
-    }
+    /* View toggle is now part of the combined tab container */
     
     /* Card view responsive */
     .transaction-cards {

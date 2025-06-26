@@ -134,27 +134,32 @@
         </header>
         
         <div class="page-content">
-            <!-- Modern Tab Navigation -->
+            <!-- Modern Tab Navigation with Combined Bar -->
             <div class="rental-logs-tabs">
-                <div class="tab-selector">
-                    <button class="tab-switch active" data-tab="rentals">
-                        <i class='bx bx-package'></i>
-                        <span>Rentals</span>
-                    </button>
-                    <button class="tab-switch" data-tab="appointments">
-                        <i class='bx bx-calendar'></i>
-                        <span>Appointments</span>
-                    </button>
-                </div>
-                
-                <!-- View Toggle -->
-                <div class="view-toggle">
-                    <button class="view-btn active" data-view="cards" id="card-view-btn">
-                        <i class='bx bx-grid-alt'></i> Cards
-                    </button>
-                    <button class="view-btn" data-view="table" id="table-view-btn">
-                        <i class='bx bx-table'></i> Table
-                    </button>
+                <div class="tab-and-view-container">
+                    <!-- Left Side: Tab Selector -->
+                    <div class="tab-selector">
+                        <button class="tab-switch active" data-tab="rentals">
+                            <i class='bx bx-package'></i>
+                            <span>Rentals</span>
+                        </button>
+                        <button class="tab-switch" data-tab="appointments">
+                            <i class='bx bx-calendar'></i>
+                            <span>Appointments</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Right Side: View Toggle -->
+                    <div class="view-toggle">
+                        <button class="view-btn active" data-view="cards" id="card-view-btn">
+                            <i class='bx bx-grid-alt'></i>
+                            <span>Cards</span>
+                        </button>
+                        <button class="view-btn" data-view="table" id="table-view-btn">
+                            <i class='bx bx-table'></i>
+                            <span>Table</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
