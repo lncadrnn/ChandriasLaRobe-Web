@@ -153,12 +153,8 @@
     margin-bottom: 15px;
 }
 
-.crop-container * {
-    pointer-events: auto;
-}
-
 .crop-container .cropper-container {
-    pointer-events: none;
+    pointer-events: auto;
 }
 
 .crop-container .cropper-drag-box,
@@ -361,16 +357,21 @@
 }
 
 /* Disable wheel events on cropper to prevent unwanted zooming */
-.crop-container .cropper-canvas,
-.crop-container .cropper-modal,
-.crop-container .cropper-face {
+.crop-container .cropper-canvas {
     pointer-events: none !important;
 }
 
+.crop-container .cropper-modal {
+    pointer-events: none !important;
+}
+
+/* Enable pointer events for interactive cropper elements */
 .crop-container .cropper-crop-box,
 .crop-container .cropper-view-box,
 .crop-container .cropper-point,
-.crop-container .cropper-line {
+.crop-container .cropper-line,
+.crop-container .cropper-face,
+.crop-container .cropper-drag-box {
     pointer-events: auto !important;
 }
 
