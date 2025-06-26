@@ -1750,6 +1750,73 @@ async function handleEditAdditional(event, originalItem) {
 }
 
 /**
+ * Generate SHA-1 signature for Cloudinary API
+ */
+async function generateSignature(publicId, timestamp, apiSecret) {
+    const dataToSign = `public_id=${publicId}&timestamp=${timestamp}${apiSecret}`;
+    const encoder = new TextEncoder();
+    const data = encoder.encode(dataToSign);
+
+    const hashBuffer = await crypto.subtle.digest("SHA-1", data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+/**
+ * Delete image from Cloudinary
+ */
+async function deleteImageFromCloudinary(publicId) {
+    if (!publicId) {
+        console.log('⚠️ No publicId provided for image deletion');
+        return;
+    }
+    
+    try {
+        const apiKey = "814782524531725";
+        const apiSecret = "9vWGOUYipmrq2ecCato2G9MTA7Q"; // exposed, unsafe
+        const cloudName = "dbtomr3fm";
+        const timestamp = Math.floor(Date.now() / 1000);
+
+        const signature = await generateSignature(
+            publicId,
+            timestamp,
+            apiSecret
+        );
+
+        const formData = new FormData();
+        formData.append("public_id", publicId);
+        formData.append("api_key", apiKey);
+        formData.append("timestamp", timestamp);
+        formData.append("signature", signature);
+
+        const response = await fetch(
+            `https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`,
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Cloudinary delete failed: ${response.status} ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        console.log('✅ Cloudinary delete result:', result);
+        
+        if (result.result !== "ok") {
+            console.error("Cloudinary deletion failed:", result);
+            throw new Error(`Image deletion failed: ${publicId}`);
+        }
+
+        return result;
+    } catch (error) {
+        console.error('❌ Error deleting image from Cloudinary:', error);
+        throw error;
+    }
+}
+
+/**
  * Delete item
  */
 function deleteItem(itemId, itemType) {
@@ -1760,7 +1827,49 @@ function deleteItem(itemId, itemType) {
                 showLoader();
                 
                 const collectionName = itemType === 'product' ? 'products' : 'additionals';
-                await deleteDoc(doc(chandriaDB, collectionName, itemId));
+                
+                // First get the item data to retrieve image IDs for Cloudinary deletion
+                const docRef = doc(chandriaDB, collectionName, itemId);
+                const docSnap = await getDoc(docRef);
+                
+                if (!docSnap.exists()) {
+                    notyf.error(`${itemType} not found`);
+                    return;
+                }
+                
+                const itemData = docSnap.data();
+                console.log(`📄 ${itemType} data:`, itemData);
+                
+                // Delete images from Cloudinary if they exist
+                try {
+                    if (itemType === 'product') {
+                        // For products, delete both front and back images
+                        if (itemData.frontImageId) {
+                            console.log('🔄 Deleting front image...');
+                            await deleteImageFromCloudinary(itemData.frontImageId);
+                            console.log('✅ Front image deleted');
+                        }
+                        
+                        if (itemData.backImageId) {
+                            console.log('🔄 Deleting back image...');
+                            await deleteImageFromCloudinary(itemData.backImageId);
+                            console.log('✅ Back image deleted');
+                        }
+                    } else if (itemType === 'additional') {
+                        // For additionals, delete the single image
+                        if (itemData.imageId) {
+                            console.log('🔄 Deleting additional image...');
+                            await deleteImageFromCloudinary(itemData.imageId);
+                            console.log('✅ Additional image deleted');
+                        }
+                    }
+                } catch (imageError) {
+                    console.warn('⚠️ Image deletion failed, but continuing with item deletion:', imageError);
+                    // Continue with item deletion even if image deletion fails
+                }
+                
+                // Delete the item document from Firestore
+                await deleteDoc(docRef);
                 
                 notyf.success(`${itemType} deleted successfully!`);
                 await loadAllData();
