@@ -616,6 +616,8 @@ select:disabled {
     align-items: flex-start;
     margin-bottom: 1rem;
     gap: 1rem;
+    position: relative;
+    min-height: 40px; /* Ensure consistent height for status positioning */
 }
 
 /* Centered customer info layout */
@@ -626,6 +628,7 @@ select:disabled {
     align-items: center;
     text-align: center;
     gap: 0.5rem;
+    max-width: calc(100% - 120px); /* Reserve space for status badge */
 }
 
 .customer-info-centered h4 {
@@ -637,6 +640,7 @@ select:disabled {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    max-width: 100%;
 }
 
 .customer-info-centered .transaction-code {
@@ -649,11 +653,15 @@ select:disabled {
     border-radius: 0;
 }
 
-/* Status badge positioned top right */
+/* Status badge positioned top right - fixed position */
 .card-status-top {
+    position: absolute;
+    top: 0;
+    right: 0;
     flex-shrink: 0;
     display: flex;
     align-items: flex-start;
+    z-index: 2;
 }
 
 .card-status-top .status-badge {
@@ -663,6 +671,8 @@ select:disabled {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    min-width: fit-content;
+    white-space: nowrap;
 }
 
 .customer-info-centered h4:hover::after {
@@ -1280,11 +1290,24 @@ select:disabled {
         min-height: 350px;
     }
     
-    .customer-info h4 {
+    .card-header {
+        min-height: 35px; /* Adjust for mobile */
+    }
+    
+    .customer-info-centered {
+        max-width: calc(100% - 100px); /* Adjust space for mobile status badge */
+    }
+
+    .customer-info-centered h4 {
         max-width: 100%;
         font-size: 1rem;
     }
     
+    .card-status-top .status-badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.6rem;
+    }
+
     .card-details {
         grid-template-columns: 1fr;
         gap: 0.75rem;
@@ -1413,6 +1436,14 @@ select:disabled {
         margin: 0 0.5rem;
     }
     
+    .card-header {
+        min-height: 30px; /* Smaller min-height for mobile */
+    }
+    
+    .customer-info-centered {
+        max-width: calc(100% - 90px); /* Adjust space for smaller mobile status badge */
+    }
+    
     /* Centered customer info on mobile */
     .customer-info-centered h4 {
         font-size: 1rem;
@@ -1425,8 +1456,8 @@ select:disabled {
     
     /* Status badge mobile positioning */
     .card-status-top .status-badge {
-        font-size: 0.7rem;
-        padding: 0.2rem 0.6rem;
+        font-size: 0.65rem;
+        padding: 0.2rem 0.5rem;
     }
     
     /* Single column layout for details on mobile */
