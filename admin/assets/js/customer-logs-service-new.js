@@ -10,6 +10,7 @@ let currentDeletingTransaction = null;
 // DOM elements
 const tableBody = document.getElementById('rental-history-tbody');
 const searchInput = document.getElementById('search-input');
+const searchInputMobile = document.getElementById('search-input-mobile');
 const refreshBtn = document.getElementById('refresh-btn');
 const refreshBtnMobile = document.getElementById('refresh-btn-mobile');
 const sortBtn = document.getElementById('sort-btn');
@@ -20,6 +21,7 @@ const tableContainer = document.getElementById('table-container');
 const cardViewBtn = document.getElementById('card-view-btn');
 const tableViewBtn = document.getElementById('table-view-btn');
 const transactionCount = document.getElementById('transaction-count');
+const transactionCountMobile = document.getElementById('transaction-count-mobile');
 
 // View state
 let currentView = 'cards'; // Default to cards view
@@ -56,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load transactions on page load
     loadTransactions();      // Add event listeners
     searchInput?.addEventListener('input', handleSearch);
+    searchInputMobile?.addEventListener('input', handleSearchMobile);
     
     // Refresh functionality for both desktop and mobile buttons
     const handleRefresh = async (button) => {
@@ -213,14 +216,24 @@ async function loadTransactions() {
 
 // Update transaction count display
 function updateTransactionCount() {
+    const total = allTransactions.length;
+    const filtered = filteredTransactions.length;
+    
+    let countText;
+    if (total === filtered) {
+        countText = `${total}`;
+    } else {
+        countText = `${filtered}`;
+    }
+    
+    // Update desktop count
     if (transactionCount) {
-        const total = allTransactions.length;
-        const filtered = filteredTransactions.length;
-        if (total === filtered) {
-            transactionCount.textContent = `${total} transaction${total !== 1 ? 's' : ''}`;
-        } else {
-            transactionCount.textContent = `${filtered} of ${total} transactions`;
-        }
+        transactionCount.textContent = countText;
+    }
+    
+    // Update mobile count
+    if (transactionCountMobile) {
+        transactionCountMobile.textContent = countText;
     }
 }
 
@@ -982,6 +995,45 @@ function closeTransactionDetailsModal() {
 // Search functionality
 function handleSearch() {
     const searchTerm = searchInput.value.toLowerCase().trim();
+    
+    if (!searchTerm) {
+        filteredTransactions = [...allTransactions];
+    } else {
+        filteredTransactions = allTransactions.filter(transaction => {
+            const customerMatch = (transaction.fullName || '').toLowerCase().includes(searchTerm);
+            const codeMatch = (transaction.transactionCode || '').toLowerCase().includes(searchTerm);
+            const contactMatch = (transaction.contactNumber || '').toLowerCase().includes(searchTerm);
+            const eventMatch = (transaction.eventType || '').toLowerCase().includes(searchTerm);
+            const rentalMatch = (transaction.rentalType || '').toLowerCase().includes(searchTerm);
+            
+            // Search in products
+            const productMatch = transaction.products?.some(product => 
+                (product.name || '').toLowerCase().includes(searchTerm) ||
+                (product.code || '').toLowerCase().includes(searchTerm)
+            ) || false;
+            
+            // Search in accessories
+            const accessoryMatch = transaction.accessories?.some(accessory => 
+                (accessory.name || '').toLowerCase().includes(searchTerm) ||
+                (accessory.code || '').toLowerCase().includes(searchTerm)
+            ) || false;
+            
+            return customerMatch || codeMatch || contactMatch || eventMatch || rentalMatch || productMatch || accessoryMatch;
+        });
+    }
+    
+    updateTransactionCount();
+    applySorting(); // Apply current sort after filtering
+}
+
+// Mobile search functionality (syncs with desktop search)
+function handleSearchMobile() {
+    const searchTerm = searchInputMobile.value.toLowerCase().trim();
+    
+    // Sync with desktop search input
+    if (searchInput) {
+        searchInput.value = searchInputMobile.value;
+    }
     
     if (!searchTerm) {
         filteredTransactions = [...allTransactions];

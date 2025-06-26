@@ -62,21 +62,20 @@
     transition: all 0.2s ease;
     position: relative;
     white-space: nowrap;
-    border-radius: 0;
+    border-radius: 8px;
     min-width: 120px;
-    border-bottom: 2px solid transparent;
 }
 
 .tab-switch:hover {
     color: #374151;
-    background: transparent;
+    background: rgba(214, 51, 132, 0.1);
 }
 
 .tab-switch.active {
-    background: transparent;
-    color: var(--primary-color);
-    border-bottom: 2px solid var(--primary-color);
+    background: linear-gradient(135deg, #d63384, #e91e63);
+    color: white;
     font-weight: 600;
+    box-shadow: 0 2px 8px rgba(214, 51, 132, 0.3);
 }
 
 .tab-switch i {
@@ -559,33 +558,8 @@ select:disabled {
     min-height: 0;
 }
 
-.transactions-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 0.5rem;
-}
-
-.header-info h3 {
-    color: var(--text-color);
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0;
-}
-
-.transaction-count {
-    color: var(--primary-color);
-    font-size: 0.9rem;
-    margin-top: 0.25rem;
-    display: block;
-    font-weight: 600;
-}
-
-/* View toggle styles moved to main tab navigation section above */
-
-/* View toggle is now enabled */
-
-/* Table container can now be shown/hidden dynamically */
+/* === OLD TRANSACTION HEADER STYLES REPLACED BY CONTROL BAR === */
+/* The transaction header styling has been replaced by the modern control bar above */
 
 /* === CARDS CONTAINER === */
 .cards-container {
@@ -1159,7 +1133,6 @@ select:disabled {
     justify-content: center;
     min-width: 32px;
     height: 32px;
-    flex-shrink: 0;
 }
 
 .action-buttons .view-details-btn:hover {
@@ -1568,4 +1541,320 @@ select:disabled {
     border-color: #3b82f6;
 }
 
-/* === SEARCH AND SORT CONTROLS === */
+/* =============== CONTROL BAR STYLES =============== */
+.control-bar {
+    margin-bottom: 2rem;
+}
+
+.control-bar-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+/* Transaction Info Section */
+.transaction-info {
+    flex-shrink: 0;
+}
+
+.transaction-count-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #475569;
+    font-weight: 500;
+}
+
+.transaction-count-wrapper i {
+    font-size: 1.25rem;
+    color: #d63384;
+}
+
+.transaction-label {
+    font-size: 0.95rem;
+    color: #64748b;
+}
+
+.transaction-count {
+    background: linear-gradient(135deg, #d63384, #e91e63);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    min-width: 2rem;
+    text-align: center;
+}
+
+/* Control Actions Section */
+.control-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.search-container {
+    flex: 1;
+    max-width: 400px;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-box .search-icon {
+    position: absolute;
+    left: 1rem;
+    color: #94a3b8;
+    font-size: 1.1rem;
+    z-index: 2;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+    color: #475569;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: #d63384;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(214, 51, 132, 0.1);
+}
+
+.search-box input::placeholder {
+    color: #94a3b8;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.control-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+    color: #475569;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.control-btn:hover {
+    border-color: #d63384;
+    color: #d63384;
+    background: #fdf2f8;
+}
+
+.control-btn:active {
+    transform: translateY(1px);
+}
+
+.control-btn i {
+    font-size: 1rem;
+}
+
+.refresh-btn:hover {
+    background: linear-gradient(135deg, #d63384, #e91e63);
+    border-color: #d63384;
+    color: white;
+}
+
+/* Sort Dropdown */
+.sort-dropdown {
+    position: relative;
+}
+
+.sort-options {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 200px;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+}
+
+.sort-dropdown:hover .sort-options,
+.sort-dropdown.active .sort-options {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.sort-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #475569;
+    font-size: 0.9rem;
+}
+
+.sort-option:hover {
+    background: #fdf2f8;
+    color: #d63384;
+}
+
+.sort-option:first-child {
+    border-radius: 8px 8px 0 0;
+}
+
+.sort-option:last-child {
+    border-radius: 0 0 8px 8px;
+}
+
+.sort-option i {
+    font-size: 1rem;
+    color: #94a3b8;
+}
+
+.sort-option:hover i {
+    color: #d63384;
+}
+
+/* Mobile Control Bar */
+.mobile-control-bar {
+    display: none;
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f1f5f9;
+    margin-bottom: 2rem;
+}
+
+.mobile-transaction-info {
+    margin-bottom: 1rem;
+}
+
+.mobile-search-container {
+    margin-bottom: 1rem;
+}
+
+.mobile-action-buttons {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.mobile-action-buttons .control-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 0.875rem 1rem;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .control-bar-container {
+        display: none;
+    }
+    
+    .mobile-control-bar {
+        display: block;
+    }
+    
+    .control-actions {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .search-container {
+        max-width: none;
+    }
+    
+    .action-buttons {
+        justify-content: center;
+    }
+}
+
+/* Tablet adjustments */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .control-bar-container {
+        flex-direction: column;
+        gap: 1.5rem;
+        align-items: stretch;
+    }
+    
+    .transaction-info {
+        align-self: flex-start;
+    }
+    
+    .control-actions {
+        justify-content: stretch;
+    }
+    
+    .search-container {
+        max-width: none;
+    }
+    
+    .action-buttons {
+        justify-content: flex-end;
+        flex-shrink: 0;
+    }
+}
+
+/* Small tablet adjustments */
+@media (max-width: 900px) {
+    .control-btn span {
+        display: none;
+    }
+    
+    .control-btn {
+        padding: 0.75rem;
+        min-width: 44px;
+        justify-content: center;
+    }
+    
+    .transaction-count-wrapper .transaction-label {
+        display: none;
+    }
+}
+
+/* Very small mobile */
+@media (max-width: 480px) {
+    .mobile-control-bar {
+        padding: 1rem;
+    }
+    
+    .mobile-action-buttons {
+        flex-direction: column;
+    }
+    
+    .transaction-count-wrapper {
+        justify-content: center;
+    }
+}

@@ -166,92 +166,126 @@
             <!-- Rentals Tab Content -->
             <div class="tab-content active" id="rentals-content">
                 <div class="transactions-container">
-                    <div class="transactions-header">
-                        <div class="header-info">
-                            <h3>All Transactions</h3>
-                            <span class="transaction-count" id="transaction-count">0</span>
-                        </div>
-                        
-                        <!-- Desktop: Search and Sort controls inline with view toggle -->
-                        <div class="header-controls desktop-controls">                        <div class="search-box">
-                            <i class='bx bx-search icon'></i>
-                            <input type="text" placeholder="Search by customer, transaction..." id="search-input">
-                        </div>
-                        <button class="btn btn-primary" id="refresh-btn" title="Refresh data">
-                            <i class='bx bx-refresh'></i> Refresh
-                        </button>
-                        <div class="sort-dropdown">
-                            <button class="btn btn-secondary" id="sort-btn">
-                                <i class='bx bx-sort'></i> Sort
-                                <i class='bx bx-chevron-down'></i>
-                            </button>
-                            <div class="sort-options" id="sort-options">
-                                <div class="sort-option" data-sort="name-asc">
-                                    <i class='bx bx-sort-a-z'></i> Name (A-Z)
-                                </div>
-                                <div class="sort-option" data-sort="name-desc">
-                                    <i class='bx bx-sort-z-a'></i> Name (Z-A)
-                                </div>
-                                <div class="sort-option" data-sort="recent">
-                                    <i class='bx bx-time-five'></i> Recent (Newest First)
-                                </div>
-                                <div class="sort-option" data-sort="oldest">
-                                    <i class='bx bx-time'></i> Oldest First
-                                </div>
-                                <div class="sort-option" data-sort="event-asc">
-                                    <i class='bx bx-calendar'></i> Event Date (Earliest)
-                                </div>
-                                <div class="sort-option" data-sort="event-desc">
-                                    <i class='bx bx-calendar-check'></i> Event Date (Latest)
+                    <!-- Modern Control Bar -->
+                    <div class="control-bar">
+                        <div class="control-bar-container">
+                            <!-- Left Side: Transaction Count -->
+                            <div class="transaction-info">
+                                <div class="transaction-count-wrapper">
+                                    <i class='bx bx-receipt'></i>
+                                    <span class="transaction-label">Total Transactions</span>
+                                    <span class="transaction-count" id="transaction-count">0</span>
                                 </div>
                             </div>
-                        </div>                        </div>
-                        
-                        <div class="view-toggle-duplicate" style="display: none;">
-                            <button class="view-btn active" data-view="cards">
-                                <i class='bx bx-grid-alt'></i> Cards
-                            </button>
-                            <button class="view-btn" data-view="table">
-                                <i class='bx bx-table'></i> Table
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Mobile: Search and Sort controls stacked -->
-                    <div class="header-controls mobile-controls">
-                        <div class="search-box">
-                            <i class='bx bx-search icon'></i>
-                            <input type="text" placeholder="Search by customer, transaction..." id="search-input-mobile">
-                        </div>
-                        <div class="mobile-buttons">
-                            <button class="btn btn-primary" id="refresh-btn-mobile" title="Refresh data">
-                                <i class='bx bx-refresh'></i> Refresh
-                            </button>
-                            <div class="sort-dropdown">
-                                <button class="btn btn-secondary" id="sort-btn-mobile">
-                                    <i class='bx bx-sort'></i> Sort
-                                    <i class='bx bx-chevron-down'></i>
-                                </button>
-                                <div class="sort-options" id="sort-options-mobile">
-                                    <div class="sort-option" data-sort="name-asc">
-                                        <i class='bx bx-sort-a-z'></i> Name (A-Z)
-                                    </div>
-                                    <div class="sort-option" data-sort="name-desc">
-                                        <i class='bx bx-sort-z-a'></i> Name (Z-A)
-                                    </div>
-                                    <div class="sort-option" data-sort="recent">
-                                        <i class='bx bx-time-five'></i> Recent (Newest First)
-                                    </div>
-                                    <div class="sort-option" data-sort="oldest">
-                                        <i class='bx bx-time'></i> Oldest First
-                                    </div>
-                                    <div class="sort-option" data-sort="event-asc">
-                                        <i class='bx bx-calendar'></i> Event Date (Earliest)
-                                    </div>
-                                    <div class="sort-option" data-sort="event-desc">
-                                        <i class='bx bx-calendar-check'></i> Event Date (Latest)
+                            
+                            <!-- Right Side: Search, Sort, and Refresh -->
+                            <div class="control-actions">
+                                <div class="search-container">
+                                    <div class="search-box">
+                                        <i class='bx bx-search search-icon'></i>
+                                        <input type="text" placeholder="Search by customer, transaction..." id="search-input">
                                     </div>
                                 </div>
+                                
+                                <div class="action-buttons">
+                                    <div class="sort-dropdown">
+                                        <button class="control-btn sort-btn" id="sort-btn">
+                                            <i class='bx bx-sort'></i>
+                                            <span>Sort</span>
+                                            <i class='bx bx-chevron-down'></i>
+                                        </button>
+                                        <div class="sort-options" id="sort-options">
+                                            <div class="sort-option" data-sort="name-asc">
+                                                <i class='bx bx-sort-a-z'></i>
+                                                <span>Name (A-Z)</span>
+                                            </div>
+                                            <div class="sort-option" data-sort="name-desc">
+                                                <i class='bx bx-sort-z-a'></i>
+                                                <span>Name (Z-A)</span>
+                                            </div>
+                                            <div class="sort-option" data-sort="recent">
+                                                <i class='bx bx-time-five'></i>
+                                                <span>Recent (Newest First)</span>
+                                            </div>
+                                            <div class="sort-option" data-sort="oldest">
+                                                <i class='bx bx-time'></i>
+                                                <span>Oldest First</span>
+                                            </div>
+                                            <div class="sort-option" data-sort="event-asc">
+                                                <i class='bx bx-calendar'></i>
+                                                <span>Event Date (Earliest)</span>
+                                            </div>
+                                            <div class="sort-option" data-sort="event-desc">
+                                                <i class='bx bx-calendar-check'></i>
+                                                <span>Event Date (Latest)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="control-btn refresh-btn" id="refresh-btn" title="Refresh data">
+                                        <i class='bx bx-refresh'></i>
+                                        <span>Refresh</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Mobile Control Bar -->
+                        <div class="mobile-control-bar">
+                            <div class="mobile-transaction-info">
+                                <div class="transaction-count-wrapper">
+                                    <i class='bx bx-receipt'></i>
+                                    <span class="transaction-label">Transactions</span>
+                                    <span class="transaction-count" id="transaction-count-mobile">0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mobile-search-container">
+                                <div class="search-box">
+                                    <i class='bx bx-search search-icon'></i>
+                                    <input type="text" placeholder="Search by customer, transaction..." id="search-input-mobile">
+                                </div>
+                            </div>
+                            
+                            <div class="mobile-action-buttons">
+                                <div class="sort-dropdown">
+                                    <button class="control-btn sort-btn" id="sort-btn-mobile">
+                                        <i class='bx bx-sort'></i>
+                                        <span>Sort</span>
+                                        <i class='bx bx-chevron-down'></i>
+                                    </button>
+                                    <div class="sort-options" id="sort-options-mobile">
+                                        <div class="sort-option" data-sort="name-asc">
+                                            <i class='bx bx-sort-a-z'></i>
+                                            <span>Name (A-Z)</span>
+                                        </div>
+                                        <div class="sort-option" data-sort="name-desc">
+                                            <i class='bx bx-sort-z-a'></i>
+                                            <span>Name (Z-A)</span>
+                                        </div>
+                                        <div class="sort-option" data-sort="recent">
+                                            <i class='bx bx-time-five'></i>
+                                            <span>Recent (Newest First)</span>
+                                        </div>
+                                        <div class="sort-option" data-sort="oldest">
+                                            <i class='bx bx-time'></i>
+                                            <span>Oldest First</span>
+                                        </div>
+                                        <div class="sort-option" data-sort="event-asc">
+                                            <i class='bx bx-calendar'></i>
+                                            <span>Event Date (Earliest)</span>
+                                        </div>
+                                        <div class="sort-option" data-sort="event-desc">
+                                            <i class='bx bx-calendar-check'></i>
+                                            <span>Event Date (Latest)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button class="control-btn refresh-btn" id="refresh-btn-mobile" title="Refresh data">
+                                    <i class='bx bx-refresh'></i>
+                                    <span>Refresh</span>
+                                </button>
                             </div>
                         </div>
                     </div>
