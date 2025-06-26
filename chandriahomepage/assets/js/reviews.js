@@ -4,6 +4,7 @@
 class ReviewsManager {    constructor() {        this.currentFilter = 'all';
         this.currentSort = 'newest';
         this.userRating = 0;
+        this.selectedTags = []; // Track selected review tags
         this.isMobile = window.innerWidth <= 768;
         this.initialReviewsCount = this.isMobile ? 2 : 3;
         this.loadBatchSize = this.isMobile ? 2 : 3;
@@ -358,6 +359,9 @@ class ReviewsManager {    constructor() {        this.currentFilter = 'all';
             modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
             
+            // Reset modal form state
+            this.resetModalForm();
+            
             // Set the selected rating in the modal
             this.updateModalStars();
             this.updateRatingDescription();
@@ -432,6 +436,19 @@ class ReviewsManager {    constructor() {        this.currentFilter = 'all';
             return;
         }
 
+        if (this.selectedTags.length !== 2) {
+            const notyf = new Notyf({
+                duration: 2500,
+                position: {
+                    x: 'center',
+                    y: 'top'
+                },
+                dismissible: true
+            });
+            notyf.error('Please select exactly 2 tags for your review.');
+            return;
+        }
+
         // Show success message
         const notyf = new Notyf({
             duration: 3000,
@@ -448,10 +465,39 @@ class ReviewsManager {    constructor() {        this.currentFilter = 'all';
         document.getElementById('review-text').value = '';
         this.closeReviewModal();
         
-        // Reset rating
+        // Reset rating and tags
         this.userRating = 0;
+        this.selectedTags = [];
         this.highlightStars(0);
         this.updateWriteReviewButton();
+        this.resetModalForm();
+    }
+
+    // Reset modal form state
+    resetModalForm() {
+        // Reset character count
+        const charCount = document.getElementById('char-count');
+        if (charCount) {
+            charCount.textContent = '0';
+            charCount.style.color = '#dc2626';
+        }
+        
+        // Reset selected tags
+        this.selectedTags = [];
+        this.updateSelectedTagsDisplay();
+        
+        // Reset tag option buttons
+        const tagOptions = document.querySelectorAll('.review-tag-option');
+        tagOptions.forEach(option => {
+            option.classList.remove('selected');
+        });
+        
+        // Reset rating description
+        const descriptionElement = document.getElementById('rating-description');
+        if (descriptionElement) {
+            descriptionElement.textContent = 'Select a rating above';
+            descriptionElement.style.color = '';
+        }
     }
 
     // Initialize modal features
@@ -496,6 +542,9 @@ class ReviewsManager {    constructor() {        this.currentFilter = 'all';
             });
         });
 
+        // Tag selection functionality
+        this.initTagSelection();
+
         // Close modal when clicking outside
         const modal = document.getElementById('review-modal');
         if (modal) {
@@ -512,6 +561,89 @@ class ReviewsManager {    constructor() {        this.currentFilter = 'all';
                 this.closeReviewModal();
             }
         });
+    }
+
+    // Initialize tag selection
+    initTagSelection() {
+        const tagOptions = document.querySelectorAll('.review-tag-option');
+        
+        tagOptions.forEach(tagOption => {
+            tagOption.addEventListener('click', () => {
+                const tagValue = tagOption.getAttribute('data-tag');
+                const tagText = tagOption.textContent.trim();
+                
+                if (tagOption.classList.contains('selected')) {
+                    // Remove tag
+                    this.removeTag(tagValue);
+                    tagOption.classList.remove('selected');
+                } else if (this.selectedTags.length < 2) {
+                    // Add tag (max 2)
+                    this.addTag(tagValue, tagText);
+                    tagOption.classList.add('selected');
+                } else {
+                    // Show notification if trying to select more than 2
+                    const notyf = new Notyf({
+                        duration: 2000,
+                        position: {
+                            x: 'center',
+                            y: 'top'
+                        },
+                        dismissible: true
+                    });
+                    notyf.error('You can only select up to 2 tags.');
+                }
+                
+                this.updateSelectedTagsDisplay();
+            });
+        });
+    }
+
+    // Add tag to selected tags
+    addTag(tagValue, tagText) {
+        if (!this.selectedTags.find(tag => tag.value === tagValue)) {
+            this.selectedTags.push({ value: tagValue, text: tagText });
+        }
+    }
+
+    // Remove tag from selected tags
+    removeTag(tagValue) {
+        this.selectedTags = this.selectedTags.filter(tag => tag.value !== tagValue);
+    }
+
+    // Update selected tags display
+    updateSelectedTagsDisplay() {
+        const container = document.getElementById('selected-tags-container');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        if (this.selectedTags.length === 0) {
+            container.innerHTML = '<span style="color: #9ca3af; font-size: 0.875rem;">No tags selected</span>';
+            return;
+        }
+
+        this.selectedTags.forEach(tag => {
+            const tagElement = document.createElement('div');
+            tagElement.className = 'selected-tag-item';
+            tagElement.innerHTML = `
+                <span>${tag.text}</span>
+                <button type="button" class="remove-tag" onclick="reviewsController.removeTagFromDisplay('${tag.value}')">×</button>
+            `;
+            container.appendChild(tagElement);
+        });
+    }
+
+    // Remove tag from display (called from HTML)
+    removeTagFromDisplay(tagValue) {
+        this.removeTag(tagValue);
+        
+        // Update tag option button
+        const tagOption = document.querySelector(`[data-tag="${tagValue}"]`);
+        if (tagOption) {
+            tagOption.classList.remove('selected');
+        }
+        
+        this.updateSelectedTagsDisplay();
     }
 
     // Generate more reviews data

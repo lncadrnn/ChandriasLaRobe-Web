@@ -679,8 +679,8 @@
 .review-modal-content {
     background: white;
     border-radius: 20px;
-    max-width: 600px;
-    width: 90%;
+    max-width: 800px;
+    width: 95%;
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
@@ -809,29 +809,103 @@
     text-align: right;
 }
 
-.review-modal-tips {
-    background: #f9fafb;
-    border-radius: 12px;
-    padding: 1.5rem;
-    border-left: 4px solid hsl(346, 100%, 74%);
+.review-modal-tags-section {
+    margin-bottom: 1.5rem;
 }
 
-.review-modal-tips h4 {
-    margin: 0 0 1rem 0;
+.review-tags-description {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 0.5rem 0 1rem 0;
+}
+
+.review-tags-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.review-tag-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    background: white;
     color: #374151;
     font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.review-modal-tips ul {
-    margin: 0;
-    padding-left: 1.5rem;
+.review-tag-option:hover {
+    border-color: hsl(346, 100%, 74%);
+    background: #fef7f7;
 }
 
-.review-modal-tips li {
-    font-size: 0.8rem;
-    color: #6b7280;
+.review-tag-option.selected {
+    border-color: hsl(346, 100%, 74%);
+    background: hsl(346, 100%, 74%);
+    color: white;
+}
+
+.review-tag-option i {
+    font-size: 1rem;
+}
+
+.selected-tags-display {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+}
+
+.selected-tags-label {
+    font-size: 0.875rem;
+    color: #374151;
+    font-weight: 500;
+    display: block;
     margin-bottom: 0.5rem;
-    line-height: 1.4;
+}
+
+#selected-tags-container {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.selected-tag-item {
+    background: hsl(346, 100%, 74%);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.selected-tag-item .remove-tag {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    line-height: 1;
+}
+
+.selected-tag-item .remove-tag:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .review-modal-footer {
@@ -890,9 +964,19 @@
 /*=============== MOBILE RESPONSIVENESS ===============*/
 @media screen and (max-width: 768px) {
     .review-modal-content {
+        max-width: 95%;
         width: 95%;
-        max-height: 95vh;
         margin: 1rem;
+    }
+    
+    .review-tags-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .review-tag-option {
+        padding: 0.875rem 1rem;
+        font-size: 0.9rem;
     }
     
     .review-modal-header,
