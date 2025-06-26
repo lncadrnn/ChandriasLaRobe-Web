@@ -1077,7 +1077,7 @@ $(document).ready(function () {
             return;
         }
 
-        if (!name || !code || isNaN(price) || price < 0) {
+        if (!name || !code || isNaN(price) || price < 1) {
             showErrorModal("Please fill in all fields with valid values.");
             return;
         }
@@ -1374,7 +1374,7 @@ $(document).ready(function () {
         const price = parseFloat($("#update-additional-price").val());
         const newImageFile = $("#update-additional-file-img")[0].files[0];
 
-        if (!name || !code || isNaN(price) || price < 0) {
+        if (!name || !code || isNaN(price) || price < 1) {
             return showErrorModal(
                 "Please fill in all fields with valid values."
             );

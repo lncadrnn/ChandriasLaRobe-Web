@@ -929,9 +929,21 @@ async function handleAddAdditional(event) {
         
         // Collect form data
         const image = document.getElementById('add-additional-image').files[0];
+        const name = document.getElementById('add-additional-name').value.trim();
+        const price = parseFloat(document.getElementById('add-additional-price').value);
         
         if (!image) {
             notyf.error('Please upload an image');
+            return;
+        }
+        
+        if (!name) {
+            notyf.error('Please enter an additional name');
+            return;
+        }
+        
+        if (!price || price < 1) {
+            notyf.error('Enter a valid price');
             return;
         }
         
@@ -952,8 +964,8 @@ async function handleAddAdditional(event) {
         
         // Prepare additional data
         const additionalData = {
-            name: document.getElementById('add-additional-name').value,
-            price: parseFloat(document.getElementById('add-additional-price').value),
+            name: name,
+            price: price,
             inclusions: inclusions.length ? inclusions : null,
             code: document.getElementById('add-additional-code').value,
             imageUrl: imageData.url,
@@ -1392,7 +1404,7 @@ function createEditAdditionalForm(item) {
                 </div>
                 <div class="form-group">
                     <label class="form-label">Price (₱)</label>
-                    <input type="number" id="edit-additional-price" class="form-input" value="${item.price}" min="0" step="0.01" required>
+                    <input type="number" id="edit-additional-price" class="form-input" value="${item.price}" min="1" step="0.01" required>
                 </div>
             </div>
 
@@ -1700,7 +1712,7 @@ async function handleEditAdditional(event, originalItem) {
         const name = document.getElementById('edit-additional-name').value.trim();
         const price = document.getElementById('edit-additional-price').value;
         
-        if (!name || !price || price <= 0) {
+        if (!name || !price || price < 1) {
             notyf.error('Please fill in all required fields');
             return;
         }
