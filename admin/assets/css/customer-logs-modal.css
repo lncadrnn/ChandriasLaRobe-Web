@@ -1371,3 +1371,93 @@ body.modal-open .modal-overlay.show .modal-content {
         height: 150px;
     }
 }
+
+/* =============== MODAL BUTTON STYLES =============== */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), #e91e63);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #ff69b4, #d63384);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(255, 105, 180, 0.2);
+}
+
+.btn-secondary {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-secondary:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+    color: #495057;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary:active {
+    transform: translateY(0);
+    background: #dee2e6;
+}
+
+.btn-disabled {
+    background: #f8f9fa;
+    color: #adb5bd;
+    border: 1px solid #e9ecef;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: not-allowed;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    opacity: 0.6;
+}
+
+.btn-disabled:hover {
+    background: #f8f9fa;
+    color: #adb5bd;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Button icons */
+.btn-primary i,
+.btn-secondary i,
+.btn-disabled i {
+    font-size: 1rem;
+}
+
+/* =============== MODAL FOOTER STYLES =============== */
