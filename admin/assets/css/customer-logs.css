@@ -2034,3 +2034,186 @@ select:disabled {
         justify-content: center;
     }
 }
+
+/* === MODAL FOOTER BUTTON FIXES === */
+/* Comprehensive fixes for "Edit Transaction" and "Cancel" buttons */
+
+/* Ensure modal footer buttons are always interactive */
+.modal-footer,
+.modal-footer * {
+    pointer-events: auto !important;
+    z-index: 9999 !important;
+}
+
+/* Primary button styles for "Edit Transaction" */
+.btn-primary {
+    background: linear-gradient(135deg, #d63384, #e91e63) !important;
+    color: white !important;
+    border: 2px solid #d63384 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+    display: inline-block !important;
+    position: relative !important;
+    z-index: 10000 !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+    user-select: none !important;
+    min-height: 44px !important; /* Minimum touch target for mobile */
+    min-width: 100px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    line-height: 1.2 !important;
+    outline: none !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background: linear-gradient(135deg, #c1327a, #d91d5f) !important;
+    border-color: #c1327a !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(214, 51, 132, 0.3) !important;
+    color: white !important;
+    text-decoration: none !important;
+}
+
+.btn-primary:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 6px rgba(214, 51, 132, 0.2) !important;
+}
+
+/* Secondary button styles for "Cancel/Close" */
+.btn-secondary {
+    background: #f8f9fa !important;
+    color: #6c757d !important;
+    border: 2px solid #dee2e6 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+    display: inline-block !important;
+    position: relative !important;
+    z-index: 10000 !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+    user-select: none !important;
+    min-height: 44px !important; /* Minimum touch target for mobile */
+    min-width: 100px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    line-height: 1.2 !important;
+    outline: none !important;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+    background: #e9ecef !important;
+    border-color: #adb5bd !important;
+    color: #495057 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    text-decoration: none !important;
+}
+
+.btn-secondary:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Disabled button styles */
+.btn-disabled,
+.btn-primary:disabled,
+.btn-secondary:disabled {
+    background: #e9ecef !important;
+    color: #6c757d !important;
+    border-color: #dee2e6 !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+    transform: none !important;
+    box-shadow: none !important;
+    pointer-events: none !important;
+}
+
+/* Additional overrides for problematic selectors */
+.modal-footer .btn,
+.modal-footer button,
+.modal .btn,
+.modal button {
+    pointer-events: auto !important;
+    z-index: 10000 !important;
+    position: relative !important;
+}
+
+/* Ensure buttons work with Bootstrap modal structure */
+.modal-dialog .modal-content .modal-footer .btn {
+    pointer-events: auto !important;
+    z-index: 10000 !important;
+    position: relative !important;
+    background-clip: padding-box !important;
+}
+
+/* Mobile-specific button fixes */
+@media (max-width: 768px) {
+    .btn-primary,
+    .btn-secondary {
+        min-height: 48px !important; /* Larger touch target for mobile */
+        padding: 1rem 1.25rem !important;
+        font-size: 1rem !important;
+        width: 100% !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .modal-footer {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+        padding: 1.5rem !important;
+    }
+    
+    .modal-footer .btn {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+}
+
+/* Force button interactivity in all contexts */
+.btn-primary[disabled],
+.btn-secondary[disabled] {
+    pointer-events: none !important;
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+}
+
+/* Ensure buttons work with any modal backdrop */
+.modal-backdrop ~ .modal .btn,
+.modal-open .modal .btn {
+    pointer-events: auto !important;
+    z-index: 10000 !important;
+}
+
+/* Fix for any potential overlay issues */
+.modal-footer::before,
+.modal-footer::after {
+    display: none !important;
+}
+
+/* Additional button reset for edge cases */
+.btn-primary *,
+.btn-secondary * {
+    pointer-events: none !important; /* Prevent child elements from blocking clicks */
+}
+
+/* Ensure text inside buttons doesn't block clicks */
+.btn-primary span,
+.btn-secondary span,
+.btn-primary i,
+.btn-secondary i {
+    pointer-events: none !important;
+    user-select: none !important;
+}

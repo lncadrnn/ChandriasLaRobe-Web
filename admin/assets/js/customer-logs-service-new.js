@@ -2196,29 +2196,7 @@ function canEditTransaction(transaction) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    // Check event date restrictions
-    let eventDate = null;
-    let minAllowedDate = new Date(today);
-    
-    if (transaction.rentalType === "Open Rental" && transaction.eventStartDate) {
-        eventDate = new Date(transaction.eventStartDate);
-        minAllowedDate.setDate(today.getDate() + 2); // Open Rental: +2 days
-    } else if (transaction.rentalType === "Fixed Rental" && transaction.eventDate) {
-        eventDate = new Date(transaction.eventDate);
-        minAllowedDate.setDate(today.getDate() + 3); // Fixed Rental: +3 days
-    } else if (transaction.eventStartDate) {
-        // Fallback to eventStartDate
-        eventDate = new Date(transaction.eventStartDate);
-        minAllowedDate.setDate(today.getDate() + 2);
-    }
-    
-    // If event date is too close, prevent editing
-    if (eventDate && eventDate < minAllowedDate) {
-        return {
-            canEdit: false,
-            reason: `Cannot edit: Event date is too close. Must be at least ${minAllowedDate.toLocaleDateString()}.`
-        };
-    }
+    // Event date restrictions removed - allow editing regardless of event date
     
     // Check if rental fee is valid (positive number)
     const rentalFee = parseFloat(transaction.rentalFee) || 0;
