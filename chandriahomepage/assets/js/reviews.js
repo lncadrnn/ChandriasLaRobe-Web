@@ -10,6 +10,7 @@ class ReviewsManager {    constructor() {        this.currentFilter = 'all';
         this.reviewsLoaded = this.initialReviewsCount;
         this.totalReviews = 127;
         this.allReviews = this.generateMoreReviews(); // Generate additional reviews
+        this.currentNotyf = null; // Initialize Notyf instance
         this.init();
         this.handleResize();
     }    init() {
@@ -18,7 +19,9 @@ class ReviewsManager {    constructor() {        this.currentFilter = 'all';
         this.initSortSelect();
         this.initReviewActions();
         this.initWriteReviewButton();
-        this.initMobileDisplay();    }
+        this.initMobileDisplay();
+        this.initModalFeatures();
+    }
 
     // Handle resize events
     handleResize() {
@@ -317,15 +320,207 @@ class ReviewsManager {    constructor() {        this.currentFilter = 'all';
         writeBtn.addEventListener('click', () => {
             this.openReviewModal();
         });
-    }    // Open review modal (placeholder)
+    }    // Open review modal
     openReviewModal() {
         if (this.userRating === 0) {
-            alert('Please select a rating first!');
+            // Create aggressive square Notyf notification
+            const notyf = new Notyf({
+                duration: 3000,
+                position: {
+                    x: 'center',
+                    y: 'center'
+                },
+                dismissible: true,
+                types: [
+                    {
+                        type: 'error',
+                        background: '#dc2626',
+                        icon: {
+                            className: 'fi fi-rs-triangle-warning',
+                            tagName: 'i',
+                            color: 'white'
+                        }
+                    }
+                ]
+            });
+            
+            notyf.error('Please select a rating first!');
+            
+            // Add shake animation to rating stars
+            const starsContainer = document.querySelector('.write-review-stars');
+            if (starsContainer) {
+                starsContainer.classList.add('shake-animation');
+                setTimeout(() => {
+                    starsContainer.classList.remove('shake-animation');
+                }, 600);
+            }
+            
             return;
         }
         
-        // In a real application, this would open a modal with a full review form
-        alert(`Review form for ${this.userRating} stars would open here!`);
+        // Open the review modal
+        this.showReviewModal();
+    }
+
+    // Show review modal
+    showReviewModal() {
+        const modal = document.getElementById('review-modal');
+        if (modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            // Set the selected rating in the modal
+            this.updateModalStars();
+            this.updateRatingDescription();
+        }
+    }
+
+    // Update stars in modal based on user rating
+    updateModalStars() {
+        const modalStars = document.querySelectorAll('.modal-review-star');
+        modalStars.forEach((star, index) => {
+            if (index < this.userRating) {
+                star.classList.add('active');
+            } else {
+                star.classList.remove('active');
+            }
+        });
+    }
+
+    // Update rating description text
+    updateRatingDescription() {
+        const descriptions = {
+            1: '⭐ Poor - Not satisfied',
+            2: '⭐⭐ Fair - Below expectations',
+            3: '⭐⭐⭐ Good - Meets expectations',
+            4: '⭐⭐⭐⭐ Very Good - Exceeds expectations',
+            5: '⭐⭐⭐⭐⭐ Excellent - Outstanding experience'
+        };
+        
+        const descriptionElement = document.getElementById('rating-description');
+        if (descriptionElement && this.userRating > 0) {
+            descriptionElement.textContent = descriptions[this.userRating];
+            descriptionElement.style.color = this.userRating >= 4 ? '#059669' : this.userRating >= 3 ? '#f59e0b' : '#dc2626';
+        }
+    }
+
+    // Close review modal
+    closeReviewModal() {
+        const modal = document.getElementById('review-modal');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    // Handle review form submission
+    submitReview() {
+        const reviewText = document.getElementById('review-text').value.trim();
+        
+        if (reviewText.length < 10) {
+            const notyf = new Notyf({
+                duration: 2500,
+                position: {
+                    x: 'center',
+                    y: 'center'
+                },
+                dismissible: true,
+                types: [
+                    {
+                        type: 'error',
+                        background: '#dc2626',
+                        icon: {
+                            className: 'fi fi-rs-triangle-warning',
+                            tagName: 'i',
+                            color: 'white'
+                        }
+                    }
+                ]
+            });
+            notyf.error('Please write at least 10 characters for your review.');
+            return;
+        }
+
+        // Show success message
+        const notyf = new Notyf({
+            duration: 3000,
+            position: {
+                x: 'center',
+                y: 'center'
+            },
+            dismissible: true,
+            types: [
+                {
+                    type: 'success',
+                    background: '#059669',
+                    icon: {
+                        className: 'fi fi-rs-check',
+                        tagName: 'i',
+                        color: 'white'
+                    }
+                }
+            ]
+        });
+        
+        notyf.success('Thank you! Your review has been submitted successfully!');
+        
+        // Reset form and close modal
+        document.getElementById('review-text').value = '';
+        this.closeReviewModal();
+        
+        // Reset rating
+        this.userRating = 0;
+        this.highlightStars(0);
+        this.updateWriteReviewButton();
+    }
+
+    // Initialize modal features
+    initModalFeatures() {
+        // Character counting for review textarea
+        const reviewTextarea = document.getElementById('review-text');
+        const charCount = document.getElementById('char-count');
+        
+        if (reviewTextarea && charCount) {
+            reviewTextarea.addEventListener('input', () => {
+                const currentLength = reviewTextarea.value.length;
+                charCount.textContent = currentLength;
+                
+                // Change color based on length
+                if (currentLength >= 10) {
+                    charCount.style.color = '#059669';
+                } else {
+                    charCount.style.color = '#dc2626';
+                }
+            });
+        }
+
+        // Modal star rating functionality
+        const modalStars = document.querySelectorAll('.modal-review-star');
+        modalStars.forEach((star, index) => {
+            star.addEventListener('click', () => {
+                this.userRating = index + 1;
+                this.updateModalStars();
+                this.updateRatingDescription();
+                this.updateWriteReviewButton();
+            });
+        });
+
+        // Close modal when clicking outside
+        const modal = document.getElementById('review-modal');
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    this.closeReviewModal();
+                }
+            });
+        }
+
+        // ESC key to close modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.closeReviewModal();
+            }
+        });
     }
 
     // Generate more reviews data
@@ -626,14 +821,14 @@ function animateRatingBars() {
 
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize reviews manager
-    const reviewsManager = new ReviewsManager();
+    // Initialize reviews manager and make it globally accessible
+    window.reviewsController = new ReviewsManager();
     
     // Initialize rating bar animations
     animateRatingBars();
     
     // Initialize see all button
-    reviewsManager.initSeeAllButton();
+    window.reviewsController.initSeeAllButton();
     
     // Add smooth scrolling to reviews section if linked from navigation
     const reviewsLink = document.querySelector('a[href="#reviews"]');

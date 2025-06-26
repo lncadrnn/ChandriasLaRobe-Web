@@ -1395,6 +1395,71 @@
             </div>
         </div>
 
+        <!-- Review Modal -->
+        <div id="review-modal" class="review-modal-overlay">
+            <div class="review-modal-content">
+                <div class="review-modal-header">
+                    <h2 class="review-modal-title">
+                        <i class="fi fi-rs-edit"></i>
+                        Write Your Review
+                    </h2>
+                    <button class="review-modal-close" onclick="reviewsController.closeReviewModal()">
+                        <i class="fi fi-rs-cross"></i>
+                    </button>
+                </div>
+                
+                <div class="review-modal-body">
+                    <div class="review-modal-rating-section">
+                        <label class="review-modal-label">Your Rating</label>
+                        <div class="review-modal-stars">
+                            <i class="fi fi-rs-star modal-review-star" data-rating="1"></i>
+                            <i class="fi fi-rs-star modal-review-star" data-rating="2"></i>
+                            <i class="fi fi-rs-star modal-review-star" data-rating="3"></i>
+                            <i class="fi fi-rs-star modal-review-star" data-rating="4"></i>
+                            <i class="fi fi-rs-star modal-review-star" data-rating="5"></i>
+                        </div>
+                        <div class="rating-description" id="rating-description">
+                            Select a rating above
+                        </div>
+                    </div>
+                    
+                    <div class="review-modal-form-section">
+                        <label for="review-text" class="review-modal-label">Your Review</label>
+                        <textarea 
+                            id="review-text" 
+                            class="review-modal-textarea" 
+                            placeholder="Share your experience with Chandria's La Robe. What did you love most about our service, fitting, or gowns? Your feedback helps other customers and helps us improve!"
+                            rows="5"
+                        ></textarea>
+                        <div class="character-count">
+                            <span id="char-count">0</span> characters (minimum 10)
+                        </div>
+                    </div>
+                    
+                    <div class="review-modal-tips">
+                        <h4>💡 Tips for a helpful review:</h4>
+                        <ul>
+                            <li>Mention the specific service or gown you experienced</li>
+                            <li>Describe the fitting process and staff assistance</li>
+                            <li>Share what made your experience special</li>
+                            <li>Be honest and specific to help other customers</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="review-modal-footer">
+                    <button class="review-modal-btn review-modal-btn-cancel" onclick="reviewsController.closeReviewModal()">
+                        <i class="fi fi-rs-cross"></i>
+                        Cancel
+                    </button>
+                    <button class="review-modal-btn review-modal-btn-submit" onclick="reviewsController.submitReview()">
+                        <i class="fi fi-rs-paper-plane"></i>
+                        Submit Review
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-------------------------------- FOOTER -------------------------------->
         <footer class="footer section">
             <div class="container">
