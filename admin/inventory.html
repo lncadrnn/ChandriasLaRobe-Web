@@ -19,10 +19,17 @@
         <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css"
+        />
+        
+        <!-- CROPPER.JS CDN -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"
         />        <!-- EXTERNAL CSS -->
         <link rel="stylesheet" href="./assets/css/admin-layout.css" />
         <link rel="stylesheet" href="./assets/css/admin-layout-mob.css" />
         <link rel="stylesheet" href="./assets/css/inventory-modern.css" />
+        <link rel="stylesheet" href="./assets/css/image-crop-modal.css" />
     </head>
     <body>
         <!-- ====== INVENTORY LOADER ====== -->
@@ -454,7 +461,28 @@
             </div>
         </div>
 
-       
+        <!-- CROP MODAL -->
+        <div id="cropModal" class="modern-modal">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content large">
+                <div class="modal-header">
+                    <h2 class="modal-title">Crop Image</h2>
+                    <button class="modal-close" id="close-crop-modal">&times;</button>
+                </div>
+                <div class="crop-content">
+                    <div class="crop-container">
+                        <img id="crop-image" src="" alt="Image to crop">
+                    </div>
+                    <div class="crop-info">
+                        <p>Adjust the crop area to fit your image. The image will be resized to a portrait format (3:4 aspect ratio).</p>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="cancel-crop">Cancel</button>
+                    <button type="button" class="btn-primary" id="confirm-crop">Apply Crop</button>
+                </div>
+            </div>
+        </div>
 
         <!-- MOBILE BOTTOM NAVIGATION -->
         <nav class="mobile-bottom-nav">
@@ -498,6 +526,9 @@
         <!-- NOTYF CDN -->
         <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 
+        <!-- CROPPER.JS CDN -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
         <!-- JQUERY JS -->
         <script
             src="https://code.jquery.com/jquery-3.7.1.js"
@@ -511,6 +542,7 @@
         <!-- EXTERNAL SCRIPT -->
         <script src="./assets/js/admin-layout.js"></script>
         <script src="./assets/js/admin-layout-mob.js"></script>
+        <script src="./assets/js/image-crop-modal.js"></script>
         <script type="module" src="./assets/js/inventory-modern.js"></script>
     </body>
 </html>

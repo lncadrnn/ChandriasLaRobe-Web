@@ -575,8 +575,8 @@ function setupImageUploadHandlers() {
         }
     });
 
-    frontInput?.addEventListener('change', (e) => handleImagePreview(e, 'front-preview'));
-    backInput?.addEventListener('change', (e) => handleImagePreview(e, 'back-preview'));
+    frontInput?.addEventListener('change', (e) => handleImageUpload(e, 'front'));
+    backInput?.addEventListener('change', (e) => handleImageUpload(e, 'back'));
 
     // Additional image
     const additionalUpload = document.getElementById('additional-upload');
@@ -588,7 +588,7 @@ function setupImageUploadHandlers() {
         }
     });
     
-    additionalInput?.addEventListener('change', (e) => handleImagePreview(e, 'additional-preview'));
+    additionalInput?.addEventListener('change', (e) => handleImageUpload(e, 'additional'));
 
     // Remove image handlers for add forms
     setupRemoveImageHandlers();
@@ -642,7 +642,86 @@ function removeImage(previewElement) {
 }
 
 /**
- * Handle image preview
+ * Handle image upload with crop modal
+ */
+function handleImageUpload(event, imageType) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+        notyf.error('Please select a valid image file');
+        event.target.value = '';
+        return;
+    }
+    
+    // Check file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+        notyf.error('Image file is too large. Please select a file smaller than 10MB');
+        event.target.value = '';
+        return;
+    }
+    
+    // Open crop modal
+    if (window.imageCropModal) {
+        window.imageCropModal.open(file, imageType, (croppedFile, type) => {
+            handleCroppedImage(croppedFile, type);
+        });
+    } else {
+        // Fallback to direct preview if crop modal not available
+        handleImagePreview(event, `${imageType}-preview`);
+    }
+}
+
+/**
+ * Handle cropped image result
+ */
+function handleCroppedImage(croppedFile, imageType) {
+    // Create a fake event to simulate file input change
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(croppedFile);
+    
+    // Update the input with the cropped file
+    let input;
+    let previewId;
+    
+    switch (imageType) {
+        case 'front':
+            input = document.getElementById('add-front-image');
+            previewId = 'front-preview';
+            break;
+        case 'back':
+            input = document.getElementById('add-back-image');
+            previewId = 'back-preview';
+            break;
+        case 'additional':
+            input = document.getElementById('add-additional-image');
+            previewId = 'additional-preview';
+            break;
+        default:
+            return;
+    }
+    
+    if (input) {
+        input.files = dataTransfer.files;
+        
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const preview = document.getElementById(previewId);
+            const uploadContent = preview.parentElement.querySelector('.upload-content');
+            const img = preview.querySelector('img');
+            
+            img.src = e.target.result;
+            uploadContent.style.display = 'none';
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(croppedFile);
+    }
+}
+
+/**
+ * Handle image preview (fallback method)
  */
 function handleImagePreview(event, previewId) {
     const file = event.target.files[0];
