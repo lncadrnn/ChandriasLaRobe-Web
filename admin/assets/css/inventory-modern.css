@@ -36,6 +36,10 @@
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Sidebar variables for layout calculations */
+    --sidebar-width: 250px;
+    --sidebar-width-closed: 88px;
 }
 
 body {
@@ -50,22 +54,22 @@ body {
    ================================ */
 
 .main-content.modern-inventory {
-    padding: 24px;
+    padding: 0 24px 24px 24px; /* No top padding, let page-header handle it */
     background-color: var(--gray-50);
     min-height: 100vh;
+    margin-left: var(--sidebar-width, 250px); /* Add left margin to account for sidebar */
+    width: calc(100% - var(--sidebar-width, 250px)); /* Adjust width accordingly */
+    transition: all 0.3s ease;
 }
 
-/* Header Section */
-.inventory-header {
-    margin-bottom: 32px;
+/* Adjust for closed sidebar */
+.sidebar.close ~ .main-content.modern-inventory {
+    margin-left: var(--sidebar-width-closed, 88px);
+    width: calc(100% - var(--sidebar-width-closed, 88px));
 }
 
-.inventory-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--primary-pink);
-    margin: 0;
-}
+/* Remove old header styles - now using admin layout header */
+/* .inventory-header styles are removed since we use page-header from admin-layout.css */
 
 /* Controls Section */
 .inventory-controls {
@@ -73,6 +77,7 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
+    margin-top: 24px; /* Add top margin since page-header handles spacing */
     gap: 20px;
     flex-wrap: wrap;
 }
@@ -942,6 +947,8 @@ body {
 @media (max-width: 768px) {
     .main-content.modern-inventory {
         padding: 16px;
+        margin-left: 0; /* No sidebar margin on mobile */
+        width: 100%; /* Full width on mobile */
     }
     
     .inventory-controls {
