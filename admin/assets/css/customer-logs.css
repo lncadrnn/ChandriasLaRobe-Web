@@ -585,7 +585,13 @@ select:disabled {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    min-height: 400px;
+    min-height: 320px;
+}
+
+.transaction-card .card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .transaction-card::before {
@@ -612,29 +618,59 @@ select:disabled {
     gap: 1rem;
 }
 
-.customer-info {
+/* Centered customer info layout */
+.customer-info-centered {
     flex: 1;
-    min-width: 0; /* Allow shrinking */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
 }
 
-.customer-info h4 {
-    color: var(--text-color);
+.customer-info-centered h4 {
+    color: #2c3e50;
     font-size: 1.1rem;
     font-weight: 600;
-    margin: 0 0 0.25rem 0;
-    max-width: 200px;
+    margin: 0;
+    width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    cursor: help;
-    position: relative;
 }
 
-.customer-info h4:hover::after {
+.customer-info-centered .transaction-code {
+    color: #6b7280;
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+}
+
+/* Status badge positioned top right */
+.card-status-top {
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-start;
+}
+
+.card-status-top .status-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.customer-info-centered h4:hover::after {
     content: attr(title);
     position: absolute;
     top: 100%;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     background: #333;
     color: white;
     padding: 0.5rem;
@@ -646,6 +682,7 @@ select:disabled {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     opacity: 0;
     animation: fadeIn 0.2s ease-in forwards;
+    pointer-events: none;
 }
 
 @keyframes fadeIn {
@@ -655,27 +692,43 @@ select:disabled {
 }
 
 .transaction-code {
-    background: rgba(255, 105, 180, 0.1);
-    color: var(--primary-color);
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    font-family: 'Courier New', monospace;
+    color: #6b7280;
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: none;
+    padding: 0;
+    border-radius: 0;
 }
 
-.card-status {
-    display: flex;    align-items: center;
-    gap: 0.5rem;
+/* Card body with details only */
+.card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Card actions at bottom */
+.card-actions-bottom {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 105, 180, 0.1);
 }
 
 /* Status badge styling moved to status-colors.css for consistency across admin pages */
 
 .card-details {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
+}
+
+@media (min-width: 480px) {
+    .card-details {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 .detail-item {
@@ -1345,7 +1398,86 @@ select:disabled {
         padding: 0.45rem 0.65rem;    }
 }
 
-/* Status badge styling moved to status-colors.css for consistency across admin pages */
+/* === MOBILE RESPONSIVENESS FOR REFACTORED CARDS === */
+@media (max-width: 768px) {
+    /* Card layout adjustments for mobile */
+    .transaction-cards {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 0;
+    }
+    
+    .transaction-card {
+        padding: 1rem;
+        min-height: 280px;
+        margin: 0 0.5rem;
+    }
+    
+    /* Centered customer info on mobile */
+    .customer-info-centered h4 {
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+    
+    .customer-info-centered .transaction-code {
+        font-size: 0.8rem;
+    }
+    
+    /* Status badge mobile positioning */
+    .card-status-top .status-badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.6rem;
+    }
+    
+    /* Single column layout for details on mobile */
+    .card-details {
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem;
+    }
+    
+    .detail-item {
+        gap: 0.15rem;
+    }
+    
+    .detail-label {
+        font-size: 0.7rem;
+    }
+    
+    .detail-value {
+        font-size: 0.85rem;
+    }
+    
+    .detail-value.amount {
+        font-size: 1rem;
+    }
+    
+    /* Card actions at bottom - mobile optimization */
+    .card-actions-bottom {
+        padding-top: 0.75rem;
+        margin-top: 0.75rem;
+    }
+    
+    .card-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+        gap: 0.5rem;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .card-action-btn {
+        padding: 0.6rem;
+        min-width: 60px;
+        height: 44px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        justify-content: center;
+    }
+    
+    .card-action-btn i {
+        font-size: 16px;
+    }
+}
 
 /* === PAYMENT STATUS === */
 .payment-status {

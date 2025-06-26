@@ -397,62 +397,54 @@ async function renderTransactionCards() {
         // Calculate payment details
         const totalPayment = parseFloat(transaction.totalPayment) || 0;
         const remainingBalance = parseFloat(transaction.remainingBalance) || 0;
-        const paymentStatus = remainingBalance > 0 ? 'Partial Payment' : 'Fully Paid';
+        // Determine payment status text with balance
+        let paymentStatusText;
+        if (remainingBalance > 0) {
+            paymentStatusText = `Bal: ₱${remainingBalance.toLocaleString()}`;
+        } else {
+            paymentStatusText = 'Fully Paid';
+        }
         
-        // Count items
-        const productCount = transaction.products?.length || 0;
-        const accessoryCount = transaction.accessories?.length || 0;
-        const totalItems = productCount + accessoryCount;        const card = `
+        const card = `
             <div class="transaction-card" data-transaction-id="${transaction.id}">
                 <div class="card-content">
                     <div class="card-header">
-                        <div class="customer-info">
-                            <h4>${transaction.fullName || 'Unknown Customer'}</h4>
-                            <code class="transaction-code">${transaction.transactionCode || transaction.id.substring(0, 8)}</code>
+                        <div class="customer-info-centered">
+                            <h4 title="${transaction.fullName || 'Unknown Customer'}">${transaction.fullName || 'Unknown Customer'}</h4>
+                            <span class="transaction-code">${transaction.transactionCode || transaction.id.substring(0, 8)}</span>
                         </div>
-                        <div class="card-status">
+                        <div class="card-status-top">
                             <span class="status-badge ${statusClass}">${rentalStatus}</span>
                         </div>
                     </div>
                     
-                    <div class="card-details">
-                        <div class="detail-item">
-                            <span class="detail-label">Event Date</span>
-                            <span class="detail-value">${eventDateDisplay}</span>
+                    <div class="card-body">
+                        <div class="card-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Event Date</span>
+                                <span class="detail-value">${eventDateDisplay}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Payment Status</span>
+                                <span class="detail-value">${paymentStatusText}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Total Amount</span>
+                                <span class="detail-value amount">₱${totalPayment.toLocaleString()}</span>
+                            </div>
                         </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Event Type</span>
-                            <span class="detail-value">${transaction.eventType || 'N/A'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Items Rented</span>
-                            <span class="detail-value">${totalItems} item${totalItems !== 1 ? 's' : ''}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Payment Status</span>
-                            <span class="detail-value">${paymentStatus}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Total Amount</span>
-                            <span class="detail-value amount">₱${totalPayment.toLocaleString()}</span>
-                        </div>
-                        ${remainingBalance > 0 ? `
-                        <div class="detail-item">
-                            <span class="detail-label">Remaining Balance</span>
-                            <span class="detail-value" style="color: #e74c3c; font-weight: 600;">₱${remainingBalance.toLocaleString()}</span>
-                        </div>
-                        ` : ''}
                     </div>
                 </div>
                 
-                <div class="card-actions-container">                    <div class="card-actions">
-                        <button class="card-action-btn view-details-btn" data-id="${transaction.id}">
+                <div class="card-actions-bottom">
+                    <div class="card-actions">
+                        <button class="card-action-btn view-details-btn" data-id="${transaction.id}" title="View Details">
                             <i class='bx bx-show'></i>
                         </button>
                         ${(() => {
                             const editValidation = canEditTransaction(transaction);
                             if (editValidation.canEdit) {
-                                return `<button class="card-action-btn edit-btn" data-id="${transaction.id}">
+                                return `<button class="card-action-btn edit-btn" data-id="${transaction.id}" title="Edit Transaction">
                                     <i class='bx bx-edit'></i>
                                 </button>`;
                             } else {
@@ -461,7 +453,7 @@ async function renderTransactionCards() {
                                 </button>`;
                             }
                         })()}
-                        <button class="card-action-btn delete-btn" data-id="${transaction.id}">
+                        <button class="card-action-btn delete-btn" data-id="${transaction.id}" title="Delete Transaction">
                             <i class='bx bx-trash'></i>
                         </button>
                         ${rentalStatus === 'Ongoing' ? `
