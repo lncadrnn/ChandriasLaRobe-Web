@@ -308,33 +308,33 @@ async function renderTransactionTable() {
                 <td><strong class="amount">₱${totalPayment.toLocaleString()}</strong></td>                <td>
                     <div class="action-buttons">
                         <button class="view-details-btn" data-id="${transaction.id}" title="View Details">
-                            <i class='bx bx-show'></i> View
+                            <i class='bx bx-show'></i>
                         </button>
                         ${(() => {
                             const editValidation = canEditTransaction(transaction);
                             if (editValidation.canEdit) {
                                 return `<button class="edit-btn" data-id="${transaction.id}" title="Edit Transaction">
-                                    <i class='bx bx-edit'></i> Edit
+                                    <i class='bx bx-edit'></i>
                                 </button>`;
                             } else {
                                 return `<button class="edit-btn disabled" data-id="${transaction.id}" title="${editValidation.reason}" disabled>
-                                    <i class='bx bx-edit'></i> Edit
+                                    <i class='bx bx-edit'></i>
                                 </button>`;
                             }
                         })()}
                         <button class="delete-btn" data-id="${transaction.id}" title="Delete Transaction">
-                            <i class='bx bx-trash'></i> Delete
+                            <i class='bx bx-trash'></i>
                         </button>
                     </div>                    ${rentalStatus === 'Ongoing' ? `
                         <div class="action-buttons-long">                            <button class="mark-complete-btn long-btn" data-id="${transaction.id}" title="Mark as Complete">
-                                <i class='bx bx-check'></i> Mark as Complete
+                                <i class='bx bx-check'></i>
                             </button>
                         </div>
                     ` : ''}
                     ${rentalStatus === 'Overdue' ? `
                         <div class="action-buttons-long">
                             <button class="process-overdue-btn long-btn" data-id="${transaction.id}" title="Process Overdue">
-                                <i class='bx bx-exclamation-triangle'></i> Process Overdue
+                                <i class='bx bx-exclamation-triangle'></i>
                             </button>
                         </div>
                     ` : ''}
@@ -440,33 +440,33 @@ async function renderTransactionCards() {
                 
                 <div class="card-actions-container">                    <div class="card-actions">
                         <button class="card-action-btn view-details-btn" data-id="${transaction.id}">
-                            <i class='bx bx-show'></i> View
+                            <i class='bx bx-show'></i>
                         </button>
                         ${(() => {
                             const editValidation = canEditTransaction(transaction);
                             if (editValidation.canEdit) {
                                 return `<button class="card-action-btn edit-btn" data-id="${transaction.id}">
-                                    <i class='bx bx-edit'></i> Edit
+                                    <i class='bx bx-edit'></i>
                                 </button>`;
                             } else {
                                 return `<button class="card-action-btn edit-btn disabled" data-id="${transaction.id}" title="${editValidation.reason}" disabled>
-                                    <i class='bx bx-edit'></i> Edit
+                                    <i class='bx bx-edit'></i>
                                 </button>`;
                             }
                         })()}
                         <button class="card-action-btn delete-btn" data-id="${transaction.id}">
-                            <i class='bx bx-trash'></i> Delete
+                            <i class='bx bx-trash'></i>
                         </button>
                     </div>${rentalStatus === 'Ongoing' ? `
                         <div class="card-actions-long">
                             <button class="card-action-btn mark-complete-btn long-btn" data-id="${transaction.id}">
-                                <i class='bx bx-check'></i> Mark as Complete
+                                <i class='bx bx-check'></i>
                             </button>
                         </div>                    ` : ''}
                     ${rentalStatus === 'Overdue' ? `
                         <div class="card-actions-long">
                             <button class="card-action-btn process-overdue-btn long-btn" data-id="${transaction.id}">
-                                <i class='bx bx-exclamation-triangle'></i> Process Overdue
+                                <i class='bx bx-exclamation-triangle'></i>
                             </button>
                         </div>
                     ` : ''}
