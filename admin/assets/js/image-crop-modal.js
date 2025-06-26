@@ -51,6 +51,24 @@ class ImageCropModal {
                         <!-- Crop Container -->
                         <div class="crop-container">
                             <img id="cropImage" class="crop-image" src="" alt="Image to crop">
+                            <!-- Reset/Rotate Controls Overlay -->
+                            <div class="crop-action-controls">
+                                <button class="crop-action-btn" id="cropReset" type="button" title="Reset Crop">
+                                    <i class="bx bx-reset"></i>
+                                </button>
+                                <button class="crop-action-btn" id="cropRotate" type="button" title="Rotate 90°">
+                                    <i class="bx bx-rotate-right"></i>
+                                </button>
+                            </div>
+                            <!-- Zoom Controls Overlay -->
+                            <div class="crop-zoom-controls">
+                                <button class="crop-zoom-btn" id="cropZoomIn" type="button" title="Zoom In">
+                                    <i class="bx bx-zoom-in"></i>
+                                </button>
+                                <button class="crop-zoom-btn" id="cropZoomOut" type="button" title="Zoom Out">
+                                    <i class="bx bx-zoom-out"></i>
+                                </button>
+                            </div>
                         </div>
                         
                         <!-- Preview Section -->
@@ -71,38 +89,6 @@ class ImageCropModal {
                                         <strong>Format:</strong> JPEG, optimized for web
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Crop Controls -->
-                        <div class="crop-controls">
-                            <div class="crop-control-group">
-                                <label class="crop-control-label">Reset</label>
-                                <button class="crop-control-btn" id="cropReset" type="button">
-                                    <i class="bx bx-reset"></i>
-                                    Reset Crop
-                                </button>
-                            </div>
-                            <div class="crop-control-group">
-                                <label class="crop-control-label">Zoom</label>
-                                <button class="crop-control-btn" id="cropZoomIn" type="button">
-                                    <i class="bx bx-zoom-in"></i>
-                                    Zoom In
-                                </button>
-                            </div>
-                            <div class="crop-control-group">
-                                <label class="crop-control-label">Zoom</label>
-                                <button class="crop-control-btn" id="cropZoomOut" type="button">
-                                    <i class="bx bx-zoom-out"></i>
-                                    Zoom Out
-                                </button>
-                            </div>
-                            <div class="crop-control-group">
-                                <label class="crop-control-label">Rotate</label>
-                                <button class="crop-control-btn" id="cropRotate" type="button">
-                                    <i class="bx bx-rotate-right"></i>
-                                    Rotate 90°
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -202,7 +188,7 @@ class ImageCropModal {
             dragMode: 'move',
             autoCropArea: 0.8,
             scalable: true,
-            zoomable: true,
+            zoomable: true, // Keep zoomable true for button controls
             rotatable: true,
             cropBoxMovable: true,
             cropBoxResizable: true,
@@ -210,7 +196,11 @@ class ImageCropModal {
             minContainerWidth: 300,
             minContainerHeight: 400,
             background: false,
-            crop: () => this.updatePreview()
+            crop: () => this.updatePreview(),
+            ready: () => {
+                // Disable wheel events on the cropper container
+                this.disableWheelZoom();
+            }
         });
     }
     
@@ -337,6 +327,28 @@ class ImageCropModal {
             loading.classList.add('show');
         } else {
             loading.classList.remove('show');
+        }
+    }
+    
+    disableWheelZoom() {
+        const cropContainer = document.querySelector('.crop-container');
+        if (cropContainer) {
+            // Prevent wheel events on the entire crop container
+            cropContainer.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }, { passive: false });
+            
+            // Also prevent wheel events on cropper elements
+            const cropperContainer = cropContainer.querySelector('.cropper-container');
+            if (cropperContainer) {
+                cropperContainer.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }, { passive: false });
+            }
         }
     }
 }
