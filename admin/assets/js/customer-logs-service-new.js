@@ -424,13 +424,15 @@ async function renderTransactionCards() {
                                 <span class="detail-label">Event Date</span>
                                 <span class="detail-value">${eventDateDisplay}</span>
                             </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Payment Status</span>
-                                <span class="detail-value">${paymentStatusText}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Total Amount</span>
-                                <span class="detail-value amount">₱${totalPayment.toLocaleString()}</span>
+                            <div class="card-details-row">
+                                <div class="detail-item">
+                                    <span class="detail-label">Payment Status</span>
+                                    <span class="detail-value">${paymentStatusText}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Total Amount</span>
+                                    <span class="detail-value amount">₱${totalPayment.toLocaleString()}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -631,11 +633,8 @@ function formatEventDate(transaction) {
     if (eventEndDate && transaction.rentalType === 'Open Rental') {
         return `${eventStartDate.toLocaleDateString()} - ${eventEndDate.toLocaleDateString()}`;
     } else {
-        // For fixed rentals, display date and label with consistent styling
-        return `<div class="event-date-fixed">
-                    <div>${eventStartDate.toLocaleDateString()}</div>
-                    <div class="fixed-rental-label">(Fixed Rental)</div>
-                </div>`;
+        // For fixed rentals, display date and label inline
+        return `${eventStartDate.toLocaleDateString()} (Fixed Rental)`;
     }
 }
 
