@@ -246,8 +246,7 @@
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     grid-auto-rows: minmax(120px, auto);
-    overflow: auto;
-    max-height: calc(100vh - 300px); /* Limit height to prevent overflow */
+    /* Remove max-height restriction to show all calendar rows */
     /* Custom scrollbar styles */
     scrollbar-width: thin;
     scrollbar-color: #c1c1c1 #f1f1f1;
