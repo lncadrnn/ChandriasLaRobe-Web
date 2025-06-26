@@ -325,33 +325,27 @@ async function renderTransactionTable() {
                         <button class="delete-btn" data-id="${transaction.id}" title="Delete Transaction">
                             <i class='bx bx-trash'></i>
                         </button>
-                    </div>                    ${rentalStatus === 'Ongoing' ? `
-                        <div class="action-buttons-long">                            <button class="mark-complete-btn long-btn" data-id="${transaction.id}" title="Mark as Complete">
+                        ${rentalStatus === 'Ongoing' ? `
+                            <button class="mark-complete-btn" data-id="${transaction.id}" title="Mark as Complete">
                                 <i class='bx bx-check'></i>
                             </button>
-                        </div>
-                    ` : ''}
-                    ${rentalStatus === 'Overdue' ? `
-                        <div class="action-buttons-long">
-                            <button class="process-overdue-btn long-btn" data-id="${transaction.id}" title="Process Overdue">
+                        ` : ''}
+                        ${rentalStatus === 'Overdue' ? `
+                            <button class="process-overdue-btn" data-id="${transaction.id}" title="Process Overdue">
                                 <i class='bx bx-exclamation-triangle'></i>
                             </button>
-                        </div>
-                    ` : ''}
-                    ${rentalStatus === 'Upcoming' ? `
-                        <div class="action-buttons-long">
-                            <button class="cancel-rental-btn long-btn" data-id="${transaction.id}" title="Cancel Rental">
-                                <i class='bx bx-x'></i> Cancel
+                        ` : ''}
+                        ${rentalStatus === 'Upcoming' ? `
+                            <button class="cancel-rental-btn" data-id="${transaction.id}" title="Cancel Rental">
+                                <i class='bx bx-x'></i>
                             </button>
-                        </div>
-                    ` : ''}
-                    ${rentalStatus === 'Cancelled' ? `
-                        <div class="action-buttons-long">
-                            <button class="undo-cancel-btn long-btn" data-id="${transaction.id}" title="Undo Cancellation">
-                                <i class='bx bx-undo'></i> Undo Cancellation
+                        ` : ''}
+                        ${rentalStatus === 'Cancelled' ? `
+                            <button class="undo-cancel-btn" data-id="${transaction.id}" title="Undo Cancellation">
+                                <i class='bx bx-undo'></i>
                             </button>
-                        </div>
-                    ` : ''}
+                        ` : ''}
+                    </div>
                 </td>
             </tr>
         `;
@@ -457,33 +451,27 @@ async function renderTransactionCards() {
                         <button class="card-action-btn delete-btn" data-id="${transaction.id}">
                             <i class='bx bx-trash'></i>
                         </button>
-                    </div>${rentalStatus === 'Ongoing' ? `
-                        <div class="card-actions-long">
-                            <button class="card-action-btn mark-complete-btn long-btn" data-id="${transaction.id}">
+                        ${rentalStatus === 'Ongoing' ? `
+                            <button class="card-action-btn mark-complete-btn" data-id="${transaction.id}" title="Mark as Complete">
                                 <i class='bx bx-check'></i>
                             </button>
-                        </div>                    ` : ''}
-                    ${rentalStatus === 'Overdue' ? `
-                        <div class="card-actions-long">
-                            <button class="card-action-btn process-overdue-btn long-btn" data-id="${transaction.id}">
+                        ` : ''}
+                        ${rentalStatus === 'Overdue' ? `
+                            <button class="card-action-btn process-overdue-btn" data-id="${transaction.id}" title="Process Overdue">
                                 <i class='bx bx-exclamation-triangle'></i>
                             </button>
-                        </div>
-                    ` : ''}
-                    ${rentalStatus === 'Upcoming' ? `
-                        <div class="card-actions-long">
-                            <button class="card-action-btn cancel-rental-btn long-btn" data-id="${transaction.id}">
-                                <i class='bx bx-x'></i> Cancel
+                        ` : ''}
+                        ${rentalStatus === 'Upcoming' ? `
+                            <button class="card-action-btn cancel-rental-btn" data-id="${transaction.id}" title="Cancel Rental">
+                                <i class='bx bx-x'></i>
                             </button>
-                        </div>
-                    ` : ''}
-                    ${rentalStatus === 'Cancelled' ? `
-                        <div class="card-actions-long">
-                            <button class="card-action-btn undo-cancel-btn long-btn" data-id="${transaction.id}">
-                                <i class='bx bx-undo'></i> Undo Cancellation
+                        ` : ''}
+                        ${rentalStatus === 'Cancelled' ? `
+                            <button class="card-action-btn undo-cancel-btn" data-id="${transaction.id}" title="Undo Cancellation">
+                                <i class='bx bx-undo'></i>
                             </button>
-                        </div>
-                    ` : ''}
+                        ` : ''}
+                    </div>
                 </div>
             </div>
         `;
