@@ -61,7 +61,7 @@
     background: var(--white);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-lg);
-    max-width: 500px;
+    max-width: 650px;
     width: 100%;
     max-height: 85vh;
     overflow-y: auto;
@@ -99,8 +99,8 @@
     color: var(--gray-400);
     cursor: pointer;
     transition: var(--transition);
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -228,6 +228,7 @@
 
 .crop-control-btn {
     width: 100%;
+    height: 40px;
     padding: 8px 12px;
     border: 1px solid var(--gray-300);
     background: var(--white);
@@ -265,6 +266,8 @@
 }
 
 .crop-btn {
+    min-width: 120px;
+    height: 44px;
     padding: 10px 20px;
     border: none;
     border-radius: var(--border-radius);
@@ -274,6 +277,7 @@
     transition: var(--transition);
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
 }
 
@@ -354,6 +358,7 @@
     .crop-modal-content {
         margin: 10px;
         max-height: 95vh;
+        max-width: 95vw;
     }
     
     .crop-modal-body {
@@ -391,12 +396,17 @@
     .crop-btn {
         width: 100%;
         justify-content: center;
+        min-width: unset;
     }
 }
 
 @media (max-width: 480px) {
     .crop-modal {
         padding: 10px;
+    }
+    
+    .crop-modal-content {
+        max-width: 95vw;
     }
     
     .crop-modal-header {
@@ -418,6 +428,10 @@
     
     .crop-control-group {
         min-width: 100%;
+    }
+    
+    .crop-btn {
+        min-width: unset;
     }
 }
 
