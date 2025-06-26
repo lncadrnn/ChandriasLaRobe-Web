@@ -128,7 +128,7 @@
     <main class="main-content">        
         <header class="page-header">
             <div class="header-left">
-                <h1 class="page-title">Rental Logs</h1>
+                <h1 class="page-title">Customer Logs</h1>
                 <p class="page-subtitle">View and manage all rental transactions and appointment history</p>
             </div>        
         </header>
@@ -509,7 +509,17 @@
                 
                 <div class="confirmation-section">
                     <p>Type <strong>DELETE</strong> to confirm:</p>
-                    <input type="text" id="delete-confirmation-input" placeholder="Type DELETE to confirm" class="confirmation-input">
+                    <input type="text" 
+                           id="delete-confirmation-input" 
+                           placeholder="Type DELETE to confirm" 
+                           class="confirmation-input"
+                           autocomplete="off"
+                           autocapitalize="off"
+                           autocorrect="off"
+                           spellcheck="false"
+                           data-form-type="other"
+                           data-lpignore="true"
+                           readonly onfocus="this.removeAttribute('readonly');">
                 </div>
                 
                 <div class="form-actions">

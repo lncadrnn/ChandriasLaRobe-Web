@@ -2130,6 +2130,35 @@ body.modal-open .modal-overlay.show .modal-content {
     letter-spacing: 0.5px !important;
 }
 
+/* Additional autocomplete prevention */
+.confirmation-input:-webkit-autofill,
+.confirmation-input:-webkit-autofill:hover,
+.confirmation-input:-webkit-autofill:focus,
+.confirmation-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
+    -webkit-text-fill-color: #374151 !important;
+    background: #ffffff !important;
+    transition: background-color 5000s ease-in-out 0s !important;
+}
+
+/* Prevent datalist suggestions and browser controls */
+.confirmation-input::-webkit-calendar-picker-indicator,
+.confirmation-input::-webkit-clear-button,
+.confirmation-input::-webkit-inner-spin-button,
+.confirmation-input::-webkit-outer-spin-button {
+    display: none !important;
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+}
+
+/* Remove any dropdown arrow or suggestion indicators */
+.confirmation-input::-webkit-search-decoration,
+.confirmation-input::-webkit-search-cancel-button,
+.confirmation-input::-webkit-search-results-button,
+.confirmation-input::-webkit-search-results-decoration {
+    display: none !important;
+}
+
 .confirmation-input:focus {
     border-color: #ef4444 !important;
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
