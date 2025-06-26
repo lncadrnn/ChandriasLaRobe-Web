@@ -345,7 +345,7 @@ async function renderTransactionTable() {
                         ` : ''}
                         ${rentalStatus === 'Overdue' ? `
                             <button class="process-overdue-btn" data-id="${transaction.id}" title="Process Overdue">
-                                <i class='bx bx-exclamation-triangle'></i>
+                                <i class='bx bx-time-five'></i>
                             </button>
                         ` : ''}
                         ${rentalStatus === 'Upcoming' ? `
@@ -463,7 +463,7 @@ async function renderTransactionCards() {
                         ` : ''}
                         ${rentalStatus === 'Overdue' ? `
                             <button class="card-action-btn process-overdue-btn" data-id="${transaction.id}" title="Process Overdue">
-                                <i class='bx bx-exclamation-triangle'></i>
+                                <i class='bx bx-time-five'></i>
                             </button>
                         ` : ''}
                         ${rentalStatus === 'Upcoming' ? `
