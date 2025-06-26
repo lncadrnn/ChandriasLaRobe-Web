@@ -2193,55 +2193,7 @@ window.currentCancelTransaction = currentCancelTransaction;
 
 // Validation function to check if transaction can be edited
 function canEditTransaction(transaction) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    // Event date restrictions removed - allow editing regardless of event date
-    
-    // Check if rental fee is valid (positive number)
-    const rentalFee = parseFloat(transaction.rentalFee) || 0;
-    if (rentalFee <= 0) {
-        return {
-            canEdit: false,
-            reason: "Cannot edit: Rental fee must be a positive number."
-        };
-    }
-    
-    // Check if total payment is valid (non-negative)
-    const totalPayment = parseFloat(transaction.totalPayment) || 0;
-    if (totalPayment < 0) {
-        return {
-            canEdit: false,
-            reason: "Cannot edit: Total payment cannot be negative."
-        };
-    }
-    
-    // Check contact number format if exists
-    if (transaction.contactNumber) {
-        const contactRegex = /^09[0-9]{9}$/;
-        if (!contactRegex.test(transaction.contactNumber)) {
-            return {
-                canEdit: false,
-                reason: "Cannot edit: Invalid contact number format (must be 11 digits starting with 09)."
-            };
-        }
-    }
-    
-    // Check if transaction status allows editing
-    if (transaction.rentalStatus === 'Completed') {
-        return {
-            canEdit: false,
-            reason: "Cannot edit: Transaction is already completed."
-        };
-    }
-    
-    if (transaction.rentalStatus === 'Cancelled') {
-        return {
-            canEdit: false,
-            reason: "Cannot edit: Transaction is cancelled."
-        };
-    }
-    
+    // Allow editing of all transactions regardless of status, date, or other conditions
     return {
         canEdit: true,
         reason: null
