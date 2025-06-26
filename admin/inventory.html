@@ -22,7 +22,7 @@
         />        <!-- EXTERNAL CSS -->
         <link rel="stylesheet" href="./assets/css/admin-layout.css" />
         <link rel="stylesheet" href="./assets/css/admin-layout-mob.css" />
-        <link rel="stylesheet" href="./assets/css/inventory.css" />
+        <link rel="stylesheet" href="./assets/css/inventory-modern.css" />
     </head>
     <body>
         <!-- ====== INVENTORY LOADER ====== -->
@@ -108,779 +108,350 @@
 
                 <div class="bottom-content"></div>
             </div>
-        </nav>        <main class="main-content">
-            <header class="page-header">
-                <div class="header-left">
-                    <h1 class="page-title">Inventory Management</h1>
-                    <p class="page-subtitle">Manage your rental inventory, add new products, and track availability</p>
-                </div>                <div class="header-right">
-                    <div class="search-box">
-                        <i class="bx bx-search icon"></i>
-                        <input type="text" id="product-search" placeholder="Search by name, category, size..." />
+        </nav>        <main class="main-content modern-inventory">
+            <!-- Header Section -->
+            <div class="inventory-header">
+                <h1 class="inventory-title">Inventory</h1>
+            </div>
+
+            <!-- Filters and Actions Section -->
+            <div class="inventory-controls">
+                <div class="filter-section">
+                    <div class="type-filters">
+                        <button class="filter-btn active" data-filter="all">All Types</button>
+                        <button class="filter-btn" data-filter="product">Product</button>
+                        <button class="filter-btn" data-filter="additional">Additional</button>
                     </div>
-                    <button class="btn btn-primary" id="add-item-btn" data-open="addProductModal">
+                </div>
+                
+                <div class="action-section">
+                    <div class="search-container">
+                        <i class="bx bx-search search-icon"></i>
+                        <input type="text" id="inventory-search" placeholder="Search products..." class="search-input">
+                    </div>
+                    <button class="action-btn primary" id="add-product-btn">
                         <i class="bx bx-plus"></i>
-                        <span>Add Product</span>
+                        Add Product
                     </button>
-                </div>            </header>
-            <div class="page-content">                <div class="search-filters">
-                    <div class="category-filter">
-                        <select id="category-filter">
-                            <option value="">All Categories</option>
-                            <option value="ball gown">Ball Gown</option>
-                            <option value="long gown">Long Gown</option>
-                            <option value="wedding gown">Wedding Gown</option>
-                            <option value="fairy gown">Fairy Gown</option>
-                            <option value="suits">Suits</option>
-                            <option value="accessory">Accessories</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="pos-tabs pos-tabs-margin">
-                    <button class="tab-btn active" data-tab="products">
-                        Products
-                    </button>
-                    <button class="tab-btn" data-tab="accessories">
-                        Additional
+                    <button class="action-btn secondary" id="add-additional-btn">
+                        <i class="bx bx-plus"></i>
+                        Add Additional
                     </button>
                 </div>
-                <div class="pos-layout">
-                    <div class="pos-products tab-content active" id="products">
-                        <div class="card_container" id="products-container">
-                            <!-- Product cards fetched from Firebase (do not modify) -->
-                            <!-- ...existing product card rendering logic... -->
-                        </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="table-container">
+                <div class="table-wrapper">
+                    <table class="inventory-table" id="inventory-table">
+                        <thead>
+                            <tr id="table-header">
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Category</th>
+                                <th>Sizes</th>
+                                <th>Quantity</th>
+                                <th>Code</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-tbody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination-container">
+                    <div class="pagination-info">
+                        <span id="pagination-info-text">Showing 1-10 of 0 items</span>
                     </div>
-                    <div class="pos-accessories tab-content" id="accessories">
-                        <div class="card_container" id="additional-container">
-                            <!-- Accessories cards or content here if needed -->
+                    <div class="pagination-controls">
+                        <button class="pagination-btn" id="prev-page" disabled>
+                            <i class="bx bx-chevron-left"></i>
+                        </button>
+                        <div class="page-numbers" id="page-numbers">
+                            <!-- Page numbers will be generated -->
                         </div>
+                        <button class="pagination-btn" id="next-page" disabled>
+                            <i class="bx bx-chevron-right"></i>
+                        </button>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- ADD PRODUCT MODAL -->
-        <div id="addProductModal" class="custom-modal">
-            <div class="custom-modal-content">
-                <span class="custom-close-button" data-close="addProductModal"
-                    >&times;</span
-                >                <h2 class="add-product-title">
-                    Add Product
-                </h2>
-                <form id="addProductForm">
-                    <!-- Image Preview (side by side like edit modal) -->
-                    <div class="file-upload-container">
-                        <div class="drop-zone" id="add-dropzone-front">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                id="add-file-front-img"
-                                hidden
-                            />
-                            <label
-                                for="add-file-front-img"
-                                class="upload-label"
-                                id="add-upload-label-front"
-                            >
-                                <img
-                                    src="https://cdn-icons-png.flaticon.com/512/724/724933.png"
-                                    alt="Upload"
-                                    class="upload-icon"
-                                />
-                                <p>Select Front View Image</p>
-                            </label>
-                        </div>
-                        <div class="drop-zone" id="add-dropzone-back">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                id="add-file-back-img"
-                                hidden
-                            />
-                            <label
-                                for="add-file-back-img"
-                                class="upload-label"
-                                id="add-upload-label-back"
-                            >
-                                <img
-                                    src="https://cdn-icons-png.flaticon.com/512/724/724933.png"
-                                    alt="Upload"
-                                    class="upload-icon"
-                                />
-                                <p>Select Back View Image</p>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- PRODUCT NAME -->
-                    <input
-                        type="text"
-                        id="add-product-name"
-                        placeholder="Product Name"
-                        required
-                    />
-
-                    <!-- PRODUCT PRICE -->
-                    <div class="price-input">
-                        <div class="price-symbol">₱</div>
-                        <input
-                            type="number"
-                            placeholder="Product Price"
-                            id="add-product-price"
-                        />
-                        <div class="price-suffix">.00</div>
-                    </div>
-
-                    <!-- SIZE SELECT -->
-                    <label>Select Size</label>
-                    <div class="size-container">
-                        <label
-                            ><input
-                                type="checkbox"
-                                name="add-product-size"
-                                value="XS"
-                            />(XS)</label
-                        >
-                        <label
-                            ><input
-                                type="checkbox"
-                                name="add-product-size"
-                                value="S"
-                            />
-                            (S)</label
-                        >
-                        <label
-                            ><input
-                                type="checkbox"
-                                name="add-product-size"
-                                value="M"
-                            />
-                            (M)</label
-                        >
-                        <label
-                            ><input
-                                type="checkbox"
-                                name="add-product-size"
-                                value="L"
-                            />
-                            (L)</label
-                        >
-                        <label
-                            ><input
-                                type="checkbox"
-                                name="add-product-size"
-                                value="XL"
-                            />
-                            (XL)</label
-                        >
-                        <label
-                            ><input
-                                type="checkbox"
-                                name="add-product-size"
-                                value="XXL"
-                            />
-                            (XXL)</label
-                        >
-                    </div>
-                    <!-- QUANTITY CONTAINER -->
-                    <div id="add-selected-size-container"></div>
-
-                    <!-- COLOR SELECT -->
-                    <select id="add-product-color">
-                        <option selected>Select Color</option>
-                        <option value="Red" style="color: #ff0000">Red</option>
-                        <option value="Blue" style="color: #0000ff">
-                            Blue
-                        </option>
-                        <option value="Yellow" style="color: #daa520">
-                            Yellow
-                        </option>
-                        <option value="Green" style="color: #008000">
-                            Green
-                        </option>
-                        <option value="Orange" style="color: #ffa500">
-                            Orange
-                        </option>
-                        <option value="Purple" style="color: #800080">
-                            Purple
-                        </option>
-                        <option value="White" style="color: #f4f3eeff">
-                            White
-                        </option>
-                        <option value="Black" style="color: #000000">
-                            Black
-                        </option>
-                        <option value="Gray" style="color: #808080">
-                            Gray
-                        </option>
-                        <option value="Brown" style="color: #964b00">
-                            Brown
-                        </option>
-                        <option value="Beige" style="color: #d2b48c">
-                            Beige
-                        </option>
-                        <option value="Cream" style="color: #f5deb3">
-                            Cream
-                        </option>
-                    </select>
-
-                    <!-- Sleeve Style Select -->
-                    <select id="add-product-sleeve">
-                        <option selected>Select Sleeve Style</option>
-                        <option value="Short Sleeves">Short Sleeves</option>
-                        <option value="Long Sleeves">Long Sleeves</option>
-                        <option value="Off Shoulder">Off Shoulder</option>
-                    </select>
-
-                    <!-- Category Select -->
-                    <select id="add-product-category">
-                        <option selected>Select Category</option>
-                        <option value="Ball Gown">Ball Gown</option>
-                        <option value="Long Gown">Long Gown</option>
-                        <option value="Wedding Gown">Wedding Gown</option>
-                        <option value="Fairy Gown">Fairy Gown</option>
-                        <option value="Suits">Suits</option>
-                    </select>
-
-                    <!-- PRODUCT CODE -->
-                    <input
-                        type="text"
-                        id="add-product-code"
-                        placeholder="Product Code"
-                        readonly
-                        disabled
-                        required
-                    />
-
-                    <!-- PRODUCT DESCRIPTION -->
-                    <textarea
-                        id="add-product-description"
-                        placeholder="Product Description here..."
-                        rows="1"
-                    ></textarea>
-
-                    <!-- Modal Buttons -->
-                    <div class="modal-buttons">
-                        <button class="custom-btn" data-close="addProductModal">
-                            Close
-                        </button>
-                        <button
-                            class="custom-btn primary-btn"
-                            id="add-product-btn"
-                        >
-                            Submit
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- UPDATE PRODUCT MODAL -->
-        <div id="viewProductModal" class="custom-modal">
-            <div class="custom-modal-content">
-                <span class="custom-close-button" data-close="viewProductModal"
-                    >&times;</span
-                >
-                <h2
-                    style="
-                        color: var(--secondary-text-color);
-                        transition: var(--tran-04);
-                    "
-                >
-                    Product Details
-                </h2>
-                <form id="updateProductForm">
-                    <!-- Image Preview -->
-                    <div class="file-upload-container">
-                        <div class="drop-zone" id="update-dropzone-front">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                id="update-file-front-img"
-                                hidden
-                            />
-                            <label
-                                for="update-file-front-img"
-                                class="upload-label"
-                                id="update-upload-label-front"
-                            >
-                                <img
-                                    src="https://cdn-icons-png.flaticon.com/512/724/724933.png"
-                                    alt="Upload"
-                                    class="upload-icon"
-                                />
-                                <p>Select Front View Image</p>
-                            </label>
-                        </div>
-                        <div class="drop-zone" id="update-dropzone-back">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                id="update-file-back-img"
-                                hidden
-                            />
-                            <label
-                                for="update-file-back-img"
-                                class="upload-label"
-                                id="update-upload-label-back"
-                            >
-                                <img
-                                    src="https://cdn-icons-png.flaticon.com/512/724/724933.png"
-                                    alt="Upload"
-                                    class="upload-icon"
-                                />
-                                <p>Select Back View Image</p>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- PRODUCT ID -->
-                    <input
-                        type="text"
-                        id="update-product-id"
-                        placeholder="Product ID HERE"
-                        disabled
-                        required
-                        hidden
-                    />
-
-                    <!-- PRODUCT NAME -->
-                    <input
-                        type="text"
-                        id="update-product-name"
-                        placeholder="Product Name"
-                        required
-                    />
-
-                    <!-- PRICE INPUT -->
-                    <div class="price-input">
-                        <div class="price-symbol">₱</div>
-                        <input
-                            type="number"
-                            placeholder="Product Price"
-                            id="update-product-price"
-                        />
-                        <div class="price-suffix">.00</div>
-                    </div>
-
-                    <!-- SIZE SELECT -->
-                    <label>Select Size</label>
-                    <div class="size-container">
-                        <label
-                            ><input
-                                type="checkbox"
-                                name="update-product-size"
-                                value="XS"
-                            />(XS)</label
-                        >
-                        <label
-                            ><input
-                                type="checkbox"
-                                name="update-product-size"
-                                value="S"
-                            />
-                            (S)</label
-                        >
-                        <label
-                            ><input
-                                type="checkbox"
-                                name="update-product-size"
-                                value="M"
-                            />
-                            (M)</label
-                        >
-                        <label
-                            ><input
-                                type="checkbox"
-                                name="update-product-size"
-                                value="L"
-                            />
-                            (L)</label
-                        >
-                        <label
-                            ><input
-                                type="checkbox"
-                                name="update-product-size"
-                                value="XL"
-                            />
-                            (XL)</label
-                        >
-                        <label
-                            ><input
-                                type="checkbox"
-                                name="update-product-size"
-                                value="XXL"
-                            />
-                            (XXL)</label
-                        >
-                    </div>
-                    <!-- QUANTITY CONTAINER -->
-                    <div id="update-selected-size-container"></div>
-
-                    <!-- COLOR SELECT -->
-                    <select id="update-product-color">
-                        <option selected>Select Color</option>
-                        <option value="Red" style="color: #ff0000">Red</option>
-                        <option value="Blue" style="color: #0000ff">
-                            Blue
-                        </option>
-                        <option value="Yellow" style="color: #daa520">
-                            Yellow
-                        </option>
-                        <option value="Green" style="color: #008000">
-                            Green
-                        </option>
-                        <option value="Orange" style="color: #ffa500">
-                            Orange
-                        </option>
-                        <option value="Purple" style="color: #800080">
-                            Purple
-                        </option>
-                        <option value="White" style="color: #f4f3eeff">
-                            White
-                        </option>
-                        <option value="Black" style="color: #000000">
-                            Black
-                        </option>
-                        <option value="Gray" style="color: #808080">
-                            Gray
-                        </option>
-                        <option value="Brown" style="color: #964b00">
-                            Brown
-                        </option>
-                        <option value="Beige" style="color: #d2b48c">
-                            Beige
-                        </option>
-                        <option value="Cream" style="color: #f5deb3">
-                            Cream
-                        </option>
-                    </select>
-
-                    <!-- SELECT SLEEVE -->
-                    <select id="update-product-sleeve">
-                        <option selected>Sleeve Style</option>
-                        <option value="Short Sleeves">Short Sleeves</option>
-                        <option value="Long Sleeves">Long Sleeves</option>
-                        <option value="Off Shoulder">Off Shoulder</option>
-                    </select>
-
-                    <!-- SELECT CATEGORY -->
-                    <select id="update-product-category">
-                        <option selected>Select Category</option>
-                        <option value="Ball Gown">Ball Gown</option>
-                        <option value="Long Gown">Long Gown</option>
-                        <option value="Wedding Gown">Wedding Gown</option>
-                        <option value="Fairy Gown">Fairy Gown</option>
-                        <option value="Suits">Suits</option>
-                    </select>
-
-                    <!-- PRODUCT CODE -->
-                    <input
-                        type="text"
-                        id="update-product-code"
-                        placeholder="Product Code"
-                        readonly
-                        disabled
-                        required
-                    />
-
-                    <!-- PRODUCT DESCRIPTION -->
-                    <textarea
-                        id="update-product-description"
-                        placeholder="Product Description here..."
-                        rows="1"
-                    >
-                    </textarea>
-
-                    <!-- MODAL BUTTONS -->
-                    <div class="modal-buttons">
-                        <button
-                            class="custom-btn"
-                            data-close="viewProductModal"
-                        >
-                            Close
-                        </button>
-                        <button
-                            class="custom-btn primary-btn"
-                            id="update-product-btn"
-                        >
-                            Update
-                        </button>
-                    </div>
-                </form>
-                <!-- // -->
-            </div>
-        </div>
-
-        <!-- ADDITIONAL MODAL -->
-        <div id="addAdditionalModal" class="custom-modal">
-            <div class="custom-modal-content">
-                <span
-                    class="custom-close-button"
-                    data-close="addAdditionalModal"
-                    >&times;</span
-                >
-                <h2
-                    style="
-                        color: var(--secondary-text-color);
-                        transition: var(--tran-04);
-                    "
-                >
-                    Add Additional
-                </h2>
-                <form>
-                    <!-- Image Preview -->
-                    <div class="file-upload-container">
-                        <div class="drop-zone" id="add-additional-dropzone-img">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                id="add-additional-file-img"
-                                hidden
-                            />
-                            <label
-                                for="add-additional-file-img"
-                                class="upload-label"
-                                id="add-additional-upload-label-img"
-                            >
-                                <img
-                                    src="https://cdn-icons-png.flaticon.com/512/724/724933.png"
-                                    alt="Upload"
-                                    class="upload-icon"
-                                />
-                                <p>Select Image</p>
-                            </label>
-                        </div>
-                    </div>
-                    <!-- Name -->
-                    <input
-                        type="text"
-                        id="add-additional-name"
-                        placeholder="Name"
-                    />
-                    <!-- ADDITIONAL PRODUCT CODE -->
-                    <input
-                        type="text"
-                        id="add-additional-code"
-                        placeholder="Additional Code"
-                        disabled
-                    />
-                    <!-- Price Input (unchanged) -->
-                    <div class="price-input">
-                        <div class="price-symbol">₱</div>
-                        <input
-                            type="number"
-                            placeholder="Price"
-                            id="add-additional-price"
-                        />
-                        <div class="price-suffix">.00</div>
-                    </div>
-                    <!-- With Inclusions Checkbox -->
-                    <div class="with-inclusions-row">
-                        <label class="with-inclusions-label">
-                            <input
-                                type="checkbox"
-                                id="with-inclusions-checkbox"
-                            />
-                            <span>With Inclusions?</span>
-                        </label>
-                    </div>
-                    <!-- Inclusions Fields (hidden by default) -->
-                    <div id="inclusions-container"></div>
-                    <div id="inclusion-btn-row">
-                        <button type="button" id="add-inclusion-btn">
-                            <i class="bx bx-plus"></i> Add More
-                        </button>
-                        <button type="button" id="remove-inclusion-btn">
-                            <i class="bx bx-trash"></i> Remove
-                        </button>
-                    </div>
-
-                    <div class="modal-buttons">
-                        <button
-                            class="custom-btn"
-                            data-close="addAdditionalModal"
-                        >
-                            Close
-                        </button>
-                        <button
-                            class="custom-btn primary-btn"
-                            id="add-additional-btn"
-                        >
-                            Submit
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- UPDATE ADDITIONAL MODAL -->
-        <div id="updateAdditionalModal" class="custom-modal">
-            <div class="custom-modal-content" id="updateModalContent">
-                <span
-                    class="custom-close-button"
-                    id="updateModalCloseBtn"
-                    data-close="updateAdditionalModal"
-                    >&times;</span
-                >
-                <h2
-                    style="
-                        color: var(--secondary-text-color);
-                        transition: var(--tran-04);
-                    "
-                >
-                    Edit Additional
-                </h2>
-                <form id="update-add-form">
-                    <!-- Image Preview -->
-                    <div class="file-upload-container">
-                        <div
-                            class="drop-zone"
-                            id="update-additional-dropzone-img"
-                        >
-                            <input
-                                type="file"
-                                accept="image/*"
-                                id="update-additional-file-img"
-                                hidden
-                            />
-                            <label
-                                for="update-additional-file-img"
-                                class="upload-label"
-                                id="update-additional-upload-label-img"
-                            >
-                                <img
-                                    src="https://cdn-icons-png.flaticon.com/512/724/724933.png"
-                                    alt="Upload"
-                                    class="upload-icon"
-                                />
-                                <p>Select Image</p>
-                            </label>
-                        </div>
-                    </div>
-                    <!-- ADDITIONAL PRODUCT ID -->
-                    <input
-                        type="text"
-                        id="update-additional-id"
-                        disabled
-                        hidden
-                    />
-                    <!-- Name -->
-                    <input
-                        type="text"
-                        id="update-additional-name"
-                        placeholder="Name"
-                    />
-                    <!-- PRODUCT CODE -->
-                    <input
-                        type="text"
-                        id="update-additional-code"
-                        placeholder="Additional Code"
-                        disabled
-                    />
-                    <!-- Price Input (unchanged) -->
-                    <div class="price-input">
-                        <div class="price-symbol">₱</div>
-                        <input
-                            type="number"
-                            placeholder="Price"
-                            id="update-additional-price"
-                        />
-                        <div class="price-suffix">.00</div>
-                    </div>
-                    <!-- With Inclusions Checkbox -->
-                    <div class="with-inclusions-row">
-                        <label class="with-inclusions-label">
-                            <input
-                                type="checkbox"
-                                id="with-inclusions-update-checkbox"
-                            />
-                            <span>With Inclusions?</span>
-                        </label>
-                    </div>
-                    <!-- Inclusions Fields (hidden by default) -->
-                    <div id="update-inclusions-container">
-                        <!-- INPUT FIELDS HERE -->
-                    </div>
-                    <div id="update-inclusion-btn-row">
-                        <button type="button" id="update-add-inclusion-btn">
-                            <i class="bx bx-plus"></i> Add More
-                        </button>
-                        <button type="button" id="update-remove-inclusion-btn">
-                            <i class="bx bx-trash"></i> Remove
-                        </button>
-                    </div>
-
-                    <div class="modal-buttons">
-                        <button
-                            class="custom-btn"
-                            id="updateCloseBtn"
-                            data-close="updateAdditionalModal"
-                        >
-                            Close
-                        </button>
-                        <button
-                            class="custom-btn primary-btn"
-                            id="update-additional-btn"
-                        >
-                            Update
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- ERROR MODAL -->
-        <div id="error-modal" class="custom-modal">
-            <div
-                class="custom-modal-content"
-                style="max-width: 400px; text-align: center"
-            >
-                <span
-                    class="custom-close-button error-close"
-                    data-close="error-modal"
-                    >&times;</span
-                >
-                <h2 style="color: #c00">Error</h2>
-                <div id="error-modal-message" style="margin: 1.5rem 0"></div>
-                <button class="custom-btn primary-btn" id="error-modal-ok">
-                    OK
-                </button>
-            </div>
-        </div>
-
-        <!-- CONFIRM MODAL -->
-        <div id="confirm-modal" class="custom-modal">
-            <div
-                class="custom-modal-content"
-                style="max-width: 400px; text-align: center"
-            >
-                <span
-                    class="custom-close-button confirm-close"
-                    data-close="confirm-modal"
-                    >&times;</span
-                >
-                <h2 style="color: var(--secondary-text-color)">Confirm</h2>
-                <div id="confirm-modal-message" style="margin: 1.5rem 0"></div>
-                <div
-                    style="display: flex; justify-content: center; gap: 1.5rem"
-                >
-                    <button
-                        class="custom-btn primary-btn"
-                        id="confirm-modal-ok"
-                    >
-                        OK
-                    </button>
-                    <button class="custom-btn" id="confirm-modal-cancel">
-                        Cancel
-                    </button>
-                </div>            </div>
-        </div>
             </div>
         </main>
 
-        <!-- MOBILE BOTTOM NAVIGATION -->        <nav class="mobile-bottom-nav">
+        <!-- ADD PRODUCT MODAL -->
+        <div id="addProductModal" class="modern-modal">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Add Product</h2>
+                    <button class="modal-close" id="close-add-product">&times;</button>
+                </div>
+                <form id="addProductForm" class="modal-form">
+                    <!-- Image Upload Section -->
+                    <div class="form-group">
+                        <label class="form-label">Product Images</label>
+                        <div class="image-upload-container">
+                            <div class="upload-box" id="front-upload">
+                                <input type="file" id="add-front-image" accept="image/*" hidden>
+                                <div class="upload-content">
+                                    <i class="bx bx-cloud-upload upload-icon"></i>
+                                    <p>Front View</p>
+                                    <span>Click to upload</span>
+                                </div>
+                                <div class="image-preview" id="front-preview" style="display: none;">
+                                    <img src="" alt="Front view">
+                                    <button type="button" class="remove-image">&times;</button>
+                                </div>
+                            </div>
+                            <div class="upload-box" id="back-upload">
+                                <input type="file" id="add-back-image" accept="image/*" hidden>
+                                <div class="upload-content">
+                                    <i class="bx bx-cloud-upload upload-icon"></i>
+                                    <p>Back View</p>
+                                    <span>Click to upload</span>
+                                </div>
+                                <div class="image-preview" id="back-preview" style="display: none;">
+                                    <img src="" alt="Back view">
+                                    <button type="button" class="remove-image">&times;</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Details -->
+                    <div class="form-group">
+                        <label class="form-label">Product Name</label>
+                        <input type="text" id="add-product-name" class="form-input" placeholder="Enter product name" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select id="add-product-category" class="form-select" required>
+                                <option value="">Select Category</option>
+                                <option value="Ball Gown">Ball Gown</option>
+                                <option value="Wedding Gown">Wedding Gown</option>
+                                <option value="Fairy Gown">Fairy Gown</option>
+                                <option value="Long Gown">Long Gown</option>
+                                <option value="Suits">Suits</option>
+                                <option value="custom">Add Custom</option>
+                            </select>
+                            <div class="custom-category" id="custom-category-section" style="display: none;">
+                                <input type="text" id="custom-category-input" class="form-input" placeholder="Enter custom category">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Price (₱)</label>
+                            <input type="number" id="add-product-price" class="form-input" placeholder="0.00" min="0" step="0.01" required>
+                        </div>
+                    </div>
+
+                    <!-- Product Sizes & Quantities -->
+                    <div class="form-group">
+                        <label class="form-label">Product Sizes & Quantities</label>
+                        <div class="size-selection">
+                            <div class="size-checkboxes">
+                                <label class="size-checkbox">
+                                    <input type="checkbox" name="product-size" value="XS">
+                                    <span>XS</span>
+                                </label>
+                                <label class="size-checkbox">
+                                    <input type="checkbox" name="product-size" value="S">
+                                    <span>S</span>
+                                </label>
+                                <label class="size-checkbox">
+                                    <input type="checkbox" name="product-size" value="M">
+                                    <span>M</span>
+                                </label>
+                                <label class="size-checkbox">
+                                    <input type="checkbox" name="product-size" value="L">
+                                    <span>L</span>
+                                </label>
+                                <label class="size-checkbox">
+                                    <input type="checkbox" name="product-size" value="XL">
+                                    <span>XL</span>
+                                </label>
+                                <label class="size-checkbox">
+                                    <input type="checkbox" name="product-size" value="XXL">
+                                    <span>XXL</span>
+                                </label>
+                            </div>
+                            <div class="size-quantities" id="size-quantities">
+                                <!-- Quantity inputs will be added dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Color</label>
+                            <div class="color-input-container">
+                                <input type="text" id="add-product-color" class="form-input" placeholder="Enter or select color">
+                                <input type="color" id="color-picker" class="color-picker">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Sleeve Style</label>
+                            <select id="add-product-sleeve" class="form-select">
+                                <option value="">Select Sleeve Style</option>
+                                <option value="Long Sleeve">Long Sleeve</option>
+                                <option value="Short Sleeve">Short Sleeve</option>
+                                <option value="Off Shoulder">Off Shoulder</option>
+                                <option value="custom">Add Custom</option>
+                            </select>
+                            <div class="custom-sleeve" id="custom-sleeve-section" style="display: none;">
+                                <input type="text" id="custom-sleeve-input" class="form-input" placeholder="Enter custom sleeve style">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Code (Auto-generated) -->
+                    <div class="form-group">
+                        <label class="form-label">Product Code</label>
+                        <input type="text" id="add-product-code" class="form-input" placeholder="Auto-generated" readonly>
+                    </div>
+
+                    <!-- Modal Actions -->
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" id="cancel-add-product">Cancel</button>
+                        <button type="submit" class="btn-primary" id="confirm-add-product">Add Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ADD ADDITIONAL MODAL -->
+        <div id="addAdditionalModal" class="modern-modal">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Add Additional</h2>
+                    <button class="modal-close" id="close-add-additional">&times;</button>
+                </div>
+                <form id="addAdditionalForm" class="modal-form">
+                    <!-- Image Upload Section -->
+                    <div class="form-group">
+                        <label class="form-label">Additional Image</label>
+                        <div class="image-upload-container single">
+                            <div class="upload-box" id="additional-upload">
+                                <input type="file" id="add-additional-image" accept="image/*" hidden>
+                                <div class="upload-content">
+                                    <i class="bx bx-cloud-upload upload-icon"></i>
+                                    <p>Upload Image</p>
+                                    <span>Click to upload</span>
+                                </div>
+                                <div class="image-preview" id="additional-preview" style="display: none;">
+                                    <img src="" alt="Additional item">
+                                    <button type="button" class="remove-image">&times;</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Additional Name</label>
+                            <input type="text" id="add-additional-name" class="form-input" placeholder="Enter additional name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Price (₱)</label>
+                            <input type="number" id="add-additional-price" class="form-input" placeholder="0.00" min="0" step="0.01" required>
+                        </div>
+                    </div>
+
+                    <!-- Inclusions Section -->
+                    <div class="form-group">
+                        <div class="inclusions-header">
+                            <label class="form-label">Inclusions</label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="with-inclusions">
+                                <span>With Inclusions</span>
+                            </label>
+                        </div>
+                        <div class="inclusions-container" id="inclusions-container" style="display: none;">
+                            <div class="inclusions-list" id="inclusions-list">
+                                <div class="inclusion-item">
+                                    <input type="text" class="form-input inclusion-input" placeholder="Enter inclusion">
+                                    <button type="button" class="remove-inclusion">
+                                        <i class="bx bx-x"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-add-inclusion" id="add-inclusion">
+                                <i class="bx bx-plus"></i>
+                                Add Inclusion
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Additional Code (Auto-generated) -->
+                    <div class="form-group">
+                        <label class="form-label">Additional Code</label>
+                        <input type="text" id="add-additional-code" class="form-input" placeholder="Auto-generated" readonly>
+                    </div>
+
+                    <!-- Modal Actions -->
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" id="cancel-add-additional">Cancel</button>
+                        <button type="submit" class="btn-primary" id="confirm-add-additional">Add Additional</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- VIEW MODAL -->
+        <div id="viewModal" class="modern-modal">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content large">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="view-modal-title">Product Details</h2>
+                    <button class="modal-close" id="close-view-modal">&times;</button>
+                </div>
+                <div class="view-content" id="view-content">
+                    <!-- Content will be populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- EDIT MODAL -->
+        <div id="editModal" class="modern-modal">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="edit-modal-title">Edit Item</h2>
+                    <button class="modal-close" id="close-edit-modal">&times;</button>
+                </div>
+                <div class="edit-content" id="edit-content">
+                    <!-- Content will be populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- CONFIRMATION MODAL -->
+        <div id="confirmModal" class="modern-modal">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content small">
+                <div class="modal-header">
+                    <h2 class="modal-title">Confirm Action</h2>
+                </div>
+                <div class="confirm-content">
+                    <p id="confirm-message">Are you sure you want to proceed?</p>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="confirm-cancel">Cancel</button>
+                    <button type="button" class="btn-primary" id="confirm-ok">Confirm</button>
+                </div>
+            </div>
+        </div>
+
+       
+
+        <!-- MOBILE BOTTOM NAVIGATION -->
+        <nav class="mobile-bottom-nav">
             <a href="./dashboard.html" class="mobile-nav-item">
                 <i class="bx bxs-dashboard icon"></i>
                 <span class="text">Dashboard</span>
@@ -925,15 +496,15 @@
         <script
             src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-            crossorigin="anonymous"        ></script>        
+            crossorigin="anonymous"
+        ></script>
+        
         <!-- Auth Guard - Must be loaded early -->
         <script type="module" src="./assets/js/auth-guard.js"></script>
         
         <!-- EXTERNAL SCRIPT -->
         <script src="./assets/js/admin-layout.js"></script>
-        <script src="./assets/js/admin-layout-mob.js"></script>        <script type="module" src="./assets/js/inventory-service.js"></script>
-        <script type="module" src="./assets/js/inventory-subscript.js"></script>
-        <script type="module" src="./assets/js/inventory-edit-delete-jquery.js"></script>
-        <script src="./assets/js/inventory-search.js"></script>
+        <script src="./assets/js/admin-layout-mob.js"></script>
+        <script type="module" src="./assets/js/inventory-modern.js"></script>
     </body>
 </html>
