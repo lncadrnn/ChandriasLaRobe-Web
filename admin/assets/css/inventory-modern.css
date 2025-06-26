@@ -1166,3 +1166,29 @@ body {
     color: var(--gray-600);
     font-size: 14px;
 }
+
+/* ================================
+   DESKTOP OVERFLOW HIDDEN
+   ================================ */
+@media (min-width: 769px) {
+    body {
+        overflow-y: hidden !important;
+        height: 100vh;
+    }
+    
+    .main-content.modern-inventory {
+        overflow-y: hidden !important;
+        height: 100vh;
+        max-height: 100vh;
+    }
+    
+    .table-container {
+        height: calc(100vh - 200px);
+        overflow-y: auto;
+    }
+    
+    .table-wrapper {
+        max-height: calc(100vh - 280px);
+        overflow-y: auto;
+    }
+}
