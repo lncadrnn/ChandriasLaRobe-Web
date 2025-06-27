@@ -350,24 +350,33 @@ function renderAppointmentCards() {
                 
                 <div class="card-actions-bottom">
                     <div class="card-actions">
-                        <button class="card-action-btn" title="Proceed to Transaction" onclick="proceedToTransaction('${appointment.id}')">
+                        <button class="card-action-btn view-details-btn" data-id="${appointment.id}" title="View Details">
+                            <i class='bx bx-show'></i>
+                        </button>
+                        <button class="card-action-btn edit-btn" data-id="${appointment.id}" title="Edit Appointment">
+                            <i class='bx bx-edit'></i>
+                        </button>
+                        <button class="card-action-btn delete-btn" data-id="${appointment.id}" title="Delete Appointment">
+                            <i class='bx bx-trash'></i>
+                        </button>
+                        <button class="card-action-btn proceed-dashboard-btn" data-id="${appointment.id}" title="Proceed to Dashboard">
                             <i class='bx bx-right-arrow-alt'></i>
                         </button>
                         ${appointmentStatus === 'Pending' || appointmentStatus === 'Scheduled' ? `
-                        <button class="card-action-btn" title="Confirm Booking" onclick="confirmAppointment('${appointment.id}')">
+                        <button class="card-action-btn confirm-appointment-btn" data-id="${appointment.id}" title="Confirm Booking">
                             <i class='bx bx-check'></i>
                         </button>
-                        <button class="card-action-btn" title="Cancel Booking" onclick="cancelAppointment('${appointment.id}')">
+                        <button class="card-action-btn cancel-appointment-btn" data-id="${appointment.id}" title="Cancel Booking">
                             <i class='bx bx-x'></i>
                         </button>
                         ` : ''}
                         ${appointmentStatus === 'Cancelled' ? `
-                        <button class="card-action-btn" title="Undo Cancellation" onclick="undoCancelAppointment('${appointment.id}')">
+                        <button class="card-action-btn undo-cancel-appointment-btn" data-id="${appointment.id}" title="Undo Cancellation">
                             <i class='bx bx-undo'></i>
                         </button>
                         ` : ''}
                         ${appointmentStatus === 'Confirmed' ? `
-                        <button class="card-action-btn" title="Undo Confirmation" onclick="undoConfirmAppointment('${appointment.id}')">
+                        <button class="card-action-btn undo-confirm-appointment-btn" data-id="${appointment.id}" title="Undo Confirmation">
                             <i class='bx bx-undo'></i>
                         </button>
                         ` : ''}
@@ -428,7 +437,16 @@ function renderAppointmentTable() {
                 <td>${appointmentDateTime}</td>
                 <td>
                     <div class="action-buttons">
-                        <button class="proceed-transaction-btn" data-id="${appointment.id}" title="Proceed to Transaction">
+                        <button class="view-details-btn" data-id="${appointment.id}" title="View Details">
+                            <i class='bx bx-show'></i>
+                        </button>
+                        <button class="edit-btn" data-id="${appointment.id}" title="Edit Appointment">
+                            <i class='bx bx-edit'></i>
+                        </button>
+                        <button class="delete-btn" data-id="${appointment.id}" title="Delete Appointment">
+                            <i class='bx bx-trash'></i>
+                        </button>
+                        <button class="proceed-dashboard-btn" data-id="${appointment.id}" title="Proceed to Dashboard">
                             <i class='bx bx-right-arrow-alt'></i>
                         </button>
                         ${appointmentStatus === 'Pending' || appointmentStatus === 'Scheduled' ? `
@@ -525,50 +543,93 @@ function formatAppointmentDateTime(appointment) {
 
 // Add action listeners for appointment cards and table
 function addAppointmentActionListeners() {
-    // Proceed to transaction buttons
-    document.querySelectorAll('.proceed-transaction-btn, .card-action-btn[onclick*="proceedToTransaction"]').forEach(btn => {
+    // View details buttons
+    document.querySelectorAll('.view-details-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            const appointmentId = btn.dataset.id || btn.onclick.toString().match(/'([^']+)'/)[1];
-            proceedToTransaction(appointmentId);
+            const appointmentId = btn.dataset.id;
+            showAppointmentDetails(appointmentId);
+        });
+    });
+
+    // Edit buttons
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const appointmentId = btn.dataset.id;
+            editAppointment(appointmentId);
+        });
+    });
+
+    // Delete buttons
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const appointmentId = btn.dataset.id;
+            deleteAppointment(appointmentId);
+        });
+    });
+
+    // Proceed to dashboard buttons
+    document.querySelectorAll('.proceed-dashboard-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const appointmentId = btn.dataset.id;
+            proceedToDashboard(appointmentId);
         });
     });
 
     // Confirm appointment buttons
-    document.querySelectorAll('.confirm-appointment-btn, .card-action-btn[onclick*="confirmAppointment"]').forEach(btn => {
+    document.querySelectorAll('.confirm-appointment-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            const appointmentId = btn.dataset.id || btn.onclick.toString().match(/'([^']+)'/)[1];
+            const appointmentId = btn.dataset.id;
             confirmAppointment(appointmentId);
         });
     });
 
     // Cancel appointment buttons
-    document.querySelectorAll('.cancel-appointment-btn, .card-action-btn[onclick*="cancelAppointment"]').forEach(btn => {
+    document.querySelectorAll('.cancel-appointment-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            const appointmentId = btn.dataset.id || btn.onclick.toString().match(/'([^']+)'/)[1];
+            const appointmentId = btn.dataset.id;
             cancelAppointment(appointmentId);
         });
     });
 
     // Undo cancellation buttons
-    document.querySelectorAll('.undo-cancel-appointment-btn, .card-action-btn[onclick*="undoCancelAppointment"]').forEach(btn => {
+    document.querySelectorAll('.undo-cancel-appointment-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            const appointmentId = btn.dataset.id || btn.onclick.toString().match(/'([^']+)'/)[1];
+            const appointmentId = btn.dataset.id;
             undoCancelAppointment(appointmentId);
         });
     });
 
     // Undo confirmation buttons
-    document.querySelectorAll('.undo-confirm-appointment-btn, .card-action-btn[onclick*="undoConfirmAppointment"]').forEach(btn => {
+    document.querySelectorAll('.undo-confirm-appointment-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            const appointmentId = btn.dataset.id || btn.onclick.toString().match(/'([^']+)'/)[1];
+            const appointmentId = btn.dataset.id;
             undoConfirmAppointment(appointmentId);
         });
     });
+}
+
+// Proceed to dashboard with appointment context
+function proceedToDashboard(appointmentId) {
+    const appointment = allAppointments.find(a => a.id === appointmentId);
+    if (!appointment) {
+        alert('Appointment not found');
+        return;
+    }
+    
+    // Store appointment context in sessionStorage for the dashboard
+    sessionStorage.setItem('selectedAppointment', JSON.stringify(appointment));
+    sessionStorage.setItem('dashboardContext', 'appointment');
+    
+    // Navigate to dashboard
+    window.location.href = './dashboard.html';
 }
 
 // Show appointment details modal
@@ -597,16 +658,46 @@ function editAppointment(appointmentId) {
     alert(`Edit appointment functionality will be implemented here for: ${appointment.customerName || 'Unknown Customer'}`);
 }
 
-// Delete appointment (placeholder)
-function deleteAppointment(appointmentId) {
+// Delete appointment
+async function deleteAppointment(appointmentId) {
     const appointment = allAppointments.find(a => a.id === appointmentId);
-    if (!appointment) return;
+    if (!appointment) {
+        alert('Appointment not found');
+        return;
+    }
     
-    const confirmed = confirm(`Are you sure you want to delete the appointment for ${appointment.customerName || 'Unknown Customer'}?`);
+    const customerName = appointment.customerName || appointment.fullName || 'Unknown Customer';
+    const confirmed = confirm(`Are you sure you want to delete the appointment for ${customerName}?\n\nThis action cannot be undone.`);
     if (!confirmed) return;
     
-    // Implement deletion logic here
-    console.log('Delete appointment:', appointmentId);
+    try {
+        // Delete appointment from Firebase
+        await deleteDoc(doc(chandriaDB, 'appointments', appointmentId));
+        
+        // Remove from local arrays
+        const allIndex = allAppointments.findIndex(a => a.id === appointmentId);
+        if (allIndex !== -1) {
+            allAppointments.splice(allIndex, 1);
+        }
+        
+        const filteredIndex = filteredAppointments.findIndex(a => a.id === appointmentId);
+        if (filteredIndex !== -1) {
+            filteredAppointments.splice(filteredIndex, 1);
+        }
+        
+        // Re-render view
+        renderAppointmentView();
+        
+        if (window.showNotification) {
+            window.showNotification(`Appointment for ${customerName} has been deleted.`, 'success');
+        } else {
+            alert(`Appointment for ${customerName} has been deleted.`);
+        }
+        
+    } catch (error) {
+        console.error('Error deleting appointment:', error);
+        alert('Error deleting appointment. Please try again.');
+    }
 }
 
 // Complete appointment
