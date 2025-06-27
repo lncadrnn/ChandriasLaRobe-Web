@@ -3028,7 +3028,7 @@ select:disabled {
     content: '';
     width: 4px;
     height: 16px;
-    background: #4f46e5;
+    background: var(--primary-color);
     border-radius: 2px;
 }
 
@@ -3089,7 +3089,7 @@ select:disabled {
 }
 
 .appointment-details-container .detail-section h3 {
-    color: #4f46e5;
+    color: var(--primary-color);
     font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 1rem;
