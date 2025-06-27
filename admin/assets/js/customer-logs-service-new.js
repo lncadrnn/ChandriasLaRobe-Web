@@ -1955,10 +1955,22 @@ function showProcessOverdueModal(transactionId) {
     // Calculate days overdue
     const daysOverdue = calculateDaysOverdue(transaction);
     document.getElementById('overdue-days-count').textContent = `${daysOverdue} days`;
-      // Reset form
+    
+    // Calculate and display overdue fee
+    const rentalFee = parseFloat(transaction.rentalFee || transaction.totalAmount) || 0;
+    const calculatedOverdueFee = rentalFee * daysOverdue;
+    
+    // Update calculation display
+    document.getElementById('original-rental-fee').textContent = `₱${rentalFee.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    document.getElementById('overdue-days-display').textContent = `${daysOverdue} days`;
+    document.getElementById('calculated-overdue-fee').textContent = `₱${calculatedOverdueFee.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    
+    // Store the calculated fee for later use
+    window.calculatedOverdueFee = calculatedOverdueFee;
+    
+    // Reset form
     document.getElementById('mark-completed').checked = true;
     document.getElementById('late-fee-section').style.display = 'none';
-    document.getElementById('late-fee-amount').value = '';
     document.getElementById('late-fee-reason').value = 'late-return';
     
     // Show modal immediately
@@ -2044,19 +2056,26 @@ async function confirmProcessOverdue() {
             updateData.completedDate = new Date().toISOString();
               } else if (selectedAction === 'late-fee') {
             // Add overdue fee and mark as completed
-            const feeAmount = parseFloat(document.getElementById('late-fee-amount').value) || 0;
             const feeReason = document.getElementById('late-fee-reason').value;
+            const calculatedFee = window.calculatedOverdueFee || 0;
+            
+            if (!feeReason) {
+                document.querySelector('.admin-action-spinner').style.display = 'none';
+                showNotification('Please select a reason for the overdue fee', 'error');
+                return;
+            }
             
             updateData.returnConfirmed = true;
             updateData.completedDate = new Date().toISOString();
             updateData.overdueFee = {
-                overdueAmount: feeAmount,
+                overdueAmount: calculatedFee,
                 overdueReason: feeReason,
+                overdueDays: calculateDaysOverdue(currentOverdueTransaction),
                 addedDate: new Date().toISOString()
             };
             
             // Update total amount
-            const newTotal = (currentOverdueTransaction.totalAmount || 0) + feeAmount;
+            const newTotal = (currentOverdueTransaction.totalAmount || 0) + calculatedFee;
             updateData.totalAmount = newTotal;
         }
         
@@ -2086,7 +2105,8 @@ async function confirmProcessOverdue() {
         if (selectedAction === 'completed') {
             successMessage = 'Overdue Processed. Product is now Completed.';
         } else if (selectedAction === 'late-fee') {
-            successMessage = 'Overdue Processed. Product is now Completed.';
+            const calculatedFee = window.calculatedOverdueFee || 0;
+            successMessage = `Rental completed with ₱${calculatedFee.toLocaleString('en-US', { minimumFractionDigits: 2 })} overdue fee`;
         }
         
         showNotification(successMessage, 'success');

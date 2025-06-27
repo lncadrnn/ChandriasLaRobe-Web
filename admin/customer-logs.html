@@ -491,7 +491,7 @@
                     <div class="summary-content">
                         <p><strong>Customer:</strong> <span id="delete-customer-name">-</span></p>
                         <p><strong>Transaction Code:</strong> <span id="delete-transaction-code">-</span></p>
-                        <p><strong>Event Date:</strong> <span id="delete-event-date">-</span></p>
+                        <p><strong>Start Date:</strong> <span id="delete-event-date">-</span></p>
                         <p><strong>Total Amount:</strong> <span id="delete-total-amount">-</span></p>
                     </div>
                 </div>
@@ -670,9 +670,22 @@
                         <!-- Late Fee Section -->
                         <div id="late-fee-section" class="fee-section fee-section-hidden">
                             <h4>Overdue Fee Details</h4>
-                            <div class="fee-input-group">
-                                <label for="late-fee-amount">Overdue Fee Amount (₱) *</label>
-                                <input type="number" id="late-fee-amount" min="0" step="0.01" placeholder="0.00" required>
+                            <div class="fee-calculation-display">
+                                <div class="calculation-row">
+                                    <span class="calculation-label">Original Rental Fee:</span>
+                                    <span class="calculation-value" id="original-rental-fee">₱0.00</span>
+                                </div>
+                                <div class="calculation-row">
+                                    <span class="calculation-label">Days Overdue:</span>
+                                    <span class="calculation-value" id="overdue-days-display">0 days</span>
+                                </div>
+                                <div class="calculation-row total-row">
+                                    <span class="calculation-label">Calculated Overdue Fee:</span>
+                                    <span class="calculation-value total-fee" id="calculated-overdue-fee">₱0.00</span>
+                                </div>
+                                <div class="calculation-formula">
+                                    <small><i class='bx bx-info-circle'></i> Formula: Rental Fee × Days Overdue</small>
+                                </div>
                             </div>
                             <div class="fee-input-group">
                                 <label for="late-fee-reason">Reason for Fee *</label>
