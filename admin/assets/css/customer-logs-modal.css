@@ -868,31 +868,29 @@ body.modal-open .modal-overlay.show .modal-content {
     min-height: 0 !important;
 }
 
-/* Custom Scrollbar for Cancel Modal Body - Same as delete modal */
+/* Custom Scrollbar for Cancel Modal Body - Exact copy of delete modal */
 #cancel-rental-modal .modal-body::-webkit-scrollbar {
     width: 8px !important;
 }
 
 #cancel-rental-modal .modal-body::-webkit-scrollbar-track {
-    background: rgba(239, 68, 68, 0.05) !important;
+    background: #fef2f2 !important;
     border-radius: 4px !important;
-    margin: 8px 0 !important;
 }
 
 #cancel-rental-modal .modal-body::-webkit-scrollbar-thumb {
-    background: #ef4444 !important;
+    background: #fecaca !important;
     border-radius: 4px !important;
-    transition: background 0.3s ease !important;
 }
 
 #cancel-rental-modal .modal-body::-webkit-scrollbar-thumb:hover {
-    background: #dc2626 !important;
+    background: #ef4444 !important;
 }
 
 /* Firefox Scrollbar for Cancel Modal Body */
 #cancel-rental-modal .modal-body {
     scrollbar-width: thin !important;
-    scrollbar-color: #ef4444 rgba(239, 68, 68, 0.05) !important;
+    scrollbar-color: #fecaca #fef2f2 !important;
 }
 
 /* Warning Section */
