@@ -2800,8 +2800,8 @@ select:disabled {
 
 /* Appointment Details Modal */
 .appointment-details-content {
-    max-width: 800px;
-    width: 95%;
+    max-width: 900px !important;
+    width: 98% !important;
 }
 
 .appointment-details-content .modal-header {
@@ -2955,15 +2955,15 @@ select:disabled {
 
 /* Appointment Summary Styles */
 .appointment-summary {
-    background: rgba(14, 165, 233, 0.05);
-    border: 1px solid rgba(14, 165, 233, 0.2);
+    background: rgba(231, 76, 60, 0.1);
+    border: 1px solid rgba(231, 76, 60, 0.3);
     border-radius: 12px;
     padding: 1.5rem;
     margin: 1rem 0;
 }
 
 .appointment-summary h4 {
-    color: #0ea5e9;
+    color: #e74c3c;
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
@@ -2975,7 +2975,7 @@ select:disabled {
     content: '';
     width: 4px;
     height: 20px;
-    background: #0ea5e9;
+    background: #e74c3c;
     border-radius: 2px;
 }
 
