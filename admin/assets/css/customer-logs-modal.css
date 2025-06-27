@@ -881,62 +881,103 @@
         padding: 1rem;
         margin-top: 1rem;
     }
+}
+
+/* Payment Section Styles */
+.payment-section {
+    background: #f8f9ff;
+    border: 1px solid #e1e5ff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.payment-section h4 {
+    color: #f97316 !important;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.payment-section h4::before {
+    content: '💳';
+    font-size: 1.2rem;
+}
+
+.payment-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.payment-type-group,
+.payment-reference-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.payment-type-group label,
+.payment-reference-group label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.875rem;
+}
+
+.payment-type-group select,
+.payment-reference-group input {
+    padding: 0.75rem;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.payment-type-group select:focus,
+.payment-reference-group input:focus {
+    outline: none;
+    border-color: #4338ca;
+    box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
+}
+
+.payment-reference-group {
+    transition: all 0.3s ease;
+}
+
+.payment-reference-group.show {
+    display: flex;
+}
+
+/* Responsive styles for payment section */
+@media (max-width: 768px) {
+    .payment-section {
+        padding: 1rem;
+        margin-top: 1rem;
+    }
     
-    .fee-input-group input,
-    .fee-input-group select,
-    .fee-input-group textarea {
+    .payment-section h4 {
+        font-size: 1rem;
+    }
+    
+    .payment-type-group select,
+    .payment-reference-group input {
         padding: 0.625rem;
         font-size: 0.875rem;
     }
 }
 
 @media (max-width: 480px) {
-    .overdue-option label span {
-        font-size: 0.9rem;
+    .payment-section {
+        padding: 0.75rem;
     }
     
-    .overdue-option label small {
-        font-size: 0.8rem;
+    .payment-section h4 {
+        font-size: 0.95rem;
     }
-    
-    .fee-section h4 {
-        font-size: 1rem;
-    }
-}
-
-/* Prevent background interaction when Process Overdue modal is open */
-#process-overdue-modal.show {
-    pointer-events: auto;
-}
-
-#process-overdue-modal.show ~ * {
-    pointer-events: none;
-}
-
-body.modal-open {
-    overflow: hidden;
-    pointer-events: none;
-}
-
-body.modal-open .modal-overlay.show {
-    pointer-events: auto;
-}
-
-body.modal-open .modal-overlay.show .modal-content {
-    pointer-events: auto;
-}
-
-/* Additional modal backdrop styles */
-#process-overdue-modal {
-    pointer-events: none;
-}
-
-#process-overdue-modal.show {
-    pointer-events: auto;
-}
-
-#process-overdue-modal .modal-content {
-    pointer-events: auto;
 }
 
 /* =============== SUCCESS MODAL STYLES =============== */
@@ -4137,7 +4178,7 @@ body.modal-open .modal-overlay.show .modal-content {
 }
 
 .calculation-row.total-row {
-    border-top: 2px solid var(--primary-color);
+    border-top: 2px solid #f97316 !important;
     margin-top: 8px;
     padding-top: 12px;
     font-weight: 600;
@@ -4157,7 +4198,7 @@ body.modal-open .modal-overlay.show .modal-content {
 .calculation-value.total-fee {
     font-size: 16px;
     font-weight: 600;
-    color: var(--primary-color);
+    color: #f97316 !important;
 }
 
 .calculation-formula {

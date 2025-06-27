@@ -1992,7 +1992,7 @@ function showProcessOverdueModal(transactionId) {
         eventStartDate: transaction.eventStartDate,
         eventEndDate: transaction.eventEndDate,
         rentalType: transaction.rentalType,
-        rentalFee: transaction.rentalFee
+               rentalFee: transaction.rentalFee
     });
     
     if (transaction.rentalType === 'Fixed Rental') {
@@ -2086,6 +2086,11 @@ function showProcessOverdueModal(transactionId) {
     document.getElementById('late-fee-section').style.display = 'block';
     document.getElementById('late-fee-reason').value = 'late-return';
     
+    // Reset payment section
+    document.getElementById('overdue-payment-type').value = '';
+    document.getElementById('overdue-payment-reference').value = '';
+    document.getElementById('payment-reference-group').style.display = 'none';
+    
     // Show modal immediately
     const modal = document.getElementById('process-overdue-modal');
     modal.style.display = 'flex';
@@ -2094,8 +2099,8 @@ function showProcessOverdueModal(transactionId) {
     // Prevent background interaction
     document.body.classList.add('modal-open');
     
-    // Add event listeners - no longer needed for radio buttons
-    // Fee section is always visible now
+    // Add event listeners for payment type selection
+    setupPaymentTypeListener();
 }
 
 // Close Process Overdue Modal
@@ -2116,37 +2121,40 @@ function setupOverdueModalListeners() {
     // Radio buttons removed - fee section is always visible
 }
 
-// Calculate days overdue
-function calculateDaysOverdue(transaction) {
-    const today = new Date();
-    const eventStartDate = new Date(transaction.eventStartDate);
-    let actualEndDate = null;
+// Setup payment type listener
+function setupPaymentTypeListener() {
+    const paymentTypeSelect = document.getElementById('overdue-payment-type');
+    const referenceGroup = document.getElementById('payment-reference-group');
+    const referenceInput = document.getElementById('overdue-payment-reference');
     
-    if (transaction.rentalType === 'Fixed Rental') {
-        // For Fixed Rental: 3-day rental starting from event start date
-        actualEndDate = new Date(eventStartDate);
-        actualEndDate.setDate(actualEndDate.getDate() + 2); // Add 2 days for 3-day rental
-    } else if (transaction.rentalType === 'Open Rental') {
-        // For Open Rental: use the provided event end date
-        if (transaction.eventEndDate) {
-            actualEndDate = new Date(transaction.eventEndDate);
-        } else {
-            return 0; // No end date available
-        }
+    // Remove any existing event listeners
+    paymentTypeSelect.removeEventListener('change', handlePaymentTypeChange);
+    
+    // Add event listener
+    paymentTypeSelect.addEventListener('change', handlePaymentTypeChange);
+}
+
+// Handle payment type change
+function handlePaymentTypeChange() {
+    const paymentType = document.getElementById('overdue-payment-type').value;
+    const referenceGroup = document.getElementById('payment-reference-group');
+    const referenceInput = document.getElementById('overdue-payment-reference');
+    
+    if (paymentType === 'Cash') {
+        // Hide reference field for cash payments
+        referenceGroup.style.display = 'none';
+        referenceInput.removeAttribute('required');
+        referenceInput.value = '';
+    } else if (paymentType === 'GCash' || paymentType === 'PayMaya' || paymentType === 'GoTyme') {
+        // Show reference field for digital payments
+        referenceGroup.style.display = 'block';
+        referenceInput.setAttribute('required', 'required');
     } else {
-        return 0; // Unknown rental type
+        // Hide reference field if no payment type selected
+        referenceGroup.style.display = 'none';
+        referenceInput.removeAttribute('required');
+        referenceInput.value = '';
     }
-    
-    // Calculate overdue days
-    const overdueStartDate = new Date(actualEndDate);
-    overdueStartDate.setDate(overdueStartDate.getDate() + 1);
-    
-    if (today >= overdueStartDate) {
-        const diffTime = today - overdueStartDate;
-        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    }
-    
-    return 0;
 }
 
 // Confirm Process Overdue
@@ -2156,9 +2164,23 @@ async function confirmProcessOverdue() {
     // Always apply overdue fee - no radio button selection needed
     const feeReason = document.getElementById('late-fee-reason').value;
     const calculatedFee = window.calculatedOverdueFee || 0;
+    const paymentType = document.getElementById('overdue-payment-type').value;
+    const paymentReference = document.getElementById('overdue-payment-reference').value;
     
+    // Validate required fields
     if (!feeReason) {
         showNotification('Please select a reason for the overdue fee', 'error');
+        return;
+    }
+    
+    if (!paymentType) {
+        showNotification('Please select a payment type', 'error');
+        return;
+    }
+    
+    // Validate reference number for digital payments
+    if ((paymentType === 'GCash' || paymentType === 'PayMaya' || paymentType === 'GoTyme') && !paymentReference.trim()) {
+        showNotification('Please enter a reference number for this payment method', 'error');
         return;
     }
     
@@ -2178,7 +2200,9 @@ async function confirmProcessOverdue() {
                 overdueDays: window.calculatedOverdueDays || 0,
                 rentalType: currentOverdueTransaction.rentalType,
                 addedDate: new Date().toISOString(),
-                notes: document.getElementById('late-fee-notes').value || ''
+                notes: document.getElementById('late-fee-notes').value || '',
+                paymentMethod: paymentType,
+                referenceNumber: paymentType !== 'Cash' ? paymentReference.trim() : null
             }
         };
         

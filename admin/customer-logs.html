@@ -693,6 +693,28 @@
                     </div>
                 </div>
                 
+                <!-- Payment Section -->
+                <div class="payment-section">
+                    <h4>Payment Information:</h4>
+                    <div class="payment-content">
+                        <div class="payment-type-group">
+                            <label for="overdue-payment-type">Payment Type *</label>
+                            <select id="overdue-payment-type" required>
+                                <option value="">Select payment method</option>
+                                <option value="Cash">Cash</option>
+                                <option value="GCash">GCash</option>
+                                <option value="PayMaya">PayMaya</option>
+                                <option value="GoTyme">GoTyme</option>
+                            </select>
+                        </div>
+                        
+                        <div class="payment-reference-group" id="payment-reference-group" style="display: none;">
+                            <label for="overdue-payment-reference">Reference Number *</label>
+                            <input type="text" id="overdue-payment-reference" placeholder="Enter reference number">
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="closeProcessOverdueModal()">
                         <i class='bx bx-x'></i> Cancel
