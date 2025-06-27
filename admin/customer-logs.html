@@ -710,7 +710,15 @@
                         
                         <div class="payment-reference-group" id="payment-reference-group" style="display: none;">
                             <label for="overdue-payment-reference">Reference Number *</label>
-                            <input type="text" id="overdue-payment-reference" placeholder="Enter reference number">
+                            <input 
+                                type="text" 
+                                id="overdue-payment-reference" 
+                                placeholder="Enter reference number"
+                                pattern="[0-9]*"
+                                inputmode="numeric"
+                                maxlength="20"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                            >
                         </div>
                     </div>
                 </div>

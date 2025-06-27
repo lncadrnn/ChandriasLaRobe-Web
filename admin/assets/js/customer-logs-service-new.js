@@ -2170,22 +2170,37 @@ async function confirmProcessOverdue() {
     // Validate required fields
     if (!feeReason) {
         showNotification('Please select a reason for the overdue fee', 'error');
+        document.getElementById('late-fee-reason').focus();
         return;
     }
     
     if (!paymentType) {
-        showNotification('Please select a payment type', 'error');
+        showNotification('Payment Type is required. Please select a payment method.', 'error');
+        document.getElementById('overdue-payment-type').focus();
         return;
     }
     
     // Validate reference number for digital payments
     if ((paymentType === 'GCash' || paymentType === 'PayMaya' || paymentType === 'GoTyme') && !paymentReference.trim()) {
-        showNotification('Please enter a reference number for this payment method', 'error');
+        showNotification('Reference Number is required for digital payments.', 'error');
+        document.getElementById('overdue-payment-reference').focus();
+        return;
+    }
+    
+    // Validate reference number format (numbers only) for digital payments
+    if ((paymentType === 'GCash' || paymentType === 'PayMaya' || paymentType === 'GoTyme') && paymentReference.trim() && !/^\d+$/.test(paymentReference.trim())) {
+        showNotification('Reference number must contain numbers only.', 'error');
+        document.getElementById('overdue-payment-reference').focus();
         return;
     }
     
     try {
-        // Show loading
+        // Show loading and disable button
+        const confirmBtn = document.getElementById('confirm-process-overdue-btn');
+        const originalText = confirmBtn.innerHTML;
+        confirmBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Processing...';
+        confirmBtn.disabled = true;
+        
         document.querySelector('.admin-action-spinner').style.display = 'flex';
         
         const transactionRef = doc(chandriaDB, 'transaction', currentOverdueTransaction.id);
@@ -2241,11 +2256,19 @@ async function confirmProcessOverdue() {
             successMessage = `Rental completed with ₱${calculatedFee.toLocaleString('en-US', { minimumFractionDigits: 2 })} overdue fee (${overdueDays} days overdue)`;
         }
         
-        showNotification(successMessage, 'success');
+        showNotification('Overdue rental processed successfully!', 'success');
       } catch (error) {
         console.error('Error processing overdue rental:', error);
+        
+        // Reset button state
+        const confirmBtn = document.getElementById('confirm-process-overdue-btn');
+        if (confirmBtn) {
+            confirmBtn.innerHTML = '<i class="bx bx-check"></i> Process Rental';
+            confirmBtn.disabled = false;
+        }
+        
         document.querySelector('.admin-action-spinner').style.display = 'none';
-        showNotification('Overdue Processed. Product is now Completed.', 'error');
+        showNotification('Failed to process overdue rental. Please try again.', 'error');
     }
 }
 
