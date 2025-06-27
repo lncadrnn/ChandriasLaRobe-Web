@@ -592,7 +592,7 @@ function proceedToDashboard(appointmentId) {
 }
 
 // Show appointment details modal
-function showAppointmentDetails(appointmentId) {
+async function showAppointmentDetails(appointmentId) {
     const appointment = allAppointments.find(a => a.id === appointmentId);
     if (!appointment) return;
     
@@ -611,6 +611,93 @@ function showAppointmentDetails(appointmentId) {
     const contactNumber = appointment.contactNumber || appointment.phoneNumber || appointment.phone || 'N/A';
     const email = appointment.email || appointment.emailAddress || 'N/A';
     const notes = appointment.notes || appointment.note || appointment.comments || 'None';
+
+    // Fetch product details for cart items
+    let productsHtml = '<p class="no-items">No products selected</p>';
+    if (appointment.cartItems && Array.isArray(appointment.cartItems) && appointment.cartItems.length > 0) {
+        try {
+            const productDetails = await Promise.all(
+                appointment.cartItems.map(async item => {
+                    try {
+                        let productDoc;
+                        if (item.type === "accessory") {
+                            productDoc = await getDoc(doc(chandriaDB, "additionals", item.productId));
+                        } else {
+                            productDoc = await getDoc(doc(chandriaDB, "products", item.productId));
+                        }
+                        
+                        if (!productDoc.exists()) return null;
+                        
+                        const productData = productDoc.data();
+                        return {
+                            id: productDoc.id,
+                            name: productData.name || productData.code || "Unknown",
+                            code: productData.code || productData.name || "Unknown",
+                            image: productData.frontImageUrl || productData.imageUrl || "",
+                            price: productData.price || 0,
+                            size: item.size || "",
+                            quantity: item.quantity || 1,
+                            type: item.type || "product",
+                            category: productData.category || "N/A"
+                        };
+                    } catch (error) {
+                        console.error('Error fetching product details:', error);
+                        return null;
+                    }
+                })
+            );
+            
+            const validProducts = productDetails.filter(Boolean);
+            if (validProducts.length > 0) {
+                productsHtml = validProducts.map(product => `
+                    <div class="detail-product">
+                        <div class="product-content">
+                            <div class="product-info">
+                                <h4>${product.name}</h4>
+                                <div class="info-list">
+                                    <div class="info-item">
+                                        <span class="info-label">Code:</span>
+                                        <span class="info-value">${product.code}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Price:</span>
+                                        <span class="info-value">₱${product.price.toLocaleString()}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Category:</span>
+                                        <span class="info-value">${product.category}</span>
+                                    </div>
+                                    ${product.size ? `
+                                    <div class="info-item">
+                                        <span class="info-label">Size:</span>
+                                        <span class="info-value">${product.size}</span>
+                                    </div>
+                                    ` : ''}
+                                    <div class="info-item">
+                                        <span class="info-label">Quantity:</span>
+                                        <span class="info-value">${product.quantity}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Type:</span>
+                                        <span class="info-value">${product.type === 'accessory' ? 'Accessory' : 'Product'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-image">
+                                ${product.image ? 
+                                    `<img src="${product.image}" alt="${product.name}" class="modal-product-image">` : 
+                                    `<div class="no-image-placeholder">No Image Available</div>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        } catch (error) {
+            console.error('Error fetching appointment products:', error);
+            productsHtml = '<p class="no-items error">Error loading products</p>';
+        }
+    }
 
     modalBody.innerHTML = `
         <div class="appointment-details-container">
@@ -639,6 +726,13 @@ function showAppointmentDetails(appointmentId) {
                         <span class="detail-label">Date & Time</span>
                         <span class="detail-value">${appointmentDateTime}</span>
                     </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <h3><i class='bx bx-package'></i> Selected Products</h3>
+                <div class="products-detail">
+                    ${productsHtml}
                 </div>
             </div>
             
