@@ -1143,13 +1143,22 @@
     color: #666;
 }
 
-.product-code {
-    font-family: 'Courier New', monospace;
-    background: #f8f9fa;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    color: #495057;
+.product-code,
+.product-code-subtitle {
+    display: inline-block;
+    font-family: 'Courier New', Courier, monospace;
+    background: #fde6ef;
+    padding: 0.35em 0.9em 0.32em 0.9em;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    color: #b48a99;
+    letter-spacing: 0.12em;
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+.product-code-subtitle {
+    margin-left: 0;
+    margin-top: 0.5rem;
 }
 
 .category-badge {

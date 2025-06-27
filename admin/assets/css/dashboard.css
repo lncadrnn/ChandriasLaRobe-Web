@@ -422,8 +422,8 @@ tr:hover {
     background: white;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    height: 490px; /* Increased from 440px to 490px */
-    max-height: 530px; /* Increased from 480px to 530px */
+    height: 100%;
+    min-height: 490px;
     border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;

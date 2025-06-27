@@ -1939,9 +1939,7 @@ $(document).ready(function () {
                 </td>
                 <td>
                     <div class="product-name-compact">${product.name}</div>
-                </td>
-                <td>
-                    <span class="product-code">${product.code}</span>
+                    <div class="product-code-subtitle">${product.code}</div>
                 </td>
                 <td>
                     <span class="category-badge">Product</span>
@@ -1974,9 +1972,7 @@ $(document).ready(function () {
                 </td>
                 <td>
                     <div class="product-name-compact">${additional.name}</div>
-                </td>
-                <td>
-                    <span class="product-code">${additional.code}</span>
+                    <div class="product-code-subtitle">${additional.code}</div>
                 </td>
                 <td>
                     <span class="category-badge">Additional</span>
