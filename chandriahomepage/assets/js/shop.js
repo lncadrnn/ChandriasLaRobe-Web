@@ -703,7 +703,7 @@ $(document).ready(function () {
                         <button class="add-to-cart-action-btn" data-product-id="${product.id}" data-in-cart="false" title="View Details">
                             <i class="fi fi-rs-shopping-bag-add"></i>
                         </button>
-                        <button class="circular-cart-btn" data-product-id="${product.id}" data-in-cart="false" title="Add to Cart">
+                        <button class="circular-cart-btn" data-product-id="${product.id}" data-in-cart="false" title="Add to Booking List">
                             <i class="fi fi-rs-shopping-cart-add"></i>
                         </button>
                     </div>` : ''}
@@ -818,7 +818,7 @@ $(document).ready(function () {
                 })
             });
             
-            notyf.success("Added to cart successfully!");
+            notyf.success("Added to booking list successfully!");
             await updateCartCount();
             closeQuickView();
             
@@ -990,7 +990,7 @@ $(document).ready(function () {
                 // Update quantity
                 currentCart[existingIndex].quantity = quantity;
                 await updateDoc(userRef, { added_to_cart: currentCart });
-                notyf.success("Cart item updated successfully.");
+                notyf.success("Booking list updated successfully.");
             } else {
                 // Add new item
                 await updateDoc(userRef, {
@@ -1000,7 +1000,7 @@ $(document).ready(function () {
                         quantity
                     })
                 });
-                notyf.success("Added successfully to cart!");
+                notyf.success("Added to booking list!");
             }
             
             await updateCartCount();
@@ -1224,7 +1224,7 @@ $(document).ready(function () {
                 await updateDoc(userRef, { added_to_cart: updatedCart });
                 
                 button.attr("data-in-cart", "false");
-                notyf.success("Removed from cart!");
+                notyf.success("Removed from booking list!");
                 
             } else {
                 // Get product data
@@ -1293,7 +1293,7 @@ $(document).ready(function () {
                 }
                 
                 button.attr("data-in-cart", "true");
-                notyf.success(`Added to cart! Size: ${selectedSize}, Qty: ${selectedQuantity}`);
+                notyf.success(`Added to booking list! Size: ${selectedSize}, Qty: ${selectedQuantity}`);
             }
             
             // Update cart count

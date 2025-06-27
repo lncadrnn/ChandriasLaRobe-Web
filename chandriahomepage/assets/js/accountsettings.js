@@ -21,13 +21,34 @@ import {
 import wishlistService from "./wishlist-firebase.js";
 
 $(document).ready(function () {
-    // NOTYF
-    const notyf = new Notyf({
+    // NOTYF with enhanced z-index handling
+    const notyf = window.createHighZIndexNotyf ? window.createHighZIndexNotyf({
+        position: {
+            x: "center",
+            y: "top"
+        }
+    }) : new Notyf({
         position: {
             x: "center",
             y: "top"
         }
     });
+    
+    // Fallback z-index setup if utility not available
+    if (!window.createHighZIndexNotyf) {
+        setTimeout(() => {
+            const notyfContainer = document.querySelector('.notyf');
+            if (notyfContainer) {
+                notyfContainer.style.zIndex = '99999';
+                notyfContainer.style.position = 'fixed';
+            }
+            
+            const notyfToasts = document.querySelectorAll('.notyf__toast');
+            notyfToasts.forEach(toast => {
+                toast.style.zIndex = '99999';
+            });
+        }, 100);
+    }
 
     // CART COUNT FUNCTION
     async function updateCartCount() {
@@ -666,8 +687,16 @@ $(document).ready(function () {
                 localStorage.removeItem('userEmail');
                 sessionStorage.clear();
                 
-                // Show success message
+                // Show success message with forced z-index
                 notyf.success("Successfully logged out!");
+                
+                // Force notification z-index to appear above modal
+                if (window.forceNotificationZIndex) {
+                    window.forceNotificationZIndex();
+                }
+                
+                // Close the logout modal
+                $("#logout-modal").removeClass("show");
                 
                 // Redirect to homepage after a short delay
                 setTimeout(() => {
@@ -828,6 +857,11 @@ $(document).ready(function () {
             console.log("User deleted from Firebase Authentication");
             
             notyf.success("Account and all associated data deleted successfully");
+            
+            // Force notification z-index to appear above any modal
+            if (window.forceNotificationZIndex) {
+                window.forceNotificationZIndex();
+            }
             
             // Clear any stored data and redirect
             localStorage.clear();

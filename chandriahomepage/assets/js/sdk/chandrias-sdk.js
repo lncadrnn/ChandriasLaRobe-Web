@@ -31,7 +31,8 @@ import {
     orderBy,
     limit,
     arrayUnion,
-    arrayRemove
+    arrayRemove,
+    startAfter
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
@@ -76,5 +77,6 @@ export {
     updatePassword,
     deleteUser,
     GoogleAuthProvider,
-    signInWithPopup
+    signInWithPopup,
+    startAfter
 };

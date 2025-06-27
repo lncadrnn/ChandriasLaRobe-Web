@@ -1,0 +1,53 @@
+/* Notification Z-Index Overrides */
+/* Ensure notifications appear above all modals and confirmation dialogs */
+
+.notyf {
+    z-index: 99999 !important;
+    position: fixed !important;
+}
+
+.notyf__toast {
+    z-index: 99999 !important;
+}
+
+/* Override SweetAlert modals if used */
+.swal2-container {
+    z-index: 10000 !important;
+}
+
+/* Override any custom modal backgrounds */
+.modal-backdrop, 
+.modal-overlay {
+    z-index: 9000 !important;
+}
+
+/* Auth modal should be below notifications */
+.auth-modal-container {
+    z-index: 8000 !important;
+}
+
+/* Confirmation modals should be below notifications */
+.confirmation-modal,
+.delete-confirmation-modal,
+.logout-confirmation-modal {
+    z-index: 8500 !important;
+}
+
+/* Account page modals */
+.account-modal {
+    z-index: 8000 !important;
+}
+
+/* Ensure notification icons are visible */
+.notyf__icon {
+    z-index: 99999 !important;
+}
+
+/* Force notifications to stay on top */
+.notyf__toast--success,
+.notyf__toast--error,
+.notyf__toast--warning,
+.notyf__toast--info {
+    z-index: 99999 !important;
+    position: relative !important;
+}

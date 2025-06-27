@@ -385,7 +385,7 @@ $(document).ready(async function () {
             if (typeof window.showAuthModal === "function") {
                 window.showAuthModal();
             } else {
-                notyf.error("Please log in to add items to cart.");
+                notyf.error("Please log in to add items to booking list.");
             }
             return;
         }
@@ -396,8 +396,16 @@ $(document).ready(async function () {
         const productId = localStorage.getItem("selectedProductId");
         const productName = $("#product-name").text();
 
+        // Check if there are any available sizes at all
+        const availableSizes = $(".size-link").length;
+        
+        if (availableSizes === 0) {
+            notyf.error("Product is unavailable");
+            return;
+        }
+
         if (!selectedSize) {
-            notyf.error("Please select a size first");
+            notyf.error("Product is unavailable");
             return;
         }
 
@@ -428,10 +436,9 @@ $(document).ready(async function () {
             );
 
             if (index !== -1) {
-                // If found, update the quantity of that item
-                currentCart[index].quantity = quantity;
-                await updateDoc(userRef, { added_to_cart: currentCart });
-                notyf.success("Cart item updated successfully.");
+                // If found, show error message that it's already in cart
+                notyf.error("Product is already added in the booking list");
+                return;
             } else {
                 // If not found, add a new item to the cart
                 await updateDoc(userRef, {
@@ -442,7 +449,7 @@ $(document).ready(async function () {
                         quantity
                     })
                 });
-                notyf.success("Added successfully to cart!");
+                notyf.success("Added to booking list!");
             }
 
             // Update cart count
@@ -1151,7 +1158,7 @@ $(document).ready(async function () {
                     <button class="add-to-cart-action-btn" data-product-id="${product.id}" data-in-cart="false" title="View Details">
                         <i class="fi fi-rs-shopping-bag-add"></i>
                     </button>
-                    <button class="circular-cart-btn" data-product-id="${product.id}" data-in-cart="false" title="Add to Cart">
+                    <button class="circular-cart-btn" data-product-id="${product.id}" data-in-cart="false" title="Add to Booking List">
                         <i class="fi fi-rs-shopping-cart-add"></i>
                     </button>
                 </div>`
@@ -1658,7 +1665,7 @@ $(document).ready(async function () {
                     await updateDoc(userRef, { added_to_cart: updatedCart });
 
                     button.attr("data-in-cart", "false");
-                    notyf.success("Removed from cart!");
+                    notyf.success("Removed from booking list!");
                 } else {
                     // Get product data
                     let productData = relatedProducts.find(
@@ -1750,7 +1757,7 @@ $(document).ready(async function () {
                     }
                     button.attr("data-in-cart", "true");
                     notyf.success(
-                        `Added to cart! Size: ${selectedSize}, Qty: ${selectedQuantity}`
+                        `Added to booking list! Size: ${selectedSize}, Qty: ${selectedQuantity}`
                     );
                 }
 

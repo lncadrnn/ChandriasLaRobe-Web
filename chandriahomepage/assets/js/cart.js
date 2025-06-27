@@ -559,7 +559,7 @@ $(document).ready(function () {
                 }
             });
 
-            notyf.success("Item removed from cart");
+            notyf.success("Item removed from booking list");
 
             // Update cart count
             await updateCartCount();

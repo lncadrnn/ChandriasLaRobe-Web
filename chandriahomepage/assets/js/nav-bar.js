@@ -288,9 +288,11 @@ let accountDropdownOpen = false;
 function updateAccountDropdown(user = null) {
     const accountName = document.getElementById('account-name');
     const accountEmail = document.getElementById('account-email');
-    const signInItem = document.querySelector('.account-dropdown-link[onclick*="showAuthModal"]')?.closest('.account-dropdown-item');
+    
+    // Find sign-in and logout items
+    const signInItem = document.getElementById('signin-item') || 
+                       document.querySelector('.account-dropdown-link[onclick*="showAuthModal"]')?.closest('.account-dropdown-item');
     const logoutItem = document.getElementById('logout-item');
-    const authRequiredItems = document.querySelectorAll('.account-dropdown-link[data-auth-required="true"]').forEach(link => link.closest('.account-dropdown-item'));
     
     if (user) {
         // User is signed in
@@ -302,7 +304,7 @@ function updateAccountDropdown(user = null) {
         if (signInItem) signInItem.style.display = 'none';
         
         // Show auth-required items
-        document.querySelectorAll('.account-dropdown-link[data-auth-required="true"]').forEach(link => {
+        document.querySelectorAll('.account-dropdown-link[data-auth-required="true"], .account-dropdown-link.auth-required').forEach(link => {
             const item = link.closest('.account-dropdown-item');
             if (item) item.style.display = 'block';
         });
@@ -315,10 +317,10 @@ function updateAccountDropdown(user = null) {
         if (logoutItem) logoutItem.style.display = 'none';
         if (signInItem) signInItem.style.display = 'block';
         
-        // Hide auth-required items
-        document.querySelectorAll('.account-dropdown-link[data-auth-required="true"]').forEach(link => {
+        // Show auth-required items but they will trigger auth modal when clicked
+        document.querySelectorAll('.account-dropdown-link[data-auth-required="true"], .account-dropdown-link.auth-required').forEach(link => {
             const item = link.closest('.account-dropdown-item');
-            if (item) item.style.display = 'none';
+            if (item) item.style.display = 'block';
         });
     }
 }
@@ -328,10 +330,17 @@ function updateAccountDropdown(user = null) {
  */
 async function handleLogout() {
     try {
-        closeAccountDropdown();
+        const btnText = document.getElementById('logout-btn-text');
+        const btnSpinner = document.getElementById('logout-btn-spinner');
+        const logoutBtn = document.getElementById('logout-confirm');
         
-        // Show loading state if available
-        showNotification('Signing out...', 'info');
+        if (btnText && btnSpinner && logoutBtn) {
+            btnText.style.display = 'none';
+            btnSpinner.style.display = 'inline-block';
+            logoutBtn.disabled = true;
+        }
+
+        closeAccountDropdown();
         
         // Import signOut function and auth from the SDK
         const { signOut, auth } = await import('./sdk/chandrias-sdk.js');
@@ -348,6 +357,12 @@ async function handleLogout() {
         // Show success message
         showNotification('Successfully signed out', 'success');
         
+        // Hide the modal
+        const modal = document.getElementById('logout-modal');
+        if (modal) {
+            modal.classList.remove('show');
+        }
+        
         // Reload page after a short delay to reset all UI states
         setTimeout(() => {
             window.location.reload();
@@ -356,33 +371,25 @@ async function handleLogout() {
     } catch (error) {
         console.error('Error signing out:', error);
         showNotification('Error signing out. Please try again.', 'error');
+        
+        // Reset button state
+        const btnText = document.getElementById('logout-btn-text');
+        const btnSpinner = document.getElementById('logout-btn-spinner');
+        const logoutBtn = document.getElementById('logout-confirm');
+        
+        if (btnText && btnSpinner && logoutBtn) {
+            btnText.style.display = 'inline';
+            btnSpinner.style.display = 'none';
+            logoutBtn.disabled = false;
+        }
     }
 }
 
 // Function to show logout confirmation
 function confirmLogout() {
-    if (typeof Swal !== 'undefined') {
-        // Use SweetAlert if available
-        Swal.fire({
-            title: 'Sign Out?',
-            text: 'Are you sure you want to sign out of your account?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#ff6b9d',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Yes, Sign Out',
-            cancelButtonText: 'Cancel',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                handleLogout();
-            }
-        });
-    } else {
-        // Fallback to native confirm dialog
-        if (confirm('Are you sure you want to sign out of your account?')) {
-            handleLogout();
-        }
+    const modal = document.getElementById('logout-modal');
+    if (modal) {
+        modal.classList.add('show');
     }
 }
 
@@ -467,6 +474,32 @@ document.addEventListener('DOMContentLoaded', function() {
             closeAccountDropdown();
         }
     });
+
+    // Add event listeners for the logout modal
+    const modal = document.getElementById('logout-modal');
+    const cancelBtn = document.getElementById('logout-cancel');
+    const confirmBtn = document.getElementById('logout-confirm');
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+            if (modal) {
+                modal.classList.remove('show');
+            }
+        });
+    }
+
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', handleLogout);
+    }
+
+    // Close modal when clicking outside
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.remove('show');
+            }
+        });
+    }
 });
 
 /**
@@ -522,43 +555,67 @@ function updateDropdownLinksVisibility(user) {
  */
 function setupAuthRequiredLinkHandlers() {
     document.addEventListener('click', function(e) {
-        const link = e.target.closest('a[data-auth-required="true"]');
-        if (link) {
+        // Handle auth-required links
+        const authRequiredLink = e.target.closest('a[data-auth-required="true"], a.auth-required');
+        if (authRequiredLink) {
             e.preventDefault();
             
             if (currentAuthUser) {
                 // User is authenticated, allow navigation
-                const navTo = link.getAttribute('data-nav-to');
-                
-                // Close dropdown first
                 closeAccountDropdown();
                 
-                if (navTo === 'settings') {
-                    window.location.href = link.getAttribute('href') || 'chandriahomepage/accounts.html';
-                } else if (navTo === 'appointments') {
-                    window.location.href = link.getAttribute('href') || 'chandriahomepage/accounts.html?tab=bookings';
-                } else if (navTo === 'notifications') {
-                    // For now, show a message since notifications aren't implemented
-                    if (typeof window.notyf !== 'undefined') {
-                        window.notyf.open({
-                            type: 'info',
-                            message: 'Notifications feature coming soon!'
-                        });
-                    } else {
-                        alert('Notifications feature coming soon!');
+                const href = authRequiredLink.getAttribute('href');
+                if (href && href !== '#') {
+                    // Check if we need to adjust path for root level pages
+                    let targetUrl = href;
+                    const isRootLevel = window.location.pathname === '/' || 
+                                       window.location.pathname.endsWith('/index.html') ||
+                                       !window.location.pathname.includes('/chandriahomepage/');
+                    
+                    // If we're on root level and the href doesn't include chandriahomepage/, add it
+                    if (isRootLevel && !href.includes('chandriahomepage/') && href.includes('accounts.html')) {
+                        targetUrl = 'chandriahomepage/' + href;
+                    }
+                    
+                    window.location.href = targetUrl;
+                } else {
+                    // Handle notifications or other special cases
+                    if (authRequiredLink.querySelector('i.fi-rs-comment')) {
+                        showNotification('Notifications feature coming soon!', 'info');
                     }
                 }
             } else {
-                // User is not authenticated, close dropdown and show auth modal
+                // User is not authenticated, show auth modal
                 closeAccountDropdown();
                 
                 if (typeof showAuthModal === 'function') {
                     showAuthModal();
                 } else {
                     console.error('Auth modal function not available');
-                    // Fallback to redirect to accounts page which will handle auth
-                    window.location.href = 'chandriahomepage/accounts.html';
+                    // Fallback to redirect to accounts page
+                    const isRootLevel = window.location.pathname === '/' || 
+                                       window.location.pathname.endsWith('/index.html') ||
+                                       !window.location.pathname.includes('/chandriahomepage/');
+                    window.location.href = isRootLevel ? 'chandriahomepage/accounts.html' : 'accounts.html';
                 }
+            }
+            return;
+        }
+        
+        // Handle sign-in button specifically
+        const signInLink = e.target.closest('a[onclick*="showAuthModal"]');
+        if (signInLink) {
+            e.preventDefault();
+            closeAccountDropdown();
+            
+            if (typeof showAuthModal === 'function') {
+                showAuthModal();
+            } else {
+                console.error('Auth modal function not available');
+                const isRootLevel = window.location.pathname === '/' || 
+                                   window.location.pathname.endsWith('/index.html') ||
+                                   !window.location.pathname.includes('/chandriahomepage/');
+                window.location.href = isRootLevel ? 'chandriahomepage/accounts.html' : 'accounts.html';
             }
         }
     });

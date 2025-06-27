@@ -28,10 +28,12 @@
         <link rel="stylesheet" href="./assets/css/product-cards.css" />
         <link rel="stylesheet" href="./assets/css/auth-modal.css" />
         <link rel="stylesheet" href="./assets/css/quick-view.css" />
+        <link rel="stylesheet" href="./assets/css/notification-overrides.css" />
         <link rel="stylesheet" href="./assets/css/spinner.css" />
         <link rel="stylesheet" href="./assets/css/chatbot.css" />
+        <link rel="stylesheet" href="./assets/css/logout-modal.css" />
 
-        <title>Chandria's La Robe</title>
+        <title>Shop - Chandria's La Robe</title>
     </head>    <body>
         <style>
       /* Hide size and quantity controls on product cards */
@@ -424,7 +426,7 @@
                     </a>
 
                     <a href="./cart.html" class="header-action-btn">
-                        <img src="assets/img/icon-cart.svg" alt="" />
+                        <img src="assets/img/icon-cart.svg" alt="Booking List" />
                         <span class="count" id="cart-count">0</span>                    </a>                    <button onclick="toggleAccountDropdown()" class="header-action-btn" style="background: none; border: none; cursor: pointer;" id="account-btn">
                         <img src="assets/img/icon-user.svg" alt="" />
                     </button>
@@ -443,24 +445,18 @@
                             </div>
                             <div class="account-dropdown-divider"></div>                            <ul class="account-dropdown-menu">
                                 <li class="account-dropdown-item">
-                                    <a href="accounts.html" class="account-dropdown-link auth-required">
+                                    <a href="accounts.html" class="account-dropdown-link" data-auth-required="true">
                                         <i class="fi fi-rs-settings"></i>
                                         <span>Settings</span>
                                     </a>
                                 </li>
                                 <li class="account-dropdown-item">
-                                    <a href="accounts.html?tab=bookings" class="account-dropdown-link auth-required">
+                                    <a href="accounts.html?tab=bookings" class="account-dropdown-link" data-auth-required="true">
                                         <i class="fi fi-rs-calendar"></i>
                                         <span>Appointments</span>
                                     </a>
                                 </li>
-                                <li class="account-dropdown-item">
-                                    <a href="#" class="account-dropdown-link auth-required">
-                                        <i class="fi fi-rs-comment"></i>
-                                        <span>Notifications</span>
-                                    </a>
-                                </li>
-                                <li class="account-dropdown-item">
+                                <li class="account-dropdown-item" id="signin-item">
                                     <a href="#" class="account-dropdown-link" onclick="showAuthModal()">
                                         <i class="fi fi-rs-sign-in"></i>
                                         <span>Sign In</span>
@@ -469,7 +465,7 @@
                                 <li class="account-dropdown-item" id="logout-item" style="display: none;">
                                     <a href="#" class="account-dropdown-link" onclick="confirmLogout()">
                                         <i class="fi fi-rs-sign-out"></i>
-                                        <span>Sign Out</span>
+                                        <span>Log Out</span>
                                     </a>
                                 </li>
                             </ul>
@@ -822,65 +818,18 @@
             </section>
         </main>
         <!--=============== LOGOUT MODAL ===============-->
-        <div
-            id="logout-modal"
-            style="
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.5);
-                z-index: 1000;
-                align-items: center;
-                justify-content: center;
-            "
-        >
-            <div
-                style="
-                    background: #fff;
-                    border-radius: 10px;
-                    max-width: 350px;
-                    width: 90%;
-                    margin: auto;
-                    padding: 2rem 1.5rem;
-                    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
-                    text-align: center;
-                "
-            >
-                <h3 style="color: #222; margin-bottom: 1.5rem">
-                    Are you sure you want to log out?
-                </h3>
-                <div style="display: flex; gap: 1rem; justify-content: center">
-                    <button
-                        id="logout-yes"
-                        style="
-                            background: #ff9aaf;
-                            color: #fff;
-                            border: none;
-                            border-radius: 5px;
-                            padding: 0.5rem 1.5rem;
-                            font-weight: 600;
-                            cursor: pointer;
-                        "
-                    >
-                        Yes
-                    </button>
-                    <button
-                        id="logout-no"
-                        style="
-                            background: #eee;
-                            color: #222;
-                            border: none;
-                            border-radius: 5px;
-                            padding: 0.5rem 1.5rem;
-                            font-weight: 600;
-                            cursor: pointer;
-                        "
-                    >
-                        No
-                    </button>
+        <div class="logout-modal-container" id="logout-modal">
+            <div class="logout-modal-box">
+                <div class="logout-modal-content">
+                    <h3>Confirm Logout</h3>
+                    <p>Are you sure you want to log out?</p>
+                    <div class="btn-group">
+                        <button class="btn-cancel" id="logout-cancel">Cancel</button>
+                        <button class="btn-submit" id="logout-confirm">
+                            <span id="logout-btn-text">Logout</span>
+                            <span id="logout-btn-spinner" class="btn-spinner" style="display: none"></span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>        <!--=============== AUTHENTICATION MODAL ===============-->

@@ -517,10 +517,10 @@ $(document).ready(function () {
             return;
         }
 
-        // Validate phone number format (basic validation)
-        const phoneRegex = /^[\+]?[0-9\s\-\(\)]{10,}$/;
+        // Validate phone number format (must start with 09 and be exactly 11 digits)
+        const phoneRegex = /^09\d{9}$/;
         if (!phoneRegex.test(customerContact.trim())) {
-            notyf.error("Please enter a valid phone number.");
+            notyf.error('Contact number must start with "09" and be exactly 11 digits.');
             return;
         }
 

@@ -34,6 +34,7 @@
         <link rel="stylesheet" href="./assets/css/spinner.css" />
         <link rel="stylesheet" href="./assets/css/chatbot.css" />
         <link rel="stylesheet" href="./assets/css/profile-nav-override.css" />
+        <link rel="stylesheet" href="./assets/css/notification-overrides.css" />
         <!-- Font Awesome for icons -->
         <link
             rel="stylesheet"
@@ -114,7 +115,7 @@
                     </a>
 
                     <a href="./cart.html" class="header-action-btn">
-                        <img src="assets/img/icon-cart.svg" alt="" />
+                        <img src="assets/img/icon-cart.svg" alt="Booking List" />
                         <span class="count" id="cart-count">0</span>
                     </a>
 
@@ -137,24 +138,18 @@
                             <div class="account-dropdown-divider"></div>
                             <ul class="account-dropdown-menu">
                                 <li class="account-dropdown-item">
-                                    <a href="accounts.html" class="account-dropdown-link" data-auth-required="true" data-nav-to="settings">
+                                    <a href="accounts.html" class="account-dropdown-link" data-auth-required="true">
                                         <i class="fi fi-rs-settings"></i>
                                         <span>Settings</span>
                                     </a>
                                 </li>
                                 <li class="account-dropdown-item">
-                                    <a href="accounts.html?tab=bookings" class="account-dropdown-link" data-auth-required="true" data-nav-to="appointments">
+                                    <a href="accounts.html?tab=bookings" class="account-dropdown-link" data-auth-required="true">
                                         <i class="fi fi-rs-calendar"></i>
                                         <span>Appointments</span>
                                     </a>
                                 </li>
-                                <li class="account-dropdown-item">
-                                    <a href="#" class="account-dropdown-link" data-auth-required="true" data-nav-to="notifications">
-                                        <i class="fi fi-rs-comment"></i>
-                                        <span>Notifications</span>
-                                    </a>
-                                </li>
-                                <li class="account-dropdown-item">
+                                <li class="account-dropdown-item" id="signin-item">
                                     <a href="#" class="account-dropdown-link" onclick="showAuthModal()">
                                         <i class="fi fi-rs-sign-in"></i>
                                         <span>Sign In</span>
@@ -163,7 +158,7 @@
                                 <li class="account-dropdown-item" id="logout-item" style="display: none;">
                                     <a href="#" class="account-dropdown-link" onclick="confirmLogout()">
                                         <i class="fi fi-rs-sign-out"></i>
-                                        <span>Sign Out</span>
+                                        <span>Log Out</span>
                                     </a>
                                 </li>
                             </ul>
@@ -498,6 +493,7 @@
             crossorigin="anonymous"
         ></script>
         <!--=============== MAIN JS ===============-->
+        <script src="./assets/js/notification-utils.js"></script>
         <script src="./assets/js/hamburger-mob.js"></script>
         <script src="./assets/js/nav-bar.js"></script>
         <script type="module" src="./assets/js/profile-nav-service.js"></script>

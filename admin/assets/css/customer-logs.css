@@ -1052,39 +1052,34 @@ select:disabled {
 /* Column width specifications */
 #rental-history-table thead th:nth-child(1), /* Customer Name */
 #rental-history-table tbody td:nth-child(1) {
+    width: 25%;
+}
+
+#rental-history-table thead th:nth-child(2), /* Event Date */
+#rental-history-table tbody td:nth-child(2) {
     width: 20%;
 }
 
-#rental-history-table thead th:nth-child(2), /* Transaction Code */
-#rental-history-table tbody td:nth-child(2) {
+#rental-history-table thead th:nth-child(3), /* Rental Status */
+#rental-history-table tbody td:nth-child(3) {
     width: 18%;
 }
 
-#rental-history-table thead th:nth-child(3), /* Event Date */
-#rental-history-table tbody td:nth-child(3) {
-    width: 16%;
-}
-
-#rental-history-table thead th:nth-child(4), /* Rental Status */
+#rental-history-table thead th:nth-child(4), /* Total Amount */
 #rental-history-table tbody td:nth-child(4) {
     width: 15%;
 }
 
-#rental-history-table thead th:nth-child(5), /* Total Amount */
+#rental-history-table thead th:nth-child(5), /* Actions */
 #rental-history-table tbody td:nth-child(5) {
-    width: 12%;
+    width: 22%;
 }
 
-#rental-history-table thead th:nth-child(6), /* Actions */
-#rental-history-table tbody td:nth-child(6) {
-    width: 19%;
-}
-
-#rental-history-table thead th:nth-child(5) { /* Total Amount header */
+#rental-history-table thead th:nth-child(4) { /* Total Amount header */
     text-align: right;
 }
 
-#rental-history-table thead th:nth-child(6) { /* Actions header */
+#rental-history-table thead th:nth-child(5) { /* Actions header */
     text-align: center;
 }
 
@@ -2216,4 +2211,44 @@ select:disabled {
 .btn-secondary i {
     pointer-events: none !important;
     user-select: none !important;
+}
+
+/* Customer info container with transaction code as subtitle */
+.customer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.customer-info .customer-name {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9rem;
+    line-height: 1.2;
+}
+
+.customer-info .transaction-code {
+    font-size: 0.75rem;
+    color: #666;
+    font-family: 'Courier New', monospace;
+    background: rgba(255, 105, 180, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+    width: fit-content;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive adjustments for customer info */
+@media (max-width: 768px) {
+    .customer-info .customer-name {
+        font-size: 0.85rem;
+    }
+    
+    .customer-info .transaction-code {
+        font-size: 0.7rem;
+        padding: 1px 4px;
+    }
 }

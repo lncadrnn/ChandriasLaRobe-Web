@@ -293,7 +293,7 @@ async function renderTransactionTable() {
     if (filteredTransactions.length === 0) {
         tableBody.innerHTML = `
             <tr>
-                <td colspan="6" class="table-empty">
+                <td colspan="5" class="table-empty">
                     <i class='bx bx-file'></i>
                     <div>No transactions found</div>
                 </td>
@@ -314,8 +314,12 @@ async function renderTransactionTable() {
         // Calculate total payment
         const totalPayment = parseFloat(transaction.totalPayment) || 0;        const row = `
             <tr data-transaction-id="${transaction.id}">
-                <td><strong>${transaction.fullName || 'Unknown'}</strong></td>
-                <td><code class="transaction-code">${transaction.transactionCode || transaction.id.substring(0, 8)}</code></td>
+                <td>
+                    <div class="customer-info">
+                        <strong class="customer-name">${transaction.fullName || 'Unknown'}</strong>
+                        <small class="transaction-code">${transaction.transactionCode || transaction.id.substring(0, 8)}</small>
+                    </div>
+                </td>
                 <td>${eventDateDisplay}</td>
                 <td><span class="status-badge ${statusClass}">${rentalStatus}</span></td>
                 <td><strong class="amount">₱${totalPayment.toLocaleString()}</strong></td>                <td>

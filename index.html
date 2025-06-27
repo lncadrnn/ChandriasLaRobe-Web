@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en">    <head>
+<html lang="en">
+    <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <!-------------------------------- FLATICON --------------------------------->
@@ -9,15 +10,22 @@
         />
 
         <!-------------------------------- BOXICONS --------------------------------->
-        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+        <link
+            href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+            rel="stylesheet"
+        />
 
-        <!---------------------------------- SWIPER CSS ---------------------------------->        <link
+        <!---------------------------------- SWIPER CSS ---------------------------------->
+        <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
         />
 
         <!-------------------------------- FLATICON --------------------------------->
-        <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css'>
+        <link
+            rel="stylesheet"
+            href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css"
+        />
 
         <!-------------------------------- GOOGLE FONTS --------------------------------->
         <link
@@ -29,24 +37,56 @@
         <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css"
-        />        <!-------------------------------- CSS --------------------------------->        <link rel="stylesheet" href="chandriahomepage/assets/css/styles.css" />
+        />
+        <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+        <!-------------------------------- CSS --------------------------------->
+        <link rel="stylesheet" href="chandriahomepage/assets/css/styles.css" />
         <link rel="stylesheet" href="chandriahomepage/assets/css/nav-bar.css" />
-        <link rel="stylesheet" href="chandriahomepage/assets/css/hamburger-mob.css" />
-        <link rel="stylesheet" href="chandriahomepage/assets/css/product-cards.css" />
-        <link rel="stylesheet" href="chandriahomepage/assets/css/auth-modal.css" />
-        <link rel="stylesheet" href="chandriahomepage/assets/css/quick-view.css" />        <link rel="stylesheet" href="chandriahomepage/assets/css/spinner.css" />
-        <link rel="stylesheet" href="chandriahomepage/assets/css/index-fixes.css" />
-        <link rel="stylesheet" href="chandriahomepage/assets/css/index-quick-view-override.css" />
-        <link rel="stylesheet" href="chandriahomepage/assets/css/footer-fixes.css" />
-        <link rel="stylesheet" href="chandriahomepage/assets/css/chatbot.css" />        <link rel="stylesheet" href="chandriahomepage/assets/css/size-chart.css" />
+        <link
+            rel="stylesheet"
+            href="chandriahomepage/assets/css/hamburger-mob.css"
+        />
+        <link
+            rel="stylesheet"
+            href="chandriahomepage/assets/css/product-cards.css"
+        />
+        <link
+            rel="stylesheet"
+            href="chandriahomepage/assets/css/auth-modal.css"
+        />
+        <link
+            rel="stylesheet"
+            href="chandriahomepage/assets/css/quick-view.css"
+        />
+        <link rel="stylesheet" href="chandriahomepage/assets/css/spinner.css" />
+        <link
+            rel="stylesheet"
+            href="chandriahomepage/assets/css/index-fixes.css"
+        />
+        <link
+            rel="stylesheet"
+            href="chandriahomepage/assets/css/footer-fixes.css"
+        />
+        <link rel="stylesheet" href="chandriahomepage/assets/css/chatbot.css" />
+        <link
+            rel="stylesheet"
+            href="chandriahomepage/assets/css/size-chart.css"
+        />
         <link rel="stylesheet" href="chandriahomepage/assets/css/reviews.css" />
-        <link rel="stylesheet" href="chandriahomepage/assets/css/category-title-fixes.css" />
+        <link
+            rel="stylesheet"
+            href="chandriahomepage/assets/css/category-title-fixes.css"
+        />
+        <link rel="stylesheet" href="chandriahomepage/assets/css/notification-overrides.css" />
+        <link rel="stylesheet" href="chandriahomepage/assets/css/logout-modal.css" />
 
         <!-- Firebase SDK -->
         <script type="module" src="admin/firebase-config.js"></script>
 
         <title>Chandria's La Robe - Book Your Fitting Appointment</title>
-    </head>    <body>        <!-- Page Loading Spinner -->
+    </head>
+    <body>
+        <!-- Page Loading Spinner -->
         <div id="page-spinner" class="page-spinner">
             <div class="spinner-content">
                 <div class="spinner-ring-container">
@@ -57,7 +97,8 @@
                 </div>
                 <p class="spinner-text">Loading page, please wait...</p>
             </div>
-        </div>        <!-- Details Navigation Loader -->
+        </div>
+        <!-- Details Navigation Loader -->
         <div id="details-navigation-loader" class="page-spinner hidden">
             <div class="spinner-content">
                 <div class="spinner-ring-container">
@@ -80,74 +121,131 @@
                         class="nav-logo-img"
                     />
                 </a>
-                
+
                 <!-- Desktop Navigation -->
                 <div class="nav-menu" id="nav-menu">
                     <ul class="nav-list">
                         <li class="nav-item">
-                            <a href="#home" class="nav-link smooth-scroll">Home</a>
+                            <a href="#home" class="nav-link smooth-scroll"
+                                >Home</a
+                            >
                         </li>
                         <li class="nav-item">
-                            <a href="#categories" class="nav-link smooth-scroll">Categories</a>
-                        </li>                        <li class="nav-item">
-                            <a href="#products" class="nav-link smooth-scroll">Products</a>
+                            <a href="#categories" class="nav-link smooth-scroll"
+                                >Categories</a
+                            >
                         </li>
                         <li class="nav-item">
-                            <a href="#reviews" class="nav-link smooth-scroll">Reviews</a>
+                            <a href="#products" class="nav-link smooth-scroll"
+                                >Products</a
+                            >
                         </li>
                         <li class="nav-item">
-                            <a href="#contact" class="nav-link smooth-scroll">About</a>
+                            <a href="#reviews" class="nav-link smooth-scroll"
+                                >Reviews</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a href="#contact" class="nav-link smooth-scroll"
+                                >About</a
+                            >
                         </li>
                     </ul>
-                </div>                <div class="header-user-actions">
+                </div>
+                <div class="header-user-actions">
                     <!-- Mobile Hamburger Menu -->
                     <div class="hamburger-menu" id="hamburger-menu">
                         <span class="hamburger-line"></span>
                         <span class="hamburger-line"></span>
                         <span class="hamburger-line"></span>
-                    </div>                    <a href="chandriahomepage/wishlist.html" class="header-action-btn">
-                        <img src="chandriahomepage/assets/img/icon-heart.svg" alt="Wishlist" />
+                    </div>
+                    <a
+                        href="chandriahomepage/wishlist.html"
+                        class="header-action-btn"
+                    >
+                        <img
+                            src="chandriahomepage/assets/img/icon-heart.svg"
+                            alt="Wishlist"
+                        />
                         <span class="count" id="wishlist-count">0</span>
-                    </a>                    <a href="chandriahomepage/cart.html" class="header-action-btn">
-                        <img src="chandriahomepage/assets/img/icon-cart.svg" alt="Cart" />                    <span class="count" id="cart-count">0</span>
-                    </a>                    <button onclick="toggleAccountDropdown()" class="header-action-btn" id="account-btn" style="background: none; border: none; cursor: pointer;">
-                        <img src="chandriahomepage/assets/img/icon-user.svg" alt="" />
+                    </a>
+                    <a
+                        href="chandriahomepage/cart.html"
+                        class="header-action-btn"
+                    >
+                        <img
+                            src="chandriahomepage/assets/img/icon-cart.svg"
+                            alt="Cart"
+                        />
+                        <span class="count" id="cart-count">0</span>
+                    </a>
+                    <button
+                        onclick="toggleAccountDropdown()"
+                        class="header-action-btn"
+                        id="account-btn"
+                        style="background: none; border: none; cursor: pointer"
+                    >
+                        <img
+                            src="chandriahomepage/assets/img/icon-user.svg"
+                            alt=""
+                        />
                     </button>
-                    
+
                     <!-- Account Dropdown Menu -->
                     <div class="account-dropdown" id="account-dropdown">
                         <div class="account-dropdown-content">
                             <div class="account-dropdown-header">
                                 <div class="account-avatar">
-                                    <img src="chandriahomepage/assets/img/icon-user.svg" alt="Profile" />
+                                    <img
+                                        src="chandriahomepage/assets/img/icon-user.svg"
+                                        alt="Profile"
+                                    />
                                 </div>
                                 <div class="account-info">
-                                    <span class="account-name" id="account-name">Guest User</span>
-                                    <span class="account-email" id="account-email">Please sign in</span>
+                                    <span class="account-name" id="account-name"
+                                        >Guest User</span
+                                    >
+                                    <span
+                                        class="account-email"
+                                        id="account-email"
+                                        >Please sign in</span
+                                    >
                                 </div>
                             </div>
-                            <div class="account-dropdown-divider"></div>                            <ul class="account-dropdown-menu">
+                            <div class="account-dropdown-divider"></div>
+                            <ul class="account-dropdown-menu">
                                 <li class="account-dropdown-item">
-                                    <a href="chandriahomepage/accounts.html" class="account-dropdown-link" data-auth-required="true" data-nav-to="settings">
+                                    <a
+                                        href="chandriahomepage/accounts.html"
+                                        class="account-dropdown-link"
+                                        data-auth-required="true"
+                                        data-nav-to="settings"
+                                    >
                                         <i class="fi fi-rs-settings"></i>
                                         <span>Settings</span>
                                     </a>
                                 </li>
                                 <li class="account-dropdown-item">
-                                    <a href="chandriahomepage/accounts.html?tab=bookings" class="account-dropdown-link" data-auth-required="true" data-nav-to="appointments">
+                                    <a
+                                        href="chandriahomepage/accounts.html?tab=bookings"
+                                        class="account-dropdown-link"
+                                        data-auth-required="true"
+                                        data-nav-to="appointments"
+                                    >
                                         <i class="fi fi-rs-calendar"></i>
                                         <span>Appointments</span>
                                     </a>
                                 </li>
-                                <li class="account-dropdown-item">
-                                    <a href="#" class="account-dropdown-link" data-auth-required="true" data-nav-to="notifications">
-                                        <i class="fi fi-rs-comment"></i>
-                                        <span>Notifications</span>
-                                    </a>
-                                </li>                                <li class="account-dropdown-item">
+                                <li class="account-dropdown-item" id="signin-item">
                                     <a href="#" class="account-dropdown-link" onclick="showAuthModal()">
                                         <i class="fi fi-rs-sign-in"></i>
                                         <span>Sign In</span>
+                                    </a>
+                                </li>
+                                <li class="account-dropdown-item" id="logout-item" style="display: none;">
+                                    <a href="#" class="account-dropdown-link" onclick="confirmLogout()">
+                                        <i class="fi fi-rs-sign-out"></i>
+                                        <span>Log Out</span>
                                     </a>
                                 </li>
                             </ul>
@@ -160,17 +258,33 @@
             <div class="mobile-nav-menu" id="mobile-nav-menu">
                 <ul class="mobile-nav-list">
                     <li class="mobile-nav-item">
-                        <a href="#home" class="mobile-nav-link smooth-scroll">Home</a>
+                        <a href="#home" class="mobile-nav-link smooth-scroll"
+                            >Home</a
+                        >
                     </li>
                     <li class="mobile-nav-item">
-                        <a href="#categories" class="mobile-nav-link smooth-scroll">Categories</a>                    </li>                    <li class="mobile-nav-item">
-                        <a href="#products" class="mobile-nav-link smooth-scroll">Products</a>
+                        <a
+                            href="#categories"
+                            class="mobile-nav-link smooth-scroll"
+                            >Categories</a
+                        >
                     </li>
                     <li class="mobile-nav-item">
-                        <a href="#reviews" class="mobile-nav-link smooth-scroll">Reviews</a>
+                        <a
+                            href="#products"
+                            class="mobile-nav-link smooth-scroll"
+                            >Products</a
+                        >
                     </li>
                     <li class="mobile-nav-item">
-                        <a href="#contact" class="mobile-nav-link smooth-scroll">About</a>
+                        <a href="#reviews" class="mobile-nav-link smooth-scroll"
+                            >Reviews</a
+                        >
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="#contact" class="mobile-nav-link smooth-scroll"
+                            >About</a
+                        >
                     </li>
                 </ul>
             </div>
@@ -207,13 +321,19 @@
                         <h1 class="hero-title">
                             Book Your Perfect
                             <span class="hero-highlight">Fitting</span>
-                            <br>Experience Today
+                            <br />Experience Today
                         </h1>
                         <p class="hero-description">
-                            Browse our exquisite collection online, then visit our physical store for professional fitting and styling consultation. Get the perfect fit for your special moments.
+                            Browse our exquisite collection online, then visit
+                            our physical store for professional fitting and
+                            styling consultation. Get the perfect fit for your
+                            special moments.
                         </p>
                         <div class="hero-actions">
-                            <a href="chandriahomepage/shop.html" class="btn btn-primary hero-btn">
+                            <a
+                                href="chandriahomepage/shop.html"
+                                class="btn btn-primary hero-btn"
+                            >
                                 <i class="fi fi-rs-shopping-bag"></i>
                                 Browse Collection
                             </a>
@@ -221,7 +341,11 @@
                     </div>
                     <div class="hero-image">
                         <div class="hero-image-wrapper">
-                            <img src="chandriahomepage/assets/img/home-img3.png" alt="Elegant Gowns" class="hero-img" />
+                            <img
+                                src="chandriahomepage/assets/img/home-img3.png"
+                                alt="Elegant Gowns"
+                                class="hero-img"
+                            />
                             <div class="hero-decoration">
                                 <div class="hero-circle hero-circle-1"></div>
                                 <div class="hero-circle hero-circle-2"></div>
@@ -232,7 +356,8 @@
                             </div>
                         </div>
                     </div>
-                </div>            </section>
+                </div>
+            </section>
 
             <!-------------------------------- POLICY FEATURES -------------------------------->
             <section class="policy section">
@@ -244,7 +369,9 @@
                             </div>
                             <div class="policy-content">
                                 <h4 class="policy-title">Free Fitting</h4>
-                                <p class="policy-text">Up to 3 items per appointment</p>
+                                <p class="policy-text">
+                                    Up to 3 items per appointment
+                                </p>
                             </div>
                         </div>
                         <div class="policy-item">
@@ -253,7 +380,9 @@
                             </div>
                             <div class="policy-content">
                                 <h4 class="policy-title">Quick Service</h4>
-                                <p class="policy-text">Best fitting consultation</p>
+                                <p class="policy-text">
+                                    Best fitting consultation
+                                </p>
                             </div>
                         </div>
                         <div class="policy-item">
@@ -262,7 +391,9 @@
                             </div>
                             <div class="policy-content">
                                 <h4 class="policy-title">Quality Guarantee</h4>
-                                <p class="policy-text">Premium fabric & craftsmanship</p>
+                                <p class="policy-text">
+                                    Premium fabric & craftsmanship
+                                </p>
                             </div>
                         </div>
                         <div class="policy-item">
@@ -271,7 +402,9 @@
                             </div>
                             <div class="policy-content">
                                 <h4 class="policy-title">Flexible Booking</h4>
-                                <p class="policy-text">Easy rescheduling available</p>
+                                <p class="policy-text">
+                                    Easy rescheduling available
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -287,213 +420,419 @@
                                 Browse Our <span>Categories</span>
                             </h2>
                             <p class="section-subtitle">
-                                Discover our curated collection of elegant gowns, suits, and accessories for every special occasion
+                                Discover our curated collection of elegant
+                                gowns, suits, and accessories for every special
+                                occasion
                             </p>
                         </div>
                     </div>
-                    
+
                     <div class="categories-section-wrapper">
                         <div class="categories-container swiper">
                             <div class="swiper-wrapper">
                                 <!-- First set of categories -->
-                                <a href="chandriahomepage/shop.html?category=ball%20gown" class="category-item swiper-slide">
+                                <a
+                                    href="chandriahomepage/shop.html?category=ball%20gown"
+                                    class="category-item swiper-slide"
+                                >
                                     <div class="category-image-wrapper">
-                                        <img src="chandriahomepage/assets/img/category-1.jpg" alt="Ball Gowns" class="category-img" />
+                                        <img
+                                            src="chandriahomepage/assets/img/category-1.jpg"
+                                            alt="Ball Gowns"
+                                            class="category-img"
+                                        />
                                         <div class="category-overlay">
-                                            <i class="fi fi-rs-arrow-right category-icon"></i>
+                                            <i
+                                                class="fi fi-rs-arrow-right category-icon"
+                                            ></i>
                                         </div>
                                     </div>
                                     <h3 class="category-title">Ball Gowns</h3>
-                                    <p class="category-description">Elegant evening wear</p>
+                                    <p class="category-description">
+                                        Elegant evening wear
+                                    </p>
                                 </a>
 
-                                <a href="chandriahomepage/shop.html?category=long%20gown" class="category-item swiper-slide">
+                                <a
+                                    href="chandriahomepage/shop.html?category=long%20gown"
+                                    class="category-item swiper-slide"
+                                >
                                     <div class="category-image-wrapper">
-                                        <img src="chandriahomepage/assets/img/category-10.png" alt="Long Gowns" class="category-img" />
+                                        <img
+                                            src="chandriahomepage/assets/img/category-10.png"
+                                            alt="Long Gowns"
+                                            class="category-img"
+                                        />
                                         <div class="category-overlay">
-                                            <i class="fi fi-rs-arrow-right category-icon"></i>
+                                            <i
+                                                class="fi fi-rs-arrow-right category-icon"
+                                            ></i>
                                         </div>
                                     </div>
                                     <h3 class="category-title">Long Gowns</h3>
-                                    <p class="category-description">Sophisticated styles</p>
+                                    <p class="category-description">
+                                        Sophisticated styles
+                                    </p>
                                 </a>
 
-                                <a href="chandriahomepage/shop.html?category=wedding%20gown" class="category-item swiper-slide">
+                                <a
+                                    href="chandriahomepage/shop.html?category=wedding%20gown"
+                                    class="category-item swiper-slide"
+                                >
                                     <div class="category-image-wrapper">
-                                        <img src="chandriahomepage/assets/img/category-11.png" alt="Wedding Gowns" class="category-img" />
+                                        <img
+                                            src="chandriahomepage/assets/img/category-11.png"
+                                            alt="Wedding Gowns"
+                                            class="category-img"
+                                        />
                                         <div class="category-overlay">
-                                            <i class="fi fi-rs-arrow-right category-icon"></i>
+                                            <i
+                                                class="fi fi-rs-arrow-right category-icon"
+                                            ></i>
                                         </div>
                                     </div>
-                                    <h3 class="category-title">Wedding Gowns</h3>
-                                    <p class="category-description">Bridal perfection</p>
+                                    <h3 class="category-title">
+                                        Wedding Gowns
+                                    </h3>
+                                    <p class="category-description">
+                                        Bridal perfection
+                                    </p>
                                 </a>
 
-                                <a href="chandriahomepage/shop.html?category=fairy%20gown" class="category-item swiper-slide">
+                                <a
+                                    href="chandriahomepage/shop.html?category=fairy%20gown"
+                                    class="category-item swiper-slide"
+                                >
                                     <div class="category-image-wrapper">
-                                        <img src="chandriahomepage/assets/img/category-2.png" alt="Fairy Gowns" class="category-img" />
+                                        <img
+                                            src="chandriahomepage/assets/img/category-2.png"
+                                            alt="Fairy Gowns"
+                                            class="category-img"
+                                        />
                                         <div class="category-overlay">
-                                            <i class="fi fi-rs-arrow-right category-icon"></i>
+                                            <i
+                                                class="fi fi-rs-arrow-right category-icon"
+                                            ></i>
                                         </div>
                                     </div>
                                     <h3 class="category-title">Fairy Gowns</h3>
-                                    <p class="category-description">Whimsical designs</p>
+                                    <p class="category-description">
+                                        Whimsical designs
+                                    </p>
                                 </a>
 
-                                <a href="chandriahomepage/shop.html?category=suits" class="category-item swiper-slide">
+                                <a
+                                    href="chandriahomepage/shop.html?category=suits"
+                                    class="category-item swiper-slide"
+                                >
                                     <div class="category-image-wrapper">
-                                        <img src="chandriahomepage/assets/img/category-7.jpg" alt="Suits" class="category-img" />
+                                        <img
+                                            src="chandriahomepage/assets/img/category-7.jpg"
+                                            alt="Suits"
+                                            class="category-img"
+                                        />
                                         <div class="category-overlay">
-                                            <i class="fi fi-rs-arrow-right category-icon"></i>
+                                            <i
+                                                class="fi fi-rs-arrow-right category-icon"
+                                            ></i>
                                         </div>
                                     </div>
                                     <h3 class="category-title">Suits</h3>
-                                    <p class="category-description">Professional attire</p>
+                                    <p class="category-description">
+                                        Professional attire
+                                    </p>
                                 </a>
 
-                                <a href="chandriahomepage/shop.html?category=accessory" class="category-item swiper-slide">
+                                <a
+                                    href="chandriahomepage/shop.html?category=accessory"
+                                    class="category-item swiper-slide"
+                                >
                                     <div class="category-image-wrapper">
-                                        <img src="chandriahomepage/assets/img/category-4.jpg" alt="Additionals" class="category-img" />
+                                        <img
+                                            src="chandriahomepage/assets/img/category-4.jpg"
+                                            alt="Additionals"
+                                            class="category-img"
+                                        />
                                         <div class="category-overlay">
-                                            <i class="fi fi-rs-arrow-right category-icon"></i>
+                                            <i
+                                                class="fi fi-rs-arrow-right category-icon"
+                                            ></i>
                                         </div>
                                     </div>
                                     <h3 class="category-title">Additionals</h3>
-                                    <p class="category-description">Accessories & more</p>
+                                    <p class="category-description">
+                                        Accessories & more
+                                    </p>
                                 </a>
 
                                 <!-- Second set of categories (duplicate for seamless loop) -->
-                                <a href="chandriahomepage/shop.html?category=ball%20gown" class="category-item swiper-slide">
+                                <a
+                                    href="chandriahomepage/shop.html?category=ball%20gown"
+                                    class="category-item swiper-slide"
+                                >
                                     <div class="category-image-wrapper">
-                                        <img src="chandriahomepage/assets/img/category-1.jpg" alt="Ball Gowns" class="category-img" />
+                                        <img
+                                            src="chandriahomepage/assets/img/category-1.jpg"
+                                            alt="Ball Gowns"
+                                            class="category-img"
+                                        />
                                         <div class="category-overlay">
-                                            <i class="fi fi-rs-arrow-right category-icon"></i>
+                                            <i
+                                                class="fi fi-rs-arrow-right category-icon"
+                                            ></i>
                                         </div>
                                     </div>
                                     <h3 class="category-title">Ball Gowns</h3>
-                                    <p class="category-description">Elegant evening wear</p>
+                                    <p class="category-description">
+                                        Elegant evening wear
+                                    </p>
                                 </a>
 
-                                <a href="chandriahomepage/shop.html?category=long%20gown" class="category-item swiper-slide">
+                                <a
+                                    href="chandriahomepage/shop.html?category=long%20gown"
+                                    class="category-item swiper-slide"
+                                >
                                     <div class="category-image-wrapper">
-                                        <img src="chandriahomepage/assets/img/category-10.png" alt="Long Gowns" class="category-img" />
+                                        <img
+                                            src="chandriahomepage/assets/img/category-10.png"
+                                            alt="Long Gowns"
+                                            class="category-img"
+                                        />
                                         <div class="category-overlay">
-                                            <i class="fi fi-rs-arrow-right category-icon"></i>
+                                            <i
+                                                class="fi fi-rs-arrow-right category-icon"
+                                            ></i>
                                         </div>
                                     </div>
                                     <h3 class="category-title">Long Gowns</h3>
-                                    <p class="category-description">Sophisticated styles</p>
+                                    <p class="category-description">
+                                        Sophisticated styles
+                                    </p>
                                 </a>
 
-                                <a href="chandriahomepage/shop.html?category=wedding%20gown" class="category-item swiper-slide">
+                                <a
+                                    href="chandriahomepage/shop.html?category=wedding%20gown"
+                                    class="category-item swiper-slide"
+                                >
                                     <div class="category-image-wrapper">
-                                        <img src="chandriahomepage/assets/img/category-11.png" alt="Wedding Gowns" class="category-img" />
+                                        <img
+                                            src="chandriahomepage/assets/img/category-11.png"
+                                            alt="Wedding Gowns"
+                                            class="category-img"
+                                        />
                                         <div class="category-overlay">
-                                            <i class="fi fi-rs-arrow-right category-icon"></i>
+                                            <i
+                                                class="fi fi-rs-arrow-right category-icon"
+                                            ></i>
                                         </div>
                                     </div>
-                                    <h3 class="category-title">Wedding Gowns</h3>
-                                    <p class="category-description">Bridal perfection</p>
+                                    <h3 class="category-title">
+                                        Wedding Gowns
+                                    </h3>
+                                    <p class="category-description">
+                                        Bridal perfection
+                                    </p>
                                 </a>
 
-                                <a href="chandriahomepage/shop.html?category=fairy%20gown" class="category-item swiper-slide">
+                                <a
+                                    href="chandriahomepage/shop.html?category=fairy%20gown"
+                                    class="category-item swiper-slide"
+                                >
                                     <div class="category-image-wrapper">
-                                        <img src="chandriahomepage/assets/img/category-2.png" alt="Fairy Gowns" class="category-img" />
+                                        <img
+                                            src="chandriahomepage/assets/img/category-2.png"
+                                            alt="Fairy Gowns"
+                                            class="category-img"
+                                        />
                                         <div class="category-overlay">
-                                            <i class="fi fi-rs-arrow-right category-icon"></i>
+                                            <i
+                                                class="fi fi-rs-arrow-right category-icon"
+                                            ></i>
                                         </div>
                                     </div>
                                     <h3 class="category-title">Fairy Gowns</h3>
-                                    <p class="category-description">Whimsical designs</p>
+                                    <p class="category-description">
+                                        Whimsical designs
+                                    </p>
                                 </a>
 
-                                <a href="chandriahomepage/shop.html?category=suits" class="category-item swiper-slide">
+                                <a
+                                    href="chandriahomepage/shop.html?category=suits"
+                                    class="category-item swiper-slide"
+                                >
                                     <div class="category-image-wrapper">
-                                        <img src="chandriahomepage/assets/img/category-7.jpg" alt="Suits" class="category-img" />
+                                        <img
+                                            src="chandriahomepage/assets/img/category-7.jpg"
+                                            alt="Suits"
+                                            class="category-img"
+                                        />
                                         <div class="category-overlay">
-                                            <i class="fi fi-rs-arrow-right category-icon"></i>
+                                            <i
+                                                class="fi fi-rs-arrow-right category-icon"
+                                            ></i>
                                         </div>
                                     </div>
                                     <h3 class="category-title">Suits</h3>
-                                    <p class="category-description">Professional attire</p>
+                                    <p class="category-description">
+                                        Professional attire
+                                    </p>
                                 </a>
 
-                                <a href="chandriahomepage/shop.html?category=accessory" class="category-item swiper-slide">
+                                <a
+                                    href="chandriahomepage/shop.html?category=accessory"
+                                    class="category-item swiper-slide"
+                                >
                                     <div class="category-image-wrapper">
-                                        <img src="chandriahomepage/assets/img/category-4.jpg" alt="Additionals" class="category-img" />
+                                        <img
+                                            src="chandriahomepage/assets/img/category-4.jpg"
+                                            alt="Additionals"
+                                            class="category-img"
+                                        />
                                         <div class="category-overlay">
-                                            <i class="fi fi-rs-arrow-right category-icon"></i>
+                                            <i
+                                                class="fi fi-rs-arrow-right category-icon"
+                                            ></i>
                                         </div>
                                     </div>
                                     <h3 class="category-title">Additionals</h3>
-                                    <p class="category-description">Accessories & more</p>
+                                    <p class="category-description">
+                                        Accessories & more
+                                    </p>
                                 </a>
 
                                 <!-- Third set of categories (duplicate for seamless loop) -->
-                                <a href="chandriahomepage/shop.html?category=ball%20gown" class="category-item swiper-slide">
+                                <a
+                                    href="chandriahomepage/shop.html?category=ball%20gown"
+                                    class="category-item swiper-slide"
+                                >
                                     <div class="category-image-wrapper">
-                                        <img src="chandriahomepage/assets/img/category-1.jpg" alt="Ball Gowns" class="category-img" />
+                                        <img
+                                            src="chandriahomepage/assets/img/category-1.jpg"
+                                            alt="Ball Gowns"
+                                            class="category-img"
+                                        />
                                         <div class="category-overlay">
-                                            <i class="fi fi-rs-arrow-right category-icon"></i>
+                                            <i
+                                                class="fi fi-rs-arrow-right category-icon"
+                                            ></i>
                                         </div>
                                     </div>
                                     <h3 class="category-title">Ball Gowns</h3>
-                                    <p class="category-description">Elegant evening wear</p>
+                                    <p class="category-description">
+                                        Elegant evening wear
+                                    </p>
                                 </a>
 
-                                <a href="chandriahomepage/shop.html?category=long%20gown" class="category-item swiper-slide">
+                                <a
+                                    href="chandriahomepage/shop.html?category=long%20gown"
+                                    class="category-item swiper-slide"
+                                >
                                     <div class="category-image-wrapper">
-                                        <img src="chandriahomepage/assets/img/category-10.png" alt="Long Gowns" class="category-img" />
+                                        <img
+                                            src="chandriahomepage/assets/img/category-10.png"
+                                            alt="Long Gowns"
+                                            class="category-img"
+                                        />
                                         <div class="category-overlay">
-                                            <i class="fi fi-rs-arrow-right category-icon"></i>
+                                            <i
+                                                class="fi fi-rs-arrow-right category-icon"
+                                            ></i>
                                         </div>
                                     </div>
                                     <h3 class="category-title">Long Gowns</h3>
-                                    <p class="category-description">Sophisticated styles</p>
+                                    <p class="category-description">
+                                        Sophisticated styles
+                                    </p>
                                 </a>
 
-                                <a href="chandriahomepage/shop.html?category=wedding%20gown" class="category-item swiper-slide">
+                                <a
+                                    href="chandriahomepage/shop.html?category=wedding%20gown"
+                                    class="category-item swiper-slide"
+                                >
                                     <div class="category-image-wrapper">
-                                        <img src="chandriahomepage/assets/img/category-11.png" alt="Wedding Gowns" class="category-img" />
+                                        <img
+                                            src="chandriahomepage/assets/img/category-11.png"
+                                            alt="Wedding Gowns"
+                                            class="category-img"
+                                        />
                                         <div class="category-overlay">
-                                            <i class="fi fi-rs-arrow-right category-icon"></i>
+                                            <i
+                                                class="fi fi-rs-arrow-right category-icon"
+                                            ></i>
                                         </div>
                                     </div>
-                                    <h3 class="category-title">Wedding Gowns</h3>
-                                    <p class="category-description">Bridal perfection</p>
+                                    <h3 class="category-title">
+                                        Wedding Gowns
+                                    </h3>
+                                    <p class="category-description">
+                                        Bridal perfection
+                                    </p>
                                 </a>
 
-                                <a href="chandriahomepage/shop.html?category=fairy%20gown" class="category-item swiper-slide">
+                                <a
+                                    href="chandriahomepage/shop.html?category=fairy%20gown"
+                                    class="category-item swiper-slide"
+                                >
                                     <div class="category-image-wrapper">
-                                        <img src="chandriahomepage/assets/img/category-2.png" alt="Fairy Gowns" class="category-img" />
+                                        <img
+                                            src="chandriahomepage/assets/img/category-2.png"
+                                            alt="Fairy Gowns"
+                                            class="category-img"
+                                        />
                                         <div class="category-overlay">
-                                            <i class="fi fi-rs-arrow-right category-icon"></i>
+                                            <i
+                                                class="fi fi-rs-arrow-right category-icon"
+                                            ></i>
                                         </div>
                                     </div>
                                     <h3 class="category-title">Fairy Gowns</h3>
-                                    <p class="category-description">Whimsical designs</p>
+                                    <p class="category-description">
+                                        Whimsical designs
+                                    </p>
                                 </a>
 
-                                <a href="chandriahomepage/shop.html?category=suits" class="category-item swiper-slide">
+                                <a
+                                    href="chandriahomepage/shop.html?category=suits"
+                                    class="category-item swiper-slide"
+                                >
                                     <div class="category-image-wrapper">
-                                        <img src="chandriahomepage/assets/img/category-7.jpg" alt="Suits" class="category-img" />
+                                        <img
+                                            src="chandriahomepage/assets/img/category-7.jpg"
+                                            alt="Suits"
+                                            class="category-img"
+                                        />
                                         <div class="category-overlay">
-                                            <i class="fi fi-rs-arrow-right category-icon"></i>
+                                            <i
+                                                class="fi fi-rs-arrow-right category-icon"
+                                            ></i>
                                         </div>
                                     </div>
                                     <h3 class="category-title">Suits</h3>
-                                    <p class="category-description">Professional attire</p>
+                                    <p class="category-description">
+                                        Professional attire
+                                    </p>
                                 </a>
 
-                                <a href="chandriahomepage/shop.html?category=accessory" class="category-item swiper-slide">
+                                <a
+                                    href="chandriahomepage/shop.html?category=accessory"
+                                    class="category-item swiper-slide"
+                                >
                                     <div class="category-image-wrapper">
-                                        <img src="chandriahomepage/assets/img/category-4.jpg" alt="Additionals" class="category-img" />
+                                        <img
+                                            src="chandriahomepage/assets/img/category-4.jpg"
+                                            alt="Additionals"
+                                            class="category-img"
+                                        />
                                         <div class="category-overlay">
-                                            <i class="fi fi-rs-arrow-right category-icon"></i>
+                                            <i
+                                                class="fi fi-rs-arrow-right category-icon"
+                                            ></i>
                                         </div>
                                     </div>
                                     <h3 class="category-title">Additionals</h3>
-                                    <p class="category-description">Accessories & more</p>
+                                    <p class="category-description">
+                                        Accessories & more
+                                    </p>
                                 </a>
                             </div>
                         </div>
@@ -524,11 +863,15 @@
                             <div class="bubble bubble-6"></div>
                         </div>
                         <div class="free-fitting-content">
-                            
                             <div class="free-fitting-text">
-                                <h3 class="free-fitting-title">Free Fitting Service Before Booking</h3>
+                                <h3 class="free-fitting-title">
+                                    Free Fitting Service Before Booking
+                                </h3>
                                 <p class="free-fitting-description">
-                                    We offer complimentary fitting sessions to ensure your perfect look. Our experienced staff will help you find the ideal size and style for your special occasion.
+                                    We offer complimentary fitting sessions to
+                                    ensure your perfect look. Our experienced
+                                    staff will help you find the ideal size and
+                                    style for your special occasion.
                                 </p>
                                 <div class="free-fitting-features">
                                     <span class="feature-item">
@@ -556,17 +899,25 @@
                     <!-- Section Header -->
                     <div class="section-header">
                         <h2 class="section-title">Fresh from the Rack</h2>
-                        <p class="section-subtitle">Discover our latest and most beautiful pieces</p>
+                        <p class="section-subtitle">
+                            Discover our latest and most beautiful pieces
+                        </p>
                     </div>
 
                     <!-- Product Content -->
-                    <div class="products-container grid" id="fresh-products-container">
+                    <div
+                        class="products-container grid"
+                        id="fresh-products-container"
+                    >
                         <!-- Fresh products will be loaded here from inventory -->
                     </div>
 
                     <!-- View All Products Button -->
                     <div class="products-actions">
-                        <a href="chandriahomepage/shop.html" class="btn btn-outline view-all-btn">
+                        <a
+                            href="chandriahomepage/shop.html"
+                            class="btn btn-outline view-all-btn"
+                        >
                             <i class="fi fi-rs-arrow-right"></i>
                             View All Products
                         </a>
@@ -579,21 +930,44 @@
                 <div class="container">
                     <!-- Section Header -->
                     <div class="size-chart-header">
-                        <h2 class="size-chart-title">Size <span>Charts</span></h2>
-                        <p class="size-chart-subtitle">Find your perfect fit with our comprehensive size guides for gowns, suits, and accessories</p>
+                        <h2 class="size-chart-title">
+                            Size <span>Charts</span>
+                        </h2>
+                        <p class="size-chart-subtitle">
+                            Find your perfect fit with our comprehensive size
+                            guides for gowns, suits, and accessories
+                        </p>
                     </div>
 
                     <!-- Size Chart Tabs -->
                     <div class="size-chart-tabs">
-                        <button class="size-chart-tab active" data-target="gowns-chart">Gowns</button>
-                        <button class="size-chart-tab" data-target="evening-wear-chart">Suits</button>
-                        <button class="size-chart-tab" data-target="accessories-chart">Accessories</button>
+                        <button
+                            class="size-chart-tab active"
+                            data-target="gowns-chart"
+                        >
+                            Gowns
+                        </button>
+                        <button
+                            class="size-chart-tab"
+                            data-target="evening-wear-chart"
+                        >
+                            Suits
+                        </button>
+                        <button
+                            class="size-chart-tab"
+                            data-target="accessories-chart"
+                        >
+                            Accessories
+                        </button>
                     </div>
 
                     <!-- Size Chart Content -->
                     <div class="size-chart-content">
                         <!-- Gowns Chart -->
-                        <div id="gowns-chart" class="size-chart-tab-content active">
+                        <div
+                            id="gowns-chart"
+                            class="size-chart-tab-content active"
+                        >
                             <div class="size-chart-table-container">
                                 <table class="size-chart-table">
                                     <thead>
@@ -653,14 +1027,29 @@
                             </div>
                             <div class="size-chart-measurement-note">
                                 <h4>How to Measure</h4>
-                                <p><strong>Bust:</strong> Measure around the fullest part of your bust, keeping the tape level.</p>
-                                <p><strong>Waist:</strong> Measure around your natural waistline, keeping the tape comfortably loose.</p>
-                                <p><strong>Hips:</strong> Measure around the fullest part of your hips, approximately 8" below your waistline.</p>
+                                <p>
+                                    <strong>Bust:</strong> Measure around the
+                                    fullest part of your bust, keeping the tape
+                                    level.
+                                </p>
+                                <p>
+                                    <strong>Waist:</strong> Measure around your
+                                    natural waistline, keeping the tape
+                                    comfortably loose.
+                                </p>
+                                <p>
+                                    <strong>Hips:</strong> Measure around the
+                                    fullest part of your hips, approximately 8"
+                                    below your waistline.
+                                </p>
                             </div>
                         </div>
 
                         <!-- Evening Wear Chart -->
-                        <div id="evening-wear-chart" class="size-chart-tab-content">
+                        <div
+                            id="evening-wear-chart"
+                            class="size-chart-tab-content"
+                        >
                             <div class="size-chart-table-container">
                                 <table class="size-chart-table">
                                     <thead>
@@ -713,13 +1102,27 @@
                             </div>
                             <div class="size-chart-measurement-note">
                                 <h4>Men's Suits Fitting Tips</h4>
-                                <p>For the best fit in men's suits, measure your chest at the widest point and your waist where you normally wear your pants. The jacket length should fall just below your seat.</p>
-                                <p>For dress shirts, measure your neck around the middle and add 0.5 inches for comfort. Sleeve length should be measured from the center back to the wrist bone.</p>
+                                <p>
+                                    For the best fit in men's suits, measure
+                                    your chest at the widest point and your
+                                    waist where you normally wear your pants.
+                                    The jacket length should fall just below
+                                    your seat.
+                                </p>
+                                <p>
+                                    For dress shirts, measure your neck around
+                                    the middle and add 0.5 inches for comfort.
+                                    Sleeve length should be measured from the
+                                    center back to the wrist bone.
+                                </p>
                             </div>
                         </div>
 
                         <!-- Accessories Chart -->
-                        <div id="accessories-chart" class="size-chart-tab-content">
+                        <div
+                            id="accessories-chart"
+                            class="size-chart-tab-content"
+                        >
                             <div class="size-chart-table-container">
                                 <table class="size-chart-table">
                                     <thead>
@@ -738,7 +1141,9 @@
                                             <td>8-9 inches</td>
                                         </tr>
                                         <tr>
-                                            <td>Headpieces (Head Circumference)</td>
+                                            <td>
+                                                Headpieces (Head Circumference)
+                                            </td>
                                             <td>21-22 inches</td>
                                             <td>22-23 inches</td>
                                             <td>23-24 inches</td>
@@ -760,8 +1165,17 @@
                             </div>
                             <div class="size-chart-measurement-note">
                                 <h4>Accessory Sizing Notes</h4>
-                                <p>Most of our accessories are adjustable to ensure a comfortable fit. For custom accessories or specific sizing questions, please contact our styling team.</p>
-                                <p>For belts, measure where you plan to wear the belt (natural waist, low waist, or hips).</p>
+                                <p>
+                                    Most of our accessories are adjustable to
+                                    ensure a comfortable fit. For custom
+                                    accessories or specific sizing questions,
+                                    please contact our styling team.
+                                </p>
+                                <p>
+                                    For belts, measure where you plan to wear
+                                    the belt (natural waist, low waist, or
+                                    hips).
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -777,7 +1191,8 @@
                             Customer <span>Reviews</span>
                         </h2>
                         <p class="section-subtitle">
-                            See what our customers say about their fitting experience
+                            See what our customers say about their fitting
+                            experience
                         </p>
                     </div>
 
@@ -786,52 +1201,81 @@
                         <!-- Reviews Overview Card -->
                         <div class="reviews-overview-card">
                             <div class="reviews-overview-header">
-                                <h3 class="reviews-overview-title">Customer Satisfaction</h3>
+                                <h3 class="reviews-overview-title">
+                                    Customer Satisfaction
+                                </h3>
                                 <div class="reviews-overall-rating">
                                     <div class="reviews-rating-number">4.8</div>
                                     <div class="reviews-rating-stars">
-                                        <i class="fi fi-rs-star review-star filled"></i>
-                                        <i class="fi fi-rs-star review-star filled"></i>
-                                        <i class="fi fi-rs-star review-star filled"></i>
-                                        <i class="fi fi-rs-star review-star filled"></i>
-                                        <i class="fi fi-rs-star review-star filled"></i>
+                                        <i
+                                            class="fi fi-rs-star review-star filled"
+                                        ></i>
+                                        <i
+                                            class="fi fi-rs-star review-star filled"
+                                        ></i>
+                                        <i
+                                            class="fi fi-rs-star review-star filled"
+                                        ></i>
+                                        <i
+                                            class="fi fi-rs-star review-star filled"
+                                        ></i>
+                                        <i
+                                            class="fi fi-rs-star review-star filled"
+                                        ></i>
                                     </div>
-                                    <span class="reviews-total-count">Based on 127 reviews</span>
+                                    <span class="reviews-total-count"
+                                        >Based on 127 reviews</span
+                                    >
                                 </div>
                             </div>
                             <div class="reviews-rating-breakdown">
-                                <div class="rating-bar-item">
+                                <div class="rating-bar-item" data-star="5">
                                     <span class="rating-label">5 stars</span>
                                     <div class="rating-bar">
-                                        <div class="rating-fill" style="width: 85%"></div>
+                                        <div
+                                            class="rating-fill"
+                                            style="width: 85%"
+                                        ></div>
                                     </div>
                                     <span class="rating-count">108</span>
                                 </div>
-                                <div class="rating-bar-item">
+                                <div class="rating-bar-item" data-star="4">
                                     <span class="rating-label">4 stars</span>
                                     <div class="rating-bar">
-                                        <div class="rating-fill" style="width: 12%"></div>
+                                        <div
+                                            class="rating-fill"
+                                            style="width: 12%"
+                                        ></div>
                                     </div>
                                     <span class="rating-count">15</span>
                                 </div>
-                                <div class="rating-bar-item">
+                                <div class="rating-bar-item" data-star="3">
                                     <span class="rating-label">3 stars</span>
                                     <div class="rating-bar">
-                                        <div class="rating-fill" style="width: 2%"></div>
+                                        <div
+                                            class="rating-fill"
+                                            style="width: 2%"
+                                        ></div>
                                     </div>
                                     <span class="rating-count">3</span>
                                 </div>
-                                <div class="rating-bar-item">
+                                <div class="rating-bar-item" data-star="2">
                                     <span class="rating-label">2 stars</span>
                                     <div class="rating-bar">
-                                        <div class="rating-fill" style="width: 1%"></div>
+                                        <div
+                                            class="rating-fill"
+                                            style="width: 1%"
+                                        ></div>
                                     </div>
                                     <span class="rating-count">1</span>
                                 </div>
-                                <div class="rating-bar-item">
+                                <div class="rating-bar-item" data-star="1">
                                     <span class="rating-label">1 star</span>
                                     <div class="rating-bar">
-                                        <div class="rating-fill" style="width: 0%"></div>
+                                        <div
+                                            class="rating-fill"
+                                            style="width: 0%"
+                                        ></div>
                                     </div>
                                     <span class="rating-count">0</span>
                                 </div>
@@ -841,37 +1285,80 @@
                         <!-- Write Review Card -->
                         <div class="write-review-card">
                             <div class="write-review-header">
-                                <h3 class="write-review-title">Share Your Experience</h3>
-                                <p class="write-review-subtitle">Help others by writing a review</p>
+                                <h3 class="write-review-title">
+                                    Share Your Experience
+                                </h3>
+                                <p class="write-review-subtitle">
+                                    Help others by writing a review
+                                </p>
                             </div>
                             <div class="write-review-content">
                                 <div class="write-review-rating">
-                                    <label class="write-review-label">Your Rating</label>
+                                    <label class="write-review-label"
+                                        >Your Rating</label
+                                    >
                                     <div class="write-review-stars">
-                                        <i class="fi fi-rs-star write-star" data-rating="1"></i>
-                                        <i class="fi fi-rs-star write-star" data-rating="2"></i>
-                                        <i class="fi fi-rs-star write-star" data-rating="3"></i>
-                                        <i class="fi fi-rs-star write-star" data-rating="4"></i>
-                                        <i class="fi fi-rs-star write-star" data-rating="5"></i>
+                                        <i
+                                            class="fi fi-rs-star write-star"
+                                            data-rating="1"
+                                        ></i>
+                                        <i
+                                            class="fi fi-rs-star write-star"
+                                            data-rating="2"
+                                        ></i>
+                                        <i
+                                            class="fi fi-rs-star write-star"
+                                            data-rating="3"
+                                        ></i>
+                                        <i
+                                            class="fi fi-rs-star write-star"
+                                            data-rating="4"
+                                        ></i>
+                                        <i
+                                            class="fi fi-rs-star write-star"
+                                            data-rating="5"
+                                        ></i>
                                     </div>
                                 </div>
-                                <button class="btn btn-primary write-review-btn">
+                                <button
+                                    class="btn btn-primary write-review-btn"
+                                >
                                     <i class="fi fi-rs-edit"></i>
                                     Write a Review
                                 </button>
                             </div>
                         </div>
                     </div>
-
                     <!-- Reviews Filter -->
                     <div class="reviews-filter-section">
                         <div class="reviews-filter-tabs">
-                            <button class="review-filter-tab active" data-filter="all">All Reviews</button>
-                            <button class="review-filter-tab" data-filter="5">5 Stars</button>
-                            <button class="review-filter-tab" data-filter="4">4 Stars</button>
-                            <button class="review-filter-tab" data-filter="3">3 Stars</button>
-                            <button class="review-filter-tab" data-filter="fitting">Fitting Experience</button>
-                            <button class="review-filter-tab" data-filter="service">Customer Service</button>
+                            <button
+                                class="review-filter-tab active"
+                                data-filter="all"
+                            >
+                                All Reviews
+                            </button>
+                            <button class="review-filter-tab" data-filter="5">
+                                5 Stars
+                            </button>
+                            <button class="review-filter-tab" data-filter="4">
+                                4 Stars
+                            </button>
+                            <button class="review-filter-tab" data-filter="3">
+                                3 Stars
+                            </button>
+                            <button
+                                class="review-filter-tab"
+                                data-filter="fitting"
+                            >
+                                Fitting Experience
+                            </button>
+                            <button
+                                class="review-filter-tab"
+                                data-filter="service"
+                            >
+                                Customer Service
+                            </button>
                         </div>
                         <div class="reviews-sort">
                             <select class="reviews-sort-select">
@@ -884,33 +1371,59 @@
                     </div>
 
                     <!-- Customer Reviews Grid -->
-                    <div class="customer-reviews-grid" id="customer-reviews-container">
+                    <div
+                        class="customer-reviews-grid"
+                        id="customer-reviews-container"
+                    >
                         <!-- Review Card 1 -->
-                        <div class="review-card" data-rating="5" data-category="fitting">
+                        <div
+                            class="review-card"
+                            data-rating="3"
+                            data-category="fitting"
+                        >
                             <div class="review-header">
                                 <div class="reviewer-info">
                                     <div class="reviewer-avatar">
                                         <span class="reviewer-initial">M</span>
                                     </div>
                                     <div class="reviewer-details">
-                                        <h4 class="reviewer-name">Maria Santos</h4>
+                                        <h4 class="reviewer-name">
+                                            Maria Santos
+                                        </h4>
                                         <div class="review-rating">
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
+                                            <i
+                                                class="fi fi-rs-star review-star filled"
+                                            ></i>
+                                            <i
+                                                class="fi fi-rs-star review-star filled"
+                                            ></i>
+                                            <i
+                                                class="fi fi-rs-star review-star filled"
+                                            ></i>
+                                            <i
+                                                class="fi fi-rs-star review-star filled"
+                                            ></i>
+                                            <i
+                                                class="fi fi-rs-star review-star filled"
+                                            ></i>
                                         </div>
                                     </div>
                                 </div>
                                 <span class="review-date">2 weeks ago</span>
-                            </div>                            <div class="review-content">
+                            </div>
+                            <div class="review-content">
                                 <p class="review-text">
-                                    "Absolutely amazing experience! The fitting session was thorough and professional. The staff helped me find the perfect wedding gown, and the alterations were flawless. Highly recommend for any special occasion!"
+                                    "Absolutely amazing experience! The fitting
+                                    session was thorough and professional. The
+                                    staff helped me find the perfect wedding
+                                    gown, and the alterations were flawless.
+                                    Highly recommend for any special occasion!"
                                 </p>
                                 <div class="review-tags">
                                     <span class="review-tag">Wedding Gown</span>
-                                    <span class="review-tag">Professional Service</span>
+                                    <span class="review-tag"
+                                        >Professional Service</span
+                                    >
                                 </div>
                             </div>
                             <div class="review-bottom">
@@ -925,31 +1438,54 @@
                         </div>
 
                         <!-- Review Card 2 -->
-                        <div class="review-card" data-rating="5" data-category="service">
+                        <div
+                            class="review-card"
+                            data-rating="5"
+                            data-category="service"
+                        >
                             <div class="review-header">
                                 <div class="reviewer-info">
                                     <div class="reviewer-avatar">
                                         <span class="reviewer-initial">A</span>
                                     </div>
                                     <div class="reviewer-details">
-                                        <h4 class="reviewer-name">Anna Rodriguez</h4>
+                                        <h4 class="reviewer-name">
+                                            Anna Rodriguez
+                                        </h4>
                                         <div class="review-rating">
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
+                                            <i
+                                                class="fi fi-rs-star review-star filled"
+                                            ></i>
+                                            <i
+                                                class="fi fi-rs-star review-star filled"
+                                            ></i>
+                                            <i
+                                                class="fi fi-rs-star review-star filled"
+                                            ></i>
+                                            <i
+                                                class="fi fi-rs-star review-star filled"
+                                            ></i>
+                                            <i
+                                                class="fi fi-rs-star review-star filled"
+                                            ></i>
                                         </div>
                                     </div>
                                 </div>
                                 <span class="review-date">1 month ago</span>
-                            </div>                            <div class="review-content">
+                            </div>
+                            <div class="review-content">
                                 <p class="review-text">
-                                    "The customer service here is exceptional. They were patient with my indecisiveness and helped me choose the perfect ball gown for my debut. The free fitting service is a game-changer!"
+                                    "The customer service here is exceptional.
+                                    They were patient with my indecisiveness and
+                                    helped me choose the perfect ball gown for
+                                    my debut. The free fitting service is a
+                                    game-changer!"
                                 </p>
                                 <div class="review-tags">
                                     <span class="review-tag">Ball Gown</span>
-                                    <span class="review-tag">Excellent Service</span>
+                                    <span class="review-tag"
+                                        >Excellent Service</span
+                                    >
                                 </div>
                             </div>
                             <div class="review-bottom">
@@ -962,163 +1498,16 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <!-- END OF Customer Reviews Grid -->
 
-                        <!-- Review Card 3 -->
-                        <div class="review-card" data-rating="4" data-category="fitting">
-                            <div class="review-header">
-                                <div class="reviewer-info">
-                                    <div class="reviewer-avatar">
-                                        <span class="reviewer-initial">L</span>
-                                    </div>
-                                    <div class="reviewer-details">
-                                        <h4 class="reviewer-name">Lisa Chen</h4>
-                                        <div class="review-rating">
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <span class="review-date">3 weeks ago</span>
-                            </div>                            <div class="review-content">
-                                <p class="review-text">
-                                    "Great selection of formal wear! The fitting process was smooth, though I had to wait a bit longer than expected. Overall, very satisfied with the quality and the final result."
-                                </p>
-                                <div class="review-tags">
-                                    <span class="review-tag">Formal Wear</span>
-                                    <span class="review-tag">Quality Products</span>
-                                </div>
-                            </div>
-                            <div class="review-bottom">
-                                <div class="review-divider"></div>
-                                <div class="review-actions">
-                                    <button class="review-action-btn">
-                                        <i class="fi fi-rs-thumbs-up"></i>
-                                        Helpful (5)
-                                    </button>
-                                </div>
-                            </div>
-                        </div>                        <!-- Review Card 4 -->
-                        <div class="review-card" data-rating="5" data-category="service" style="display: none;">
-                            <div class="review-header">
-                                <div class="reviewer-info">
-                                    <div class="reviewer-avatar">
-                                        <span class="reviewer-initial">J</span>
-                                    </div>
-                                    <div class="reviewer-details">
-                                        <h4 class="reviewer-name">Jessica Torres</h4>
-                                        <div class="review-rating">
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <span class="review-date">2 months ago</span>
-                            </div>                            <div class="review-content">
-                                <p class="review-text">
-                                    "I love how they handle appointments! Very organized and professional. The staff knows their craft well and gave excellent styling advice. Will definitely come back for future events."
-                                </p>
-                                <div class="review-tags">
-                                    <span class="review-tag">Professional</span>
-                                    <span class="review-tag">Styling Advice</span>
-                                </div>
-                            </div>
-                            <div class="review-bottom">
-                                <div class="review-divider"></div>
-                                <div class="review-actions">
-                                    <button class="review-action-btn">
-                                        <i class="fi fi-rs-thumbs-up"></i>
-                                        Helpful (15)
-                                    </button>
-                                </div>
-                            </div>                        </div>                        <!-- Review Card 5 -->
-                        <div class="review-card" data-rating="5" data-category="fitting" style="display: none;">
-                            <div class="review-header">
-                                <div class="reviewer-info">
-                                    <div class="reviewer-avatar">
-                                        <span class="reviewer-initial">C</span>
-                                    </div>
-                                    <div class="reviewer-details">
-                                        <h4 class="reviewer-name">Carmen Rodriguez</h4>
-                                        <div class="review-rating">
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <span class="review-date">1 week ago</span>
-                            </div>
-                            <div class="review-content">
-                                <p class="review-text">
-                                    "The entire experience was seamless! From browsing online to the in-store fitting, everything was perfectly organized. The gown fit like it was made just for me!"
-                                </p>
-                                <div class="review-tags">
-                                    <span class="review-tag">Seamless Experience</span>
-                                    <span class="review-tag">Perfect Fit</span>
-                                </div>
-                            </div>
-                            <div class="review-bottom">
-                                <div class="review-divider"></div>
-                                <div class="review-actions">
-                                    <button class="review-action-btn">
-                                        <i class="fi fi-rs-thumbs-up"></i>
-                                        Helpful (9)
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Review Card 6 -->
-                        <div class="review-card" data-rating="4" data-category="service">
-                            <div class="review-header">
-                                <div class="reviewer-info">
-                                    <div class="reviewer-avatar">
-                                        <span class="reviewer-initial">R</span>
-                                    </div>
-                                    <div class="reviewer-details">
-                                        <h4 class="reviewer-name">Rachel Kim</h4>
-                                        <div class="review-rating">
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star filled"></i>
-                                            <i class="fi fi-rs-star review-star"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <span class="review-date">4 days ago</span>
-                            </div>
-                            <div class="review-content">
-                                <p class="review-text">
-                                    "Great selection and friendly staff. The appointment system works well and they really take their time to ensure you're happy with the fit. Pricing is reasonable too!"
-                                </p>
-                                <div class="review-tags">
-                                    <span class="review-tag">Great Selection</span>
-                                    <span class="review-tag">Reasonable Pricing</span>
-                                </div>
-                            </div>
-                            <div class="review-bottom">
-                                <div class="review-divider"></div>
-                                <div class="review-actions">
-                                    <button class="review-action-btn">
-                                        <i class="fi fi-rs-thumbs-up"></i>
-                                        Helpful (6)
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>                    <!-- See All Reviews Button -->
+                    <!-- See All Reviews Button -->
                     <div class="reviews-actions">
                         <button class="btn btn-outline see-all-reviews-btn">
-                            <i class="fi fi-rs-eye"></i>                            <span class="btn-text-desktop">Load More Reviews (124 remaining)</span>
+                            <i class="fi fi-rs-eye"></i>
+                            <span class="btn-text-desktop"
+                                >Load More Reviews (124 remaining)</span
+                            >
                             <span class="btn-text-mobile">Load More</span>
                         </button>
                     </div>
@@ -1136,19 +1525,23 @@
                                     Visit Our <span>Physical Store</span>
                                 </h3>
                                 <p class="section-subtitle">
-                                    Experience personalized fitting and styling consultation
+                                    Experience personalized fitting and styling
+                                    consultation
                                 </p>
                             </div>
-                            
+
                             <div class="store-details">
                                 <div class="store-detail-item">
                                     <div class="store-detail-icon">
                                         <i class="fi fi-rs-marker"></i>
                                     </div>
                                     <div class="store-detail-content">
-                                        <h4 class="store-detail-title">Our Location</h4>
+                                        <h4 class="store-detail-title">
+                                            Our Location
+                                        </h4>
                                         <p class="store-detail-text">
-                                            B42 L13 Bilbao Street, Hacienda La Joya Subdivision<br />
+                                            B42 L13 Bilbao Street, Hacienda La
+                                            Joya Subdivision<br />
                                             Imus, Cavite, Philippines
                                         </p>
                                     </div>
@@ -1159,8 +1552,12 @@
                                         <i class="fi fi-rs-phone-call"></i>
                                     </div>
                                     <div class="store-detail-content">
-                                        <h4 class="store-detail-title">Contact Number</h4>
-                                        <p class="store-detail-text">+63 920 370 0774</p>
+                                        <h4 class="store-detail-title">
+                                            Contact Number
+                                        </h4>
+                                        <p class="store-detail-text">
+                                            +63 920 370 0774
+                                        </p>
                                     </div>
                                 </div>
 
@@ -1169,17 +1566,24 @@
                                         <i class="fi fi-rs-clock"></i>
                                     </div>
                                     <div class="store-detail-content">
-                                        <h4 class="store-detail-title">Fitting Hours</h4>
+                                        <h4 class="store-detail-title">
+                                            Fitting Hours
+                                        </h4>
                                         <p class="store-detail-text">
-                                            Monday - Sunday: 08:00 AM - 9:00 PM<br />
-                                            We'll notify you if your booking is cancelled
+                                            Monday - Sunday: 08:00 AM - 9:00
+                                            PM<br />
+                                            We'll notify you if your booking is
+                                            cancelled
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="store-actions">
-                                <a href="chandriahomepage/about-policy.html" class="btn btn-outline">
+                                <a
+                                    href="chandriahomepage/about-policy.html"
+                                    class="btn btn-outline"
+                                >
                                     <i class="fi fi-rs-document"></i>
                                     About & Policies
                                 </a>
@@ -1193,7 +1597,8 @@
                                     <span>Booking</span> Information
                                 </h3>
                                 <p class="section-subtitle">
-                                    Everything you need to know about our fitting services
+                                    Everything you need to know about our
+                                    fitting services
                                 </p>
                             </div>
 
@@ -1203,9 +1608,13 @@
                                         <i class="fi fi-rs-tags"></i>
                                     </div>
                                     <div class="booking-feature-content">
-                                        <h4 class="booking-feature-title">Free Fitting Policy</h4>
+                                        <h4 class="booking-feature-title">
+                                            Free Fitting Policy
+                                        </h4>
                                         <p class="booking-feature-text">
-                                            Free fitting for up to 3 items/products. Additional fittings are ₱100 each
+                                            Free fitting for up to 3
+                                            items/products. Additional fittings
+                                            are ₱100 each
                                         </p>
                                     </div>
                                 </div>
@@ -1215,9 +1624,13 @@
                                         <i class="fi fi-rs-clothes-hanger"></i>
                                     </div>
                                     <div class="booking-feature-content">
-                                        <h4 class="booking-feature-title">Product Preparation</h4>
+                                        <h4 class="booking-feature-title">
+                                            Product Preparation
+                                        </h4>
                                         <p class="booking-feature-text">
-                                            We prepare your selected gown when you book it. You can also book a blank appointment
+                                            We prepare your selected gown when
+                                            you book it. You can also book a
+                                            blank appointment
                                         </p>
                                     </div>
                                 </div>
@@ -1227,20 +1640,29 @@
                                         <i class="fi fi-rs-bell"></i>
                                     </div>
                                     <div class="booking-feature-content">
-                                        <h4 class="booking-feature-title">Availability Notice</h4>
+                                        <h4 class="booking-feature-title">
+                                            Availability Notice
+                                        </h4>
                                         <p class="booking-feature-text">
-                                            If your selected product is already booked, we'll notify you immediately
+                                            If your selected product is already
+                                            booked, we'll notify you immediately
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="booking-actions">
-                                <a href="chandriahomepage/shop.html" class="btn btn-primary">
+                                <a
+                                    href="chandriahomepage/shop.html"
+                                    class="btn btn-primary"
+                                >
                                     <i class="fi fi-rs-shopping-bag"></i>
                                     Browse Our Products
                                 </a>
-                                <a href="chandriahomepage/about-policy.html" class="btn btn-outline">
+                                <a
+                                    href="chandriahomepage/about-policy.html"
+                                    class="btn btn-outline"
+                                >
                                     <i class="fi fi-rs-document"></i>
                                     About & Policies
                                 </a>
@@ -1248,20 +1670,24 @@
                         </div>
                     </div>
                 </div>
-            </section>        </main>
+            </section>
+        </main>
 
         <!--=============== AUTHENTICATION MODAL ===============-->
         <div id="auth-modal" class="auth-modal-container">
             <div class="auth-modal">
-                <button class="auth-close" id="auth-close">
-                    &times;
-                </button>
-                
-                <div class="auth-content">                    <!-- Left Side - Image -->
+                <button class="auth-close" id="auth-close">&times;</button>
+
+                <div class="auth-content">
+                    <!-- Left Side - Image -->
                     <div class="auth-image-section">
-                        <img src="chandriahomepage/assets/img/authenimage.jpg" alt="Chandria's La Robe" class="auth-image" />
+                        <img
+                            src="chandriahomepage/assets/img/authenimage.jpg"
+                            alt="Chandria's La Robe"
+                            class="auth-image"
+                        />
                     </div>
-                    
+
                     <!-- Right Side - Forms -->
                     <div class="auth-form-section">
                         <!-- Sign In Form -->
@@ -1270,123 +1696,260 @@
                                 <h2>Welcome Back</h2>
                                 <p>Sign in to your account</p>
                             </div>
-                            
-                            <form class="auth-form-content" id="signin-form-element">
+
+                            <form
+                                class="auth-form-content"
+                                id="signin-form-element"
+                            >
                                 <div class="auth-input-group">
-                                    <label for="signin-email">Email Address</label>
-                                    <input type="email" id="signin-email" name="email" required />
+                                    <label for="signin-email"
+                                        >Email Address</label
+                                    >
+                                    <input
+                                        type="email"
+                                        id="signin-email"
+                                        name="email"
+                                        required
+                                    />
                                 </div>
-                                
+
                                 <div class="auth-input-group">
-                                    <label for="signin-password">Password</label>
-                                    <input type="password" id="signin-password" name="password" required />
+                                    <label for="signin-password"
+                                        >Password</label
+                                    >
+                                    <input
+                                        type="password"
+                                        id="signin-password"
+                                        name="password"
+                                        required
+                                    />
                                 </div>
-                                
+
                                 <div class="auth-forgot">
-                                    <a href="#" id="forgot-password-link">Forgot Password?</a>
+                                    <a href="#" id="forgot-password-link"
+                                        >Forgot Password?</a
+                                    >
                                 </div>
-                                
-                                <button type="submit" class="auth-btn auth-btn-primary">
+
+                                <button
+                                    type="submit"
+                                    class="auth-btn auth-btn-primary"
+                                >
                                     Sign In
-                                </button>                                <div class="auth-divider">
+                                </button>
+                                <div class="auth-divider">
                                     <span>or</span>
-                                </div>                                <div class="auth-social">
-                                    <button type="button" class="auth-social-btn google-btn" id="google-signin" title="Sign in with Google">
-                                        <svg width="18" height="18" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                                            <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
-                                            <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/>
-                                            <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
-                                            <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571c.001-.001.002-.001.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
+                                </div>
+                                <div class="auth-social">
+                                    <button
+                                        type="button"
+                                        class="auth-social-btn google-btn"
+                                        id="google-signin"
+                                        title="Sign in with Google"
+                                    >
+                                        <svg
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 48 48"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                fill="#FFC107"
+                                                d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"
+                                            />
+                                            <path
+                                                fill="#FF3D00"
+                                                d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"
+                                            />
+                                            <path
+                                                fill="#4CAF50"
+                                                d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"
+                                            />
+                                            <path
+                                                fill="#1976D2"
+                                                d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571c.001-.001.002-.001.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"
+                                            />
                                         </svg>
                                         <span>Continue with Google</span>
                                     </button>
                                 </div>
-                                
+
                                 <div class="auth-switch">
                                     <span>Don't have an account? </span>
-                                    <a href="#" id="switch-to-signup">Sign Up</a>
+                                    <a href="#" id="switch-to-signup"
+                                        >Sign Up</a
+                                    >
                                 </div>
                             </form>
                         </div>
-                        
+
                         <!-- Sign Up Form -->
                         <div class="auth-form" id="signup-form">
                             <div class="auth-header">
                                 <h2>Create Account</h2>
-                                <p>Join us for the perfect fitting experience</p>                            </div>                              <form class="auth-form-content" id="signup-form-element">                                <!-- Full Name -->
+                                <p>
+                                    Join us for the perfect fitting experience
+                                </p>
+                            </div>
+                            <form
+                                class="auth-form-content"
+                                id="signup-form-element"
+                            >
+                                <!-- Full Name -->
                                 <div class="auth-input-group">
-                                    <label for="signup-fullname">Full Name</label>
-                                    <input type="text" id="signup-fullname" name="fullname" required />
+                                    <label for="signup-fullname"
+                                        >Full Name</label
+                                    >
+                                    <input
+                                        type="text"
+                                        id="signup-fullname"
+                                        name="fullname"
+                                        required
+                                    />
                                 </div>
-                                  <!-- Contact Number -->
+                                <!-- Contact Number -->
                                 <div class="auth-input-group">
-                                    <label for="signup-contact">Contact Number</label>
-                                    <input type="tel" id="signup-contact" name="contact" required />
+                                    <label for="signup-contact"
+                                        >Contact Number</label
+                                    >
+                                    <input
+                                        type="tel"
+                                        id="signup-contact"
+                                        name="contact"
+                                        required
+                                    />
                                 </div>
-                                  <!-- Email Address -->
+                                <!-- Email Address -->
                                 <div class="auth-input-group">
-                                    <label for="signup-email">Email Address</label>
-                                    <input type="email" id="signup-email" name="email" required />
+                                    <label for="signup-email"
+                                        >Email Address</label
+                                    >
+                                    <input
+                                        type="email"
+                                        id="signup-email"
+                                        name="email"
+                                        required
+                                    />
                                 </div>
-                                
+
                                 <!-- Password and Confirm Password in one row -->
                                 <div class="auth-input-row">
                                     <!-- Password -->
                                     <div class="auth-input-group">
-                                        <label for="signup-password">Password</label>
-                                        <input type="password" id="signup-password" name="password" required />
+                                        <label for="signup-password"
+                                            >Password</label
+                                        >
+                                        <input
+                                            type="password"
+                                            id="signup-password"
+                                            name="password"
+                                            required
+                                        />
                                     </div>
-                                    
+
                                     <!-- Confirm Password -->
                                     <div class="auth-input-group">
-                                        <label for="signup-confirm-password">Confirm Password</label>
-                                        <input type="password" id="signup-confirm-password" name="confirm-password" required />
+                                        <label for="signup-confirm-password"
+                                            >Confirm Password</label
+                                        >
+                                        <input
+                                            type="password"
+                                            id="signup-confirm-password"
+                                            name="confirm-password"
+                                            required
+                                        />
                                     </div>
                                 </div>
-                                  <button type="submit" class="auth-btn auth-btn-primary">
+                                <button
+                                    type="submit"
+                                    class="auth-btn auth-btn-primary"
+                                >
                                     Sign Up
-                                </button>                                <div class="auth-divider">
+                                </button>
+                                <div class="auth-divider">
                                     <span>or continue with</span>
                                 </div>
 
                                 <div class="auth-social">
-                                    <button type="button" class="auth-social-btn google-btn" id="google-signin" title="Sign in with Google">
-                                        <svg width="18" height="18" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                                            <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
-                                            <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/>
-                                            <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
-                                            <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571c.001-.001.002-.001.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
+                                    <button
+                                        type="button"
+                                        class="auth-social-btn google-btn"
+                                        id="google-signin"
+                                        title="Sign in with Google"
+                                    >
+                                        <svg
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 48 48"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                fill="#FFC107"
+                                                d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"
+                                            />
+                                            <path
+                                                fill="#FF3D00"
+                                                d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"
+                                            />
+                                            <path
+                                                fill="#4CAF50"
+                                                d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"
+                                            />
+                                            <path
+                                                fill="#1976D2"
+                                                d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571c.001-.001.002-.001.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"
+                                            />
                                         </svg>
                                         <span>Continue with Google</span>
                                     </button>
                                 </div>
-                                
+
                                 <div class="auth-switch">
                                     <span>Already have an account? </span>
-                                    <a href="#" id="switch-to-signin">Sign in</a>
+                                    <a href="#" id="switch-to-signin"
+                                        >Sign in</a
+                                    >
                                 </div>
                             </form>
                         </div>
-                        
+
                         <!-- Forgot Password Form -->
                         <div class="auth-form" id="forgot-form">
                             <div class="auth-header">
                                 <h2>Reset Password</h2>
-                                <p>Enter your email to receive reset instructions</p>
+                                <p>
+                                    Enter your email to receive reset
+                                    instructions
+                                </p>
                             </div>
-                            
-                            <form class="auth-form-content" id="forgot-form-element">
+
+                            <form
+                                class="auth-form-content"
+                                id="forgot-form-element"
+                            >
                                 <div class="auth-input-group">
-                                    <label for="forgot-email">Email Address</label>
-                                    <input type="email" id="forgot-email" name="email" required />
+                                    <label for="forgot-email"
+                                        >Email Address</label
+                                    >
+                                    <input
+                                        type="email"
+                                        id="forgot-email"
+                                        name="email"
+                                        required
+                                    />
                                 </div>
-                                
-                                <button type="submit" class="auth-btn auth-btn-primary">
+
+                                <button
+                                    type="submit"
+                                    class="auth-btn auth-btn-primary"
+                                >
                                     Send Reset Link
                                 </button>
-                                
+
                                 <div class="auth-switch">
-                                    <a href="#" id="back-to-signin">Back to Sign In</a>
+                                    <a href="#" id="back-to-signin"
+                                        >Back to Sign In</a
+                                    >
                                 </div>
                             </form>
                         </div>
@@ -1403,92 +1966,172 @@
                         <i class="fi fi-rs-edit"></i>
                         Write Your Review
                     </h2>
-                    <button class="review-modal-close" onclick="reviewsController.closeReviewModal()">
+                    <button
+                        class="review-modal-close"
+                        onclick="reviewsController.closeReviewModal()"
+                    >
                         <i class="fi fi-rs-cross"></i>
                     </button>
                 </div>
-                
+
                 <div class="review-modal-body">
                     <div class="review-modal-rating-section">
                         <label class="review-modal-label">Your Rating</label>
                         <div class="review-modal-stars">
-                            <i class="fi fi-rs-star modal-review-star" data-rating="1"></i>
-                            <i class="fi fi-rs-star modal-review-star" data-rating="2"></i>
-                            <i class="fi fi-rs-star modal-review-star" data-rating="3"></i>
-                            <i class="fi fi-rs-star modal-review-star" data-rating="4"></i>
-                            <i class="fi fi-rs-star modal-review-star" data-rating="5"></i>
+                            <i
+                                class="fi fi-rs-star modal-review-star"
+                                data-rating="1"
+                            ></i>
+                            <i
+                                class="fi fi-rs-star modal-review-star"
+                                data-rating="2"
+                            ></i>
+                            <i
+                                class="fi fi-rs-star modal-review-star"
+                                data-rating="3"
+                            ></i>
+                            <i
+                                class="fi fi-rs-star modal-review-star"
+                                data-rating="4"
+                            ></i>
+                            <i
+                                class="fi fi-rs-star modal-review-star"
+                                data-rating="5"
+                            ></i>
                         </div>
                         <div class="rating-description" id="rating-description">
                             Select a rating above
                         </div>
                     </div>
-                    
+
                     <div class="review-modal-form-section">
-                        <label for="review-text" class="review-modal-label">Your Review</label>
-                        <textarea 
-                            id="review-text" 
-                            class="review-modal-textarea" 
+                        <label for="review-text" class="review-modal-label"
+                            >Your Review</label
+                        >
+                        <textarea
+                            id="review-text"
+                            class="review-modal-textarea"
                             placeholder="Share your experience with Chandria's La Robe. What did you love most about our service, fitting, or gowns? Your feedback helps other customers and helps us improve!"
                             rows="5"
                         ></textarea>
                         <div class="character-count">
-                            <span id="char-count">0</span>/250 characters (minimum 10)
+                            <span id="char-count">0</span>/250 characters
+                            (minimum 10)
                         </div>
                     </div>
-                    
+
                     <div class="review-modal-tags-section">
-                        <label class="review-modal-label">Select Review Tags <span style="color: #dc2626;">*</span></label>
-                        <p class="review-tags-description">Choose 2 tags that best describe your experience:</p>
+                        <label class="review-modal-label"
+                            >Select Review Tags
+                            <span style="color: #dc2626">*</span></label
+                        >
+                        <p class="review-tags-description">
+                            Choose 2 tags that best describe your experience:
+                        </p>
                         <div class="review-tags-grid">
-                            <button type="button" class="review-tag-option" data-tag="fitting-experience">
+                            <button
+                                type="button"
+                                class="review-tag-option"
+                                data-tag="fitting-experience"
+                            >
                                 <i class="fi fi-rs-clothes-hanger"></i>
                                 Fitting Experience
                             </button>
-                            <button type="button" class="review-tag-option" data-tag="customer-service">
+                            <button
+                                type="button"
+                                class="review-tag-option"
+                                data-tag="customer-service"
+                            >
                                 <i class="fi fi-rs-user-headset"></i>
                                 Customer Service
                             </button>
-                            <button type="button" class="review-tag-option" data-tag="product-quality">
+                            <button
+                                type="button"
+                                class="review-tag-option"
+                                data-tag="product-quality"
+                            >
                                 <i class="fi fi-rs-diamond"></i>
                                 Product Quality
                             </button>
-                            <button type="button" class="review-tag-option" data-tag="pricing-value">
+                            <button
+                                type="button"
+                                class="review-tag-option"
+                                data-tag="pricing-value"
+                            >
                                 <i class="fi fi-rs-dollar"></i>
                                 Pricing & Value
                             </button>
-                            <button type="button" class="review-tag-option" data-tag="appointment-booking">
+                            <button
+                                type="button"
+                                class="review-tag-option"
+                                data-tag="appointment-booking"
+                            >
                                 <i class="fi fi-rs-calendar"></i>
                                 Appointment & Booking
                             </button>
-                            <button type="button" class="review-tag-option" data-tag="staff-expertise">
+                            <button
+                                type="button"
+                                class="review-tag-option"
+                                data-tag="staff-expertise"
+                            >
                                 <i class="fi fi-rs-user-check"></i>
                                 Staff Expertise
                             </button>
-                            <button type="button" class="review-tag-option" data-tag="store-atmosphere">
+                            <button
+                                type="button"
+                                class="review-tag-option"
+                                data-tag="store-atmosphere"
+                            >
                                 <i class="fi fi-rs-shop"></i>
                                 Store Atmosphere
                             </button>
-                            <button type="button" class="review-tag-option" data-tag="overall-experience">
+                            <button
+                                type="button"
+                                class="review-tag-option"
+                                data-tag="overall-experience"
+                            >
                                 <i class="fi fi-rs-star"></i>
                                 Overall Experience
                             </button>
                         </div>
                         <div class="selected-tags-display">
-                            <span class="selected-tags-label">Selected tags:</span>
+                            <span class="selected-tags-label"
+                                >Selected tags:</span
+                            >
                             <div id="selected-tags-container"></div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="review-modal-footer">
-                    <button class="review-modal-btn review-modal-btn-cancel" onclick="reviewsController.closeReviewModal()">
+                    <button
+                        class="review-modal-btn review-modal-btn-cancel"
+                        onclick="reviewsController.closeReviewModal()"
+                    >
                         <i class="fi fi-rs-cross"></i>
                         Cancel
                     </button>
-                    <button class="review-modal-btn review-modal-btn-submit" onclick="reviewsController.submitReview()">
+                    <button class="review-modal-btn review-modal-btn-submit">
                         <i class="fi fi-rs-paper-plane"></i>
                         Submit Review
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logout Confirmation Modal -->
+        <div class="logout-modal-container" id="logout-modal">
+            <div class="logout-modal-box">
+                <div class="logout-modal-content">
+                    <h3>Confirm Logout</h3>
+                    <p>Are you sure you want to log out?</p>
+                    <div class="btn-group">
+                        <button class="btn-cancel" id="logout-cancel">Cancel</button>
+                        <button class="btn-submit" id="logout-confirm">
+                            <span id="logout-btn-text">Logout</span>
+                            <span id="logout-btn-spinner" class="btn-spinner" style="display: none"></span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1502,29 +2145,47 @@
             </div>
         </footer>
 
-        <!-- NOTYF CDN -->
-        <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-
         <!---------------------------------- SWIPER JS ---------------------------------->
         <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-        
+
         <!-- JQUERY CDN -->
         <script
             src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
             crossorigin="anonymous"
-        ></script>        <!-------------------------------- JS --------------------------------->        <script src="chandriahomepage/assets/js/spinner/spinner-core.js"></script>
-        <script src="chandriahomepage/assets/js/spinner/spinner-page.js"></script>        <script src="chandriahomepage/assets/js/spinner/spinner-utils.js"></script>
+        ></script>
+        <!-------------------------------- JS --------------------------------->
+        <script src="chandriahomepage/assets/js/spinner/spinner-core.js"></script>
+        <script src="chandriahomepage/assets/js/spinner/spinner-page.js"></script>
+        <script src="chandriahomepage/assets/js/spinner/spinner-utils.js"></script>
         <script src="chandriahomepage/assets/js/hamburger-mob.js"></script>
         <script src="chandriahomepage/assets/js/quick-view/quick-view.js"></script>
         <script src="chandriahomepage/assets/js/nav-bar.js"></script>
-        <script type="module" src="chandriahomepage/assets/js/profile-nav-service.js"></script>
+        <script
+            type="module"
+            src="chandriahomepage/assets/js/profile-nav-service.js"
+        ></script>
         <script src="chandriahomepage/assets/js/main.js"></script>
-        <script type="module" src="chandriahomepage/assets/js/auth-modal.js"></script>
-        <script type="module" src="./chandriahomepage/assets/js/wishlist-firebase.js"></script>
-        <script type="module" src="./chandriahomepage/assets/js/index.js"></script>        <script type="module" src="./chandriahomepage/assets/js/chatbot/chatbot-init.js"></script>
+        <script
+            type="module"
+            src="chandriahomepage/assets/js/auth-modal.js"
+        ></script>
+        <script
+            type="module"
+            src="./chandriahomepage/assets/js/wishlist-firebase.js"
+        ></script>
+        <script
+            type="module"
+            src="./chandriahomepage/assets/js/index.js"
+        ></script>
+        <script
+            type="module"
+            src="./chandriahomepage/assets/js/chatbot/chatbot-init.js"
+        ></script>
         <script src="./chandriahomepage/assets/js/size-chart.js"></script>
-        <script src="./chandriahomepage/assets/js/reviews.js"></script>
-
+        <script
+            type="module"
+            src="./chandriahomepage/assets/js/reviews.js"
+        ></script>
     </body>
 </html>

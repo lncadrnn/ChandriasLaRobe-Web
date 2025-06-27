@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="assets/css/chatbot.css" />
     <link rel="stylesheet" href="assets/css/spinner.css" />
     <link rel="stylesheet" href="assets/css/footer-fixes.css" />
+    <link rel="stylesheet" href="assets/css/notification-overrides.css" />
+    <link rel="stylesheet" href="assets/css/logout-modal.css" />
     
     <title>About Us & Policies - Chandria's La Robe</title>
 </head>
@@ -73,7 +75,7 @@
                 </a>
 
                 <a href="cart.html" class="header-action-btn">
-                    <img src="assets/img/icon-cart.svg" alt="">
+                    <img src="assets/img/icon-cart.svg" alt="Booking List">
                     <span class="count" id="cart-count">0</span>
                 </a>                <button class="header-action-btn" id="account-btn" onclick="toggleAccountDropdown()" style="background: none; border: none; cursor: pointer;">
                     <img src="assets/img/icon-user.svg" alt="">
@@ -93,27 +95,27 @@
                         </div>
                         <div class="account-dropdown-divider"></div>                        <ul class="account-dropdown-menu">
                             <li class="account-dropdown-item">
-                                <a href="accounts.html" class="account-dropdown-link auth-required">
+                                <a href="accounts.html" class="account-dropdown-link auth-required" data-auth-required="true">
                                     <i class="fi fi-rs-settings"></i>
                                     <span>Settings</span>
                                 </a>
                             </li>
                             <li class="account-dropdown-item">
-                                <a href="accounts.html?tab=bookings" class="account-dropdown-link auth-required">
+                                <a href="accounts.html?tab=bookings" class="account-dropdown-link auth-required" data-auth-required="true">
                                     <i class="fi fi-rs-calendar"></i>
                                     <span>Appointments</span>
                                 </a>
                             </li>
-                            <li class="account-dropdown-item">
-                                <a href="#" class="account-dropdown-link auth-required">
-                                    <i class="fi fi-rs-comment"></i>
-                                    <span>Notifications</span>
-                                </a>
-                            </li>
-                            <li class="account-dropdown-item">
-                                <a href="#" class="account-dropdown-link">
+                            <li class="account-dropdown-item" id="signin-item">
+                                <a href="#" class="account-dropdown-link" onclick="showAuthModal()">
                                     <i class="fi fi-rs-sign-in"></i>
                                     <span>Sign In</span>
+                                </a>
+                            </li>
+                            <li class="account-dropdown-item" id="logout-item" style="display: none;">
+                                <a href="#" class="account-dropdown-link" onclick="confirmLogout()">
+                                    <i class="fi fi-rs-sign-out"></i>
+                                    <span>Log Out</span>
                                 </a>
                             </li>
                         </ul>
@@ -409,6 +411,23 @@
         </section>
     </main>
 
+    <!-- Logout Confirmation Modal -->
+    <div class="logout-modal-container" id="logout-modal">
+        <div class="logout-modal-box">
+            <div class="logout-modal-content">
+                <h3>Confirm Logout</h3>
+                <p>Are you sure you want to log out?</p>
+                <div class="btn-group">
+                    <button class="btn-cancel" id="logout-cancel">Cancel</button>
+                    <button class="btn-submit" id="logout-confirm">
+                        <span id="logout-btn-text">Logout</span>
+                        <span id="logout-btn-spinner" class="btn-spinner" style="display: none"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!--=============== AUTHENTICATION MODAL ===============-->
     <div id="auth-modal" class="auth-modal-container">
         <div class="auth-modal">
@@ -567,6 +586,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     
+    <script src="assets/js/notification-utils.js"></script>
     <script src="assets/js/nav-bar.js"></script>
     <script src="assets/js/hamburger-mob.js"></script>
     <script type="module" src="assets/js/profile-nav-service.js"></script>

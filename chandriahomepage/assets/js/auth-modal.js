@@ -24,14 +24,52 @@ import {
 
 class AuthModal {
     constructor() {
+        console.log('AuthModal constructor called');
+        
         this.modal = document.getElementById('auth-modal');
         this.signInForm = document.getElementById('signin-form');
         this.signUpForm = document.getElementById('signup-form');
         this.forgotPasswordForm = document.getElementById('forgot-form');
         this.currentForm = 'signin';
         this.isLoggingIn = false;
-          // Initialize Notyf for notifications
-        this.notyf = new Notyf({
+
+        console.log('Modal elements found:', {
+            modal: !!this.modal,
+            signInForm: !!this.signInForm,
+            signUpForm: !!this.signUpForm,
+            forgotPasswordForm: !!this.forgotPasswordForm
+        });
+
+        // Initialize Notyf for notifications with enhanced z-index
+        this.notyf = window.createHighZIndexNotyf ? window.createHighZIndexNotyf({
+            duration: 4000,
+            position: {
+                x: 'center',
+                y: 'top',
+            },
+            dismissible: true,
+            ripple: true,
+            types: [
+                {
+                    type: 'warning',
+                    background: '#f39c12',
+                    icon: {
+                        className: 'fi fi-rs-exclamation-triangle',
+                        tagName: 'i',
+                        text: ''
+                    }
+                },
+                {
+                    type: 'info',
+                    background: '#3498db',
+                    icon: {
+                        className: 'fi fi-rs-info',
+                        tagName: 'i',
+                        text: ''
+                    }
+                }
+            ]
+        }) : new Notyf({
             duration: 4000,
             position: {
                 x: 'center',
@@ -61,17 +99,27 @@ class AuthModal {
             ]
         });
         
-        // Set Notyf container z-index to be higher than auth modal
-        setTimeout(() => {
-            const notyfContainer = document.querySelector('.notyf');
-            if (notyfContainer) {
-                notyfContainer.style.zIndex = '20000';
-            }
-        }, 100);
+        // Fallback z-index setup if utility not available
+        if (!window.createHighZIndexNotyf) {
+            setTimeout(() => {
+                const notyfContainer = document.querySelector('.notyf');
+                if (notyfContainer) {
+                    notyfContainer.style.zIndex = '99999';
+                    notyfContainer.style.position = 'fixed';
+                }
+                
+                const notyfToasts = document.querySelectorAll('.notyf__toast');
+                notyfToasts.forEach(toast => {
+                    toast.style.zIndex = '99999';
+                });
+            }, 100);
+        }
         
+        console.log('Initializing event listeners...');
         this.initializeEventListeners();
         this.setupPasswordToggles();
         this.setupAuthStateListener();
+        console.log('AuthModal constructor completed');
     }    initializeEventListeners() {
         // Modal open/close events
         const closeBtn = document.querySelector('.auth-close');
@@ -111,8 +159,15 @@ class AuthModal {
         const signUpFormElement = document.getElementById('signup-form-element');
         const forgotFormElement = document.getElementById('forgot-form-element');
 
+        console.log('Form elements found:', {
+            signInFormElement: !!signInFormElement,
+            signUpFormElement: !!signUpFormElement,
+            forgotFormElement: !!forgotFormElement
+        });
+
         if (signInFormElement) {
             signInFormElement.addEventListener('submit', (e) => {
+                console.log('Sign in form submit event triggered');
                 e.preventDefault();
                 this.handleSignIn(e);
             });
@@ -120,6 +175,7 @@ class AuthModal {
 
         if (signUpFormElement) {
             signUpFormElement.addEventListener('submit', (e) => {
+                console.log('Sign up form submit event triggered');
                 e.preventDefault();
                 this.handleSignUp(e);
             });
@@ -306,7 +362,10 @@ class AuthModal {
         const email = formData.get('email');
         const password = formData.get('password');
 
+        console.log('Sign in form submitted:', { email, password: '***' });
+
         if (!this.validateSignInForm(email, password)) {
+            console.log('Sign in validation failed');
             return;
         }
 
@@ -314,6 +373,8 @@ class AuthModal {
         this.showLoading(event.target);
 
         try {
+            console.log('Checking if email exists in database...');
+            
             // Check if email exists in adminAccounts collection first
             const adminEmailQuery = await getDocs(
                 query(
@@ -334,6 +395,8 @@ class AuthModal {
             let isAdmin = !adminEmailQuery.empty;
             let isUser = !userEmailQuery.empty;
 
+            console.log('Email check results:', { isAdmin, isUser });
+
             // If email doesn't exist in either collection, show error
             if (!isAdmin && !isUser) {
                 this.notyf.error("Email is not registered. Please sign up first.");
@@ -342,12 +405,17 @@ class AuthModal {
                 return;
             }
 
+            console.log('Attempting to sign in with Firebase Auth...');
+            
             // Sign in with Firebase Authentication
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+            console.log('Firebase Auth sign in successful');
 
             // Check if verified (only for non-admin users)
             const user = userCredential.user;
             if (!user.emailVerified && !isAdmin) {
+                console.log('User email not verified, signing out...');
                 // Sign out the unverified user
                 await signOut(auth);
                 this.notyf.error("Please verify your email before logging in.");
@@ -358,6 +426,7 @@ class AuthModal {
 
             // Handle redirect based on account type
             if (isAdmin) {
+                console.log('Admin login successful, redirecting...');
                 this.notyf.success("Admin login successful! Redirecting to admin panel...");
                 
                 // Close modal and redirect to admin panel
@@ -377,10 +446,25 @@ class AuthModal {
                 }, 1500);
                 
             } else {
-                // Regular user login
+                console.log('User login successful');
+                // Regular user login - show success notification
                 this.notyf.success("Login successful! Welcome back.");
                 
-                // The auth state listener will handle UI updates and modal closing for users
+                // Force notification z-index to appear above modal
+                if (window.forceNotificationZIndex) {
+                    window.forceNotificationZIndex();
+                }
+                
+                // Close modal first
+                this.closeModal();
+                
+                // The auth state listener will handle UI updates for users
+                // Add a small delay before page reload to ensure user sees the notification
+                setTimeout(() => {
+                    if (typeof location !== 'undefined' && location.reload) {
+                        location.reload();
+                    }
+                }, 1500);
             }
             
         } catch (error) {
@@ -396,7 +480,7 @@ class AuthModal {
             this.isLoggingIn = false;
             this.hideLoading(event.target);
         }
-    }async handleSignUp(event) {
+    }    async handleSignUp(event) {
         const formData = new FormData(event.target);
         const fullname = formData.get('fullname');
         const email = formData.get('email');
@@ -404,7 +488,10 @@ class AuthModal {
         const password = formData.get('password');
         const confirmPassword = formData.get('confirm-password');
 
+        console.log('Sign up form submitted:', { fullname, email, contact, password: '***', confirmPassword: '***' });
+
         if (!this.validateSignUpForm(fullname, email, contact, password, confirmPassword)) {
+            console.log('Validation failed');
             return;
         }
 
@@ -412,45 +499,36 @@ class AuthModal {
         this.showLoading(event.target);
 
         try {
-            // Password strength validation
-            const status = await validatePassword(auth, password);
-            if (!status.isValid) {
-                const minLength = status.passwordPolicy.customStrengthOptions.minPasswordLength;
-                let errorMsg = `<strong>Password doesn't meet requirements:</strong><ul>`;
-                if (!status.containsLowercaseLetter) errorMsg += "<li>Lowercase letter</li>";
-                if (!status.containsUppercaseLetter) errorMsg += "<li>Uppercase letter</li>";
-                if (!status.containsNumericCharacter) errorMsg += "<li>Number</li>";
-                if (!status.containsNonAlphanumericCharacter) errorMsg += "<li>Special character</li>";
-                if (minLength && password.length < minLength) errorMsg += `<li>At least ${minLength} characters</li>`;
-                errorMsg += "</ul>";
-
-                this.notyf.open({
-                    type: "error",
-                    message: errorMsg,
-                    duration: 5000
-                });
-                this.isLoggingIn = false;
-                this.hideLoading(event.target);                return;
-            }
-
+            console.log('Creating user with Firebase Auth...');
+            
             // Firebase Auth sign-up
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            console.log('User created successfully:', userCredential.user.uid);
+            
             await getAuth().signOut(); // Sign out immediately after registration
             await sendEmailVerification(userCredential.user);
-            await updateProfile(userCredential.user, { displayName: fullname });            // Form data
+            await updateProfile(userCredential.user, { displayName: fullname });
+
+            // Form data
             const userData = {
                 fullname,
                 contact,
                 email,
                 role: "user",
-                createdAt: new Date()
+                createdAt: new Date(),
+                added_to_cart: [],
+                added_to_wishlist: []
             };
 
+            console.log('Saving user data to Firestore...');
+            
             // Save user info to Firestore
             await setDoc(
                 doc(chandriaDB, "userAccounts", userCredential.user.uid),
                 userData
             );
+
+            console.log('User data saved successfully');
 
             // Success message
             this.notyf.success("Account created successfully! Check your email for verification.");
@@ -557,6 +635,11 @@ class AuthModal {
                 // Admin user - handle admin login
                 this.notyf.success("Admin Google sign-in successful! Redirecting to admin panel...");
                 
+                // Force notification z-index to appear above modal
+                if (window.forceNotificationZIndex) {
+                    window.forceNotificationZIndex();
+                }
+                
                 // Close modal and redirect to admin panel
                 this.closeModal();
                 
@@ -598,6 +681,11 @@ class AuthModal {
             }
             
             this.notyf.success('Google sign in successful!');
+            
+            // Force notification z-index to appear above modal
+            if (window.forceNotificationZIndex) {
+                window.forceNotificationZIndex();
+            }
             // The auth state listener will handle UI updates and modal closing
 
         } catch (error) {
@@ -616,6 +704,8 @@ class AuthModal {
     validateSignInForm(email, password) {
         let isValid = true;
 
+        console.log('Validating sign in form:', { email, password: '***' });
+
         if (!this.validateEmail(email)) {
             this.notyf.error('Please enter a valid email address.');
             isValid = false;
@@ -626,9 +716,18 @@ class AuthModal {
             isValid = false;
         }
 
+        console.log('Sign in validation result:', isValid);
         return isValid;
     }    validateSignUpForm(fullname, email, contact, password, confirmPassword) {
         let isValid = true;
+        
+        console.log('Validating sign up form:', { 
+            fullname, 
+            email, 
+            contact, 
+            password: '***', 
+            confirmPassword: '***' 
+        });
 
         if (!fullname || fullname.trim().length < 2) {
             this.notyf.error('Full name must be at least 2 characters long.');
@@ -652,8 +751,7 @@ class AuthModal {
             isValid = false;
         }
 
-        if (!password || password.length < 6) {
-            this.notyf.error('Password must be at least 6 characters long.');
+        if (!this.validatePasswordRequirements(password)) {
             isValid = false;
         }
 
@@ -662,6 +760,7 @@ class AuthModal {
             isValid = false;
         }
 
+        console.log('Sign up validation result:', isValid);
         return isValid;
     }
 
@@ -671,8 +770,37 @@ class AuthModal {
     }
 
     validatePhone(phone) {
+        console.log('Validating phone:', phone);
         const contactPattern = /^09\d{9}$/;
-        return contactPattern.test(phone);
+        const isValid = contactPattern.test(phone);
+        console.log('Phone validation result:', isValid);
+        return isValid;
+    }
+
+    validatePasswordRequirements(password) {
+        if (!password || password.length < 6) {
+            this.notyf.error('Password must be at least 6 characters long.');
+            return false;
+        }
+
+        const hasUppercase = /[A-Z]/.test(password);
+        const hasLowercase = /[a-z]/.test(password);
+        const hasNumber = /\d/.test(password);
+        const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+        let missingRequirements = [];
+        if (!hasUppercase) missingRequirements.push('uppercase letter');
+        if (!hasLowercase) missingRequirements.push('lowercase letter');
+        if (!hasNumber) missingRequirements.push('number');
+        if (!hasSpecialChar) missingRequirements.push('special character');
+
+        if (missingRequirements.length > 0) {
+            const message = `Password must contain at least one: ${missingRequirements.join(', ')}.`;
+            this.notyf.error(message);
+            return false;
+        }
+
+        return true;
     }    setupFormValidation() {
         // Only visual error clearing, no validation on blur
         const inputs = this.modal.querySelectorAll('input');
@@ -838,13 +966,18 @@ class AuthModal {
 
 // Initialize the auth modal when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('Auth modal initializing...');
     const authModal = new AuthModal();
+    console.log('Auth modal initialized successfully');
     
     // Make functions globally accessible
     window.showAuthModal = () => {
+        console.log('showAuthModal called');
         // Check if user is already logged in
         const userEmail = localStorage.getItem('userEmail');
         const currentUser = auth.currentUser;
+        
+        console.log('User check:', { userEmail, currentUser: currentUser?.email, emailVerified: currentUser?.emailVerified });
         
         if (userEmail && currentUser && currentUser.emailVerified) {
             // Determine the correct path to accounts.html based on current location
@@ -856,13 +989,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 accountsPath = './chandriahomepage/accounts.html';
             }
             
+            console.log('Redirecting to accounts page:', accountsPath);
             // Redirect to accounts page if user is logged in
             window.location.href = accountsPath;
         } else {
+            console.log('Showing auth modal');
             // Show auth modal if user is not logged in
             authModal.show();
         }
     };
-    window.hideAuthModal = () => authModal.hide();
+    
+    window.hideAuthModal = () => {
+        console.log('hideAuthModal called');
+        authModal.hide();
+    };
+    
     window.authModal = authModal;
+    
+    console.log('Global auth functions set up');
 });

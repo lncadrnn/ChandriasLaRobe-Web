@@ -28,11 +28,13 @@
         <link rel="stylesheet" href="assets/css/shop.css" />
         <link rel="stylesheet" href="assets/css/auth-modal.css" />
         <link rel="stylesheet" href="assets/css/spinner.css" />
+        <link rel="stylesheet" href="assets/css/notification-overrides.css" />
         <link rel="stylesheet" href="assets/css/chatbot.css" />
+        <link rel="stylesheet" href="assets/css/logout-modal.css" />
 
         <link rel="stylesheet" href="./assets/css/cart.css" />
 
-        <title>Chandria's La Robe</title>
+        <title>Cart - Chandria's La Robe</title>
     </head>
     <body>
         <!-- Full Screen Cart Loader -->
@@ -44,7 +46,7 @@
                     <div class="spinner-ring"></div>
                     <div class="spinner-ring"></div>
                 </div>
-                <p class="spinner-text">Loading data from your cart.</p>
+                <p class="spinner-text">Loading data from your booking list.</p>
             </div>
         </div>
 
@@ -94,7 +96,7 @@
                     </a>
 
                     <a href="cart.html" class="header-action-btn">
-                        <img src="assets/img/icon-cart.svg" alt="" />
+                        <img src="assets/img/icon-cart.svg" alt="Booking List" />
                         <span class="count" id="cart-count">0</span>
                     </a>
 
@@ -117,24 +119,18 @@
                             <div class="account-dropdown-divider"></div>
                             <ul class="account-dropdown-menu">
                                 <li class="account-dropdown-item">
-                                    <a href="accounts.html" class="account-dropdown-link" data-auth-required="true" data-nav-to="settings">
+                                    <a href="accounts.html" class="account-dropdown-link" data-auth-required="true">
                                         <i class="fi fi-rs-settings"></i>
                                         <span>Settings</span>
                                     </a>
                                 </li>
                                 <li class="account-dropdown-item">
-                                    <a href="accounts.html?tab=bookings" class="account-dropdown-link" data-auth-required="true" data-nav-to="appointments">
+                                    <a href="accounts.html?tab=bookings" class="account-dropdown-link" data-auth-required="true">
                                         <i class="fi fi-rs-calendar"></i>
                                         <span>Appointments</span>
                                     </a>
                                 </li>
-                                <li class="account-dropdown-item">
-                                    <a href="#" class="account-dropdown-link" data-auth-required="true" data-nav-to="notifications">
-                                        <i class="fi fi-rs-comment"></i>
-                                        <span>Notifications</span>
-                                    </a>
-                                </li>
-                                <li class="account-dropdown-item">
+                                <li class="account-dropdown-item" id="signin-item">
                                     <a href="#" class="account-dropdown-link" onclick="showAuthModal()">
                                         <i class="fi fi-rs-sign-in"></i>
                                         <span>Sign In</span>
@@ -143,7 +139,7 @@
                                 <li class="account-dropdown-item" id="logout-item" style="display: none;">
                                     <a href="#" class="account-dropdown-link" onclick="confirmLogout()">
                                         <i class="fi fi-rs-sign-out"></i>
-                                        <span>Sign Out</span>
+                                        <span>Log Out</span>
                                     </a>
                                 </li>
                             </ul>
@@ -211,9 +207,9 @@
                         <div class="empty-cart-icon">
                             <i class="fi fi-rs-shopping-cart"></i>
                         </div>
-                        <h3 class="empty-cart-title">Your cart is empty</h3>
+                        <h3 class="empty-cart-title">Your booking list is empty</h3>
                         <p class="empty-cart-text">
-                            Looks like you haven't added any items to your cart
+                            Looks like you haven't added any items to your booking list
                             yet.
                         </p>
                         <a
@@ -229,8 +225,8 @@
                     <div class="cart-auth-required" id="cart-auth-required" style="display: none;">
                         <div class="auth-required-content">
                             <i class="fi fi-rs-shopping-cart auth-required-icon"></i>
-                            <h3 class="auth-required-title">Sign in to view your cart</h3>
-                            <p class="auth-required-text">Create an account to save items to your cart and checkout securely</p>
+                            <h3 class="auth-required-title">Sign in to view your booking list</h3>
+                            <p class="auth-required-text">Create an account to save items to your booking list and checkout securely</p>
                             <div class="auth-required-actions">
                                 <button onclick="showAuthModal()" class="btn btn-primary">Sign In</button>
                                 <a href="shop.html" class="btn btn-secondary">Continue Shopping</a>
@@ -292,7 +288,7 @@
                     <h3 class="modal-title">Remove Item</h3>
                     <p class="modal-message">
                         Are you sure you want to remove this item from your
-                        cart?
+                        booking list?
                     </p>
                     <div class="modal-actions">
                         <button id="remove-no" class="btn btn-secondary">
@@ -484,6 +480,23 @@
                         <button id="proceed-with-booking" class="btn btn-primary">
                             <i class="fi fi-rs-check"></i>
                             Proceed with Booking
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logout Confirmation Modal -->
+        <div class="logout-modal-container" id="logout-modal">
+            <div class="logout-modal-box">
+                <div class="logout-modal-content">
+                    <h3>Confirm Logout</h3>
+                    <p>Are you sure you want to log out?</p>
+                    <div class="btn-group">
+                        <button class="btn-cancel" id="logout-cancel">Cancel</button>
+                        <button class="btn-submit" id="logout-confirm">
+                            <span id="logout-btn-text">Logout</span>
+                            <span id="logout-btn-spinner" class="btn-spinner" style="display: none"></span>
                         </button>
                     </div>
                 </div>
