@@ -701,9 +701,9 @@
 
     <!-- Undo Cancellation Modal -->
     <div id="undo-cancel-modal" class="modal-overlay">
-        <div class="undo-modal-content">
-            <div class="undo-header">
-                <h2><i class='bx bx-undo'></i> Restore Cancelled Rental</h2>
+        <div class="modal-content undo-modal-content">
+            <div class="modal-header undo-header">
+                <h2><i class='bx bx-undo'></i> Undo Cancellation</h2>
                 <button class="close-btn" onclick="closeUndoCancelModal()">
                     <i class='bx bx-x'></i>
                 </button>
@@ -714,22 +714,22 @@
                         <i class='bx bx-undo'></i>
                     </div>
                     <div class="warning-content">
-                        <h3>Restore Cancelled Rental</h3>
-                        <p>This action will undo the cancellation and restore the rental to its appropriate status based on the current date and event schedule.</p>
+                        <h3>⚠️ Are you sure you want to undo this cancellation?</h3>
+                        <p>This action will:</p>
                         <ul class="warning-list">
-                            <li>The rental status will be automatically recalculated</li>
-                            <li>Customer will be notified of the status change</li>
-                            <li>Any cancellation fees will be reversed</li>
-                            <li>The rental will be restored to the active schedule</li>
+                            <li>Restore the rental to active status</li>
+                            <li>Re-reserve the items for this customer</li>
+                            <li>Change the rental status based on current date</li>
+                            <li>Record the restoration date</li>
                         </ul>
-                        <div class="final-warning">
-                            <strong>⚠️ Important:</strong> Please confirm this action is intended as it will reactivate the rental booking.
-                        </div>
+                        <p class="final-warning">
+                            <strong>The rental will be reactivated immediately!</strong>
+                        </p>
                     </div>
                 </div>
                 
                 <div class="transaction-summary">
-                    <h4><i class='bx bx-receipt'></i> Rental Details</h4>
+                    <h4>Rental to be restored:</h4>
                     <div class="summary-content">
                         <p><strong>Customer:</strong> <span id="undo-customer-name">-</span></p>
                         <p><strong>Transaction Code:</strong> <span id="undo-transaction-code">-</span></p>
@@ -739,21 +739,22 @@
                     </div>
                 </div>
 
-                <div class="transaction-summary">
-                    <h4><i class='bx bx-info-circle'></i> Status Information</h4>
-                    <div class="summary-content">
-                        <p><strong>Current Status:</strong> <span class="status-badge status-cancelled">Cancelled</span></p>
-                        <p><strong>New Status:</strong> <span class="status-badge" id="predicted-status-badge">Calculating...</span></p>
-                        <p><strong>Reason:</strong> <span id="status-explanation">The rental status will be automatically determined based on the current date and event dates.</span></p>
+                <div class="status-prediction">
+                    <h4>Predicted New Status:</h4>
+                    <div class="status-badge" id="predicted-status-badge">
+                        <span id="predicted-status-text">Calculating...</span>
                     </div>
+                    <p class="status-explanation" id="status-explanation">
+                        The rental status will be automatically determined based on the current date and event dates.
+                    </p>
                 </div>
                 
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="closeUndoCancelModal()">
-                        <i class='bx bx-x'></i> Cancel
+                        <i class='bx bx-x'></i> Keep Cancelled
                     </button>
-                    <button type="button" class="btn-primary" id="confirm-undo-btn" onclick="confirmUndoCancel()">
-                        <i class='bx bx-undo'></i> Restore Rental
+                    <button type="button" class="btn-undo" id="confirm-undo-btn" onclick="confirmUndoCancel()">
+                        <i class='bx bx-undo'></i> Undo Cancellation
                     </button>
                 </div>
             </div>
