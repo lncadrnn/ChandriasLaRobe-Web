@@ -2800,59 +2800,94 @@ select:disabled {
 
 /* Appointment Details Modal */
 .appointment-details-content {
-    max-width: 600px;
-    max-height: 80vh;
-    overflow-y: auto;
+    max-width: 800px;
+    width: 95%;
 }
 
 .appointment-details-content .modal-header {
-    background: linear-gradient(135deg, #e91e63, #d63384);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
     color: white;
+    padding: 1.5rem 2rem;
     border-radius: 16px 16px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    flex-shrink: 0;
 }
 
 .appointment-details-content .modal-header h2 {
-    color: white;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
+    color: white;
 }
 
 .appointment-details-content .modal-header .close-btn {
-    color: white;
     background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
 }
 
 .appointment-details-content .modal-header .close-btn:hover {
     background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.1);
 }
 
 /* Edit Appointment Modal */
 .edit-appointment-modal-content {
-    max-width: 700px;
-    max-height: 85vh;
-    overflow-y: auto;
+    max-width: 900px !important;
+    width: 95% !important;
+    max-height: 95vh !important;
 }
 
 .edit-appointment-modal-content .modal-header {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
     color: white;
+    padding: 1.5rem 2rem;
     border-radius: 16px 16px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    flex-shrink: 0;
 }
 
 .edit-appointment-modal-content .modal-header h2 {
-    color: white;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
+    color: white;
 }
 
 .edit-appointment-modal-content .modal-header .close-btn {
-    color: white;
     background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.5rem;
+    transition: all 0.2s ease;
 }
 
 .edit-appointment-modal-content .modal-header .close-btn:hover {
@@ -2862,33 +2897,60 @@ select:disabled {
 
 /* Delete Appointment Modal */
 .delete-appointment-modal-content {
-    max-width: 550px;
-    border: 2px solid #dc2626;
-    box-shadow: 0 20px 60px rgba(220, 38, 38, 0.2);
+    max-width: 800px !important;
+    width: 95% !important;
+    max-height: 90vh !important;
+    background: white !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    transform: scale(0.9) translateY(20px) !important;
+    transition: transform 0.3s ease !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
 }
 
 .delete-appointment-modal-content .modal-header.delete-header {
-    background: linear-gradient(135deg, #dc2626, #ef4444);
-    color: white;
-    border-radius: 16px 16px 0 0;
+    background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+    color: white !important;
+    padding: 1.5rem 2rem !important;
+    border-radius: 16px 16px 0 0 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
 }
 
 .delete-appointment-modal-content .modal-header h2 {
-    color: white;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
+    margin: 0 !important;
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    color: white !important;
 }
 
 .delete-appointment-modal-content .modal-header .close-btn {
-    color: white;
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: none !important;
+    color: white !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    font-size: 1.5rem !important;
+    transition: all 0.2s ease !important;
 }
 
 .delete-appointment-modal-content .modal-header .close-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: scale(1.1) !important;
 }
 
 /* Appointment Summary Styles */
@@ -3135,4 +3197,9 @@ select:disabled {
         flex-direction: column;
         gap: 0.75rem;
     }
+}
+
+/* Show state for delete appointment modal to match rental modal behavior */
+#delete-appointment-modal.show .delete-appointment-modal-content {
+    transform: scale(1) translateY(0) !important;
 }
