@@ -790,147 +790,370 @@ body.modal-open .modal-overlay.show .modal-content {
     box-shadow: none;
 }
 
-/* =============== IMPROVED CANCEL RENTAL MODAL STYLES =============== */
-#cancel-rental-modal .modal-content {
-    max-width: 500px;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-    transform: translateY(-20px) scale(0.95);
-    transition: all 0.3s ease;
-    overflow: hidden;
+/* =============== CANCEL RENTAL MODAL - EXACT COPY OF DELETE MODAL STRUCTURE =============== */
+
+/* Cancel Modal Content - Same width as transaction details and delete modals */
+.cancel-modal-content {
+    max-width: 800px !important;
+    width: 95% !important;
+    max-height: 90vh !important;
+    background: white !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    transform: scale(0.9) translateY(20px) !important;
+    transition: transform 0.3s ease !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
 }
 
-#cancel-rental-modal.show .modal-content {
-    transform: translateY(0) scale(1);
+#cancel-rental-modal.show .cancel-modal-content {
+    transform: scale(1) translateY(0) !important;
 }
 
+/* Cancel Modal Header - Red theme */
 .cancel-header {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
-    padding: 1.5rem;
-    border-radius: 16px 16px 0 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+    color: white !important;
+    padding: 1.5rem 2rem !important;
+    border-radius: 16px 16px 0 0 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
 }
 
 .cancel-header h2 {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    margin: 0 !important;
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    color: white !important;
+}
+
+.cancel-header h2 i {
+    font-size: 1.5rem !important;
+    color: white !important;
 }
 
 .cancel-header .close-btn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    transition: background-color 0.2s;
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: none !important;
+    color: white !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    font-size: 1.5rem !important;
+    transition: all 0.2s ease !important;
 }
 
 .cancel-header .close-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: scale(1.1) !important;
 }
 
-.cancel-warning {
-    background: #fef3c7;
-    border: 2px solid #fbbf24;
-    border-radius: 12px;
-    padding: 1.25rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
+/* Cancel Modal Body - With scrollbar styling like delete modal */
+#cancel-rental-modal .modal-body {
+    padding: 2rem !important;
+    overflow-y: auto !important;
+    flex: 1 !important;
+    min-height: 0 !important;
 }
 
-.warning-icon {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    flex-shrink: 0;
+/* Custom Scrollbar for Cancel Modal Body - Same as delete modal */
+#cancel-rental-modal .modal-body::-webkit-scrollbar {
+    width: 8px !important;
 }
 
-.warning-content {
-    flex: 1;
+#cancel-rental-modal .modal-body::-webkit-scrollbar-track {
+    background: rgba(239, 68, 68, 0.05) !important;
+    border-radius: 4px !important;
+    margin: 8px 0 !important;
 }
 
-.cancel-warning-title {
-    margin: 0 0 0.75rem 0;
-    color: #dc2626;
-    font-size: 1.1rem;
-    font-weight: 600;
+#cancel-rental-modal .modal-body::-webkit-scrollbar-thumb {
+    background: #ef4444 !important;
+    border-radius: 4px !important;
+    transition: background 0.3s ease !important;
 }
 
-.cancel-warning-text {
-    margin: 0 0 0.5rem 0;
-    color: #7f1d1d;
-    font-weight: 500;
+#cancel-rental-modal .modal-body::-webkit-scrollbar-thumb:hover {
+    background: #dc2626 !important;
 }
 
-.cancel-warning-list {
-    margin: 0 0 1rem 0;
-    padding-left: 1.25rem;
-    color: #7f1d1d;
+/* Firefox Scrollbar for Cancel Modal Body */
+#cancel-rental-modal .modal-body {
+    scrollbar-width: thin !important;
+    scrollbar-color: #ef4444 rgba(239, 68, 68, 0.05) !important;
 }
 
-.cancel-warning-list li {
-    margin-bottom: 0.25rem;
+/* Warning Section */
+#cancel-rental-modal .warning-section {
+    background: #fef2f2 !important;
+    border: 2px solid #fecaca !important;
+    border-radius: 12px !important;
+    padding: 2rem !important;
+    margin-bottom: 2rem !important;
+    text-align: center !important;
+    display: block !important;
 }
 
-.cancel-final-warning {
-    margin: 0;
-    color: #059669;
-    font-size: 0.9rem;
-    padding: 0.75rem;
-    background: #ecfdf5;
-    border-radius: 8px;
-    border-left: 4px solid #10b981;
+#cancel-rental-modal .warning-icon {
+    width: 80px !important;
+    height: 80px !important;
+    background: linear-gradient(135deg, #fee2e2, #fecaca) !important;
+    border: 3px solid #ef4444 !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    animation: pulse 2s infinite !important;
+    margin: 0 auto 1.5rem auto !important;
+    flex-shrink: 0 !important;
 }
 
-.btn-cancel {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.2s;
-    min-width: 140px;
-    justify-content: center;
+#cancel-rental-modal .warning-icon i {
+    font-size: 2.5rem !important;
+    color: #dc2626 !important;
+    z-index: 1 !important;
+    position: relative !important;
 }
 
-.btn-cancel:hover {
-    background: linear-gradient(135deg, #dc2626, #b91c1c);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+#cancel-rental-modal .warning-content {
+    max-width: 100% !important;
 }
 
-.btn-cancel:active {
-    transform: translateY(0);
+#cancel-rental-modal .warning-content h3 {
+    margin: 0 0 1rem 0 !important;
+    color: #dc2626 !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    text-align: center !important;
 }
 
-.btn-cancel:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
+#cancel-rental-modal .warning-content p {
+    margin: 0 0 1.5rem 0 !important;
+    color: #7f1d1d !important;
+    line-height: 1.6 !important;
+    font-weight: 500 !important;
+    text-align: center !important;
+    max-width: 600px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+#cancel-rental-modal .warning-list {
+    margin: 0 0 1.5rem 0 !important;
+    padding-left: 0 !important;
+    color: #991b1b !important;
+    text-align: left !important;
+    max-width: 500px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    list-style: none !important;
+}
+
+#cancel-rental-modal .warning-list li {
+    margin-bottom: 0.75rem !important;
+    line-height: 1.5 !important;
+    position: relative !important;
+    font-weight: 500 !important;
+    padding-left: 1.5rem !important;
+}
+
+#cancel-rental-modal .warning-list li::before {
+    content: '⚠️' !important;
+    position: absolute !important;
+    left: 0 !important;
+    color: #ef4444 !important;
+    font-weight: bold !important;
+}
+
+#cancel-rental-modal .final-warning {
+    background: linear-gradient(135deg, #fee2e2, #fecaca) !important;
+    border: 2px solid #ef4444 !important;
+    border-radius: 8px !important;
+    padding: 1rem !important;
+    margin-top: 1.5rem !important;
+    font-weight: 600 !important;
+    color: #dc2626 !important;
+}
+
+/* Transaction Summary */
+#cancel-rental-modal .transaction-summary {
+    background: #fef2f2 !important;
+    border: 2px solid #fecaca !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 2rem !important;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1) !important;
+}
+
+#cancel-rental-modal .transaction-summary h4 {
+    margin: 0 0 1rem 0 !important;
+    color: #dc2626 !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    padding-bottom: 0.5rem !important;
+    border-bottom: 2px solid #fecaca !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+#cancel-rental-modal .summary-content p {
+    margin: 0.75rem 0 !important;
+    color: #7f1d1d !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    line-height: 1.5 !important;
+    font-weight: 500 !important;
+}
+
+#cancel-rental-modal .summary-content strong {
+    color: #991b1b !important;
+    font-weight: 600 !important;
+    min-width: 140px !important;
+}
+
+#cancel-rental-modal .summary-content span {
+    text-align: right !important;
+    font-weight: 600 !important;
+    color: #dc2626 !important;
+}
+
+/* Form Actions - Same as delete modal */
+#cancel-rental-modal .form-actions {
+    display: flex !important;
+    gap: 1rem !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    padding: 1.5rem 2rem !important;
+    background: #fef2f2 !important;
+    border-top: 2px solid #fecaca !important;
+    border-radius: 0 0 16px 16px !important;
+    flex-shrink: 0 !important;
+}
+
+/* Cancel Modal Buttons */
+#cancel-rental-modal .btn-cancel {
+    background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+    color: white !important;
+    border: 2px solid #dc2626 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    min-width: 140px !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+}
+
+#cancel-rental-modal .btn-cancel:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+    border-color: #b91c1c !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4) !important;
+}
+
+#cancel-rental-modal .btn-cancel:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3) !important;
+}
+
+#cancel-rental-modal .btn-secondary {
+    background: #f8f9fa !important;
+    color: #6c757d !important;
+    border: 2px solid #dee2e6 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    min-width: 120px !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+}
+
+#cancel-rental-modal .btn-secondary:hover {
+    background: #e9ecef !important;
+    border-color: #adb5bd !important;
+    color: #495057 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Cancel Button Loading State */
+#cancel-rental-modal .btn-cancel.loading {
+    pointer-events: none !important;
+    opacity: 0.7 !important;
+}
+
+#cancel-rental-modal .btn-cancel.loading i {
+    animation: spin 1s linear infinite !important;
+}
+
+/* Mobile Responsive Design for Cancel Modal */
+@media (max-width: 768px) {
+    .cancel-modal-content {
+        width: 95% !important;
+        max-width: none !important;
+        margin: 1rem !important;
+        max-height: calc(100vh - 2rem) !important;
+    }
+
+    .cancel-header {
+        padding: 1rem 1.5rem !important;
+    }
+
+    .cancel-header h2 {
+        font-size: 1.25rem !important;
+    }
+
+    #cancel-rental-modal .modal-body {
+        padding: 1.5rem !important;
+    }
+
+    #cancel-rental-modal .warning-section {
+        padding: 1.5rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+
+    #cancel-rental-modal .transaction-summary {
+        margin-bottom: 1.5rem !important;
+        padding: 1.25rem !important;
+    }
+
+    #cancel-rental-modal .form-actions {
+        padding: 1rem 1.5rem !important;
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+    }
+
+    #cancel-rental-modal .btn-cancel,
+    #cancel-rental-modal .btn-secondary {
+        width: 100% !important;
+        min-width: unset !important;
+    }
 }
 
 /* =============== SHARED MODAL STYLES =============== */

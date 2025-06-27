@@ -582,28 +582,28 @@
 
     <!-- Cancel Rental Confirmation Modal -->
     <div id="cancel-rental-modal" class="modal-overlay">
-        <div class="modal-content delete-modal-content">
+        <div class="modal-content cancel-modal-content">
             <div class="modal-header cancel-header">
-                <h2><i class='bx bx-error-circle'></i> Cancel Rental</h2>
+                <h2><i class='bx bx-x-circle'></i> Cancel Rental</h2>
                 <button class="close-btn" onclick="closeCancelRentalModal()">
                     <i class='bx bx-x'></i>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="warning-section cancel-warning">
+                <div class="warning-section">
                     <div class="warning-icon">
-                        <i class='bx bx-error-circle cancel-warning-icon'></i>
+                        <i class='bx bx-x-circle'></i>
                     </div>
                     <div class="warning-content">
-                        <h3 class="cancel-warning-title">⚠️ Are you sure you want to cancel this rental?</h3>
-                        <p class="cancel-warning-text">This action will:</p>
-                        <ul class="warning-list cancel-warning-list">
+                        <h3>⚠️ Are you sure you want to cancel this rental?</h3>
+                        <p>This action will:</p>
+                        <ul class="warning-list">
                             <li>Cancel the upcoming rental booking</li>
                             <li>Free up the reserved items for other customers</li>
                             <li>Change the rental status to "Cancelled"</li>
                             <li>Record the cancellation date</li>
                         </ul>
-                        <p class="final-warning cancel-final-warning">
+                        <p class="final-warning">
                             <strong>This action can be undone later if needed!</strong>
                         </p>
                     </div>
@@ -622,7 +622,8 @@
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="closeCancelRentalModal()">
                         <i class='bx bx-x'></i> Keep Rental
-                    </button>                    <button type="button" class="btn-cancel" id="confirm-cancel-rental-btn" onclick="console.log('Cancel button clicked!'); confirmCancelRental();">
+                    </button>
+                    <button type="button" class="btn-cancel" id="confirm-cancel-rental-btn" onclick="confirmCancelRental()">
                         <i class='bx bx-x-circle'></i> Cancel Rental
                     </button>
                 </div>
