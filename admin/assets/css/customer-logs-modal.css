@@ -1872,19 +1872,20 @@ body.modal-open .modal-overlay.show .modal-content {
         gap: 0.75rem !important;
     }
     
-    #mark-complete-confirmation-modal .warning-icon {
-        width: 50px !important;
-        height: 50px !important;
-        font-size: 1.5rem !important;
+    #mark-complete-confirmation-modal .transaction-summary {
+        padding: 1rem !important;
+        margin-bottom: 1.5rem !important;
     }
-    
+
     #mark-complete-confirmation-modal .form-actions {
         padding: 1rem 1.5rem !important;
         flex-direction: column !important;
     }
     
-    #mark-complete-confirmation-modal .form-actions button {
+    #mark-complete-confirmation-modal .btn-complete,
+    #mark-complete-confirmation-modal .btn-secondary {
         width: 100% !important;
+        min-width: auto !important;
         justify-content: center !important;
     }
 }
@@ -2158,10 +2159,9 @@ body.modal-open .modal-overlay.show .modal-content {
     border: 2px solid rgba(251, 146, 60, 0.4) !important;
 }
 
-/* Fee Section - Orange theme */
-#process-overdue-modal .fee-section {
-    background: rgba(251, 146, 60, 0.05) !important;
-    border: 2px solid rgba(251, 146, 60, 0.2) !important;
+/* Option Notes for overdue modal */
+#process-overdue-modal .option-note {
+    background: rgba(59, 130, 246, 0.05) !important;
     border-radius: 12px !important;
     padding: 1.5rem !important;
     margin-top: 1.5rem !important;

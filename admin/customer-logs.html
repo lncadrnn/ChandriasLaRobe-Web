@@ -648,32 +648,47 @@
                                     <span>Mark as Completed</span>
                                     <small>Items have been returned without penalty</small>
                                 </label>
+                                <div class="option-note" id="completed-note">
+                                    <i class='bx bx-info-circle'></i>
+                                    <p>Marking this rental as completed indicates that all transactions with this customer have been successfully concluded.</p>
+                                </div>
                             </div>
                             <div class="overdue-option">
                                 <input type="radio" id="add-late-fee" name="overdue-action" value="late-fee">
                                 <label for="add-late-fee">
                                     <i class='bx bx-money'></i>
-                                    <span>Add Late Fee & Complete</span>
-                                    <small>Apply penalty for late return</small>
+                                    <span>Add Overdue Fee & Complete</span>
+                                    <small>Apply penalty for overdue return</small>
                                 </label>
+                                <div class="option-note option-note-hidden" id="late-fee-note">
+                                    <i class='bx bx-money'></i>
+                                    <p>An overdue fee will be added to cover the penalty for late return. Please specify the fee amount and reason below.</p>
+                                </div>
                             </div>
                         </div>
                         
                         <!-- Late Fee Section -->
                         <div id="late-fee-section" class="fee-section fee-section-hidden">
-                            <h4>Late Fee Details</h4>
+                            <h4>Overdue Fee Details</h4>
                             <div class="fee-input-group">
-                                <label for="late-fee-amount">Fee Amount (₱)</label>
-                                <input type="number" id="late-fee-amount" min="0" step="0.01" placeholder="0.00">
+                                <label for="late-fee-amount">Overdue Fee Amount (₱) *</label>
+                                <input type="number" id="late-fee-amount" min="0" step="0.01" placeholder="0.00" required>
                             </div>
                             <div class="fee-input-group">
-                                <label for="late-fee-reason">Reason</label>
-                                <select id="late-fee-reason">
+                                <label for="late-fee-reason">Reason for Fee *</label>
+                                <select id="late-fee-reason" required>
+                                    <option value="">Select a reason</option>
                                     <option value="late-return">Late Return</option>
                                     <option value="damaged-item">Damaged Item</option>
                                     <option value="missing-accessory">Missing Accessory</option>
-                                    <option value="other">Other</option>
+                                    <option value="cleaning-fee">Additional Cleaning Required</option>
+                                    <option value="extended-use">Extended Use Beyond Agreement</option>
+                                    <option value="other">Other (Specify in Notes)</option>
                                 </select>
+                            </div>
+                            <div class="fee-input-group">
+                                <label for="late-fee-notes">Additional Notes (Optional)</label>
+                                <textarea id="late-fee-notes" rows="2" placeholder="Any additional details about the fee..."></textarea>
                             </div>
                         </div>
                     </div>
