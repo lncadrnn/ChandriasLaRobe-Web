@@ -4149,6 +4149,23 @@
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
 }
 
+#mark-complete-confirmation-modal .payment-section h4 {
+    color: #2196F3 !important;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#mark-complete-confirmation-modal .payment-type-group select:focus,
+#mark-complete-confirmation-modal .payment-reference-group input:focus {
+    outline: none;
+    border-color: #2196F3 !important;
+    box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
+}
+
 /* Helper text below input */
 .delete-input-helper {
     margin-top: 0.75rem !important;
