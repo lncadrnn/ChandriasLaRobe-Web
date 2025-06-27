@@ -1707,14 +1707,14 @@ select:disabled {
 }
 
 .card-action-btn.undo-cancel-btn {
-    background: rgba(59, 130, 246, 0.1);
-    border-color: rgba(59, 130, 246, 0.3);
-    color: #3b82f6;
+    background: var(--background-color  );
+    border-color: rgba(255, 193, 7, 0.772);
+    color: #ffc107;
 }
 
 .card-action-btn.undo-cancel-btn:hover {
-    background: rgba(59, 130, 246, 0.2);
-    border-color: #3b82f6;
+    background: rgba(255, 193, 7, 0.3);
+    border-color: #ffc107;
 }
 
 /* =============== CONTROL BAR STYLES =============== */
