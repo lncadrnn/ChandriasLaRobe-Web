@@ -3858,7 +3858,7 @@
 }
 
 /* Delete Modal Buttons */
-#delete-modal .btn-danger {
+#delete-modal .btn-danger, button:disabled, .btn:disabled, input:disabled, select:disabled {
     background: linear-gradient(135deg, #ef4444, #dc2626);
     color: white;
     border: 2px solid #dc2626;
