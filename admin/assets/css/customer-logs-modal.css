@@ -1,304 +1,365 @@
-/* ============================================
-   Undo Cancellation Modal Styles
-   ============================================ */
+/* =============== UNDO CANCELLATION MODAL - EXACT COPY OF CANCEL MODAL STRUCTURE WITH YELLOW THEME =============== */
 
-/* Use the same primary color variables as the admin layout */
-:root {
-    --primary-color: hsl(346, 100%, 74%);
-    --primary-color-light: #f6f5ff;
-    --primary-color-dark: hsl(346, 100%, 65%);
-    --primary-color-darker: hsl(346, 100%, 55%);
-}
-
-/* Modal Overlay */
-.undo-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.undo-modal-overlay.show {
-    display: flex;
-    opacity: 1;
-}
-
-/* Modal Content */
+/* Undo Modal Content - Same width as transaction details and delete modals */
 .undo-modal-content {
-    background: white;
-    border-radius: 16px;
-    width: 90%;
-    max-width: 600px;
-    max-height: 90vh;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    transform: scale(0.9) translateY(20px);
-    transition: transform 0.3s ease;
-    position: relative;
-    display: flex;
-    flex-direction: column;
+    max-width: 800px !important;
+    width: 95% !important;
+    max-height: 90vh !important;
+    background: white !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    transform: scale(0.9) translateY(20px) !important;
+    transition: transform 0.3s ease !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
 }
 
-.undo-modal-overlay.show .undo-modal-content {
-    transform: scale(1) translateY(0);
+#undo-cancel-modal.show .undo-modal-content {
+    transform: scale(1) translateY(0) !important;
 }
 
-/* Modal Header */
-.undo-modal-header {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
-    color: white;
-    padding: 1.5rem 2rem;
-    border-radius: 16px 16px 0 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
+/* Undo Modal Header - Yellow theme */
+.undo-header {
+    background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+    color: white !important;
+    padding: 1.5rem 2rem !important;
+    border-radius: 16px 16px 0 0 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
 }
 
-.undo-modal-header h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: white;
+.undo-header h2 {
+    margin: 0 !important;
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    color: white !important;
 }
 
-.undo-modal-header h2 i {
-    font-size: 1.8rem;
-    animation: rotate 2s ease-in-out infinite;
+.undo-header h2 i {
+    font-size: 1.5rem !important;
+    color: white !important;
 }
 
-@keyframes rotate {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(180deg); }
+.undo-header .close-btn {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: none !important;
+    color: white !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    font-size: 1.5rem !important;
+    transition: all 0.2s ease !important;
 }
 
-.undo-modal-close {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    padding: 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s ease;
-    width: 40px;
-    height: 40px;
+.undo-header .close-btn:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: scale(1.1) !important;
 }
 
-.undo-modal-close:hover {
-    background: rgba(255, 255, 255, 0.3);
+/* Undo Modal Body - With scrollbar styling like delete modal */
+#undo-cancel-modal .modal-body {
+    padding: 2rem !important;
+    overflow-y: auto !important;
+    flex: 1 !important;
+    min-height: 0 !important;
 }
 
-.undo-modal-close i {
-    font-size: 1.2rem;
+/* Custom Scrollbar for Undo Modal Body - Exact copy of cancel modal */
+#undo-cancel-modal .modal-body::-webkit-scrollbar {
+    width: 8px !important;
 }
 
-/* Modal Body */
-.undo-modal-body {
-    padding: 2rem;
-    overflow-y: auto;
-    flex: 1;
-    min-height: 0;
+#undo-cancel-modal .modal-body::-webkit-scrollbar-track {
+    background: #fefbf2 !important;
+    border-radius: 4px !important;
 }
 
-/* Custom Scrollbar for Modal Body */
-.undo-modal-body::-webkit-scrollbar {
-    width: 8px;
+#undo-cancel-modal .modal-body::-webkit-scrollbar-thumb {
+    background: #fcd34d !important;
+    border-radius: 4px !important;
 }
 
-.undo-modal-body::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 4px;
-    margin: 8px 0;
+#undo-cancel-modal .modal-body::-webkit-scrollbar-thumb:hover {
+    background: #f59e0b !important;
 }
 
-.undo-modal-body::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: 4px;
-    transition: background 0.3s ease;
+/* Firefox Scrollbar for Undo Modal Body */
+#undo-cancel-modal .modal-body {
+    scrollbar-width: thin !important;
+    scrollbar-color: #fcd34d #fefbf2 !important;
 }
 
-.undo-modal-body::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-color-dark);
+/* Warning Section */
+#undo-cancel-modal .warning-section {
+    background: #fefbf2 !important;
+    border: 2px solid #fcd34d !important;
+    border-radius: 12px !important;
+    padding: 2rem !important;
+    margin-bottom: 2rem !important;
+    text-align: center !important;
+    display: block !important;
 }
 
-/* Firefox Scrollbar for Modal Body */
-.undo-modal-body {
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.05);
+#undo-cancel-modal .warning-icon {
+    width: 80px !important;
+    height: 80px !important;
+    background: linear-gradient(135deg, #fef3c7, #fcd34d) !important;
+    border: 3px solid #f59e0b !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    animation: pulse 2s infinite !important;
+    margin: 0 auto 1.5rem auto !important;
+    flex-shrink: 0 !important;
 }
 
-/* Confirmation Section */
-.undo-confirmation-section {
-    display: flex;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+#undo-cancel-modal .warning-icon i {
+    font-size: 2.5rem !important;
+    color: #d97706 !important;
+    z-index: 1 !important;
+    position: relative !important;
 }
 
-.undo-confirmation-icon {
-    flex-shrink: 0;
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, var(--primary-color-light), rgba(255, 105, 180, 0.2));
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
+#undo-cancel-modal .warning-content {
+    max-width: 100% !important;
 }
 
-.undo-confirmation-icon::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(23, 162, 184, 0.1), transparent);
-    animation: shimmer 2s infinite;
+#undo-cancel-modal .warning-content h3 {
+    margin: 0 0 1rem 0 !important;
+    color: #d97706 !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    text-align: center !important;
 }
 
-@keyframes shimmer {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+#undo-cancel-modal .warning-content p {
+    margin: 0 0 1.5rem 0 !important;
+    color: #92400e !important;
+    line-height: 1.6 !important;
+    font-weight: 500 !important;
+    text-align: center !important;
+    max-width: 600px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 
-.undo-confirmation-icon i {
-    font-size: 2.5rem;
-    color: var(--primary-color);
-    z-index: 1;
-    position: relative;
+#undo-cancel-modal .warning-list {
+    margin: 0 0 1.5rem 0 !important;
+    padding-left: 0 !important;
+    color: #78350f !important;
+    text-align: left !important;
+    max-width: 500px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    list-style: none !important;
 }
 
-.undo-confirmation-content {
-    flex: 1;
+#undo-cancel-modal .warning-list li {
+    margin-bottom: 0.75rem !important;
+    line-height: 1.5 !important;
+    position: relative !important;
+    font-weight: 500 !important;
+    padding-left: 1.5rem !important;
 }
 
-.undo-confirmation-content h3 {
-    margin: 0 0 1rem 0;
-    color: #2c3e50;
-    font-size: 1.25rem;
-    font-weight: 600;
+#undo-cancel-modal .warning-list li::before {
+    content: '🔄' !important;
+    position: absolute !important;
+    left: 0 !important;
+    color: #f59e0b !important;
+    font-weight: bold !important;
 }
 
-.undo-confirmation-content p {
-    margin: 0 0 1rem 0;
-    color: #6c757d;
-    line-height: 1.5;
-}
-
-.undo-confirmation-list {
-    margin: 0 0 1.5rem 0;
-    padding-left: 1.2rem;
-    color: #495057;
-}
-
-.undo-confirmation-list li {
-    margin-bottom: 0.5rem;
-    line-height: 1.4;
-    position: relative;
-}
-
-.undo-confirmation-list li::marker {
-    color: var(--primary-color);
-}
-
-/* Status Prediction */
-.undo-status-prediction {
-    background: linear-gradient(135deg, var(--primary-color-light), #f8f9fa);
-    border: 2px solid rgba(255, 105, 180, 0.2);
-    border-radius: 12px;
-    padding: 1.25rem;
-    margin-top: 1.5rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.undo-status-prediction::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(23, 162, 184, 0.1), transparent);
-    animation: slideIn 3s infinite;
-}
-
-@keyframes slideIn {
-    0% { left: -100%; }
-    50% { left: 100%; }
-    100% { left: 100%; }
-}
-
-.undo-status-prediction h4 {
-    margin: 0 0 0.75rem 0;
-    color: #2c3e50;
-    font-size: 1.1rem;
-    font-weight: 600;
-    position: relative;
-    z-index: 1;
-}
-
-.undo-status-prediction p {
-    margin: 0;
-    font-size: 1rem;
-    color: #495057;
-    position: relative;
-    z-index: 1;
+#undo-cancel-modal .final-warning {
+    background: linear-gradient(135deg, #fef3c7, #fcd34d) !important;
+    border: 2px solid #f59e0b !important;
+    border-radius: 8px !important;
+    padding: 1rem !important;
+    margin-top: 1.5rem !important;
+    font-weight: 600 !important;
+    color: #d97706 !important;
 }
 
 /* Transaction Summary */
-.undo-transaction-summary {
-    background: #ffffff;
-    border: 1px solid #e9ecef;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+#undo-cancel-modal .transaction-summary {
+    background: #fefbf2 !important;
+    border: 2px solid #fcd34d !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 2rem !important;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.1) !important;
 }
 
-.undo-transaction-summary h4 {
-    margin: 0 0 1rem 0;
-    color: #2c3e50;
-    font-size: 1.1rem;
-    font-weight: 600;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e9ecef;
+#undo-cancel-modal .transaction-summary h4 {
+    margin: 0 0 1rem 0 !important;
+    color: #d97706 !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    padding-bottom: 0.5rem !important;
+    border-bottom: 2px solid #fcd34d !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
 }
 
-.undo-summary-content p {
-    margin: 0.75rem 0;
-    color: #495057;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    line-height: 1.4;
+#undo-cancel-modal .summary-content p {
+    margin: 0.75rem 0 !important;
+    color: #92400e !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    line-height: 1.5 !important;
+    font-weight: 500 !important;
 }
 
-.undo-summary-content strong {
-    color: #2c3e50;
-    font-weight: 600;
-    min-width: 140px;
+#undo-cancel-modal .summary-content strong {
+    color: #78350f !important;
+    font-weight: 600 !important;
+    min-width: 140px !important;
 }
 
-.undo-summary-content span {
-    text-align: right;
-    font-weight: 500;
+#undo-cancel-modal .summary-content span {
+    text-align: right !important;
+    font-weight: 600 !important;
+    color: #d97706 !important;
+}
+
+/* Form Actions - Same as cancel modal */
+#undo-cancel-modal .form-actions {
+    display: flex !important;
+    gap: 1rem !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    padding: 1.5rem 2rem !important;
+    background: #fefbf2 !important;
+    border-top: 2px solid #fcd34d !important;
+    border-radius: 0 0 16px 16px !important;
+    flex-shrink: 0 !important;
+}
+
+/* Undo Modal Buttons */
+#undo-cancel-modal .btn-primary {
+    background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+    color: white !important;
+    border: 2px solid #d97706 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    min-width: 140px !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+}
+
+#undo-cancel-modal .btn-primary:hover {
+    background: linear-gradient(135deg, #d97706, #b45309) !important;
+    border-color: #b45309 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4) !important;
+}
+
+#undo-cancel-modal .btn-primary:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3) !important;
+}
+
+#undo-cancel-modal .btn-secondary {
+    background: #f8f9fa !important;
+    color: #6c757d !important;
+    border: 2px solid #dee2e6 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    min-width: 120px !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+}
+
+#undo-cancel-modal .btn-secondary:hover {
+    background: #e9ecef !important;
+    border-color: #adb5bd !important;
+    color: #495057 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Undo Button Loading State */
+#undo-cancel-modal .btn-primary.loading {
+    pointer-events: none !important;
+    opacity: 0.7 !important;
+}
+
+#undo-cancel-modal .btn-primary.loading i {
+    animation: spin 1s linear infinite !important;
+}
+
+/* Mobile Responsive Design for Undo Modal */
+@media (max-width: 768px) {
+    .undo-modal-content {
+        width: 95% !important;
+        max-width: none !important;
+        margin: 1rem !important;
+        max-height: calc(100vh - 2rem) !important;
+    }
+
+    .undo-header {
+        padding: 1rem 1.5rem !important;
+    }
+
+    .undo-header h2 {
+        font-size: 1.25rem !important;
+    }
+
+    #undo-cancel-modal .modal-body {
+        padding: 1.5rem !important;
+    }
+
+    #undo-cancel-modal .warning-section {
+        padding: 1.5rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+
+    #undo-cancel-modal .transaction-summary {
+        margin-bottom: 1.5rem !important;
+        padding: 1.25rem !important;
+    }
+
+    #undo-cancel-modal .form-actions {
+        padding: 1rem 1.5rem !important;
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+    }
+
+    #undo-cancel-modal .btn-primary,
+    #undo-cancel-modal .btn-secondary {
+        width: 100% !important;
+        min-width: unset !important;
+    }
 }
 
 /* Status Badge */
@@ -343,50 +404,7 @@
     box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
 }
 
-/* =============== UNDO CANCELLATION MODAL STYLES =============== */
-.undo-icon {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
-    color: white;
-}
-
-.undo-icon i {
-    color: white;
-}
-
-.status-prediction {
-    background: var(--primary-color-light);
-    border: 1px solid rgba(255, 105, 180, 0.3);
-    border-radius: 8px;
-    padding: 1rem;
-    margin-top: 1rem;
-}
-
-.status-prediction h4 {
-    margin: 0 0 0.5rem 0;
-    color: var(--primary-color-darker);
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-.status-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.5rem;
-}
-
-.status-badge.upcoming {
-    background: #dbeafe;
-    color: #1e40af;
-    border: 1px solid var(--primary-color);
-}
-
-.status-badge.ongoing {
+/* =============== SHARED MODAL STYLES =============== */
     background: #fef3c7;
     color: #92400e;
     border: 1px solid #f59e0b;

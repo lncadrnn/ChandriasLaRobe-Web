@@ -14,17 +14,6 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>    <!-- Notyf CSS and JS for notifications -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-    <script>
-        // Initialize Notyf globally
-        window.notyf = new Notyf({
-            duration: 4000,
-            position: {
-                x: 'right',
-                y: 'top'
-            },
-            dismissible: true
-        });
-    </script>
 </head>
 
 <body>    <!-- Page Loader -->
@@ -568,6 +557,9 @@
     <!-- Auth Guard - Must be loaded early -->
     <script type="module" src="./assets/js/auth-guard.js"></script>
     
+    <!-- Real-time Update System -->
+    <script src="./assets/js/customer-logs-realtime.js"></script>
+    
       <!-- EXTERNAL SCRIPT -->
     <script src="./assets/js/spinners-admin.js"></script><script src="./assets/js/admin-layout.js"></script>
     <script src="./assets/js/admin-layout-mob.js"></script>
@@ -707,45 +699,37 @@
         </div>
     </div>
 
-    <!-- Success Modal -->
-    <div id="success-modal" class="modal-overlay modal-hidden">
-        <div class="success-modal-content">
-            <div class="success-modal-header">
-                <i class='bx bx-check-circle success-icon'></i>
-                <h3 id="success-modal-title">Success!</h3>
-            </div>
-            <div class="success-modal-body">
-                <p id="success-modal-message">Operation completed successfully.</p>
-            </div>
-            <div class="success-modal-footer">
-                <button type="button" class="btn-success-ok" onclick="closeSuccessModal()">
-                    <i class='bx bx-check'></i> OK
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Undo Cancellation Modal -->
     <div id="undo-cancel-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class='bx bx-undo'></i> Undo Cancellation</h2>
+        <div class="undo-modal-content">
+            <div class="undo-header">
+                <h2><i class='bx bx-undo'></i> Restore Cancelled Rental</h2>
                 <button class="close-btn" onclick="closeUndoCancelModal()">
                     <i class='bx bx-x'></i>
                 </button>
             </div>
-            <div class="modal-body">                <div class="confirmation-section">
-                    <div class="confirmation-icon undo-icon">
+            <div class="modal-body">
+                <div class="warning-section">
+                    <div class="warning-icon">
                         <i class='bx bx-undo'></i>
                     </div>
-                    <div class="confirmation-content">
-                        <h3>Restore this cancelled rental?</h3>
-                        <p>This will undo the cancellation and restore the rental to its appropriate status based on the event dates.</p>
+                    <div class="warning-content">
+                        <h3>Restore Cancelled Rental</h3>
+                        <p>This action will undo the cancellation and restore the rental to its appropriate status based on the current date and event schedule.</p>
+                        <ul class="warning-list">
+                            <li>The rental status will be automatically recalculated</li>
+                            <li>Customer will be notified of the status change</li>
+                            <li>Any cancellation fees will be reversed</li>
+                            <li>The rental will be restored to the active schedule</li>
+                        </ul>
+                        <div class="final-warning">
+                            <strong>⚠️ Important:</strong> Please confirm this action is intended as it will reactivate the rental booking.
+                        </div>
                     </div>
                 </div>
                 
                 <div class="transaction-summary">
-                    <h4>Rental Details:</h4>
+                    <h4><i class='bx bx-receipt'></i> Rental Details</h4>
                     <div class="summary-content">
                         <p><strong>Customer:</strong> <span id="undo-customer-name">-</span></p>
                         <p><strong>Transaction Code:</strong> <span id="undo-transaction-code">-</span></p>
@@ -755,21 +739,21 @@
                     </div>
                 </div>
 
-                <div class="status-prediction">
-                    <h4>Predicted New Status:</h4>
-                    <div class="status-badge" id="predicted-status-badge">
-                        <span id="predicted-status-text">Calculating...</span>
+                <div class="transaction-summary">
+                    <h4><i class='bx bx-info-circle'></i> Status Information</h4>
+                    <div class="summary-content">
+                        <p><strong>Current Status:</strong> <span class="status-badge status-cancelled">Cancelled</span></p>
+                        <p><strong>New Status:</strong> <span class="status-badge" id="predicted-status-badge">Calculating...</span></p>
+                        <p><strong>Reason:</strong> <span id="status-explanation">The rental status will be automatically determined based on the current date and event dates.</span></p>
                     </div>
-                    <p class="status-explanation" id="status-explanation">
-                        The rental status will be automatically determined based on the current date and event dates.
-                    </p>
                 </div>
                 
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="closeUndoCancelModal()">
                         <i class='bx bx-x'></i> Cancel
-                    </button>                    <button type="button" class="btn-primary" id="confirm-undo-btn" onclick="confirmUndoCancel()">
-                        <i class='bx bx-undo'></i> Confirm Undo
+                    </button>
+                    <button type="button" class="btn-primary" id="confirm-undo-btn" onclick="confirmUndoCancel()">
+                        <i class='bx bx-undo'></i> Restore Rental
                     </button>
                 </div>
             </div>

@@ -1190,12 +1190,19 @@ async function handleEditSubmit(e) {
             filteredTransactions = [...allTransactions];
         }
         
-        // Close modal and refresh view
+        // Close modal
         closeEditModal();
-        if (currentView === 'cards') {
-            renderTransactionCards();
+        
+        // Use real-time updater for immediate UI changes
+        if (window.realTimeUpdater) {
+            window.realTimeUpdater.updateTransaction(currentEditingTransaction.id, updatedData);
         } else {
-            renderTransactionTable();
+            // Fallback: refresh view
+            if (currentView === 'cards') {
+                renderTransactionCards();
+            } else {
+                renderTransactionTable();
+            }
         }
         
         // Show success message
@@ -1326,13 +1333,20 @@ async function confirmDelete() {
         window.allTransactions = allTransactions;
         window.filteredTransactions = filteredTransactions;
         
-        // Close modal and refresh view
+        // Close modal
         closeDeleteModal();
-        updateTransactionCount();
-        if (currentView === 'cards') {
-            renderTransactionCards();
+        
+        // Use real-time updater for immediate UI changes
+        if (window.realTimeUpdater) {
+            window.realTimeUpdater.removeTransaction(currentDeletingTransaction.id);
         } else {
-            renderTransactionTable();
+            // Fallback: update count and re-render
+            updateTransactionCount();
+            if (currentView === 'cards') {
+                renderTransactionCards();
+            } else {
+                renderTransactionTable();
+            }
         }
         
         // Show success message
@@ -1647,21 +1661,25 @@ async function cancelRental(transactionId) {
         if (transactionIndex !== -1) {
             allTransactions[transactionIndex].rentalStatus = 'Cancelled';
             allTransactions[transactionIndex].cancelledDate = new Date().toISOString();
-        }        // Re-filter and re-render
-        filterTransactions();
+        }        
+
+        // Use real-time updater for immediate UI changes
+        if (window.realTimeUpdater) {
+            window.realTimeUpdater.updateTransaction(transactionId, {
+                rentalStatus: 'Cancelled',
+                cancelledDate: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            });
+        } else {
+            // Fallback: Re-filter and re-render
+            filterTransactions();
+        }
           // Hide loading
         hideActionSpinner();
 
-        // Show success notification with Notyf
-        if (window.notyf) {
-            window.notyf.success({
-                message: 'Rental cancelled successfully!',
-                duration: 4000,
-                background: '#28a745',
-                icon: {
-                    className: 'bx bx-check-circle',
-                    tagName: 'i'
-                }            });
+        // Show red rental cancelled notification
+        if (window.showRentalCancelledNotification) {
+            window.showRentalCancelledNotification();
         } else {
             showNotification('Rental cancelled successfully!', 'success');
         }
@@ -1864,28 +1882,27 @@ async function confirmCancelRental() {
         window.allTransactions = allTransactions;
         window.filteredTransactions = filteredTransactions;
 
-        // Re-render the views
-        if (currentView === 'cards') {
-            renderTransactionCards();
+        // Use real-time updater for immediate UI changes
+        if (window.realTimeUpdater) {
+            window.realTimeUpdater.updateTransaction(currentCancelTransaction.id, {
+                rentalStatus: 'Cancelled',
+                cancelledDate: new Date().toISOString(),
+                lastUpdated: new Date().toISOString()
+            });
         } else {
-            renderTransactionTable();
+            // Fallback: Re-render the views
+            if (currentView === 'cards') {
+                renderTransactionCards();
+            } else {
+                renderTransactionTable();
+            }
         }
 
         // Close modal
         closeCancelRentalModal();        // Hide loading
-        document.querySelector('.admin-action-spinner').style.display = 'none';        // Show success notification with Notyf
-        if (window.notyf) {
-            window.notyf.success({
-                message: 'Rental cancelled successfully!',
-                duration: 4000,
-                background: '#28a745',
-                icon: {
-                    className: 'bx bx-check-circle',
-                    tagName: 'i'
-                }
-            });
-        } else if (showSuccessToast) {
-            showSuccessToast('Rental cancelled successfully!');
+        document.querySelector('.admin-action-spinner').style.display = 'none';        // Show red rental cancelled notification
+        if (window.showRentalCancelledNotification) {
+            window.showRentalCancelledNotification();
         } else {
             alert('Rental cancelled successfully!');
         }    } catch (error) {
@@ -2052,9 +2069,16 @@ async function confirmProcessOverdue() {
             Object.assign(allTransactions[transactionIndex], updateData);
         }
         
-        // Close modal and refresh
+        // Close modal
         closeProcessOverdueModal();
-        filterTransactions();
+        
+        // Use real-time updater for immediate UI changes
+        if (window.realTimeUpdater) {
+            window.realTimeUpdater.updateTransaction(currentOverdueTransaction.id, updateData);
+        } else {
+            // Fallback: refresh
+            filterTransactions();
+        }
         
         // Hide loading
         document.querySelector('.admin-action-spinner').style.display = 'none';        // Show success message
