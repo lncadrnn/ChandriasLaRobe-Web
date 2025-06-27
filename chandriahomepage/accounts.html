@@ -118,9 +118,57 @@
                         <span class="count" id="cart-count">0</span>
                     </a>
 
-                    <button onclick="window.profileNavService?.handleAccountClick() || showAuthModal()" class="header-action-btn" style="background: none; border: none; cursor: pointer;" id="account-btn">
+                    <button onclick="toggleAccountDropdown()" class="header-action-btn" id="account-btn" style="background: none; border: none; cursor: pointer;">
                         <img src="assets/img/icon-user.svg" alt="" />
                     </button>
+                    
+                    <!-- Account Dropdown Menu -->
+                    <div class="account-dropdown" id="account-dropdown">
+                        <div class="account-dropdown-content">
+                            <div class="account-dropdown-header">
+                                <div class="account-avatar">
+                                    <img src="assets/img/icon-user.svg" alt="Profile" />
+                                </div>
+                                <div class="account-info">
+                                    <span class="account-name" id="account-name">Guest User</span>
+                                    <span class="account-email" id="account-email">Please sign in</span>
+                                </div>
+                            </div>
+                            <div class="account-dropdown-divider"></div>
+                            <ul class="account-dropdown-menu">
+                                <li class="account-dropdown-item">
+                                    <a href="accounts.html" class="account-dropdown-link" data-auth-required="true" data-nav-to="settings">
+                                        <i class="fi fi-rs-settings"></i>
+                                        <span>Settings</span>
+                                    </a>
+                                </li>
+                                <li class="account-dropdown-item">
+                                    <a href="accounts.html?tab=bookings" class="account-dropdown-link" data-auth-required="true" data-nav-to="appointments">
+                                        <i class="fi fi-rs-calendar"></i>
+                                        <span>Appointments</span>
+                                    </a>
+                                </li>
+                                <li class="account-dropdown-item">
+                                    <a href="#" class="account-dropdown-link" data-auth-required="true" data-nav-to="notifications">
+                                        <i class="fi fi-rs-comment"></i>
+                                        <span>Notifications</span>
+                                    </a>
+                                </li>
+                                <li class="account-dropdown-item">
+                                    <a href="#" class="account-dropdown-link" onclick="showAuthModal()">
+                                        <i class="fi fi-rs-sign-in"></i>
+                                        <span>Sign In</span>
+                                    </a>
+                                </li>
+                                <li class="account-dropdown-item" id="logout-item" style="display: none;">
+                                    <a href="#" class="account-dropdown-link" onclick="confirmLogout()">
+                                        <i class="fi fi-rs-sign-out"></i>
+                                        <span>Sign Out</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </nav>
 
@@ -134,7 +182,7 @@
                         <a href="../index.html#categories" class="mobile-nav-link">Categories</a>
                     </li>
                     <li class="mobile-nav-item">
-                        <a href="shop.html" class="mobile-nav-link">Shop</a>
+                        <a href="shop.html" class="mobile-nav-link">Products</a>
                     </li>
                     <li class="mobile-nav-item">
                         <a href="../index.html#reviews" class="mobile-nav-link">Reviews</a>

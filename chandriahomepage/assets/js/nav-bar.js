@@ -288,48 +288,38 @@ let accountDropdownOpen = false;
 function updateAccountDropdown(user = null) {
     const accountName = document.getElementById('account-name');
     const accountEmail = document.getElementById('account-email');
-    const signInItem = document.querySelector('.account-dropdown-item:last-child');
-    
-    if (!signInItem) return;
-    
-    const signInLink = signInItem.querySelector('.account-dropdown-link');
+    const signInItem = document.querySelector('.account-dropdown-link[onclick*="showAuthModal"]')?.closest('.account-dropdown-item');
+    const logoutItem = document.getElementById('logout-item');
+    const authRequiredItems = document.querySelectorAll('.account-dropdown-link[data-auth-required="true"]').forEach(link => link.closest('.account-dropdown-item'));
     
     if (user) {
-        // User is logged in - show logout option
-        if (accountName) {
-            accountName.textContent = user.displayName || user.email.split('@')[0];
-        }
-        if (accountEmail) {
-            accountEmail.textContent = user.email;
-        }
+        // User is signed in
+        if (accountName) accountName.textContent = user.displayName || user.email?.split('@')[0] || 'User';
+        if (accountEmail) accountEmail.textContent = user.email || '';
         
-        // Update the last menu item to be logout
-        signInLink.innerHTML = `
-            <i class="fi fi-rs-sign-out"></i>
-            <span>Log Out</span>
-        `;
-        signInLink.onclick = handleLogout;
-        signInLink.removeAttribute('onclick');
+        // Show logout, hide sign in
+        if (logoutItem) logoutItem.style.display = 'block';
+        if (signInItem) signInItem.style.display = 'none';
+        
+        // Show auth-required items
+        document.querySelectorAll('.account-dropdown-link[data-auth-required="true"]').forEach(link => {
+            const item = link.closest('.account-dropdown-item');
+            if (item) item.style.display = 'block';
+        });
     } else {
-        // User is not logged in - show sign in option
-        if (accountName) {
-            accountName.textContent = 'Guest User';
-        }
-        if (accountEmail) {
-            accountEmail.textContent = 'Please sign in';
-        }
+        // User is not signed in
+        if (accountName) accountName.textContent = 'Guest User';
+        if (accountEmail) accountEmail.textContent = 'Please sign in';
         
-        // Update the last menu item to be sign in
-        signInLink.innerHTML = `
-            <i class="fi fi-rs-sign-in"></i>
-            <span>Sign In</span>
-        `;
-        signInLink.onclick = () => {
-            closeAccountDropdown();
-            if (typeof showAuthModal === 'function') {
-                showAuthModal();
-            }
-        };
+        // Hide logout, show sign in
+        if (logoutItem) logoutItem.style.display = 'none';
+        if (signInItem) signInItem.style.display = 'block';
+        
+        // Hide auth-required items
+        document.querySelectorAll('.account-dropdown-link[data-auth-required="true"]').forEach(link => {
+            const item = link.closest('.account-dropdown-item');
+            if (item) item.style.display = 'none';
+        });
     }
 }
 
@@ -341,9 +331,7 @@ async function handleLogout() {
         closeAccountDropdown();
         
         // Show loading state if available
-        if (typeof showNotification === 'function') {
-            showNotification('Signing out...', 'info');
-        }
+        showNotification('Signing out...', 'info');
         
         // Import signOut function and auth from the SDK
         const { signOut, auth } = await import('./sdk/chandrias-sdk.js');
@@ -358,9 +346,7 @@ async function handleLogout() {
         updateAccountDropdown(null);
         
         // Show success message
-        if (typeof showNotification === 'function') {
-            showNotification('Successfully signed out', 'success');
-        }
+        showNotification('Successfully signed out', 'success');
         
         // Reload page after a short delay to reset all UI states
         setTimeout(() => {
@@ -369,8 +355,33 @@ async function handleLogout() {
         
     } catch (error) {
         console.error('Error signing out:', error);
-        if (typeof showNotification === 'function') {
-            showNotification('Error signing out. Please try again.', 'error');
+        showNotification('Error signing out. Please try again.', 'error');
+    }
+}
+
+// Function to show logout confirmation
+function confirmLogout() {
+    if (typeof Swal !== 'undefined') {
+        // Use SweetAlert if available
+        Swal.fire({
+            title: 'Sign Out?',
+            text: 'Are you sure you want to sign out of your account?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#ff6b9d',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, Sign Out',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                handleLogout();
+            }
+        });
+    } else {
+        // Fallback to native confirm dialog
+        if (confirm('Are you sure you want to sign out of your account?')) {
+            handleLogout();
         }
     }
 }
@@ -378,6 +389,7 @@ async function handleLogout() {
 function toggleAccountDropdown() {
     const dropdown = document.getElementById('account-dropdown');
     const overlay = document.getElementById('account-dropdown-overlay');
+    const accountBtn = document.getElementById('account-btn');
     
     if (!dropdown) return;
     
@@ -385,6 +397,8 @@ function toggleAccountDropdown() {
     
     if (accountDropdownOpen) {
         dropdown.classList.add('show');
+        if (accountBtn) accountBtn.classList.add('active');
+        
         // Create overlay if it doesn't exist
         if (!overlay) {
             createDropdownOverlay();
@@ -401,12 +415,16 @@ function toggleAccountDropdown() {
 function closeAccountDropdown() {
     const dropdown = document.getElementById('account-dropdown');
     const overlay = document.getElementById('account-dropdown-overlay');
+    const accountBtn = document.getElementById('account-btn');
     
     if (dropdown) {
         dropdown.classList.remove('show');
     }
     if (overlay) {
         overlay.classList.remove('show');
+    }
+    if (accountBtn) {
+        accountBtn.classList.remove('active');
     }
     
     accountDropdownOpen = false;
@@ -438,6 +456,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.toggleAccountDropdown = toggleAccountDropdown;
     window.closeAccountDropdown = closeAccountDropdown;
     window.updateAccountDropdown = updateAccountDropdown;
+    window.confirmLogout = confirmLogout;
     
     // Initialize authentication state
     initializeAuthState();

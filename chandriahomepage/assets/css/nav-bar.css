@@ -803,68 +803,74 @@ html body.page-accounts button.header-action-btn[onclick*="showAuthModal"]:focus
   position: relative;
 }
 
-/* Responsive adjustments */
-@media screen and (max-width: 768px) {
+/* Ensure proper z-index stacking for account dropdown */
+.header {
+  position: relative;
+  z-index: 100;
+}
+
+.header-user-actions {
+  position: relative;
+  z-index: 101;
+}
+
+.account-dropdown {
+  z-index: 1500; /* Higher than most other elements */
+}
+
+.account-dropdown-overlay {
+  z-index: 1499;
+}
+
+/* Ensure dropdown appears above any potential modal or overlay content */
+.account-dropdown.show {
+  z-index: 1500;
+}
+
+/* Better visual feedback on account button when dropdown is open */
+.header-action-btn.active,
+.header-action-btn:has(+ .account-dropdown.show) {
+  background-color: rgba(255, 107, 157, 0.1);
+  border-radius: 8px;
+}
+
+/* Smooth transitions for better UX */
+.header-action-btn {
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.header-action-btn:active {
+  transform: scale(0.95);
+}
+
+/* Additional mobile optimizations */
+@media screen and (max-width: 576px) {
   .account-dropdown {
-    right: -10px;
-    min-width: 260px;
-    margin-top: 5px;
-  }
-  
-  .account-dropdown-content {
-    border-radius: 8px;
+    right: -15px;
+    min-width: 250px;
+    max-width: calc(100vw - 30px);
   }
   
   .account-dropdown-header {
-    padding: 12px 16px;
-    border-radius: 8px 8px 0 0;
+    padding: 10px 14px;
   }
   
   .account-dropdown-link {
-    padding: 10px 16px;
-    font-size: 13px;
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+  
+  .account-dropdown-link i {
+    font-size: 14px;
+    margin-right: 10px;
   }
 }
 
-/* Click outside to close functionality */
-.account-dropdown-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 999;
-  background: transparent;
-  display: none;
-}
-
-.account-dropdown-overlay.show {
-  display: block;
-}
-
-/* Arrow pointing to account button */
-.account-dropdown::before {
-  content: '';
-  position: absolute;
-  top: -8px;
-  right: 12px;
-  width: 0;
-  height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-bottom: 8px solid #e91e63;
-  z-index: 1001;
-}
-
-.account-dropdown::after {
-  content: '';
-  position: absolute;
-  top: -9px;
-  right: 12px;
-  width: 0;
-  height: 0;
-  border-left: 9px solid transparent;
-  border-right: 9px solid transparent;
-  border-bottom: 9px solid rgba(0, 0, 0, 0.08);
-  z-index: 1000;
+/* Prevent dropdown from causing horizontal scroll */
+@media screen and (max-width: 360px) {
+  .account-dropdown {
+    right: -20px;
+    min-width: 240px;
+    max-width: calc(100vw - 40px);
+  }
 }

@@ -461,9 +461,15 @@
                                     </a>
                                 </li>
                                 <li class="account-dropdown-item">
-                                    <a href="#" class="account-dropdown-link">
+                                    <a href="#" class="account-dropdown-link" onclick="showAuthModal()">
                                         <i class="fi fi-rs-sign-in"></i>
                                         <span>Sign In</span>
+                                    </a>
+                                </li>
+                                <li class="account-dropdown-item" id="logout-item" style="display: none;">
+                                    <a href="#" class="account-dropdown-link" onclick="confirmLogout()">
+                                        <i class="fi fi-rs-sign-out"></i>
+                                        <span>Sign Out</span>
                                     </a>
                                 </li>
                             </ul>
@@ -481,7 +487,7 @@
                     <li class="mobile-nav-item">
                         <a href="../index.html#categories" class="mobile-nav-link">Categories</a>
                     </li>                    <li class="mobile-nav-item">
-                        <a href="shop.html" class="mobile-nav-link">Shop</a>
+                        <a href="shop.html" class="mobile-nav-link">Products</a>
                     </li>
                     <li class="mobile-nav-item">
                         <a href="../index.html#reviews" class="mobile-nav-link">Reviews</a>
