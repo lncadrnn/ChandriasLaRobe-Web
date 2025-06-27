@@ -1005,10 +1005,17 @@
 }
 
 /* Appointment-specific status colors */
-.appointment-card .status-scheduled {
-    background: #e3f2fd;
-    color: #1565c0;
-    border: 1px solid #bbdefb;
+.appointment-card .status-scheduled,
+.appointment-card .status-pending {
+    background: #fef3c7;
+    color: #d97706;
+    border: 1px solid #fbbf24;
+}
+
+.appointment-card .status-confirmed {
+    background: #d1fae5;
+    color: #059669;
+    border: 1px solid #10b981;
 }
 
 .appointment-card .status-today {
@@ -1024,9 +1031,9 @@
 }
 
 .appointment-card .status-cancelled {
-    background: #ffebee;
-    color: #c62828;
-    border: 1px solid #ffcdd2;
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #f87171;
 }
 
 .appointment-card .status-missed {
@@ -1303,3 +1310,41 @@
 }
 
 /* === APPOINTMENT CONTAINER === */
+
+/* General status colors for table view and other components */
+.status-scheduled,
+.status-pending {
+    background: #fef3c7;
+    color: #d97706;
+    border: 1px solid #fbbf24;
+}
+
+.status-confirmed {
+    background: #d1fae5;
+    color: #059669;
+    border: 1px solid #10b981;
+}
+
+.status-cancelled {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #f87171;
+}
+
+.status-today {
+    background: #fff3e0;
+    color: #ef6c00;
+    border: 1px solid #ffcc02;
+}
+
+.status-completed {
+    background: #e8f5e8;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.status-missed {
+    background: #fce4ec;
+    color: #ad1457;
+    border: 1px solid #f8bbd9;
+}
