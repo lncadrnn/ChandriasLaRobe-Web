@@ -1002,7 +1002,10 @@ async function confirmDeleteAppointment() {
         // Re-render view
         renderAppointmentView();
         
-        if (window.showNotification) {
+        // Show success notification with Notyf
+        if (typeof notyf !== 'undefined') {
+            notyf.success(`Appointment for ${customerName} has been deleted.`);
+        } else if (window.showNotification) {
             window.showNotification(`Appointment for ${customerName} has been deleted.`, 'success');
         } else {
             alert(`Appointment for ${customerName} has been deleted.`);
@@ -1073,7 +1076,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Re-render view
                 renderAppointmentView();
                 
-                if (window.showNotification) {
+                // Show success notification with Notyf
+                if (typeof notyf !== 'undefined') {
+                    notyf.success("Appointment updated successfully!");
+                } else if (window.showNotification) {
                     window.showNotification('Appointment updated successfully!', 'success');
                 } else {
                     alert('Appointment updated successfully!');
