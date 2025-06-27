@@ -30,6 +30,82 @@ function initializeAppointmentTab() {
             }
         });
     });
+    
+    // Initialize control bar functionality
+    initializeAppointmentControlBar();
+}
+
+// Initialize appointment control bar functionality
+function initializeAppointmentControlBar() {
+    // Search functionality
+    const appointmentSearchInput = document.getElementById('appointment-search');
+    const mobileAppointmentSearchInput = document.getElementById('mobile-appointment-search');
+    
+    if (appointmentSearchInput) {
+        appointmentSearchInput.addEventListener('input', function() {
+            searchAppointments(this.value);
+        });
+    }
+    
+    if (mobileAppointmentSearchInput) {
+        mobileAppointmentSearchInput.addEventListener('input', function() {
+            searchAppointments(this.value);
+        });
+    }
+    
+    // Sort dropdown functionality
+    const sortBtn = document.getElementById('appointment-sort-btn');
+    const mobileSortBtn = document.getElementById('mobile-appointment-sort-btn');
+    const sortOptions = document.getElementById('appointment-sort-options');
+    
+    if (sortBtn && sortOptions) {
+        sortBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            sortOptions.classList.toggle('show');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function() {
+            sortOptions.classList.remove('show');
+        });
+        
+        // Handle sort option selection
+        const sortOptionElements = sortOptions.querySelectorAll('.appointment-sort-option');
+        sortOptionElements.forEach(option => {
+            option.addEventListener('click', function() {
+                const sortType = this.getAttribute('data-sort');
+                handleAppointmentSort(sortType);
+                sortOptions.classList.remove('show');
+            });
+        });
+    }
+    
+    // Mobile sort button
+    if (mobileSortBtn) {
+        mobileSortBtn.addEventListener('click', function() {
+            // Cycle through sort options for mobile
+            const sortTypes = ['date-desc', 'date-asc', 'status', 'customer'];
+            const currentIndex = sortTypes.indexOf(currentSort);
+            const nextIndex = (currentIndex + 1) % sortTypes.length;
+            handleAppointmentSort(sortTypes[nextIndex]);
+        });
+    }
+    
+    // Refresh functionality
+    const refreshBtn = document.getElementById('appointment-refresh-btn');
+    const mobileRefreshBtn = document.getElementById('mobile-appointment-refresh-btn');
+    
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', function() {
+            loadAppointments();
+        });
+    }
+    
+    if (mobileRefreshBtn) {
+        mobileRefreshBtn.addEventListener('click', function() {
+            loadAppointments();
+        });
+    }
 }
 
 // Load appointments from Firebase
@@ -57,6 +133,7 @@ async function loadAppointments() {
         filteredAppointments = [...allAppointments];
         applyAppointmentSorting();
         renderAppointmentView();
+        updateAppointmentCount();
         
         // Hide page loader after successful load
         if (window.adminSpinners) {
@@ -76,23 +153,69 @@ async function loadAppointments() {
     }
 }
 
+// Search appointments
+function searchAppointments(searchTerm) {
+    if (!searchTerm.trim()) {
+        filteredAppointments = [...allAppointments];
+    } else {
+        const term = searchTerm.toLowerCase();
+        filteredAppointments = allAppointments.filter(appointment => {
+            return (
+                (appointment.customerName || appointment.fullName || '').toLowerCase().includes(term) ||
+                (appointment.appointmentCode || '').toLowerCase().includes(term) ||
+                (appointment.contactNumber || appointment.phoneNumber || '').includes(term) ||
+                (appointment.purpose || appointment.appointmentType || '').toLowerCase().includes(term) ||
+                (appointment.notes || '').toLowerCase().includes(term)
+            );
+        });
+    }
+    
+    applyAppointmentSorting();
+    renderAppointmentView();
+    updateAppointmentCount();
+}
+
+// Handle appointment sorting
+function handleAppointmentSort(sortType) {
+    currentSort = sortType;
+    applyAppointmentSorting();
+    renderAppointmentView();
+}
+
+// Update appointment count in control bar
+function updateAppointmentCount() {
+    const countElements = document.querySelectorAll('.appointment-count');
+    countElements.forEach(element => {
+        element.textContent = filteredAppointments.length;
+    });
+}
+
 // Render appointment view
 function renderAppointmentView() {
     if (!appointmentsContainer) return;
     
+    // Update appointment count
+    updateAppointmentCount();
+    
+    const emptyStateElement = document.getElementById('appointments-empty-state');
+    const cardsContainer = document.getElementById('appointment-cards-container');
+    
     if (filteredAppointments.length === 0) {
-        appointmentsContainer.innerHTML = `
-            <div class="appointments-container">
-                <div class="empty-state">
-                    <div class="empty-state-icon">
-                        <i class='bx bx-calendar-x'></i>
-                    </div>
-                    <h3>No Appointments Found</h3>
-                    <p>No appointment records match your current criteria. Appointments will appear here once they're created.</p>
-                </div>
-            </div>
-        `;
+        if (emptyStateElement) {
+            emptyStateElement.style.display = 'block';
+        }
+        if (cardsContainer) {
+            cardsContainer.style.display = 'none';
+        }
         return;
+    }
+    
+    // Hide empty state and show cards
+    if (emptyStateElement) {
+        emptyStateElement.style.display = 'none';
+    }
+    if (cardsContainer) {
+        cardsContainer.style.display = 'grid';
     }
     
     // Create appointment cards view
@@ -101,7 +224,8 @@ function renderAppointmentView() {
 
 // Render appointment cards
 function renderAppointmentCards() {
-    if (!appointmentsContainer) return;
+    const cardsContainer = document.getElementById('appointment-cards-container');
+    if (!cardsContainer) return;
     
     const cards = [];
     
@@ -155,25 +279,23 @@ function renderAppointmentCards() {
                 
                 <div class="card-actions-bottom">
                     <div class="card-actions">
-                        <button class="card-action-btn view-appointment-details-btn" data-id="${appointment.id}" title="View Details">
+                        <button class="card-action-btn" title="View Details" onclick="viewAppointmentDetails('${appointment.id}')">
                             <i class='bx bx-show'></i>
                         </button>
-                        <button class="card-action-btn edit-appointment-btn" data-id="${appointment.id}" title="Edit Appointment">
+                        <button class="card-action-btn" title="Edit Appointment" onclick="editAppointment('${appointment.id}')">
                             <i class='bx bx-edit'></i>
                         </button>
-                        <button class="card-action-btn delete-appointment-btn" data-id="${appointment.id}" title="Delete Appointment">
+                        ${appointmentStatus !== 'Completed' && appointmentStatus !== 'Cancelled' ? `
+                        <button class="card-action-btn" title="Mark Complete" onclick="completeAppointment('${appointment.id}')">
+                            <i class='bx bx-check-circle'></i>
+                        </button>
+                        <button class="card-action-btn" title="Cancel Appointment" onclick="cancelAppointment('${appointment.id}')">
+                            <i class='bx bx-x-circle'></i>
+                        </button>
+                        ` : ''}
+                        <button class="card-action-btn" title="Delete Appointment" onclick="deleteAppointment('${appointment.id}')">
                             <i class='bx bx-trash'></i>
                         </button>
-                        ${appointmentStatus === 'Scheduled' ? `
-                            <button class="card-action-btn complete-appointment-btn" data-id="${appointment.id}" title="Mark as Completed">
-                                <i class='bx bx-check'></i>
-                            </button>
-                        ` : ''}
-                        ${appointmentStatus === 'Scheduled' ? `
-                            <button class="card-action-btn cancel-appointment-btn" data-id="${appointment.id}" title="Cancel Appointment">
-                                <i class='bx bx-x'></i>
-                            </button>
-                        ` : ''}
                     </div>
                 </div>
             </div>
@@ -182,15 +304,7 @@ function renderAppointmentCards() {
         cards.push(card);
     }
     
-    appointmentsContainer.innerHTML = `
-        <div class="appointments-container">
-            <div class="appointment-cards">
-                ${cards.join('')}
-            </div>
-        </div>
-    `;
-    
-    addAppointmentActionListeners();
+    cardsContainer.innerHTML = cards.join('');
 }
 
 // Calculate appointment status

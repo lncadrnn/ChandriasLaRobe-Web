@@ -7,6 +7,7 @@
       <!-- EXTERNAL CSS -->    <link rel="stylesheet" href="./assets/css/admin-layout.css" />
     <link rel="stylesheet" href="./assets/css/admin-layout-mob.css" />
     <link rel="stylesheet" href="./assets/css/customer-logs.css" />
+    <link rel="stylesheet" href="./assets/css/customer-logs-appointment.css" />
     <link rel="stylesheet" href="./assets/css/customer-logs-modal.css" />
     <link rel="stylesheet" href="./assets/css/status-colors.css" />
     <link rel="stylesheet" href="./assets/css/spinners-admin.css" />
@@ -311,12 +312,164 @@
             <!-- Appointments Tab Content -->
             <div class="tab-content" id="appointments-content">
                 <div class="appointments-container">
-                    <div class="empty-state">
+                    <!-- Modern Control Bar -->
+                    <div class="control-bar">
+                        <div class="control-bar-container">
+                            <!-- Left Side: Appointment Count -->
+                            <div class="transaction-info">
+                                <div class="transaction-count-wrapper">
+                                    <i class='bx bx-calendar-event'></i>
+                                    <span class="transaction-label">Total Appointments</span>
+                                    <span class="transaction-count" id="appointment-count">0</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Right Side: Search, Sort, and Refresh -->
+                            <div class="control-actions">
+                                <div class="search-container">
+                                    <div class="search-box">
+                                        <i class='bx bx-search search-icon'></i>
+                                        <input type="text" placeholder="Search by customer, appointment..." id="appointment-search-input">
+                                    </div>
+                                </div>
+                                
+                                <div class="action-buttons">
+                                    <div class="sort-dropdown">
+                                        <button class="control-btn sort-btn" id="appointment-sort-btn">
+                                            <i class='bx bx-sort'></i>
+                                            <span>Sort</span>
+                                            <i class='bx bx-chevron-down'></i>
+                                        </button>
+                                        <div class="sort-options" id="appointment-sort-options">
+                                            <div class="sort-option" data-sort="name-asc">
+                                                <i class='bx bx-sort-a-z'></i>
+                                                <span>Name (A-Z)</span>
+                                            </div>
+                                            <div class="sort-option" data-sort="name-desc">
+                                                <i class='bx bx-sort-z-a'></i>
+                                                <span>Name (Z-A)</span>
+                                            </div>
+                                            <div class="sort-option" data-sort="recent">
+                                                <i class='bx bx-time-five'></i>
+                                                <span>Recent (Newest First)</span>
+                                            </div>
+                                            <div class="sort-option" data-sort="oldest">
+                                                <i class='bx bx-time'></i>
+                                                <span>Oldest First</span>
+                                            </div>
+                                            <div class="sort-option" data-sort="event-asc">
+                                                <i class='bx bx-calendar'></i>
+                                                <span>Appointment Date (Earliest)</span>
+                                            </div>
+                                            <div class="sort-option" data-sort="event-desc">
+                                                <i class='bx bx-calendar-check'></i>
+                                                <span>Appointment Date (Latest)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="control-btn refresh-btn" id="appointment-refresh-btn" title="Refresh data">
+                                        <i class='bx bx-refresh'></i>
+                                        <span>Refresh</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Mobile Control Bar -->
+                        <div class="mobile-control-bar">
+                            <div class="mobile-transaction-info">
+                                <div class="transaction-count-wrapper">
+                                    <i class='bx bx-calendar-event'></i>
+                                    <span class="transaction-label">Appointments</span>
+                                    <span class="transaction-count" id="appointment-count-mobile">0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mobile-search-container">
+                                <div class="search-box">
+                                    <i class='bx bx-search search-icon'></i>
+                                    <input type="text" placeholder="Search by customer, appointment..." id="appointment-search-input-mobile">
+                                </div>
+                            </div>
+                            
+                            <div class="mobile-action-buttons">
+                                <div class="sort-dropdown">
+                                    <button class="control-btn sort-btn" id="appointment-sort-btn-mobile">
+                                        <i class='bx bx-sort'></i>
+                                        <span>Sort</span>
+                                        <i class='bx bx-chevron-down'></i>
+                                    </button>
+                                    <div class="sort-options" id="appointment-sort-options-mobile">
+                                        <div class="sort-option" data-sort="name-asc">
+                                            <i class='bx bx-sort-a-z'></i>
+                                            <span>Name (A-Z)</span>
+                                        </div>
+                                        <div class="sort-option" data-sort="name-desc">
+                                            <i class='bx bx-sort-z-a'></i>
+                                            <span>Name (Z-A)</span>
+                                        </div>
+                                        <div class="sort-option" data-sort="recent">
+                                            <i class='bx bx-time-five'></i>
+                                            <span>Recent (Newest First)</span>
+                                        </div>
+                                        <div class="sort-option" data-sort="oldest">
+                                            <i class='bx bx-time'></i>
+                                            <span>Oldest First</span>
+                                        </div>
+                                        <div class="sort-option" data-sort="event-asc">
+                                            <i class='bx bx-calendar'></i>
+                                            <span>Appointment Date (Earliest)</span>
+                                        </div>
+                                        <div class="sort-option" data-sort="event-desc">
+                                            <i class='bx bx-calendar-check'></i>
+                                            <span>Appointment Date (Latest)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button class="control-btn refresh-btn" id="appointment-refresh-btn-mobile" title="Refresh data">
+                                    <i class='bx bx-refresh'></i>
+                                    <span>Refresh</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card View -->
+                    <div class="appointment-cards-container" id="appointment-cards-container">
+                        <div class="appointment-cards" id="appointment-cards">
+                            <!-- Cards will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <!-- Table View -->
+                    <div class="appointment-table-container" id="appointment-table-container">
+                        <div class="table-wrapper">
+                            <table id="appointment-history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Customer Name</th>
+                                        <th>Appointment Date</th>
+                                        <th>Status</th>
+                                        <th>Service Type</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="appointment-history-tbody">
+                                    <!-- Table rows will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Appointments will be dynamically loaded here -->
+                    <div class="appointments-empty-state" id="appointments-empty-state">
                         <div class="empty-state-icon">
                             <i class='bx bx-calendar-x'></i>
                         </div>
-                        <h3>No Appointment History</h3>
-                        <p>Appointment booking feature coming soon. All appointment records will appear here.</p>
+                        <h3>No Appointments Found</h3>
+                        <p>No appointment records are available at the moment. Appointments will appear here when they are scheduled.</p>
                     </div>
                 </div>
             </div>
