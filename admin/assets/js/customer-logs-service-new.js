@@ -569,18 +569,27 @@ function calculateRentalStatus(transaction) {
             statusClass = 'status-ongoing';
             console.log('📅 Within rental period → ONGOING');
         } else if (today > rentalEndDate) {
-            // Past end date - check if it's overdue (3 days after end date)
-            const overduePeriod = new Date(rentalEndDate);
-            overduePeriod.setDate(overduePeriod.getDate() + 3);
+            // Past end date - calculate actual end date based on rental type
+            let actualEndDate = rentalEndDate;
             
-            if (today > overduePeriod) {
+            if (transaction.rentalType === 'Fixed Rental') {
+                // For Fixed Rental: recalculate end date as start + 2 days
+                actualEndDate = new Date(rentalStartDate);
+                actualEndDate.setDate(actualEndDate.getDate() + 2);
+            }
+            
+            // Overdue starts the day after actual end date
+            const overdueStartDate = new Date(actualEndDate);
+            overdueStartDate.setDate(overdueStartDate.getDate() + 1);
+            
+            if (today >= overdueStartDate) {
                 rentalStatus = 'Overdue';
                 statusClass = 'status-overdue';
-                console.log('📅 Past overdue period (3+ days after end date) → OVERDUE');
+                console.log('📅 Past actual end date + 1 day → OVERDUE');
             } else {
                 rentalStatus = 'Ongoing';
                 statusClass = 'status-ongoing';
-                console.log('📅 Within 3 days after end date → ONGOING');
+                console.log('📅 Event ended but within grace period → ONGOING');
             }
         }
     } else {
@@ -604,17 +613,27 @@ function calculateRentalStatus(transaction) {
             statusClass = 'status-ongoing';
             console.log('📅 Event is today → ONGOING');
         } else if (today > rentalStartDate) {
-            // Past event date - check if it's overdue (3+ days after event)
-            const daysDiff = Math.floor((today - rentalStartDate) / (1000 * 60 * 60 * 24));
+            // Past event date - calculate actual end date based on rental type
+            let actualEndDate = rentalStartDate;
             
-            if (daysDiff >= 3) {
+            if (transaction.rentalType === 'Fixed Rental') {
+                // For Fixed Rental: end date is start + 2 days
+                actualEndDate = new Date(rentalStartDate);
+                actualEndDate.setDate(actualEndDate.getDate() + 2);
+            }
+            
+            // Overdue starts the day after actual end date
+            const overdueStartDate = new Date(actualEndDate);
+            overdueStartDate.setDate(overdueStartDate.getDate() + 1);
+            
+            if (today >= overdueStartDate) {
                 rentalStatus = 'Overdue';
                 statusClass = 'status-overdue';
-                console.log('📅 3+ days after event date → OVERDUE');
+                console.log('📅 Past actual end date + 1 day → OVERDUE');
             } else {
                 rentalStatus = 'Ongoing';
                 statusClass = 'status-ongoing';
-                console.log('📅 Within 3 days after event date → ONGOING');
+                console.log('📅 Event ended but within grace period → ONGOING');
             }
         }
     }
@@ -1946,27 +1965,113 @@ function showProcessOverdueModal(transactionId) {
 
     currentOverdueTransaction = transaction;
     
+    // Debug: Log transaction data to check field names
+    console.log('Transaction data for overdue calculation:', {
+        id: transaction.id,
+        eventStartDate: transaction.eventStartDate,
+        eventEndDate: transaction.eventEndDate,
+        rentalType: transaction.rentalType,
+        rentalFee: transaction.rentalFee,
+        totalAmount: transaction.totalAmount
+    });
+    
     // Populate modal with transaction details
     document.getElementById('overdue-customer-name').textContent = transaction.fullName || 'Unknown';
     document.getElementById('overdue-transaction-code').textContent = transaction.transactionCode || 'N/A';
     document.getElementById('overdue-event-date').textContent = formatEventDate(transaction);
     document.getElementById('overdue-total-amount').textContent = `₱${transaction.totalAmount ? transaction.totalAmount.toLocaleString() : '0'}`;
     
-    // Calculate days overdue
-    const daysOverdue = calculateDaysOverdue(transaction);
-    document.getElementById('overdue-days-count').textContent = `${daysOverdue} days`;
+    // Calculate overdue days based on rental type
+    let overdueDays = 0;
+    let actualEndDate = null;
+    const today = new Date();
+    const eventStartDate = new Date(transaction.eventStartDate);
     
-    // Calculate and display overdue fee
-    const rentalFee = parseFloat(transaction.rentalFee || transaction.totalAmount) || 0;
-    const calculatedOverdueFee = rentalFee * daysOverdue;
+    console.log('Transaction data for overdue calculation:', {
+        id: transaction.id,
+        eventStartDate: transaction.eventStartDate,
+        eventEndDate: transaction.eventEndDate,
+        rentalType: transaction.rentalType,
+        rentalFee: transaction.rentalFee
+    });
     
+    if (transaction.rentalType === 'Fixed Rental') {
+        // For Fixed Rental: 3-day rental starting from event start date
+        // If start date is June 23, rental period is June 23, 24, 25
+        // So end date is June 25, overdue starts June 26
+        actualEndDate = new Date(eventStartDate);
+        actualEndDate.setDate(actualEndDate.getDate() + 2); // Add 2 days for 3-day rental
+        
+        const overdueStartDate = new Date(actualEndDate);
+        overdueStartDate.setDate(overdueStartDate.getDate() + 1);
+        
+        if (today > overdueStartDate) {
+            const diffTime = today - overdueStartDate;
+            overdueDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+        
+        console.log('Fixed Rental calculation:', {
+            eventStartDate: eventStartDate.toDateString(),
+            actualEndDate: actualEndDate.toDateString(),
+            overdueStartDate: overdueStartDate.toDateString(),
+            today: today.toDateString(),
+            overdueDays: overdueDays
+        });
+        
+    } else if (transaction.rentalType === 'Open Rental') {
+        // For Open Rental: use the provided event end date
+        // If event is June 20-22, overdue starts June 23
+        if (transaction.eventEndDate) {
+            actualEndDate = new Date(transaction.eventEndDate);
+            
+            const overdueStartDate = new Date(actualEndDate);
+            overdueStartDate.setDate(overdueStartDate.getDate() + 1);
+            
+            if (today > overdueStartDate) {
+                const diffTime = today - overdueStartDate;
+                overdueDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            }
+            
+            console.log('Open Rental calculation:', {
+                eventEndDate: actualEndDate.toDateString(),
+                overdueStartDate: overdueStartDate.toDateString(),
+                today: today.toDateString(),
+                overdueDays: overdueDays
+            });
+        }
+    }
+
+    // Ensure overdue days is not negative
+    overdueDays = Math.max(0, overdueDays);
+    
+    console.log('Final calculated overdue days:', overdueDays);
+
+    // Calculate overdue fee (rental fee × overdue days)
+    const rentalFee = parseFloat(transaction.rentalFee) || parseFloat(transaction.totalPayment) || 0;
+    const calculatedOverdueFee = rentalFee * overdueDays;
+
+    console.log('Overdue fee calculation:', {
+        rentalFee: rentalFee,
+        overdueDays: overdueDays,
+        calculatedOverdueFee: calculatedOverdueFee
+    });
+
+    // Update modal content
+    document.getElementById('overdue-customer-name').textContent = transaction.fullName;
+    document.getElementById('overdue-transaction-code').textContent = transaction.transactionCode;
+    document.getElementById('overdue-event-date').textContent = formatEventDate(transaction);
+    document.getElementById('overdue-days-count').textContent = `${overdueDays} days`;
+    document.getElementById('overdue-total-amount').textContent = `₱${(transaction.totalAmount || transaction.totalPayment || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+
     // Update calculation display
     document.getElementById('original-rental-fee').textContent = `₱${rentalFee.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-    document.getElementById('overdue-days-display').textContent = `${daysOverdue} days`;
+    document.getElementById('overdue-days-display').textContent = `${overdueDays} days`;
     document.getElementById('calculated-overdue-fee').textContent = `₱${calculatedOverdueFee.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
     
-    // Store the calculated fee for later use
+    // Store the calculated fee and overdue days for later use
     window.calculatedOverdueFee = calculatedOverdueFee;
+    window.calculatedOverdueDays = overdueDays;
+    window.actualEndDate = actualEndDate;
     
     // Reset form
     document.getElementById('mark-completed').checked = true;
@@ -2017,21 +2122,34 @@ function setupOverdueModalListeners() {
 // Calculate days overdue
 function calculateDaysOverdue(transaction) {
     const today = new Date();
-    let eventEndDate = null;
+    const eventStartDate = new Date(transaction.eventStartDate);
+    let actualEndDate = null;
     
-    if (transaction.eventEndDate) {
-        eventEndDate = new Date(transaction.eventEndDate);
-    } else if (transaction.eventStartDate) {
-        eventEndDate = new Date(transaction.eventStartDate);
-    } else if (transaction.eventDate) {
-        eventEndDate = new Date(transaction.eventDate);
+    if (transaction.rentalType === 'Fixed Rental') {
+        // For Fixed Rental: 3-day rental starting from event start date
+        actualEndDate = new Date(eventStartDate);
+        actualEndDate.setDate(actualEndDate.getDate() + 2); // Add 2 days for 3-day rental
+    } else if (transaction.rentalType === 'Open Rental') {
+        // For Open Rental: use the provided event end date
+        if (transaction.eventEndDate) {
+            actualEndDate = new Date(transaction.eventEndDate);
+        } else {
+            return 0; // No end date available
+        }
+    } else {
+        return 0; // Unknown rental type
     }
     
-    if (!eventEndDate) return 0;
+    // Calculate overdue days
+    const overdueStartDate = new Date(actualEndDate);
+    overdueStartDate.setDate(overdueStartDate.getDate() + 1);
     
-    const timeDiff = today - eventEndDate;
-    const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-    return Math.max(0, daysDiff);
+    if (today >= overdueStartDate) {
+        const diffTime = today - overdueStartDate;
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    }
+    
+    return 0;
 }
 
 // Confirm Process Overdue
@@ -2070,7 +2188,8 @@ async function confirmProcessOverdue() {
             updateData.overdueFee = {
                 overdueAmount: calculatedFee,
                 overdueReason: feeReason,
-                overdueDays: calculateDaysOverdue(currentOverdueTransaction),
+                overdueDays: window.calculatedOverdueDays || 0,
+                rentalType: currentOverdueTransaction.rentalType,
                 addedDate: new Date().toISOString()
             };
             
@@ -2106,7 +2225,8 @@ async function confirmProcessOverdue() {
             successMessage = 'Overdue Processed. Product is now Completed.';
         } else if (selectedAction === 'late-fee') {
             const calculatedFee = window.calculatedOverdueFee || 0;
-            successMessage = `Rental completed with ₱${calculatedFee.toLocaleString('en-US', { minimumFractionDigits: 2 })} overdue fee`;
+            const overdueDays = window.calculatedOverdueDays || 0;
+            successMessage = `Rental completed with ₱${calculatedFee.toLocaleString('en-US', { minimumFractionDigits: 2 })} overdue fee (${overdueDays} days overdue)`;
         }
         
         showNotification(successMessage, 'success');
