@@ -2121,6 +2121,7 @@ body.modal-open .modal-overlay.show .modal-content {
     font-size: 1rem !important;
     font-weight: 600 !important;
     color: #ea580c !important;
+    align-items: left;
 }
 
 #process-overdue-modal .overdue-option label small {
