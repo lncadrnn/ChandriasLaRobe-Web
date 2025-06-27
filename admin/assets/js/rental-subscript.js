@@ -9,6 +9,12 @@ import {
     doc
 } from "./sdk/chandrias-sdk.js";
 
+// Import rental duplication functions
+import {
+    checkProductAvailability,
+    checkCartAvailability
+} from "./rental-duplication.js";
+
 // Helper function to get image URL from product data
 function getImageUrl(product, type = 'front') {
     // Try new structure first (using frontImageId/backImageId)
@@ -296,6 +302,35 @@ $(document).ready(function () {
         if (legacyTotalElements.length) {
             legacyTotalElements.text(`₱${total.toLocaleString()}`);
         }
+        
+        // Trigger availability check if dates are already selected
+        triggerAvailabilityCheckForCurrentDates();
+    }
+    
+    // Function to check availability when cart changes but dates are already set
+    function triggerAvailabilityCheckForCurrentDates() {
+        const rentalType = $("#rental-type").val();
+        let startDate = null;
+        let endDate = null;
+        
+        if (rentalType === 'Fixed Rental') {
+            startDate = $('#fixed-event-date').val();
+        } else if (rentalType === 'Open Rental') {
+            startDate = $('#event-start-date').val();
+            endDate = $('#event-end-date').val();
+        }
+        
+        if (startDate && cart.products.length > 0) {
+            // Clear previous timeout to avoid multiple calls
+            if (availabilityCheckTimeout) {
+                clearTimeout(availabilityCheckTimeout);
+            }
+            
+            // Check availability after a short delay
+            availabilityCheckTimeout = setTimeout(async () => {
+                await checkAndDisplayAvailability(startDate, endDate, rentalType);
+            }, 300);
+        }
     }
     
     // CLEAR CART FUNCTION 
@@ -391,7 +426,7 @@ $(document).ready(function () {
     });
 
     // PROCEED TO CUSTOMER MODAL CART FUNCTION
-    $("#proceed-btn").on("click", function () {
+    $("#proceed-btn").on("click", async function () {
         if ($(this).hasClass("disabled")) return;
 
         const productId = $(this).data("id");
@@ -406,25 +441,42 @@ $(document).ready(function () {
         let added = false;
         let anyValid = false;
 
-        selectedSizes.each(function () {
-            const size = $(this).val();
+        for (let i = 0; i < selectedSizes.length; i++) {
+            const checkbox = selectedSizes[i];
+            const size = $(checkbox).val();
             const $qtyInput = $(`#size-qty-${size}`);
-            const altQtyInput = $(this)
+            const altQtyInput = $(checkbox)
                 .closest("label")
                 .find(".quantity-input");
             const qty = parseInt($qtyInput.val() || altQtyInput.val(), 10);
 
-            if (!qty || qty < 1) return;
+            if (!qty || qty < 1) continue;
 
             anyValid = true;
 
             const exists = cart.products.some(
                 p => p.id === productId && p.size === size
-            );            if (exists) {
+            );
+            
+            if (exists) {
                 notyf.error(
                     `"${productName}" (${size}) is already in the Rental List.`
                 );
-            } else {
+                continue;
+            }
+
+            // Check product availability (basic stock check without dates for now)
+            try {
+                const availability = await checkProductAvailability(productId, size, new Date().toISOString().split('T')[0]);
+                
+                if (!availability.available || availability.stock < qty) {
+                    notyf.error(
+                        `"${productName}" (${size}) is not available. Available stock: ${availability.stock}, Requested: ${qty}`
+                    );
+                    continue;
+                }
+                
+                // Add to cart if available
                 cart.products.push({
                     id: productId,
                     name: productName,
@@ -434,8 +486,12 @@ $(document).ready(function () {
                     quantity: qty
                 });
                 added = true;
+                
+            } catch (error) {
+                console.error('Error checking product availability:', error);
+                notyf.error(`Error checking availability for "${productName}" (${size}). Please try again.`);
             }
-        });
+        }
 
         if (!anyValid) {
             console.warn(
@@ -1220,7 +1276,7 @@ $(document).ready(function () {
         
         console.log('Modal summary updated with total:', formattedTotal);
     }    // FUNCTION FOR CART PROCEED BUTTON - Enhanced with better modal handling
-    $(document).on('click', '#cart-checkout-btn', function(e) {
+    $(document).on('click', '#cart-checkout-btn', async function(e) {
         e.preventDefault();
         console.log('Proceed to Payment button clicked');
         
@@ -1232,6 +1288,37 @@ $(document).ready(function () {
         if (totalItems === 0) {
             notyf.error("Please add at least one item to the Rental List before proceeding.");
             return;
+        }
+
+        // Basic availability check for current date (without specific rental dates)
+        if (cart.products.length > 0) {
+            try {
+                const currentDate = new Date().toISOString().split('T')[0];
+                let hasUnavailableProducts = false;
+                
+                for (const product of cart.products) {
+                    const availability = await checkProductAvailability(
+                        product.id, 
+                        product.size, 
+                        currentDate,
+                        null,
+                        'Fixed Rental'
+                    );
+                    
+                    if (!availability.available || availability.stock < (product.quantity || 1)) {
+                        notyf.error(`"${product.name}" (${product.size}) has limited availability. Please verify rental dates carefully.`);
+                        hasUnavailableProducts = true;
+                    }
+                }
+                
+                if (hasUnavailableProducts) {
+                    console.log('Some products have availability issues, but allowing checkout with warning');
+                }
+                
+            } catch (error) {
+                console.error('Error during preliminary availability check:', error);
+                // Continue with checkout even if availability check fails
+            }
         }
 
         // Update customer modal with cart data
@@ -1622,9 +1709,12 @@ $(document).ready(function () {
         let dateToValidate = null;
         let dateFieldName = "";
         let minAllowedDate = null;
+        let startDate = null;
+        let endDate = null;
         
         if (rentalType === "Open Rental") {
-            const startDate = $("#event-start-date").val();
+            startDate = $("#event-start-date").val();
+            endDate = $("#event-end-date").val();
             if (startDate) {
                 dateToValidate = new Date(startDate);
                 dateFieldName = "Start date";
@@ -1632,9 +1722,9 @@ $(document).ready(function () {
                 minAllowedDate.setDate(today.getDate() + 1); // Open Rental: +1 day
             }
         } else if (rentalType === "Fixed Rental") {
-            const eventDate = $("#fixed-event-date").val();
-            if (eventDate) {
-                dateToValidate = new Date(eventDate);
+            startDate = $("#fixed-event-date").val();
+            if (startDate) {
+                dateToValidate = new Date(startDate);
                 dateFieldName = "Event date";
                 minAllowedDate = new Date(today);
                 minAllowedDate.setDate(today.getDate() + 1); // Fixed Rental: +1 day
@@ -1644,6 +1734,49 @@ $(document).ready(function () {
         if (dateToValidate && minAllowedDate && dateToValidate < minAllowedDate) {
             notyf.error(`${dateFieldName} must be at least ${minAllowedDate.toLocaleDateString()}. Please select a valid date.`);
             return false;
+        }
+
+        // CHECK PRODUCT AVAILABILITY FOR SELECTED DATES
+        if (startDate && cart.products.length > 0) {
+            try {
+                const cartProducts = cart.products.map(product => ({
+                    id: product.id,
+                    name: product.name,
+                    size: product.size,
+                    quantity: product.quantity || 1
+                }));
+                
+                const availabilityResult = await checkCartAvailability(
+                    cartProducts,
+                    startDate,
+                    endDate,
+                    rentalType
+                );
+                
+                if (!availabilityResult.available) {
+                    let errorMessage = "Some products are not available for the selected dates:\n\n";
+                    
+                    availabilityResult.conflicts.forEach(conflict => {
+                        errorMessage += `• ${conflict.product} (${conflict.size}): `;
+                        if (conflict.available === 0) {
+                            errorMessage += "No stock available";
+                        } else {
+                            errorMessage += `Only ${conflict.available} available, but ${conflict.requested} requested`;
+                        }
+                        errorMessage += "\n";
+                    });
+                    
+                    errorMessage += "\nPlease modify your rental list or select different dates.";
+                    
+                    notyf.error(errorMessage);
+                    return false;
+                }
+                
+            } catch (error) {
+                console.error('Error checking cart availability:', error);
+                notyf.error('Error checking product availability. Please try again.');
+                return false;
+            }
         }
 
         // SPINNER VARIABLES
@@ -2734,5 +2867,72 @@ $(document).ready(function () {
     // --- Error Notification Logic (Using Notyf) ---
     function showErrorModal(message) {
         notyf.error(message);
+    }
+    
+    // Real-time availability checking when dates change
+    let availabilityCheckTimeout;
+    
+    // Check availability for Fixed Rental date
+    $(document).on('change', '#fixed-event-date', async function() {
+        const eventDate = $(this).val();
+        if (!eventDate || cart.products.length === 0) return;
+        
+        // Clear previous timeout
+        if (availabilityCheckTimeout) {
+            clearTimeout(availabilityCheckTimeout);
+        }
+        
+        // Add a small delay to avoid too many API calls
+        availabilityCheckTimeout = setTimeout(async () => {
+            await checkAndDisplayAvailability(eventDate, null, 'Fixed Rental');
+        }, 500);
+    });
+    
+    // Check availability for Open Rental dates
+    $(document).on('change', '#event-start-date, #event-end-date', async function() {
+        const startDate = $('#event-start-date').val();
+        const endDate = $('#event-end-date').val();
+        
+        if (!startDate || cart.products.length === 0) return;
+        
+        // Clear previous timeout
+        if (availabilityCheckTimeout) {
+            clearTimeout(availabilityCheckTimeout);
+        }
+        
+        // Add a small delay to avoid too many API calls
+        availabilityCheckTimeout = setTimeout(async () => {
+            await checkAndDisplayAvailability(startDate, endDate, 'Open Rental');
+        }, 500);
+    });
+    
+    // Function to check and display availability
+    async function checkAndDisplayAvailability(startDate, endDate, rentalType) {
+        try {
+            const cartProducts = cart.products.map(product => ({
+                id: product.id,
+                name: product.name,
+                size: product.size,
+                quantity: product.quantity || 1
+            }));
+            
+            const availabilityResult = await checkCartAvailability(
+                cartProducts,
+                startDate,
+                endDate,
+                rentalType
+            );
+            
+            if (!availabilityResult.available) {
+                let conflictProducts = availabilityResult.conflicts.map(c => `${c.product} (${c.size})`).join(', ');
+                notyf.error(`Products not available for selected dates: ${conflictProducts}. Please select different dates or remove conflicting items.`);
+            } else {
+                // Optional: Show success message for available products
+                // notyf.success('All products are available for the selected dates!');
+            }
+            
+        } catch (error) {
+            console.error('Error checking availability for date change:', error);
+        }
     }
 });
