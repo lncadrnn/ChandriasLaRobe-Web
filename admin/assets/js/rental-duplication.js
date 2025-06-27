@@ -11,49 +11,49 @@ import {
  * Handles stock checking and date conflict validation for rentals
  */
 
+// Enable/disable debug logging
+const DEBUG_ENABLED = true; // Set to false to disable console logs
+
+function debugLog(...args) {
+    if (DEBUG_ENABLED) {
+        console.log(...args);
+    }
+}
+
 /**
  * Check if a product with specific size is available for rental on given dates
+ * Simple rule: If product is already rented on any of the requested dates, it's not available
  * @param {string} productId - The product ID
  * @param {string} size - The product size
  * @param {string} startDate - Start date (YYYY-MM-DD format)
  * @param {string} endDate - End date (YYYY-MM-DD format) - optional for fixed rentals
  * @param {string} rentalType - 'Open Rental' or 'Fixed Rental'
- * @returns {Promise<{available: boolean, conflictDates: string[], stock: number}>}
+ * @returns {Promise<{available: boolean, conflictDates: string[], message: string}>}
  */
 export async function checkProductAvailability(productId, size, startDate, endDate = null, rentalType = 'Fixed Rental') {
     try {
-        // First, get the product's stock information
-        const productStock = await getProductStock(productId, size);
-        
-        if (productStock <= 0) {
-            return {
-                available: false,
-                conflictDates: [],
-                stock: 0,
-                message: 'Product is out of stock'
-            };
-        }
-
         // Generate the date range that would be blocked
         const blockedDates = generateBlockedDates(startDate, endDate, rentalType);
         
         // Get all existing rentals for this product and size
         const existingRentals = await getExistingRentals(productId, size);
         
-        // Check for conflicts with existing rentals
-        const conflicts = checkDateConflicts(blockedDates, existingRentals);
+        // Check for any date conflicts - simple rule: if any date overlaps, product is not available
+        const hasConflicts = existingRentals.some(rental => {
+            return blockedDates.some(date => rental.dateRange.includes(date));
+        });
         
-        // Count how many rentals would conflict
-        const conflictingRentals = conflicts.length;
-        const availableStock = productStock - conflictingRentals;
+        debugLog(`[DEBUG] Product ${productId} (${size}) availability check:`, {
+            requestedDates: blockedDates,
+            existingRentals: existingRentals.length,
+            hasConflicts,
+            available: !hasConflicts
+        });
         
         return {
-            available: availableStock > 0,
-            conflictDates: conflicts.map(c => c.dateRange).flat(),
-            stock: availableStock,
-            totalStock: productStock,
-            conflictingRentals: conflictingRentals,
-            message: availableStock > 0 ? 'Product available' : 'All stock is rented for the selected dates'
+            available: !hasConflicts,
+            conflictDates: hasConflicts ? blockedDates : [],
+            message: hasConflicts ? 'Product is already rented on the selected dates' : 'Product available'
         };
         
     } catch (error) {
@@ -61,7 +61,6 @@ export async function checkProductAvailability(productId, size, startDate, endDa
         return {
             available: false,
             conflictDates: [],
-            stock: 0,
             message: 'Error checking availability'
         };
     }
@@ -73,7 +72,7 @@ export async function checkProductAvailability(productId, size, startDate, endDa
  * @param {string} size - The product size
  * @returns {Promise<number>}
  */
-async function getProductStock(productId, size) {
+export async function getProductStock(productId, size) {
     try {
         const productRef = collection(chandriaDB, "products");
         const q = query(productRef, where("__name__", "==", productId));
@@ -144,6 +143,7 @@ function generateBlockedDates(startDate, endDate = null, rentalType = 'Fixed Ren
 
 /**
  * Get all existing rentals for a specific product and size
+ * Simple rule: if product exists in rental, it's considered rented
  * @param {string} productId - The product ID
  * @param {string} size - The product size
  * @returns {Promise<Array>}
@@ -155,6 +155,8 @@ async function getExistingRentals(productId, size) {
         
         const rentals = [];
         
+        debugLog(`[DEBUG] Checking existing rentals for Product ID: ${productId}, Size: ${size}`);
+        
         querySnapshot.forEach((doc) => {
             const data = doc.data();
             
@@ -163,31 +165,38 @@ async function getExistingRentals(productId, size) {
                 return;
             }
             
-            // Check if this rental includes our product and size
-            let productMatches = false;
+            let hasThisProduct = false;
             
             // Check in products array (new format)
             if (data.products && Array.isArray(data.products)) {
-                productMatches = data.products.some(p => 
-                    p.id === productId && 
-                    p.sizes && 
-                    p.sizes[size] && 
-                    p.sizes[size] > 0
-                );
+                hasThisProduct = data.products.some(p => {
+                    const hasMatchingId = p.id === productId;
+                    const hasSizes = p.sizes && typeof p.sizes === 'object';
+                    const hasMatchingSize = hasSizes && p.sizes[size] && p.sizes[size] > 0;
+                    
+                    return hasMatchingId && hasSizes && hasMatchingSize;
+                });
             }
             
             // Check in productCode string (legacy format)
-            if (!productMatches && data.productCode) {
-                // This is a fallback for older format, might need adjustment based on your data structure
-                productMatches = data.productCode.includes(productId);
+            if (!hasThisProduct && data.productCode) {
+                const productCodes = data.productCode.split(',').map(code => code.trim());
+                hasThisProduct = productCodes.some(code => code.includes(productId));
             }
             
-            if (productMatches && (data.eventStartDate || data.eventDate)) {
+            // If this rental includes our product and has valid dates, add it to conflicts
+            if (hasThisProduct && (data.eventStartDate || data.eventDate)) {
                 const rentalDates = generateBlockedDates(
                     data.eventStartDate || data.eventDate,
                     data.eventEndDate,
                     data.rentalType || 'Fixed Rental'
                 );
+                
+                debugLog(`[DEBUG] Found conflicting rental:`, {
+                    transactionCode: data.transactionCode,
+                    dateRange: rentalDates,
+                    rentalType: data.rentalType
+                });
                 
                 rentals.push({
                     id: doc.id,
@@ -200,6 +209,7 @@ async function getExistingRentals(productId, size) {
             }
         });
         
+        debugLog(`[DEBUG] Found ${rentals.length} existing rentals for ${productId} (${size})`);
         return rentals;
         
     } catch (error) {
@@ -241,7 +251,8 @@ function formatDate(date) {
 }
 
 /**
- * Check if a specific date is available for all products in the cart
+ * Check if all products in the cart are available for the specified dates
+ * Simple rule: If any product is already rented on the requested dates, it's not available
  * @param {Array} cartProducts - Array of cart products with id, size, etc.
  * @param {string} startDate - Start date (YYYY-MM-DD format)
  * @param {string} endDate - End date (YYYY-MM-DD format) - optional
@@ -253,40 +264,23 @@ export async function checkCartAvailability(cartProducts, startDate, endDate = n
         const conflicts = [];
         let allAvailable = true;
         
-        // Group products by id and size to handle quantities
-        const productGroups = {};
-        cartProducts.forEach(product => {
-            const key = `${product.id}_${product.size}`;
-            if (!productGroups[key]) {
-                productGroups[key] = {
-                    id: product.id,
-                    name: product.name,
-                    size: product.size,
-                    quantity: 0
-                };
-            }
-            productGroups[key].quantity += (product.quantity || 1);
-        });
-        
-        // Check each product group
-        for (const group of Object.values(productGroups)) {
+        for (const product of cartProducts) {
             const availability = await checkProductAvailability(
-                group.id, 
-                group.size, 
-                startDate, 
-                endDate, 
+                product.id,
+                product.size,
+                startDate,
+                endDate,
                 rentalType
             );
             
-            if (!availability.available || availability.stock < group.quantity) {
+            if (!availability.available) {
                 allAvailable = false;
                 conflicts.push({
-                    product: group.name,
-                    size: group.size,
-                    requested: group.quantity,
-                    available: availability.stock,
-                    conflictDates: availability.conflictDates,
-                    message: availability.message
+                    product: product.name,
+                    size: product.size,
+                    available: 0, // Simple: either available (1) or not (0)
+                    requested: 1,
+                    message: 'Already rented on selected dates'
                 });
             }
         }
@@ -294,7 +288,7 @@ export async function checkCartAvailability(cartProducts, startDate, endDate = n
         return {
             available: allAvailable,
             conflicts: conflicts,
-            message: allAvailable ? 'All products available for selected dates' : 'Some products are not available'
+            message: allAvailable ? 'All products available' : 'Some products are already rented on selected dates'
         };
         
     } catch (error) {
@@ -302,7 +296,7 @@ export async function checkCartAvailability(cartProducts, startDate, endDate = n
         return {
             available: false,
             conflicts: [],
-            message: 'Error checking availability'
+            message: 'Error checking cart availability'
         };
     }
 }
@@ -322,3 +316,50 @@ export async function updateProductStock(productId, size, quantity) {
     console.log(`Stock update requested: ${productId} (${size}) - ${quantity}`);
     return true;
 }
+
+/**
+ * Debug function to check what's causing availability issues
+ * @param {string} productId - The product ID
+ * @param {string} size - The product size
+ * @param {string} startDate - Start date (YYYY-MM-DD format)
+ * @param {string} endDate - End date (YYYY-MM-DD format) - optional
+ * @param {string} rentalType - 'Open Rental' or 'Fixed Rental'
+ * @returns {Promise<Object>} Debug information
+ */
+export async function debugProductAvailability(productId, size, startDate, endDate = null, rentalType = 'Fixed Rental') {
+    console.log('=== DEBUGGING PRODUCT AVAILABILITY ===');
+    console.log('Product ID:', productId);
+    console.log('Size:', size);
+    console.log('Start Date:', startDate);
+    console.log('End Date:', endDate);
+    console.log('Rental Type:', rentalType);
+    
+    const productStock = await getProductStock(productId, size);
+    console.log('Total Stock:', productStock);
+    
+    const existingRentals = await getExistingRentals(productId, size);
+    console.log('Existing Rentals:', existingRentals.length);
+    console.log('Rental Details:', existingRentals);
+    
+    const blockedDates = generateBlockedDates(startDate, endDate, rentalType);
+    console.log('Blocked Dates:', blockedDates);
+    
+    const conflictingQuantity = calculateConflictingQuantity(blockedDates, existingRentals, productId, size);
+    console.log('Conflicting Quantity:', conflictingQuantity);
+    
+    const availableStock = productStock - conflictingQuantity;
+    console.log('Available Stock:', availableStock);
+    
+    console.log('=== END DEBUG ===');
+    
+    return {
+        productStock,
+        existingRentals: existingRentals.length,
+        conflictingQuantity,
+        availableStock,
+        blockedDates,
+        rentalDetails: existingRentals
+    };
+}
+
+

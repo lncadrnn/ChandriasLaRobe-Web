@@ -12,7 +12,8 @@ import {
 // Import rental duplication functions
 import {
     checkProductAvailability,
-    checkCartAvailability
+    checkCartAvailability,
+    debugProductAvailability
 } from "./rental-duplication.js";
 
 // Helper function to get image URL from product data
@@ -465,32 +466,19 @@ $(document).ready(function () {
                 continue;
             }
 
-            // Check product availability (basic stock check without dates for now)
-            try {
-                const availability = await checkProductAvailability(productId, size, new Date().toISOString().split('T')[0]);
-                
-                if (!availability.available || availability.stock < qty) {
-                    notyf.error(
-                        `"${productName}" (${size}) is not available. Available stock: ${availability.stock}, Requested: ${qty}`
-                    );
-                    continue;
-                }
-                
-                // Add to cart if available
-                cart.products.push({
-                    id: productId,
-                    name: productName,
-                    code: productCode,
-                    price: productPrice,
-                    size: size,
-                    quantity: qty
-                });
-                added = true;
-                
-            } catch (error) {
-                console.error('Error checking product availability:', error);
-                notyf.error(`Error checking availability for "${productName}" (${size}). Please try again.`);
-            }
+            // Simple check: just verify the item exists and isn't already in cart
+            // Date-specific availability will be checked when rental dates are selected
+            
+            // Add to cart
+            cart.products.push({
+                id: productId,
+                name: productName,
+                code: productCode,
+                price: productPrice,
+                size: size,
+                quantity: qty
+            });
+            added = true;
         }
 
         if (!anyValid) {
@@ -1290,36 +1278,7 @@ $(document).ready(function () {
             return;
         }
 
-        // Basic availability check for current date (without specific rental dates)
-        if (cart.products.length > 0) {
-            try {
-                const currentDate = new Date().toISOString().split('T')[0];
-                let hasUnavailableProducts = false;
-                
-                for (const product of cart.products) {
-                    const availability = await checkProductAvailability(
-                        product.id, 
-                        product.size, 
-                        currentDate,
-                        null,
-                        'Fixed Rental'
-                    );
-                    
-                    if (!availability.available || availability.stock < (product.quantity || 1)) {
-                        notyf.error(`"${product.name}" (${product.size}) has limited availability. Please verify rental dates carefully.`);
-                        hasUnavailableProducts = true;
-                    }
-                }
-                
-                if (hasUnavailableProducts) {
-                    console.log('Some products have availability issues, but allowing checkout with warning');
-                }
-                
-            } catch (error) {
-                console.error('Error during preliminary availability check:', error);
-                // Continue with checkout even if availability check fails
-            }
-        }
+        // Skip preliminary availability check - full check will happen when dates are selected
 
         // Update customer modal with cart data
         updateCustomerModalSummary();
@@ -1754,19 +1713,13 @@ $(document).ready(function () {
                 );
                 
                 if (!availabilityResult.available) {
-                    let errorMessage = "Some products are not available for the selected dates:\n\n";
+                    let errorMessage = "Some products are already rented on the selected dates:\n\n";
                     
                     availabilityResult.conflicts.forEach(conflict => {
-                        errorMessage += `• ${conflict.product} (${conflict.size}): `;
-                        if (conflict.available === 0) {
-                            errorMessage += "No stock available";
-                        } else {
-                            errorMessage += `Only ${conflict.available} available, but ${conflict.requested} requested`;
-                        }
-                        errorMessage += "\n";
+                        errorMessage += `• ${conflict.product} (${conflict.size}): Already rented on these dates\n`;
                     });
                     
-                    errorMessage += "\nPlease modify your rental list or select different dates.";
+                    errorMessage += "\nPlease select different dates or remove conflicting items from your rental list.";
                     
                     notyf.error(errorMessage);
                     return false;
@@ -2925,7 +2878,7 @@ $(document).ready(function () {
             
             if (!availabilityResult.available) {
                 let conflictProducts = availabilityResult.conflicts.map(c => `${c.product} (${c.size})`).join(', ');
-                notyf.error(`Products not available for selected dates: ${conflictProducts}. Please select different dates or remove conflicting items.`);
+                notyf.error(`Products already rented on selected dates: ${conflictProducts}. Please select different dates or remove conflicting items.`);
             } else {
                 // Optional: Show success message for available products
                 // notyf.success('All products are available for the selected dates!');
