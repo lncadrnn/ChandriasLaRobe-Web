@@ -1082,5 +1082,170 @@
         </div>
     </div>
 
+    <!-- Appointment Details Modal -->
+    <div id="appointment-details-modal" class="modal-overlay">
+        <div class="modal-content appointment-details-content">
+            <div class="modal-header">
+                <h2><i class='bx bx-calendar-event'></i> Appointment Details</h2>
+                <button class="close-btn" onclick="closeAppointmentDetailsModal()">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="modal-body" id="appointment-details-body">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Appointment Modal -->
+    <div id="edit-appointment-modal" class="modal-overlay">
+        <div class="modal-content edit-appointment-modal-content">
+            <div class="modal-header">
+                <h2><i class='bx bx-edit'></i> Edit Appointment</h2>
+                <button class="close-btn" onclick="closeEditAppointmentModal()">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-appointment-form">
+                    <div class="form-section">
+                        <h3>Customer Information</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="edit-appointment-customerName">Full Name *</label>
+                                <input type="text" id="edit-appointment-customerName" name="customerName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-appointment-contactNumber">Contact Number *</label>
+                                <input type="tel" id="edit-appointment-contactNumber" name="contactNumber" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-appointment-email">Email Address</label>
+                                <input type="email" id="edit-appointment-email" name="email">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Appointment Details</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="edit-appointment-date">Appointment Date *</label>
+                                <input type="date" id="edit-appointment-date" name="appointmentDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-appointment-time">Appointment Time *</label>
+                                <input type="time" id="edit-appointment-time" name="appointmentTime" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-appointment-purpose">Purpose/Service *</label>
+                                <select id="edit-appointment-purpose" name="purpose" required>
+                                    <option value="">Select purpose</option>
+                                    <option value="Consultation">Consultation</option>
+                                    <option value="Fitting">Fitting Session</option>
+                                    <option value="Final Fitting">Final Fitting</option>
+                                    <option value="Pickup">Item Pickup</option>
+                                    <option value="Return">Item Return</option>
+                                    <option value="Alteration">Alteration Service</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-appointment-status">Status</label>
+                                <select id="edit-appointment-status" name="status">
+                                    <option value="scheduled">Scheduled</option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Additional Information</h3>
+                        <div class="form-group">
+                            <label for="edit-appointment-notes">Notes</label>
+                            <textarea id="edit-appointment-notes" name="notes" rows="3" placeholder="Any special requests or additional information..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeEditAppointmentModal()">Cancel</button>
+                        <button type="submit" class="btn-primary">
+                            <i class='bx bx-save'></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Delete Appointment Confirmation Modal -->
+    <div id="delete-appointment-modal" class="modal-overlay">
+        <div class="modal-content delete-appointment-modal-content">
+            <div class="modal-header delete-header">
+                <h2><i class='bx bx-error-circle'></i> Confirm Appointment Deletion</h2>
+                <button class="close-btn" onclick="closeDeleteAppointmentModal()">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="warning-section">
+                    <div class="warning-icon">
+                        <i class='bx bx-error-circle'></i>
+                    </div>
+                    <div class="warning-content">
+                        <h3>⚠️ WARNING: This action cannot be undone!</h3>
+                        <p>You are about to permanently delete this appointment. This will:</p>
+                        <ul class="warning-list">
+                            <li>Remove all customer appointment information</li>
+                            <li>Delete appointment history records</li>
+                            <li>Remove scheduling information</li>
+                            <li>Clear all associated notes and data</li>
+                        </ul>
+                        <p class="final-warning">
+                            <strong>This data will be FOREVER GONE and cannot be recovered!</strong>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="appointment-summary">
+                    <h4>Appointment to be deleted:</h4>
+                    <div class="summary-content">
+                        <p><strong>Customer:</strong> <span id="delete-appointment-customer-name">-</span></p>
+                        <p><strong>Date & Time:</strong> <span id="delete-appointment-datetime">-</span></p>
+                        <p><strong>Purpose:</strong> <span id="delete-appointment-purpose">-</span></p>
+                        <p><strong>Status:</strong> <span id="delete-appointment-status">-</span></p>
+                    </div>
+                </div>
+                
+                <div class="confirmation-section">
+                    <p>Type <strong>DELETE</strong> to confirm:</p>
+                    <input type="text" 
+                           id="delete-appointment-confirmation-input" 
+                           placeholder="Type DELETE to confirm" 
+                           class="confirmation-input"
+                           autocomplete="off"
+                           autocapitalize="off"
+                           autocorrect="off"
+                           spellcheck="false"
+                           data-form-type="other"
+                           data-lpignore="true"
+                           readonly onfocus="this.removeAttribute('readonly');">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeDeleteAppointmentModal()">
+                        <i class='bx bx-x'></i> Cancel
+                    </button>
+                    <button type="button" class="btn-danger" id="confirm-delete-appointment-btn" disabled onclick="confirmDeleteAppointment()">
+                        <i class='bx bx-trash'></i> DELETE FOREVER
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

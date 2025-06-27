@@ -596,28 +596,125 @@ function showAppointmentDetails(appointmentId) {
     const appointment = allAppointments.find(a => a.id === appointmentId);
     if (!appointment) return;
     
-    // For now, show an alert with appointment details
-    // You can implement a proper modal later
-    const details = `
-        Customer: ${appointment.customerName || appointment.fullName || 'Unknown'}
-        Contact: ${appointment.contactNumber || appointment.phoneNumber || 'N/A'}
-        Date: ${formatAppointmentDateTime(appointment)}
-        Purpose: ${appointment.purpose || appointment.appointmentType || 'Consultation'}
-        Notes: ${appointment.notes || 'None'}
+    const modal = document.getElementById('appointment-details-modal');
+    const modalBody = document.getElementById('appointment-details-body');
+    
+    if (!modal || !modalBody) return;
+    
+    // Calculate appointment status
+    const { appointmentStatus, statusClass } = calculateAppointmentStatus(appointment);
+    
+    // Format appointment date and time
+    const appointmentDateTime = formatAppointmentDateTime(appointment);
+    
+    // Format customer info
+    const customerName = appointment.customerName || appointment.fullName || appointment.name || 'Unknown Customer';
+    const contactNumber = appointment.contactNumber || appointment.phoneNumber || appointment.phone || 'N/A';
+    const email = appointment.email || appointment.emailAddress || 'N/A';
+    const purpose = appointment.purpose || appointment.appointmentType || appointment.type || appointment.service || 'Consultation';
+    const notes = appointment.notes || appointment.note || appointment.comments || 'None';
+    
+    modalBody.innerHTML = `
+        <div class="appointment-details-container">
+            <div class="detail-section">
+                <h3><i class='bx bx-user'></i> Customer Information</h3>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Full Name</span>
+                        <span class="detail-value">${customerName}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Contact Number</span>
+                        <span class="detail-value">${contactNumber}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Email Address</span>
+                        <span class="detail-value">${email}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <h3><i class='bx bx-calendar'></i> Appointment Information</h3>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Date & Time</span>
+                        <span class="detail-value">${appointmentDateTime}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Purpose/Service</span>
+                        <span class="detail-value">${purpose}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value">
+                            <span class="appointment-status-badge ${statusClass.replace('status-', '')}">${appointmentStatus}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <h3><i class='bx bx-note'></i> Additional Information</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Notes</span>
+                    <span class="detail-value">${notes}</span>
+                </div>
+            </div>
+            
+            <div class="detail-actions">
+                <button class="btn-primary" onclick="editAppointment('${appointmentId}')">
+                    <i class='bx bx-edit'></i> Edit Appointment
+                </button>
+                <button class="btn-secondary" onclick="closeAppointmentDetailsModal()">
+                    <i class='bx bx-x'></i> Close
+                </button>
+            </div>
+        </div>
     `;
     
-    alert(`Appointment Details:\n\n${details}`);
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
 }
 
-// Edit appointment (placeholder)
+// Edit appointment (shows edit modal)
 function editAppointment(appointmentId) {
     const appointment = allAppointments.find(a => a.id === appointmentId);
     if (!appointment) return;
     
-    alert(`Edit appointment functionality will be implemented here for: ${appointment.customerName || 'Unknown Customer'}`);
+    const modal = document.getElementById('edit-appointment-modal');
+    const form = document.getElementById('edit-appointment-form');
+    
+    if (!modal || !form) return;
+    
+    // Close appointment details modal if open
+    closeAppointmentDetailsModal();
+    
+    // Populate form with appointment data
+    document.getElementById('edit-appointment-customerName').value = appointment.customerName || appointment.fullName || appointment.name || '';
+    document.getElementById('edit-appointment-contactNumber').value = appointment.contactNumber || appointment.phoneNumber || appointment.phone || '';
+    document.getElementById('edit-appointment-email').value = appointment.email || appointment.emailAddress || '';
+    
+    // Format date for input (YYYY-MM-DD)
+    const appointmentDate = appointment.appointmentDate ? new Date(appointment.appointmentDate) : null;
+    if (appointmentDate) {
+        const formattedDate = appointmentDate.toISOString().split('T')[0];
+        document.getElementById('edit-appointment-date').value = formattedDate;
+    }
+    
+    document.getElementById('edit-appointment-time').value = appointment.appointmentTime || appointment.time || '';
+    document.getElementById('edit-appointment-purpose').value = appointment.purpose || appointment.appointmentType || appointment.type || appointment.service || '';
+    document.getElementById('edit-appointment-status').value = appointment.status || 'scheduled';
+    document.getElementById('edit-appointment-notes').value = appointment.notes || appointment.note || appointment.comments || '';
+    
+    // Store appointment ID for form submission
+    form.dataset.appointmentId = appointmentId;
+    
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
 }
 
-// Delete appointment
+// Delete appointment (shows delete confirmation modal)
 async function deleteAppointment(appointmentId) {
     const appointment = allAppointments.find(a => a.id === appointmentId);
     if (!appointment) {
@@ -625,38 +722,43 @@ async function deleteAppointment(appointmentId) {
         return;
     }
     
-    const customerName = appointment.customerName || appointment.fullName || 'Unknown Customer';
-    const confirmed = confirm(`Are you sure you want to delete the appointment for ${customerName}?\n\nThis action cannot be undone.`);
-    if (!confirmed) return;
+    const modal = document.getElementById('delete-appointment-modal');
+    if (!modal) return;
     
-    try {
-        // Delete appointment from Firebase
-        await deleteDoc(doc(chandriaDB, 'appointments', appointmentId));
+    const customerName = appointment.customerName || appointment.fullName || appointment.name || 'Unknown Customer';
+    const appointmentDateTime = formatAppointmentDateTime(appointment);
+    const purpose = appointment.purpose || appointment.appointmentType || appointment.type || appointment.service || 'Consultation';
+    const { appointmentStatus, statusClass } = calculateAppointmentStatus(appointment);
+    
+    // Populate modal with appointment data
+    document.getElementById('delete-appointment-customer-name').textContent = customerName;
+    document.getElementById('delete-appointment-datetime').textContent = appointmentDateTime;
+    document.getElementById('delete-appointment-purpose').textContent = purpose;
+    document.getElementById('delete-appointment-status').innerHTML = `<span class="appointment-status-badge ${statusClass.replace('status-', '')}">${appointmentStatus}</span>`;
+    
+    // Store appointment ID for deletion
+    const confirmBtn = document.getElementById('confirm-delete-appointment-btn');
+    confirmBtn.dataset.appointmentId = appointmentId;
+    
+    // Reset confirmation input
+    const confirmInput = document.getElementById('delete-appointment-confirmation-input');
+    confirmInput.value = '';
+    confirmBtn.disabled = true;
+    
+    // Setup confirmation input listener
+    confirmInput.addEventListener('input', function() {
+        const isValid = this.value.trim().toUpperCase() === 'DELETE';
+        confirmBtn.disabled = !isValid;
         
-        // Remove from local arrays
-        const allIndex = allAppointments.findIndex(a => a.id === appointmentId);
-        if (allIndex !== -1) {
-            allAppointments.splice(allIndex, 1);
-        }
-        
-        const filteredIndex = filteredAppointments.findIndex(a => a.id === appointmentId);
-        if (filteredIndex !== -1) {
-            filteredAppointments.splice(filteredIndex, 1);
-        }
-        
-        // Re-render view
-        renderAppointmentView();
-        
-        if (window.showNotification) {
-            window.showNotification(`Appointment for ${customerName} has been deleted.`, 'success');
+        if (isValid) {
+            confirmBtn.classList.add('enabled');
         } else {
-            alert(`Appointment for ${customerName} has been deleted.`);
+            confirmBtn.classList.remove('enabled');
         }
-        
-    } catch (error) {
-        console.error('Error deleting appointment:', error);
-        alert('Error deleting appointment. Please try again.');
-    }
+    });
+    
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
 }
 
 // Complete appointment
@@ -763,103 +865,166 @@ function showAppointmentError(message) {
     }
 }
 
-// Action functions for appointments
+// Modal close functions for appointments
+function closeAppointmentDetailsModal() {
+    const modal = document.getElementById('appointment-details-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+}
 
-// Debug function to test Firebase connection and inspect data structure
-async function testFirebaseConnection() {
+function closeEditAppointmentModal() {
+    const modal = document.getElementById('edit-appointment-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+}
+
+function closeDeleteAppointmentModal() {
+    const modal = document.getElementById('delete-appointment-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+}
+
+// Confirm delete appointment
+async function confirmDeleteAppointment() {
+    const confirmBtn = document.getElementById('confirm-delete-appointment-btn');
+    const appointmentId = confirmBtn.dataset.appointmentId;
+    
+    if (!appointmentId) return;
+    
+    const appointment = allAppointments.find(a => a.id === appointmentId);
+    if (!appointment) return;
+    
+    const customerName = appointment.customerName || appointment.fullName || appointment.name || 'Unknown Customer';
+    
     try {
-        console.log('Testing Firebase connection...');
-        console.log('Database instance:', chandriaDB);
+        // Show loading state
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Deleting...';
         
-        // Test if we can access the appointments collection
-        const appointmentRef = collection(chandriaDB, 'appointments');
-        console.log('Appointments collection reference:', appointmentRef);
+        // Delete appointment from Firebase
+        await deleteDoc(doc(chandriaDB, 'appointments', appointmentId));
         
-        // Try to get a count of documents
-        const snapshot = await getDocs(appointmentRef);
-        console.log('Firebase connection successful!');
-        console.log('Total appointments in database:', snapshot.size);
-        
-        // Log the structure of ALL appointments to see field variations
-        if (snapshot.size > 0) {
-            console.log('=== DETAILED APPOINTMENT DATA INSPECTION ===');
-            snapshot.forEach((doc, index) => {
-                const data = doc.data();
-                console.log(`Appointment ${index + 1} (ID: ${doc.id}):`);
-                console.log('- All fields:', Object.keys(data));
-                console.log('- Full data:', data);
-                console.log('---');
-            });
-            
-            // Show first few appointments in a table format for easy comparison
-            const firstFew = [];
-            snapshot.docs.slice(0, 3).forEach(doc => {
-                firstFew.push({
-                    id: doc.id,
-                    data: doc.data()
-                });
-            });
-            console.table(firstFew);
+        // Remove from local arrays
+        const allIndex = allAppointments.findIndex(a => a.id === appointmentId);
+        if (allIndex !== -1) {
+            allAppointments.splice(allIndex, 1);
         }
         
-        return true;
+        const filteredIndex = filteredAppointments.findIndex(a => a.id === appointmentId);
+        if (filteredIndex !== -1) {
+            filteredAppointments.splice(filteredIndex, 1);
+        }
+        
+        // Close modal
+        closeDeleteAppointmentModal();
+        
+        // Re-render view
+        renderAppointmentView();
+        
+        if (window.showNotification) {
+            window.showNotification(`Appointment for ${customerName} has been deleted.`, 'success');
+        } else {
+            alert(`Appointment for ${customerName} has been deleted.`);
+        }
+        
     } catch (error) {
-        console.error('Firebase connection test failed:', error);
-        console.error('Error details:', {
-            code: error.code,
-            message: error.message,
-            stack: error.stack
-        });
-        return false;
+        console.error('Error deleting appointment:', error);
+        alert('Error deleting appointment. Please try again.');
+        
+        // Reset button
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = '<i class="bx bx-trash"></i> DELETE FOREVER';
     }
 }
 
-// Debug function to inspect currently loaded appointments
-function inspectLoadedAppointments() {
-    console.log('=== LOADED APPOINTMENTS INSPECTION ===');
-    console.log('Total appointments loaded:', allAppointments.length);
-    
-    if (allAppointments.length > 0) {
-        console.log('First appointment structure:');
-        console.table(allAppointments[0]);
-        
-        // Check field availability across all appointments
-        const fieldStats = {};
-        allAppointments.forEach(appointment => {
-            Object.keys(appointment).forEach(field => {
-                if (!fieldStats[field]) fieldStats[field] = 0;
-                if (appointment[field] && appointment[field] !== 'N/A' && appointment[field] !== '') {
-                    fieldStats[field]++;
+// Handle edit appointment form submission
+document.addEventListener('DOMContentLoaded', function() {
+    const editForm = document.getElementById('edit-appointment-form');
+    if (editForm) {
+        editForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const appointmentId = this.dataset.appointmentId;
+            if (!appointmentId) return;
+            
+            const formData = new FormData(this);
+            const appointmentData = {};
+            
+            // Convert form data to object
+            for (let [key, value] of formData.entries()) {
+                appointmentData[key] = value.trim();
+            }
+            
+            // Add timestamp for last updated
+            appointmentData.lastUpdated = new Date().toISOString();
+            
+            try {
+                // Show loading state
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalContent = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Saving...';
+                
+                // Update appointment in Firebase
+                await updateDoc(doc(chandriaDB, 'appointments', appointmentId), appointmentData);
+                
+                // Update local data
+                const appointmentIndex = allAppointments.findIndex(a => a.id === appointmentId);
+                if (appointmentIndex !== -1) {
+                    allAppointments[appointmentIndex] = {
+                        ...allAppointments[appointmentIndex],
+                        ...appointmentData
+                    };
                 }
-            });
+                
+                // Update filtered appointments
+                const filteredIndex = filteredAppointments.findIndex(a => a.id === appointmentId);
+                if (filteredIndex !== -1) {
+                    filteredAppointments[filteredIndex] = {
+                        ...filteredAppointments[filteredIndex],
+                        ...appointmentData
+                    };
+                }
+                
+                // Close modal
+                closeEditAppointmentModal();
+                
+                // Re-render view
+                renderAppointmentView();
+                
+                if (window.showNotification) {
+                    window.showNotification('Appointment updated successfully!', 'success');
+                } else {
+                    alert('Appointment updated successfully!');
+                }
+                
+                // Reset form
+                this.reset();
+                delete this.dataset.appointmentId;
+                
+            } catch (error) {
+                console.error('Error updating appointment:', error);
+                alert('Error updating appointment. Please try again.');
+            } finally {
+                // Reset button
+                const submitBtn = this.querySelector('button[type="submit"]');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalContent;
+            }
         });
-        
-        console.log('Field availability stats:');
-        console.table(fieldStats);
-        
-        // Show some sample data
-        console.log('Sample appointment data:');
-        allAppointments.slice(0, 3).forEach((appointment, index) => {
-            console.log(`Appointment ${index + 1}:`);
-            console.log('- Customer Name:', appointment.customerName);
-            console.log('- Contact Number:', appointment.contactNumber);
-            console.log('- Email:', appointment.email);
-            console.log('- Appointment Date:', appointment.appointmentDate);
-            console.log('- Appointment Time:', appointment.appointmentTime);
-            console.log('- Purpose:', appointment.purpose);
-            console.log('- Status:', appointment.status);
-            console.log('---');
-        });
-    } else {
-        console.log('No appointments loaded yet. Try calling loadAppointments() first.');
     }
-}
+});
 
-// Export functions to global scope
-window.loadAppointments = loadAppointments;
-window.renderAppointmentView = renderAppointmentView;
-window.applyAppointmentSorting = applyAppointmentSorting;
-window.testFirebaseConnection = testFirebaseConnection;
-window.inspectLoadedAppointments = inspectLoadedAppointments;
+// Global functions for modal access
+window.closeAppointmentDetailsModal = closeAppointmentDetailsModal;
+window.closeEditAppointmentModal = closeEditAppointmentModal;
+window.closeDeleteAppointmentModal = closeDeleteAppointmentModal;
+window.confirmDeleteAppointment = confirmDeleteAppointment;
 
-console.log('Customer logs appointment module loaded');
+// ...existing code...
