@@ -1097,6 +1097,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Global functions for modal access
+window.editAppointment = editAppointment;
 window.closeAppointmentDetailsModal = closeAppointmentDetailsModal;
 window.closeEditAppointmentModal = closeEditAppointmentModal;
 window.closeDeleteAppointmentModal = closeDeleteAppointmentModal;
