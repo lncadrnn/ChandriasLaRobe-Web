@@ -2133,6 +2133,65 @@ body.modal-open .modal-overlay.show .modal-content {
     display: block !important;
 }
 
+/* Late Fee Notes Textarea Specific Styling */
+#late-fee-notes {
+    width: 100%;
+    min-height: 80px;
+    max-height: 150px;
+    padding: 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    background-color: #ffffff;
+    color: #2c3e50;
+    resize: vertical;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+#late-fee-notes:focus {
+    outline: none;
+    border-color: #e67e22;
+    box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+    background-color: #fefefe;
+}
+
+#late-fee-notes::placeholder {
+    color: #6c757d;
+    font-style: italic;
+    opacity: 0.8;
+}
+
+#late-fee-notes:hover:not(:focus) {
+    border-color: #dee2e6;
+    background-color: #f8f9fa;
+}
+
+/* Fee Section Container for Additional Notes */
+.fee-input-group:has(#late-fee-notes) {
+    margin-top: 1rem;
+}
+
+.fee-input-group label[for="late-fee-notes"] {
+    color: #e67e22;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    font-size: 14px;
+}
+
+/* Mobile responsive for late fee notes */
+@media (max-width: 768px) {
+    #late-fee-notes {
+        min-height: 70px;
+        max-height: 120px;
+        font-size: 13px;
+        padding: 10px;
+    }
+}
+
 /* Selected state for overdue options */
 #process-overdue-modal .overdue-option input[type="radio"]:checked + label {
     color: #ea580c !important;
