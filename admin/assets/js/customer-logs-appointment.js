@@ -389,6 +389,7 @@ function renderAppointmentCards() {
     }
     
     cardsContainer.innerHTML = cards.join('');
+    addAppointmentActionListeners();
 }
 
 // Render appointment table
@@ -840,18 +841,6 @@ function showAppointmentError(message) {
 }
 
 // Action functions for appointments
-function proceedToTransaction(appointmentId) {
-    const appointment = allAppointments.find(a => a.id === appointmentId);
-    if (!appointment) {
-        console.error('Appointment not found:', appointmentId);
-        return;
-    }
-    
-    // For now, show an alert - you can implement actual transaction flow later
-    alert(`Proceeding to transaction for appointment: ${appointment.customerName || appointment.fullName || 'Unknown Customer'}`);
-    console.log('Proceed to transaction for appointment:', appointment);
-}
-
 async function confirmAppointment(appointmentId) {
     const appointment = allAppointments.find(a => a.id === appointmentId);
     if (!appointment) {

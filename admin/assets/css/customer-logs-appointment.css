@@ -317,6 +317,154 @@
     border-color: #3b82f6;
 }
 
+/* =============== ACTION BUTTONS MATCHING RENTAL TAB =============== */
+
+/* View details button styling */
+.view-details-btn,
+.card-action-btn.view-details-btn {
+    background: rgba(52, 152, 219, 0.1);
+    border-color: rgba(52, 152, 219, 0.3);
+    color: #3498db;
+}
+
+.view-details-btn:hover,
+.card-action-btn.view-details-btn:hover {
+    background: rgba(52, 152, 219, 0.2);
+    border-color: #3498db;
+    color: #2980b9;
+}
+
+/* Edit button styling */
+.edit-btn,
+.card-action-btn.edit-btn {
+    background: rgba(52, 152, 219, 0.1);
+    border-color: rgba(52, 152, 219, 0.3);
+    color: #3498db;
+}
+
+.edit-btn:hover,
+.card-action-btn.edit-btn:hover {
+    background: rgba(52, 152, 219, 0.2);
+    border-color: #3498db;
+    color: #2980b9;
+}
+
+/* Delete button styling */
+.delete-btn,
+.card-action-btn.delete-btn {
+    background: rgba(231, 76, 60, 0.1);
+    border-color: rgba(231, 76, 60, 0.3);
+    color: #e74c3c;
+}
+
+.delete-btn:hover,
+.card-action-btn.delete-btn:hover {
+    background: rgba(231, 76, 60, 0.2);
+    border-color: #e74c3c;
+    color: #c0392b;
+}
+
+/* Proceed to dashboard button styling */
+.proceed-dashboard-btn,
+.card-action-btn.proceed-dashboard-btn {
+    background: rgba(255, 105, 180, 0.1);
+    border-color: rgba(255, 105, 180, 0.3);
+    color: var(--primary-color);
+}
+
+.proceed-dashboard-btn:hover,
+.card-action-btn.proceed-dashboard-btn:hover {
+    background: rgba(255, 105, 180, 0.2);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+/* Table action buttons styling */
+.action-buttons {
+    display: flex;
+    gap: 0.25rem;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.action-buttons button {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background: var(--white-color);
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    padding: 0;
+}
+
+.action-buttons button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.action-buttons button:active {
+    transform: translateY(0);
+}
+
+.action-buttons button i {
+    font-size: 14px;
+}
+
+/* Status specific action button colors for appointments */
+.appointment-card .card-action-btn.confirm-appointment-btn,
+.action-buttons .confirm-appointment-btn {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.3);
+    color: #22c55e;
+}
+
+.appointment-card .card-action-btn.confirm-appointment-btn:hover,
+.action-buttons .confirm-appointment-btn:hover {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: #22c55e;
+    color: #16a34a;
+}
+
+.appointment-card .card-action-btn.cancel-appointment-btn,
+.action-buttons .cancel-appointment-btn {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+}
+
+.appointment-card .card-action-btn.cancel-appointment-btn:hover,
+.action-buttons .cancel-appointment-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
+    color: #dc2626;
+}
+
+.appointment-card .card-action-btn.undo-cancel-appointment-btn,
+.appointment-card .card-action-btn.undo-confirm-appointment-btn,
+.action-buttons .undo-cancel-appointment-btn,
+.action-buttons .undo-confirm-appointment-btn {
+    background: rgba(156, 163, 175, 0.1);
+    border-color: rgba(156, 163, 175, 0.3);
+    color: #6b7280;
+}
+
+.appointment-card .card-action-btn.undo-cancel-appointment-btn:hover,
+.appointment-card .card-action-btn.undo-confirm-appointment-btn:hover,
+.action-buttons .undo-cancel-appointment-btn:hover,
+.action-buttons .undo-confirm-appointment-btn:hover {
+    background: rgba(156, 163, 175, 0.2);
+    border-color: #6b7280;
+    color: #4b5563;
+}
+
 /* === APPOINTMENT TABLE STYLES === */
 .appointment-table-container {
     flex: 1;

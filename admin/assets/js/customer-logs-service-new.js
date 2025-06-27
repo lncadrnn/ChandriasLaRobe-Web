@@ -1244,12 +1244,22 @@ async function handleEditSubmit(e) {
 
 // Delete transaction function
 function deleteTransaction(transactionId) {
-    const transaction = allTransactions.find(t => t.id === transactionId);
-    if (!transaction) {
-        alert('Transaction not found');
+    console.log('deleteTransaction called with ID:', transactionId);
+    
+    if (!transactionId) {
+        console.error('No transaction ID provided');
+        alert('Error: No transaction ID provided.');
         return;
     }
     
+    const transaction = allTransactions.find(t => t.id === transactionId);
+    if (!transaction) {
+        console.error('Transaction not found with ID:', transactionId);
+        alert('Transaction not found. It may have been already deleted or moved.');
+        return;
+    }
+    
+    console.log('Found transaction for deletion:', transaction);
     currentDeletingTransaction = transaction;
     populateDeleteModal(transaction);
     showDeleteModal();
@@ -1320,11 +1330,24 @@ async function confirmDelete() {
     
     if (!currentDeletingTransaction) {
         console.error('No transaction to delete');
+        alert('Error: No transaction selected for deletion.');
+        return;
+    }
+    
+    // Additional safety check
+    if (!currentDeletingTransaction.id) {
+        console.error('Transaction missing ID:', currentDeletingTransaction);
+        alert('Error: Invalid transaction data.');
         return;
     }
     
     // Check if the button is disabled
     const deleteBtn = document.getElementById('confirm-delete-btn');
+    if (!deleteBtn) {
+        console.error('Delete button not found');
+        return;
+    }
+    
     if (deleteBtn.disabled) {
         console.log('Delete button is disabled, not proceeding');
         return;
@@ -1332,7 +1355,7 @@ async function confirmDelete() {
     
     // Verify the input confirmation
     const input = document.getElementById('delete-confirmation-input');
-    if (input.value.toUpperCase() !== 'DELETE') {
+    if (!input || input.value.toUpperCase() !== 'DELETE') {
         console.log('Confirmation text is not correct');
         return;
     }
@@ -1340,28 +1363,31 @@ async function confirmDelete() {
     try {
         console.log('Starting deletion process for:', currentDeletingTransaction.id);
         
+        // Store the transaction ID before closing modal (to avoid null reference)
+        const transactionId = currentDeletingTransaction.id;
+        
         // Show loading state
         const originalText = deleteBtn.innerHTML;
         deleteBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Deleting...';
         deleteBtn.disabled = true;
           // Delete document from Firebase
         console.log('Deleting document from Firebase...');
-        await deleteDoc(doc(chandriaDB, 'transaction', currentDeletingTransaction.id));
+        await deleteDoc(doc(chandriaDB, 'transaction', transactionId));
         console.log('Document deleted successfully');
           // Remove from local arrays
-        allTransactions = allTransactions.filter(t => t.id !== currentDeletingTransaction.id);
-        filteredTransactions = filteredTransactions.filter(t => t.id !== currentDeletingTransaction.id);
+        allTransactions = allTransactions.filter(t => t.id !== transactionId);
+        filteredTransactions = filteredTransactions.filter(t => t.id !== transactionId);
         
         // Update global references
         window.allTransactions = allTransactions;
         window.filteredTransactions = filteredTransactions;
         
-        // Close modal
+        // Close modal (this will set currentDeletingTransaction to null)
         closeDeleteModal();
         
-        // Use real-time updater for immediate UI changes
+        // Use real-time updater for immediate UI changes (use stored ID)
         if (window.realTimeUpdater) {
-            window.realTimeUpdater.removeTransaction(currentDeletingTransaction.id);
+            window.realTimeUpdater.removeTransaction(transactionId);
         } else {
             // Fallback: update count and re-render
             updateTransactionCount();
@@ -1378,11 +1404,20 @@ async function confirmDelete() {
         
     } catch (error) {
         console.error('Error deleting transaction:', error);
-        alert('Error deleting transaction. Please try again.');
+        console.error('Error details:', {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+            transactionId: currentDeletingTransaction ? currentDeletingTransaction.id : 'N/A'
+        });
         
-        // Restore button state
-        deleteBtn.innerHTML = '<i class="bx bx-trash"></i> DELETE FOREVER';
-        deleteBtn.disabled = true; // Keep disabled until confirmation is re-entered
+        alert(`Error deleting transaction: ${error.message}. Please try again.`);
+        
+        // Restore button state if button still exists
+        if (deleteBtn) {
+            deleteBtn.innerHTML = '<i class="bx bx-trash"></i> DELETE FOREVER';
+            deleteBtn.disabled = true; // Keep disabled until confirmation is re-entered
+        }
     }
 }
 
