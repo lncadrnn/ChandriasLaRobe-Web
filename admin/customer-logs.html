@@ -639,36 +639,10 @@
                     </div>
                     <div class="warning-content">
                         <h3>⚠️ Process this overdue rental?</h3>
-                        <p>This rental is overdue and requires processing. Choose how to proceed:</p>
-                        <div class="overdue-options">
-                            <div class="overdue-option">
-                                <input type="radio" id="mark-completed" name="overdue-action" value="completed" checked>
-                                <label for="mark-completed">
-                                    <i class='bx bx-check-circle'></i>
-                                    <span>Mark as Completed</span>
-                                    <small>Items have been returned without penalty</small>
-                                </label>
-                                <div class="option-note" id="completed-note">
-                                    <i class='bx bx-info-circle'></i>
-                                    <p>Marking this rental as completed indicates that all transactions with this customer have been successfully concluded.</p>
-                                </div>
-                            </div>
-                            <div class="overdue-option">
-                                <input type="radio" id="add-late-fee" name="overdue-action" value="late-fee">
-                                <label for="add-late-fee">
-                                    <i class='bx bx-money'></i>
-                                    <span>Add Overdue Fee & Complete</span>
-                                    <small>Apply penalty for overdue return</small>
-                                </label>
-                                <div class="option-note option-note-hidden" id="late-fee-note">
-                                    <i class='bx bx-money'></i>
-                                    <p>An overdue fee will be added to cover the penalty for late return. Please specify the fee amount and reason below.</p>
-                                </div>
-                            </div>
-                        </div>
+                        <p>This rental is overdue and requires processing. The overdue fee will be automatically calculated and applied.</p>
                         
-                        <!-- Late Fee Section -->
-                        <div id="late-fee-section" class="fee-section fee-section-hidden">
+                        <!-- Overdue Fee Section (Always Visible) -->
+                        <div id="late-fee-section" class="fee-section">
                             <h4>Overdue Fee Details</h4>
                             <div class="fee-calculation-display">
                                 <div class="calculation-row">

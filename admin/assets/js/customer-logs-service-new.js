@@ -2082,9 +2082,8 @@ function showProcessOverdueModal(transactionId) {
     window.calculatedOverdueDays = overdueDays;
     window.actualEndDate = actualEndDate;
     
-    // Reset form
-    document.getElementById('mark-completed').checked = true;
-    document.getElementById('late-fee-section').style.display = 'none';
+    // Reset form - always show fee section
+    document.getElementById('late-fee-section').style.display = 'block';
     document.getElementById('late-fee-reason').value = 'late-return';
     
     // Show modal immediately
@@ -2095,8 +2094,8 @@ function showProcessOverdueModal(transactionId) {
     // Prevent background interaction
     document.body.classList.add('modal-open');
     
-    // Add event listeners for radio buttons
-    setupOverdueModalListeners();
+    // Add event listeners - no longer needed for radio buttons
+    // Fee section is always visible now
 }
 
 // Close Process Overdue Modal
@@ -2112,20 +2111,9 @@ function closeProcessOverdueModal() {
     currentOverdueTransaction = null;
 }
 
-// Setup event listeners for the modal
+// Setup event listeners for the modal - no longer needed
 function setupOverdueModalListeners() {
-    const radioButtons = document.querySelectorAll('input[name="overdue-action"]');
-    radioButtons.forEach(radio => {
-        radio.addEventListener('change', function() {
-            // Hide all sections first
-            document.getElementById('late-fee-section').style.display = 'none';
-            
-            // Show relevant section based on selection
-            if (this.value === 'late-fee') {
-                document.getElementById('late-fee-section').style.display = 'block';
-            }
-        });
-    });
+    // Radio buttons removed - fee section is always visible
 }
 
 // Calculate days overdue
@@ -2165,7 +2153,14 @@ function calculateDaysOverdue(transaction) {
 async function confirmProcessOverdue() {
     if (!currentOverdueTransaction) return;
     
-    const selectedAction = document.querySelector('input[name="overdue-action"]:checked').value;
+    // Always apply overdue fee - no radio button selection needed
+    const feeReason = document.getElementById('late-fee-reason').value;
+    const calculatedFee = window.calculatedOverdueFee || 0;
+    
+    if (!feeReason) {
+        showNotification('Please select a reason for the overdue fee', 'error');
+        return;
+    }
     
     try {
         // Show loading
@@ -2174,38 +2169,22 @@ async function confirmProcessOverdue() {
         const transactionRef = doc(chandriaDB, 'transaction', currentOverdueTransaction.id);
         const updateData = {
             processedOverdue: true,
-            updatedAt: new Date().toISOString()
-        };
-        
-        if (selectedAction === 'completed') {
-            // Mark as completed
-            updateData.returnConfirmed = true;
-            updateData.completedDate = new Date().toISOString();
-              } else if (selectedAction === 'late-fee') {
-            // Add overdue fee and mark as completed
-            const feeReason = document.getElementById('late-fee-reason').value;
-            const calculatedFee = window.calculatedOverdueFee || 0;
-            
-            if (!feeReason) {
-                document.querySelector('.admin-action-spinner').style.display = 'none';
-                showNotification('Please select a reason for the overdue fee', 'error');
-                return;
-            }
-            
-            updateData.returnConfirmed = true;
-            updateData.completedDate = new Date().toISOString();
-            updateData.overdueFee = {
+            updatedAt: new Date().toISOString(),
+            returnConfirmed: true,
+            completedDate: new Date().toISOString(),
+            overdueFee: {
                 overdueAmount: calculatedFee,
                 overdueReason: feeReason,
                 overdueDays: window.calculatedOverdueDays || 0,
                 rentalType: currentOverdueTransaction.rentalType,
-                addedDate: new Date().toISOString()
-            };
-            
-            // Update total amount
-            const newTotal = (currentOverdueTransaction.totalAmount || 0) + calculatedFee;
-            updateData.totalAmount = newTotal;
-        }
+                addedDate: new Date().toISOString(),
+                notes: document.getElementById('late-fee-notes').value || ''
+            }
+        };
+        
+        // Update total amount - only add overdue fee to existing total
+        const newTotal = (currentOverdueTransaction.totalAmount || 0) + calculatedFee;
+        updateData.totalAmount = newTotal;
         
         // Update the transaction in Firebase
         await updateDoc(transactionRef, updateData);
