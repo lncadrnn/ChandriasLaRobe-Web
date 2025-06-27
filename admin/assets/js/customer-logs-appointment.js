@@ -148,18 +148,32 @@ async function loadAppointments() {
             window.adminSpinners.showPageLoader('Loading appointments...');
         }
         
+        console.log('Starting to load appointments from Firebase...');
         const appointmentRef = collection(chandriaDB, 'appointments');
+        console.log('Collection reference created for: appointments');
+        
         const snapshot = await getDocs(appointmentRef);
+        console.log('Firestore query completed. Documents found:', snapshot.size);
         
         allAppointments = [];
         window.allAppointments = allAppointments; // Update global reference
         
         snapshot.forEach(doc => {
             const data = doc.data();
-            allAppointments.push({
+            const appointment = {
                 id: doc.id,
-                ...data
-            });
+                ...data,
+                // Normalize field names for consistency
+                customerName: data.customerName || data.fullName || data.name || '',
+                contactNumber: data.contactNumber || data.phoneNumber || data.phone || '',
+                email: data.email || data.emailAddress || '',
+                appointmentDate: data.appointmentDate || data.date || data.scheduledDate || '',
+                appointmentTime: data.appointmentTime || data.time || data.scheduledTime || '',
+                purpose: data.purpose || data.appointmentType || data.type || data.service || '',
+                notes: data.notes || data.note || data.comments || '',
+                status: data.status || 'scheduled'
+            };
+            allAppointments.push(appointment);
         });
         
         filteredAppointments = [...allAppointments];
@@ -173,6 +187,7 @@ async function loadAppointments() {
         }
         
         console.log('Appointments loaded:', allAppointments.length);
+        console.log('Sample appointment data:', allAppointments[0]); // Debug: Show first appointment structure
         
     } catch (error) {
         console.error('Error loading appointments:', error);
@@ -194,7 +209,6 @@ function searchAppointments(searchTerm) {
         filteredAppointments = allAppointments.filter(appointment => {
             return (
                 (appointment.customerName || appointment.fullName || '').toLowerCase().includes(term) ||
-                (appointment.appointmentCode || '').toLowerCase().includes(term) ||
                 (appointment.contactNumber || appointment.phoneNumber || '').includes(term) ||
                 (appointment.purpose || appointment.appointmentType || '').toLowerCase().includes(term) ||
                 (appointment.notes || '').toLowerCase().includes(term)
@@ -285,9 +299,11 @@ function renderAppointmentCards() {
         // Format appointment date and time
         const appointmentDateTime = formatAppointmentDateTime(appointment);
         
-        // Format customer info
-        const customerName = appointment.customerName || appointment.fullName || 'Unknown Customer';
-        const contactNumber = appointment.contactNumber || appointment.phoneNumber || 'N/A';
+        // Format customer info with better fallbacks
+        const customerName = appointment.customerName || appointment.fullName || appointment.name || 'Unknown Customer';
+        const contactNumber = appointment.contactNumber || appointment.phoneNumber || appointment.phone || 'N/A';
+        const email = appointment.email || appointment.emailAddress || 'N/A';
+        const purpose = appointment.purpose || appointment.appointmentType || appointment.type || appointment.service || 'Consultation';
         
         const card = `
             <div class="transaction-card" data-appointment-id="${appointment.id}">
@@ -295,7 +311,6 @@ function renderAppointmentCards() {
                     <div class="card-header">
                         <div class="customer-info-centered">
                             <h4 title="${customerName}">${customerName}</h4>
-                            <span class="transaction-code">${appointment.appointmentCode || appointment.id.substring(0, 8)}</span>
                         </div>
                         <div class="card-status-top">
                             <span class="status-badge ${statusClass}">${appointmentStatus}</span>
@@ -385,17 +400,16 @@ function renderAppointmentTable() {
         // Format appointment date and time
         const appointmentDateTime = formatAppointmentDateTime(appointment);
         
-        // Format customer info
-        const customerName = appointment.customerName || appointment.fullName || 'Unknown Customer';
-        const contactNumber = appointment.contactNumber || appointment.phoneNumber || 'N/A';
-        const email = appointment.email || 'N/A';
+        // Format customer info with better fallbacks
+        const customerName = appointment.customerName || appointment.fullName || appointment.name || 'Unknown Customer';
+        const contactNumber = appointment.contactNumber || appointment.phoneNumber || appointment.phone || 'N/A';
+        const email = appointment.email || appointment.emailAddress || 'N/A';
         
         const row = `
             <tr data-appointment-id="${appointment.id}">
                 <td>
                     <div class="customer-info">
                         <strong class="customer-name">${customerName}</strong>
-                        <small class="appointment-code">${appointment.appointmentCode || appointment.id.substring(0, 8)}</small>
                     </div>
                 </td>
                 <td>${email}</td>
@@ -853,9 +867,44 @@ async function undoConfirmAppointment(appointmentId) {
     }
 }
 
+// Debug function to test Firebase connection
+async function testFirebaseConnection() {
+    try {
+        console.log('Testing Firebase connection...');
+        console.log('Database instance:', chandriaDB);
+        
+        // Test if we can access the appointments collection
+        const appointmentRef = collection(chandriaDB, 'appointments');
+        console.log('Appointments collection reference:', appointmentRef);
+        
+        // Try to get a count of documents
+        const snapshot = await getDocs(appointmentRef);
+        console.log('Firebase connection successful!');
+        console.log('Total appointments in database:', snapshot.size);
+        
+        // Log the structure of the first appointment (if any)
+        if (snapshot.size > 0) {
+            const firstDoc = snapshot.docs[0];
+            console.log('First appointment ID:', firstDoc.id);
+            console.log('First appointment data:', firstDoc.data());
+        }
+        
+        return true;
+    } catch (error) {
+        console.error('Firebase connection test failed:', error);
+        console.error('Error details:', {
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
+        return false;
+    }
+}
+
 // Export functions to global scope
 window.loadAppointments = loadAppointments;
 window.renderAppointmentView = renderAppointmentView;
 window.applyAppointmentSorting = applyAppointmentSorting;
+window.testFirebaseConnection = testFirebaseConnection;
 
 console.log('Customer logs appointment module loaded');

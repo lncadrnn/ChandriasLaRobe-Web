@@ -106,16 +106,6 @@
     max-width: 100%;
 }
 
-.appointment-card .customer-info-centered .appointment-code {
-    color: #6b7280;
-    font-size: 0.85rem;
-    font-weight: 500;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: none;
-    padding: 0;
-    border-radius: 0;
-}
-
 /* Status badge positioned top right - fixed position */
 .appointment-card .card-status-top {
     position: absolute;
