@@ -1144,7 +1144,7 @@ body.modal-open .modal-overlay.show .modal-content {
 }
 
 .btn-complete {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+    background: linear-gradient(135deg, #2196F3, #1976D2) !important;
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -1486,16 +1486,6 @@ body.modal-open .modal-overlay.show .modal-content {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Cancel Button Loading State */
-#cancel-rental-modal .btn-cancel.loading {
-    pointer-events: none !important;
-    opacity: 0.7 !important;
-}
-
-#cancel-rental-modal .btn-cancel.loading i {
-    animation: spin 1s linear infinite !important;
-}
-
 /* Mobile Responsive Design for Cancel Modal */
 @media (max-width: 768px) {
     .cancel-modal-content {
@@ -1695,20 +1685,53 @@ body.modal-open .modal-overlay.show .modal-content {
 #mark-complete-confirmation-modal .warning-list li {
     margin-bottom: 0.5rem !important;
     line-height: 1.4 !important;
+    position: relative !important;
+    font-weight: 500 !important;
+    padding-left: 1.5rem !important;
 }
 
-#mark-complete-confirmation-modal .warning-list li:last-child {
-    margin-bottom: 0 !important;
+/* Override any generic warning styles for mark as complete modal */
+#mark-complete-confirmation-modal .warning-list li::before {
+    content: "ℹ️" !important;
+    position: absolute !important;
+    left: 0 !important;
+    color: #2196F3 !important;
+    font-weight: bold !important;
+    font-size: 1rem !important;
 }
 
+/* Ensure warning icon background and border are blue */
+#mark-complete-confirmation-modal .warning-icon {
+    background: linear-gradient(135deg, #2196F3, #1976D2) !important;
+    border: 3px solid #1976D2 !important;
+    color: white !important;
+}
+
+#mark-complete-confirmation-modal .warning-icon i {
+    color: white !important;
+    font-size: 1.8rem !important;
+}
+
+/* Ensure final warning is blue themed */
 #mark-complete-confirmation-modal .final-warning {
-    margin: 1rem 0 0 0 !important;
-    padding: 0.75rem !important;
     background: rgba(33, 150, 243, 0.1) !important;
+    border: 2px solid #2196F3 !important;
     border-radius: 6px !important;
-    font-weight: 600 !important;
     color: #1976D2 !important;
-    border-left: 4px solid #2196F3 !important;
+}
+
+/* Override any other warning styles that might conflict */
+#mark-complete-confirmation-modal .warning-section {
+    background: #e3f2fd !important;
+    border: 2px solid #2196F3 !important;
+}
+
+#mark-complete-confirmation-modal .warning-content h3 {
+    color: #1976D2 !important;
+}
+
+#mark-complete-confirmation-modal .warning-content p {
+    color: #424242 !important;
 }
 
 /* Transaction Summary Section */
@@ -3298,12 +3321,12 @@ body.modal-open .modal-overlay.show .modal-content {
 
 /* Delete Button Loading State */
 #delete-modal .btn-danger.loading {
-    pointer-events: none;
-    opacity: 0.7;
+    pointer-events: none !important;
+    opacity: 0.7 !important;
 }
 
 #delete-modal .btn-danger.loading i {
-    animation: spin 1s linear infinite;
+    animation: spin 1s linear infinite !important;
 }
 
 /* Mobile Responsive Design for Delete Modal */
