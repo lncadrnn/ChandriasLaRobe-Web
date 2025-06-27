@@ -911,6 +911,7 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    width: 100%; /* Ensure full width */
 }
 
 .payment-type-group,
@@ -918,6 +919,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    width: 100%; /* Ensure each group takes full width */
 }
 
 .payment-type-group label,
@@ -925,6 +927,7 @@
     font-weight: 600;
     color: #374151;
     font-size: 0.875rem;
+    width: 100%; /* Full width labels */
 }
 
 .payment-type-group select,
@@ -935,17 +938,25 @@
     font-size: 0.875rem;
     transition: all 0.2s ease;
     background: white;
+    width: 100%; /* Full width inputs */
+    box-sizing: border-box; /* Include padding in width calculation */
 }
 
 .payment-type-group select:focus,
 .payment-reference-group input:focus {
     outline: none;
-    border-color: #4338ca;
+    border-color: #f97316 !important;
     box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
 }
 
 .payment-reference-group {
     transition: all 0.3s ease;
+    order: 2; /* Ensure reference field appears at the bottom */
+    margin-top: 0.5rem; /* Add extra spacing */
+}
+
+.payment-type-group {
+    order: 1; /* Ensure payment type appears at the top */
 }
 
 .payment-reference-group.show {
