@@ -113,6 +113,7 @@ function initializeAppointmentControlBar() {
     
     if (cardViewBtn && tableViewBtn) {
         cardViewBtn.addEventListener('click', function() {
+            console.log('Card view button clicked, current view:', currentView);
             if (currentView !== 'cards') {
                 currentView = 'cards';
                 
@@ -120,18 +121,23 @@ function initializeAppointmentControlBar() {
                 cardViewBtn.classList.add('active');
                 tableViewBtn.classList.remove('active');
                 
+                console.log('Switching to cards view');
+                
                 // Re-render view
                 renderAppointmentView();
             }
         });
         
         tableViewBtn.addEventListener('click', function() {
+            console.log('Table view button clicked, current view:', currentView);
             if (currentView !== 'table') {
                 currentView = 'table';
                 
                 // Update button states
                 tableViewBtn.classList.add('active');
                 cardViewBtn.classList.remove('active');
+                
+                console.log('Switching to table view');
                 
                 // Re-render view
                 renderAppointmentView();
@@ -252,10 +258,11 @@ function renderAppointmentView() {
             emptyStateElement.style.display = 'block';
         }
         if (cardsContainer) {
-            cardsContainer.style.display = 'none';
+            cardsContainer.classList.add('hidden');
         }
         if (tableContainer) {
-            tableContainer.style.display = 'none';
+            tableContainer.classList.add('hidden');
+            tableContainer.classList.remove('show');
         }
         return;
     }
@@ -266,20 +273,25 @@ function renderAppointmentView() {
     }
     
     // Show appropriate view based on current view setting
+    console.log('renderAppointmentView - currentView:', currentView);
     if (currentView === 'cards') {
+        console.log('Showing cards view, hiding table view');
         if (cardsContainer) {
-            cardsContainer.style.display = 'block'; // Changed from 'flex' to 'block' to allow grid layout
+            cardsContainer.classList.remove('hidden');
         }
         if (tableContainer) {
-            tableContainer.style.display = 'none';
+            tableContainer.classList.add('hidden');
+            tableContainer.classList.remove('show');
         }
         renderAppointmentCards();
     } else {
+        console.log('Showing table view, hiding cards view');
         if (cardsContainer) {
-            cardsContainer.style.display = 'none';
+            cardsContainer.classList.add('hidden');
         }
         if (tableContainer) {
-            tableContainer.style.display = 'block';
+            tableContainer.classList.remove('hidden');
+            tableContainer.classList.add('show');
         }
         renderAppointmentTable();
     }

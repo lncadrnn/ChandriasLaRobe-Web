@@ -1278,3 +1278,14 @@
         margin: 0.75rem !important;
     }
 }
+
+/* === VIEW TOGGLE CLASSES === */
+#appointment-cards-container.hidden {
+    display: none !important;
+}
+
+#appointment-table-container.hidden {
+    display: none !important;
+}
+
+/* === APPOINTMENT CONTAINER === */
