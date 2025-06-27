@@ -725,12 +725,19 @@ $(document).ready(function () {
     // A-HREF DELETE ACCOUNT TOGGLER
     $("#del-acc").on("click", function (e) {
         e.preventDefault();
-
-        if (confirm("Are you sure you want to delete your account?")) {
-            $(".del-acc-modal-container").addClass("show");
-        } else {
+        const user = auth.currentUser;
+        if (!user) {
+            notyf.error("Please sign in to delete your account");
             return;
         }
+
+        // Check if user is Google-signed-in
+        const isGoogle = isGoogleUser(user);
+        
+        // Show appropriate modal content
+        $(".del-acc-modal-container").addClass("show").css("display", "flex");
+        $("#del-acc-regular-content").css("display", isGoogle ? "none" : "block");
+        $("#del-acc-google-content").css("display", isGoogle ? "block" : "none");
     });
 
     // DELETE ACCOUNT CLICK HANDLER
@@ -880,12 +887,12 @@ $(document).ready(function () {
     // Modal close handlers
     $(".del-acc-modal-container").on("click", function(e) {
         if (e.target === this) {
-            $(this).css("display", "none");
+            $(this).removeClass("show").css("display", "none");
         }
     });
 
     $("#del-acc-cancel, #del-acc-google-cancel").on("click", function() {
-        $(".del-acc-modal-container").css("display", "none");
+        $(".del-acc-modal-container").removeClass("show").css("display", "none");
         $("#del-acc-password").val(""); // Clear password field
     });
 

@@ -328,39 +328,7 @@ $(document).ready(function () {
     const todayDate = new Date().toISOString().split("T")[0];
     $("#checkout-date").attr("min", todayDate);
 
-    // Initialize Bootstrap Clockpicker (with clock UI)
-    $("#checkout-time").clockpicker({
-        autoclose: true,
-        placement: "bottom",
-        align: "left",
-        donetext: "Done",
-        twelvehour: false, // 24-hour mode for easier validation
-        afterDone: function () {
-            const selectedTimeStr = $("#checkout-time").val(); // Format: HH:MM
-            if (selectedTimeStr) {
-                const timeParts = selectedTimeStr.split(":");
-                const hours = parseInt(timeParts[0], 10);
-                const minutes = parseInt(timeParts[1], 10);
-                const selectedTotalMinutes = hours * 60 + minutes;
-                const minTotalMinutes = 8 * 60; // 8:00 AM
-                const maxTotalMinutes = 21 * 60; // 9:00 PM
-                if (
-                    selectedTotalMinutes < minTotalMinutes ||
-                    selectedTotalMinutes > maxTotalMinutes
-                ) {
-                    notyf.error(
-                        "Please select a time between 8:00 AM and 9:00 PM."
-                    );
-                    $("#checkout-time").val("");
-                }
-            }
-        }
-    });
-    // Also open clockpicker when clicking the clock button
-    $("#clock-btn").on("click", function (e) {
-        e.preventDefault();
-        $("#checkout-time").clockpicker("show");
-    }); // FILL UP FORM BASE ON CURRENT USER LOGGED-IN
+    // FILL UP FORM BASE ON CURRENT USER LOGGED-IN
 
     // AUTH STATE CHANGED FUNCTION
     onAuthStateChanged(auth, async user => {
@@ -388,8 +356,9 @@ $(document).ready(function () {
                         // Auto-fill email from Firebase Auth
                         $("#customer-email").val(user.email);
 
-                        // Check if user is Google user
-                        const isGoogle = isGoogleUser(user);
+                        // Always allow editing phone number
+                        $("#customer-contact").removeAttr("readonly");
+                        $("#customer-contact").attr("placeholder", "Phone No.");
 
                         // Fetch user data from Firestore
                         const userDoc = await getDoc(
@@ -402,25 +371,6 @@ $(document).ready(function () {
 
                             const contactValue = userData.contact || "";
                             $("#customer-contact").val(contactValue);
-
-                            // If Google user and no contact info, allow editing
-                            if (isGoogle && !contactValue.trim()) {
-                                $("#customer-contact").removeAttr("readonly");
-                                $("#customer-contact").attr(
-                                    "placeholder",
-                                    "Phone No."
-                                );
-                            } else {
-                                // Keep readonly for non-Google users or Google users with existing contact
-                                $("#customer-contact").attr("readonly", true);
-                            }
-                        } else if (isGoogle) {
-                            // New Google user with no Firestore record
-                            $("#customer-contact").removeAttr("readonly");
-                            $("#customer-contact").attr(
-                                "placeholder",
-                                "Phone No."
-                            );
                         }
                     })(),
                     loadCartItems(user.uid),
