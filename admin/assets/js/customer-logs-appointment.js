@@ -70,7 +70,7 @@ function initializeAppointmentControlBar() {
         });
         
         // Handle sort option selection
-        const sortOptionElements = sortOptions.querySelectorAll('.appointment-sort-option');
+        const sortOptionElements = sortOptions.querySelectorAll('.sort-option');
         sortOptionElements.forEach(option => {
             option.addEventListener('click', function() {
                 const sortType = this.getAttribute('data-sort');
@@ -82,13 +82,33 @@ function initializeAppointmentControlBar() {
     
     // Mobile sort button
     if (mobileSortBtn) {
-        mobileSortBtn.addEventListener('click', function() {
-            // Cycle through sort options for mobile
-            const sortTypes = ['date-desc', 'date-asc', 'status', 'customer'];
-            const currentIndex = sortTypes.indexOf(currentSort);
-            const nextIndex = (currentIndex + 1) % sortTypes.length;
-            handleAppointmentSort(sortTypes[nextIndex]);
+        const mobileSortOptions = document.getElementById('appointment-sort-options-mobile');
+        
+        mobileSortBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (mobileSortOptions) {
+                mobileSortOptions.classList.toggle('show');
+            }
         });
+        
+        // Close mobile dropdown when clicking outside
+        document.addEventListener('click', function() {
+            if (mobileSortOptions) {
+                mobileSortOptions.classList.remove('show');
+            }
+        });
+        
+        // Handle mobile sort option selection
+        if (mobileSortOptions) {
+            const mobileSortOptionElements = mobileSortOptions.querySelectorAll('.sort-option');
+            mobileSortOptionElements.forEach(option => {
+                option.addEventListener('click', function() {
+                    const sortType = this.getAttribute('data-sort');
+                    handleAppointmentSort(sortType);
+                    mobileSortOptions.classList.remove('show');
+                });
+            });
+        }
     }
     
     // Refresh functionality
@@ -220,12 +240,14 @@ function searchAppointments(searchTerm) {
             return (
                 (appointment.customerName || appointment.fullName || '').toLowerCase().includes(term) ||
                 (appointment.contactNumber || appointment.phoneNumber || '').includes(term) ||
+                (appointment.email || appointment.emailAddress || '').toLowerCase().includes(term) ||
                 (appointment.purpose || appointment.appointmentType || '').toLowerCase().includes(term) ||
                 (appointment.notes || '').toLowerCase().includes(term)
             );
         });
     }
     
+    console.log('Search term:', searchTerm, 'Found appointments:', filteredAppointments.length);
     applyAppointmentSorting();
     renderAppointmentView();
     updateAppointmentCount();
@@ -240,10 +262,18 @@ function handleAppointmentSort(sortType) {
 
 // Update appointment count in control bar
 function updateAppointmentCount() {
-    const countElements = document.querySelectorAll('.appointment-count');
-    countElements.forEach(element => {
-        element.textContent = filteredAppointments.length;
-    });
+    const countElement = document.getElementById('appointment-count');
+    const mobileCountElement = document.getElementById('appointment-count-mobile');
+    
+    if (countElement) {
+        countElement.textContent = filteredAppointments.length;
+    }
+    
+    if (mobileCountElement) {
+        mobileCountElement.textContent = filteredAppointments.length;
+    }
+    
+    console.log('Updated appointment count:', filteredAppointments.length);
 }
 
 // Render appointment view
@@ -694,19 +724,23 @@ function applyAppointmentSorting() {
             const nameB = (b.customerName || b.fullName || '').toLowerCase();
             return nameB.localeCompare(nameA);
         });
-    } else if (currentSort === 'date-asc') {
+    } else if (currentSort === 'event-asc') {
+        // Sort by appointment date (earliest first)
         filteredAppointments.sort((a, b) => {
             const dateA = new Date(a.appointmentDate || 0);
             const dateB = new Date(b.appointmentDate || 0);
             return dateA - dateB;
         });
-    } else if (currentSort === 'date-desc') {
+    } else if (currentSort === 'event-desc') {
+        // Sort by appointment date (latest first)
         filteredAppointments.sort((a, b) => {
             const dateA = new Date(a.appointmentDate || 0);
             const dateB = new Date(b.appointmentDate || 0);
             return dateB - dateA;
         });
     }
+    
+    console.log('Applied sorting:', currentSort, 'Total appointments:', filteredAppointments.length);
 }
 
 // Show appointment error
