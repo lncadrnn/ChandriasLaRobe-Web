@@ -106,6 +106,20 @@
     max-width: 100%;
 }
 
+/* Contact number subtitle styling */
+.customer-info-centered .contact-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0.25rem 0 0 0;
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+/* Ensure proper spacing in customer info */
+.customer-info-centered h4 {
+    margin-bottom: 0.25rem;
+}
+
 /* Status badge positioned top right - fixed position */
 .appointment-card .card-status-top {
     position: absolute;

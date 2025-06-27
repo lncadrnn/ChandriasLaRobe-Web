@@ -166,19 +166,23 @@ async function loadAppointments() {
         
         snapshot.forEach(doc => {
             const data = doc.data();
+            console.log('Raw appointment data from Firebase:', doc.id, data); // Debug: Log raw data structure
+            
             const appointment = {
                 id: doc.id,
                 ...data,
-                // Normalize field names for consistency
-                customerName: data.customerName || data.fullName || data.name || '',
-                contactNumber: data.contactNumber || data.phoneNumber || data.phone || '',
-                email: data.email || data.emailAddress || '',
-                appointmentDate: data.appointmentDate || data.date || data.scheduledDate || '',
-                appointmentTime: data.appointmentTime || data.time || data.scheduledTime || '',
-                purpose: data.purpose || data.appointmentType || data.type || data.service || '',
-                notes: data.notes || data.note || data.comments || '',
-                status: data.status || 'scheduled'
+                // Normalize field names for consistency - expanded field mapping
+                customerName: data.customerName || data.fullName || data.name || data.firstName || data.customer || data.clientName || '',
+                contactNumber: data.contactNumber || data.phoneNumber || data.phone || data.mobile || data.contact || data.cellphone || '',
+                email: data.email || data.emailAddress || data.emailAddr || data.customerEmail || data.contactEmail || '',
+                appointmentDate: data.appointmentDate || data.date || data.scheduledDate || data.bookingDate || data.appointmentDay || data.dateScheduled || '',
+                appointmentTime: data.appointmentTime || data.time || data.scheduledTime || data.bookingTime || data.timeSlot || data.timeScheduled || '',
+                purpose: data.purpose || data.appointmentType || data.type || data.service || data.serviceType || data.reason || 'Consultation',
+                notes: data.notes || data.note || data.comments || data.message || data.additionalInfo || '',
+                status: data.status || data.appointmentStatus || data.bookingStatus || 'scheduled'
             };
+            
+            console.log('Normalized appointment data:', appointment); // Debug: Log normalized data
             allAppointments.push(appointment);
         });
         
@@ -323,6 +327,7 @@ function renderAppointmentCards() {
                     <div class="card-header">
                         <div class="customer-info-centered">
                             <h4 title="${customerName}">${customerName}</h4>
+                            <p class="contact-subtitle">${contactNumber}</p>
                         </div>
                         <div class="card-status-top">
                             <span class="status-badge ${statusClass}">${appointmentStatus}</span>
@@ -332,18 +337,12 @@ function renderAppointmentCards() {
                     <div class="card-body">
                         <div class="card-details">
                             <div class="detail-item">
+                                <span class="detail-label">Email</span>
+                                <span class="detail-value">${appointment.email || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
                                 <span class="detail-label">Date and Time</span>
                                 <span class="detail-value">${appointmentDateTime}</span>
-                            </div>
-                            <div class="card-details-row">
-                                <div class="detail-item">
-                                    <span class="detail-label">Email</span>
-                                    <span class="detail-value">${appointment.email || 'N/A'}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Contact Number</span>
-                                    <span class="detail-value">${contactNumber}</span>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -879,7 +878,7 @@ async function undoConfirmAppointment(appointmentId) {
     }
 }
 
-// Debug function to test Firebase connection
+// Debug function to test Firebase connection and inspect data structure
 async function testFirebaseConnection() {
     try {
         console.log('Testing Firebase connection...');
@@ -894,11 +893,26 @@ async function testFirebaseConnection() {
         console.log('Firebase connection successful!');
         console.log('Total appointments in database:', snapshot.size);
         
-        // Log the structure of the first appointment (if any)
+        // Log the structure of ALL appointments to see field variations
         if (snapshot.size > 0) {
-            const firstDoc = snapshot.docs[0];
-            console.log('First appointment ID:', firstDoc.id);
-            console.log('First appointment data:', firstDoc.data());
+            console.log('=== DETAILED APPOINTMENT DATA INSPECTION ===');
+            snapshot.forEach((doc, index) => {
+                const data = doc.data();
+                console.log(`Appointment ${index + 1} (ID: ${doc.id}):`);
+                console.log('- All fields:', Object.keys(data));
+                console.log('- Full data:', data);
+                console.log('---');
+            });
+            
+            // Show first few appointments in a table format for easy comparison
+            const firstFew = [];
+            snapshot.docs.slice(0, 3).forEach(doc => {
+                firstFew.push({
+                    id: doc.id,
+                    data: doc.data()
+                });
+            });
+            console.table(firstFew);
         }
         
         return true;
@@ -913,10 +927,52 @@ async function testFirebaseConnection() {
     }
 }
 
+// Debug function to inspect currently loaded appointments
+function inspectLoadedAppointments() {
+    console.log('=== LOADED APPOINTMENTS INSPECTION ===');
+    console.log('Total appointments loaded:', allAppointments.length);
+    
+    if (allAppointments.length > 0) {
+        console.log('First appointment structure:');
+        console.table(allAppointments[0]);
+        
+        // Check field availability across all appointments
+        const fieldStats = {};
+        allAppointments.forEach(appointment => {
+            Object.keys(appointment).forEach(field => {
+                if (!fieldStats[field]) fieldStats[field] = 0;
+                if (appointment[field] && appointment[field] !== 'N/A' && appointment[field] !== '') {
+                    fieldStats[field]++;
+                }
+            });
+        });
+        
+        console.log('Field availability stats:');
+        console.table(fieldStats);
+        
+        // Show some sample data
+        console.log('Sample appointment data:');
+        allAppointments.slice(0, 3).forEach((appointment, index) => {
+            console.log(`Appointment ${index + 1}:`);
+            console.log('- Customer Name:', appointment.customerName);
+            console.log('- Contact Number:', appointment.contactNumber);
+            console.log('- Email:', appointment.email);
+            console.log('- Appointment Date:', appointment.appointmentDate);
+            console.log('- Appointment Time:', appointment.appointmentTime);
+            console.log('- Purpose:', appointment.purpose);
+            console.log('- Status:', appointment.status);
+            console.log('---');
+        });
+    } else {
+        console.log('No appointments loaded yet. Try calling loadAppointments() first.');
+    }
+}
+
 // Export functions to global scope
 window.loadAppointments = loadAppointments;
 window.renderAppointmentView = renderAppointmentView;
 window.applyAppointmentSorting = applyAppointmentSorting;
 window.testFirebaseConnection = testFirebaseConnection;
+window.inspectLoadedAppointments = inspectLoadedAppointments;
 
 console.log('Customer logs appointment module loaded');
