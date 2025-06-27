@@ -2448,6 +2448,14 @@ select:disabled {
     pointer-events: none;
 }
 
+/* Ensure appointment cards have same grid layout as transaction cards */
+#appointment-cards-container .transaction-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    padding-bottom: 2rem;
+}
+
 /* Responsive styles for appointments */
 @media (max-width: 768px) {
     .appointments-container {
@@ -2501,4 +2509,30 @@ select:disabled {
         white-space: normal;
         word-break: break-word;
     }
+}
+
+/* === APPOINTMENT-SPECIFIC STATUS COLORS === */
+/* These apply to appointment cards using transaction-card classes */
+.status-scheduled {
+    background: #e3f2fd;
+    color: #1565c0;
+    border: 1px solid #bbdefb;
+}
+
+.status-today {
+    background: #fff3e0;
+    color: #ef6c00;
+    border: 1px solid #ffcc02;
+}
+
+.status-confirmed {
+    background: #e8f5e8;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.status-missed {
+    background: #fce4ec;
+    color: #ad1457;
+    border: 1px solid #f8bbd9;
 }

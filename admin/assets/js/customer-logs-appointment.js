@@ -254,7 +254,7 @@ function renderAppointmentView() {
     // Show appropriate view based on current view setting
     if (currentView === 'cards') {
         if (cardsContainer) {
-            cardsContainer.style.display = 'grid';
+            cardsContainer.style.display = 'flex';
         }
         if (tableContainer) {
             tableContainer.style.display = 'none';
@@ -273,7 +273,7 @@ function renderAppointmentView() {
 
 // Render appointment cards
 function renderAppointmentCards() {
-    const cardsContainer = document.getElementById('appointment-cards-container');
+    const cardsContainer = document.getElementById('appointment-cards');
     if (!cardsContainer) return;
     
     const cards = [];
@@ -290,12 +290,12 @@ function renderAppointmentCards() {
         const contactNumber = appointment.contactNumber || appointment.phoneNumber || 'N/A';
         
         const card = `
-            <div class="appointment-card" data-appointment-id="${appointment.id}">
+            <div class="transaction-card" data-appointment-id="${appointment.id}">
                 <div class="card-content">
                     <div class="card-header">
                         <div class="customer-info-centered">
                             <h4 title="${customerName}">${customerName}</h4>
-                            <span class="appointment-code">${appointment.appointmentCode || appointment.id.substring(0, 8)}</span>
+                            <span class="transaction-code">${appointment.appointmentCode || appointment.id.substring(0, 8)}</span>
                         </div>
                         <div class="card-status-top">
                             <span class="status-badge ${statusClass}">${appointmentStatus}</span>
