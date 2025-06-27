@@ -106,6 +106,38 @@ function initializeAppointmentControlBar() {
             loadAppointments();
         });
     }
+    
+    // View toggle functionality
+    const cardViewBtn = document.getElementById('card-view-btn');
+    const tableViewBtn = document.getElementById('table-view-btn');
+    
+    if (cardViewBtn && tableViewBtn) {
+        cardViewBtn.addEventListener('click', function() {
+            if (currentView !== 'cards') {
+                currentView = 'cards';
+                
+                // Update button states
+                cardViewBtn.classList.add('active');
+                tableViewBtn.classList.remove('active');
+                
+                // Re-render view
+                renderAppointmentView();
+            }
+        });
+        
+        tableViewBtn.addEventListener('click', function() {
+            if (currentView !== 'table') {
+                currentView = 'table';
+                
+                // Update button states
+                tableViewBtn.classList.add('active');
+                cardViewBtn.classList.remove('active');
+                
+                // Re-render view
+                renderAppointmentView();
+            }
+        });
+    }
 }
 
 // Load appointments from Firebase
@@ -199,6 +231,7 @@ function renderAppointmentView() {
     
     const emptyStateElement = document.getElementById('appointments-empty-state');
     const cardsContainer = document.getElementById('appointment-cards-container');
+    const tableContainer = document.getElementById('appointment-table-container');
     
     if (filteredAppointments.length === 0) {
         if (emptyStateElement) {
@@ -207,19 +240,35 @@ function renderAppointmentView() {
         if (cardsContainer) {
             cardsContainer.style.display = 'none';
         }
+        if (tableContainer) {
+            tableContainer.style.display = 'none';
+        }
         return;
     }
     
-    // Hide empty state and show cards
+    // Hide empty state
     if (emptyStateElement) {
         emptyStateElement.style.display = 'none';
     }
-    if (cardsContainer) {
-        cardsContainer.style.display = 'grid';
-    }
     
-    // Create appointment cards view
-    renderAppointmentCards();
+    // Show appropriate view based on current view setting
+    if (currentView === 'cards') {
+        if (cardsContainer) {
+            cardsContainer.style.display = 'grid';
+        }
+        if (tableContainer) {
+            tableContainer.style.display = 'none';
+        }
+        renderAppointmentCards();
+    } else {
+        if (cardsContainer) {
+            cardsContainer.style.display = 'none';
+        }
+        if (tableContainer) {
+            tableContainer.style.display = 'block';
+        }
+        renderAppointmentTable();
+    }
 }
 
 // Render appointment cards
@@ -256,46 +305,46 @@ function renderAppointmentCards() {
                     <div class="card-body">
                         <div class="card-details">
                             <div class="detail-item">
-                                <span class="detail-label">Appointment Date</span>
+                                <span class="detail-label">Date and Time</span>
                                 <span class="detail-value">${appointmentDateTime}</span>
                             </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Contact</span>
-                                <span class="detail-value">${contactNumber}</span>
+                            <div class="card-details-row">
+                                <div class="detail-item">
+                                    <span class="detail-label">Email</span>
+                                    <span class="detail-value">${appointment.email || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Contact Number</span>
+                                    <span class="detail-value">${contactNumber}</span>
+                                </div>
                             </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Purpose</span>
-                                <span class="detail-value">${appointment.purpose || appointment.appointmentType || 'Consultation'}</span>
-                            </div>
-                            ${appointment.notes ? `
-                            <div class="detail-item">
-                                <span class="detail-label">Notes</span>
-                                <span class="detail-value">${appointment.notes}</span>
-                            </div>
-                            ` : ''}
                         </div>
                     </div>
                 </div>
                 
                 <div class="card-actions-bottom">
                     <div class="card-actions">
-                        <button class="card-action-btn" title="View Details" onclick="viewAppointmentDetails('${appointment.id}')">
-                            <i class='bx bx-show'></i>
+                        <button class="card-action-btn" title="Proceed to Transaction" onclick="proceedToTransaction('${appointment.id}')">
+                            <i class='bx bx-right-arrow-alt'></i>
                         </button>
-                        <button class="card-action-btn" title="Edit Appointment" onclick="editAppointment('${appointment.id}')">
-                            <i class='bx bx-edit'></i>
+                        ${appointmentStatus === 'Scheduled' || appointmentStatus === 'Pending' ? `
+                        <button class="card-action-btn" title="Confirm Booking" onclick="confirmAppointment('${appointment.id}')">
+                            <i class='bx bx-check'></i>
                         </button>
-                        ${appointmentStatus !== 'Completed' && appointmentStatus !== 'Cancelled' ? `
-                        <button class="card-action-btn" title="Mark Complete" onclick="completeAppointment('${appointment.id}')">
-                            <i class='bx bx-check-circle'></i>
-                        </button>
-                        <button class="card-action-btn" title="Cancel Appointment" onclick="cancelAppointment('${appointment.id}')">
-                            <i class='bx bx-x-circle'></i>
+                        <button class="card-action-btn" title="Cancel Booking" onclick="cancelAppointment('${appointment.id}')">
+                            <i class='bx bx-x'></i>
                         </button>
                         ` : ''}
-                        <button class="card-action-btn" title="Delete Appointment" onclick="deleteAppointment('${appointment.id}')">
-                            <i class='bx bx-trash'></i>
+                        ${appointmentStatus === 'Cancelled' ? `
+                        <button class="card-action-btn" title="Undo Cancellation" onclick="undoCancelAppointment('${appointment.id}')">
+                            <i class='bx bx-undo'></i>
                         </button>
+                        ` : ''}
+                        ${appointmentStatus === 'Confirmed' ? `
+                        <button class="card-action-btn" title="Undo Confirmation" onclick="undoConfirmAppointment('${appointment.id}')">
+                            <i class='bx bx-undo'></i>
+                        </button>
+                        ` : ''}
                     </div>
                 </div>
             </div>
@@ -305,6 +354,86 @@ function renderAppointmentCards() {
     }
     
     cardsContainer.innerHTML = cards.join('');
+}
+
+// Render appointment table
+function renderAppointmentTable() {
+    const tableBody = document.getElementById('appointment-history-tbody');
+    if (!tableBody) return;
+    
+    if (filteredAppointments.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="5" class="empty-state-row">
+                    <div class="empty-state">
+                        <i class='bx bx-calendar-x'></i>
+                        <h3>No appointments found</h3>
+                        <p>No appointment records match your current search or filter criteria.</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    const tableRows = [];
+    
+    for (const appointment of filteredAppointments) {
+        // Calculate appointment status
+        const { appointmentStatus, statusClass } = calculateAppointmentStatus(appointment);
+        
+        // Format appointment date and time
+        const appointmentDateTime = formatAppointmentDateTime(appointment);
+        
+        // Format customer info
+        const customerName = appointment.customerName || appointment.fullName || 'Unknown Customer';
+        const contactNumber = appointment.contactNumber || appointment.phoneNumber || 'N/A';
+        const email = appointment.email || 'N/A';
+        
+        const row = `
+            <tr data-appointment-id="${appointment.id}">
+                <td>
+                    <div class="customer-info">
+                        <strong class="customer-name">${customerName}</strong>
+                        <small class="appointment-code">${appointment.appointmentCode || appointment.id.substring(0, 8)}</small>
+                    </div>
+                </td>
+                <td>${email}</td>
+                <td>${contactNumber}</td>
+                <td>${appointmentDateTime}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="proceed-transaction-btn" data-id="${appointment.id}" title="Proceed to Transaction">
+                            <i class='bx bx-right-arrow-alt'></i>
+                        </button>
+                        ${appointmentStatus === 'Scheduled' || appointmentStatus === 'Pending' ? `
+                            <button class="confirm-appointment-btn" data-id="${appointment.id}" title="Confirm Booking">
+                                <i class='bx bx-check'></i>
+                            </button>
+                            <button class="cancel-appointment-btn" data-id="${appointment.id}" title="Cancel Booking">
+                                <i class='bx bx-x'></i>
+                            </button>
+                        ` : ''}
+                        ${appointmentStatus === 'Cancelled' ? `
+                            <button class="undo-cancel-appointment-btn" data-id="${appointment.id}" title="Undo Cancellation">
+                                <i class='bx bx-undo'></i>
+                            </button>
+                        ` : ''}
+                        ${appointmentStatus === 'Confirmed' ? `
+                            <button class="undo-confirm-appointment-btn" data-id="${appointment.id}" title="Undo Confirmation">
+                                <i class='bx bx-undo'></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                </td>
+            </tr>
+        `;
+        
+        tableRows.push(row);
+    }
+    
+    tableBody.innerHTML = tableRows.join('');
+    addAppointmentActionListeners();
 }
 
 // Calculate appointment status
@@ -329,8 +458,13 @@ function calculateAppointmentStatus(appointment) {
         return { appointmentStatus: 'Cancelled', statusClass: 'status-cancelled' };
     }
     
+    // Check if appointment is confirmed
+    if (appointment.status === 'confirmed' || appointment.confirmed) {
+        appointmentStatus = 'Confirmed';
+        statusClass = 'status-confirmed';
+    }
     // Check if appointment date has passed
-    if (apptDay && today > apptDay) {
+    else if (apptDay && today > apptDay) {
         appointmentStatus = 'Missed';
         statusClass = 'status-missed';
     } else if (apptDay && today.getTime() === apptDay.getTime()) {
@@ -364,45 +498,50 @@ function formatAppointmentDateTime(appointment) {
     return dateStr;
 }
 
-// Add action listeners for appointment cards
+// Add action listeners for appointment cards and table
 function addAppointmentActionListeners() {
-    // View details buttons
-    document.querySelectorAll('.view-appointment-details-btn').forEach(btn => {
+    // Proceed to transaction buttons
+    document.querySelectorAll('.proceed-transaction-btn, .card-action-btn[onclick*="proceedToTransaction"]').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const appointmentId = e.target.closest('.view-appointment-details-btn').dataset.id;
-            showAppointmentDetails(appointmentId);
+            e.preventDefault();
+            const appointmentId = btn.dataset.id || btn.onclick.toString().match(/'([^']+)'/)[1];
+            proceedToTransaction(appointmentId);
         });
     });
 
-    // Edit buttons
-    document.querySelectorAll('.edit-appointment-btn').forEach(btn => {
+    // Confirm appointment buttons
+    document.querySelectorAll('.confirm-appointment-btn, .card-action-btn[onclick*="confirmAppointment"]').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const appointmentId = e.target.closest('.edit-appointment-btn').dataset.id;
-            editAppointment(appointmentId);
+            e.preventDefault();
+            const appointmentId = btn.dataset.id || btn.onclick.toString().match(/'([^']+)'/)[1];
+            confirmAppointment(appointmentId);
         });
     });
 
-    // Delete buttons
-    document.querySelectorAll('.delete-appointment-btn').forEach(btn => {
+    // Cancel appointment buttons
+    document.querySelectorAll('.cancel-appointment-btn, .card-action-btn[onclick*="cancelAppointment"]').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const appointmentId = e.target.closest('.delete-appointment-btn').dataset.id;
-            deleteAppointment(appointmentId);
-        });
-    });
-
-    // Complete buttons
-    document.querySelectorAll('.complete-appointment-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const appointmentId = e.target.closest('.complete-appointment-btn').dataset.id;
-            completeAppointment(appointmentId);
-        });
-    });
-
-    // Cancel buttons
-    document.querySelectorAll('.cancel-appointment-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const appointmentId = e.target.closest('.cancel-appointment-btn').dataset.id;
+            e.preventDefault();
+            const appointmentId = btn.dataset.id || btn.onclick.toString().match(/'([^']+)'/)[1];
             cancelAppointment(appointmentId);
+        });
+    });
+
+    // Undo cancellation buttons
+    document.querySelectorAll('.undo-cancel-appointment-btn, .card-action-btn[onclick*="undoCancelAppointment"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const appointmentId = btn.dataset.id || btn.onclick.toString().match(/'([^']+)'/)[1];
+            undoCancelAppointment(appointmentId);
+        });
+    });
+
+    // Undo confirmation buttons
+    document.querySelectorAll('.undo-confirm-appointment-btn, .card-action-btn[onclick*="undoConfirmAppointment"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const appointmentId = btn.dataset.id || btn.onclick.toString().match(/'([^']+)'/)[1];
+            undoConfirmAppointment(appointmentId);
         });
     });
 }
@@ -581,6 +720,136 @@ function showAppointmentError(message) {
                 </div>
             </div>
         `;
+    }
+}
+
+// Action functions for appointments
+function proceedToTransaction(appointmentId) {
+    const appointment = allAppointments.find(a => a.id === appointmentId);
+    if (!appointment) {
+        console.error('Appointment not found:', appointmentId);
+        return;
+    }
+    
+    // For now, show an alert - you can implement actual transaction flow later
+    alert(`Proceeding to transaction for appointment: ${appointment.customerName || appointment.fullName || 'Unknown Customer'}`);
+    console.log('Proceed to transaction for appointment:', appointment);
+}
+
+async function confirmAppointment(appointmentId) {
+    const appointment = allAppointments.find(a => a.id === appointmentId);
+    if (!appointment) {
+        console.error('Appointment not found:', appointmentId);
+        return;
+    }
+    
+    if (!confirm(`Are you sure you want to confirm the appointment for ${appointment.customerName || appointment.fullName || 'Unknown Customer'}?`)) {
+        return;
+    }
+    
+    try {
+        // Update appointment status in Firebase
+        await updateDoc(doc(chandriaDB, 'appointments', appointmentId), {
+            status: 'confirmed',
+            confirmed: true,
+            confirmedDate: new Date().toISOString(),
+            lastUpdated: new Date().toISOString()
+        });
+        
+        // Update local data
+        const index = allAppointments.findIndex(a => a.id === appointmentId);
+        if (index !== -1) {
+            allAppointments[index].status = 'confirmed';
+            allAppointments[index].confirmed = true;
+            allAppointments[index].confirmedDate = new Date().toISOString();
+        }
+        
+        // Re-render view
+        filteredAppointments = [...allAppointments];
+        renderAppointmentView();
+        
+        alert('Appointment confirmed successfully!');
+    } catch (error) {
+        console.error('Error confirming appointment:', error);
+        alert('Failed to confirm appointment. Please try again.');
+    }
+}
+
+async function undoCancelAppointment(appointmentId) {
+    const appointment = allAppointments.find(a => a.id === appointmentId);
+    if (!appointment) {
+        console.error('Appointment not found:', appointmentId);
+        return;
+    }
+    
+    if (!confirm(`Are you sure you want to undo the cancellation for ${appointment.customerName || appointment.fullName || 'Unknown Customer'}?`)) {
+        return;
+    }
+    
+    try {
+        // Update appointment status in Firebase
+        await updateDoc(doc(chandriaDB, 'appointments', appointmentId), {
+            status: 'scheduled',
+            cancelled: false,
+            cancelledDate: null,
+            lastUpdated: new Date().toISOString()
+        });
+        
+        // Update local data
+        const index = allAppointments.findIndex(a => a.id === appointmentId);
+        if (index !== -1) {
+            allAppointments[index].status = 'scheduled';
+            allAppointments[index].cancelled = false;
+            delete allAppointments[index].cancelledDate;
+        }
+        
+        // Re-render view
+        filteredAppointments = [...allAppointments];
+        renderAppointmentView();
+        
+        alert('Appointment cancellation undone successfully!');
+    } catch (error) {
+        console.error('Error undoing appointment cancellation:', error);
+        alert('Failed to undo cancellation. Please try again.');
+    }
+}
+
+async function undoConfirmAppointment(appointmentId) {
+    const appointment = allAppointments.find(a => a.id === appointmentId);
+    if (!appointment) {
+        console.error('Appointment not found:', appointmentId);
+        return;
+    }
+    
+    if (!confirm(`Are you sure you want to undo the confirmation for ${appointment.customerName || appointment.fullName || 'Unknown Customer'}?`)) {
+        return;
+    }
+    
+    try {
+        // Update appointment status in Firebase
+        await updateDoc(doc(chandriaDB, 'appointments', appointmentId), {
+            status: 'scheduled',
+            confirmed: false,
+            confirmedDate: null,
+            lastUpdated: new Date().toISOString()
+        });
+        
+        // Update local data
+        const index = allAppointments.findIndex(a => a.id === appointmentId);
+        if (index !== -1) {
+            allAppointments[index].status = 'scheduled';
+            allAppointments[index].confirmed = false;
+            delete allAppointments[index].confirmedDate;
+        }
+        
+        // Re-render view
+        filteredAppointments = [...allAppointments];
+        renderAppointmentView();
+        
+        alert('Appointment confirmation undone successfully!');
+    } catch (error) {
+        console.error('Error undoing appointment confirmation:', error);
+        alert('Failed to undo confirmation. Please try again.');
     }
 }
 
