@@ -1912,6 +1912,492 @@ body.modal-open .modal-overlay.show .modal-content {
     }
 }
 
+/* =============== PROCESS OVERDUE MODAL - ORANGE THEME =============== */
+
+/* Process Overdue Modal Content - Same dimensions as cancel modal */
+.overdue-modal-content {
+    max-width: 800px !important;
+    width: 95% !important;
+    max-height: 90vh !important;
+    background: white !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    transform: scale(0.9) translateY(20px) !important;
+    transition: transform 0.3s ease !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+#process-overdue-modal.show .overdue-modal-content {
+    transform: scale(1) translateY(0) !important;
+}
+
+/* Process Overdue Modal Header - Orange theme */
+.overdue-header {
+    background: linear-gradient(135deg, #fb923c, #f97316) !important;
+    color: white !important;
+    padding: 1.5rem 2rem !important;
+    border-radius: 16px 16px 0 0 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
+}
+
+.overdue-header h2 {
+    margin: 0 !important;
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    color: white !important;
+}
+
+.overdue-header h2 i {
+    font-size: 1.5rem !important;
+    color: white !important;
+}
+
+.overdue-header .close-btn {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: none !important;
+    color: white !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    font-size: 1.5rem !important;
+    transition: all 0.2s ease !important;
+}
+
+.overdue-header .close-btn:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: scale(1.1) !important;
+}
+
+/* Process Overdue Modal Body - With scrollbar styling */
+#process-overdue-modal .modal-body {
+    padding: 2rem !important;
+    overflow-y: auto !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+}
+
+/* Custom Scrollbar for Process Overdue Modal Body - Orange theme */
+#process-overdue-modal .modal-body::-webkit-scrollbar {
+    width: 8px !important;
+}
+
+#process-overdue-modal .modal-body::-webkit-scrollbar-track {
+    background: rgba(251, 146, 60, 0.1) !important;
+    border-radius: 4px !important;
+}
+
+#process-overdue-modal .modal-body::-webkit-scrollbar-thumb {
+    background: rgba(251, 146, 60, 0.5) !important;
+    border-radius: 4px !important;
+}
+
+#process-overdue-modal .modal-body::-webkit-scrollbar-thumb:hover {
+    background: #fb923c !important;
+}
+
+/* Firefox Scrollbar for Process Overdue Modal Body */
+#process-overdue-modal .modal-body {
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(251, 146, 60, 0.5) rgba(251, 146, 60, 0.1) !important;
+}
+
+/* Warning Section - Orange theme */
+#process-overdue-modal .warning-section {
+    background: rgba(251, 146, 60, 0.05) !important;
+    border: 2px solid rgba(251, 146, 60, 0.2) !important;
+    border-radius: 12px !important;
+    padding: 2rem !important;
+    margin-bottom: 2rem !important;
+    text-align: center !important;
+    display: block !important;
+}
+
+#process-overdue-modal .warning-icon {
+    width: 80px !important;
+    height: 80px !important;
+    background: linear-gradient(135deg, rgba(251, 146, 60, 0.2), rgba(251, 146, 60, 0.3)) !important;
+    border: 3px solid #fb923c !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    animation: pulse 2s infinite !important;
+    margin: 0 auto 1.5rem auto !important;
+    flex-shrink: 0 !important;
+}
+
+#process-overdue-modal .warning-icon i {
+    font-size: 2.5rem !important;
+    color: #f97316 !important;
+    z-index: 1 !important;
+    position: relative !important;
+}
+
+#process-overdue-modal .warning-content {
+    max-width: 100% !important;
+}
+
+#process-overdue-modal .warning-content h3 {
+    margin: 0 0 1rem 0 !important;
+    color: #f97316 !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+}
+
+#process-overdue-modal .warning-content p {
+    margin: 0 0 1.5rem 0 !important;
+    color: #c2410c !important;
+    line-height: 1.6 !important;
+    font-weight: 500 !important;
+    text-align: center !important;
+    max-width: 600px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Overdue Options Styling - Orange theme */
+#process-overdue-modal .overdue-options {
+    display: grid !important;
+    gap: 1rem !important;
+    margin: 1.5rem 0 !important;
+    max-width: 600px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+#process-overdue-modal .overdue-option {
+    background: rgba(251, 146, 60, 0.05) !important;
+    border: 2px solid rgba(251, 146, 60, 0.2) !important;
+    border-radius: 12px !important;
+    padding: 1rem !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+}
+
+#process-overdue-modal .overdue-option:hover {
+    background: rgba(251, 146, 60, 0.1) !important;
+    border-color: rgba(251, 146, 60, 0.4) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(251, 146, 60, 0.2) !important;
+}
+
+#process-overdue-modal .overdue-option input[type="radio"] {
+    display: none !important;
+}
+
+#process-overdue-modal .overdue-option label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    cursor: pointer !important;
+    width: 100% !important;
+    color: #c2410c !important;
+    font-weight: 500 !important;
+}
+
+#process-overdue-modal .overdue-option label i {
+    font-size: 1.5rem !important;
+    color: #fb923c !important;
+    flex-shrink: 0 !important;
+}
+
+#process-overdue-modal .overdue-option label span {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: #ea580c !important;
+}
+
+#process-overdue-modal .overdue-option label small {
+    font-size: 0.875rem !important;
+    color: #c2410c !important;
+    opacity: 0.8 !important;
+    margin-top: 0.25rem !important;
+    display: block !important;
+}
+
+/* Selected state for overdue options */
+#process-overdue-modal .overdue-option input[type="radio"]:checked + label {
+    color: #ea580c !important;
+}
+
+#process-overdue-modal .overdue-option input[type="radio"]:checked ~ label {
+    color: #ea580c !important;
+}
+
+#process-overdue-modal input[type="radio"]:checked + label span {
+    color: #ea580c !important;
+    font-weight: 700 !important;
+}
+
+#process-overdue-modal input[type="radio"]:checked + label i {
+    color: #ea580c !important;
+}
+
+#process-overdue-modal input[type="radio"]:checked + label {
+    background: rgba(251, 146, 60, 0.1) !important;
+    border-radius: 8px !important;
+    padding: 0.5rem !important;
+    margin: -0.5rem !important;
+    border: 2px solid rgba(251, 146, 60, 0.4) !important;
+}
+
+/* Fee Section - Orange theme */
+#process-overdue-modal .fee-section {
+    background: rgba(251, 146, 60, 0.05) !important;
+    border: 2px solid rgba(251, 146, 60, 0.2) !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    margin-top: 1.5rem !important;
+    display: none !important;
+}
+
+#process-overdue-modal .fee-section:not(.fee-section-hidden) {
+    display: block !important;
+}
+
+#process-overdue-modal .fee-section h4 {
+    margin: 0 0 1rem 0 !important;
+    color: #f97316 !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    padding-bottom: 0.5rem !important;
+    border-bottom: 2px solid rgba(251, 146, 60, 0.3) !important;
+}
+
+#process-overdue-modal .fee-input-group {
+    margin-bottom: 1rem !important;
+}
+
+#process-overdue-modal .fee-input-group label {
+    display: block !important;
+    margin-bottom: 0.5rem !important;
+    color: #ea580c !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+}
+
+#process-overdue-modal .fee-input-group input,
+#process-overdue-modal .fee-input-group select {
+    width: 100% !important;
+    padding: 0.75rem !important;
+    border: 2px solid rgba(251, 146, 60, 0.3) !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+    background: white !important;
+    color: #c2410c !important;
+    transition: all 0.2s ease !important;
+}
+
+#process-overdue-modal .fee-input-group input:focus,
+#process-overdue-modal .fee-input-group select:focus {
+    outline: none !important;
+    border-color: #fb923c !important;
+    box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.2) !important;
+}
+
+/* Transaction Summary - Orange theme */
+#process-overdue-modal .transaction-summary {
+    background: rgba(251, 146, 60, 0.05) !important;
+    border: 2px solid rgba(251, 146, 60, 0.2) !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 2rem !important;
+    box-shadow: 0 2px 8px rgba(251, 146, 60, 0.1) !important;
+}
+
+#process-overdue-modal .transaction-summary h4 {
+    margin: 0 0 1rem 0 !important;
+    color: #f97316 !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    padding-bottom: 0.5rem !important;
+    border-bottom: 2px solid rgba(251, 146, 60, 0.3) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+#process-overdue-modal .summary-content p {
+    margin: 0.75rem 0 !important;
+    color: #c2410c !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    line-height: 1.5 !important;
+    font-weight: 500 !important;
+}
+
+#process-overdue-modal .summary-content strong {
+    color: #ea580c !important;
+    font-weight: 600 !important;
+    min-width: 140px !important;
+}
+
+#process-overdue-modal .summary-content span {
+    text-align: right !important;
+    font-weight: 600 !important;
+    color: #f97316 !important;
+}
+
+#process-overdue-modal .overdue-count {
+    background: rgba(251, 146, 60, 0.1) !important;
+    border-color: rgba(251, 146, 60, 0.3) !important;
+    color: #fb923c !important;
+    padding: 0.25rem 0.75rem !important;
+    border-radius: 20px !important;
+    font-weight: 600 !important;
+    border: 1px solid rgba(251, 146, 60, 0.3) !important;
+}
+
+/* Form Actions - Orange theme */
+#process-overdue-modal .form-actions {
+    display: flex !important;
+    gap: 1rem !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    padding: 1.5rem 2rem !important;
+    background: rgba(251, 146, 60, 0.05) !important;
+    border-top: 2px solid rgba(251, 146, 60, 0.2) !important;
+    border-radius: 0 0 16px 16px !important;
+    flex-shrink: 0 !important;
+}
+
+/* Process Overdue Modal Buttons */
+#process-overdue-modal .btn-overdue {
+    background: linear-gradient(135deg, #fb923c, #f97316) !important;
+    color: white !important;
+    border: 2px solid #f97316 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    min-width: 160px !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+}
+
+#process-overdue-modal .btn-overdue:hover {
+    background: linear-gradient(135deg, #f97316, #ea580c) !important;
+    border-color: #ea580c !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 3px 8px rgba(251, 146, 60, 0.4) !important;
+}
+
+#process-overdue-modal .btn-overdue:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 1px 4px rgba(251, 146, 60, 0.3) !important;
+}
+
+#process-overdue-modal .btn-secondary {
+    background: #f8f9fa !important;
+    color: #6c757d !important;
+    border: 2px solid #dee2e6 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    min-width: 140px !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+}
+
+#process-overdue-modal .btn-secondary:hover {
+    background: #e9ecef !important;
+    border-color: #adb5bd !important;
+    color: #495057 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+#process-overdue-modal .btn-secondary:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Mobile Responsive Styles for Process Overdue Modal */
+@media (max-width: 768px) {
+    .overdue-modal-content {
+        width: 98% !important;
+        max-width: none !important;
+        margin: 1rem !important;
+        max-height: calc(100vh - 2rem) !important;
+    }
+
+    .overdue-header {
+        padding: 1rem 1.5rem !important;
+    }
+
+    .overdue-header h2 {
+        font-size: 1.2rem !important;
+    }
+
+    #process-overdue-modal .modal-body {
+        padding: 1.5rem !important;
+    }
+
+    #process-overdue-modal .warning-section {
+        padding: 1.5rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+
+    #process-overdue-modal .transaction-summary {
+        padding: 1rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+
+    #process-overdue-modal .form-actions {
+        padding: 1rem 1.5rem !important;
+        flex-direction: column-reverse !important;
+        gap: 0.75rem !important;
+    }
+
+    #process-overdue-modal .btn-overdue,
+    #process-overdue-modal .btn-secondary {
+        width: 100% !important;
+        min-width: auto !important;
+        justify-content: center !important;
+    }
+    
+    #process-overdue-modal .overdue-options {
+        gap: 0.75rem !important;
+    }
+    
+    #process-overdue-modal .overdue-option {
+        padding: 0.75rem !important;
+    }
+    
+    #process-overdue-modal .fee-section {
+        padding: 1rem !important;
+        margin-top: 1rem !important;
+    }
+}
+
 /* =============== SHARED MODAL STYLES =============== */
 .modal-overlay {
     position: fixed;

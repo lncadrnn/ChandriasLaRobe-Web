@@ -625,38 +625,41 @@
 
     <!-- Process Overdue Modal -->
     <div id="process-overdue-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
+        <div class="modal-content overdue-modal-content">
+            <div class="modal-header overdue-header">
                 <h2><i class='bx bx-time-five'></i> Process Overdue Rental</h2>
                 <button class="close-btn" onclick="closeProcessOverdueModal()">
                     <i class='bx bx-x'></i>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="confirmation-section">
-                    <div class="confirmation-icon overdue-icon">
+                <div class="warning-section">
+                    <div class="warning-icon">
                         <i class='bx bx-error-circle'></i>
                     </div>
-                    <div class="confirmation-content">
+                    <div class="warning-content">
                         <h3>⚠️ Process this overdue rental?</h3>
-                        <p>This rental is overdue and requires processing. You can:</p>
+                        <p>This rental is overdue and requires processing. Choose how to proceed:</p>
                         <div class="overdue-options">
                             <div class="overdue-option">
                                 <input type="radio" id="mark-completed" name="overdue-action" value="completed" checked>
                                 <label for="mark-completed">
                                     <i class='bx bx-check-circle'></i>
                                     <span>Mark as Completed</span>
-                                    <small>Items have been returned</small>
+                                    <small>Items have been returned without penalty</small>
                                 </label>
-                            </div>                            <div class="overdue-option">
+                            </div>
+                            <div class="overdue-option">
                                 <input type="radio" id="add-late-fee" name="overdue-action" value="late-fee">
                                 <label for="add-late-fee">
                                     <i class='bx bx-money'></i>
                                     <span>Add Late Fee & Complete</span>
                                     <small>Apply penalty for late return</small>
                                 </label>
-                            </div>                        </div>
-                          <!-- Late Fee Section -->
+                            </div>
+                        </div>
+                        
+                        <!-- Late Fee Section -->
                         <div id="late-fee-section" class="fee-section fee-section-hidden">
                             <h4>Late Fee Details</h4>
                             <div class="fee-input-group">
@@ -691,7 +694,7 @@
                     <button type="button" class="btn-secondary" onclick="closeProcessOverdueModal()">
                         <i class='bx bx-x'></i> Cancel
                     </button>
-                    <button type="button" class="btn-primary" id="confirm-process-overdue-btn" onclick="confirmProcessOverdue()">
+                    <button type="button" class="btn-overdue" id="confirm-process-overdue-btn" onclick="confirmProcessOverdue()">
                         <i class='bx bx-check'></i> Process Rental
                     </button>
                 </div>
