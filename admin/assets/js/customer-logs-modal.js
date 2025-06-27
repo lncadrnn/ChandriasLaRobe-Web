@@ -970,9 +970,24 @@ function populateMarkCompleteModal(transaction) {
     }
 
     // Calculate and display remaining balance
-    const totalAmount = parseFloat(transaction.totalAmount || transaction.amount || 0);
-    const totalPaid = parseFloat(transaction.totalPaid || 0);
-    const remainingBalance = Math.max(0, totalAmount - totalPaid);
+    // First try to get remaining balance from the transaction field (like in overdue modal)
+    let remainingBalance = parseFloat(transaction.remainingBalance || 0);
+    
+    // If remainingBalance field doesn't exist, calculate it from totalAmount - totalPaid
+    if (remainingBalance === 0) {
+        const totalAmount = parseFloat(transaction.totalAmount || transaction.amount || 0);
+        const totalPaid = parseFloat(transaction.totalPaid || 0);
+        remainingBalance = Math.max(0, totalAmount - totalPaid);
+    }
+    
+    // Debug logging to check values
+    console.log('Transaction data for remaining balance calculation:', {
+        transactionId: transaction.id,
+        remainingBalanceField: transaction.remainingBalance,
+        calculatedRemainingBalance: remainingBalance,
+        totalAmount: transaction.totalAmount || transaction.amount,
+        totalPaid: transaction.totalPaid
+    });
     
     const remainingBalanceEl = document.getElementById('complete-remaining-balance');
     if (remainingBalanceEl) {
@@ -1011,9 +1026,15 @@ async function proceedWithMarkComplete() {
     }
 
     // Check if payment is required and validate payment fields
-    const totalAmount = parseFloat(currentTransactionToComplete.totalAmount || currentTransactionToComplete.amount || 0);
-    const totalPaid = parseFloat(currentTransactionToComplete.totalPaid || 0);
-    const remainingBalance = Math.max(0, totalAmount - totalPaid);
+    // First try to get remaining balance from the transaction field (like in overdue modal)
+    let remainingBalance = parseFloat(currentTransactionToComplete.remainingBalance || 0);
+    
+    // If remainingBalance field doesn't exist, calculate it from totalAmount - totalPaid
+    if (remainingBalance === 0) {
+        const totalAmount = parseFloat(currentTransactionToComplete.totalAmount || currentTransactionToComplete.amount || 0);
+        const totalPaid = parseFloat(currentTransactionToComplete.totalPaid || 0);
+        remainingBalance = Math.max(0, totalAmount - totalPaid);
+    }
     
     let paymentInfo = null;
     
@@ -1087,7 +1108,12 @@ async function proceedWithMarkComplete() {
 
         // If there was a payment made during completion, update payment info
         if (paymentInfo) {
-            updateData.totalPaid = totalPaid + remainingBalance; // Full payment
+            // Calculate current total paid (for updating the total)
+            const currentTotalPaid = parseFloat(currentTransactionToComplete.totalPaid || 0);
+            const newTotalPaid = currentTotalPaid + remainingBalance;
+            
+            updateData.totalPaid = newTotalPaid;
+            updateData.remainingBalance = 0; // Set remaining balance to 0 after payment
             updateData.paymentHistory = arrayUnion({
                 ...paymentInfo,
                 description: 'Final payment on completion'
