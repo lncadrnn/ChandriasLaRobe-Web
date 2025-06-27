@@ -362,24 +362,6 @@ function renderAppointmentCards() {
                         <button class="card-action-btn proceed-dashboard-btn" data-id="${appointment.id}" title="Proceed to Dashboard">
                             <i class='bx bx-right-arrow-alt'></i>
                         </button>
-                        ${appointmentStatus === 'Pending' || appointmentStatus === 'Scheduled' ? `
-                        <button class="card-action-btn confirm-appointment-btn" data-id="${appointment.id}" title="Confirm Booking">
-                            <i class='bx bx-check'></i>
-                        </button>
-                        <button class="card-action-btn cancel-appointment-btn" data-id="${appointment.id}" title="Cancel Booking">
-                            <i class='bx bx-x'></i>
-                        </button>
-                        ` : ''}
-                        ${appointmentStatus === 'Cancelled' ? `
-                        <button class="card-action-btn undo-cancel-appointment-btn" data-id="${appointment.id}" title="Undo Cancellation">
-                            <i class='bx bx-undo'></i>
-                        </button>
-                        ` : ''}
-                        ${appointmentStatus === 'Confirmed' ? `
-                        <button class="card-action-btn undo-confirm-appointment-btn" data-id="${appointment.id}" title="Undo Confirmation">
-                            <i class='bx bx-undo'></i>
-                        </button>
-                        ` : ''}
                     </div>
                 </div>
             </div>
@@ -450,24 +432,6 @@ function renderAppointmentTable() {
                         <button class="proceed-dashboard-btn" data-id="${appointment.id}" title="Proceed to Dashboard">
                             <i class='bx bx-right-arrow-alt'></i>
                         </button>
-                        ${appointmentStatus === 'Pending' || appointmentStatus === 'Scheduled' ? `
-                            <button class="confirm-appointment-btn" data-id="${appointment.id}" title="Confirm Booking">
-                                <i class='bx bx-check'></i>
-                            </button>
-                            <button class="cancel-appointment-btn" data-id="${appointment.id}" title="Cancel Booking">
-                                <i class='bx bx-x'></i>
-                            </button>
-                        ` : ''}
-                        ${appointmentStatus === 'Cancelled' ? `
-                            <button class="undo-cancel-appointment-btn" data-id="${appointment.id}" title="Undo Cancellation">
-                                <i class='bx bx-undo'></i>
-                            </button>
-                        ` : ''}
-                        ${appointmentStatus === 'Confirmed' ? `
-                            <button class="undo-confirm-appointment-btn" data-id="${appointment.id}" title="Undo Confirmation">
-                                <i class='bx bx-undo'></i>
-                            </button>
-                        ` : ''}
                     </div>
                 </td>
             </tr>
@@ -577,42 +541,6 @@ function addAppointmentActionListeners() {
             e.preventDefault();
             const appointmentId = btn.dataset.id;
             proceedToDashboard(appointmentId);
-        });
-    });
-
-    // Confirm appointment buttons
-    document.querySelectorAll('.confirm-appointment-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const appointmentId = btn.dataset.id;
-            confirmAppointment(appointmentId);
-        });
-    });
-
-    // Cancel appointment buttons
-    document.querySelectorAll('.cancel-appointment-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const appointmentId = btn.dataset.id;
-            cancelAppointment(appointmentId);
-        });
-    });
-
-    // Undo cancellation buttons
-    document.querySelectorAll('.undo-cancel-appointment-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const appointmentId = btn.dataset.id;
-            undoCancelAppointment(appointmentId);
-        });
-    });
-
-    // Undo confirmation buttons
-    document.querySelectorAll('.undo-confirm-appointment-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const appointmentId = btn.dataset.id;
-            undoConfirmAppointment(appointmentId);
         });
     });
 }
@@ -740,45 +668,6 @@ async function completeAppointment(appointmentId) {
     }
 }
 
-// Cancel appointment
-async function cancelAppointment(appointmentId) {
-    const appointment = allAppointments.find(a => a.id === appointmentId);
-    if (!appointment) return;
-    
-    const confirmed = confirm(`Cancel appointment for ${appointment.customerName || 'Unknown Customer'}?`);
-    if (!confirmed) return;
-    
-    try {
-        // Update appointment status in Firebase
-        await updateDoc(doc(chandriaDB, 'appointments', appointmentId), {
-            status: 'cancelled',
-            cancelled: true,
-            cancelledDate: new Date().toISOString(),
-            lastUpdated: new Date().toISOString()
-        });
-        
-        // Update local data
-        const index = allAppointments.findIndex(a => a.id === appointmentId);
-        if (index !== -1) {
-            allAppointments[index].status = 'cancelled';
-            allAppointments[index].cancelled = true;
-            allAppointments[index].cancelledDate = new Date().toISOString();
-        }
-        
-        // Re-render view
-        filteredAppointments = [...allAppointments];
-        renderAppointmentView();
-        
-        if (window.showNotification) {
-            window.showNotification('Appointment cancelled!', 'info');
-        }
-        
-    } catch (error) {
-        console.error('Error cancelling appointment:', error);
-        alert('Error cancelling appointment. Please try again.');
-    }
-}
-
 // Apply sorting to appointments
 function applyAppointmentSorting() {
     if (currentSort === 'recent') {
@@ -841,122 +730,6 @@ function showAppointmentError(message) {
 }
 
 // Action functions for appointments
-async function confirmAppointment(appointmentId) {
-    const appointment = allAppointments.find(a => a.id === appointmentId);
-    if (!appointment) {
-        console.error('Appointment not found:', appointmentId);
-        return;
-    }
-    
-    if (!confirm(`Are you sure you want to confirm the appointment for ${appointment.customerName || appointment.fullName || 'Unknown Customer'}?`)) {
-        return;
-    }
-    
-    try {
-        // Update appointment status in Firebase
-        await updateDoc(doc(chandriaDB, 'appointments', appointmentId), {
-            status: 'confirmed',
-            confirmed: true,
-            confirmedDate: new Date().toISOString(),
-            lastUpdated: new Date().toISOString()
-        });
-        
-        // Update local data
-        const index = allAppointments.findIndex(a => a.id === appointmentId);
-        if (index !== -1) {
-            allAppointments[index].status = 'confirmed';
-            allAppointments[index].confirmed = true;
-            allAppointments[index].confirmedDate = new Date().toISOString();
-        }
-        
-        // Re-render view
-        filteredAppointments = [...allAppointments];
-        renderAppointmentView();
-        
-        alert('Appointment confirmed successfully!');
-    } catch (error) {
-        console.error('Error confirming appointment:', error);
-        alert('Failed to confirm appointment. Please try again.');
-    }
-}
-
-async function undoCancelAppointment(appointmentId) {
-    const appointment = allAppointments.find(a => a.id === appointmentId);
-    if (!appointment) {
-        console.error('Appointment not found:', appointmentId);
-        return;
-    }
-    
-    if (!confirm(`Are you sure you want to undo the cancellation for ${appointment.customerName || appointment.fullName || 'Unknown Customer'}?`)) {
-        return;
-    }
-    
-    try {
-        // Update appointment status in Firebase
-        await updateDoc(doc(chandriaDB, 'appointments', appointmentId), {
-            status: 'scheduled',
-            cancelled: false,
-            cancelledDate: null,
-            lastUpdated: new Date().toISOString()
-        });
-        
-        // Update local data
-        const index = allAppointments.findIndex(a => a.id === appointmentId);
-        if (index !== -1) {
-            allAppointments[index].status = 'scheduled';
-            allAppointments[index].cancelled = false;
-            delete allAppointments[index].cancelledDate;
-        }
-        
-        // Re-render view
-        filteredAppointments = [...allAppointments];
-        renderAppointmentView();
-        
-        alert('Appointment cancellation undone successfully!');
-    } catch (error) {
-        console.error('Error undoing appointment cancellation:', error);
-        alert('Failed to undo cancellation. Please try again.');
-    }
-}
-
-async function undoConfirmAppointment(appointmentId) {
-    const appointment = allAppointments.find(a => a.id === appointmentId);
-    if (!appointment) {
-        console.error('Appointment not found:', appointmentId);
-        return;
-    }
-    
-    if (!confirm(`Are you sure you want to undo the confirmation for ${appointment.customerName || appointment.fullName || 'Unknown Customer'}?`)) {
-        return;
-    }
-    
-    try {
-        // Update appointment status in Firebase
-        await updateDoc(doc(chandriaDB, 'appointments', appointmentId), {
-            status: 'scheduled',
-            confirmed: false,
-            confirmedDate: null,
-            lastUpdated: new Date().toISOString()
-        });
-        
-        // Update local data
-        const index = allAppointments.findIndex(a => a.id === appointmentId);
-        if (index !== -1) {
-            allAppointments[index].status = 'scheduled';
-            allAppointments[index].confirmed = false;
-            delete allAppointments[index].confirmedDate;
-        }
-        
-        // Re-render view
-        filteredAppointments = [...allAppointments];
-        renderAppointmentView();
-        
-        alert('Appointment confirmation undone successfully!');
-    } catch (error) {
-        console.error('Error undoing appointment confirmation:', error);
-        alert('Failed to undo confirmation. Please try again.');
-    }
-}
 
 // Debug function to test Firebase connection and inspect data structure
 async function testFirebaseConnection() {
