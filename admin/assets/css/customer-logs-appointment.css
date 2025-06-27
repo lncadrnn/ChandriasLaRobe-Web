@@ -4,7 +4,619 @@
 /* The appointment control bar now uses the exact same CSS classes as the rental control bar */
 /* All styling is inherited from customer-logs.css - no additional CSS needed for the control bar */
 
-/* Only appointment-specific content styling below */
+/* =============== APPOINTMENT CARDS (COPIED FROM RENTAL CARDS) =============== */
+
+/* === APPOINTMENT CONTAINER === */
+.appointments-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-height: 0;
+}
+
+/* === APPOINTMENT CARDS CONTAINER === */
+.appointment-cards-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.appointment-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    padding-bottom: 2rem;
+}
+
+.appointment-card {
+    background: var(--white-color);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(255, 105, 180, 0.08);
+    border: 1px solid rgba(255, 105, 180, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 320px;
+}
+
+.appointment-card .card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.appointment-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+}
+
+.appointment-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(255, 105, 180, 0.15);
+    border-color: var(--primary-color);
+}
+
+.appointment-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    gap: 1rem;
+    position: relative;
+    min-height: 40px; /* Ensure consistent height for status positioning */
+}
+
+/* Centered customer info layout */
+.appointment-card .customer-info-centered {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+    max-width: calc(100% - 120px); /* Reserve space for status badge */
+}
+
+.appointment-card .customer-info-centered h4 {
+    color: #2c3e50;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.appointment-card .customer-info-centered .appointment-code {
+    color: #6b7280;
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+}
+
+/* Status badge positioned top right - fixed position */
+.appointment-card .card-status-top {
+    position: absolute;
+    top: 0;
+    right: 0;
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-start;
+    z-index: 2;
+}
+
+.appointment-card .card-status-top .status-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: fit-content;
+    white-space: nowrap;
+}
+
+.appointment-card .customer-info-centered h4:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 400;
+    white-space: nowrap;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    animation: fadeIn 0.2s ease-in forwards;
+    pointer-events: none;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+.appointment-code {
+    color: #6b7280;
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+}
+
+/* Card body with details only */
+.appointment-card .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Card actions at bottom */
+.appointment-card .card-actions-bottom {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 105, 180, 0.1);
+}
+
+.appointment-card .card-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 0;
+}
+
+/* Appointment details row - side by side */
+.appointment-card .card-details-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.appointment-card .card-details-row .detail-item {
+    flex: 1;
+}
+
+.appointment-card .detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.appointment-card .detail-label {
+    color: var(--primary-color);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.appointment-card .detail-value {
+    color: #2c3e50;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.appointment-card .detail-value.amount {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.appointment-card .card-actions {
+    display: flex;
+    gap: 0.75rem;
+    border-top: 1px solid rgba(255, 105, 180, 0.1);
+    padding-top: 1rem;
+}
+
+.appointment-card .card-action-btn {
+    flex: 1;
+    background: transparent;
+    border: 1px solid rgba(255, 105, 180, 0.3);
+    color: var(--text-color);
+    padding: 0.6rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+}
+
+.appointment-card .card-action-btn:hover {
+    background: rgba(255, 105, 180, 0.1);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.appointment-card .card-action-btn.edit-btn:hover {
+    background: rgba(52, 152, 219, 0.1);
+    border-color: #3498db;
+    color: #3498db;
+}
+
+.appointment-card .card-action-btn.delete-btn:hover {
+    background: rgba(231, 76, 60, 0.1);
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+
+/* === APPOINTMENT BUTTON STYLES === */
+
+/* Confirm Appointment Button */
+.appointment-card .card-action-btn.confirm-appointment-btn {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.3);
+    color: #22c55e;
+}
+
+.appointment-card .card-action-btn.confirm-appointment-btn:hover {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: #22c55e;
+}
+
+/* Cancel Appointment Button */
+.appointment-card .card-action-btn.cancel-appointment-btn {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+}
+
+.appointment-card .card-action-btn.cancel-appointment-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
+}
+
+/* Reschedule Appointment Button */
+.appointment-card .card-action-btn.reschedule-appointment-btn {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #3b82f6;
+}
+
+.appointment-card .card-action-btn.reschedule-appointment-btn:hover {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: #3b82f6;
+}
+
+/* === APPOINTMENT TABLE STYLES === */
+.appointment-table-container {
+    flex: 1;
+    display: none; /* Hidden by default, shown when table view is selected */
+    flex-direction: column;
+    min-height: 0;
+    overflow-x: hidden; /* Prevent horizontal scrollbar */
+}
+
+.appointment-table-container.show {
+    display: flex;
+}
+
+.appointment-table-container .table-wrapper {
+    flex: 1;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(255, 105, 180, 0.1);
+    border: 1px solid rgba(255, 105, 180, 0.2);
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: var(--white-color);
+    max-height: calc(60px + 10 * 80px); /* Header (60px) + 10 rows * estimated row height (80px) */
+    overflow-x: hidden; /* Prevent horizontal scrollbar */
+}
+
+#appointment-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    background: var(--white-color);
+    display: block;
+    overflow: hidden;
+    overflow-x: hidden; /* Prevent horizontal scrollbar */
+}
+
+#appointment-history-table thead,
+#appointment-history-table tbody {
+    display: block;
+    width: 100%;
+    overflow-x: hidden; /* Prevent horizontal scrollbar */
+}
+
+#appointment-history-table thead {
+    background: var(--primary-color);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+#appointment-history-table tbody {
+    background: var(--white-color);
+    overflow-y: auto;
+    overflow-x: hidden; /* Prevent horizontal scrollbar */
+    max-height: calc(10 * 80px); /* Maximum height for 10 rows */
+}
+
+#appointment-history-table thead tr,
+#appointment-history-table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    overflow-x: hidden; /* Prevent horizontal scrollbar */
+}
+
+#appointment-history-table thead th {
+    padding: 1.25rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--white-color);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-size: 0.8rem;
+    border: none;
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Column width specifications for appointments */
+#appointment-history-table thead th:nth-child(1), /* Customer Name */
+#appointment-history-table tbody td:nth-child(1) {
+    width: 25%;
+}
+
+#appointment-history-table thead th:nth-child(2), /* Appointment Date */
+#appointment-history-table tbody td:nth-child(2) {
+    width: 20%;
+}
+
+#appointment-history-table thead th:nth-child(3), /* Status */
+#appointment-history-table tbody td:nth-child(3) {
+    width: 18%;
+}
+
+#appointment-history-table thead th:nth-child(4), /* Service Type */
+#appointment-history-table tbody td:nth-child(4) {
+    width: 15%;
+}
+
+#appointment-history-table thead th:nth-child(5), /* Actions */
+#appointment-history-table tbody td:nth-child(5) {
+    width: 22%;
+}
+
+#appointment-history-table tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(255, 105, 180, 0.08);
+}
+
+#appointment-history-table tbody tr:hover {
+    background: rgba(255, 105, 180, 0.05);
+    transform: translateX(4px);
+}
+
+#appointment-history-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+#appointment-history-table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    color: var(--text-color);
+    border: none;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* === RESPONSIVE DESIGN FOR APPOINTMENTS === */
+@media (max-width: 768px) {
+    /* Appointment card view responsive */
+    .appointment-cards {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 0;
+    }
+    
+    .appointment-card {
+        padding: 1rem;
+        margin: 0;
+        box-shadow: 0 4px 16px rgba(255, 105, 180, 0.08);
+        min-height: 350px;
+    }
+    
+    .appointment-card .card-header {
+        min-height: 35px; /* Adjust for mobile */
+    }
+    
+    .appointment-card .customer-info-centered {
+        max-width: calc(100% - 100px); /* Adjust space for mobile status badge */
+    }
+
+    .appointment-card .customer-info-centered h4 {
+        max-width: 100%;
+        font-size: 1rem;
+    }
+    
+    .appointment-card .card-status-top .status-badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.6rem;
+    }
+
+    .appointment-card .card-details {
+        gap: 0.75rem;
+    }
+    
+    /* Stack appointment details vertically on mobile */
+    .appointment-card .card-details-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .appointment-card .card-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .appointment-card .card-action-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    /* Hide traditional table on mobile and use card-like layout */
+    #appointment-history-table {
+        display: none;
+    }
+}
+
+/* Tablet responsive adjustments for appointments */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .appointment-cards {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .appointment-table-container .table-wrapper {
+        max-height: calc(55px + 10 * 75px);
+    }
+    
+    #appointment-history-table {
+        font-size: 0.85rem;
+    }
+    
+    #appointment-history-table thead th {
+        padding: 1rem 0.75rem;
+        font-size: 0.75rem;
+    }
+    
+    #appointment-history-table tbody td {
+        padding: 0.875rem 0.75rem;
+    }
+}
+
+/* === MOBILE RESPONSIVENESS FOR APPOINTMENT CARDS === */
+@media (max-width: 768px) {
+    /* Appointment card layout adjustments for mobile */
+    .appointment-cards {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 0;
+    }
+    
+    .appointment-card {
+        padding: 1rem;
+        min-height: 280px;
+        margin: 0 0.5rem;
+    }
+    
+    .appointment-card .card-header {
+        min-height: 30px; /* Smaller min-height for mobile */
+    }
+    
+    .appointment-card .customer-info-centered {
+        max-width: calc(100% - 90px); /* Adjust space for smaller mobile status badge */
+    }
+    
+    /* Centered customer info on mobile */
+    .appointment-card .customer-info-centered h4 {
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+    
+    .appointment-card .customer-info-centered .appointment-code {
+        font-size: 0.8rem;
+    }
+    
+    /* Status badge mobile positioning */
+    .appointment-card .card-status-top .status-badge {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.5rem;
+    }
+    
+    /* Single column layout for details on mobile */
+    .appointment-card .card-details {
+        gap: 0.75rem;
+    }
+    
+    /* Stack appointment details vertically on mobile */
+    .appointment-card .card-details-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .appointment-card .detail-item {
+        gap: 0.15rem;
+    }
+    
+    .appointment-card .detail-label {
+        font-size: 0.7rem;
+    }
+    
+    .appointment-card .detail-value {
+        font-size: 0.85rem;
+    }
+    
+    .appointment-card .detail-value.amount {
+        font-size: 1rem;
+    }
+    
+    /* Card actions at bottom - mobile optimization */
+    .appointment-card .card-actions-bottom {
+        padding-top: 0.75rem;
+        margin-top: 0.75rem;
+    }
+    
+    .appointment-card .card-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+        gap: 0.5rem;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .appointment-card .card-action-btn {
+        padding: 0.6rem;
+        min-width: 60px;
+        height: 44px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        justify-content: center;
+    }
+    
+    .appointment-card .card-action-btn i {
+        font-size: 16px;
+    }
+}
 
 .appointment-search-box input {
     padding: 0.75rem 0.75rem 0.75rem 2.5rem;
