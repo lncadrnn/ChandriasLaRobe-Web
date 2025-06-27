@@ -834,6 +834,35 @@ document.addEventListener('click', (e) => {
     }
 });
 
+// Handle payment type change in mark complete modal
+document.addEventListener('change', (e) => {
+    if (e.target.id === 'complete-payment-type') {
+        const paymentType = e.target.value;
+        const referenceNumberContainer = document.getElementById('complete-payment-reference-group');
+        const referenceNumberInput = document.getElementById('complete-payment-reference');
+        
+        if (referenceNumberContainer && referenceNumberInput) {
+            // Show reference number for digital payments
+            if (paymentType === 'GCash' || paymentType === 'PayMaya' || paymentType === 'GoTyme') {
+                referenceNumberContainer.style.display = 'block';
+                referenceNumberInput.required = true;
+            } else {
+                referenceNumberContainer.style.display = 'none';
+                referenceNumberInput.required = false;
+                referenceNumberInput.value = '';
+            }
+        }
+    }
+});
+
+// Handle reference number input validation in mark complete modal (numbers only)
+document.addEventListener('input', (e) => {
+    if (e.target.id === 'complete-payment-reference') {
+        // Allow only numbers
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    }
+});
+
 /**
  * Mark as Complete Modal Functions
  */
@@ -939,6 +968,37 @@ function populateMarkCompleteModal(transaction) {
             maximumFractionDigits: 2
         })}`;
     }
+
+    // Calculate and display remaining balance
+    const totalAmount = parseFloat(transaction.totalAmount || transaction.amount || 0);
+    const totalPaid = parseFloat(transaction.totalPaid || 0);
+    const remainingBalance = Math.max(0, totalAmount - totalPaid);
+    
+    const remainingBalanceEl = document.getElementById('complete-remaining-balance');
+    if (remainingBalanceEl) {
+        remainingBalanceEl.textContent = `₱${remainingBalance.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })}`;
+    }
+
+    // Show/hide payment section based on remaining balance
+    const paymentSection = document.getElementById('complete-payment-section');
+    if (paymentSection) {
+        if (remainingBalance > 0) {
+            paymentSection.style.display = 'block';
+            // Reset payment fields
+            const paymentTypeSelect = document.getElementById('complete-payment-type');
+            const referenceNumberInput = document.getElementById('complete-payment-reference');
+            const referenceNumberContainer = document.getElementById('complete-payment-reference-group');
+            
+            if (paymentTypeSelect) paymentTypeSelect.value = '';
+            if (referenceNumberInput) referenceNumberInput.value = '';
+            if (referenceNumberContainer) referenceNumberContainer.style.display = 'none';
+        } else {
+            paymentSection.style.display = 'none';
+        }
+    }
 }
 
 /**
@@ -948,6 +1008,58 @@ async function proceedWithMarkComplete() {
     if (!currentTransactionToComplete) {
         console.error('No transaction selected for completion');
         return;
+    }
+
+    // Check if payment is required and validate payment fields
+    const totalAmount = parseFloat(currentTransactionToComplete.totalAmount || currentTransactionToComplete.amount || 0);
+    const totalPaid = parseFloat(currentTransactionToComplete.totalPaid || 0);
+    const remainingBalance = Math.max(0, totalAmount - totalPaid);
+    
+    let paymentInfo = null;
+    
+    if (remainingBalance > 0) {
+        const paymentTypeEl = document.getElementById('complete-payment-type');
+        const referenceNumberEl = document.getElementById('complete-payment-reference');
+        
+        if (!paymentTypeEl || !paymentTypeEl.value) {
+            if (window.showNotification) {
+                window.showNotification('Please select a payment type.', 'error');
+            } else {
+                alert('Please select a payment type.');
+            }
+            return;
+        }
+        
+        const paymentType = paymentTypeEl.value;
+        
+        // Validate reference number for digital payments
+        if ((paymentType === 'GCash' || paymentType === 'PayMaya' || paymentType === 'GoTyme')) {
+            if (!referenceNumberEl || !referenceNumberEl.value.trim()) {
+                if (window.showNotification) {
+                    window.showNotification('Please enter a reference number for digital payments.', 'error');
+                } else {
+                    alert('Please enter a reference number for digital payments.');
+                }
+                return;
+            }
+            
+            if (referenceNumberEl.value.trim().length < 6) {
+                if (window.showNotification) {
+                    window.showNotification('Reference number must be at least 6 digits.', 'error');
+                } else {
+                    alert('Reference number must be at least 6 digits.');
+                }
+                return;
+            }
+        }
+        
+        // Prepare payment info
+        paymentInfo = {
+            paymentType: paymentType,
+            referenceNumber: referenceNumberEl ? referenceNumberEl.value.trim() : null,
+            paymentAmount: remainingBalance,
+            paymentDate: new Date().toISOString()
+        };
     }
 
     try {
@@ -972,6 +1084,20 @@ async function proceedWithMarkComplete() {
             lastUpdated: new Date().toISOString(),
             rentalStatus: 'Completed'
         };
+
+        // If there was a payment made during completion, update payment info
+        if (paymentInfo) {
+            updateData.totalPaid = totalPaid + remainingBalance; // Full payment
+            updateData.paymentHistory = arrayUnion({
+                ...paymentInfo,
+                description: 'Final payment on completion'
+            });
+            updateData.lastPaymentDate = paymentInfo.paymentDate;
+            updateData.lastPaymentType = paymentInfo.paymentType;
+            if (paymentInfo.referenceNumber) {
+                updateData.lastPaymentReference = paymentInfo.referenceNumber;
+            }
+        }
 
         await updateDoc(transactionRef, updateData);
 
@@ -1109,6 +1235,7 @@ if (typeof window !== 'undefined') {    // Preserve the original function if it 
     window.closeCancellationUndoneModal = closeCancellationUndoneModal;
     window.showMarkCompleteConfirmation = showMarkCompleteConfirmation;
     window.closeMarkCompleteConfirmationModal = closeMarkCompleteConfirmationModal;
+    window.closeMarkCompleteModal = closeMarkCompleteConfirmationModal; // Alias for compatibility
     window.proceedWithMarkComplete = proceedWithMarkComplete;
     window.showMarkCompleteSuccessModal = showMarkCompleteSuccessModal;
     window.closeMarkCompleteSuccessModal = closeMarkCompleteSuccessModal;

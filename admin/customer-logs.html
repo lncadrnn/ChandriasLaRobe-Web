@@ -853,7 +853,38 @@
                         <p><strong>Customer:</strong> <span id="complete-customer-name">-</span></p>
                         <p><strong>Transaction Code:</strong> <span id="complete-transaction-code">-</span></p>
                         <p><strong>Event Date:</strong> <span id="complete-event-date">-</span></p>
+                        <p><strong>Remaining Balance:</strong> <span id="complete-remaining-balance">-</span></p>
                         <p><strong>Total Amount:</strong> <span id="complete-total-amount">-</span></p>
+                    </div>
+                </div>
+                
+                <!-- Payment Section for Remaining Balance -->
+                <div class="payment-section" id="complete-payment-section" style="display: none;">
+                    <h4>Payment Information for Remaining Balance:</h4>
+                    <div class="payment-content">
+                        <div class="payment-type-group">
+                            <label for="complete-payment-type">Payment Type *</label>
+                            <select id="complete-payment-type" required>
+                                <option value="">Select payment method</option>
+                                <option value="Cash">Cash</option>
+                                <option value="GCash">GCash</option>
+                                <option value="PayMaya">PayMaya</option>
+                                <option value="GoTyme">GoTyme</option>
+                            </select>
+                        </div>
+                        
+                        <div class="payment-reference-group" id="complete-payment-reference-group" style="display: none;">
+                            <label for="complete-payment-reference">Reference Number *</label>
+                            <input 
+                                type="text" 
+                                id="complete-payment-reference" 
+                                placeholder="Enter reference number"
+                                pattern="[0-9]*"
+                                inputmode="numeric"
+                                maxlength="20"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                            >
+                        </div>
                     </div>
                 </div>
                 
