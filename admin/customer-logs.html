@@ -784,25 +784,30 @@
 
     <!-- Mark as Complete Confirmation Modal -->
     <div id="mark-complete-confirmation-modal" class="modal-overlay">
-        <div class="confirmation-modal-content">
-            <div class="confirmation-modal-header">
-                <i class='bx bx-check-circle confirmation-icon'></i>
-                <h3>Mark as Complete</h3>
+        <div class="modal-content complete-modal-content">
+            <div class="modal-header complete-header">
+                <h2><i class='bx bx-check-circle'></i> Mark as Complete</h2>
+                <button class="close-btn" onclick="closeMarkCompleteConfirmationModal()">
+                    <i class='bx bx-x'></i>
+                </button>
             </div>
-            <div class="confirmation-modal-body">
-                <div class="warning-section complete-warning">
-                    <div class="warning-icon complete-warning-icon">
-                        <i class='bx bx-info-circle'></i>
+            <div class="modal-body">
+                <div class="warning-section">
+                    <div class="warning-icon">
+                        <i class='bx bx-check-circle'></i>
                     </div>
                     <div class="warning-content">
-                        <h4>⚠️ This action cannot be reversed!</h4>
-                        <p>You are about to mark this rental as completed. This will:</p>
+                        <h3>✅ Are you sure you want to mark this rental as complete?</h3>
+                        <p>This action will:</p>
                         <ul class="warning-list">
-                            <li>Change the rental status to "Completed"</li>
-                            <li>Record the completion date</li>
-                            <li>Mark items as returned</li>
-                            <li><strong>This action cannot be undone</strong></li>
+                            <li>Mark the rental as completed</li>
+                            <li>Record the completion date and time</li>
+                            <li>Mark items as returned and available</li>
+                            <li>Update the rental status to "Completed"</li>
                         </ul>
+                        <p class="final-warning">
+                            <strong>This action cannot be undone once confirmed!</strong>
+                        </p>
                     </div>
                 </div>
                 
@@ -816,15 +821,14 @@
                     </div>
                 </div>
                 
-                <p class="final-confirmation">Are you sure you want to mark this rental as completed?</p>
-            </div>
-            <div class="confirmation-modal-footer">
-                <button type="button" class="btn-secondary" onclick="closeMarkCompleteConfirmationModal()">
-                    <i class='bx bx-x'></i> Cancel
-                </button>
-                <button type="button" class="btn-complete" id="confirm-mark-complete-btn" onclick="proceedWithMarkComplete()">
-                    <i class='bx bx-check-circle'></i> Mark as Complete
-                </button>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeMarkCompleteConfirmationModal()">
+                        <i class='bx bx-x'></i> Keep Active
+                    </button>
+                    <button type="button" class="btn-complete" id="confirm-mark-complete-btn" onclick="proceedWithMarkComplete()">
+                        <i class='bx bx-check-circle'></i> Mark as Complete
+                    </button>
+                </div>
             </div>
         </div>
     </div>

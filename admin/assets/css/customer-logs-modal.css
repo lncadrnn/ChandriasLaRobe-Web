@@ -711,20 +711,6 @@
         margin-bottom: 1.5rem !important;
     }
 
-    #undo-cancel-modal .warning-icon {
-        width: 60px !important;
-        height: 60px !important;
-        margin: 0 auto 1rem auto !important;
-    }
-
-    #undo-cancel-modal .warning-icon i {
-        font-size: 2rem !important;
-    }
-
-    #undo-cancel-modal .warning-content h3 {
-        font-size: 1.1rem !important;
-    }
-
     #undo-cancel-modal .transaction-summary,
     #undo-cancel-modal .status-prediction {
         padding: 1rem !important;
@@ -1554,6 +1540,354 @@ body.modal-open .modal-overlay.show .modal-content {
     }
 }
 
+/* =============== MARK AS COMPLETE MODAL - BLUE THEME (COPY OF CANCEL MODAL STRUCTURE) =============== */
+
+/* Complete Modal Content - Same width as transaction details and cancel modals */
+.complete-modal-content {
+    max-width: 800px !important;
+    width: 95% !important;
+    max-height: 90vh !important;
+    background: white !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    transform: scale(0.9) translateY(20px) !important;
+    transition: transform 0.3s ease !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+#mark-complete-confirmation-modal.show .complete-modal-content {
+    transform: scale(1) translateY(0) !important;
+}
+
+/* Complete Modal Header - Blue theme */
+.complete-header {
+    background: linear-gradient(135deg, #2196F3, #1976D2) !important;
+    color: white !important;
+    padding: 1.5rem 2rem !important;
+    border-radius: 16px 16px 0 0 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
+}
+
+.complete-header h2 {
+    margin: 0 !important;
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    color: white !important;
+}
+
+.complete-header h2 i {
+    font-size: 1.5rem !important;
+    color: white !important;
+}
+
+.complete-header .close-btn {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: none !important;
+    color: white !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    font-size: 1.5rem !important;
+    transition: all 0.2s ease !important;
+}
+
+.complete-header .close-btn:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: scale(1.1) !important;
+}
+
+/* Complete Modal Body - With scrollbar styling like cancel modal */
+#mark-complete-confirmation-modal .modal-body {
+    padding: 2rem !important;
+    overflow-y: auto !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+}
+
+/* Custom Scrollbar for Complete Modal Body - Blue theme */
+#mark-complete-confirmation-modal .modal-body::-webkit-scrollbar {
+    width: 8px !important;
+}
+
+#mark-complete-confirmation-modal .modal-body::-webkit-scrollbar-track {
+    background: #e3f2fd !important;
+    border-radius: 4px !important;
+}
+
+#mark-complete-confirmation-modal .modal-body::-webkit-scrollbar-thumb {
+    background: #bbdefb !important;
+    border-radius: 4px !important;
+}
+
+#mark-complete-confirmation-modal .modal-body::-webkit-scrollbar-thumb:hover {
+    background: #2196F3 !important;
+}
+
+/* Firefox Scrollbar for Complete Modal Body */
+#mark-complete-confirmation-modal .modal-body {
+    scrollbar-width: thin !important;
+    scrollbar-color: #bbdefb #e3f2fd !important;
+}
+
+/* Warning Section - Blue theme */
+#mark-complete-confirmation-modal .warning-section {
+    background: #e3f2fd !important;
+    border: 2px solid #bbdefb !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+    display: flex !important;
+    gap: 1rem !important;
+    align-items: flex-start !important;
+}
+
+#mark-complete-confirmation-modal .warning-icon {
+    flex-shrink: 0 !important;
+    width: 60px !important;
+    height: 60px !important;
+    background: linear-gradient(135deg, #2196F3, #1976D2) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: white !important;
+    font-size: 1.8rem !important;
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3) !important;
+}
+
+#mark-complete-confirmation-modal .warning-content {
+    flex: 1 !important;
+}
+
+#mark-complete-confirmation-modal .warning-content h3 {
+    color: #1976D2 !important;
+    margin: 0 0 0.75rem 0 !important;
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+}
+
+#mark-complete-confirmation-modal .warning-content p {
+    margin: 0 0 1rem 0 !important;
+    color: #424242 !important;
+    line-height: 1.5 !important;
+}
+
+#mark-complete-confirmation-modal .warning-list {
+    margin: 0 !important;
+    padding-left: 1.25rem !important;
+    color: #555 !important;
+}
+
+#mark-complete-confirmation-modal .warning-list li {
+    margin-bottom: 0.5rem !important;
+    line-height: 1.4 !important;
+}
+
+#mark-complete-confirmation-modal .warning-list li:last-child {
+    margin-bottom: 0 !important;
+}
+
+#mark-complete-confirmation-modal .final-warning {
+    margin: 1rem 0 0 0 !important;
+    padding: 0.75rem !important;
+    background: rgba(33, 150, 243, 0.1) !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    color: #1976D2 !important;
+    border-left: 4px solid #2196F3 !important;
+}
+
+/* Transaction Summary Section */
+#mark-complete-confirmation-modal .transaction-summary {
+    background: #f8f9fa !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+#mark-complete-confirmation-modal .transaction-summary h4 {
+    margin: 0 0 1rem 0 !important;
+    color: #2c3e50 !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+}
+
+#mark-complete-confirmation-modal .summary-content {
+    display: grid !important;
+    gap: 0.75rem !important;
+}
+
+#mark-complete-confirmation-modal .summary-content p {
+    margin: 0 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    padding: 0.5rem 0 !important;
+    border-bottom: 1px solid #eee !important;
+    color: #555 !important;
+}
+
+#mark-complete-confirmation-modal .summary-content p:last-child {
+    border-bottom: none !important;
+}
+
+#mark-complete-confirmation-modal .summary-content strong {
+    color: #2c3e50 !important;
+    font-weight: 600 !important;
+}
+
+#mark-complete-confirmation-modal .summary-content span {
+    color: #1976D2 !important;
+    font-weight: 500 !important;
+}
+
+/* Form Actions - Blue theme buttons */
+#mark-complete-confirmation-modal .form-actions {
+    padding: 1.5rem 2rem !important;
+    border-top: 1px solid #dee2e6 !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 1rem !important;
+    background: #f8f9fa !important;
+    border-radius: 0 0 16px 16px !important;
+    flex-shrink: 0 !important;
+}
+
+#mark-complete-confirmation-modal .btn-complete {
+    background: linear-gradient(135deg, #2196F3, #1976D2) !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3) !important;
+    font-size: 0.95rem !important;
+}
+
+#mark-complete-confirmation-modal .btn-complete:hover {
+    background: linear-gradient(135deg, #1976D2, #1565C0) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4) !important;
+}
+
+#mark-complete-confirmation-modal .btn-complete:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3) !important;
+}
+
+#mark-complete-confirmation-modal .btn-complete:disabled {
+    background: linear-gradient(135deg, #90caf9, #64b5f6) !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Secondary button styling for complete modal */
+#mark-complete-confirmation-modal .btn-secondary {
+    background: #f8f9fa !important;
+    color: #6c757d !important;
+    border: 2px solid #dee2e6 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    font-size: 0.95rem !important;
+}
+
+#mark-complete-confirmation-modal .btn-secondary:hover {
+    background: #e9ecef !important;
+    border-color: #adb5bd !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Responsive Design for Complete Modal */
+@media (max-width: 768px) {
+    .complete-modal-content {
+        width: 98% !important;
+        margin: 1rem !important;
+        max-height: 95vh !important;
+    }
+    
+    .complete-header {
+        padding: 1rem 1.5rem !important;
+    }
+    
+    .complete-header h2 {
+        font-size: 1.3rem !important;
+    }
+    
+    #mark-complete-confirmation-modal .modal-body {
+        padding: 1.5rem !important;
+    }
+    
+    #mark-complete-confirmation-modal .warning-section {
+        padding: 1rem !important;
+        gap: 0.75rem !important;
+    }
+    
+    #mark-complete-confirmation-modal .warning-icon {
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 1.5rem !important;
+    }
+    
+    #mark-complete-confirmation-modal .form-actions {
+        padding: 1rem 1.5rem !important;
+        flex-direction: column !important;
+    }
+    
+    #mark-complete-confirmation-modal .form-actions button {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .complete-modal-content {
+        width: 95% !important;
+        margin: 0.5rem !important;
+    }
+    
+    #mark-complete-confirmation-modal .warning-section {
+        flex-direction: column !important;
+        text-align: center !important;
+    }
+    
+    #mark-complete-confirmation-modal .warning-icon {
+        align-self: center !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    #mark-complete-confirmation-modal .summary-content p {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.25rem !important;
+    }
+}
+
 /* =============== SHARED MODAL STYLES =============== */
 .modal-overlay {
     position: fixed;
@@ -2049,29 +2383,6 @@ body.modal-open .modal-overlay.show .modal-content {
 .btn-secondary:active {
     transform: translateY(0);
     background: #dee2e6;
-}
-
-.btn-disabled {
-    background: #f8f9fa;
-    color: #adb5bd;
-    border: 1px solid #e9ecef;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: not-allowed;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-    opacity: 0.6;
-}
-
-.btn-disabled:hover {
-    background: #f8f9fa;
-    color: #adb5bd;
-    transform: none;
-    box-shadow: none;
 }
 
 /* Button icons */
@@ -2674,81 +2985,81 @@ body.modal-open .modal-overlay.show .modal-content {
 
 /* Transaction Summary */
 .transaction-summary {
-    background: #fef2f2 !important;
-    border: 2px solid #fecaca !important;
-    border-radius: 12px !important;
-    padding: 1.5rem !important;
-    margin-bottom: 2rem !important;
-    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1) !important;
+    background: #fef2f2;
+    border: 2px solid #fecaca;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1);
 }
 
 .transaction-summary h4 {
-    margin: 0 0 1rem 0 !important;
-    color: #dc2626 !important;
-    font-size: 1.1rem !important;
-    font-weight: 600 !important;
-    padding-bottom: 0.5rem !important;
-    border-bottom: 2px solid #fecaca !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
+    margin: 0 0 1rem 0;
+    color: #dc2626;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #fecaca;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .summary-content p {
-    margin: 0.75rem 0 !important;
-    color: #7f1d1d !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    line-height: 1.5 !important;
-    font-weight: 500 !important;
+    margin: 0.75rem 0;
+    color: #7f1d1d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    line-height: 1.5;
+    font-weight: 500;
 }
 
 .summary-content strong {
-    color: #991b1b !important;
-    font-weight: 600 !important;
-    min-width: 140px !important;
+    color: #991b1b;
+    font-weight: 600;
+    min-width: 140px;
 }
 
 .summary-content span {
-    text-align: right !important;
-    font-weight: 600 !important;
-    color: #dc2626 !important;
+    text-align: right;
+    font-weight: 600;
+    color: #dc2626;
 }
 
 /* Confirmation Section */
 .confirmation-section {
-    background: #ffffff !important;
-    border: 2px solid #fecaca !important;
-    border-radius: 8px !important;
-    padding: 1.5rem !important;
-    margin-bottom: 2rem !important;
-    text-align: center !important;
+    background: #ffffff;
+    border: 2px solid #fecaca;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
 }
 
 .confirmation-section p {
-    display: block !important;
-    margin-bottom: 1rem !important;
-    color: #dc2626 !important;
-    font-weight: 600 !important;
-    font-size: 1rem !important;
+    display: block;
+    margin-bottom: 1rem;
+    color: #dc2626;
+    font-weight: 600;
+    font-size: 1rem;
 }
 
 .confirmation-input {
-    width: 100% !important;
-    max-width: 300px !important;
-    padding: 0.75rem 1rem !important;
-    border: 2px solid #fecaca !important;
-    border-radius: 8px !important;
-    font-size: 1rem !important;
-    text-align: center !important;
-    font-weight: 600 !important;
-    color: #374151 !important;
-    background: #ffffff !important;
-    transition: all 0.2s ease !important;
-    outline: none !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
+    width: 100%;
+    max-width: 300px;
+    padding: 0.75rem 1rem;
+    border: 2px solid #fecaca;
+    border-radius: 8px;
+    font-size: 1rem;
+    text-align: center;
+    font-weight: 600;
+    color: #374151;
+    background: #ffffff;
+    transition: all 0.2s ease;
+    outline: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 /* Additional autocomplete prevention */
@@ -2756,10 +3067,10 @@ body.modal-open .modal-overlay.show .modal-content {
 .confirmation-input:-webkit-autofill:hover,
 .confirmation-input:-webkit-autofill:focus,
 .confirmation-input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
-    -webkit-text-fill-color: #374151 !important;
-    background: #ffffff !important;
-    transition: background-color 5000s ease-in-out 0s !important;
+    -webkit-box-shadow: 0 0 0 30px #ffffff inset;
+    -webkit-text-fill-color: #374151;
+    background: #ffffff;
+    transition: background-color 5000s ease-in-out 0s;
 }
 
 /* Prevent datalist suggestions and browser controls */
@@ -2767,9 +3078,9 @@ body.modal-open .modal-overlay.show .modal-content {
 .confirmation-input::-webkit-clear-button,
 .confirmation-input::-webkit-inner-spin-button,
 .confirmation-input::-webkit-outer-spin-button {
-    display: none !important;
-    -webkit-appearance: none !important;
-    margin: 0 !important;
+    display: none;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 /* Remove any dropdown arrow or suggestion indicators */
@@ -2777,48 +3088,48 @@ body.modal-open .modal-overlay.show .modal-content {
 .confirmation-input::-webkit-search-cancel-button,
 .confirmation-input::-webkit-search-results-button,
 .confirmation-input::-webkit-search-results-decoration {
-    display: none !important;
+    display: none;
 }
 
 .confirmation-input:focus {
-    border-color: #ef4444 !important;
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
-    background: #ffffff !important;
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    background: #ffffff;
 }
 
 .confirmation-input:hover {
-    border-color: #ef4444 !important;
+    border-color: #ef4444;
 }
 
 .confirmation-input::placeholder {
-    color: #9ca3af !important;
-    font-weight: 500 !important;
-    text-transform: none !important;
-    letter-spacing: normal !important;
+    color: #9ca3af;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: normal;
 }
 
 /* Valid state when user types DELETE correctly */
 .confirmation-input.valid {
-    border-color: #22c55e !important;
-    background: #f0fdf4 !important;
-    color: #166534 !important;
+    border-color: #22c55e;
+    background: #f0fdf4;
+    color: #166534;
 }
 
 .confirmation-input.valid:focus {
-    border-color: #22c55e !important;
-    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1) !important;
+    border-color: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
 }
 
 /* Invalid state styling */
 .confirmation-input.invalid {
-    border-color: #ef4444 !important;
-    background: #fef2f2 !important;
-    color: #dc2626 !important;
+    border-color: #ef4444;
+    background: #fef2f2;
+    color: #dc2626;
 }
 
 .confirmation-input.invalid:focus {
-    border-color: #ef4444 !important;
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
 }
 
 /* Transaction Summary for Delete Modal */
