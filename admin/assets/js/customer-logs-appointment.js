@@ -651,11 +651,11 @@ function showAppointmentDetails(appointmentId) {
             </div>
             
             <div class="detail-actions">
-                <button class="btn-primary" onclick="editAppointment('${appointmentId}')">
-                    <i class='bx bx-edit'></i> Edit Appointment
-                </button>
                 <button class="btn-secondary" onclick="closeAppointmentDetailsModal()">
                     <i class='bx bx-x'></i> Close
+                </button>
+                <button class="btn-primary" onclick="editAppointment('${appointmentId}')">
+                    <i class='bx bx-edit'></i> Edit Appointment
                 </button>
             </div>
         </div>

@@ -2857,13 +2857,15 @@
 }
 
 .modal-footer {
-    padding: 1.5rem 2rem;
-    background: #f8fafc;
-    border-top: 1px solid #e2e8f0;
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-    flex-shrink: 0;
+    padding: 1.5rem 2rem !important;
+    background: #f8fafc !important;
+    border-top: 1px solid #e2e8f0 !important;
+    display: flex !important;
+    gap: 1rem !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-shrink: 0 !important;
+    min-height: 80px !important;
 }
 
 .no-items {
@@ -2918,13 +2920,15 @@
     }
     
     .modal-footer {
-        padding: 1rem;
-        flex-direction: column;
-        gap: 0.75rem;
+        padding: 1rem !important;
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+        min-height: auto !important;
     }
     
     .modal-footer button {
-        width: 100%;
+        width: 100% !important;
+        justify-content: center !important;
     }
 }
 
@@ -3008,6 +3012,32 @@
 .btn-secondary:active {
     transform: translateY(0);
     background: #dee2e6;
+}
+
+.btn-disabled {
+    background: #f8f9fa !important;
+    color: #6c757d !important;
+    border: 1px solid #dee2e6 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    cursor: not-allowed !important;
+    transition: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    text-decoration: none !important;
+    opacity: 0.6 !important;
+}
+
+.btn-disabled:hover {
+    background: #f8f9fa !important;
+    border-color: #dee2e6 !important;
+    color: #6c757d !important;
+    transform: none !important;
+    box-shadow: none !important;
+    cursor: not-allowed !important;
 }
 
 /* =============== EDIT TRANSACTION MODAL =============== */
