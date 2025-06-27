@@ -2060,8 +2060,17 @@ function showProcessOverdueModal(transactionId) {
     document.getElementById('overdue-customer-name').textContent = transaction.fullName;
     document.getElementById('overdue-transaction-code').textContent = transaction.transactionCode;
     document.getElementById('overdue-event-date').textContent = formatEventDate(transaction);
-    document.getElementById('overdue-days-count').textContent = `${overdueDays} days`;
-    document.getElementById('overdue-total-amount').textContent = `₱${(transaction.totalAmount || transaction.totalPayment || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    
+    // Display overdue fee instead of days
+    document.getElementById('overdue-fee-amount').textContent = `₱${calculatedOverdueFee.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    
+    // Display remaining balance
+    const remainingBalance = parseFloat(transaction.remainingBalance) || 0;
+    document.getElementById('overdue-remaining-balance').textContent = `₱${remainingBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    
+    // Calculate total amount: overdue fee + remaining balance (do NOT include original rental amount)
+    const totalAmount = calculatedOverdueFee + remainingBalance;
+    document.getElementById('overdue-total-amount').textContent = `₱${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 
     // Update calculation display
     document.getElementById('original-rental-fee').textContent = `₱${rentalFee.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
