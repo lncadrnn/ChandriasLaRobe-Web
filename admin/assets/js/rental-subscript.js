@@ -2379,9 +2379,8 @@ $(document).ready(function () {
                         if (value) {
                             const selectedDate = new Date(value);
                             const today = new Date();
-                            today.setHours(0, 0, 0, 0);
-                            const minAllowedDate = new Date(today);
-                            minAllowedDate.setDate(today.getDate() + 2);
+                            today.setHours(0, 0, 0, 0);                    const minAllowedDate = new Date(today);
+                    minAllowedDate.setDate(today.getDate() + 1);
                             
                             if (selectedDate < minAllowedDate) {
                                 $input.val('');
@@ -2487,7 +2486,7 @@ $(document).ready(function () {
     function setFixedRentalDateRestrictions() {
         const today = new Date();
         const minEventDate = new Date(today);
-        minEventDate.setDate(today.getDate() + 3); // Minimum is current date + 3 days for Fixed Rental
+        minEventDate.setDate(today.getDate() + 2); // Minimum is current date + 2 days for Fixed Rental
         
         const minDateString = minEventDate.toISOString().split('T')[0];
         console.log('Today:', today.toDateString());
@@ -2509,7 +2508,7 @@ $(document).ready(function () {
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 const minAllowedDate = new Date(today);
-                minAllowedDate.setDate(today.getDate() + 3); // Fixed Rental needs 3 days advance
+                minAllowedDate.setDate(today.getDate() + 2); // Fixed Rental needs 2 days advance
                 
                 if (selectedDate < minAllowedDate) {
                     // Immediately clear the invalid value
