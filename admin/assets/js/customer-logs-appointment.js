@@ -173,10 +173,10 @@ async function loadAppointments() {
                 ...data,
                 // Normalize field names for consistency - expanded field mapping
                 customerName: data.customerName || data.fullName || data.name || data.firstName || data.customer || data.clientName || '',
-                contactNumber: data.contactNumber || data.phoneNumber || data.phone || data.mobile || data.contact || data.cellphone || '',
+                contactNumber: data.contactNumber || data.phoneNumber || data.phone || data.mobile || data.contact || data.cellphone || data.customerContact || '',
                 email: data.email || data.emailAddress || data.emailAddr || data.customerEmail || data.contactEmail || '',
-                appointmentDate: data.appointmentDate || data.date || data.scheduledDate || data.bookingDate || data.appointmentDay || data.dateScheduled || '',
-                appointmentTime: data.appointmentTime || data.time || data.scheduledTime || data.bookingTime || data.timeSlot || data.timeScheduled || '',
+                appointmentDate: data.appointmentDate || data.date || data.scheduledDate || data.bookingDate || data.appointmentDay || data.dateScheduled || data.checkoutDate || '',
+                appointmentTime: data.appointmentTime || data.time || data.scheduledTime || data.bookingTime || data.timeSlot || data.timeScheduled || data.checkoutTime || '',
                 purpose: data.purpose || data.appointmentType || data.type || data.service || data.serviceType || data.reason || 'Consultation',
                 notes: data.notes || data.note || data.comments || data.message || data.additionalInfo || '',
                 status: data.status || data.appointmentStatus || data.bookingStatus || 'scheduled'
@@ -353,7 +353,7 @@ function renderAppointmentCards() {
                         <button class="card-action-btn" title="Proceed to Transaction" onclick="proceedToTransaction('${appointment.id}')">
                             <i class='bx bx-right-arrow-alt'></i>
                         </button>
-                        ${appointmentStatus === 'Scheduled' || appointmentStatus === 'Pending' ? `
+                        ${appointmentStatus === 'Pending' || appointmentStatus === 'Scheduled' ? `
                         <button class="card-action-btn" title="Confirm Booking" onclick="confirmAppointment('${appointment.id}')">
                             <i class='bx bx-check'></i>
                         </button>
@@ -431,7 +431,7 @@ function renderAppointmentTable() {
                         <button class="proceed-transaction-btn" data-id="${appointment.id}" title="Proceed to Transaction">
                             <i class='bx bx-right-arrow-alt'></i>
                         </button>
-                        ${appointmentStatus === 'Scheduled' || appointmentStatus === 'Pending' ? `
+                        ${appointmentStatus === 'Pending' || appointmentStatus === 'Scheduled' ? `
                             <button class="confirm-appointment-btn" data-id="${appointment.id}" title="Confirm Booking">
                                 <i class='bx bx-check'></i>
                             </button>
@@ -470,7 +470,7 @@ function calculateAppointmentStatus(appointment) {
     const today = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
     const apptDay = appointmentDate ? new Date(appointmentDate.getFullYear(), appointmentDate.getMonth(), appointmentDate.getDate()) : null;
     
-    let appointmentStatus = 'Scheduled';
+    let appointmentStatus = 'Pending'; // Changed from 'Scheduled' to 'Pending'
     let statusClass = 'status-scheduled';
     
     // Check if appointment is completed
@@ -496,7 +496,7 @@ function calculateAppointmentStatus(appointment) {
         appointmentStatus = 'Today';
         statusClass = 'status-today';
     } else {
-        appointmentStatus = 'Scheduled';
+        appointmentStatus = 'Pending'; // Changed from 'Scheduled' to 'Pending'
         statusClass = 'status-scheduled';
     }
     
