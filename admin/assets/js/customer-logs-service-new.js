@@ -1176,7 +1176,11 @@ function populateEditForm(transaction) {
 async function handleEditSubmit(e) {
     e.preventDefault();
     
-    if (!currentEditingTransaction) return;
+    if (!currentEditingTransaction || !currentEditingTransaction.id) {
+        console.error('No valid transaction selected for editing');
+        alert('No transaction selected for editing. Please try again.');
+        return;
+    }
     
     const formData = new FormData(e.target);
     const updatedData = {};
@@ -1196,18 +1200,25 @@ async function handleEditSubmit(e) {
     // Add timestamp for last update
     updatedData.lastUpdated = new Date().toISOString();
     
+    // Get submit button and store original text outside try block
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn ? submitBtn.innerHTML : 'Save Changes';
+    
     try {
         // Show loading state
-        const submitBtn = e.target.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Saving...';
-        submitBtn.disabled = true;
+        if (submitBtn) {
+            submitBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Saving...';
+            submitBtn.disabled = true;
+        }
         
         // Update document in Firebase
         await updateDoc(doc(chandriaDB, 'transaction', currentEditingTransaction.id), updatedData);
         
+        // Store transaction ID before closing modal (since closeEditModal sets currentEditingTransaction to null)
+        const transactionId = currentEditingTransaction.id;
+        
         // Update local data
-        const index = allTransactions.findIndex(t => t.id === currentEditingTransaction.id);
+        const index = allTransactions.findIndex(t => t.id === transactionId);
         if (index !== -1) {
             allTransactions[index] = { ...allTransactions[index], ...updatedData };
             filteredTransactions = [...allTransactions];
@@ -1218,7 +1229,7 @@ async function handleEditSubmit(e) {
         
         // Use real-time updater for immediate UI changes
         if (window.realTimeUpdater) {
-            window.realTimeUpdater.updateTransaction(currentEditingTransaction.id, updatedData);
+            window.realTimeUpdater.updateTransaction(transactionId, updatedData);
         } else {
             // Fallback: refresh view
             if (currentView === 'cards') {
@@ -1236,9 +1247,10 @@ async function handleEditSubmit(e) {
         alert('Error updating transaction. Please try again.');
         
         // Restore button state
-        const submitBtn = e.target.querySelector('button[type="submit"]');
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
+        if (submitBtn) {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
     }
 }
 
