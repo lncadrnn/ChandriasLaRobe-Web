@@ -254,7 +254,7 @@ function renderAppointmentView() {
     // Show appropriate view based on current view setting
     if (currentView === 'cards') {
         if (cardsContainer) {
-            cardsContainer.style.display = 'flex';
+            cardsContainer.style.display = 'block'; // Changed from 'flex' to 'block' to allow grid layout
         }
         if (tableContainer) {
             tableContainer.style.display = 'none';

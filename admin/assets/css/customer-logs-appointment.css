@@ -4,7 +4,7 @@
 /* The appointment control bar now uses the exact same CSS classes as the rental control bar */
 /* All styling is inherited from customer-logs.css - no additional CSS needed for the control bar */
 
-/* =============== APPOINTMENT CARDS (COPIED FROM RENTAL CARDS) =============== */
+/* =============== APPOINTMENT CARDS LAYOUT FIX =============== */
 
 /* === APPOINTMENT CONTAINER === */
 .appointments-container {
@@ -16,20 +16,26 @@
 }
 
 /* === APPOINTMENT CARDS CONTAINER === */
-.appointment-cards-container {
+#appointment-cards-container {
     flex: 1;
     overflow-y: auto;
     padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
 }
 
-.appointment-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 1.5rem;
+/* Fix the grid layout for appointment cards - target the actual ID used in HTML */
+#appointment-cards {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)) !important;
+    gap: 1.5rem !important;
     padding-bottom: 2rem;
+    width: 100%;
+    margin: 0;
 }
 
-.appointment-card {
+/* Ensure appointment cards inherit the proper transaction-card styling */
+#appointment-cards .transaction-card {
     background: var(--white-color);
     border-radius: 16px;
     padding: 1.5rem;
@@ -41,9 +47,11 @@
     display: flex;
     flex-direction: column;
     min-height: 320px;
+    width: auto; /* Ensure cards don't have fixed width */
+    max-width: none; /* Remove any max-width restrictions */
 }
 
-.appointment-card .card-content {
+#appointment-cards .transaction-card .card-content {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -435,6 +443,162 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+/* =============== APPOINTMENT CARDS RESPONSIVE GRID =============== */
+
+/* Large screens - 4 cards per row */
+@media screen and (min-width: 1600px) {
+    #appointment-cards {
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)) !important;
+        gap: 2rem !important;
+    }
+}
+
+/* Desktop - 3 cards per row */
+@media screen and (min-width: 1200px) and (max-width: 1599px) {
+    #appointment-cards {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)) !important;
+        gap: 1.5rem !important;
+    }
+}
+
+/* Tablet - 2 cards per row */
+@media screen and (min-width: 768px) and (max-width: 1199px) {
+    #appointment-cards {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+        gap: 1.25rem !important;
+    }
+    
+    #appointment-cards .transaction-card {
+        min-height: 300px;
+    }
+}
+
+/* Mobile - 1 card per row */
+@media screen and (max-width: 767px) {
+    #appointment-cards-container {
+        padding: 0.25rem;
+    }
+    
+    #appointment-cards {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+        padding: 0 0.5rem 1rem 0.5rem;
+    }
+    
+    #appointment-cards .transaction-card {
+        min-height: 280px;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+/* Force grid layout override any conflicting styles */
+.appointments-container .transaction-cards {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)) !important;
+    gap: 1.5rem !important;
+}
+
+/* Ensure proper card distribution */
+#appointment-cards .transaction-card {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    align-self: stretch;
+    justify-self: stretch;
+}
+
+/* =============== APPOINTMENT CARDS FINAL GRID FIX =============== */
+
+/* Ensure appointment cards container has the same behavior as rental cards */
+#appointment-cards-container .transaction-cards,
+#appointment-cards {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)) !important;
+    gap: 1.5rem !important;
+    padding-bottom: 2rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Prevent any flex behavior that might interfere with grid */
+#appointment-cards-container {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Debug: Ensure no conflicting display properties */
+.appointments-container .cards-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.appointments-container .cards-container .transaction-cards {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)) !important;
+    gap: 1.5rem !important;
+    grid-auto-rows: minmax(320px, auto);
+    align-items: stretch;
+}
+
+/* =============== APPOINTMENT CARDS DEBUG & ENHANCEMENT =============== */
+
+/* Visual debugging (uncomment these for troubleshooting layout issues) */
+/* 
+#appointment-cards {
+    border: 2px dashed red;
+    background: rgba(255, 0, 0, 0.1);
+}
+
+#appointment-cards .transaction-card {
+    border: 1px solid blue;
+    background: rgba(0, 0, 255, 0.05);
+}
+*/
+
+/* Ensure proper card spacing and alignment */
+#appointment-cards .transaction-card {
+    /* Remove any absolute positioning that might interfere */
+    position: relative !important;
+    /* Ensure proper box model */
+    box-sizing: border-box !important;
+    /* Remove any transforms that might affect layout */
+    transform: none;
+    /* Ensure proper sizing */
+    width: 100% !important;
+    height: auto !important;
+    min-height: 320px;
+    max-width: none !important;
+    /* Fix any potential margin/padding issues */
+    margin: 0 !important;
+    padding: 1.5rem;
+}
+
+/* Ensure hover effects don't break layout */
+#appointment-cards .transaction-card:hover {
+    transform: translateY(-4px);
+    position: relative;
+    z-index: 1;
+}
+
+/* Grid container overflow fix */
+#appointment-cards-container {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Force grid behavior even if JavaScript tries to interfere */
+#appointment-cards[style*="display"] {
+    display: grid !important;
+}
+
+/* Ensure proper grid item behavior */
+#appointment-cards > * {
+    grid-column: auto;
+    grid-row: auto;
 }
 
 /* === RESPONSIVE DESIGN FOR APPOINTMENTS === */
@@ -1081,5 +1245,46 @@
     
     .appointments-empty-state h3 {
         font-size: 1.25rem;
+    }
+}
+
+/* =============== FINAL GRID LAYOUT ENFORCEMENT =============== */
+
+/* Ensure the grid container properly displays the grid after JavaScript renders cards */
+#appointment-cards:not(:empty) {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)) !important;
+    gap: 1.5rem !important;
+}
+
+/* Ensure cards are properly sized within the grid */
+#appointment-cards .transaction-card {
+    grid-column: span 1;
+    grid-row: span 1;
+    align-self: stretch;
+    justify-self: stretch;
+}
+
+/* Force reflow after content changes */
+.appointments-container {
+    contain: layout style paint;
+}
+
+/* Ensure proper initialization */
+#appointment-cards {
+    min-height: 100px; /* Prevents collapse when empty */
+}
+
+/* Grid fallback for older browsers */
+@supports not (display: grid) {
+    #appointment-cards {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: flex-start !important;
+    }
+    
+    #appointment-cards .transaction-card {
+        flex: 0 1 350px !important;
+        margin: 0.75rem !important;
     }
 }
