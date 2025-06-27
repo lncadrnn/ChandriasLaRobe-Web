@@ -606,14 +606,12 @@ function showAppointmentDetails(appointmentId) {
     
     // Format appointment date and time
     const appointmentDateTime = formatAppointmentDateTime(appointment);
-    
-    // Format customer info
+      // Format customer info
     const customerName = appointment.customerName || appointment.fullName || appointment.name || 'Unknown Customer';
     const contactNumber = appointment.contactNumber || appointment.phoneNumber || appointment.phone || 'N/A';
     const email = appointment.email || appointment.emailAddress || 'N/A';
-    const purpose = appointment.purpose || appointment.appointmentType || appointment.type || appointment.service || 'Consultation';
     const notes = appointment.notes || appointment.note || appointment.comments || 'None';
-    
+
     modalBody.innerHTML = `
         <div class="appointment-details-container">
             <div class="detail-section">
@@ -640,16 +638,6 @@ function showAppointmentDetails(appointmentId) {
                     <div class="detail-item">
                         <span class="detail-label">Date & Time</span>
                         <span class="detail-value">${appointmentDateTime}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Purpose/Service</span>
-                        <span class="detail-value">${purpose}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Status</span>
-                        <span class="detail-value">
-                            <span class="appointment-status-badge ${statusClass.replace('status-', '')}">${appointmentStatus}</span>
-                        </span>
                     </div>
                 </div>
             </div>
@@ -703,8 +691,6 @@ function editAppointment(appointmentId) {
     }
     
     document.getElementById('edit-appointment-time').value = appointment.appointmentTime || appointment.time || '';
-    document.getElementById('edit-appointment-purpose').value = appointment.purpose || appointment.appointmentType || appointment.type || appointment.service || '';
-    document.getElementById('edit-appointment-status').value = appointment.status || 'scheduled';
     document.getElementById('edit-appointment-notes').value = appointment.notes || appointment.note || appointment.comments || '';
     
     // Store appointment ID for form submission
@@ -724,17 +710,12 @@ async function deleteAppointment(appointmentId) {
     
     const modal = document.getElementById('delete-appointment-modal');
     if (!modal) return;
-    
-    const customerName = appointment.customerName || appointment.fullName || appointment.name || 'Unknown Customer';
+      const customerName = appointment.customerName || appointment.fullName || appointment.name || 'Unknown Customer';
     const appointmentDateTime = formatAppointmentDateTime(appointment);
-    const purpose = appointment.purpose || appointment.appointmentType || appointment.type || appointment.service || 'Consultation';
-    const { appointmentStatus, statusClass } = calculateAppointmentStatus(appointment);
-    
+
     // Populate modal with appointment data
     document.getElementById('delete-appointment-customer-name').textContent = customerName;
     document.getElementById('delete-appointment-datetime').textContent = appointmentDateTime;
-    document.getElementById('delete-appointment-purpose').textContent = purpose;
-    document.getElementById('delete-appointment-status').innerHTML = `<span class="appointment-status-badge ${statusClass.replace('status-', '')}">${appointmentStatus}</span>`;
     
     // Store appointment ID for deletion
     const confirmBtn = document.getElementById('confirm-delete-appointment-btn');
